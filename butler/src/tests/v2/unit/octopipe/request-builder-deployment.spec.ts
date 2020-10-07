@@ -262,7 +262,7 @@ const deploymentWith1ComponentCircle1CustomNamespace: Deployment = {
   ]
 }
 
-describe('V2 Octopipe Deployment Request Builder', () => {
+describe('V2 Octopipe Deployment Request Builder', () => { // TODO Cluster Config Tests
 
   it('should create the correct complete request object with 3 new components and some unused components', async() => {
 

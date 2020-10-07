@@ -15,10 +15,17 @@
  */
 
 import 'jest'
-
-import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
+import { OctopipeRequestBuilder } from '../../../../app/v2/core/integrations/octopipe/request-builder'
+import { completeOctopipeUndeploymentRequest } from './fixtures/undeployment/undeploy-complete-pipeline'
+import { GitProvidersEnum } from '../../../../app/v1/core/integrations/configuration/interfaces'
+import { ClusterProviderEnum } from '../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { dummyVirtualServicePipelineOctopipe } from './fixtures/undeployment/dummy-virtualservice-pipeline'
+import { undeploySameTagDiffCirclesUnusedOctopipe } from './fixtures/undeployment/undeploy-same-tag-diff-circles-unused'
+import { undeployOneSameTagDiffCirclesUnusedOctopipe } from './fixtures/undeployment/undeploy-one-same-tag-diff-circles-unused'
+import { undeployDiffSubsetsSameTagOctopipe } from './fixtures/undeployment/undeploy-diff-subsets-same-tag'
+import { undeployHostnameGatewayOctopipe } from './fixtures/undeployment/undeploy-hostname-gateway'
 
 const deploymentWith2Components: Deployment = {
   id: 'deployment-id',
@@ -26,14 +33,14 @@ const deploymentWith2Components: Deployment = {
   callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
   cdConfiguration: {
     id: 'cd-configuration-id',
-    type: CdTypeEnum.SPINNAKER,
+    type: CdTypeEnum.OCTOPIPE,
     configurationData: {
-      gitAccount: 'github-artifact',
-      account: 'default',
-      namespace: 'sandbox',
-      url: 'spinnaker-url'
+      gitProvider: GitProvidersEnum.GITHUB,
+      gitToken: 'git-token',
+      provider: ClusterProviderEnum.DEFAULT,
+      namespace: 'sandbox'
     },
-    name: 'spinnakerconfiguration',
+    name: 'octopipeconfiguration',
     authorId: 'user-2',
     workspaceId: 'workspace-id',
     createdAt: new Date(),
@@ -46,7 +53,7 @@ const deploymentWith2Components: Deployment = {
       id: 'component-id-4',
       helmUrl: 'http://localhost:2222/helm',
       imageTag: 'v1',
-      imageUrl: 'https://repository.com/A:v2',
+      imageUrl: 'https://repository.com/A:v1',
       name: 'A',
       running: false,
       hostValue: null,
@@ -56,7 +63,7 @@ const deploymentWith2Components: Deployment = {
       id: 'component-id-5',
       helmUrl: 'http://localhost:2222/helm',
       imageTag: 'v1',
-      imageUrl: 'https://repository.com/B:v2',
+      imageUrl: 'https://repository.com/B:v1',
       name: 'B',
       running: false,
       hostValue: null,
@@ -71,14 +78,14 @@ const deploymentWith2ComponentsHostnameGateway: Deployment = {
   callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
   cdConfiguration: {
     id: 'cd-configuration-id',
-    type: CdTypeEnum.SPINNAKER,
+    type: CdTypeEnum.OCTOPIPE,
     configurationData: {
-      gitAccount: 'github-artifact',
-      account: 'default',
-      namespace: 'sandbox',
-      url: 'spinnaker-url'
+      gitProvider: GitProvidersEnum.GITHUB,
+      gitToken: 'git-token',
+      provider: ClusterProviderEnum.DEFAULT,
+      namespace: 'sandbox'
     },
-    name: 'spinnakerconfiguration',
+    name: 'octopipeconfiguration',
     authorId: 'user-2',
     workspaceId: 'workspace-id',
     createdAt: new Date(),
@@ -91,7 +98,7 @@ const deploymentWith2ComponentsHostnameGateway: Deployment = {
       id: 'component-id-4',
       helmUrl: 'http://localhost:2222/helm',
       imageTag: 'v1',
-      imageUrl: 'https://repository.com/A:v2',
+      imageUrl: 'https://repository.com/A:v1',
       name: 'A',
       running: false,
       hostValue: 'host-value-1',
@@ -101,7 +108,7 @@ const deploymentWith2ComponentsHostnameGateway: Deployment = {
       id: 'component-id-5',
       helmUrl: 'http://localhost:2222/helm',
       imageTag: 'v1',
-      imageUrl: 'https://repository.com/B:v2',
+      imageUrl: 'https://repository.com/B:v1',
       name: 'B',
       running: false,
       hostValue: 'host-value-2',
@@ -110,9 +117,9 @@ const deploymentWith2ComponentsHostnameGateway: Deployment = {
   ]
 }
 
-describe('V2 Octopipe Undeployment Request Builder', () => {
+describe('V2 Octopipe Undeployment Request Builder', () => { //TODO ClusterConfig tests
 
-  it('should create the correct complete pipeline object with 2 components being effectively undeployed', async() => {
+  it('should create the correct complete request object with 2 components being effectively undeployed', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -132,19 +139,19 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -164,14 +171,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -196,14 +203,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -228,14 +235,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -260,14 +267,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -278,11 +285,11 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(completeSpinnakerUndeploymentPipeline)
+      new OctopipeRequestBuilder().buildUndeploymentRequest(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(completeOctopipeUndeploymentRequest)
   })
 
-  it('should create the correct pipeline object with 2 components being undeployed when no other version is active', async() => {
+  it('should create the correct request object with 2 components being undeployed when no other version is active', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -302,19 +309,19 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -334,14 +341,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -352,11 +359,11 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(dummyVirtualserviceSpinnakerPipeline)
+      new OctopipeRequestBuilder().buildUndeploymentRequest(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(dummyVirtualServicePipelineOctopipe)
   })
 
-  it('should create the correct pipeline object with 2 components being undeployed even with same tag in diff circles', async() => {
+  it('should create the correct request object with 2 components being undeployed even with same tag in diff circles', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -376,19 +383,19 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -408,14 +415,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -440,14 +447,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -472,14 +479,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -490,11 +497,11 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(undeploySameTagDiffCirclesUnused)
+      new OctopipeRequestBuilder().buildUndeploymentRequest(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(undeploySameTagDiffCirclesUnusedOctopipe)
   })
-
-  it('should create the correct pipeline object with 2 components being undeployed, even with one same tag in diff circle', async() => {
+  
+  it('should create the correct request object with 2 components being undeployed, even with one same tag in diff circle', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -514,19 +521,19 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -546,14 +553,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -578,14 +585,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -610,14 +617,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -628,8 +635,8 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(undeployOneSameTagDiffCirclesUnused)
+      new OctopipeRequestBuilder().buildUndeploymentRequest(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(undeployOneSameTagDiffCirclesUnusedOctopipe)
   })
 
   it('should create the correct pipeline with repeated tags in different subsets', async() => {
@@ -652,19 +659,19 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -684,14 +691,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -716,14 +723,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -748,14 +755,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -780,14 +787,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -812,14 +819,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -830,8 +837,8 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(undeployDiffSubsetsSameTag)
+      new OctopipeRequestBuilder().buildUndeploymentRequest(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(undeployDiffSubsetsSameTagOctopipe)
   })
 
   it('should create the correct pipeline with custom host name and gateway name', async() => {
@@ -854,19 +861,19 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -886,14 +893,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -918,14 +925,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -950,14 +957,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -982,14 +989,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -1014,14 +1021,14 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.SPINNAKER,
+            type: CdTypeEnum.OCTOPIPE,
             configurationData: {
-              gitAccount: 'github-artifact',
-              account: 'default',
-              namespace: 'sandbox',
-              url: 'spinnaker-url'
+              gitProvider: GitProvidersEnum.GITHUB,
+              gitToken: 'git-token',
+              provider: ClusterProviderEnum.DEFAULT,
+              namespace: 'sandbox'
             },
-            name: 'spinnakerconfiguration',
+            name: 'octopipeconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -1032,9 +1039,9 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(
+      new OctopipeRequestBuilder().buildUndeploymentRequest(
         deploymentWith2ComponentsHostnameGateway, activeComponents,
         { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(hostnameGatewayUndeploymentPipeline)
+    ).toEqual(undeployHostnameGatewayOctopipe)
   })
 })

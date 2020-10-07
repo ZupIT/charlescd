@@ -118,7 +118,7 @@ export class ReceiveNotificationUseCase {
     }
 
     const notificationResult = await this.sendMooveNotification(
-      execution.id,
+      execution.id, //TODO unnecessary parameter
       notificationStatus,
       execution.deployment.callbackUrl,
       execution.incomingCircleId
