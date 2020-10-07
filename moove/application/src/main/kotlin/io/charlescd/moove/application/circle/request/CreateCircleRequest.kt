@@ -84,6 +84,7 @@ data class NodePart(
         LESS_THAN_OR_EQUAL,
         STARTS_WITH,
         ENDS_WITH,
-        NOT_EQUAL
+        NOT_EQUAL,
+        MATCHES
     }
 }
