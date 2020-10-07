@@ -14,32 +14,22 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_BLACK_MARLIN,
-  COLOR_RED_ORANGE,
-  COLOR_ORANGE_PEEL,
-  COLOR_SANTAS_GREY, COLOR_PAYNES_GREY
-} from '../colors';
+import React from 'react';
+import Text from 'core/components/Text';
+import Styled from './styled';
 
-export const light = {};
-
-export const dark = {
-  content: {
-    background: COLOR_BASTILLE,
-    card: COLOR_BLACK_MARLIN
-  },
-  execution: {
-    status: {
-      error: COLOR_RED_ORANGE,
-      reached: COLOR_ORANGE_PEEL,
-      active: COLOR_SANTAS_GREY
-    }
-  },
-  chart: {
-    gridColor: COLOR_BLACK_MARLIN
-  },
-  footer: {
-    borderColor: COLOR_PAYNES_GREY
-  }
+export type Props = {
+  title: string;
+  subTitle: string;
 };
+
+const NavTabsPlaceholder = ({ title, subTitle }: Props) => {
+  return (
+    <Styled.Placeholder>
+      <Styled.PlaceholderTitle color="light">{title}</Styled.PlaceholderTitle>
+      <Text.h5 color="dark">{subTitle}</Text.h5>
+    </Styled.Placeholder>
+  );
+};
+
+export default NavTabsPlaceholder;

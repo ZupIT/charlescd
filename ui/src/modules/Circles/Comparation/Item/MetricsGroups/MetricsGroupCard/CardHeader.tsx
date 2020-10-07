@@ -6,25 +6,15 @@ import { MetricsGroup } from '../types';
 
 type Props = {
   metricGroup: MetricsGroup;
-  handleAddMetric: Function;
   handleDeleteMetricsGroup: Function;
 };
 
-const CardHeader = ({
-  metricGroup,
-  handleAddMetric,
-  handleDeleteMetricsGroup
-}: Props) => (
+const CardHeader = ({ metricGroup, handleDeleteMetricsGroup }: Props) => (
   <Styled.MetricsGroupsCardHeader>
     <Text.h2 color="light" title={metricGroup.name}>
       {metricGroup.name}
     </Text.h2>
     <Dropdown icon="vertical-dots" size="16px">
-      <Dropdown.Item
-        icon="add"
-        name="Add metric"
-        onClick={() => handleAddMetric(metricGroup)}
-      />
       <Dropdown.Item
         icon="delete"
         name="Delete"

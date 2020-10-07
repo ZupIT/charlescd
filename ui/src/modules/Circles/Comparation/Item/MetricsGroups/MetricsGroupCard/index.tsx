@@ -30,6 +30,8 @@ import MetricsCard from './Metrics';
 import Styled from './styled';
 import { MetricsGroup } from '../types';
 import CardHeader from './CardHeader';
+import NavTabs from 'core/components/NavTabs';
+import Button from 'core/components/Button';
 
 type Props = {
   metricGroup: MetricsGroup;
@@ -129,10 +131,35 @@ const MetricsGroupCard = ({
     <Styled.MetricsGroupsCard key={metricGroup.id}>
       <CardHeader
         metricGroup={metricGroup}
-        handleAddMetric={handleAddMetric}
         handleDeleteMetricsGroup={handleDeleteMetricsGroup}
       />
-      {!isEmpty(metricGroup.metrics) && renderMetricsContent()}
+      (
+      <NavTabs>
+        <NavTabs.Tab title="Metrics">
+          {!isEmpty(metricGroup.metrics) ? (
+            renderMetricsContent()
+          ) : (
+            <NavTabs.Placeholder
+              title="No metric in this  group."
+              subTitle="You can add metrics and monitor the health of your activities."
+            />
+          )}
+          <Styled.MetricsGroupsFooter>
+            <Button.Default onClick={() => handleAddMetric()}>
+              Add metric
+            </Button.Default>
+          </Styled.MetricsGroupsFooter>
+        </NavTabs.Tab>
+        <NavTabs.Tab title="Actions">
+          <NavTabs.Placeholder
+            title="No actions in this metrics group."
+            subTitle="An action is an automated workflow that connects your applications and services through metrics triggers."
+          />
+          <Styled.MetricsGroupsFooter>
+            <Button.Default>Add action</Button.Default>
+          </Styled.MetricsGroupsFooter>
+        </NavTabs.Tab>
+      </NavTabs>
     </Styled.MetricsGroupsCard>
   );
 };
