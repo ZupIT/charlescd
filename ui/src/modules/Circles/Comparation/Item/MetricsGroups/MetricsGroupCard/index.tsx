@@ -18,7 +18,6 @@ import React, { useState } from 'react';
 import { OptionTypeBase } from 'react-select';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
-import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
 import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
@@ -30,6 +29,7 @@ import MonitoringMetrics from './MonitoringMetrics';
 import MetricsCard from './Metrics';
 import Styled from './styled';
 import { MetricsGroup } from '../types';
+import CardHeader from './CardHeader';
 
 type Props = {
   metricGroup: MetricsGroup;
@@ -74,75 +74,65 @@ const MetricsGroupCard = ({
     return false;
   };
 
+  const renderMetricsContent = () => (
+    <>
+      <Styled.MonitoringMetricsFilter isOpen={!chartOpen}>
+        <LabeledIcon
+          isActive={chartOpen}
+          icon={chartOpen ? 'view' : 'no-view'}
+          onClick={handleViewChart}
+        >
+          <Text.h5 color={chartOpen ? 'light' : 'dark'}>View Chart</Text.h5>
+        </LabeledIcon>
+        {chartOpen && (
+          <LabeledIcon icon="filter" isActive={!renderLabelText()}>
+            <Styled.MultiSelect
+              control={control}
+              name="metrics"
+              isLoading={loadingStatus}
+              customOption={CustomOption.Check}
+              options={normalizedSelectOptions}
+              label={renderLabelText() && 'Select metrics'}
+              defaultValue={[allOption, ...normalizedSelectOptions]}
+              onChange={e => setSelectMetric(e)}
+            />
+          </LabeledIcon>
+        )}
+      </Styled.MonitoringMetricsFilter>
+      {chartOpen && (
+        <MonitoringMetrics
+          metricsGroupId={metricGroup.id}
+          selectFilters={selectMetric}
+          onChangePeriod={handleChangePeriod}
+        />
+      )}
+      <Styled.MetricCardTableHead>
+        <Text.h5 color="dark">Nickname</Text.h5>
+        <Text.h5 color="dark">Condition Threshold</Text.h5>
+        <Text.h5 color="dark">Last Value</Text.h5>
+      </Styled.MetricCardTableHead>
+      <Styled.MetricsGroupsCardContent>
+        {map(metricGroup.metrics, metric => (
+          <MetricsCard
+            metric={metric}
+            metricGroup={metricGroup}
+            key={metric.id}
+            handleDeleteMetric={handleDeleteMetric}
+            handleEditMetric={handleEditMetric}
+          />
+        ))}
+      </Styled.MetricsGroupsCardContent>
+    </>
+  );
+
   return (
     <Styled.MetricsGroupsCard key={metricGroup.id}>
-      <Styled.MetricsGroupsCardHeader>
-        <Text.h2 color="light" title={metricGroup.name}>
-          {metricGroup.name}
-        </Text.h2>
-        <Dropdown icon="vertical-dots" size="16px">
-          <Dropdown.Item
-            icon="add"
-            name="Add metric"
-            onClick={() => handleAddMetric(metricGroup)}
-          />
-          <Dropdown.Item
-            icon="delete"
-            name="Delete"
-            onClick={() => handleDeleteMetricsGroup(metricGroup.id)}
-          />
-        </Dropdown>
-      </Styled.MetricsGroupsCardHeader>
-      {!isEmpty(metricGroup.metrics) && (
-        <>
-          <Styled.MonitoringMetricsFilter isOpen={!chartOpen}>
-            <LabeledIcon
-              isActive={chartOpen}
-              icon={chartOpen ? 'view' : 'no-view'}
-              onClick={handleViewChart}
-            >
-              <Text.h5 color={chartOpen ? 'light' : 'dark'}>View Chart</Text.h5>
-            </LabeledIcon>
-            {chartOpen && (
-              <LabeledIcon icon="filter" isActive={!renderLabelText()}>
-                <Styled.MultiSelect
-                  control={control}
-                  name="metrics"
-                  isLoading={loadingStatus}
-                  customOption={CustomOption.Check}
-                  options={normalizedSelectOptions}
-                  label={renderLabelText() && 'Select metrics'}
-                  defaultValue={[allOption, ...normalizedSelectOptions]}
-                  onChange={e => setSelectMetric(e)}
-                />
-              </LabeledIcon>
-            )}
-          </Styled.MonitoringMetricsFilter>
-          {chartOpen && (
-            <MonitoringMetrics
-              metricsGroupId={metricGroup.id}
-              selectFilters={selectMetric}
-              onChangePeriod={handleChangePeriod}
-            />
-          )}
-          <Styled.MetricCardTableHead>
-            <Text.h5 color="dark">Nickname</Text.h5>
-            <Text.h5 color="dark">Condition Threshold</Text.h5>
-            <Text.h5 color="dark">Last Value</Text.h5>
-          </Styled.MetricCardTableHead>
-          <Styled.MetricsGroupsCardContent>
-            {map(metricGroup.metrics, metric => (
-              <MetricsCard
-                metric={metric}
-                metricGroup={metricGroup}
-                key={metric.id}
-                handleDeleteMetric={handleDeleteMetric}
-                handleEditMetric={handleEditMetric}
-              />
-            ))}
-          </Styled.MetricsGroupsCardContent>
-        </>
-      )}
+      <CardHeader
+        metricGroup={metricGroup}
+        handleAddMetric={handleAddMetric}
+        handleDeleteMetricsGroup={handleDeleteMetricsGroup}
+      />
+      {!isEmpty(metricGroup.metrics) && renderMetricsContent()}
     </Styled.MetricsGroupsCard>
   );
 };
