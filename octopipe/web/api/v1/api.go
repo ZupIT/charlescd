@@ -63,8 +63,8 @@ func throttle(requestLimiter *rate.Limiter) gin.HandlerFunc {
 	}
 }
 func getLimiter() *rate.Limiter {
-	limitRequestBurstBySeconds,error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BY_SECOND"), 0, 32)
-	limitRequestBySeconds,error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BURST_BY_SECOND"), 0, 32)
+	limitRequestBurstBySeconds, error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BY_SECOND"), 0, 32)
+	limitRequestBySeconds, error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BURST_BY_SECOND"), 0, 32)
 	if error != nil {
 		limitRequestBurstBySeconds = DefaultLimitRequestBySeconds
 		limitRequestBySeconds = DefaultLimitRequestBurstBySeconds
