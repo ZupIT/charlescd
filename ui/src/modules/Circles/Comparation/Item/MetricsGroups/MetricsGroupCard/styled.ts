@@ -39,7 +39,7 @@ const MetricsGroupsCard = styled.div`
   margin-top: 15px;
   border-radius: 5px;
   width: 520px;
-  padding: 20px;
+  padding: 20px 20px 0 20px;
 `;
 
 const MetricsGroupsCardHeader = styled.div`
@@ -184,6 +184,13 @@ const MetricDropdown = styled.div`
   margin-right: 10px;
 `;
 
+const MetricsGroupsFooter = styled.div`
+  border-top: 2px solid
+    ${({ theme }) => theme.circleGroupMetrics.footer.borderColor};
+  padding-top: 15px;
+  margin-top: 15px;
+`;
+
 export default {
   MetricsGroupsCard,
   MetricsGroupsCardHeader,
@@ -199,5 +206,6 @@ export default {
   MetricLastValueText,
   MetricLastValue,
   MetricDropdown,
-  MetricCardTableHead
+  MetricCardTableHead,
+  MetricsGroupsFooter
 };
