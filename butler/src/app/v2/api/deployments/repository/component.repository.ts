@@ -36,18 +36,20 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
   }
 
   public async findCircleRunningComponents(circleId: string): Promise<ComponentEntityV2[]> {
-    return this.createQueryBuilder('v2components')
-      .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where(`deployment.circle_id = '${circleId}'`)
-      .andWhere('v2components.running = true')
+    return this.createQueryBuilder('c')
+      .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
+      .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
+      .where('d.circle_id = :circleId', { circleId })
+      .andWhere('e.status = :status', { status: 'CREATED' })
       .getMany()
   }
 
   public async findDefaultRunningComponents(): Promise<ComponentEntityV2[]> {
-    return this.createQueryBuilder('v2components')
-      .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .andWhere('deployment.circle_id is null')
-      .andWhere('v2components.running = true')
+    return this.createQueryBuilder('c')
+      .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
+      .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
+      .where('d.circle_id is null')
+      .andWhere('e.status = :status', { status: 'CREATED' })
       .getMany()
   }
 }
