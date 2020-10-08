@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.moove.api.request
+package io.charlescd.villager.interactor.registry;
 
-data class CreateVillagerRegistryConfigurationRequest(
-    val name: String,
-    val address: String,
-    val provider: CreateVillagerRegistryConfigurationProvider,
-    val username: String? = null,
-    val password: String? = null,
-    val accessKey: String? = null,
-    val secretKey: String? = null,
-    val region: String? = null,
-    val authorId: String,
-    val organization: String? = null,
-    val jsonKey: String? = null
-)
+public class HarborDockerRegistryAuth implements DockerRegistryAuth {
+    private String username;
+    private String password;
 
-enum class CreateVillagerRegistryConfigurationProvider {
-    AWS, Azure, GCP, DOCKER_HUB, HARBOR
+    public HarborDockerRegistryAuth(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }
