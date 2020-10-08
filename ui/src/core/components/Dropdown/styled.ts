@@ -34,7 +34,8 @@ const Dropdown = styled.div<DropDownProps>`
   top: 0;
   background: ${({ theme }) => theme.dropdown.background};
   border-radius: 4px;
-  width: 136px;
+  width: auto;
+  min-width: 136px;
   box-shadow: 0px 2px 10px 0px ${({ theme }) => theme.dropdown.shadow};
   display: flex;
   overflow-y: auto;

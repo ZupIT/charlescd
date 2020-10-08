@@ -48,9 +48,11 @@ type SuiteMetricGroup struct {
 }
 
 func (s *SuiteMetricGroup) SetupSuite() {
-	var err error
-
 	os.Setenv("ENV", "TEST")
+}
+
+func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
+	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
@@ -60,13 +62,14 @@ func (s *SuiteMetricGroup) SetupSuite() {
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
-
 	s.repository = metricsgroup.NewMain(s.DB, metricMain, datasourceMain, pluginMain)
-}
 
-func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
 	s.DB.Exec("DELETE FROM metrics_groups")
 	s.DB.Exec("DELETE FROM data_sources")
+}
+
+func (s *SuiteMetricGroup) AfterTest(suiteName, testName string) {
+	s.DB.Close()
 }
 
 func TestInitMetricGroup(t *testing.T) {
@@ -176,6 +179,13 @@ func (s *SuiteMetricGroup) TestFindAll() {
 	}
 }
 
+func (s *SuiteMetricGroup) TestFindAllError() {
+	s.DB.Close()
+
+	_, err := s.repository.FindAll()
+	require.Error(s.T(), err)
+}
+
 func (s *SuiteMetricGroup) TestFindById() {
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
@@ -218,11 +228,46 @@ func (s *SuiteMetricGroup) TestUpdate() {
 	s.DB.Create(&metricgroup)
 
 	metricgroup.Name = "group 2"
+	metricgroup.CircleID = uuid.New()
 	createMetricGroup, err := s.repository.Update(metricgroup.ID.String(), metricgroup)
 	require.NoError(s.T(), err)
 
 	metricgroup.BaseModel = createMetricGroup.BaseModel
 	require.Equal(s.T(), createMetricGroup, metricgroup)
+}
+
+func (s *SuiteMetricGroup) TestUpdateName() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+
+	newName := "group 2"
+	metricgroup.Name = newName
+	createMetricGroup, err := s.repository.UpdateName(metricgroup.ID.String(), metricgroup)
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), createMetricGroup.Name, newName)
+}
+
+func (s *SuiteMetricGroup) TestUpdateNameError() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+
+	newName := "group 2"
+	metricgroup.Name = newName
+	s.DB.Close()
+	_, err := s.repository.UpdateName(metricgroup.ID.String(), metricgroup)
+
+	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestDelete() {
