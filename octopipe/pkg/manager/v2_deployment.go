@@ -18,6 +18,7 @@ package manager
 
 import (
 	"context"
+
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
@@ -93,7 +94,7 @@ func (manager Manager) runV2UnusedDeployments(v2Pipeline V2DeploymentPipeline) e
 			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentUnusedDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
 		})
 	}
-	log.WithFields(log.Fields{"function": "runV2Rollbacks"}).Info("FINISH:RUN_V2_ROLLBACKS")
+	log.WithFields(log.Fields{"function": "runV2UnusedDeployments"}).Info("FINISH:RUN_V2_UNUSED_DEPLOYMENTS")
 	return errs.Wait()
 }
 

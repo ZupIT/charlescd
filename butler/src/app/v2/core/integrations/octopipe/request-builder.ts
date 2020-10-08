@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  OctopipeDeployment,
-  OctopipeDeploymentRequest
-} from './interfaces/octopipe-deployment.interface'
+import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
 import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
@@ -113,7 +110,10 @@ export class OctopipeRequestBuilder {
     deployment.components.forEach(component => {
       const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
       proxyUndeployments.push(IstioUndeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeByName))
-      proxyUndeployments.push(IstioUndeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName))
+      proxyUndeployments.push(activeByName.length > 1 ?
+        IstioUndeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName) :
+        IstioUndeploymentManifestsUtils.getEmptyVirtualServiceManifest(deployment, component)
+      )
     })
     return proxyUndeployments
   }

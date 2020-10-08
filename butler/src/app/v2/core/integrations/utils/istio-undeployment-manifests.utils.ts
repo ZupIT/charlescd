@@ -37,6 +37,41 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
+  getEmptyVirtualServiceManifest: (deployment: Deployment, component: Component): K8sManifest => {
+    return {
+      apiVersion: 'networking.istio.io/v1alpha3',
+      kind: 'VirtualService',
+      metadata: {
+        name: component.name,
+        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+      },
+      spec: {
+        gateways: component.gatewayName ? [component.gatewayName] : [],
+        hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
+        http: [
+          {
+            match: [
+              {
+                headers: {
+                  'unreachable-cookie-name': {
+                    exact: 'unreachable-cookie - value'
+                  }
+                }
+              }
+            ],
+            route: [
+              {
+                destination: {
+                  host: 'unreachable-app-name'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+
   getDestinationRulesManifest: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
