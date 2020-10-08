@@ -7,14 +7,24 @@ import { MetricsGroup } from '../types';
 type Props = {
   metricGroup: MetricsGroup;
   handleDeleteMetricsGroup: Function;
+  handleEditGroup: Function;
 };
 
-const CardHeader = ({ metricGroup, handleDeleteMetricsGroup }: Props) => (
+const CardHeader = ({
+  metricGroup,
+  handleDeleteMetricsGroup,
+  handleEditGroup
+}: Props) => (
   <Styled.MetricsGroupsCardHeader>
     <Text.h2 color="light" title={metricGroup.name}>
       {metricGroup.name}
     </Text.h2>
     <Dropdown icon="vertical-dots" size="16px">
+      <Dropdown.Item
+        icon="edit"
+        name="Edit"
+        onClick={() => handleEditGroup(metricGroup)}
+      />
       <Dropdown.Item
         icon="delete"
         name="Delete"
