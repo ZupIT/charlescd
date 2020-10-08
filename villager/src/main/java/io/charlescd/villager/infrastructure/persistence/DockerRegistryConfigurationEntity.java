@@ -89,4 +89,15 @@ public class DockerRegistryConfigurationEntity {
             this.password = password;
         }
     }
+
+    public static class HarborDockerRegistryConnectionData extends DockerRegistryConnectionData {
+        public String username;
+        public String password;
+
+        public HarborDockerRegistryConnectionData(String address, String username, String password) {
+            super(address, "");
+            this.username = username;
+            this.password = password;
+        }
+    }
 }
