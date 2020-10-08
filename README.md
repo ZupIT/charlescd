@@ -1,3 +1,12 @@
+![build butler](https://github.com/ZupIT/charlescd/workflows/build%20butler/badge.svg)
+![build circle-matcher](https://github.com/ZupIT/charlescd/workflows/build%20circle-matcher/badge.svg)
+![build compass](https://github.com/ZupIT/charlescd/workflows/build%20compass/badge.svg)
+![build moove](https://github.com/ZupIT/charlescd/workflows/build%20moove/badge.svg)
+![build octopipe](https://github.com/ZupIT/charlescd/workflows/build%20octopipe/badge.svg)
+![build villager](https://github.com/ZupIT/charlescd/workflows/build%20villager/badge.svg)
+[![codecov](https://codecov.io/gh/ZupIT/charlescd/branch/master/graph/badge.svg)](https://codecov.io/gh/ZupIT/charlescd)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 ![CharlesCD Logo](/images/logo.png)
 
 # About
