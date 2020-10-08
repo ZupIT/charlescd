@@ -152,11 +152,11 @@ const MetricsGroupsThresholdsContent = styled.div<NoDataThresholds>`
 `;
 
 const MetricsGroupsNameContent = styled(Text.h5)`
-  margin: auto 60px auto 15px;
+  margin: auto 20px auto 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 140px;
+  width: 180px;
 `;
 
 const MetricsGroupsFooter = styled.div`

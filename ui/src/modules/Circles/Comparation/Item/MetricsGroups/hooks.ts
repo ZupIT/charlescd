@@ -27,7 +27,8 @@ import {
   createMetric,
   updateMetric,
   getAllDataSourceMetrics as getAllDataSourceMetricsRequest,
-  saveMetricGroup,
+  createMetricGroup,
+  updateMetricGroup,
   deleteMetricGroup,
   deleteMetricByMetricId,
   getChartDataByQuery
@@ -198,8 +199,14 @@ export const useProviderMetrics = () => {
   };
 };
 
-export const useCreateMetricsGroup = () => {
-  const createMetricsGroupPayload = useFetchData<MetricsGroup>(saveMetricGroup);
+export const useCreateMetricsGroup = (metricGroupId: string) => {
+  const saveMetricGroupRequest = metricGroupId
+    ? updateMetricGroup
+    : createMetricGroup;
+
+  const createMetricsGroupPayload = useFetchData<MetricsGroup>(
+    saveMetricGroupRequest
+  );
   const status = useFetchStatus();
   const dispatch = useDispatch();
 
@@ -207,10 +214,13 @@ export const useCreateMetricsGroup = () => {
     async (name: string, circleId: string) => {
       try {
         status.pending();
-        const createdMetricsGroupResponse = await createMetricsGroupPayload({
-          name,
-          circleId
-        });
+        const createdMetricsGroupResponse = await createMetricsGroupPayload(
+          {
+            name,
+            circleId
+          },
+          metricGroupId
+        );
 
         status.resolved();
 
@@ -221,15 +231,14 @@ export const useCreateMetricsGroup = () => {
           const parsedError = JSON.parse(errorMessage);
           dispatch(
             toogleNotification({
-              text:
-                parsedError?.[0].message ?? 'Error on creating metric group',
+              text: parsedError?.[0].message ?? 'Error on save metric group',
               status: 'error'
             })
           );
         });
       }
     },
-    [createMetricsGroupPayload, status, dispatch]
+    [createMetricsGroupPayload, status, dispatch, metricGroupId]
   );
 
   return {
