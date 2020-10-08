@@ -15,6 +15,7 @@
  */
 
 import { IDeploymentVersion, IPipelineCircle } from '../../../../../../../api/components/interfaces'
+import { formatDnsLabel } from '../helpers/format-dns-label'
 import { ISubset } from './base-service'
 
 interface IDestinationRule {
@@ -51,12 +52,14 @@ const baseDestinationRules = (appName: string, appNamespace: string): IDestinati
 })
 
 const createSubsets = (versions: IDeploymentVersion[], appName: string): ISubset[] => {
-  return versions.map(({ version }) => ({
-    labels: {
-      version: `${appName}-${version}`
-    },
-    name: version
-  }))
+  return versions.map(({ version }) => {
+    return {
+      labels: {
+        version: `${appName}-${version}`
+      },
+      name: formatDnsLabel(version)
+    }
+  })
 }
 
 const createDestinationRules = (appName: string, appNamespace: string, circles: IPipelineCircle[], versions: IDeploymentVersion[], hostValue: string | undefined) : IDestinationRule => {
