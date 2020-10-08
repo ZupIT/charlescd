@@ -57,6 +57,7 @@ const (
 	ResumeByCircleError      = "RESUME_BY_CIRCLE_ERROR"
 	SaveMetricsGroupError    = "SAVE_METRICS_GROUP_ERROR"
 	UpdateMetricsGroupError  = "UPDATE_METRICS_GROUP_ERROR"
+	UpdateNameMetricsGroupError  = "UPDATE_NAME_METRICS_GROUP_ERROR"
 	RemoveMetricsGroupError  = "REMOVE_METRICS_GROUP_ERROR"
 	QueryFindDatasourceError = "QUERY_FIND_DATASOURCE_ERROR"
 	QueryGetPluginError      = "QUERY_GET_PLUGIN_ERROR"

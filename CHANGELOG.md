@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.10 (01/10/2020)
+- [#545](https://github.com/ZupIT/charlescd/pull/545) Workflow prod oidc
+- [#553](https://github.com/ZupIT/charlescd/pull/553) change npm to yarn in prodrelease
+- [#550](https://github.com/ZupIT/charlescd/pull/550) Matcher s3 sync
+- [#552](https://github.com/ZupIT/charlescd/pull/552) wrong react-select version change required props
+- [#534](https://github.com/ZupIT/charlescd/pull/534) Add dockerhub support
+- [#551](https://github.com/ZupIT/charlescd/pull/551) Matcher s3 sync keycloak login
+- [#519](https://github.com/ZupIT/charlescd/pull/519) Fixing filter when adding user groups at workspace
+- [#492](https://github.com/ZupIT/charlescd/pull/492) Filter within the metrics group
+- [#544](https://github.com/ZupIT/charlescd/pull/544) fix nginx error in single file installation
+- [#543](https://github.com/ZupIT/charlescd/pull/543) CharleCD code of conduct
+- [#541](https://github.com/ZupIT/charlescd/pull/541) CI Update of charts and changelog
+
+---
+
 ## 0.3.9 (25/09/2020)
 - [#540](https://github.com/ZupIT/charlescd/pull/540) Issues
 - [#538](https://github.com/ZupIT/charlescd/pull/538) CI Update of charts and changelog
