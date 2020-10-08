@@ -21,8 +21,6 @@ import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
 import { OctopipeApi } from './octopipe-api'
-import { OctopipeDeployment } from './interfaces/octopipe-deployment.interface'
-import { OctopipeUndeployment } from './interfaces/octopipe-undeployment.interface'
 import { OctopipeRequestBuilder } from './request-builder'
 
 @Injectable()
