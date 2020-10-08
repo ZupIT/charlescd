@@ -14,18 +14,36 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import styled, { css } from 'styled-components';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
-
-  return status;
+type TabItemProps = {
+  isActive?: boolean;
 };
 
-export const isNotBlank = (value: string) => !!value.trim();
+const TabList = styled.div`
+  display: flex;
+  border-bottom: 2px solid ${({ theme }) => theme.navTabs.list.border};
+`;
+
+const Tab = styled.div`
+  padding: 20px 0;
+`;
+
+const TabItem = styled.div<TabItemProps>`
+  padding: 16px 26px 18px 26px;
+  position: relative;
+  top: 2px;
+  cursor: pointer;
+
+  ${({ isActive }) =>
+    isActive &&
+    css`
+      border-bottom: 2px solid ${({ theme }) => theme.navTabs.item.border};
+    `}
+`;
+
+export default {
+  TabList,
+  Tab,
+  TabItem
+};
