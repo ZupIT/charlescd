@@ -19,7 +19,11 @@ import {
   COLOR_BLACK_MARLIN,
   COLOR_RED_ORANGE,
   COLOR_ORANGE_PEEL,
-  COLOR_SANTAS_GREY, COLOR_PAYNES_GREY
+  COLOR_SANTAS_GREY,
+  COLOR_PAYNES_GREY,
+  COLOR_MOUNTAIN_MEADOW,
+  COLOR_FREE_SPEECH_BLUE,
+  COLOR_NEON_BLUE
 } from '../colors';
 
 export const light = {};
@@ -34,6 +38,14 @@ export const dark = {
       error: COLOR_RED_ORANGE,
       reached: COLOR_ORANGE_PEEL,
       active: COLOR_SANTAS_GREY
+    }
+  },
+  action: {
+    status: {
+      success: COLOR_MOUNTAIN_MEADOW,
+      failed: COLOR_RED_ORANGE,
+      inExecution: COLOR_FREE_SPEECH_BLUE,
+      notExecuted: COLOR_NEON_BLUE
     }
   },
   chart: {

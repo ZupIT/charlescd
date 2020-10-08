@@ -1,4 +1,4 @@
-import { Metric, ChartData } from "../types";
+import { Metric, Action, ChartData } from "../types";
 
 export const MetricsGroupChartData = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
@@ -30,11 +30,20 @@ export const metricsData: Metric = {
   metric: 'metric xyz'
 };
 
+export const actionData: Action = {
+  id: '1action',
+  nickname: 'action',
+  status: 'SUCCESS',
+  triggeredAt: '10/08/2015 12:35',
+  actionType: 'Circle promotion'
+};
+
 export const MetricsGroupData = [{
   id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   name: "test 1",
   metrics: [metricsData],
+  actions: [actionData],
   status: "ACTIVE"
 }];
 
@@ -43,6 +52,7 @@ export const MetricsGroupWithoutMetricData = [{
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   name: "test 1",
   metrics: [],
+  actions: [],
   status: "ACTIVE"
 }];
 

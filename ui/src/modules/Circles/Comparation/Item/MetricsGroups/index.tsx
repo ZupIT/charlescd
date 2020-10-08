@@ -50,10 +50,6 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     }
   }, [getMetricsGroups, id, status.isIdle]);
 
-  const getNewMetricsGroups = () => {
-    getMetricsGroups(id);
-  };
-
   const handleAddMetric = (metricGroup: MetricsGroup) => {
     setActiveMetricsGroup(metricGroup);
     setActiveTab(TABS.METRIC);
@@ -62,6 +58,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   const handleAddAction = (metricGroup: MetricsGroup) => {
     setActiveMetricsGroup(metricGroup);
     setActiveTab(TABS.ACTION);
+  };
+
+  const handleEditGroup = (metricGroup: MetricsGroup) => {
+    setToggleModal(true);
+    setActiveMetricsGroup(metricGroup);
   };
 
   const handleDeleteMetricsGroup = (metricGroupId: string) => {
@@ -90,13 +91,25 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     getMetricsGroups(id);
   };
 
+  const handleCloseModal = () => {
+    setToggleModal(false);
+    setActiveMetric(null);
+    setActiveMetricsGroup(null);
+  };
+
+  const handleSaveGroup = () => {
+    getMetricsGroups(id);
+    handleCloseModal();
+  };
+
   const renderList = () => (
     <>
       {toggleModal && (
         <AddMetricsGroup
           id={id}
-          getNewMetricsGroups={getNewMetricsGroups}
-          closeModal={() => setToggleModal(false)}
+          metricGroup={activeMetricsGroup}
+          onCloseModal={handleCloseModal}
+          onSaveGroup={handleSaveGroup}
         />
       )}
       <Styled.Layer data-testid="metrics-groups-list">
@@ -140,6 +153,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               handleDeleteMetric={handleDeleteMetric}
               handleEditMetric={handleEditMetric}
               handleAddAction={handleAddAction}
+              handleEditGroup={handleEditGroup}
             />
           ))
         )}
