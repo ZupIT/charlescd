@@ -74,6 +74,10 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                                 "https://auth.docker.io/token",
                                 "registry.docker.io"));
                 break;
+            case HARBOR:
+                var harborConfig = (DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData) config;
+                this.client.register(new CommonBasicAuthenticator(harborConfig.username, harborConfig.password));
+                break;
             default:
                 throw new IllegalArgumentException("Registry type is not supported!");
         }
