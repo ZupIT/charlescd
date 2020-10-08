@@ -163,6 +163,7 @@ const MetricsGroupCard = ({
       <CardHeader
         metricGroup={metricGroup}
         handleDeleteMetricsGroup={handleDeleteMetricsGroup}
+        handleEditGroup={handleEditGroup}
       />
       <NavTabs>
         <NavTabs.Tab title="Metrics">
