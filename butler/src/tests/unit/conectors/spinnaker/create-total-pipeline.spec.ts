@@ -22,6 +22,7 @@ import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeli
 import { CallbackTypeEnum } from '../../../../app/v1/api/notifications/enums/callback-type.enum'
 import istioPipeline, { istioPipelineHostValueAndGateway } from './fixtures/expected-istio-pipeline'
 import { AppConstants } from '../../../../app/v1/core/constants'
+import istioPipelineFormattedSubsets from './fixtures/expected-istio-pipeline-formatted-subsets'
 
 it('compiles the pipeline', () => {
   const contract: ISpinnakerPipelineConfiguration = {
@@ -88,6 +89,28 @@ it('builds istio pipeline', () => {
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildIstioPipeline()
   expect(result).toEqual(istioPipeline)
+})
+
+it('builds istio pipeline with formatted subset label', () => {
+  const contract: ISpinnakerPipelineConfiguration = {
+    account: 'account',
+    pipelineName: 'pipeline-name',
+    applicationName: 'application-name',
+    appName: 'app-name',
+    appNamespace: 'app-namespace',
+    webhookUri: 'webhook.uri',
+    versions: [{ version: '1.1', versionUrl: '/v1', versionCircle: 'dummy,circle' }],
+    unusedVersions: [{ version: '1.2', versionUrl: '/v2', versionCircle: 'dummy,circle' }],
+    circles: [{ destination: { version: '1.3' } }, { destination: { version: '1.4' } }],
+    githubAccount: 'github-acc',
+    helmRepository: 'https://api.github.com/repos/org/repo/contents/',
+    circleId: 'circle-id',
+    url: 'http://spinnaker.url.com',
+    callbackType: CallbackTypeEnum.ISTIO_DEPLOYMENT
+  }
+  const totalPipeline = new TotalPipeline(contract)
+  const result = totalPipeline.buildIstioPipeline()
+  expect(result).toEqual(istioPipelineFormattedSubsets)
 })
 
 it('build istio pipeline by hostValue and gatewayName', () => {

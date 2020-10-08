@@ -17,6 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
+import debounce from 'debounce-promise';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import Card from 'core/components/Card';
@@ -40,7 +41,8 @@ const FormUserGroup = ({ onFinish }: Props) => {
     loadingSave,
     loadingAdd,
     loadingAll,
-    getAll
+    getAll,
+    findUserGroupByName
   } = useUserGroup();
   const {
     getAll: getAllRoles,
@@ -65,7 +67,9 @@ const FormUserGroup = ({ onFinish }: Props) => {
     setRoleOptions(options);
   }, [rolesAll]);
 
-  useEffect(() => getAll(), [getAll]);
+  useEffect(() => {
+    getAll();
+  }, [getAll]);
 
   useEffect(() => {
     if (responseSave) onFinish();
@@ -79,7 +83,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
     setIsDisableSave(isEmpty(watchedRoleId));
   }, [watchedRoleId]);
 
-  const onSelectGoup = (option: Option) => {
+  const onSelectGroup = (option: Option) => {
     setIsDisableAdd(!option);
     setGroup(option);
   };
@@ -139,18 +143,30 @@ const FormUserGroup = ({ onFinish }: Props) => {
     </>
   );
 
+  const loadUserGroups = debounce(
+    name =>
+      findUserGroupByName(name).then(
+        ({ content }: { content: UserGroup[] }) => {
+          return reduce(content);
+        }
+      ),
+    500
+  );
+
   const renderFields = () => (
     <Styled.Fields>
-      <Styled.Select
+      <Styled.SelectAsync
         control={control}
         name="userGroup"
         customOption={CustomOption.Icon}
         options={reduce(responseAll as UserGroup[])}
         label="Select a user group"
         isDisabled={loadingAll}
-        onChange={group => onSelectGoup(group)}
+        loadOptions={loadUserGroups}
+        onChange={group => onSelectGroup(group)}
       />
       <Button.Default
+        id="add"
         isLoading={loadingAll}
         isDisabled={isDisableAdd}
         size="EXTRA_SMALL"
@@ -177,6 +193,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
       </Styled.Title>
       {form ? renderForm() : renderFields()}
       <Button.Default
+        id="save"
         type="submit"
         onClick={onSubmit}
         isDisabled={isDisableSave}

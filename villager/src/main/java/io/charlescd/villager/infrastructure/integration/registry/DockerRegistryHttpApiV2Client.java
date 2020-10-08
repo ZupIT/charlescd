@@ -19,8 +19,8 @@ package io.charlescd.villager.infrastructure.integration.registry;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicCredentialsProvider;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
+import io.charlescd.villager.infrastructure.integration.registry.authentication.DockerBearerAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
@@ -41,7 +41,8 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     }
 
     public void configureAuthentication(RegistryType type,
-                                        DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
+                                        DockerRegistryConfigurationEntity.DockerRegistryConnectionData config,
+                                        String tagName) {
         this.baseAddress = config.address;
 
         switch (type) {
@@ -63,6 +64,16 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                 var gcpConfig = (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config;
                 this.client.register(new CommonBasicAuthenticator(gcpConfig.username, gcpConfig.jsonKey));
                 break;
+            case DOCKER_HUB:
+                var dockerHubConfig = (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config;
+                this.client.register(
+                        new DockerBearerAuthenticator(dockerHubConfig.organization,
+                                dockerHubConfig.username,
+                                dockerHubConfig.password,
+                                tagName,
+                                "https://auth.docker.io/token",
+                                "registry.docker.io"));
+                break;
             default:
                 throw new IllegalArgumentException("Registry type is not supported!");
         }
@@ -83,7 +94,6 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         }
 
         return Optional.ofNullable(this.client.target(url).request().get());
-
     }
 
     private String createGetImageUrl(String baseAddress, String name, String tagName) {
