@@ -23,22 +23,18 @@ class CreateUserInteractorImpl @Inject constructor(
 ) : CreateUserInteractor {
 
     override fun execute(createUserRequest: CreateUserRequest, authorization: String): UserResponse {
-        if (internalIdmEnabled) {
-            val newUser = createUserRequest.toUser()
-            val password = createUserRequest.password
-            val emailFromToken = keycloakService.getEmailByAccessToken(authorization)
-            val userFromToken = userRepository.findByEmail(emailFromToken)
+        val newUser = createUserRequest.toUser()
+        val password = createUserRequest.password
+        val emailFromToken = keycloakService.getEmailByAccessToken(authorization)
+        val userFromToken = userRepository.findByEmail(emailFromToken)
 
-            userFromToken.ifPresentOrElse({
-                createUserWhenUserFromTokenExists(it, newUser, password)
-            }, {
-                createOwnUser(emailFromToken, newUser, password)
-            })
+        userFromToken.ifPresentOrElse({
+            createUserWhenUserFromTokenExists(it, newUser, password)
+        }, {
+            createOwnUser(emailFromToken, newUser, password)
+        })
 
-            return UserResponse.from(newUser)
-        } else {
-            throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_FORBIDDEN)
-        }
+        return UserResponse.from(newUser)
     }
 
     private fun createOwnUser(emailFromToken: String, newUser: User, password: String?) {
@@ -61,7 +57,9 @@ class CreateUserInteractorImpl @Inject constructor(
         userService.checkIfEmailAlreadyExists(newUser)
         userService.save(newUser)
 
-        saveUserOnKeycloak(newUser, password)
+        if (internalIdmEnabled) {
+            saveUserOnKeycloak(newUser, password)
+        }
     }
 
     private fun saveUserOnKeycloak(user: User, password: String?) {

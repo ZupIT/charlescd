@@ -153,7 +153,7 @@ class CreateUserInteractorImplTest extends Specification {
         1 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
     }
 
-    def "when using external idm should throw exception"(){
+    def "when using external idm should not create o keycloak"(){
         given:
         def userEmail = "manager@test.com.br"
         def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], true, LocalDateTime.now())
@@ -170,13 +170,10 @@ class CreateUserInteractorImplTest extends Specification {
         createUserInteractor.execute(createUserRequest, authorization)
 
         then:
-        0 * userRepository.findByEmail(createUserRequest.email) >> Optional.empty()
-        0 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
-        0 * userRepository.save(_) >> _
+        1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
+        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
+        1 * userRepository.findByEmail(createUserRequest.email) >> Optional.empty()
+        1 * userRepository.save(_) >> _
         0 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
-        0 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
-
-        def exception = thrown(BusinessException)
-        exception.errorCode == MooveErrorCode.EXTERNAL_IDM_FORBIDDEN
     }
 }
