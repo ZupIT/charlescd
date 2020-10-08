@@ -26,6 +26,10 @@ const Modal = styled(ComponentModal.Default)`
     padding-bottom: 30px !important;
     width: 500px !important;
   }
+
+  .modal-content {
+    overflow: unset;
+  }
 `;
 
 const Module = styled.div`
@@ -55,8 +59,15 @@ const Search = styled(ComponentInput)`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+  max-height: 188px;
+`;
+
+const Bottom = styled.form`
+  height: auto;
+
+  > * {
+    margin-top: 10px;
+  }
 `;
 
 const Description = styled.div`
@@ -87,5 +98,6 @@ export default {
   Search,
   Loading,
   Content,
+  Bottom,
   Panel
 };

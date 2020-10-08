@@ -117,15 +117,15 @@ export const useAddMember = (): AddMemberProps => {
 
 interface AddModuleProps {
   loading: boolean;
-  addModules: Function;
+  persistModules: Function;
 }
 
-export const useAddModule = (): AddModuleProps => {
+export const useModules = (): AddModuleProps => {
   const dispatch = useDispatch();
   const [data, updateCard] = useFetch(updateById);
   const { loading, error } = data;
 
-  const addModules = useCallback(
+  const persistModules = useCallback(
     (cardId: string, payload: CardPayload) => {
       updateCard(cardId, payload);
     },
@@ -145,7 +145,7 @@ export const useAddModule = (): AddModuleProps => {
 
   return {
     loading,
-    addModules
+    persistModules
   };
 };
 
