@@ -27,6 +27,8 @@ import AddMetric from './AddMetric';
 import MetricsGroupsCard from './MetricsGroupCard';
 import AddMetricsGroup from './AddMetricsGroup';
 import Loader from '../Loaders/index';
+import { TABS } from './enums';
+import AddAction from './AddAction';
 
 interface Props {
   id: string;
@@ -34,7 +36,7 @@ interface Props {
 }
 
 const MetricsGroups = ({ onGoBack, id }: Props) => {
-  const [showAddMetricForm, setShowAddMetricForm] = useState(false);
+  const [activeTab, setActiveTab] = useState<TABS>(TABS.LIST);
   const [toggleModal, setToggleModal] = useState(false);
   const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
   const [activeMetric, setActiveMetric] = useState<Metric>();
@@ -54,7 +56,12 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const handleAddMetric = (metricGroup: MetricsGroup) => {
     setActiveMetricsGroup(metricGroup);
-    setShowAddMetricForm(true);
+    setActiveTab(TABS.METRIC);
+  };
+
+  const handleAddAction = (metricGroup: MetricsGroup) => {
+    setActiveMetricsGroup(metricGroup);
+    setActiveTab(TABS.ACTION);
   };
 
   const handleDeleteMetricsGroup = (metricGroupId: string) => {
@@ -73,17 +80,17 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const handleEditMetric = (metric: Metric, metricsGroup: MetricsGroup) => {
     setActiveMetricsGroup(metricsGroup);
-    setShowAddMetricForm(true);
+    setActiveTab(TABS.METRIC);
     setActiveMetric(metric);
   };
 
   const handleGoBack = () => {
-    setShowAddMetricForm(false);
+    setActiveTab(TABS.LIST);
     setActiveMetric(null);
     getMetricsGroups(id);
   };
 
-  return !showAddMetricForm ? (
+  const renderList = () => (
     <>
       {toggleModal && (
         <AddMetricsGroup
@@ -132,18 +139,35 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               handleDeleteMetricsGroup={handleDeleteMetricsGroup}
               handleDeleteMetric={handleDeleteMetric}
               handleEditMetric={handleEditMetric}
+              handleAddAction={handleAddAction}
             />
           ))
         )}
       </Styled.Layer>
     </>
-  ) : (
+  );
+
+  const renderCreateMetric = () => (
     <AddMetric
       onGoBack={handleGoBack}
       id={activeMetricsGroup?.id}
       metric={activeMetric}
     />
   );
+
+  const renderCreateAction = () => <AddAction onGoBack={handleGoBack} />;
+
+  const renderContentByTab = () => {
+    const contentsByTab = {
+      [TABS.LIST]: renderList,
+      [TABS.METRIC]: renderCreateMetric,
+      [TABS.ACTION]: renderCreateAction
+    } as Record<TABS, () => JSX.Element>;
+
+    return contentsByTab[activeTab]();
+  };
+
+  return renderContentByTab();
 };
 
 export default MetricsGroups;

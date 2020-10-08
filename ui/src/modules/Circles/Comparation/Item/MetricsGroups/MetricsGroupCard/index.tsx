@@ -40,6 +40,7 @@ type Props = {
   handleDeleteMetricsGroup: Function;
   handleDeleteMetric: Function;
   handleEditMetric: Function;
+  handleAddAction: Function;
 };
 
 const MetricsGroupCard = ({
@@ -48,7 +49,8 @@ const MetricsGroupCard = ({
   handleAddMetric,
   handleDeleteMetricsGroup,
   handleDeleteMetric,
-  handleEditMetric
+  handleEditMetric,
+  handleAddAction
 }: Props) => {
   const normalizedSelectOptions = normalizeSelectOptionsNickname(
     metricGroup.metrics
@@ -156,7 +158,9 @@ const MetricsGroupCard = ({
             subTitle="An action is an automated workflow that connects your applications and services through metrics triggers."
           />
           <Styled.MetricsGroupsFooter>
-            <Button.Default>Add action</Button.Default>
+            <Button.Default onClick={() => handleAddAction()}>
+              Add action
+            </Button.Default>
           </Styled.MetricsGroupsFooter>
         </NavTabs.Tab>
       </NavTabs>
