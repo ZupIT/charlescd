@@ -23,12 +23,19 @@ import lowerCase from 'lodash/lowerCase';
 import kebabCase from 'lodash/kebabCase';
 import includes from 'lodash/includes';
 import Text from 'core/components/Text';
+import Button from 'core/components/Button';
+import { Input } from 'core/components/Form';
 import { Card } from 'modules/Hypotheses/Board/interfaces';
-import { useAddModule } from 'modules/Hypotheses/Board/hooks';
+import {
+  CARD_TYPE_ACTION,
+  CARD_TYPE_FEATURE
+} from 'modules/Hypotheses/Board/Card/constants';
+import { useModules } from 'modules/Hypotheses/Board/hooks';
 import { Module as ModuleProps } from 'modules/Modules/interfaces/Module';
 import Module from '../Module';
 import Checked from './Checked';
 import Styled from './styled';
+import { useForm } from 'react-hook-form';
 
 interface Props {
   card: Card;
@@ -38,9 +45,21 @@ interface Props {
 }
 
 const Modal = ({ card, modules, allModules, onClose }: Props) => {
-  const { addModules, loading } = useAddModule();
+  const MAX_LENGTH_BRANCH_NAME = 40;
+  const INPUT_NAME = 'branchName';
+  const { persistModules, loading } = useModules();
   const [modulesFiltered, filterModules] = useState<ModuleProps[]>(allModules);
   const [moduleIds, setModuleIds] = useState<string[]>();
+  // const [newModuleIds, setNewModuleIds] = useState<string[]>();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isValid }
+  } = useForm();
+  // const isDisabled =
+  //   (isValid && !isEmpty(moduleIds)) || (!isValid && isEmpty(moduleIds));
+
   const handleClose = () => onClose();
 
   useEffect(() => {
@@ -49,7 +68,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     }
   }, [modules]);
 
-  const handleChange = (value: string) => {
+  const onChangeFilter = (value: string) => {
     filterModules(
       filter(allModules, module =>
         includes(lowerCase(module.name), lowerCase(value))
@@ -57,17 +76,21 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     );
   };
 
+  const onSubmit = ({ branchName }: Record<string, string>) => {
+    persistModules(card.id, {
+      branchName: kebabCase(branchName),
+      description: card.description,
+      labels: [],
+      modules: moduleIds,
+      name: card.name,
+      type: isEmpty(moduleIds) ? CARD_TYPE_ACTION : CARD_TYPE_FEATURE
+    });
+  };
+
   const toggleModule = (id: string) => {
     const toggledModuleIds = xor(moduleIds, [id]);
     setModuleIds(toggledModuleIds);
-    addModules(card.id, {
-      branchName: kebabCase(card.name),
-      description: card.description,
-      labels: [],
-      modules: toggledModuleIds,
-      name: card.name,
-      type: isEmpty(toggledModuleIds) ? 'ACTION' : 'FEATURE'
-    });
+    if (isEmpty(toggledModuleIds)) setValue(INPUT_NAME, '');
   };
 
   const renderModule = ({ id, name }: ModuleProps) => (
@@ -82,14 +105,18 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     </Styled.Module>
   );
 
+  const renderEmptyContent = () => (
+    <Text.h6 color="dark">{`Where's everybody? Try another filter.`}</Text.h6>
+  );
+
+  const renderContent = () => (
+    <Styled.Panel size="400px">
+      {map(modulesFiltered, user => renderModule(user))}
+    </Styled.Panel>
+  );
+
   const renderModules = () =>
-    isEmpty(modulesFiltered) ? (
-      <Text.h6 color="dark">{`Where's everybody?`}</Text.h6>
-    ) : (
-      <Styled.Panel size="400px">
-        {map(modulesFiltered, user => renderModule(user))}
-      </Styled.Panel>
-    );
+    isEmpty(modulesFiltered) ? renderEmptyContent() : renderContent();
 
   return (
     <Styled.Modal onClose={handleClose}>
@@ -97,10 +124,29 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
         <Text.h4 color="light">Add or remove module</Text.h4>
         <Styled.Search
           label="Filter by name"
-          onChange={e => handleChange(e.currentTarget.value)}
+          onChange={e => onChangeFilter(e.currentTarget.value)}
         />
       </Styled.Header>
       <Styled.Content>{renderModules()}</Styled.Content>
+      <Styled.Bottom onSubmit={handleSubmit(onSubmit)}>
+        {!isEmpty(moduleIds) && (
+          <Input
+            name={INPUT_NAME}
+            label="Branch name"
+            disabled={!isEmpty(card.feature?.branchName)}
+            defaultValue={card.feature?.branchName}
+            tipTitle="Why we ask for a branch name?"
+            tipDescription="When a module is add to a card, Charles creates a new git branch for the client that is directly stored in the used SCM, Git or Gitlab, for example. When the branch already exists, Charles only links the card with the branch."
+            ref={register({
+              required: true,
+              maxLength: MAX_LENGTH_BRANCH_NAME
+            })}
+          />
+        )}
+        <Button.Default type="submit" size="EXTRA_SMALL">
+          Save
+        </Button.Default>
+      </Styled.Bottom>
     </Styled.Modal>
   );
 };
