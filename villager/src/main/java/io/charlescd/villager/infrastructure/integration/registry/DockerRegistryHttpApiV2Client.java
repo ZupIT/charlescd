@@ -42,7 +42,7 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
 
     public void configureAuthentication(RegistryType type,
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config,
-                                        String tagName) {
+                                        String name) {
         this.baseAddress = config.address;
 
         switch (type) {
@@ -70,7 +70,7 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                         new DockerBearerAuthenticator(dockerHubConfig.organization,
                                 dockerHubConfig.username,
                                 dockerHubConfig.password,
-                                tagName,
+                                name,
                                 "https://auth.docker.io/token",
                                 "registry.docker.io"));
                 break;
