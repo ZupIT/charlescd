@@ -159,7 +159,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def activeDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(1),
                 LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, null)
@@ -220,7 +220,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         given:
         def author = getDummyUser()
         def circle = new Circle("44406b2a-557b-45c5-91be-1e1db909b000", 'Default', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circle.id)
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circle.id, build.id)
@@ -282,7 +282,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         given:
         def author = getDummyUser()
         def circle = new Circle("44406b2a-557b-45c5-91be-1e1db909b000", 'Default', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circle.id)
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circle.id, build.id)
@@ -346,7 +346,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
                 LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
@@ -421,7 +421,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null

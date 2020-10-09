@@ -175,7 +175,8 @@ class CreateCircleInteractorImplTest extends Specification {
                 0,
                 null,
                 false,
-                workspaceId
+                workspaceId,
+                null
         )
     }
 }
