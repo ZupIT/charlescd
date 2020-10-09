@@ -1,0 +1,14 @@
+name: Circle deployment
+id: circle_deployment
+description: Circle deployment
+input_parameters:
+  configuration_inputs:
+    - name: mooveUrl
+      label: Moove URL
+      type: text
+      required: true
+  execution_inputs:
+    - name: destinationCircleID
+      label: Destination Circle ID
+      type: text
+      required: true

@@ -39,13 +39,12 @@ type Input struct {
 }
 
 type Plugin struct {
-	ID          string  `json:"id"`
-	Category    string  `json:"category"`
-	Name        string  `json:"name"`
-	Src         string  `json:"src"`
-	Description string  `json:"description"`
-	Health      bool    `json:"health"`
-	Inputs      []Input `json:"inputs"`
+	ID          string                 `json:"id"`
+	Category    string                 `json:"category"`
+	Name        string                 `json:"name"`
+	Src         string                 `json:"src"`
+	Description string                 `json:"description"`
+	Params      map[string]interface{} `json:"params"`
 }
 
 func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, error) {
