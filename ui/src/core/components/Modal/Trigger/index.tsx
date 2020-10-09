@@ -22,6 +22,7 @@ import Styled from './styled';
 
 export interface Props {
   title: string;
+  className?: string;
   dismissLabel: string;
   continueLabel?: string;
   onContinue?: Function;
@@ -30,6 +31,7 @@ export interface Props {
 }
 
 const Trigger = ({
+  className,
   onContinue,
   onDismiss,
   continueLabel,
@@ -52,9 +54,13 @@ const Trigger = ({
 
   return (
     toggle && (
-      <Styled.Wrapper data-testid="modal-trigger" ref={menuRef}>
-        <Styled.Background />
-        <Styled.Content>
+      <Styled.Wrapper
+        ref={menuRef}
+        data-testid="modal-trigger"
+        className={className}
+      >
+        <Styled.Background className="modal-background" />
+        <Styled.Content className="modal-content">
           <Styled.Button.Container>
             <Icon
               name="cancel"
@@ -66,7 +72,7 @@ const Trigger = ({
           <Styled.Title weight="bold" color="light">
             {title}
           </Styled.Title>
-          <Text.h4 color="light">{children}</Text.h4>
+          {children}
           <Styled.Buttons>
             <Styled.Button.Dismiss id="dismiss" onClick={() => onDismiss()}>
               <Text.h5 color="light">{dismissLabel}</Text.h5>

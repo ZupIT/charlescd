@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { RadioButton } from 'core/components/Radio/Buttons';
+import React from 'react';
+import RadioButtons, { Props as RadioButtonsProps } from './Buttons';
+import RadioCards, { Props as RadioCardsProps } from './Cards';
 
-export const FORM_REGISTRY = 'registry';
+const Radio = {
+  Buttons: (props: RadioButtonsProps) => <RadioButtons {...props} />,
+  Cards: (props: RadioCardsProps) => <RadioCards {...props} />
+};
 
-export const radios: RadioButton[] = [
-  { icon: 'aws', name: 'AWS', value: 'AWS' },
-  { icon: 'azure', name: 'Azure', value: 'AZURE' },
-  { icon: 'gcp', name: 'GCP', value: 'GCP' },
-  { icon: 'docker', name: 'Docker Hub', value: 'DOCKER_HUB' }
-];
+export default Radio;

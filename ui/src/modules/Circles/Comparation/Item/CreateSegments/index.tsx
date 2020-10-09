@@ -101,7 +101,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
       onContinue={onContinue}
       onDismiss={onDismissWarningMessage}
     >
-      {getWarningText(warningMessage)}
+      <Text.h4 color="light">{getWarningText(warningMessage)}</Text.h4>
     </Modal.Trigger>
   );
 
