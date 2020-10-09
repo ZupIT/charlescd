@@ -226,4 +226,44 @@ class IdentificationServiceImplTest extends Specification {
 
         notThrown()
     }
+
+    def "if percentage of circle is 20 and RandomValue is 80 should identify open sea "() {
+        def workspaceId = "43865b8e-cde4-4807-b702-e652bf804799"
+        def composedKey = "username:28840781-d86e-4803-a742-53566c140e56:SIMPLE_KV"
+        def key = "email"
+        def value = "user@zup.com.br"
+        def data = new HashMap();
+        data.put(key,value)
+        def values = new ArrayList()
+        values.add(value)
+        def metadataList = new ArrayList()
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+
+        metadataList.add(keyMetadata)
+
+
+        def request = new IdentificationRequest(workspaceId, data)
+        when:
+        def response = identificationService.identify(request)
+        then:
+
+
+        1 * keyMetadataRepository.findByWorkspaceId(workspaceId) >> metadataList
+        1 * segmentationRepository.isMember(composedKey, value) >> true
+
+
+    }
+
+    def "if percentage of circle is 20 and RandomValue is 15 should identify  circle with percentage "() {
+
+
+    }
+
+    def "if percentage of circles A,B,C is 10,15,20 respectively and RandomValue is 25 should identify percentage circle B "() {
+
+
+    }
 }

@@ -18,10 +18,16 @@ package io.charlescd.circlematcher.domain.service;
 
 import io.charlescd.circlematcher.api.request.IdentificationRequest;
 import io.charlescd.circlematcher.domain.Circle;
+import io.charlescd.circlematcher.domain.KeyMetadata;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface IdentificationService {
 
     Set<Circle> identify(IdentificationRequest request);
+
+    Optional<KeyMetadata> getCircleByPercentage(List<KeyMetadata> percentageCircles);
 
 }

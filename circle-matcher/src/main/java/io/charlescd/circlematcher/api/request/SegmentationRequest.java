@@ -46,6 +46,11 @@ public abstract class SegmentationRequest {
     @NotNull
     private Boolean isDefault;
 
+    @Valid
+    private Integer percentage;
+
+
+
     public String getName() {
         return name;
     }
@@ -102,7 +107,19 @@ public abstract class SegmentationRequest {
         this.isDefault = isDefault;
     }
 
-    public Segmentation toSegmentation() {
-        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault);
+    public Integer getPercentage() {
+        return percentage;
     }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+
+    public Segmentation toSegmentation() {
+        return new Segmentation(
+                this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, percentage
+        );
+    }
+
+
 }

@@ -32,6 +32,8 @@ public class Segmentation {
 
     private Boolean isDefault;
 
+    private Integer percentage;
+
     public Segmentation() {
     }
 
@@ -41,7 +43,8 @@ public class Segmentation {
                         String circleId,
                         SegmentationType type,
                         String workspaceId,
-                        Boolean isDefault) {
+                        Boolean isDefault,
+                        Integer percentage) {
         this.name = name;
         this.node = node;
         this.reference = reference;
@@ -49,6 +52,7 @@ public class Segmentation {
         this.type = type;
         this.workspaceId = workspaceId;
         this.isDefault = isDefault;
+        this.percentage = percentage;
     }
 
     public static Segmentation of(KeyMetadata metadata) {
@@ -59,7 +63,8 @@ public class Segmentation {
                 metadata.getCircleId(),
                 metadata.getType(),
                 metadata.getWorkspaceId(),
-                metadata.getIsDefault());
+                metadata.getIsDefault(),
+                metadata.getPercentage());
     }
 
     public String getName() {
@@ -88,5 +93,13 @@ public class Segmentation {
 
     public Boolean getIsDefault() {
         return isDefault;
+    }
+
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
     }
 }

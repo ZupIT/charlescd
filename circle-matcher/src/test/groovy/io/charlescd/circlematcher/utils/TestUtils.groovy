@@ -37,7 +37,8 @@ class TestUtils {
                 "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85",
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
-                false)
+                false,
+                10)
     }
 
     static Segmentation createDefaultSegmentation(Node node, SegmentationType type) {
@@ -47,7 +48,8 @@ class TestUtils {
                 "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a89",
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
-                true)
+                true,
+                null)
     }
 
     static createSegmentationRequest(Node node, SegmentationType type) {

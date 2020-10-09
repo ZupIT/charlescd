@@ -18,5 +18,6 @@ package io.charlescd.moove.domain
 
 enum class MatcherTypeEnum {
     REGULAR,
-    SIMPLE_KV
+    SIMPLE_KV,
+    PERCENTAGE
 }

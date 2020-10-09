@@ -16,6 +16,8 @@
 
 package io.charlescd.circlematcher.domain;
 
+import java.time.Period;
+
 public class KeyMetadata {
 
     private String reference;
@@ -32,6 +34,8 @@ public class KeyMetadata {
 
     private Boolean isDefault;
 
+    private Integer percentage;
+
     public KeyMetadata() {
     }
 
@@ -43,6 +47,7 @@ public class KeyMetadata {
         this.name = segmentation.getName();
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
+        this.percentage = segmentation.getPercentage();
     }
 
     public String getReference() {
@@ -71,5 +76,21 @@ public class KeyMetadata {
 
     public Boolean getIsDefault() {
         return isDefault;
+    }
+
+    public boolean isPercentage() {
+        return type.equals(SegmentationType.PERCENTAGE);
+    }
+
+    public Integer getPercentage() {
+        return this.percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+
+    public int sumPercentage(Integer percentageToSum) {
+        return this.percentage += percentageToSum;
     }
 }

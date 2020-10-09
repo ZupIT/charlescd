@@ -18,10 +18,7 @@ package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.circle.*
-import io.charlescd.moove.application.circle.request.CreateCircleRequest
-import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
-import io.charlescd.moove.application.circle.request.PatchCircleRequest
-import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
+import io.charlescd.moove.application.circle.request.*
 import io.charlescd.moove.application.circle.response.*
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
@@ -46,7 +43,8 @@ class V2CircleController(
     private val createCircleWithCsvFileInteractor: CreateCircleWithCsvFileInteractor,
     private val updateCircleWithCsvFileInteractor: UpdateCircleWithCsvFileInteractor,
     private val identifyCircleInteractor: IdentifyCircleInteractor,
-    private val circlesHistoryInteractor: FindCirclesHistoryInteractor
+    private val circlesHistoryInteractor: FindCirclesHistoryInteractor,
+    private val createCircleWIthPercentageInteractor: CreateCircleWIthPercentageInteractor
 ) {
 
     @ApiOperation(value = "Find all")
@@ -179,5 +177,19 @@ class V2CircleController(
         pageRequest: PageRequest
     ): ResourcePageResponse<CircleHistoryResponse> {
         return circlesHistoryInteractor.execute(workspaceId, name, pageRequest)
+    }
+
+    @ApiOperation(value = "Create circle with Percentage")
+    @PostMapping("/percentage")
+    @ApiImplicitParam(name = "request", value = "Circle Details", required = true, dataType = "CreateCircleRequest")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createWithPercentage(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @Valid @RequestBody request: CreateCircleWithPercentageRequest
+    ): CircleResponse {
+        return this.createCircleWIthPercentageInteractor.execute(
+            request,
+            workspaceId
+        )
     }
 }
