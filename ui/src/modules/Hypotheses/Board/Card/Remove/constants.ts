@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-import { RadioButton } from 'core/components/Radio/Buttons';
+import { RadioCard } from 'core/components/Radio/Cards';
 
-export const FORM_REGISTRY = 'registry';
-
-export const radios: RadioButton[] = [
-  { icon: 'aws', name: 'AWS', value: 'AWS' },
-  { icon: 'azure', name: 'Azure', value: 'AZURE' },
-  { icon: 'gcp', name: 'GCP', value: 'GCP' },
-  { icon: 'docker', name: 'Docker Hub', value: 'DOCKER_HUB' }
+export const radios: RadioCard[] = [
+  {
+    title: 'Card',
+    description:
+      'We will delete the card but the git branch will still exists.',
+    value: 'card'
+  },
+  {
+    title: 'Card and Branch',
+    description: 'We will delete the card and the git branch.',
+    value: 'card-branch'
+  }
 ];

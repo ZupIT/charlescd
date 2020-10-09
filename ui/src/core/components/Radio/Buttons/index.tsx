@@ -25,14 +25,14 @@ export interface RadioButton {
   value: string;
 }
 
-interface Props {
+export interface Props {
   items: RadioButton[];
   name: string;
   onChange?: (event: ChangeInputEvent) => void;
 }
 
-const RadioGroup = ({ name, items, onChange }: Props) => (
-  <Styled.RadioGroup data-testid={`radio-group-${name}`}>
+const RadioButtons = ({ name, items, onChange }: Props) => (
+  <Styled.RadioButtons data-testid={`radio-group-${name}`}>
     {map(items, item => {
       const id = `radio-group-${name}-item-${item.value}`;
 
@@ -55,7 +55,7 @@ const RadioGroup = ({ name, items, onChange }: Props) => (
         </Styled.Radio>
       );
     })}
-  </Styled.RadioGroup>
+  </Styled.RadioButtons>
 );
 
-export default RadioGroup;
+export default RadioButtons;

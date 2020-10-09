@@ -19,22 +19,23 @@ import map from 'lodash/map';
 import { ChangeInputEvent } from 'core/interfaces/InputEvents';
 import Styled from './styled';
 
-export interface RadioButton {
-  icon?: string;
-  name?: string;
+export interface RadioCard {
+  title: string;
+  description: string;
   value: string;
 }
 
-interface Props {
-  items: RadioButton[];
+export interface Props {
+  items: RadioCard[];
   name: string;
   onChange?: (event: ChangeInputEvent) => void;
 }
 
-const RadioGroup = ({ name, items, onChange }: Props) => (
-  <Styled.RadioGroup data-testid={`radio-group-${name}`}>
+const RadioCards = ({ name, items, onChange }: Props) => (
+  <Styled.RadioCards data-testid={`radio-group-${name}`}>
     {map(items, item => {
-      const id = `radio-group-${name}-item-${item.value}`;
+      const { title, description, value } = item;
+      const id = `radio-cards-${name}-item-${value}`;
 
       return (
         <Styled.Radio key={id}>
@@ -43,19 +44,17 @@ const RadioGroup = ({ name, items, onChange }: Props) => (
             data-testid={id}
             type="radio"
             name={name}
-            value={item.value}
+            value={value}
             onChange={onChange}
           />
-          <Styled.Label icon={item.icon} value={item.value} htmlFor={id}>
-            {item.icon && <Styled.Icon name={item.icon} color="dark" />}
-            <Styled.Text color="dark">
-              {item.name ? item.name : item.value}
-            </Styled.Text>
+          <Styled.Label value={value} htmlFor={id}>
+            <Styled.Title color="dark">{title}</Styled.Title>
+            <Styled.Description color="dark">{description}</Styled.Description>
           </Styled.Label>
         </Styled.Radio>
       );
     })}
-  </Styled.RadioGroup>
+  </Styled.RadioCards>
 );
 
-export default RadioGroup;
+export default RadioCards;

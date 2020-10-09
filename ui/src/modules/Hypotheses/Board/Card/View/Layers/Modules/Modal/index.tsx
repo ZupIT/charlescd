@@ -50,15 +50,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const { persistModules, loading } = useModules();
   const [modulesFiltered, filterModules] = useState<ModuleProps[]>(allModules);
   const [moduleIds, setModuleIds] = useState<string[]>();
-  // const [newModuleIds, setNewModuleIds] = useState<string[]>();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { isValid }
-  } = useForm();
-  // const isDisabled =
-  //   (isValid && !isEmpty(moduleIds)) || (!isValid && isEmpty(moduleIds));
+  const { register, handleSubmit, setValue } = useForm();
 
   const handleClose = () => onClose();
 

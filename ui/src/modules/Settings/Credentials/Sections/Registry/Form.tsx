@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
-import RadioGroup from 'core/components/RadioGroup';
+import Radio from 'core/components/Radio';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
@@ -215,7 +215,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>
-      <RadioGroup
+      <Radio.Buttons
         name="registry"
         items={radios}
         onChange={({ currentTarget }) => onChange(currentTarget.value)}

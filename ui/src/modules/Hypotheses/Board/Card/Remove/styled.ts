@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import { RadioButton } from 'core/components/Radio/Buttons';
+import styled from 'styled-components';
+import ModalTrigger from 'core/components/Modal/Trigger';
+import { COLOR_BLACK_RUSSIAN } from 'core/assets/colors';
 
-export const FORM_REGISTRY = 'registry';
+const Modal = styled(ModalTrigger)`
+  .modal-content {
+    padding: 10px 48px;
+    width: 408px;
+    background-color: ${COLOR_BLACK_RUSSIAN};
+    top: 50px;
+  }
+`;
 
-export const radios: RadioButton[] = [
-  { icon: 'aws', name: 'AWS', value: 'AWS' },
-  { icon: 'azure', name: 'Azure', value: 'AZURE' },
-  { icon: 'gcp', name: 'GCP', value: 'GCP' },
-  { icon: 'docker', name: 'Docker Hub', value: 'DOCKER_HUB' }
-];
+export default {
+  Modal
+};

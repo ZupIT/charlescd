@@ -89,7 +89,7 @@ export const useBoard = (): BoardFetchProps => {
 
 interface Props extends FetchProps {
   getById: Function;
-  removeBy: Function;
+  removeById: Function;
   archiveBy: Function;
 }
 
@@ -178,7 +178,7 @@ export const useCard = (): Props => {
     }
   }, [error, dispatch]);
 
-  const removeBy = useCallback(
+  const removeById = useCallback(
     (id: string) => {
       removeCard(id);
     },
@@ -234,7 +234,7 @@ export const useCard = (): Props => {
 
   return {
     getById,
-    removeBy,
+    removeById,
     responseRemove,
     archiveBy,
     responseArchive,

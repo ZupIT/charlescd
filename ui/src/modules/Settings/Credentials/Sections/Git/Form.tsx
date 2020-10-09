@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
-import RadioGroup from 'core/components/RadioGroup';
+import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -92,7 +92,7 @@ const FormGit = ({ onFinish }: Props) => {
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>
-      <RadioGroup
+      <Radio.Buttons
         name="git"
         items={radios}
         onChange={({ currentTarget }) => setGitType(currentTarget.value)}

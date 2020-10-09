@@ -37,7 +37,7 @@ const Popover = ({
   title,
   size = '24px',
   link = CHARLES_DOC,
-  linkLabel,
+  linkLabel = 'View documentation',
   description,
   className
 }: Props) => {
@@ -62,11 +62,9 @@ const Popover = ({
           <Styled.Content>
             <Text.h5 color="dark">{description}</Text.h5>
           </Styled.Content>
-          {link && (
-            <Styled.Link href={link} target="_blank">
-              <Text.h6 color="light">{linkLabel}</Text.h6>
-            </Styled.Link>
-          )}
+          <Styled.Link href={link} target="_blank">
+            <Text.h6 color="light">{linkLabel}</Text.h6>
+          </Styled.Link>
         </Styled.Popover>
       )}
     </Styled.Wrapper>

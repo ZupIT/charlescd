@@ -22,7 +22,7 @@ import React, {
   FocusEvent,
   useEffect
 } from 'react';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import Popover from 'core/components/Popover';
 import { InputEvents, ChangeInputEvent } from 'core/interfaces/InputEvents';
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';

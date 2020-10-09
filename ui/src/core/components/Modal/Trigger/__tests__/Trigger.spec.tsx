@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { render, wait, fireEvent } from 'unit-test/testUtils';
+import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 
 test('render Trigger', async () => {
@@ -26,7 +27,7 @@ test('render Trigger', async () => {
       onDismiss={jest.fn()}
       onContinue={jest.fn()}
     >
-        Test
+      <Text.h4 color="light">Test</Text.h4>
     </Modal.Trigger>
   );
 
@@ -39,7 +40,7 @@ test('onDismiss button click', async () => {
   const onDismiss = jest.fn();
   const { getByTestId } = render(
     <Modal.Trigger title="Test" dismissLabel="dismiss" onDismiss={onDismiss}>
-        Test
+      <Text.h4 color="light">Test</Text.h4>
     </Modal.Trigger>
   );
   const button = getByTestId('button-default-dismiss');
@@ -55,7 +56,7 @@ test('onContinue button click', async () => {
       onDismiss={jest.fn()}
       onContinue={onContinue}
     >
-        Test
+      <Text.h4 color="light">Test</Text.h4>
     </Modal.Trigger>
   );
   const button = getByTestId('button-default-continue');
@@ -71,7 +72,7 @@ test('onClose button click', async () => {
       onDismiss={jest.fn()}
       onContinue={jest.fn()}
     >
-        Test
+      <Text.h4 color="light">Test</Text.h4>
     </Modal.Trigger>
   );
 

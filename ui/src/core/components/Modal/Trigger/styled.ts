@@ -52,7 +52,7 @@ const Content = styled.div`
   text-align: left;
   background: ${({ theme }) => theme.modal.trigger.background};
   width: 408px;
-  height: 210px;
+  min-height: 210px;
   box-sizing: border-box;
   border-radius: 6px;
   opacity: 1.2;
