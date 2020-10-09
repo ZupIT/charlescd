@@ -25,8 +25,10 @@ import (
 	"compass/internal/health"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
+	"compass/internal/moove"
 	"compass/internal/plugin"
 	"log"
+	"time"
 
 	utils "compass/internal/util"
 	v1 "compass/web/api/v1"
@@ -51,7 +53,8 @@ func main() {
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
-	healthMain := health.NewMain(db, datasourceMain, pluginMain)
+	mooveMain := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
+	healthMain := health.NewMain(db, datasourceMain, pluginMain, mooveMain)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
 
 	stopChan := make(chan bool, 0)
