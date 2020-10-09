@@ -51,6 +51,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   }, [getMetricsGroups, id, status.isIdle]);
 
   const handleAddMetric = (metricGroup: MetricsGroup) => {
+    console.log(metricGroup);
     setActiveMetricsGroup(metricGroup);
     setActiveTab(TABS.METRIC);
   };
@@ -148,12 +149,12 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               key={metricsGroup.id}
               metricGroup={metricsGroup}
               loadingStatus={status.isPending}
-              handleAddMetric={handleAddMetric}
-              handleDeleteMetricsGroup={handleDeleteMetricsGroup}
-              handleDeleteMetric={handleDeleteMetric}
-              handleEditMetric={handleEditMetric}
-              handleAddAction={handleAddAction}
               handleEditGroup={handleEditGroup}
+              handleDeleteMetricsGroup={handleDeleteMetricsGroup}
+              handleAddMetric={handleAddMetric}
+              handleEditMetric={handleEditMetric}
+              handleDeleteMetric={handleDeleteMetric}
+              handleAddAction={handleAddAction}
             />
           ))
         )}
@@ -169,7 +170,9 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     />
   );
 
-  const renderCreateAction = () => <AddAction onGoBack={handleGoBack} />;
+  const renderCreateAction = () => (
+    <AddAction onGoBack={handleGoBack} metricsGroup={activeMetricsGroup} />
+  );
 
   const renderContentByTab = () => {
     const contentsByTab = {

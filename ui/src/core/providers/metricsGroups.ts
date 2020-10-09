@@ -17,7 +17,8 @@
 import { baseRequest, postRequest, deleteRequest, putRequest } from './base';
 import {
   Metric,
-  MetricsGroup
+  MetricsGroup,
+  ActionGroupPayload
 } from 'modules/Circles/Comparation/Item/MetricsGroups/types';
 
 const endpoint = '/compass/api/v1';
@@ -79,3 +80,6 @@ export const getChartDataByQuery = (
   baseRequest(`${endpoint}/metrics-groups/${metricsGroupId}/query?${params}`);
 
 export const getAllActionsTypes = () => baseRequest(`${endpoint}/actions`);
+
+export const createAction = (actionGroupPayload: ActionGroupPayload) =>
+  postRequest(`${endpoint}/group_actions`, actionGroupPayload);

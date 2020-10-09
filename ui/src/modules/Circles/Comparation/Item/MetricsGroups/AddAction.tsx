@@ -24,17 +24,22 @@ import CustomOption from 'core/components/Form/Select/CustomOptions';
 import debounce from 'debounce-promise';
 import { useCirclesData } from 'modules/Circles/hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
-import { useActionTypes } from './hooks';
+import { createActionPayload } from './helpers';
+import { useActionTypes, useSaveAction } from './hooks';
+import { ActionGroupPayload, MetricsGroup } from './types';
 
 type Props = {
   onGoBack: Function;
+  metricsGroup: MetricsGroup;
 };
 
-type ActionForm = {
+export type ActionForm = {
   nickname: string;
+  actionId: string;
+  circleId?: string;
 };
 
-const AddAction = ({ onGoBack }: Props) => {
+const AddAction = ({ onGoBack, metricsGroup }: Props) => {
   const {
     handleSubmit,
     register,
@@ -43,16 +48,22 @@ const AddAction = ({ onGoBack }: Props) => {
     watch,
     formState: { isValid }
   } = useForm<ActionForm>({ mode: 'onChange' });
+  const { saveAction } = useSaveAction();
   const { getAllActionsTypesData } = useActionTypes();
   const { getCirclesData } = useCirclesData();
   const actionId = watch('actionId');
 
   useEffect(() => {
-    // getAllActionsTypesData();
+    getAllActionsTypesData();
   }, []);
 
   const onSubmit = (data: ActionForm) => {
-    console.log(data);
+    const newPayload: ActionGroupPayload = createActionPayload(
+      data,
+      metricsGroup
+    );
+    console.log(metricsGroup);
+    saveAction(newPayload);
   };
 
   const loadCirclesByName = debounce(
@@ -65,7 +76,7 @@ const AddAction = ({ onGoBack }: Props) => {
 
   const options = [
     {
-      value: 'CIRCLE',
+      value: 'CIRCLE_DEPLOY',
       label: 'Circle promotion',
       description: 'This action promotes a complete circle'
     },
@@ -121,10 +132,10 @@ const AddAction = ({ onGoBack }: Props) => {
             label="Select a action type"
             isDisabled={false}
           />
-          {actionId === 'CIRCLE' && (
+          {actionId === 'CIRCLE_DEPLOY' && (
             <Styled.SelectAsync
               control={control}
-              name="cirleId"
+              name="circleId"
               options={[]}
               label="Select a user group"
               isDisabled={false}

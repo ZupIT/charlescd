@@ -32,7 +32,8 @@ import {
   deleteMetricGroup,
   deleteMetricByMetricId,
   getChartDataByQuery,
-  getAllActionsTypes
+  getAllActionsTypes,
+  createAction
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
@@ -42,7 +43,8 @@ import {
   MetricsGroupsResume,
   Metric,
   DataSource,
-  ChartDataByQuery
+  ChartDataByQuery,
+  ActionGroupPayload
 } from './types';
 import { ValidationError } from 'core/interfaces/ValidationError';
 
@@ -378,5 +380,54 @@ export const useActionTypes = () => {
 
   return {
     getAllActionsTypesData
+  };
+};
+
+export const useSaveAction = (actionId?: string) => {
+  // const saveRequest = metricId ? updateMetric : createAction;
+  const saveActionPayload = useFetchData<ActionGroupPayload>(createAction);
+  const status = useFetchStatus();
+  const dispatch = useDispatch();
+  const [validationError, setValidationError] = useState<ValidationError>();
+
+  const saveAction = useCallback(
+    async (ActionGroupPayload: ActionGroupPayload) => {
+      try {
+        status.pending();
+        const savedActionResponse = await saveActionPayload(ActionGroupPayload);
+
+        status.resolved();
+
+        dispatch(
+          toogleNotification({
+            text: `The action ${ActionGroupPayload.nickname} has been created`,
+            status: 'success'
+          })
+        );
+
+        return savedActionResponse;
+      } catch (error) {
+        status.rejected();
+        console.log(error);
+        // error.text().then((errorMessage: string) => {
+        //   const parsedError = JSON.parse(errorMessage);
+        setValidationError(error);
+        // });
+
+        dispatch(
+          toogleNotification({
+            text: `An error occurred while trying to create the ${ActionGroupPayload.nickname} action`,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [saveActionPayload, status, dispatch]
+  );
+
+  return {
+    saveAction,
+    status,
+    validationError
   };
 };
