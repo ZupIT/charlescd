@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button/Default';
 import Styled from './styled';
+import CustomOption from 'core/components/Form/Select/CustomOptions';
+import debounce from 'debounce-promise';
+import { useCirclesData } from 'modules/Circles/hooks';
+import { normalizeSelectOptions } from 'core/utils/select';
+import { useActionTypes } from './hooks';
 
 type Props = {
   onGoBack: Function;
@@ -34,12 +39,42 @@ const AddAction = ({ onGoBack }: Props) => {
     handleSubmit,
     register,
     errors,
+    control,
+    watch,
     formState: { isValid }
   } = useForm<ActionForm>({ mode: 'onChange' });
+  const { getAllActionsTypesData } = useActionTypes();
+  const { getCirclesData } = useCirclesData();
+  const actionId = watch('actionId');
+
+  useEffect(() => {
+    // getAllActionsTypesData();
+  }, []);
 
   const onSubmit = (data: ActionForm) => {
     console.log(data);
   };
+
+  const loadCirclesByName = debounce(
+    name =>
+      getCirclesData({ name, active: true }).then(response =>
+        normalizeSelectOptions(response.content)
+      ),
+    500
+  );
+
+  const options = [
+    {
+      value: 'CIRCLE',
+      label: 'Circle promotion',
+      description: 'This action promotes a complete circle'
+    },
+    {
+      value: 'XYZ',
+      label: 'Xyz',
+      description: 'Xyz ffdj sfljds fsdhjfds'
+    }
+  ];
 
   return (
     <div data-testid="metric-group-action-form">
@@ -77,6 +112,24 @@ const AddAction = ({ onGoBack }: Props) => {
               <Icon name="error" color="error" />
               <Text.h6 color="error">{errors.nickname.message}</Text.h6>
             </Styled.FieldErrorWrapper>
+          )}
+          <Styled.Select
+            control={control}
+            name="actionId"
+            customOption={CustomOption.Description}
+            options={options}
+            label="Select a action type"
+            isDisabled={false}
+          />
+          {actionId === 'CIRCLE' && (
+            <Styled.SelectAsync
+              control={control}
+              name="cirleId"
+              options={[]}
+              label="Select a user group"
+              isDisabled={false}
+              loadOptions={loadCirclesByName}
+            />
           )}
           <Button
             type="submit"
