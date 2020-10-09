@@ -40,6 +40,9 @@ var initialValues = map[string]string{
 	"PLUGINS_DIR":         "./plugins",
 	"MOOVE_URL":           "http://localhost:8082",
 	"DISPATCHER_INTERVAL": "15s",
+	"MOOVE_USER":          "admin@admin",
+	"MOOVE_PATH":          "charlescd-moove:8080",
+	"MOOVE_AUTH":          "Bearer 123",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {

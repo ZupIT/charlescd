@@ -89,7 +89,7 @@ func (main Main) FindAll(category string) ([]Plugin, error) {
 
 	categories, err := ioutil.ReadDir(pluginsDir)
 	if err != nil {
-		logger.Error(util.FindPluginError, "FindAll", err, plugins)
+		logger.Error(util.FindPluginError, "FindAllActions", err, plugins)
 		return []Plugin{}, err
 	}
 
