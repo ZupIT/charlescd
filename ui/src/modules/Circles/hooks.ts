@@ -15,7 +15,7 @@
  */
 
 import { useEffect, useCallback, useState } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import {
   findAllCircles,
   findCircleById,
@@ -43,6 +43,7 @@ import {
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { buildFormData } from './helpers';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
+import { Pagination } from 'core/interfaces/Pagination';
 
 export enum CIRCLE_TYPES {
   metrics = 'metrics',
@@ -161,6 +162,14 @@ export const useDeleteCircle = (): [Function, string] => {
   }, [response, error, dispatch, circleName]);
 
   return [delCircle, circleStatus];
+};
+
+export const useCirclesData = () => {
+  const getCirclesData = useFetchData<Pagination<Circle>>(findAllCircles);
+
+  return {
+    getCirclesData
+  };
 };
 
 export const useCircles = (

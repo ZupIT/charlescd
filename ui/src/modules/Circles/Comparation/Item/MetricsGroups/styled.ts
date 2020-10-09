@@ -101,6 +101,11 @@ const Select = styled(SelectComponent.Single)`
   margin-bottom: 20px;
 `;
 
+const SelectAsync = styled(SelectComponent.Async)`
+  width: 230px;
+  margin-bottom: 20px;
+`;
+
 const SelectMetric = styled(SelectComponent.Single)`
   width: 380px;
   margin-bottom: 20px;
@@ -197,5 +202,6 @@ export default {
   },
   TrashIcon,
   RuleWrapper,
-  FieldErrorWrapper
+  FieldErrorWrapper,
+  SelectAsync
 };
