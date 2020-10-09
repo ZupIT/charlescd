@@ -55,7 +55,7 @@ const AddAction = ({ onGoBack, metricsGroup }: Props) => {
 
   useEffect(() => {
     getAllActionsTypesData();
-  }, []);
+  }, [getAllActionsTypesData]);
 
   const onSubmit = (data: ActionForm) => {
     const newPayload: ActionGroupPayload = createActionPayload(
