@@ -21,6 +21,7 @@ package metricsgroup
 import (
 	"compass/internal/datasource"
 	"compass/internal/metric"
+	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"compass/internal/util"
 	datasourcePKG "compass/pkg/datasource"
@@ -41,19 +42,20 @@ type UseCases interface {
 	QueryByGroupID(id, period, interval string) ([]datasourcePKG.MetricValues, error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
-	FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
+	ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, error)
 	Validate(metricsGroup MetricsGroup) []util.ErrorUtil
 }
 
 type Main struct {
-	db             *gorm.DB
-	metricMain     metric.UseCases
-	datasourceMain datasource.UseCases
-	pluginMain     plugin.UseCases
+	db               *gorm.DB
+	metricMain       metric.UseCases
+	datasourceMain   datasource.UseCases
+	pluginMain       plugin.UseCases
+	groupActionsMain metricsgroupaction.UseCases
 }
 
 func NewMain(
-	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain plugin.UseCases,
+	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain plugin.UseCases, groupActionsMain metricsgroupaction.UseCases,
 ) UseCases {
-	return Main{db, metricMain, datasourceMain, pluginMain}
+	return Main{db, metricMain, datasourceMain, pluginMain, groupActionsMain}
 }

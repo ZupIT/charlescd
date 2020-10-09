@@ -23,10 +23,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 )
-
-const adminEmail = "charlesadmin@admin"
 
 type executionConfiguration struct {
 	DestinationCircleID string `json:"destinationCircleId"`
@@ -67,7 +66,7 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 		return err
 	}
 
-	user, err := getUserByEmail(adminEmail, ac.MooveURL)
+	user, err := getUserByEmail(os.Getenv("MOOVE_USER"), ac.MooveURL)
 	if err != nil {
 		logger.Error("DO_USER_FIND", "DoDeploymentAction", err, ac.MooveURL)
 		return err

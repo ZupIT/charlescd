@@ -43,6 +43,13 @@ type MetricsGroup struct {
 	Actions     []metricsgroupaction.MetricsGroupActions `json:"actions"`
 }
 
+type MetricsGroupRepresentation struct {
+	ID      uuid.UUID                                             `json:"id"`
+	Name    string                                                `json:"name"`
+	Metrics []metric.Metric                                       `json:"metrics"`
+	Actions []metricsgroupaction.GroupActionExecutionStatusResume `json:"actions"`
+}
+
 type MetricGroupResume struct {
 	util.BaseModel
 	Name              string `json:"name"`
@@ -96,19 +103,19 @@ func (main Main) PeriodValidate(currentPeriod string) error {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
 		logger.Error(util.PeriodValidateRegexError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval")
+		return errors.New("invalid period or interval")
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found number")
+		return errors.New("invalid period or interval: not found number")
 	}
 
 	unit := reg.ReplaceAllString(currentPeriod, "")
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found unit")
+		return errors.New("invalid period or interval: not found unit")
 	}
 
 	return nil
@@ -244,13 +251,29 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 	return metricsGroup, nil
 }
 
-func (main Main) FindCircleMetricGroups(circleId string) ([]MetricsGroup, error) {
-	var metricsGroups []MetricsGroup
-	db := main.db.Set("gorm:auto_preload", true).Where("circle_id = ?", circleId).Find(&metricsGroups)
+func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, error) {
+	var metricsGroups []MetricsGroupRepresentation
+	db := main.db.Table("metrics_groups").Select("name, circle_id").Where("circle_id = ?", circleId).Find(&metricsGroups)
 	if db.Error != nil {
-		logger.Error(util.FindMetricsGroupError, "FindCircleMetricGroups", db.Error, "CircleId= "+circleId)
-		return []MetricsGroup{}, db.Error
+		logger.Error(util.FindMetricsGroupError, "ListAllByCircle", db.Error, "CircleId= "+circleId)
+		return []MetricsGroupRepresentation{}, db.Error
 	}
+
+	for _, group := range metricsGroups {
+		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(group.ID.String())
+		if err != nil {
+			logger.Error(util.FindMetricsGroupError, "ListAllByCircle", db.Error, "CircleId= "+circleId)
+			return []MetricsGroupRepresentation{}, err
+		}
+		metrics, err := main.metricMain.FindAllByGroup(group.ID.String())
+		if err != nil {
+			logger.Error(util.FindMetricsGroupError, "ListAllByCircle", db.Error, "CircleId= "+circleId)
+			return []MetricsGroupRepresentation{}, err
+		}
+		group.Actions = actionResume
+		group.Metrics = metrics
+	}
+
 	return metricsGroups, nil
 }
 

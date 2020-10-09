@@ -24,6 +24,7 @@ import (
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 
 	"github.com/google/uuid"
@@ -309,4 +310,16 @@ func (main Main) Query(metric Metric, period, interval string) (interface{}, err
 	}
 
 	return getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), metric.Filters)
+}
+
+func (main Main) FindAllByGroup(metricGroupID string) ([]Metric, error) {
+	var metrics []Metric
+	result := main.db.Set("gorm:auto_preload", true).Where("metrics_group_id = ?", metricGroupID).Find(&metrics)
+
+	if result.Error != nil {
+		logger.Error(util.ListAllByGroupError, "FindAllByGroup", result.Error, fmt.Sprintf("GroupID: %s", metricGroupID))
+		return nil, result.Error
+	}
+
+	return metrics, nil
 }

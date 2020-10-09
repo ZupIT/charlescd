@@ -19,6 +19,7 @@
 package tests
 
 import (
+	"compass/internal/action"
 	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/metric"
@@ -63,10 +64,11 @@ func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
-	s.repository = metricsgroup.NewMain(s.DB, metricMain, datasourceMain, pluginMain)
+	actionMain := action.NewMain(s.DB, pluginMain)
+	groupActionMain := metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
+	s.repository = metricsgroup.NewMain(s.DB, metricMain, datasourceMain, pluginMain, groupActionMain)
 
-	s.DB.Exec("DELETE FROM metrics_groups")
-	s.DB.Exec("DELETE FROM data_sources")
+	clearDatabase(s.DB)
 }
 
 func (s *SuiteMetricGroup) AfterTest(suiteName, testName string) {
@@ -97,7 +99,7 @@ func (s *SuiteMetricGroup) TestValidateError() {
 
 	ers := s.repository.Validate(newMetricGroup)
 
-	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "Name is required"}, ers[0])
+	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "name is required"}, ers[0])
 	require.Equal(s.T(), util.ErrorUtil{Field: "circleID", Error: "CircleID is required"}, ers[1])
 }
 
@@ -120,13 +122,13 @@ func (s *SuiteMetricGroup) TestPeriodValidate() {
 func (s *SuiteMetricGroup) TestPeriodValidateNotFoundNumber() {
 	err := s.repository.PeriodValidate("d")
 
-	require.Equal(s.T(), "Invalid period or interval: not found number", err.Error())
+	require.Equal(s.T(), "invalid period or interval: not found number", err.Error())
 }
 
 func (s *SuiteMetricGroup) TestPeriodValidateNotFoundUnit() {
 	err := s.repository.PeriodValidate("1")
 
-	require.Equal(s.T(), "Invalid period or interval: not found unit", err.Error())
+	require.Equal(s.T(), "invalid period or interval: not found unit", err.Error())
 }
 
 func (s *SuiteMetricGroup) TestParseMetricsGroup() {
@@ -253,28 +255,51 @@ func (s *SuiteMetricGroup) TestDelete() {
 }
 
 func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
-	metricgroup := metricsgroup.MetricsGroup{
+	circleID := uuid.New()
+	metricgroup1 := metricsgroup.MetricsGroup{
 		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+		Actions:     []metricsgroupaction.MetricsGroupActions{},
+	}
+
+	metricgroup2 := metricsgroup.MetricsGroup{
+		Name:        "group 2",
+		Metrics:     []metric.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+		Actions:     []metricsgroupaction.MetricsGroupActions{},
+	}
+
+	metricgroup3 := metricsgroup.MetricsGroup{
+		Name:        "group 3",
 		Metrics:     []metric.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
+		Actions:     []metricsgroupaction.MetricsGroupActions{},
 	}
 
-	s.DB.Create(&metricgroup)
+	s.DB.Create(&metricgroup1)
+	s.DB.Create(&metricgroup2)
+	s.DB.Create(&metricgroup3)
 
-	res, err := s.repository.FindCircleMetricGroups(metricgroup.CircleID.String())
+	res, err := s.repository.ListAllByCircle(circleID.String())
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), res)
+	require.Len(s.T(), res, 2)
 }
 
-func (s *SuiteMetricGroup) TestFindByIdError() {
-	_, err := s.repository.FindById("any-id")
+func (s *SuiteMetricGroup) TestFindCircleMetricGroupsError() {
+	s.DB.Close()
+	_, err := s.repository.ListAllByCircle(uuid.New().String())
 	require.Error(s.T(), err)
 }
 
-//func (s *SuiteMetricGroup) TestResumeByCircleError() {
-//
-//}
+func (s *SuiteMetricGroup) TestFindByIdError() {
+	s.DB.Close()
+	_, err := s.repository.FindById("any-id")
+	require.Error(s.T(), err)
+}
 
 func (s *SuiteMetricGroup) TestResumeByCircle() {
 	circleID := uuid.New()

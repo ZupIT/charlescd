@@ -29,21 +29,25 @@ type ActionsConfigurations struct {
 	NumberOfCycles int16     `json:"numberOfCycles"`
 }
 
-type GroupActionExecutionByStatusResponse struct {
-	Nickname   string    `json:"nickname"`
-	ActionType string    `json:"actionType"`
-	Status     string    `json:"status"`
-	StartedAt  time.Time `json:"triggeredAt"`
+type GroupActionExecutionStatusResume struct {
+	Id         string     `json:"id"`
+	Nickname   string     `json:"nickname"`
+	ActionType string     `json:"actionType"`
+	Status     string     `json:"status"`
+	StartedAt  *time.Time `json:"triggeredAt"`
 }
 
 const groupActionQuery = `
-				SELECT 	mga.nickname 	AS nickname,
-						a.type          AS type,
-       					ae.status       AS status,
-       					ae.started_at 	AS execution
+				SELECT 	mga.id									AS id,
+						mga.nickname 							AS nickname,
+						a.nickname          					AS action_type,
+       					coalesce (ae.status, 'NOT_EXECUTED')	AS status,
+       					ae.started_at 							AS execution
 				FROM metrics_group_actions mga
-         			INNER JOIN action_executions ae ON mga.id = ae.action_id
-         			INNER JOIN actions a 			ON mga.actions_id = a.id`
+         			INNER JOIN actions a 			ON mga.action_id = a.id	
+					LEFT JOIN actions_executions ae ON mga.id = ae.group_action_id
+					WHERE mga.metrics_group_id = ? 
+					ORDER BY execution DESC`
 
 func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupActions, error) {
 	var mgAct MetricsGroupActions
@@ -107,7 +111,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupActions, wor
 		})
 	}
 
-	ers = append(ers, main.ValidateJobConfiguration(metricsGroupAction.Configuration)...)
+	ers = append(ers, main.validateJobConfiguration(metricsGroupAction.Configuration)...)
 
 	if needConfigValidation {
 		ers = append(ers, main.validateExecutionConfig(act.Type, metricsGroupAction.ExecutionParameters)...)
@@ -116,7 +120,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupActions, wor
 	return ers
 }
 
-func (main Main) ValidateJobConfiguration(configuration ActionsConfigurations) []util.ErrorUtil {
+func (main Main) validateJobConfiguration(configuration ActionsConfigurations) []util.ErrorUtil {
 	errs := make([]util.ErrorUtil, 0)
 
 	if configuration.NumberOfCycles < 0 {
@@ -166,7 +170,14 @@ func (main Main) SaveGroupAction(metricsGroupAction MetricsGroupActions) (Metric
 }
 
 func (main Main) UpdateGroupAction(id string, metricsGroupAction MetricsGroupActions) (MetricsGroupActions, error) {
-	db := main.db.Where("id = ?", id).Update(&metricsGroupAction)
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		logger.Error(util.UpdateActionError, "UpdateAction", err, fmt.Sprintf("Id: %s", id))
+		return MetricsGroupActions{}, err
+	}
+
+	metricsGroupAction.BaseModel.ID = parsedId
+	db := main.db.Save(&metricsGroupAction)
 	if db.Error != nil {
 		logger.Error(util.UpdateActionError, "UpdateAction", db.Error, metricsGroupAction)
 		return MetricsGroupActions{}, db.Error
@@ -196,11 +207,11 @@ func (main Main) DeleteGroupAction(id string) error {
 	return nil
 }
 
-func (main Main) ListGroupActionExecutionStatusByGroup(groupID string) ([]GroupActionExecutionByStatusResponse, error) {
-	var executions []GroupActionExecutionByStatusResponse
-	result := main.db.Select(groupActionQuery).Where("mga.metrics_group_id", groupID).Order("execution desc").Find(&executions)
+func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, error) {
+	var executions []GroupActionExecutionStatusResume
+	result := main.db.Raw(groupActionQuery, groupID).Find(&executions)
 	if result.Error != nil {
-		logger.Error(util.ListGroupActionExecutionStatusError, "ListGroupActionExecutionStatusByGroup", result.Error, groupID)
+		logger.Error(util.ListGroupActionExecutionStatusError, "ListGroupActionExecutionResumeByGroup", result.Error, groupID)
 		return nil, result.Error
 	}
 
@@ -208,5 +219,11 @@ func (main Main) ListGroupActionExecutionStatusByGroup(groupID string) ([]GroupA
 }
 
 func (main Main) ValidateActionCanBeExecuted(metricsGroupAction MetricsGroupActions) bool {
-	return metricsGroupAction.Configuration.Repeatable || int64(metricsGroupAction.Configuration.NumberOfCycles) > main.getNumberOfActionExecutions(metricsGroupAction.ID)
+	count, err := main.getNumberOfActionExecutions(metricsGroupAction.ID)
+	if err != nil {
+		logger.Error(util.ActionExecutionValidateError, "ValidateActionCanBeExecuted", err, fmt.Sprintf("%+v", metricsGroupAction))
+		return false
+	}
+
+	return metricsGroupAction.Configuration.Repeatable || int64(metricsGroupAction.Configuration.NumberOfCycles) > count
 }

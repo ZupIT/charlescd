@@ -51,9 +51,9 @@ func main() {
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
-	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
 	actionMain := action.NewMain(db, pluginMain)
 	metricsGroupActionMain := metricsgroupaction.NewMain(db, pluginMain, actionMain)
+	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, metricsGroupActionMain)
 	metricDispatcher := dispatcher.NewDispatcher(metricMain)
 	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
