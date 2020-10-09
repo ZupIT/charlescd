@@ -55,7 +55,7 @@ func (s *Suite) BeforeTest(suiteName, testName string) {
 
 	var pluginMain = plugin.NewMain()
 	s.repository = datasource2.NewMain(s.DB, pluginMain)
-	s.DB.Exec("DELETE FROM data_sources")
+	clearDatabase(s.DB)
 }
 
 func (s *Suite) AfterTest(suiteName, testName string) {

@@ -3,11 +3,8 @@ package tests
 import (
 	"compass/internal/action"
 	"compass/internal/configuration"
-	metric2 "compass/internal/metric"
-	"compass/internal/metricsgroup"
 	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
-	"compass/internal/util"
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -33,7 +30,7 @@ func (s *MetricsGroupActionSuite) SetupSuite() {
 	os.Setenv("ENV", "TEST")
 }
 
-func (s *MetricsGroupActionSuite) BeforeTest(suiteName, testName string) {
+func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
@@ -42,12 +39,10 @@ func (s *MetricsGroupActionSuite) BeforeTest(suiteName, testName string) {
 	s.DB.LogMode(dbLog)
 
 	s.repository = metricsgroupaction.NewMain(s.DB, s.pluginRepo, s.actionRepo)
-	s.DB.Exec("DELETE FROM metrics_group_actions")
-	s.DB.Exec("DELETE FROM actions")
-	s.DB.Exec("DELETE FROM metrics_groups")
+	clearDatabase(s.DB)
 }
 
-func (s *MetricsGroupActionSuite) AfterTest(suiteName, testName string) {
+func (s *MetricsGroupActionSuite) AfterTest(_, _ string) {
 	s.DB.Close()
 }
 
@@ -55,264 +50,432 @@ func TestInitMetricsGroupActions(t *testing.T) {
 	suite.Run(t, new(MetricsGroupActionSuite))
 }
 
-func (s *ActionSuite) TestParseGroupAction() {
+func (s *MetricsGroupActionSuite) TestParseGroupAction() {
 	stringReader := strings.NewReader(`{
     "nickname": " ExecutionName ",
     "metricsGroupId": "8800ba87-94e9-443e-9e10-59efe8c58706",
-    "actionsId": "f1fbe330-c7f6-4215-8311-83015b8df761",
+    "actionId": "f1fbe330-c7f6-4215-8311-83015b8df761",
     "executionParameters": {
-        "circleId": "123456789"
+        "destinationCircleId": "e5b84a9a-340a-49ed-a035-0666506de2d6"
     },
 	"configuration": {
 		"repeatable": true,
 		"numberOfCycles": 0
-	}"
+	}
 }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
-	res, err := s.repository.ParseAction(stringReadCloser)
+	res, err := s.repository.ParseGroupAction(stringReadCloser)
 
-	wsID, _ := uuid.Parse("5b17f1ec-41ab-472a-b307-f0495e480a1c")
+	groupID, _ := uuid.Parse("8800ba87-94e9-443e-9e10-59efe8c58706")
+	actID, _ := uuid.Parse("f1fbe330-c7f6-4215-8311-83015b8df761")
 
 	require.NoError(s.T(), err)
 	require.NotNil(s.T(), res)
 
-	require.Equal(s.T(), "Open-sea up", res.Nickname)
-	require.Equal(s.T(), "CircleUpstream", res.Type)
-	require.Equal(s.T(), "", res.Description)
-	require.Equal(s.T(), wsID, res.WorkspaceId)
-	require.NotNil(s.T(), res.Configuration)
-	require.True(s.T(), len(res.Configuration) > 0)
+	require.Equal(s.T(), "ExecutionName", res.Nickname)
+	require.Equal(s.T(), groupID, res.MetricsGroupID)
+	require.Equal(s.T(), actID, res.ActionID)
+	require.NotNil(s.T(), res.ExecutionParameters)
+	require.True(s.T(), res.Configuration.Repeatable)
+	require.Equal(s.T(), int16(0), res.Configuration.NumberOfCycles)
 }
 
-func (s *ActionSuite) TestParseGroupActionError() {
+func (s *MetricsGroupActionSuite) TestParseGroupActionError() {
 	stringReader := strings.NewReader(``)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
-	_, err := s.repository.ParseAction(stringReadCloser)
+	_, err := s.repository.ParseGroupAction(stringReadCloser)
 
 	require.Error(s.T(), err)
 }
 
-func (s *MetricsGroupActionSuite) TestValidateMetricsGroupAction() {
-	mgaStruct := metricsgroupaction.MetricsGroupActions{
-		BaseModel:           util.BaseModel{},
-		Nickname:            "",
-		MetricsGroupID:      uuid.UUID{},
-		ActionsID:           uuid.UUID{},
-		ExecutionParameters: nil,
-		DeletedAt:           nil,
-	}
-	res := s.repository.Validate(mgaStruct)
-	require.NotEmpty(s.T(), res)
-}
-
 func (s *MetricsGroupActionSuite) TestSaveMetricsGroupAction() {
-	metricGroup := metricsgroup.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
-	s.DB.Create(&metricGroup)
+	act := newBasicAction()
+	group := newBasicMetricGroup()
 
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
-		DeletedAt:     nil,
-	}
-	s.DB.Create(&actionStruct)
+	s.DB.Create(&group)
+	s.DB.Create(&act)
 
-	mgaStruct := metricsgroupaction.MetricsGroupActions{
-		BaseModel:           util.BaseModel{},
-		Nickname:            "ActionNickname",
-		MetricsGroupID:      metricGroup.ID,
-		ActionsID:           actionStruct.ID,
-		ExecutionParameters: json.RawMessage(`{"exec": "some-param"}`),
-		DeletedAt:           nil,
-	}
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
 
-	res, err := s.repository.Save(mgaStruct)
+	res, err := s.repository.SaveGroupAction(groupAction)
 
 	require.NoError(s.T(), err)
-	mgaStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), mgaStruct, res)
+	groupAction.BaseModel = res.BaseModel
+	require.Equal(s.T(), groupAction, res)
 }
 
 func (s *MetricsGroupActionSuite) TestSaveMetricsGroupActionError() {
-	mgaStruct := metricsgroupaction.MetricsGroupActions{
-		BaseModel:           util.BaseModel{},
-		Nickname:            "ActionNickname",
-		MetricsGroupID:      uuid.New(),
-		ActionsID:           uuid.New(),
-		ExecutionParameters: json.RawMessage(`{"exec": "some-param"}`),
-		DeletedAt:           nil,
-	}
-	_, err := s.repository.Save(mgaStruct)
+	s.DB.Close()
+	_, err := s.repository.SaveGroupAction(newBasicGroupAction())
 
 	require.Error(s.T(), err)
 }
 
 func (s *MetricsGroupActionSuite) TestFindByIdMetricsGroupAction() {
-	metricGroup := metricsgroup.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
-	s.DB.Create(&metricGroup)
+	act := newBasicAction()
+	group := newBasicMetricGroup()
 
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
-		DeletedAt:     nil,
-	}
-	s.DB.Create(&actionStruct)
+	s.DB.Create(&group)
+	s.DB.Create(&act)
 
-	mgaStruct := metricsgroupaction.MetricsGroupActions{
-		BaseModel:           util.BaseModel{},
-		Nickname:            "ActionNickname",
-		MetricsGroupID:      metricGroup.ID,
-		ActionsID:           actionStruct.ID,
-		ExecutionParameters: json.RawMessage(`{"exec": "some-param"}`),
-		DeletedAt:           nil,
-	}
-	s.DB.Create(&mgaStruct)
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
 
-	res, err := s.repository.FindById(mgaStruct.ID.String())
+	s.DB.Create(&groupAction)
+
+	res, err := s.repository.FindGroupActionById(groupAction.ID.String())
 	require.NoError(s.T(), err)
-	mgaStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), mgaStruct, res)
+	require.Equal(s.T(), groupAction.ID, res.ID)
 }
 
 func (s *MetricsGroupActionSuite) TestFindByIdMetricsGroupActionError() {
-	_, err := s.repository.FindById(uuid.New().String())
-	require.Error(s.T(), err)
-}
-
-func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
-	metricGroup := metricsgroup.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
-	s.DB.Create(&metricGroup)
-
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
-		DeletedAt:     nil,
-	}
-	s.DB.Create(&actionStruct)
-
-	mgaStruct := metricsgroupaction.MetricsGroupActions{
-		BaseModel:           util.BaseModel{},
-		Nickname:            "ActionNickname",
-		MetricsGroupID:      metricGroup.ID,
-		ActionsID:           actionStruct.ID,
-		ExecutionParameters: json.RawMessage(`{"exec": "some-param"}`),
-		DeletedAt:           nil,
-	}
-	s.DB.Create(&mgaStruct)
-
-	res, err := s.repository.FindAll()
-
-	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), res)
-	mgaStruct.BaseModel = res[0].BaseModel
-	require.Equal(s.T(), mgaStruct, res[0])
-}
-
-func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionError() {
 	s.DB.Close()
-	_, err := s.repository.FindAll()
+	_, err := s.repository.FindGroupActionById(uuid.New().String())
 	require.Error(s.T(), err)
 }
 
 func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupAction() {
-	metricGroup := metricsgroup.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
-	s.DB.Create(&metricGroup)
+	act := newBasicAction()
+	group := newBasicMetricGroup()
 
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
-		DeletedAt:     nil,
-	}
-	s.DB.Create(&actionStruct)
+	s.DB.Create(&group)
+	s.DB.Create(&act)
 
-	mgaStruct := metricsgroupaction.MetricsGroupActions{
-		BaseModel:           util.BaseModel{},
-		Nickname:            "ActionNickname",
-		MetricsGroupID:      metricGroup.ID,
-		ActionsID:           actionStruct.ID,
-		ExecutionParameters: json.RawMessage(`{"exec": "some-param"}`),
-		DeletedAt:           nil,
-	}
-	s.DB.Create(&mgaStruct)
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
 
-	err := s.repository.Delete(mgaStruct.ID.String())
+	s.DB.Create(&groupAction)
+
+	err := s.repository.DeleteGroupAction(groupAction.ID.String())
 	require.NoError(s.T(), err)
+
+	var verify metricsgroupaction.MetricsGroupActions
+	s.DB.Where("id = ?", groupAction.ID).Find(&verify)
+
+	require.Equal(s.T(), metricsgroupaction.MetricsGroupActions{}, verify)
 }
 
 func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupActionError() {
 	s.DB.Close()
-	err := s.repository.Delete(uuid.New().String())
+	err := s.repository.DeleteGroupAction(uuid.New().String())
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group1 := newBasicMetricGroup()
+	s.DB.Create(&group1)
+
+	group2 := newBasicMetricGroup()
+	s.DB.Create(&group2)
+
+	groupAction1 := newBasicGroupAction()
+	groupAction1.ActionID = act.ID
+	groupAction1.MetricsGroupID = group1.ID
+	groupAction2 := newBasicGroupAction()
+	groupAction2.ActionID = act.ID
+	groupAction2.MetricsGroupID = group1.ID
+	groupAction3 := newBasicGroupAction()
+	groupAction3.ActionID = act.ID
+	groupAction3.MetricsGroupID = group2.ID
+	s.DB.Create(&groupAction1)
+	s.DB.Create(&groupAction2)
+	s.DB.Create(&groupAction3)
+
+	res, err := s.repository.ListGroupActionExecutionResumeByGroup(group1.ID.String())
+
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), res)
+	require.Len(s.T(), res, 2)
+	require.Equal(s.T(), groupAction1.ID.String(), res[0].Id)
+	require.Equal(s.T(), groupAction1.Nickname, res[0].Nickname)
+	require.Equal(s.T(), act.Nickname, res[0].ActionType)
+	require.Equal(s.T(), "NOT_EXECUTED", res[0].Status)
+	require.Nil(s.T(), res[0].StartedAt)
+	require.Equal(s.T(), groupAction2.ID.String(), res[1].Id)
+	require.Equal(s.T(), groupAction2.Nickname, res[1].Nickname)
+	require.Equal(s.T(), act.Nickname, res[1].ActionType)
+	require.Equal(s.T(), "NOT_EXECUTED", res[1].Status)
+	require.Nil(s.T(), res[1].StartedAt)
+
+}
+
+func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionError() {
+	s.DB.Close()
+	_, err := s.repository.ListGroupActionExecutionResumeByGroup(uuid.New().String())
 	require.Error(s.T(), err)
 }
 
 func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupAction() {
-	metricGroup := metricsgroup.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
-	s.DB.Create(&metricGroup)
+	act := newBasicAction()
+	s.DB.Create(&act)
 
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
-		DeletedAt:     nil,
-	}
-	s.DB.Create(&actionStruct)
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
 
-	mgaStruct := metricsgroupaction.MetricsGroupActions{
-		BaseModel:           util.BaseModel{},
-		Nickname:            "ActionNickname",
-		MetricsGroupID:      metricGroup.ID,
-		ActionsID:           actionStruct.ID,
-		ExecutionParameters: json.RawMessage(`{"exec": "some-param"}`),
-		DeletedAt:           nil,
-	}
-	s.DB.Create(&mgaStruct)
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	s.DB.Create(&groupAction)
 
-	mgaStruct.ExecutionParameters = json.RawMessage(`{"update": "eoq"}`)
+	groupAction.ExecutionParameters = json.RawMessage(`{"update": "eoq"}`)
 
-	res, err := s.repository.Update(mgaStruct.ID.String(), mgaStruct)
+	res, err := s.repository.UpdateGroupAction(groupAction.ID.String(), groupAction)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), mgaStruct.ExecutionParameters, res.ExecutionParameters)
+	require.Equal(s.T(), groupAction.ExecutionParameters, res.ExecutionParameters)
 }
 
 func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionError() {
-	mgaStruct := metricsgroupaction.MetricsGroupActions{}
 	s.DB.Close()
 
-	_, err := s.repository.Update("12345", mgaStruct)
+	_, err := s.repository.UpdateGroupAction("12345", metricsgroupaction.MetricsGroupActions{})
 	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestCreateNewExecution() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	s.DB.Create(&groupAction)
+
+	res, err := s.repository.CreateNewExecution(groupAction.ID.String())
+	require.NoError(s.T(), err)
+
+	var executions []metricsgroupaction.ActionsExecutions
+	s.DB.Where("group_action_id = ?", groupAction.ID).Find(&executions)
+
+	require.Len(s.T(), executions, 1)
+	require.Equal(s.T(), res.ID, executions[0].ID)
+	require.Equal(s.T(), "IN_EXECUTION", res.Status)
+}
+
+func (s *MetricsGroupActionSuite) TestCreateNewExecutionWrongIDFormat() {
+	_, err := s.repository.CreateNewExecution("i'm a wrong format")
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestCreateNewExecutionError() {
+	s.DB.Close()
+	_, err := s.repository.CreateNewExecution(uuid.New().String())
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionFailed() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	s.DB.Create(&groupAction)
+
+	execution := newBasicActionExecution()
+	execution.GroupActionId = groupAction.ID
+	s.DB.Create(&execution)
+
+	res, err := s.repository.SetExecutionFailed(execution.ID.String(), "Just Exploded")
+	require.NoError(s.T(), err)
+
+	var executions []metricsgroupaction.ActionsExecutions
+	s.DB.Where("group_action_id = ?", groupAction.ID).Find(&executions)
+
+	require.Len(s.T(), executions, 1)
+	require.Equal(s.T(), res.ID, executions[0].ID)
+	require.Equal(s.T(), "FAILED", res.Status)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionFailedNotFoundExecution() {
+	_, err := s.repository.SetExecutionFailed("i does not exist", "Just Exploded")
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionFailedNotInExecution() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	s.DB.Create(&groupAction)
+
+	execution := newBasicActionExecution()
+	execution.GroupActionId = groupAction.ID
+	execution.Status = "SUCCESS"
+	s.DB.Create(&execution)
+
+	_, err := s.repository.SetExecutionFailed(execution.ID.String(), "Just Exploded")
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionFailedError() {
+	s.DB.Close()
+	_, err := s.repository.SetExecutionFailed(uuid.New().String(), "Ops!")
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionSuccess() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	s.DB.Create(&groupAction)
+
+	execution := newBasicActionExecution()
+	execution.GroupActionId = groupAction.ID
+	s.DB.Create(&execution)
+
+	res, err := s.repository.SetExecutionSuccess(execution.ID.String(), "Im fine")
+	require.NoError(s.T(), err)
+
+	var executions []metricsgroupaction.ActionsExecutions
+	s.DB.Where("group_action_id = ?", groupAction.ID).Find(&executions)
+
+	require.Len(s.T(), executions, 1)
+	require.Equal(s.T(), res.ID, executions[0].ID)
+	require.Equal(s.T(), "SUCCESS", res.Status)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionSuccessNotFoundExecution() {
+	_, err := s.repository.SetExecutionSuccess("i does not exist", "Im fine")
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionSuccessNotInExecution() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	s.DB.Create(&groupAction)
+
+	execution := newBasicActionExecution()
+	execution.GroupActionId = groupAction.ID
+	execution.Status = "FAILED"
+	s.DB.Create(&execution)
+
+	_, err := s.repository.SetExecutionSuccess(execution.ID.String(), "Im Fine")
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestSetExecutionSuccessError() {
+	s.DB.Close()
+	_, err := s.repository.SetExecutionSuccess(uuid.New().String(), "Ops!")
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateRepeatableActionWithNoExecutionsCanBeExecuted() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	groupAction.Configuration.Repeatable = true
+	groupAction.Configuration.NumberOfCycles = 0
+	s.DB.Create(&groupAction)
+
+	res := s.repository.ValidateActionCanBeExecuted(groupAction)
+	require.True(s.T(), res)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateRepeatableActionWithExecutionsCanBeExecuted() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	groupAction.Configuration.Repeatable = true
+	groupAction.Configuration.NumberOfCycles = 0
+	s.DB.Create(&groupAction)
+
+	execution := newBasicActionExecution()
+	execution.GroupActionId = groupAction.ID
+	execution.Status = "SUCCESS"
+	s.DB.Create(&execution)
+
+	res := s.repository.ValidateActionCanBeExecuted(groupAction)
+	require.True(s.T(), res)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateNotRepeatableActionWithNoExecutionsCanBeExecuted() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	groupAction.Configuration.Repeatable = false
+	groupAction.Configuration.NumberOfCycles = 1
+	s.DB.Create(&groupAction)
+
+	res := s.repository.ValidateActionCanBeExecuted(groupAction)
+	require.True(s.T(), res)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateNotRepeatableActionWithExecutionsCanBeExecuted() {
+	act := newBasicAction()
+	s.DB.Create(&act)
+
+	group := newBasicMetricGroup()
+	s.DB.Create(&group)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = group.ID
+	groupAction.Configuration.Repeatable = false
+	groupAction.Configuration.NumberOfCycles = 1
+	s.DB.Create(&groupAction)
+
+	execution := newBasicActionExecution()
+	execution.GroupActionId = groupAction.ID
+	execution.Status = "SUCCESS"
+	s.DB.Create(&execution)
+
+	res := s.repository.ValidateActionCanBeExecuted(groupAction)
+	require.False(s.T(), res)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateActionCanBeExecutedError() {
+	s.DB.Close()
+	res := s.repository.ValidateActionCanBeExecuted(newBasicGroupAction())
+	require.False(s.T(), res)
 }

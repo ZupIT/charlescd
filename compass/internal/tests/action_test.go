@@ -37,7 +37,7 @@ func (s *ActionSuite) BeforeTest(_, _ string) {
 	s.DB.LogMode(dbLog)
 
 	s.repository = action.NewMain(s.DB, s.plugins)
-	s.DB.Exec("DELETE FROM actions")
+	clearDatabase(s.DB)
 }
 
 func (s *ActionSuite) AfterTest(_, _ string) {
@@ -153,7 +153,8 @@ func (s *ActionSuite) TestFindAllActionByWorkspace() {
 		DeletedAt:     nil,
 	}
 
-	s.DB.Create([]action.Action{actionStruct1, actionStruct2})
+	s.DB.Create(&actionStruct1)
+	s.DB.Create(&actionStruct2)
 
 	res, err := s.repository.FindAllActionsByWorkspace(wspID.String())
 

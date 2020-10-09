@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -56,6 +57,7 @@ func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url strin
 		return DeploymentResponse{}, err
 	}
 	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
@@ -84,7 +86,13 @@ func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url strin
 }
 
 func getUserByEmail(email string, url string) (UserResponse, error) {
-	response, err := http.DefaultClient.Get(fmt.Sprintf("%s/v2/users/%s", url, email))
+	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/users/%s", url, email), nil)
+	if err != nil {
+		return UserResponse{}, err
+	}
+	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
+
+	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return UserResponse{}, err
 	}
@@ -122,6 +130,7 @@ func deployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId string
 	}
 	request.Header.Add("Content-type", "application/json")
 	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {

@@ -17,16 +17,15 @@ func (v1 V1) NewMetricsGroupActionApi(main metricsgroupaction.UseCases) MetricsG
 	apiPath := "/group-actions"
 	metricsGroupActionApi := MetricsGroupActionApi{main}
 
-	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupActionApi.Create))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.Delete))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.FindById))
-	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.Update))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/list"), api.HttpValidator(metricsGroupActionApi.List))
+	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupActionApi.create))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.delete))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.findById))
+	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.update))
 
 	return metricsGroupActionApi
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceID string) {
+func (metricsGroupActionApi MetricsGroupActionApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceID string) {
 	act, err := metricsGroupActionApi.main.ParseGroupAction(r.Body)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid payload")})
@@ -52,7 +51,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) Create(w http.ResponseWriter,
 	api.NewRestSuccess(w, http.StatusOK, act)
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) Delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupActionApi MetricsGroupActionApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	err := metricsGroupActionApi.main.DeleteGroupAction(ps.ByName("id"))
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error deleting action")})
@@ -61,7 +60,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) Delete(w http.ResponseWriter,
 	api.NewRestSuccess(w, http.StatusNoContent, nil)
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) FindById(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupActionApi MetricsGroupActionApi) findById(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
 
 	act, err := metricsGroupActionApi.main.FindGroupActionById(id)
@@ -76,7 +75,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) FindById(w http.ResponseWrite
 	api.NewRestSuccess(w, http.StatusOK, act)
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) Update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceID string) {
+func (metricsGroupActionApi MetricsGroupActionApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceID string) {
 	id := ps.ByName("id")
 	act, err := metricsGroupActionApi.main.ParseGroupAction(r.Body)
 	if err != nil {
@@ -94,22 +93,11 @@ func (metricsGroupActionApi MetricsGroupActionApi) Update(w http.ResponseWriter,
 		return
 	}
 
-	_, err = metricsGroupActionApi.main.UpdateGroupAction(id, act)
+	groupActResp, err := metricsGroupActionApi.main.UpdateGroupAction(id, act)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error updating action")})
 		return
 	}
 
-	api.NewRestSuccess(w, http.StatusOK, act)
-}
-
-func (metricsGroupActionApi MetricsGroupActionApi) List(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
-	id := ps.ByName("groupID")
-	actions, err := metricsGroupActionApi.main.ListGroupActionExecutionStatusByGroup(id)
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error listing actions")})
-		return
-	}
-
-	api.NewRestSuccess(w, http.StatusOK, actions)
+	api.NewRestSuccess(w, http.StatusOK, groupActResp)
 }
