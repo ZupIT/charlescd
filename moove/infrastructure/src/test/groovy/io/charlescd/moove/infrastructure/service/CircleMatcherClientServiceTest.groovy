@@ -192,7 +192,8 @@ class CircleMatcherClientServiceTest extends Specification {
                 null,
                 null,
                 false,
-                "44446b2a-557b-45c5-91be-1e1db9095556"
+                "44446b2a-557b-45c5-91be-1e1db9095556",
+                null
         )
     }
 }

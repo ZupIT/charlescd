@@ -270,6 +270,7 @@ class DeployClientServiceTest extends Specification {
 
     private static Circle getDummyCircle(String name, User author, Boolean isDefault) {
         new Circle('w8296aea-6ae1-44ea-bc55-0242ac13000w', name, 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, isDefault, "44446b2a-557b-45c5-91be-1e1db9095556")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, isDefault, "44446b2a-557b-45c5-91be-1e1db9095556",null
+        )
     }
 }
