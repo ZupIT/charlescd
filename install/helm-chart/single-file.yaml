@@ -1,26 +1,4 @@
 ---
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
----
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -58,22 +36,6 @@ metadata:
 type: Opaque
 data:
   password: "Zmlyc3RwYXNzd29yZA=="
----
-# Source: Charles-CD/charts/mongodb/templates/secrets.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-type: Opaque
-data:
-  mongodb-root-password:  "b2N0b3BpcGU="
-  mongodb-password:  "Zmlyc3RwYXNzd29yZA=="
 ---
 # Source: Charles-CD/charts/postgresql/templates/secrets.yaml
 apiVersion: v1
@@ -493,23 +455,35 @@ data:
     "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
     exit $exit_status
 ---
-# Source: Charles-CD/charts/mongodb/templates/pvc-standalone.yaml
-kind: PersistentVolumeClaim
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
 apiVersion: v1
+kind: ServiceAccount
 metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: charles
   labels:
     app: mongodb
     chart: mongodb-7.14.2
-    heritage: Helm
-    release: charlescd
-  name: charlescd-mongodb
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
   namespace: charles
-spec:
-  accessModes:
-    - "ReadWriteOnce"
-  resources:
-    requests:
-      storage: "8Gi"
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -677,27 +651,6 @@ spec:
   selector:
     app.kubernetes.io/name: keycloak
     app.kubernetes.io/instance: "charlescd"
----
-# Source: Charles-CD/charts/mongodb/templates/svc-standalone.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-spec:
-  type: ClusterIP
-  ports:
-    - name: mongodb
-      port: 27017
-      targetPort: mongodb
-  selector:
-    app: mongodb
-    release: "charlescd"
 ---
 # Source: Charles-CD/charts/nginx/templates/nginx-service.yaml
 apiVersion: v1
@@ -957,101 +910,6 @@ spec:
   selector:
     app: charlescd-villager
 ---
-# Source: Charles-CD/charts/mongodb/templates/deployment-standalone.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-spec:
-  strategy:
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      app: mongodb
-      release: "charlescd"
-  template:
-    metadata:
-      labels:
-        app: mongodb
-        release: "charlescd"
-        chart: mongodb-7.14.2
-    spec:
-      serviceAccountName: charlescd-mongodb
-      securityContext:
-        fsGroup: 1001      
-      initContainers:
-      containers:
-        - name: charlescd-mongodb
-          image: docker.io/bitnami/mongodb:4.2.7-debian-10-r0
-          imagePullPolicy: "IfNotPresent"
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1001
-          env:
-            - name: MONGODB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: charlescd-mongodb
-                  key: mongodb-password
-            - name: MONGODB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: charlescd-mongodb
-                  key: mongodb-root-password
-            - name: MONGODB_USERNAME
-              value: "mongodb"
-            - name: MONGODB_SYSTEM_LOG_VERBOSITY
-              value: "0"
-            - name: MONGODB_DISABLE_SYSTEM_LOG
-              value: "no"
-            - name: MONGODB_DATABASE
-              value: "octopipe"
-            - name: MONGODB_ENABLE_IPV6
-              value: "no"
-            - name: MONGODB_ENABLE_DIRECTORY_PER_DB
-              value: "no"
-          ports:
-            - name: mongodb
-              containerPort: 27017
-          livenessProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          volumeMounts:
-            - name: data
-              mountPath: /bitnami/mongodb
-              subPath: 
-          resources:
-            {}
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: charlescd-mongodb
----
 # Source: Charles-CD/charts/nginx/templates/nginx.deployment.yaml
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
@@ -1140,8 +998,6 @@ spec:
           env:
           - name: APP_PORT
             value: "8080"
-          - name: DB_URL
-            value: "mongodb://root:octopipe@charlescd-mongodb:27017"
           - name: KUBECONFIG
             value: "IN_CLUSTER"
           - name: TIMEOUT_RESOURCE_VERIFICATION
@@ -1195,7 +1051,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.3.9
+          image: zupcharles/charlescd-butler:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1275,7 +1131,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.3.9
+          image: zupcharles/charlescd-circle-matcher:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1349,7 +1205,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.3.9
+          image: zupcharles/charlescd-compass:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1430,7 +1286,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.3.9
+          image: zupcharles/charlescd-moove:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1513,7 +1369,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.3.9
+          image: zupcharles/charlescd-ui:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1591,7 +1447,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.3.9
+          image: zupcharles/charlescd-villager:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
