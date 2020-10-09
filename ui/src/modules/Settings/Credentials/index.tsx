@@ -128,7 +128,7 @@ const Credentials = () => {
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {status === 'pending' || (isEmpty(workspace.id) && isEmpty(datasources)) ? (
+      {status === 'pending' || isEmpty(workspace.id) || isEmpty(datasources) ? (
         <Loader.Tab />
       ) : (
           renderPanel()
