@@ -42,6 +42,7 @@ type Props = {
   handleDeleteMetricsGroup: Function;
   handleDeleteMetric: Function;
   handleEditMetric: Function;
+  handleAddAction: Function;
   handleEditGroup: Function;
 };
 
@@ -52,6 +53,7 @@ const MetricsGroupCard = ({
   handleDeleteMetricsGroup,
   handleDeleteMetric,
   handleEditMetric,
+  handleAddAction,
   handleEditGroup
 }: Props) => {
   const normalizedSelectOptions = normalizeSelectOptionsNickname(
@@ -191,7 +193,9 @@ const MetricsGroupCard = ({
             />
           )}
           <Styled.MetricsGroupsFooter>
-            <Button.Default>Add action</Button.Default>
+            <Button.Default onClick={() => handleAddAction()}>
+              Add action
+            </Button.Default>
           </Styled.MetricsGroupsFooter>
         </NavTabs.Tab>
       </NavTabs>
