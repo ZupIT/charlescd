@@ -77,3 +77,5 @@ export const getChartDataByQuery = (
   params: URLSearchParams
 ) =>
   baseRequest(`${endpoint}/metrics-groups/${metricsGroupId}/query?${params}`);
+
+export const getAllActionsTypes = () => baseRequest(`${endpoint}/actions`);

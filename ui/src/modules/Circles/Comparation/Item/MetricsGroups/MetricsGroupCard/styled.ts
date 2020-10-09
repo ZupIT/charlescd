@@ -53,6 +53,7 @@ const MetricsGroupsCardHeader = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 20px;
+    line-height: 1.5;
   }
 `;
 
