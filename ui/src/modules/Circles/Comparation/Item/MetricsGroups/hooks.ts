@@ -31,7 +31,8 @@ import {
   updateMetricGroup,
   deleteMetricGroup,
   deleteMetricByMetricId,
-  getChartDataByQuery
+  getChartDataByQuery,
+  getAllActionsTypes
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
@@ -359,5 +360,23 @@ export const useMetricQuery = () => {
 
   return {
     getMetricByQuery
+  };
+};
+
+export const useActionTypes = () => {
+  const getAllActionsTypesRequest = useFetchData<any>(getAllActionsTypes);
+
+  const getAllActionsTypesData = useCallback(async () => {
+    try {
+      const response = await getAllActionsTypesRequest();
+
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
+  }, [getAllActionsTypesRequest]);
+
+  return {
+    getAllActionsTypesData
   };
 };
