@@ -1,9 +1,10 @@
 name: Prometheus
 id: prometheus
 description: My prometheus
-health: true
-inputs:
-  - name: url
-    label: Url
-    type: text
-    required: true
+input_parameters:
+  health: true
+  configuration_inputs:
+    - name: url
+      label: Url
+      type: text
+      required: true
