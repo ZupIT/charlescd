@@ -4,6 +4,7 @@ import (
 	"compass/internal/util"
 	datasourcePKG "compass/pkg/datasource"
 	"compass/pkg/logger"
+	"encoding/json"
 	"fmt"
 )
 
@@ -71,9 +72,15 @@ func (main Main) getComponentStatus(thresholdValue, metricValue float64) string 
 }
 
 func (main Main) getComponentsErrorPercentage(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
-	components, err := main.getMooveComponents(circleId, workspaceId)
+	body, err := main.mooveMain.GetMooveComponents(circleId, workspaceId)
 	if err != nil {
 		logger.Error(util.QueryGetPluginError, "getComponentsErrorPercentage", err, nil)
+		return nil, err
+	}
+
+	var components []DeploymentInCircle
+	err = json.Unmarshal(body, &components)
+	if err != nil {
 		return nil, err
 	}
 
@@ -98,9 +105,15 @@ func (main Main) getComponentsErrorPercentage(workspaceId, circleId string) ([]C
 }
 
 func (main Main) getComponentsLatency(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
-	components, err := main.getMooveComponents(circleId, workspaceId)
+	body, err := main.mooveMain.GetMooveComponents(circleId, workspaceId)
 	if err != nil {
 		logger.Error(util.QueryGetPluginError, "getComponentsLatency", err, nil)
+		return nil, err
+	}
+
+	var components []DeploymentInCircle
+	err = json.Unmarshal(body, &components)
+	if err != nil {
 		return nil, err
 	}
 
