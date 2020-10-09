@@ -40,6 +40,8 @@ type UseCases interface {
 	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
 	FindAllMetricExecutions() ([]MetricExecution, error)
 	Validate(metric Metric) []util.ErrorUtil
+	ValidateIfExecutionReached(metric MetricExecution) bool
+	FindAllByGroup(metricGroupID string) ([]Metric, error)
 }
 
 type Main struct {

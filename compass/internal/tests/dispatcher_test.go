@@ -44,6 +44,14 @@ type SuiteDispatcher struct {
 }
 
 func (s *SuiteDispatcher) SetupSuite() {
+	os.Setenv("ENV", "TEST")
+}
+
+func (s *SuiteDispatcher) afterTest(_, _ string) {
+	s.DB.Close()
+}
+
+func (s *SuiteDispatcher) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
@@ -55,15 +63,8 @@ func (s *SuiteDispatcher) SetupSuite() {
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
 	s.repository = dispatcher.NewDispatcher(s.metricMain)
-}
 
-func (s *SuiteDispatcher) BeforeTest(suiteName, testName string) {
-	s.DB.Exec("DELETE FROM metric_filters")
-	s.DB.Exec("DELETE FROM metric_group_bies")
-	s.DB.Exec("DELETE FROM metrics")
-	s.DB.Exec("DELETE FROM metrics_groups")
-	s.DB.Exec("DELETE FROM data_sources")
-	s.DB.Exec("DELETE FROM metric_executions")
+	clearDatabase(s.DB)
 }
 
 func TestInitDispatcher(t *testing.T) {

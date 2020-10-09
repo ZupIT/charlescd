@@ -19,12 +19,14 @@
 package main
 
 import (
+	"compass/internal/action"
 	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/dispatcher"
 	"compass/internal/health"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
+	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"log"
 
@@ -50,19 +52,25 @@ func main() {
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
-	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
+	actionMain := action.NewMain(db, pluginMain)
+	metricsGroupActionMain := metricsgroupaction.NewMain(db, pluginMain, actionMain)
+	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, metricsGroupActionMain)
 	healthMain := health.NewMain(db, datasourceMain, pluginMain)
-	dispatcher := dispatcher.NewDispatcher(metricMain)
+	metricDispatcher := dispatcher.NewDispatcher(metricMain)
+	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
 	stopChan := make(chan bool, 0)
-	go dispatcher.Start(stopChan)
+	go metricDispatcher.Start(stopChan)
+	go actionDispatcher.Start(stopChan)
 
-	v1 := v1.NewV1()
-	v1.NewPluginApi(pluginMain)
-	v1.NewMetricsGroupApi(metricsgroupMain)
-	v1.NewMetricApi(metricMain, metricsgroupMain)
-	v1.NewDataSourceApi(datasourceMain)
-	v1.NewCircleApi(metricsgroupMain)
-	v1.NewHealthApi(healthMain)
-	v1.Start()
+	v1Api := v1.NewV1()
+	v1Api.NewPluginApi(pluginMain)
+	v1Api.NewMetricsGroupApi(metricsgroupMain)
+	v1Api.NewMetricApi(metricMain, metricsgroupMain)
+	v1Api.NewDataSourceApi(datasourceMain)
+	v1Api.NewCircleApi(metricsgroupMain)
+	v1Api.NewActionApi(actionMain)
+	v1Api.NewHealthApi(healthMain)
+	v1Api.NewMetricsGroupActionApi(metricsGroupActionMain)
+	v1Api.Start()
 }

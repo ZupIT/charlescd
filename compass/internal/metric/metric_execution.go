@@ -84,3 +84,7 @@ func (main Main) removeMetricExecution(tx *gorm.DB, id string) error {
 	}
 	return nil
 }
+
+func (main Main) ValidateIfExecutionReached(metricExecution MetricExecution) bool {
+	return metricExecution.Status == MetricReached
+}

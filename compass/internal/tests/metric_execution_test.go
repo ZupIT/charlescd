@@ -44,9 +44,11 @@ type SuiteMetricExecution struct {
 }
 
 func (s *SuiteMetricExecution) SetupSuite() {
-	var err error
-
 	os.Setenv("ENV", "TEST")
+}
+
+func (s *SuiteMetricExecution) BeforeTest(_, _ string) {
+	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
@@ -57,15 +59,11 @@ func (s *SuiteMetricExecution) SetupSuite() {
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
 	s.repository = metric.NewMain(s.DB, datasourceMain, pluginMain)
+	clearDatabase(s.DB)
 }
 
-func (s *SuiteMetricExecution) BeforeTest(suiteName, testName string) {
-	s.DB.Exec("DELETE FROM metric_filters")
-	s.DB.Exec("DELETE FROM metric_group_bies")
-	s.DB.Exec("DELETE FROM metrics")
-	s.DB.Exec("DELETE FROM metrics_groups")
-	s.DB.Exec("DELETE FROM data_sources")
-	s.DB.Exec("DELETE FROM metric_executions")
+func (s *SuiteMetricExecution) AfterTest(_, _ string) {
+	s.DB.Close()
 }
 
 func TestInitMetricExecutions(t *testing.T) {
