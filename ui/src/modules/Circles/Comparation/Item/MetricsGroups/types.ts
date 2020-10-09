@@ -42,6 +42,19 @@ export type Action = {
   actionType: string;
 };
 
+export type ExecutionParameters = {
+  destinationCircleId?: string;
+  originCircleId?: string;
+  workspaceId: string;
+};
+
+export type ActionGroupPayload = {
+  metricsGroupId: string;
+  actionId?: string;
+  nickname: string;
+  executionParameters?: ExecutionParameters;
+};
+
 export type Metric = {
   id: string;
   nickname: string;

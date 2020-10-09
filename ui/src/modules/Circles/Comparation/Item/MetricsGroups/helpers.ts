@@ -18,10 +18,13 @@ import { OptionTypeBase } from 'react-select';
 import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
+import { getWorkspaceId } from 'core/utils/workspace';
 import find from 'lodash/find';
 import isUndefined from 'lodash/isUndefined';
 import filter from 'lodash/filter';
+import { ActionForm } from './AddAction';
 import {
+  MetricsGroup,
   MetricFilter,
   Metric,
   ChartDataByQuery,
@@ -125,4 +128,33 @@ export const filterMetricsSeries = (
   });
 
   return filteredData as ChartData[];
+};
+
+export const createCirclePromotionPayload = (
+  data: ActionForm,
+  metricsGroup: MetricsGroup
+) => {
+  return {
+    destinationCircleId: data.circleId,
+    originCircleId: metricsGroup.circleId,
+    workspaceId: getWorkspaceId()
+  };
+};
+
+export const createActionPayload = (
+  data: ActionForm,
+  metricsGroup: MetricsGroup
+) => {
+  const { actionId, nickname } = data;
+
+  const payloadByAction = {
+    CIRCLE_DEPLOY: () => createCirclePromotionPayload(data, metricsGroup)
+  } as Record<string, Function>;
+
+  return {
+    metricsGroupId: metricsGroup.id,
+    actionId,
+    nickname,
+    executionParameters: payloadByAction[actionId]()
+  };
 };
