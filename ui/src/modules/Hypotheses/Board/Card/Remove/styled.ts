@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import ModalTrigger from 'core/components/Modal/Trigger';
-import { COLOR_BLACK_RUSSIAN } from 'core/assets/colors';
+import { COLOR_BLACK_RUSSIAN, COLOR_BASTILLE } from 'core/assets/colors';
 
 const Modal = styled(ModalTrigger)`
   .modal-content {
@@ -24,6 +24,11 @@ const Modal = styled(ModalTrigger)`
     width: 408px;
     background-color: ${COLOR_BLACK_RUSSIAN};
     top: 50px;
+  }
+
+  .modal-background {
+    opacity: 0.7;
+    background-color: ${COLOR_BASTILLE};
   }
 `;
 
