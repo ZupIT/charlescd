@@ -7,16 +7,17 @@ import (
 	"compass/internal/moove"
 	"compass/internal/plugin"
 	"encoding/json"
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 type SuiteHealth struct {
@@ -76,11 +77,12 @@ func (s SuiteHealth) TestComponentsHealthDataSourceError() {
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
+	os.Setenv("PLUGINS_DIR", "../../dist")
 	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	datasourceStruct := datasource.DataSource{
 		Name:        "DataTest",
-		PluginSrc:   "./dist/datasource/prometheus/prometheus",
+		PluginSrc:   "datasource/prometheus/prometheus",
 		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: workspaceId,
