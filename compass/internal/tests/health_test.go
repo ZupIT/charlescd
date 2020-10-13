@@ -7,6 +7,7 @@ import (
 	"compass/internal/moove"
 	"compass/internal/plugin"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -48,6 +49,8 @@ func (s *SuiteHealth) BeforeTest(suiteName, testName string) {
 			w.Write([]byte(`[{"id": "123456", "name": "SomeName", "errorThreshold": 12.6, "latencyThreshold": 10.4, "moduleId": "12345", "moduleName": "SomeModuleName"}]`))
 		}),
 	)
+
+	fmt.Printf("SERVER: " + s.server.URL)
 
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
@@ -93,6 +96,24 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
 	_, err := s.repository.ComponentsHealth(workspaceId.String(), circleId)
 
 	s.Require().Error(err)
+}
+
+func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
+	os.Setenv("PLUGINS_DIR", "../../dist")
+	workspaceId := uuid.New()
+	circleId := uuid.New().String()
+	datasourceStruct := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "datasource/prometheus/prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+		WorkspaceID: workspaceId,
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasourceStruct)
+
+	_, err := s.repository.ComponentsHealth(workspaceId.String(), circleId)
+	s.NoError(err)
 }
 
 func (s SuiteHealth) TestComponentsError() {
