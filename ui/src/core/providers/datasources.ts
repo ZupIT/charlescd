@@ -19,7 +19,7 @@ import { Datasource } from 'modules/Settings/Credentials/Sections/MetricProvider
 
 const endpoint = '/compass/api/v1';
 
-export const getAllPlugins = () => baseRequest(`${endpoint}/plugins`)
+export const getAllPlugins = () => baseRequest(`${endpoint}/plugins?category=datasource`)
 
 export const getAllDatasources = () => baseRequest(`${endpoint}/datasources`);
 
