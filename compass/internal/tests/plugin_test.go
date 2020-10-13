@@ -43,21 +43,54 @@ func TestInitPlugins(t *testing.T) {
 }
 
 func (s *SuitePlugins) TestFindAll() {
-	expectedPlugins := []plugin.Plugin{
+	gInput := []plugin.Input{
 		{
-			Name: "Google Analytics",
-			Src:  "google_analytics",
+			Name:     "viewId",
+			Label:    "View ID",
+			Type:     "text",
+			Required: true,
 		},
 		{
-			Name: "Prometheus",
-			Src:  "prometheus",
+			Name:     "serviceAccount",
+			Label:    "Service Account",
+			Type:     "textarea",
+			Required: true,
+		},
+	}
+
+	pInput := []plugin.Input{
+		{
+			Name:     "url",
+			Label:    "Url",
+			Type:     "text",
+			Required: true,
+		},
+	}
+
+	expectedPlugins := []plugin.Plugin{
+		{
+			ID:          "google_analytics",
+			Category:    "datasource",
+			Name:        "Google Analytics",
+			Src:         "../../plugins/datasource/google_analytics/google_analytics",
+			Description: "My google analytics",
+			Inputs:      gInput,
+		},
+		{
+			ID:          "prometheus",
+			Category:    "datasource",
+			Name:        "Prometheus",
+			Src:         "../../plugins/datasource/prometheus/prometheus",
+			Description: "My prometheus",
+			Health:      true,
+			Inputs:      pInput,
 		},
 	}
 
 	os.Setenv("PLUGINS_DIR", "../../plugins")
 	plugins, err := s.repository.FindAll("")
-	require.NoError(s.T(), err)
 
+	require.NoError(s.T(), err)
 	for i, p := range plugins {
 		require.Equal(s.T(), expectedPlugins[i], p)
 	}

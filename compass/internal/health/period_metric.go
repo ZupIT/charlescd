@@ -4,6 +4,7 @@ import (
 	"compass/internal/util"
 	datasourcePKG "compass/pkg/datasource"
 	"compass/pkg/logger"
+	"encoding/json"
 	"errors"
 )
 
@@ -88,7 +89,13 @@ func (main Main) Components(workspaceId, circleId, projectionType, metricType st
 		Type:   metricType,
 	}
 
-	components, err := main.getMooveComponents(circleId, workspaceId)
+	body, err := main.mooveMain.GetMooveComponents(circleId, workspaceId)
+	if err != nil {
+		return ComponentMetricRepresentation{}, err
+	}
+
+	var components []DeploymentInCircle
+	err = json.Unmarshal(body, &components)
 	if err != nil {
 		return ComponentMetricRepresentation{}, err
 	}
