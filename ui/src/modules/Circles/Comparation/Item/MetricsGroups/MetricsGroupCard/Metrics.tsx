@@ -51,12 +51,24 @@ const MetricCard = ({
   };
 
   return (
-    <Styled.MetricCardBody key={metric.id}>
-      <Styled.MetricNickname color="light" title={metric.nickname}>
+    <Styled.MetricCardBody
+      key={metric.id}
+      data-testid={`metric-group-card-${metric.nickname}`}
+    >
+      <Styled.MetricNickname
+        color="light"
+        title={metric.nickname}
+        data-testid={`${metric.nickname}-nickname`}
+      >
         {metric.nickname}
       </Styled.MetricNickname>
       <Styled.MetricConditionThreshold>
-        <Text.h5 color="dark">{getMetricCondition(metric.condition)}</Text.h5>
+        <Text.h5
+          color="dark"
+          data-testid={`${metric.nickname}-threshold-condition`}
+        >
+          {getMetricCondition(metric.condition)}
+        </Text.h5>
         <Text.h5 color="light" title={metric.threshold.toString()}>
           {metric.threshold !== 0 && metric.threshold}
         </Text.h5>
@@ -64,6 +76,7 @@ const MetricCard = ({
       <Styled.MetricLastValue
         color={thresholdStatus.color}
         hasTreshold={isEmpty(metric.condition)}
+        data-testid={`${metric.nickname}-threshold-last-value`}
       >
         <Icon
           name={thresholdStatus.icon}

@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import { COLOR_GHOST_WHITE, COLOR_SANTAS_GREY } from '../colors';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
+export const light = {};
 
-  return status;
+export const dark = {
+  list: {
+    border: COLOR_SANTAS_GREY
+  },
+  item: {
+    border: COLOR_GHOST_WHITE
+  }
 };
-
-export const isNotBlank = (value: string) => !!value.trim();
