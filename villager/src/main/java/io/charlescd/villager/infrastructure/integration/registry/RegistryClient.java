@@ -24,7 +24,8 @@ import javax.ws.rs.core.Response;
 public interface RegistryClient extends Closeable {
 
     void configureAuthentication(RegistryType type,
-                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
+                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData config,
+                                 String tagName);
 
     Optional<Response> getImage(String name, String tagName,
                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
