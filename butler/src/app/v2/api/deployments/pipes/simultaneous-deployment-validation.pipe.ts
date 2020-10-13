@@ -16,6 +16,7 @@
 
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { flatMap, uniq } from 'lodash'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ComponentsRepositoryV2 } from '../repository'
 
@@ -34,7 +35,10 @@ export class SimultaneousDeploymentValidationPipe implements PipeTransform {
       await this.componentsRepository.findDefaultRunningComponents()
 
     if (runningComponents && runningComponents.length > 0) {
-      throw new BadRequestException('Simultaneous deployments are not allowed for a given circle')
+      const componentIds = runningComponents.map( c => c.id)
+      const components = await this.componentsRepository.findByIds(componentIds, { relations: ['deployment', 'deployment.executions'] })
+      const executionIds = uniq(flatMap(components, c => c.deployment.executions.map(e => e.id)))
+      throw new BadRequestException(`Simultaneous deployments are not allowed for a given circle. The following executions are not finished: ${executionIds}`)
     }
 
     return createDeploymentDto

@@ -71,10 +71,11 @@ describe('DeploymentCleanupHandler', () => {
 
     await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
     const createDeploymentDto = createDto(componentName, circleId)
+    const execution = await manager.findOneOrFail(Execution)
 
     await expect(
       pipe.transform(createDeploymentDto)
-    ).rejects.toThrow(new BadRequestException('Simultaneous deployments are not allowed for a given circle'))
+    ).rejects.toThrow(new BadRequestException(`Simultaneous deployments are not allowed for a given circle. The following executions are not finished: ${execution.id}`))
 
   })
 
@@ -102,9 +103,10 @@ describe('DeploymentCleanupHandler', () => {
 
     await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
     const createDeploymentDto = createDto(componentName, null)
+    const execution = await manager.findOneOrFail(Execution)
     await expect(
       pipe.transform(createDeploymentDto)
-    ).rejects.toThrow(new BadRequestException('Simultaneous deployments are not allowed for a given circle'))
+    ).rejects.toThrow(new BadRequestException(`Simultaneous deployments are not allowed for a given circle. The following executions are not finished: ${execution.id}`))
 
   })
 })
