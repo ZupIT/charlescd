@@ -2,22 +2,21 @@ name: build compass
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
     paths:
-      - 'compass/**'
-    tags: 
-      - '!*'
+      - "compass/**"
+    tags:
+      - "!*"
   pull_request:
-    branches: [ master ]
+    branches: [master]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - 'compass/**'
+      - "compass/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -30,7 +29,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: '^1.14.2'
+          go-version: "^1.14.2"
 
       - name: Up Docker tests
         working-directory: ./compass
@@ -39,7 +38,7 @@ jobs:
       - name: Run Unit tests
         working-directory: ./compass
         run: |
-          go test -v -coverpkg ./... ./internal/tests/ -coverprofile=coverage.cov
+          go test ./... -v -cover -coverprofile=coverage.out
 
       - name: Tests coverage
         uses: codecov/codecov-action@v1.0.13
