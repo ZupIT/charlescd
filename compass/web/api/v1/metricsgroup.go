@@ -41,7 +41,8 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.show))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/query"), api.HttpValidator(metricsGroupApi.query))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/result"), api.HttpValidator(metricsGroupApi.result))
-	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.update))
+	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.update))
+	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.updateName))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.delete))
 	v1.Router.GET(v1.getCompletePath("/resume"+apiPath), api.HttpValidator(metricsGroupApi.resume))
 	return metricsGroupApi
@@ -164,6 +165,30 @@ func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
+}
+
+func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+	id := ps.ByName("id")
+	metricsGroupAux, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
+
+	metricsGroup, err := metricsGroupApi.metricsGroupMain.FindById(id)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	metricsGroup.Name = metricsGroupAux.Name
+	if err := metricsGroupApi.metricsGroupMain.Validate(metricsGroup); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save metrics-group")
+		return
+	}
+
+	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.UpdateName(id, metricsGroup)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
 }
 

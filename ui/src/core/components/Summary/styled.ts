@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import styled from 'styled-components';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
+const Summary = styled.div`
+  display: flex;
+`;
 
-  return status;
+export default {
+  Summary
 };
-
-export const isNotBlank = (value: string) => !!value.trim();
