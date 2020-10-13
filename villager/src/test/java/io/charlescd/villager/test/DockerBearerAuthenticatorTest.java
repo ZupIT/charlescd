@@ -35,13 +35,13 @@ public class DockerBearerAuthenticatorTest {
         var organization = "org";
         var username = "user";
         var password = "pass";
-        var tagName = "latest";
+        var imageName = "image";
         var authUrl = "https://auth.docker.io";
         var service = "registry.docker.io";
 
-        var auth = new DockerBearerAuthenticator(organization, username, password, tagName, authUrl, service);
+        var auth = new DockerBearerAuthenticator(organization, username, password, imageName, authUrl, service);
 
-        assertThat(auth.createAuthUrl(), is("https://auth.docker.io?service=registry.docker.io&scope=repository:org/latest:pull"));
+        assertThat(auth.createAuthUrl(), is("https://auth.docker.io?service=registry.docker.io&scope=repository:org/image:pull"));
     }
 
     @Test
