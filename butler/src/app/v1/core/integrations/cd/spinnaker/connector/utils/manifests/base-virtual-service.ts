@@ -24,6 +24,7 @@ import {
   IDefaultCircleMatcher,
   IEmptyVirtualService
 } from '../../interfaces'
+import { formatDnsLabel } from '../helpers/format-dns-label'
 
 const baseVirtualService = (appName: string, appNamespace: string): IBaseVirtualService => ({
   apiVersion: 'networking.istio.io/v1alpha3',
@@ -89,7 +90,7 @@ const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string): I
         {
           destination: {
             host: appName,
-            subset: circle.destination.version
+            subset: formatDnsLabel(circle.destination.version)
           },
           headers: {
             response: {
@@ -125,7 +126,7 @@ const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string): ICirc
         {
           destination: {
             host: appName,
-            subset: circle.destination.version
+            subset: formatDnsLabel(circle.destination.version)
           },
           headers: {
             response: {
@@ -150,7 +151,7 @@ const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string
     {
       destination: {
         host: appName,
-        subset: circle.destination.version
+        subset: formatDnsLabel(circle.destination.version)
       },
       headers: {
         response: {
