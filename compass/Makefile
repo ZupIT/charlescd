@@ -31,7 +31,7 @@ tests-dep-up:
 tests-dep-down:
 				docker-compose -f $(COMPOSE_TESTS) down
 cover:
-				$(GOTEST) ./... -v -cover
+				$(GOTEST) ./... -v -cover -coverprofile=cover.out
 				$(GOTOOL) cover -func=cover.out
 cover-browser:
 				$(GOTEST) ./... -v -cover -coverprofile=cover.out
