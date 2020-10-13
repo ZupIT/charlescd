@@ -16,7 +16,6 @@
 
 package io.charlescd.circlematcher.domain.service
 
-
 import io.charlescd.circlematcher.api.request.IdentificationRequest
 import io.charlescd.circlematcher.domain.KeyMetadata
 import io.charlescd.circlematcher.domain.Segmentation
@@ -32,7 +31,6 @@ import spock.lang.Specification
 class IdentificationServiceImplTest extends Specification {
 
     private IdentificationService identificationService
-
     private ScriptManagerServiceImpl scriptManagerService = new ScriptManagerServiceImpl()
     private SegmentationRepository segmentationRepository = Mock(SegmentationRepository)
     private KeyMetadataRepository keyMetadataRepository = Mock(KeyMetadataRepository)

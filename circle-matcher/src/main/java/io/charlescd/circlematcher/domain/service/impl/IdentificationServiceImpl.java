@@ -69,7 +69,6 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private Optional<Segmentation> findSegmentation(KeyMetadata metadata, IdentificationRequest request) {
-
         if (SegmentationType.SIMPLE_KV.equals(metadata.getType())) {
             if (isMember(metadata, request)) {
                 return Optional.of(Segmentation.of(metadata));
@@ -141,7 +140,6 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .filter(item -> item.getPercentage() >= randomValue)
                 .findFirst();
     }
-
 
     private int sumValuesPercentage(KeyMetadata keyMetadata, KeyMetadata keyMetadata1) {
         return keyMetadata.sumPercentage(keyMetadata1.getPercentage());

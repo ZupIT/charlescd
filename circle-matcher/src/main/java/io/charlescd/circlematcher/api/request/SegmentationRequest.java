@@ -49,8 +49,6 @@ public abstract class SegmentationRequest {
     @Valid
     private Integer percentage;
 
-
-
     public String getName() {
         return name;
     }
@@ -120,6 +118,4 @@ public abstract class SegmentationRequest {
                 this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, percentage
         );
     }
-
-
 }

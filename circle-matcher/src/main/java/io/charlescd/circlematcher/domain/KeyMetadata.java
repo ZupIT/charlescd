@@ -16,8 +16,6 @@
 
 package io.charlescd.circlematcher.domain;
 
-import java.time.Period;
-
 public class KeyMetadata {
 
     private String reference;
