@@ -101,7 +101,7 @@ class VillagerClientServiceTest extends Specification {
         receivedId == villagerResponse.id
     }
 
-    def 'when creating GCP registry configuration, should do it successfully'() {
+    def 'when creating gcp registry configuration, should do it successfully'() {
         given:
         def villagerResponse = new CreateVillagerRegistryConfigurationResponse('w8098b2a-557b-45c5-91be-1e1db909mo5g')
         def author = getDummyUser()
@@ -129,6 +129,38 @@ class VillagerClientServiceTest extends Specification {
 
             villagerResponse
         }
+        receivedId == villagerResponse.id
+    }
+
+    def 'when creating docker hub registry configuration, should do it successfully'() {
+        given:
+        def villagerResponse = new CreateVillagerRegistryConfigurationResponse('w8098b2a-557b-45c5-91be-1e1db909mo5g')
+        def author = getDummyUser()
+        def workspace = getDummyWorkspace(author)
+        def registryConfiguration = new DockerHubRegistryConfiguration('Registry Name', 'Address', author, 'Hostname', workspace,
+                'Username', 'Password')
+
+        when:
+        def receivedId = villagerService.createRegistryConfiguration(registryConfiguration)
+
+        then:
+        1 * villagerClient.createRegistryConfiguration(_, workspace.id) >> { arguments ->
+            def villagerRequest = arguments[0]
+            assert villagerRequest instanceof CreateVillagerRegistryConfigurationRequest
+            villagerRequest.name == registryConfiguration.name
+            villagerRequest.address == registryConfiguration.address
+            villagerRequest.username == registryConfiguration.username
+            villagerRequest.password == registryConfiguration.password
+            villagerRequest.accessKey == null
+            villagerRequest.secretKey == null
+            villagerRequest.region == null
+            villagerRequest.authorId == registryConfiguration.author.id
+            villagerRequest.organization == null
+            villagerRequest.jsonKey == null
+
+            villagerResponse
+        }
+
         receivedId == villagerResponse.id
     }
 
