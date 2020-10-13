@@ -23,6 +23,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -41,60 +42,67 @@ func TestInitPlugins(t *testing.T) {
 	suite.Run(t, new(SuitePlugins))
 }
 
-// func (s *SuitePlugins) TestFindAll() {
-// 	gInput := []plugin.Input{
-// 		{
-// 			Name:     "viewId",
-// 			Label:    "View ID",
-// 			Type:     "text",
-// 			Required: true,
-// 		},
-// 		{
-// 			Name:     "serviceAccount",
-// 			Label:    "Service Account",
-// 			Type:     "textarea",
-// 			Required: true,
-// 		},
-// 	}
+func (s *SuitePlugins) TestFindAll() {
+	gInput := []interface{}{
+		map[string]interface{}{
+			"name":     "viewId",
+			"label":    "View ID",
+			"type":     "text",
+			"required": true,
+		},
+		map[string]interface{}{
+			"name":     "serviceAccount",
+			"label":    "Service Account",
+			"type":     "textarea",
+			"required": true,
+		},
+	}
 
-// 	pInput := []plugin.Input{
-// 		{
-// 			Name:     "url",
-// 			Label:    "Url",
-// 			Type:     "text",
-// 			Required: true,
-// 		},
-// 	}
+	pInput := []interface{}{
+		map[string]interface{}{
+			"name":     "url",
+			"label":    "Url",
+			"type":     "text",
+			"required": true,
+		},
+	}
 
-// 	expectedPlugins := []plugin.Plugin{
-// 		{
-// 			ID:          "google_analytics",
-// 			Category:    "datasource",
-// 			Name:        "Google Analytics",
-// 			Src:         "../../plugins/datasource/google_analytics/google_analytics",
-// 			Description: "My google analytics",
-// 		},
-// 		{
-// 			ID:          "prometheus",
-// 			Category:    "datasource",
-// 			Name:        "Prometheus",
-// 			Src:         "../../plugins/datasource/prometheus/prometheus",
-// 			Description: "My prometheus",
-// 		},
-// 	}
+	expectedPlugins := []plugin.Plugin{
+		{
+			ID:          "google_analytics",
+			Category:    "datasource",
+			Name:        "Google Analytics",
+			Src:         "datasource/google_analytics/google_analytics",
+			Description: "My google analytics",
+			InputParameters: map[string]interface{}{
+				"configurationInputs": gInput,
+			},
+		},
+		{
+			ID:          "prometheus",
+			Category:    "datasource",
+			Name:        "Prometheus",
+			Src:         "datasource/prometheus/prometheus",
+			Description: "My prometheus",
+			InputParameters: map[string]interface{}{
+				"health":              true,
+				"configurationInputs": pInput,
+			},
+		},
+	}
 
-// 	os.Setenv("PLUGINS_DIR", "../../plugins")
-// 	plugins, err := s.repository.FindAll("")
+	os.Setenv("PLUGINS_DIR", "../../dist")
+	plugins, err := s.repository.FindAll("datasource")
 
-// 	require.NoError(s.T(), err)
-// 	for i, p := range plugins {
-// 		require.Equal(s.T(), expectedPlugins[i], p)
-// 	}
-// }
+	require.NoError(s.T(), err)
+	for i, p := range plugins {
+		require.Equal(s.T(), expectedPlugins[i], p)
+	}
+}
 
-// func (s *SuitePlugins) TestFindAllNoSuchDirectory() {
-// 	os.Setenv("PLUGINS_DIR", "./plugin")
+func (s *SuitePlugins) TestFindAllNoSuchDirectory() {
+	os.Setenv("PLUGINS_DIR", "./dist")
 
-// 	_, err := s.repository.FindAll("")
-// 	require.Error(s.T(), err)
-// }
+	_, err := s.repository.FindAll("")
+	require.Error(s.T(), err)
+}
