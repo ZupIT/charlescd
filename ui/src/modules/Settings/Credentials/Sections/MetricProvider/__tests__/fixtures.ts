@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-export const MetricConfiguration = {
-  id: '1',
-  provider: 'PROMETHEUS'
-}
+import { Datasource } from "../interfaces"
+
+export const Datasources: Datasource[] = [
+  {
+    id: 'prometheus',
+    name: 'Prometheus',
+    pluginSrc: 'datasource/prometheus/prometheus',
+    healthy: true,
+    data: {},
+  }
+]

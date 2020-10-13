@@ -49,13 +49,17 @@ export interface Input {
   required: boolean;
 }
 
+export interface PluginDatasource {
+  configurationInputs: Input[];
+  health: boolean;
+}
+
 export interface Plugin {
   id: string;
   name: string;
   src: string;
   description: string;
-  inputs: Input[];
-  health: boolean;
+  inputParameters?: any;
 }
 
 export interface TestConnectionResponse {

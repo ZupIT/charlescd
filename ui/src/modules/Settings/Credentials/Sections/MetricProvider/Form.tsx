@@ -23,7 +23,7 @@ import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { Datasource, Plugin } from './interfaces';
+import { Datasource, Plugin, PluginDatasource } from './interfaces';
 import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
 import { useDatasource, usePlugins } from './hooks';
@@ -48,7 +48,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     save({
       ...datasource,
       pluginSrc: plugin.src,
-      healthy: plugin.health,
+      healthy: (plugin.inputParameters as PluginDatasource)['health'],
     });
   };
 
@@ -75,7 +75,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         name="name"
         label="Datasource name"
       />
-      {map(plugin.inputs, input => (
+      {map((plugin.inputParameters as PluginDatasource)['configurationInputs'], input => (
         <Styled.Input
           key={input.name}
           ref={register}
