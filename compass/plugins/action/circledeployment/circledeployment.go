@@ -89,42 +89,6 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 	return nil
 }
 
-func GetActionConfigTemplate() ([]byte, error) {
-	template, err := json.Marshal(`{
-    "fields": [
-        {
-            "name": "destinationCircleId",
-            "type": "string",
-            "label": "",
-            "tooltip": "If there is any release deployed at circle, it will be overwritten"
-        }
-    ]
-	}`)
-	if err != nil {
-		return nil, err
-	}
-
-	return template, nil
-}
-
-func GetExecutionConfigTemplate() ([]byte, error) {
-	template, err := json.Marshal(`"fields": [
-        {
-            "name": "mooveUrl",
-            "type": "string",
-            "label": "",
-            "tooltip": "Could be a service name, or a http url"
-        }
-    ]
-	}`)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return template, nil
-}
-
 func ValidateExecutionConfiguration(executionConfig []byte) []error {
 	errs := make([]error, 0)
 	var config executionConfiguration
