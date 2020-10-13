@@ -20,8 +20,6 @@ package action
 
 type UseCases interface {
 	Do(actionConfig []byte, executionConfig []byte) error
-	GetExecutionConfigTemplate() ([]byte, error)
-	GetActionConfigTemplate() ([]byte, error)
 	ValidateExecutionConfiguration(executionConfig []byte) []error
 	ValidateActionConfiguration(actionConfig []byte) []error
 }
