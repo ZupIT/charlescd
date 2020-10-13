@@ -26,7 +26,7 @@ interface Props {
   metricGroup?: MetricsGroup;
 }
 
-const MetricCard = ({ action, metricGroup }: Props) => {
+const ActionCard = ({ action, metricGroup }: Props) => {
   return (
     <Styled.ActionCardBody
       key={action.id}
@@ -75,4 +75,4 @@ const MetricCard = ({ action, metricGroup }: Props) => {
   );
 };
 
-export default MetricCard;
+export default ActionCard;

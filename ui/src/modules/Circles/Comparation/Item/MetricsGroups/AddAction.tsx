@@ -62,7 +62,6 @@ const AddAction = ({ onGoBack, metricsGroup }: Props) => {
       data,
       metricsGroup
     );
-    console.log(metricsGroup);
     saveAction(newPayload);
   };
 
