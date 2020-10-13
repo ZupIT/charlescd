@@ -23,14 +23,15 @@ import (
 	datasource2 "compass/internal/datasource"
 	"compass/internal/plugin"
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 type Suite struct {

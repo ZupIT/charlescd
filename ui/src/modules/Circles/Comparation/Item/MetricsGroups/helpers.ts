@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
+import { OptionTypeBase } from 'react-select';
 import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
 import find from 'lodash/find';
-import { MetricFilter, Metric, ChartDataByQuery, ChartData } from './types';
+import isUndefined from 'lodash/isUndefined';
+import filter from 'lodash/filter';
+import {
+  MetricFilter,
+  Metric,
+  ChartDataByQuery,
+  Data,
+  ChartData
+} from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
   map(metrics, item => ({
@@ -88,14 +97,32 @@ export const getThresholdStatus = (status: string) => {
   }
 };
 
-const buildSeriesData = (data: ChartData[]) =>
+const buildSeriesData = (data: Data[]) =>
   map(data, item => ({
     x: item.period * 1000,
     y: item.total
   }));
 
-export const getDeploySeries = (data: ChartDataByQuery) =>
+export const getMetricSeries = (data: ChartDataByQuery) =>
   map(data, item => ({
     name: item.metric,
     data: buildSeriesData(item.result)
   }));
+
+export const filterMetricsSeries = (
+  data: ChartData[],
+  selectFilters: OptionTypeBase[]
+) => {
+  if (isUndefined(selectFilters) || selectFilters[0]?.value === '*') {
+    return data;
+  }
+
+  const filteredData = filter(data, item => {
+    return find(
+      selectFilters,
+      (filterItem: OptionTypeBase) => filterItem.label === item.name
+    );
+  });
+
+  return filteredData as ChartData[];
+};
