@@ -22,13 +22,12 @@ import (
 	"compass/internal/configuration"
 	"compass/internal/util"
 	"compass/pkg/logger"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"plugin"
-
-	"gopkg.in/yaml.v2"
 )
 
 type Input struct {
@@ -38,13 +37,15 @@ type Input struct {
 	Required bool   `json:"required"`
 }
 
+type InputParameters map[string]interface{}
+
 type Plugin struct {
-	ID          string                 `json:"id"`
-	Category    string                 `json:"category"`
-	Name        string                 `json:"name"`
-	Src         string                 `json:"src"`
-	Description string                 `json:"description"`
-	Params      map[string]interface{} `json:"params"`
+	ID              string          `json:"id"`
+	Category        string          `json:"category"`
+	Name            string          `json:"name"`
+	Src             string          `json:"src"`
+	Description     string          `json:"description"`
+	InputParameters InputParameters `json:"inputParameters"`
 }
 
 func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, error) {
@@ -57,14 +58,14 @@ func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, error) {
 	}
 
 	for _, p := range ps {
-		readme, err := ioutil.ReadFile(fmt.Sprintf("%s/%s/%s/readme.yaml", pluginsDir, categoryName, p.Name()))
+		readme, err := ioutil.ReadFile(fmt.Sprintf("%s/%s/%s/readme.json", pluginsDir, categoryName, p.Name()))
 		if err != nil {
 			logger.Error(util.FindPluginError, "FindAll", errors.New("Invalid plugin"), plugins)
 			return []Plugin{}, err
 		}
 
 		newPlugin := Plugin{}
-		err = yaml.Unmarshal(readme, &newPlugin)
+		err = json.Unmarshal(readme, &newPlugin)
 		if err != nil {
 			logger.Error(util.FindPluginError, "FindAll", err, plugins)
 			return []Plugin{}, err
