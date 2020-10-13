@@ -108,5 +108,6 @@ func (main Main) FindAll(category string) ([]Plugin, error) {
 }
 
 func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, error) {
-	return plugin.Open(filepath.Join(fmt.Sprintf("%s.so", src)))
+	pluginsDir := configuration.GetConfiguration("PLUGINS_DIR")
+	return plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
 }
