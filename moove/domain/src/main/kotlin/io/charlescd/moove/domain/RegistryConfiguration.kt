@@ -56,6 +56,16 @@ data class GCPRegistryConfiguration(
     val jsonKey: String
 ) : RegistryConfiguration(name, address, RegistryConfigurationProviderEnum.GCP, hostname, author, workspace)
 
+data class DockerHubRegistryConfiguration(
+    override val name: String,
+    override val address: String,
+    override val author: User,
+    override val hostname: String,
+    override val workspace: Workspace,
+    val username: String,
+    val password: String
+) : RegistryConfiguration(name, address, RegistryConfigurationProviderEnum.DOCKER_HUB, hostname, author, workspace)
+
 enum class RegistryConfigurationProviderEnum {
-    AWS, Azure, GCP
+    AWS, Azure, GCP, DOCKER_HUB
 }
