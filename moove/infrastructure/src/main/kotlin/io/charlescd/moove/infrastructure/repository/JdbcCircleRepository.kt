@@ -147,8 +147,9 @@ class JdbcCircleRepository(
                         imported_kv_records,
                         user_id,
                         default_circle,
-                        workspace_id)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        workspace_id,
+                        percentage)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
         )
 
@@ -164,6 +165,7 @@ class JdbcCircleRepository(
             ps.setString(9, circle.author?.id)
             ps.setBoolean(10, circle.defaultCircle)
             ps.setString(11, circle.workspaceId)
+            ps.setObject(12, circle.percentage)
         }
     }
 
@@ -475,6 +477,23 @@ class JdbcCircleRepository(
             parameters.add("%$name%")
         }
 
+        return this.jdbcTemplate.queryForObject(
+            query.toString(),
+            parameters.toTypedArray()
+        ) { rs, _ ->
+            rs.getInt(1)
+        } ?: 0
+    }
+
+    override fun countPercentageByWorkspaceId(workspaceId: String): Int {
+        val parameters = mutableListOf(workspaceId)
+        val query = StringBuilder(
+            """
+                    SELECT  SUM(circles.percentage)   AS total
+                    FROM circles circles
+                    WHERE circles.workspace_id = ?
+            """
+        )
         return this.jdbcTemplate.queryForObject(
             query.toString(),
             parameters.toTypedArray()

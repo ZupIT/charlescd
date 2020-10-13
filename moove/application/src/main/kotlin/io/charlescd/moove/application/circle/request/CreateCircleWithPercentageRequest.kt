@@ -7,7 +7,7 @@ import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
-import javax.validation.constraints.NotBlank
+import javax.validation.constraints.*
 
 class CreateCircleWithPercentageRequest(
     @field:NotBlank
@@ -15,7 +15,10 @@ class CreateCircleWithPercentageRequest(
 
     @field:NotBlank
     val authorId: String,
-    @field:Valid
+
+    @field:Min(1)
+    @field:Max(100)
+    @field:NotNull
     val percentage: Int
 )
 {

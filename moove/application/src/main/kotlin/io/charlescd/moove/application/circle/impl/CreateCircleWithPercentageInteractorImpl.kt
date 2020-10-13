@@ -27,7 +27,10 @@ import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.CircleMatcherService
+import org.springframework.web.client.HttpClientErrorException
 import javax.inject.Named
 import javax.transaction.Transactional
 
@@ -41,9 +44,8 @@ open class CreateCircleWithPercentageInteractorImpl(
 
     @Transactional
     override fun execute(request: CreateCircleWithPercentageRequest, workspaceId: String): CircleResponse {
-//        this.checkIfLimitOfPercentageReached()
+        checkIfLimitOfPercentageReached(request.percentage, workspaceId)
         val circle = circleService.save(createCircle(request, workspaceId))
-
         createCircleOnCircleMatcher(workspaceId, circle)
         return CircleResponse.from(circle)
     }
@@ -60,7 +62,18 @@ open class CreateCircleWithPercentageInteractorImpl(
         val author = userService.find(request.authorId)
         return request.toDomain(author, workspaceId)
     }
-    private fun checkIfLimitOfPercentageReached() {
-        TODO("Not yet implemented")
+    private fun checkIfLimitOfPercentageReached(percentageRequest: Int, workspaceId: String) {
+        this.circleService.findSumPercentageCirclesValuesInWorkspace(workspaceId)
+            .let{
+                actualPercentage -> verifyLimitReached(actualPercentage, percentageRequest)
+            }
+    }
+
+    private fun verifyLimitReached(actualPercentage: Int, percentageRequest: Int) {
+      if (actualPercentage + percentageRequest > 100){
+          val percentageRemaining = 100  - actualPercentage
+          throw BusinessException.of(MooveErrorCode.LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED)
+              .withParameters("Percentage remaining: $percentageRemaining")
+      }
     }
 }

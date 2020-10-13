@@ -49,4 +49,6 @@ interface CircleRepository {
     fun count(workspaceId: String): Int
 
     fun count(workspaceId: String, name: String?): Int
+
+    fun countPercentageByWorkspaceId(workspaceId: String): Int
 }

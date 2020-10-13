@@ -70,4 +70,8 @@ class CircleService(private val circleRepository: CircleRepository) {
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle> {
         return this.circleRepository.findDefaultByWorkspaceId(workspaceId)
     }
+
+    fun findSumPercentageCirclesValuesInWorkspace(workspaceId: String): Int {
+        return this.circleRepository.countPercentageByWorkspaceId(workspaceId)
+    }
 }
