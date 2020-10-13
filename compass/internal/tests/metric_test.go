@@ -378,7 +378,7 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 		CircleID:       circleId,
 	}
 
-	_, err := s.repository.Query(metricStruct, datasource2.Period{Value: 13, Unit: "h"}, datasource2.Period{Value: 1, Unit: "h"})
+	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 1, Unit: "h"})
 
 	require.Error(s.T(), err)
 }
@@ -395,7 +395,7 @@ func (s *SuiteMetric) TestQueryDatasourceError() {
 		CircleID:       uuid.New(),
 	}
 
-	_, err := s.repository.Query(metricStruct, datasource2.Period{Value: 13, Unit: "h"}, datasource2.Period{Value: 13, Unit: "h"})
+	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 13, Unit: "h"})
 	require.Error(s.T(), err)
 }
 
