@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, error) {
@@ -18,7 +19,9 @@ func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
+
 	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := api.httpClient.Do(request)
 	if err != nil {
