@@ -26,6 +26,7 @@ import (
 	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"compass/pkg/logger"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -88,7 +89,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 	}
 
 	act, _ := dispatcher.actionRepo.FindActionById(groupAction.ActionID.String())
-	actionPlugin, err := dispatcher.pluginRepo.GetPluginBySrc(act.Type)
+	actionPlugin, err := dispatcher.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", act.Type, act.Type))
 	if err != nil {
 		logger.Error("error finding actionPlugin", "doAction", err, act)
 		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())

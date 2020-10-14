@@ -137,7 +137,7 @@ func (main Main) validateJobConfiguration(configuration ActionsConfigurations) [
 func (main Main) validateExecutionConfig(actionType string, executionConfiguration json.RawMessage) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
-	plugin, err := main.pluginRepo.GetPluginBySrc(actionType)
+	plugin, err := main.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", actionType, actionType))
 	if err != nil {
 		logger.Error("error finding plugin", "ValidateExecutionConfig", err, actionType)
 		return []util.ErrorUtil{{Field: "actionId", Error: errors.New("action is invalid").Error()}}
