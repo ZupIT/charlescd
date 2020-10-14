@@ -23,6 +23,7 @@ import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } fr
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
+import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -46,6 +47,7 @@ export class DeploymentsController {
   }
 
   @Post('/:id/undeploy')
+  @UsePipes(UndeploymentValidation)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createUndeployment(
     @Param('id') deploymentId: string,
