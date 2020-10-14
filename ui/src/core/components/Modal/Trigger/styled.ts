@@ -64,7 +64,6 @@ const Title = styled(Text.h2)`
 `;
 
 const ContinueButton = styled(DefaultButton)`
-  cursor: pointer;
   padding: 5px;
   margin-top: 15px;
   margin-left: 15px;

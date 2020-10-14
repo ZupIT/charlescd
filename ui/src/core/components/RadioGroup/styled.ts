@@ -60,7 +60,7 @@ const Input = styled.input`
   pointer-events: none;
 
   :checked + ${Label} {
-    background-color: ${({ theme }) => theme.radio.checked.background};
+    background-color: ${({ theme }) => theme.radio.button.checked.background};
     transition: 0.2s;
 
     :hover {
@@ -68,12 +68,12 @@ const Input = styled.input`
     }
 
     ${Icon}, ${Text} {
-      color: ${({ theme }) => theme.radio.checked.color};
+      color: ${({ theme }) => theme.radio.button.checked.color};
     }
   }
 
   :not(:checked) + ${Label} {
-    background-color: ${({ theme }) => theme.radio.unchecked.background};
+    background-color: ${({ theme }) => theme.radio.button.unchecked.background};
     transition: 0.2s;
 
     :hover {
@@ -81,7 +81,7 @@ const Input = styled.input`
     }
 
     ${Icon}, ${Text} {
-      color: ${({ theme }) => theme.radio.unchecked.color};
+      color: ${({ theme }) => theme.radio.button.unchecked.color};
     }
   }
 `;
