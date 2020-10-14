@@ -24,6 +24,8 @@ import { MooveService } from '../../../../v1/core/integrations/moove'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { DateUtils } from '../../../core/utils/date.utils'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
+import { ComponentEntityV2 } from '../entity/component.entity'
+import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { ComponentsRepositoryV2 } from '../repository'
@@ -83,18 +85,23 @@ export class ReceiveNotificationUseCase {
     const savedExecution = await getConnection().transaction(async transactionManager => {
       try {
         if (currentActiveDeployment) {
-          await transactionManager.save(currentActiveDeployment)
+          await transactionManager.update(DeploymentEntityV2, { id: currentActiveDeployment.id }, { active: currentActiveDeployment.active })
         }
-        await transactionManager.save(execution.deployment.components)
-        await transactionManager.save(execution.deployment)
-        return await transactionManager.save(execution)
+        for await (const c of execution.deployment.components) {
+          transactionManager.update(ComponentEntityV2, { id: c.id }, { running: c.running })
+        }
+        await transactionManager.update(DeploymentEntityV2, { id: execution.deployment.id }, { active: execution.deployment.active })
+        await transactionManager.update(Execution, { id: execution.id }, { status: execution.status, finishedAt: DateUtils.now() })
+        return execution
       }
       catch (error) {
         if (error.constraint === QueuedDeploymentsConstraints.ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG) {
           this.consoleLoggerService.log('ERROR:Can only have one deployment active per circle')
           throw new InternalServerErrorException('Can only have one deployment active per circle')
         } else {
-          this.consoleLoggerService.log('ERROR:Failed to save deployment ')
+          this.consoleLoggerService.log('ERROR:Failed to save deployment')
+          console.log({ aaaaaaaaaaaaaaaaaaaaaaaA: error })
+          this.consoleLoggerService.log(error)
           throw new InternalServerErrorException
         }
       }
