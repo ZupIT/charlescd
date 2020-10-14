@@ -69,10 +69,10 @@ func (s *SuitePlugins) TestFindAll() {
 
 	expectedPlugins := []plugin.Plugin{
 		{
-			ID:          "google_analytics",
+			ID:          "googleanalytics",
 			Category:    "datasource",
 			Name:        "Google Analytics",
-			Src:         "datasource/google_analytics/google_analytics",
+			Src:         "datasource/googleanalytics/googleanalytics",
 			Description: "My google analytics",
 			InputParameters: map[string]interface{}{
 				"configurationInputs": gInput,

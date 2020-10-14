@@ -1,10 +1,13 @@
 package moove
 
 import (
+	"compass/internal/util"
+	"compass/pkg/logger"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, error) {
@@ -16,7 +19,9 @@ func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
+
 	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := api.httpClient.Do(request)
 	if err != nil {
@@ -25,6 +30,7 @@ func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, e
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
+		logger.Error(util.QueryGetPluginError, "GetMooveComponents", errors.New("Internal server error"), response)
 		return nil, errors.New("Internal server error")
 	}
 
