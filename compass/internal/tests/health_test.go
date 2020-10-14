@@ -123,3 +123,35 @@ func (s SuiteHealth) TestComponentsError() {
 
 	s.Require().Error(err)
 }
+
+func (s SuiteHealth) TestComponentsMetricTypeErrorByCircle() {
+	workspaceId := uuid.New().String()
+	circleId := uuid.New().String()
+	projectionType := "FIVE_MINUTES"
+	metricType := "REQUESTS_ERRORS_BY_CIRCLE"
+
+	_, err := s.repository.Components("", workspaceId, circleId, projectionType, metricType)
+
+	s.Require().Error(err)
+}
+
+func (s SuiteHealth) TestComponentsMetricTypeLatencyByCircleError() {
+	workspaceId := uuid.New().String()
+	circleId := uuid.New().String()
+	projectionType := "FIVE_MINUTES"
+	metricType := "REQUESTS_LATENCY_BY_CIRCLE"
+
+	_, err := s.repository.Components("", workspaceId, circleId, projectionType, metricType)
+
+	s.Require().Error(err)
+}
+
+func (s SuiteHealth) TestComponentsMetricTypeDefaultError() {
+	workspaceId := uuid.New().String()
+	circleId := uuid.New().String()
+	projectionType := "FIVE_MINUTES"
+
+	_, err := s.repository.Components("", workspaceId, circleId, projectionType, "")
+
+	s.Require().Error(err)
+}
