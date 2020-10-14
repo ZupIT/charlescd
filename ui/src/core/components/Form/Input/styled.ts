@@ -76,6 +76,12 @@ const Input = styled.input<InputProps>`
     border-bottom-color: ${({ theme }) => theme.input.disabled.borderColor};
   }
 
+  :-webkit-autofill {
+    + ${Label} {
+      top: 0px;
+    }
+  }
+
   ${({ resume }) =>
     resume &&
     css`
