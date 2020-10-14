@@ -1,6 +1,6 @@
 {
   "name": "Circle deployment",
-  "id": "circle_deployment",
+  "id": "circledeployment",
   "description": "Circle deployment",
   "inputParameters": {
     "configurationInputs": [

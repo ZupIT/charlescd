@@ -78,7 +78,7 @@ func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 func (main Main) validateActionConfig(actionType string, actionConfiguration json.RawMessage) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
-	plugin, err := main.pluginRepo.GetPluginBySrc(actionType)
+	plugin, err := main.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", actionType, actionType))
 	if err != nil {
 		logger.Error("error finding plugin", "ValidateActionConfig", err, actionType)
 		return []util.ErrorUtil{{Field: "type", Error: errors.New("action type is invalid").Error()}}

@@ -31,7 +31,7 @@ import Styled from './styled';
 import { find, map } from 'lodash';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
-  const { responseAdd, save, loadingSave, loadingAdd } = useDatasource();
+  const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
   const [isDisabled, setIsDisabled] = useState(true);
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins()
@@ -41,8 +41,8 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   useEffect(() => {
     getAll()
-    if (responseAdd) onFinish();
-  }, [onFinish, responseAdd, getAll]);
+    if (responseSave) onFinish();
+  }, [onFinish, responseSave, getAll]);
 
   const onSubmit = (datasource: Datasource) => {
     save({
