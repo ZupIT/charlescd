@@ -71,7 +71,7 @@ func (s SuiteHealth) TestComponentsHealthDataSourceError() {
 	workspaceId := uuid.New().String()
 	circleId := uuid.New().String()
 
-	_, err := s.repository.ComponentsHealth(workspaceId, circleId)
+	_, err := s.repository.ComponentsHealth("", workspaceId, circleId)
 
 	s.Require().Error(err)
 }
@@ -90,7 +90,7 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
 	}
 	s.DB.Create(&datasourceStruct)
 
-	_, err := s.repository.ComponentsHealth(workspaceId.String(), circleId)
+	_, err := s.repository.ComponentsHealth("", workspaceId.String(), circleId)
 
 	s.Require().Error(err)
 }
@@ -109,7 +109,7 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
 	}
 	s.DB.Create(&datasourceStruct)
 
-	_, err := s.repository.ComponentsHealth(workspaceId.String(), circleId)
+	_, err := s.repository.ComponentsHealth("", workspaceId.String(), circleId)
 	s.NoError(err)
 }
 
@@ -119,7 +119,7 @@ func (s SuiteHealth) TestComponentsError() {
 	projectionType := "FIVE_MINUTES"
 	metricType := "REQUESTS_BY_CIRCLE"
 
-	_, err := s.repository.Components(workspaceId, circleId, projectionType, metricType)
+	_, err := s.repository.Components("", workspaceId, circleId, projectionType, metricType)
 
 	s.Require().Error(err)
 }
