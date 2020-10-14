@@ -56,7 +56,7 @@ test('render Credentials items', async () => {
   expect(screen.queryByTestId('contentIcon-metrics'));
 });
 
-test.only('render User Group credentials', async () => {
+test('render User Group credentials', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123',
@@ -66,7 +66,7 @@ test.only('render User Group credentials', async () => {
   }));
   jest.spyOn(MetricProviderHooks, 'useDatasource').mockImplementation(() => ({
     responseAll: [...Datasources],
-    getAll: jest.fn()
+    getAll: jest.fn
   }));
   render(<Credentials />);
   const content = screen.queryByTestId('contentIcon-users');
