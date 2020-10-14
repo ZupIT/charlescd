@@ -15,10 +15,10 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { create, detach, findAll } from 'core/providers/userGroup';
+import { create, detach, findByName, findAll } from 'core/providers/userGroup';
 import { findAll as findAllRoles } from 'core/providers/roles';
 import { addConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useFetch, FetchProps, useFetchData } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
 import { UserGroup, GroupRoles, Role } from './interfaces';
@@ -26,6 +26,9 @@ import { UserGroup, GroupRoles, Role } from './interfaces';
 export const useUserGroup = (): FetchProps => {
   const dispatch = useDispatch();
   const [createData, createUserGroup] = useFetch<GroupRoles>(create);
+  const findUserGroupByName = useFetchData<{ content: UserGroup[] }>(
+    findByName
+  );
   const [userGroupsData, getUserGroups] = useFetch<{ content: UserGroup[] }>(
     findAll
   );
@@ -97,6 +100,7 @@ export const useUserGroup = (): FetchProps => {
 
   return {
     getAll,
+    findUserGroupByName,
     save,
     remove,
     responseAdd,
