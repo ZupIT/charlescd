@@ -83,13 +83,13 @@ func (main Main) getDatasourceValuesByMetricType(workspaceId, circleId, projecti
 	}
 }
 
-func (main Main) Components(workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error) {
+func (main Main) Components(circleIDHeader, workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error) {
 	metricComponents := ComponentMetricRepresentation{
 		Period: projectionType,
 		Type:   metricType,
 	}
 
-	body, err := main.mooveMain.GetMooveComponents(circleId, workspaceId)
+	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceId)
 	if err != nil {
 		return ComponentMetricRepresentation{}, err
 	}

@@ -71,8 +71,8 @@ func (main Main) getComponentStatus(thresholdValue, metricValue float64) string 
 	return "STABLE"
 }
 
-func (main Main) getComponentsErrorPercentage(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
-	body, err := main.mooveMain.GetMooveComponents(circleId, workspaceId)
+func (main Main) getComponentsErrorPercentage(circleIDHeader, workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
+	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceId)
 	if err != nil {
 		logger.Error(util.QueryGetPluginError, "getComponentsErrorPercentage", err, nil)
 		return nil, err
@@ -104,8 +104,8 @@ func (main Main) getComponentsErrorPercentage(workspaceId, circleId string) ([]C
 	return circleComponents, nil
 }
 
-func (main Main) getComponentsLatency(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
-	body, err := main.mooveMain.GetMooveComponents(circleId, workspaceId)
+func (main Main) getComponentsLatency(circleIDHeader, workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
+	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceId)
 	if err != nil {
 		logger.Error(util.QueryGetPluginError, "getComponentsLatency", err, nil)
 		return nil, err
@@ -137,19 +137,19 @@ func (main Main) getComponentsLatency(workspaceId, circleId string) ([]CircleCom
 	return circleComponents, nil
 }
 
-func (main Main) ComponentsHealth(workspaceId, circleId string) (CircleHealthRepresentation, error) {
+func (main Main) ComponentsHealth(circleIDHeader, workspaceId, circleId string) (CircleHealthRepresentation, error) {
 	requestTotalQueryString := main.getTotalRequestStringQuery(workspaceId, circleId, true)
 	requestsTotal, err := main.getResultQuery(workspaceId, requestTotalQueryString)
 	if err != nil {
 		return CircleHealthRepresentation{}, err
 	}
 
-	componentsErrorPercentage, err := main.getComponentsErrorPercentage(workspaceId, circleId)
+	componentsErrorPercentage, err := main.getComponentsErrorPercentage(circleIDHeader, workspaceId, circleId)
 	if err != nil {
 		return CircleHealthRepresentation{}, err
 	}
 
-	componentsErrorLatency, err := main.getComponentsLatency(workspaceId, circleId)
+	componentsErrorLatency, err := main.getComponentsLatency(circleIDHeader, workspaceId, circleId)
 	if err != nil {
 		return CircleHealthRepresentation{}, err
 	}
