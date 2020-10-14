@@ -1,6 +1,6 @@
 {
   "name": "Google Analytics",
-  "id": "google_analytics",
+  "id": "googleanalytics",
   "description": "My google analytics",
   "inputParameters": {
     "configurationInputs": [
