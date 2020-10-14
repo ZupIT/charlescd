@@ -40,12 +40,14 @@ export const dark = {
     checked: {
       background: COLOR_JAGUAR,
       border: COLOR_CHETWODE_BLUE,
-      color: COLOR_WHITE
+      color: COLOR_WHITE,
+      checkmark: COLOR_CHETWODE_BLUE
     },
     unchecked: {
       background: COLOR_BASTILLE,
       border: COLOR_BASTILLE,
-      color: COLOR_SANTAS_GREY
+      color: COLOR_SANTAS_GREY,
+      checkmark: COLOR_SANTAS_GREY
     }
   }
 };

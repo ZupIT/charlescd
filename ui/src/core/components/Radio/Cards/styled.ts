@@ -29,6 +29,11 @@ const RadioCards = styled.div`
 `;
 
 const Radio = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: relative;
+
   :not(:first-child) {
     margin-top: 8px;
   }
@@ -39,8 +44,7 @@ const Title = styled(ComponentText.h4)``;
 const Description = styled(ComponentText.h5)``;
 
 const Label = styled.label<LabelProps>`
-  padding: ${({ icon }) =>
-    icon ? '12px 30px 12px 30px' : '15px 33px 15px 33px'};
+  padding: 15px 13px 15px 53px;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -56,26 +60,63 @@ const Label = styled.label<LabelProps>`
   }
 `;
 
+const Checkmark = styled.span`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  left: 10px;
+  height: 25px;
+  width: 25px;
+  border: 1px ${({ theme }) => theme.radio.card.unchecked.checkmark} solid;
+  border-radius: 50%;
+
+  :after {
+    content: '';
+    position: absolute;
+    display: none;
+    top: 6px;
+    left: 6px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: white;
+  }
+`;
+
 const Input = styled.input`
   opacity: 0;
   width: 0;
   height: 0;
   position: absolute;
   pointer-events: none;
+  margin: auto;
 
-  :checked + ${Label} {
-    background-color: ${({ theme }) => theme.radio.card.checked.background};
-    border: 1px ${({ theme }) => theme.radio.card.checked.border} solid;
-    transition: box-shadow 0.2s linear;
+  :checked {
+    & + ${Label} {
+      background-color: ${({ theme }) => theme.radio.card.checked.background};
+      border: 1px ${({ theme }) => theme.radio.card.checked.border} solid;
+      transition: box-shadow 0.2s linear;
 
-    :hover {
-      box-shadow: 0px 0px 0px 2px
-        ${({ theme }) => theme.radio.card.checked.border};
-      /* transform: scale(1.1); */
+      :hover {
+        box-shadow: 0px 0px 0px 2px
+          ${({ theme }) => theme.radio.card.checked.border};
+        /* transform: scale(1.1); */
+      }
+
+      ${Title}, ${Description} {
+        color: ${({ theme }) => theme.radio.card.checked.color};
+      }
     }
 
-    ${Title}, ${Description} {
-      color: ${({ theme }) => theme.radio.card.checked.color};
+    ~ ${Checkmark} {
+      border: 2px ${({ theme }) => theme.radio.card.checked.checkmark} solid;
+      background-color: transparent;
+
+      :after {
+        background-color: ${({ theme }) => theme.radio.card.checked.checkmark};
+        display: block;
+      }
     }
   }
 
@@ -93,6 +134,11 @@ const Input = styled.input`
       color: ${({ theme }) => theme.radio.card.unchecked.color};
     }
   }
+
+  ~ ${Checkmark} {
+    background-color: transparent;
+    border: 2px ${({ theme }) => theme.radio.card.unchecked.checkmark} solid;
+  }
 `;
 
 export default {
@@ -101,5 +147,6 @@ export default {
   Title,
   Description,
   Radio,
+  Checkmark,
   RadioCards
 };

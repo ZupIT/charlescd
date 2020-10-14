@@ -23,6 +23,7 @@ export interface RadioCard {
   title: string;
   description: string;
   value: string;
+  checked?: boolean;
 }
 
 export interface Props {
@@ -51,6 +52,7 @@ const RadioCards = ({ name, items, onChange }: Props) => (
             <Styled.Title color="dark">{title}</Styled.Title>
             <Styled.Description color="dark">{description}</Styled.Description>
           </Styled.Label>
+          <Styled.Checkmark />
         </Styled.Radio>
       );
     })}

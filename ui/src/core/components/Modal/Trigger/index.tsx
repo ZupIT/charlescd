@@ -27,6 +27,8 @@ export interface Props {
   continueLabel?: string;
   onContinue?: Function;
   onDismiss: Function;
+  isDisabled?: boolean;
+  isLoading?: boolean;
   children: ReactNode;
 }
 
@@ -37,6 +39,8 @@ const Trigger = ({
   continueLabel,
   dismissLabel,
   title,
+  isDisabled = false,
+  isLoading = false,
   children
 }: Props) => {
   const [toggle, switchToggle] = useState(true);
@@ -74,12 +78,14 @@ const Trigger = ({
           </Styled.Title>
           {children}
           <Styled.Buttons>
-            <Styled.Button.Dismiss id="dismiss" onClick={() => onDismiss()}>
+            <Styled.Button.Dismiss id="dismiss" onClick={() => handleDismiss()}>
               <Text.h5 color="light">{dismissLabel}</Text.h5>
             </Styled.Button.Dismiss>
             {onContinue && (
               <Styled.Button.Continue
                 id="continue"
+                isLoading={isLoading}
+                isDisabled={isDisabled}
                 onClick={() => onContinue()}
               >
                 <Text.h5 color="light">{continueLabel}</Text.h5>

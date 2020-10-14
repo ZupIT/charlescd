@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
-import Layer from 'core/components/Layer';
+import React, { useEffect, useState } from 'react';
 import Radio from 'core/components/Radio';
+import { ChangeInputEvent } from 'core/interfaces/InputEvents';
 import { useCard } from '../../hooks';
 import { radios } from './constants';
 import Styled from './styled';
@@ -28,8 +28,9 @@ interface Props {
 }
 
 const CardRemove = ({ id, onClose }: Props) => {
-  console.log('id', id);
-  const { removeById, responseRemove } = useCard();
+  const [isReady, setIsReady] = useState(false);
+  const [isDeleteBranch, setIsDeleteBranch] = useState(false);
+  const { removeById, responseRemove, loadingRemove } = useCard();
 
   useEffect(() => {
     if (responseRemove) {
@@ -37,27 +38,34 @@ const CardRemove = ({ id, onClose }: Props) => {
     }
   }, [onClose, responseRemove]);
 
-  // const onRemove = () => {
-  //   removeById(id);
-  // };
+  const onChange = (value: string) => {
+    setIsReady(true);
+    setIsDeleteBranch(value === 'card-branch');
+  };
 
-  const renderLoader = () => <Layer>Loading..</Layer>;
-
-  // const renderContent = () => <Layer>Loading..</Layer>;
+  const onRemove = () => {
+    removeById(id, isDeleteBranch);
+  };
 
   return (
     <Styled.Modal
       title="Choose what you want to delete"
       dismissLabel="Cancel"
       continueLabel="Delete"
-      onContinue={() => console.log('Continue')}
-      onDismiss={() => console.log('Dismiss')}
+      onContinue={onRemove}
+      onDismiss={onClose}
+      isDisabled={!isReady}
+      isLoading={loadingRemove}
     >
-      <Radio.Cards name={`radio-cards-remove-${id}`} items={radios} />
+      <Radio.Cards
+        name={`radio-cards-remove-${id}`}
+        items={radios}
+        onChange={(event: ChangeInputEvent) =>
+          onChange(event.currentTarget.value)
+        }
+      />
     </Styled.Modal>
   );
-
-  // return <Styled.Modal onClose={onClose}>{renderLoader()}</Styled.Modal>;
 };
 
 export default CardRemove;

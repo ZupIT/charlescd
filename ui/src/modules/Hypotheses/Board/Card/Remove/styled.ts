@@ -22,6 +22,7 @@ const Modal = styled(ModalTrigger)`
   .modal-content {
     padding: 10px 48px;
     width: 408px;
+    height: 330px;
     background-color: ${COLOR_BLACK_RUSSIAN};
     top: 50px;
   }
