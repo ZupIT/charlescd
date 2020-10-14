@@ -44,10 +44,14 @@ func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 
 	if strings.TrimSpace(action.Nickname) == "" {
 		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("action nickname is required").Error()})
+	} else if len(action.Nickname) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("action nickname is limited to 100 characters maximum").Error()})
 	}
 
 	if strings.TrimSpace(action.Description) == "" {
 		ers = append(ers, util.ErrorUtil{Field: "description", Error: errors.New("description is required").Error()})
+	} else if len(action.Description) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("description is limited to 100 characters maximum").Error()})
 	}
 
 	if action.Configuration == nil || len(action.Configuration) == 0 {
