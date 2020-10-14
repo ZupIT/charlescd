@@ -111,7 +111,7 @@ const CirclesList = () => {
 
   return (
     <Styled.Wrapper data-testid="metrics-list">
-      {!some((responseAll as Datasource[])) && !loading
+      {!some((responseAll as Datasource[]), { healthy: true }) && !loading
         ? renderNoMetrics()
         : renderMetrics()}
     </Styled.Wrapper>

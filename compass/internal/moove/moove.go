@@ -1,6 +1,8 @@
 package moove
 
 import (
+	"compass/internal/util"
+	"compass/pkg/logger"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -25,6 +27,7 @@ func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, e
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
+		logger.Error(util.QueryGetPluginError, "GetMooveComponents", errors.New("Internal server error"), response)
 		return nil, errors.New("Internal server error")
 	}
 
