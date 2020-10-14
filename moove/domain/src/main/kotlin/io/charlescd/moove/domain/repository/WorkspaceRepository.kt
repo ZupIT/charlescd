@@ -36,6 +36,4 @@ interface WorkspaceRepository {
     fun associateUserGroupAndPermissions(workspaceId: String, userGroupId: String, permissions: List<Permission>)
 
     fun disassociateUserGroupAndPermissions(workspaceId: String, userGroupId: String)
-
-    fun findPermissions(workspaceId: String, user: User): Map<String, List<Permission>>
 }
