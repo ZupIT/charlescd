@@ -23,7 +23,7 @@ import { useDatasource } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
 import { Datasource } from './interfaces';
 import FormMetricProvider from './Form';
-import { map } from 'lodash';
+import { filter, map } from 'lodash';
 
 interface Props {
   form: string;
@@ -32,8 +32,13 @@ interface Props {
 }
 
 const MetricProvider = ({ form, setForm, data }: Props) => {
-  const [datasources] = useState(data);
+  const [datasources, setDatasource] = useState(data);
   const { remove, loadingRemove } = useDatasource();
+
+  const handleClose = async (id: string) => {
+    await remove(id);
+    setDatasource(filter(datasources, item => item.id !== id));
+  };
 
   const renderSection = () => (
     <Section
@@ -48,7 +53,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
           icon="metrics"
           description={datasource.name}
           isLoading={loadingRemove}
-          onClose={() => remove(datasource.id)}
+          onClose={() => handleClose(datasource.id)}
         />
       ))}
     </Section >

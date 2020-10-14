@@ -30,6 +30,9 @@ import { prepareCircles, getDefaultCircle } from './helpers';
 import CirclesListItem from './Item';
 import Loader from './Loaders';
 import Styled from './styled';
+import { useDatasource } from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
+import { every, some } from 'lodash';
+import { Datasource } from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
 
 const CirclesList = () => {
   const [loading, , getCircles] = useCircles(CIRCLE_TYPES.metrics);
@@ -38,13 +41,15 @@ const CirclesList = () => {
   );
   const { status } = useGlobalState(({ workspaces }) => workspaces);
   const [response, loadWorkspace] = useWorkspace();
+  const { responseAll, getAll } = useDatasource()
   const profileName = getProfileByKey('name');
 
   useEffect(() => {
-    if (status === 'idle') {
-      loadWorkspace(getWorkspaceId());
-    }
-  }, [loadWorkspace, status]);
+    // if (status === 'idle') {
+    //   loadWorkspace(getWorkspaceId());
+    // }
+    getAll()
+  }, [getAll]);
 
   useEffect(() => {
     getCircles();
@@ -113,7 +118,7 @@ const CirclesList = () => {
 
   return (
     <Styled.Wrapper data-testid="metrics-list">
-      {isEmpty(response?.metricConfiguration) && !loading
+      {!some((responseAll as Datasource[])) && !loading
         ? renderNoMetrics()
         : renderMetrics()}
     </Styled.Wrapper>
