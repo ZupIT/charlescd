@@ -206,12 +206,12 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
 	require.Equal(s.T(), groupAction1.ID.String(), res[0].Id)
 	require.Equal(s.T(), groupAction1.Nickname, res[0].Nickname)
 	require.Equal(s.T(), act.Nickname, res[0].ActionType)
-	require.Equal(s.T(), "NOT_EXECUTED", res[0].Status)
+	require.Equal(s.T(), "IN_EXECUTION", res[0].Status)
 	require.Nil(s.T(), res[0].StartedAt)
 	require.Equal(s.T(), groupAction2.ID.String(), res[1].Id)
 	require.Equal(s.T(), groupAction2.Nickname, res[1].Nickname)
 	require.Equal(s.T(), act.Nickname, res[1].ActionType)
-	require.Equal(s.T(), "NOT_EXECUTED", res[1].Status)
+	require.Equal(s.T(), "IN_EXECUTION", res[1].Status)
 	require.Nil(s.T(), res[1].StartedAt)
 
 }
