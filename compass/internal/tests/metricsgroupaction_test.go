@@ -190,6 +190,14 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
 	s.DB.Create(&groupAction2)
 	s.DB.Create(&groupAction3)
 
+	ga1Execution := newBasicActionExecution()
+	ga1Execution.GroupActionId = groupAction1.ID
+	ga2Execution := newBasicActionExecution()
+	ga2Execution.GroupActionId = groupAction2.ID
+
+	s.DB.Create(&ga1Execution)
+	s.DB.Create(&ga2Execution)
+
 	res, err := s.repository.ListGroupActionExecutionResumeByGroup(group1.ID.String())
 
 	require.NoError(s.T(), err)

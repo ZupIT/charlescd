@@ -265,7 +265,7 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 
 func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, error) {
 	var metricsGroups []MetricsGroupRepresentation
-	db := main.db.Table("metrics_groups").Select("name, circle_id").Where("circle_id = ?", circleId).Find(&metricsGroups)
+	db := main.db.Table("metrics_groups").Select("name", "id").Where("circle_id = ?", circleId).Find(&metricsGroups)
 	if db.Error != nil {
 		logger.Error(util.FindMetricsGroupError, "ListAllByCircle", db.Error, "CircleId= "+circleId)
 		return []MetricsGroupRepresentation{}, db.Error
