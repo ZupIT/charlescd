@@ -21,16 +21,13 @@ package io.charlescd.moove.application.circle.impl
 import io.charlescd.moove.application.CircleService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
-import io.charlescd.moove.application.circle.CreateCircleInteractor
-import io.charlescd.moove.application.circle.CreateCircleWIthPercentageInteractor
-import io.charlescd.moove.application.circle.request.CreateCircleRequest
+import io.charlescd.moove.application.circle.CreateCircleWithPercentageInteractor
 import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.CircleMatcherService
-import org.springframework.web.client.HttpClientErrorException
 import javax.inject.Named
 import javax.transaction.Transactional
 
@@ -40,7 +37,7 @@ open class CreateCircleWithPercentageInteractorImpl(
     private val userService: UserService,
     private val workspaceService: WorkspaceService,
     private val circleMatcherService: CircleMatcherService
-) : CreateCircleWIthPercentageInteractor {
+) : CreateCircleWithPercentageInteractor {
 
     @Transactional
     override fun execute(request: CreateCircleWithPercentageRequest, workspaceId: String): CircleResponse {

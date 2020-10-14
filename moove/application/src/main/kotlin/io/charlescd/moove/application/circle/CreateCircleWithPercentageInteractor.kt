@@ -19,7 +19,7 @@ package io.charlescd.moove.application.circle
 import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 
-interface CreateCircleWIthPercentageInteractor {
+interface CreateCircleWithPercentageInteractor {
 
     fun execute(request: CreateCircleWithPercentageRequest, workspaceId: String): CircleResponse
 }

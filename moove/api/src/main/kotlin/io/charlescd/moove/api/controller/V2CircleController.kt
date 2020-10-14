@@ -44,7 +44,7 @@ class V2CircleController(
     private val updateCircleWithCsvFileInteractor: UpdateCircleWithCsvFileInteractor,
     private val identifyCircleInteractor: IdentifyCircleInteractor,
     private val circlesHistoryInteractor: FindCirclesHistoryInteractor,
-    private val createCircleWIthPercentageInteractor: CreateCircleWIthPercentageInteractor
+    private val createCircleWIthPercentageInteractor: CreateCircleWithPercentageInteractor
 ) {
 
     @ApiOperation(value = "Find all")
