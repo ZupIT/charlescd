@@ -100,7 +100,6 @@ export class ReceiveNotificationUseCase {
           throw new InternalServerErrorException('Can only have one deployment active per circle')
         } else {
           this.consoleLoggerService.log('ERROR:Failed to save deployment')
-          console.log({ aaaaaaaaaaaaaaaaaaaaaaaA: error })
           this.consoleLoggerService.log(error)
           throw new InternalServerErrorException
         }
