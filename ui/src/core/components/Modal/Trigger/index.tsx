@@ -77,13 +77,18 @@ const Trigger = ({
             {title}
           </Styled.Title>
           {children}
-          <Styled.Buttons>
-            <Styled.Button.Dismiss id="dismiss" onClick={() => handleDismiss()}>
+          <Styled.Buttons className="modal-buttons">
+            <Styled.Button.Dismiss
+              id="dismiss"
+              className="modal-button-dismiss"
+              onClick={() => handleDismiss()}
+            >
               <Text.h5 color="light">{dismissLabel}</Text.h5>
             </Styled.Button.Dismiss>
             {onContinue && (
               <Styled.Button.Continue
                 id="continue"
+                className="modal-button-continue"
                 isLoading={isLoading}
                 isDisabled={isDisabled}
                 onClick={() => onContinue()}

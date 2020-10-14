@@ -31,6 +31,18 @@ const Modal = styled(ModalTrigger)`
     opacity: 0.7;
     background-color: ${COLOR_BASTILLE};
   }
+
+  .modal-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .modal-button-dismiss,
+  .modal-button-continue {
+    width: 100px;
+  }
 `;
 
 export default {

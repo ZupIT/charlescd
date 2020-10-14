@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import xor from 'lodash/xor';
@@ -46,11 +46,14 @@ interface Props {
 
 const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const MAX_LENGTH_BRANCH_NAME = 40;
-  const INPUT_NAME = 'branchName';
   const { persistModules, loading } = useModules();
   const [modulesFiltered, filterModules] = useState<ModuleProps[]>(allModules);
   const [moduleIds, setModuleIds] = useState<string[]>();
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, errors, handleSubmit, setValue, watch } = useForm({
+    mode: 'onBlur'
+  });
+
+  const branchName = watch('branchName') as string;
 
   const handleClose = () => onClose();
 
@@ -68,7 +71,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     );
   };
 
-  const onSubmit = ({ branchName }: Record<string, string>) => {
+  const onSubmit = () => {
     persistModules(card.id, {
       branchName: kebabCase(branchName),
       description: card.description,
@@ -82,7 +85,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const toggleModule = (id: string) => {
     const toggledModuleIds = xor(moduleIds, [id]);
     setModuleIds(toggledModuleIds);
-    if (isEmpty(toggledModuleIds)) setValue(INPUT_NAME, '');
+    if (isEmpty(toggledModuleIds)) setValue('branchName', '');
   };
 
   const renderModule = ({ id, name }: ModuleProps) => (
@@ -110,6 +113,25 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const renderModules = () =>
     isEmpty(modulesFiltered) ? renderEmptyContent() : renderContent();
 
+  const renderBranchField = () => (
+    <Fragment>
+      <Input
+        name="branchName"
+        label="Branch name"
+        disabled={!isEmpty(card.feature?.branchName)}
+        defaultValue={card.feature?.branchName}
+        tipTitle="Why we ask for a branch name?"
+        maxLength={MAX_LENGTH_BRANCH_NAME}
+        tipDescription="When a module is add to a card, Charles creates a new git branch for the client that is directly stored in the used SCM, Git or Gitlab, for example. When the branch already exists, Charles only links the card with the branch."
+        ref={register({
+          required: true,
+          maxLength: MAX_LENGTH_BRANCH_NAME
+        })}
+      />
+      {errors.branchName && <Text.h6 color="error">Required Field</Text.h6>}
+    </Fragment>
+  );
+
   return (
     <Styled.Modal onClose={handleClose}>
       <Styled.Header>
@@ -121,21 +143,13 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
       </Styled.Header>
       <Styled.Content>{renderModules()}</Styled.Content>
       <Styled.Bottom onSubmit={handleSubmit(onSubmit)}>
-        {!isEmpty(moduleIds) && (
-          <Input
-            name={INPUT_NAME}
-            label="Branch name"
-            disabled={!isEmpty(card.feature?.branchName)}
-            defaultValue={card.feature?.branchName}
-            tipTitle="Why we ask for a branch name?"
-            tipDescription="When a module is add to a card, Charles creates a new git branch for the client that is directly stored in the used SCM, Git or Gitlab, for example. When the branch already exists, Charles only links the card with the branch."
-            ref={register({
-              required: true,
-              maxLength: MAX_LENGTH_BRANCH_NAME
-            })}
-          />
-        )}
-        <Button.Default type="submit" size="EXTRA_SMALL">
+        {!isEmpty(moduleIds) && renderBranchField()}
+        <Button.Default
+          isLoading={loading}
+          isDisabled={!isEmpty(moduleIds) && isEmpty(branchName)}
+          type="submit"
+          size="EXTRA_SMALL"
+        >
           Save
         </Button.Default>
       </Styled.Bottom>
