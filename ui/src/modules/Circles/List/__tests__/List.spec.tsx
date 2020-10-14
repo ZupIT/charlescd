@@ -32,17 +32,12 @@ test('render Metrics list component without metric configuration', async () => {
 });
 
 test('render Metrics list component with metric configuration', async () => {
-  // (fetch as FetchMock).mockResponseOnce(
-  //   JSON.stringify({ metricConfiguration: 'Prometheus' })
-  // );
-  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
-    responseAll: [...Datasources],
-    getAll: jest.fn
-  });
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ metricConfiguration: 'Prometheus' })
+  );
   const { getByTestId } = render(<CirclesList />);
 
   await wait();
 
   expect(getByTestId('metrics-list')).toBeInTheDocument();
-  expect(getByTestId('icon-empty-circles')).toBeInTheDocument();
 });
