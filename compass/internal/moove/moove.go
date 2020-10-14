@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, error) {
+func (api APIClient) GetMooveComponents(circleIDHeader, circleId, workspaceId string) ([]byte, error) {
 	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleId)
 
 	fmt.Println(mooveUrl)
@@ -21,6 +21,7 @@ func (api APIClient) GetMooveComponents(circleId, workspaceId string) ([]byte, e
 	}
 
 	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("x-circle-id", circleIDHeader)
 	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := api.httpClient.Do(request)

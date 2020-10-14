@@ -4,12 +4,13 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/moove"
 	"compass/internal/plugin"
+
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	Components(workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error)
-	ComponentsHealth(workspaceId, circleId string) (CircleHealthRepresentation, error)
+	Components(circleIDHeader, workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error)
+	ComponentsHealth(circleIDHeader, workspaceId, circleId string) (CircleHealthRepresentation, error)
 }
 
 type Main struct {
