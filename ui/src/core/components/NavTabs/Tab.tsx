@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import React from 'react';
+import Styled from './styled';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
-
-  return status;
+export type Props = {
+  children: React.ReactNode;
+  title: string;
 };
 
-export const isNotBlank = (value: string) => !!value.trim();
+const Tab = ({ children }: Props) => {
+  return <Styled.Tab>{children}</Styled.Tab>;
+};
+
+export default Tab;

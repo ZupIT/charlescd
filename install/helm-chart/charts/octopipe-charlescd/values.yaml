@@ -7,8 +7,6 @@ image:
 envVars:
   - name: APP_PORT
     value: "8080"
-  - name: DB_URL
-    value: "mongodb://root:octopipe@charlescd-mongodb:27017"
   - name: KUBECONFIG
     value: "IN_CLUSTER"
   - name: TIMEOUT_RESOURCE_VERIFICATION
