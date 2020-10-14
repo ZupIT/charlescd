@@ -21,6 +21,7 @@ import {
 } from 'react-beautiful-dnd';
 import { useParams } from 'core/utils/routes';
 import { setCard } from 'modules/Hypotheses/state/actions';
+import { CARD_TYPE_ACTION } from 'modules/Hypotheses/Board/Card/constants';
 import { useDispatch } from 'core/state/hooks';
 import { Card as CardProps } from '../interfaces';
 import { useCard, useBoard } from '../hooks';
@@ -58,15 +59,20 @@ const CardBoard = forwardRef(
     const { hypothesisId } = useParams<Params>();
     const dispatch = useDispatch();
     const { getAll } = useBoard();
-    const { archiveBy, responseArchive } = useCard();
+    const {
+      archiveBy,
+      responseArchive,
+      removeById,
+      responseRemove
+    } = useCard();
     const [toggleModalView, setToggleModalView] = useState(false);
     const [toggleModalRemove, setToggleModalRemove] = useState(false);
 
     useEffect(() => {
-      if (responseArchive) {
+      if (responseArchive || responseRemove) {
         getAll(hypothesisId);
       }
-    }, [responseArchive, getAll, hypothesisId]);
+    }, [responseArchive, responseRemove, getAll, hypothesisId]);
 
     const onCloseView = (cardUpdated: CardProps) => {
       setToggleModalView(false);
@@ -79,8 +85,11 @@ const CardBoard = forwardRef(
     };
 
     const handleRemove = () => {
-      console.log('handleRemove');
-      setToggleModalRemove(true);
+      if (card.type === CARD_TYPE_ACTION) {
+        removeById(card.id);
+      } else {
+        setToggleModalRemove(true);
+      }
     };
 
     const archiveCard = () => {

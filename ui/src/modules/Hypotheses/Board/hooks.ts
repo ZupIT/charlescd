@@ -156,7 +156,11 @@ export const useCard = (): Props => {
   const [archivedCard, archiveCard] = useFetch(archiveById);
   const [updateResponse, updateCard] = useFetch(updateById);
   const { response, loading, error } = card;
-  const { response: responseRemove, error: errorRemove } = removedCard;
+  const {
+    response: responseRemove,
+    error: errorRemove,
+    loading: loadingRemove
+  } = removedCard;
   const { response: responseArchive, error: errorArchive } = archivedCard;
   const { loading: loadingUpdate, error: errorUpdate } = updateResponse;
 
@@ -179,8 +183,8 @@ export const useCard = (): Props => {
   }, [error, dispatch]);
 
   const removeById = useCallback(
-    (id: string) => {
-      removeCard(id);
+    (id: string, branchDeletion: boolean) => {
+      removeCard(id, branchDeletion);
     },
     [removeCard]
   );
@@ -236,6 +240,7 @@ export const useCard = (): Props => {
     getById,
     removeById,
     responseRemove,
+    loadingRemove,
     archiveBy,
     responseArchive,
     response,

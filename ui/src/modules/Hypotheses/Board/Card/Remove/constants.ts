@@ -21,7 +21,8 @@ export const radios: RadioCard[] = [
     title: 'Card',
     description:
       'We will delete the card but the git branch will still exists.',
-    value: 'card'
+    value: 'card',
+    checked: true
   },
   {
     title: 'Card and Branch',
