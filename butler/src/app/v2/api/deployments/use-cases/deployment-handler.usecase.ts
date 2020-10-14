@@ -81,33 +81,46 @@ export class DeploymentHandlerUseCase {
     if (!deployment.circleId) {
       deployment.components = deployment.components.filter(c => !c.merged)
     }
-
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-    const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
-    const cdResponse = await cdConnector.createDeployment(
-      deployment,
-      activeComponents,
-      { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
-    )
-    return cdResponse.status === 'ERROR' ?
-      await this.handleCdError(job, cdResponse) :
-      await this.handleCdSuccess(job, deployment)
+
+    try {
+      await this.updateComponentsRunningStatus(deployment, true)
+      const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
+      const cdResponse = await cdConnector.createDeployment(
+        deployment,
+        activeComponents,
+        { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
+      )
+      return cdResponse.status === 'ERROR' ?
+        await this.handleCdError(job, cdResponse.error, deployment) :
+        await this.handleCdSuccess(job)
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:RUN_DEPLOYMENT_EXECUTION', { error })
+      return this.handleCdError(job, error, deployment)
+    }
   }
 
   private async runUndeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
     this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-    const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
-    const cdResponse = await cdConnector.createUndeployment(
-      deployment,
-      activeComponents,
-      { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
-    )
-    return cdResponse.status === 'ERROR' ?
-      await this.handleCdError(job, cdResponse) :
-      await this.handleCdSuccess(job, deployment)
+
+    try {
+      await this.updateComponentsRunningStatus(deployment, true)
+      const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
+      const cdResponse = await cdConnector.createUndeployment(
+        deployment,
+        activeComponents,
+        { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
+      )
+      return cdResponse.status === 'ERROR' ?
+        await this.handleCdError(job, cdResponse.error, deployment) :
+        await this.handleCdSuccess(job)
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:RUN_UNDEPLOYMENT_EXECUTION', { error })
+      return this.handleCdError(job, error, deployment)
+    }
   }
 
   private handleInvalidExecutionType(job: ExecutionJob): ExecutionJob {
@@ -134,16 +147,16 @@ export class DeploymentHandlerUseCase {
     return job
   }
 
-  public async handleCdSuccess(job: ExecutionJob, deployment: DeploymentEntity) : Promise<ExecutionJob> {
-    await this.updateComponentsToRunning(deployment)
+  public async handleCdSuccess(job: ExecutionJob) : Promise<ExecutionJob> {
     this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job.id })
     job.done()
     return job
   }
 
-  public async handleCdError(job: ExecutionJob, cdResponse: ConnectorResultError): Promise<ExecutionJob> {
-    this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job.id, error: cdResponse.error })
-    job.done(new Error(cdResponse.error))
+  public async handleCdError(job: ExecutionJob, error: string, deployment: DeploymentEntity): Promise<ExecutionJob> {
+    await this.updateComponentsRunningStatus(deployment, false)
+    this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job.id, error })
+    job.done(new Error(error))
     return job
   }
 
@@ -161,9 +174,9 @@ export class DeploymentHandlerUseCase {
     return await this.componentsRepository.find({ where: { name: In(names), deployment: deployment } })
   }
 
-  public async updateComponentsToRunning(deployment: DeploymentEntity): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
+  public async updateComponentsRunningStatus(deployment: DeploymentEntity, status: boolean): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
     deployment.components = deployment.components.map(c => {
-      c.running = true
+      c.running = status
       return c
     })
     const updated = await this.deploymentsRepository.save(deployment, { reload: true })
