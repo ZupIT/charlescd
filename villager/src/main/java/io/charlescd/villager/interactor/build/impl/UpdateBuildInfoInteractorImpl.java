@@ -37,7 +37,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.hibernate.annotations.Synchronize;
 
 @ApplicationScoped
 public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor {
