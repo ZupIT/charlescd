@@ -271,19 +271,19 @@ func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation,
 		return []MetricsGroupRepresentation{}, db.Error
 	}
 
-	for _, group := range metricsGroups {
-		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(group.ID.String())
+	for idx, _ := range metricsGroups {
+		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
 			logger.Error(util.FindMetricsGroupError, "ListAllByCircle", db.Error, "CircleId= "+circleId)
 			return []MetricsGroupRepresentation{}, err
 		}
-		metrics, err := main.metricMain.FindAllByGroup(group.ID.String())
+		metrics, err := main.metricMain.FindAllByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
 			logger.Error(util.FindMetricsGroupError, "ListAllByCircle", db.Error, "CircleId= "+circleId)
 			return []MetricsGroupRepresentation{}, err
 		}
-		group.Actions = actionResume
-		group.Metrics = metrics
+		metricsGroups[idx].Actions = actionResume
+		metricsGroups[idx].Metrics = metrics
 	}
 
 	return metricsGroups, nil
