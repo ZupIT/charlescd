@@ -59,7 +59,7 @@ export default () => {
 
   const fetchUrl = (apiParams, headers, basePath) => {
     fetch(
-      `${basePath}/compass/api/v1/application-health${getMetricResource(
+      `${basePath}/compass/api/v1/application-health/${getMetricResource(
         apiParams
       )}`,
       { headers }
