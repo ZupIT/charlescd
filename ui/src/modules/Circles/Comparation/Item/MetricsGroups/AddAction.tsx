@@ -62,7 +62,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
   const { getCirclesData } = useCirclesData();
   const { getActionGroup, actionData } = useActionTypeById();
-  const [{ circleResponse }, { loadCircle }] = useCircle();
+  const [{ circleResponse, loading }, { loadCircle }] = useCircle();
 
   useEffect(() => {
     action && getActionGroup(action.id);
@@ -180,14 +180,14 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
               )}
             />
           )}
-          {selectedAction === 'circledeployment' && (
+          {selectedAction === 'circledeployment' && !loading && (
             <Styled.SelectAsync
               control={control}
               name="circleId"
-              options={currentCircleOptions}
               label="Select a circle to deploy"
               isDisabled={false}
               loadOptions={loadCirclesByName}
+              defaultOptions={currentCircleOptions}
               defaultValue={getSelectDefaultValue(
                 actionData?.executionParameters.destinationCircleId,
                 currentCircleOptions

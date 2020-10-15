@@ -27,6 +27,7 @@ const Select = ({
   placeholder,
   options,
   defaultValue,
+  defaultOptions,
   className,
   isDisabled = false,
   onChange,
@@ -52,7 +53,7 @@ const Select = ({
       styles={customStyles}
       cacheOptions
       options={options}
-      defaultOptions
+      defaultOptions={defaultOptions ?? true}
       loadOptions={loadOptions}
       onInputChange={onInputChange}
       onChange={(option: Option) => onChange(option)}

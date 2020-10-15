@@ -102,6 +102,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   const handleGoBack = () => {
     setActiveTab(TABS.LIST);
     setActiveMetric(null);
+    setActiveAction(null);
     getMetricsGroups(id);
   };
 
