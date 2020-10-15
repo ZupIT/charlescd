@@ -100,6 +100,14 @@ func (s *SuitePlugins) TestFindAll() {
 	}
 }
 
+func (s *SuitePlugins) TestFindAllFull() {
+	os.Setenv("PLUGINS_DIR", "../../dist")
+	res, err := s.repository.FindAll("")
+
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), res)
+}
+
 func (s *SuitePlugins) TestFindAllNoSuchDirectory() {
 	os.Setenv("PLUGINS_DIR", "./dist")
 
