@@ -29,7 +29,8 @@ import {
   Metric,
   ChartDataByQuery,
   Data,
-  ChartData
+  ChartData,
+  ActionType
 } from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
@@ -132,29 +133,40 @@ export const filterMetricsSeries = (
 //create tests
 export const createCirclePromotionPayload = (
   data: ActionForm,
-  metricsGroup: MetricsGroup
+  circleId: string
 ) => {
   return {
     destinationCircleId: data.circleId,
-    originCircleId: metricsGroup.circleId,
+    originCircleId: circleId,
     workspaceId: getWorkspaceId()
   };
 };
 
 export const createActionPayload = (
   data: ActionForm,
-  metricsGroup: MetricsGroup
+  metricsGroup: MetricsGroup,
+  circleId: string,
+  selectedAction: string
 ) => {
   const { actionId, nickname } = data;
 
   const payloadByAction = {
-    CIRCLE_DEPLOY: () => createCirclePromotionPayload(data, metricsGroup)
+    circledeployment: () => createCirclePromotionPayload(data, circleId)
   } as Record<string, Function>;
 
   return {
     metricsGroupId: metricsGroup.id,
     actionId,
     nickname,
-    executionParameters: payloadByAction[actionId]()
+    executionParameters: payloadByAction[selectedAction]()
   };
+};
+
+export const normalizeActionsOptions = (actionsType: ActionType[]) => {
+  return map(actionsType, actionType => ({
+    ...actionType,
+    value: actionType.id,
+    label: actionType.nickname,
+    description: actionType.description
+  }));
 };

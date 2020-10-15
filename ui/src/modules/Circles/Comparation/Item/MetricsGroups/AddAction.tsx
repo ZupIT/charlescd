@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { useForm } from 'react-hook-form';
@@ -24,13 +24,15 @@ import CustomOption from 'core/components/Form/Select/CustomOptions';
 import debounce from 'debounce-promise';
 import { useCirclesData } from 'modules/Circles/hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
-import { createActionPayload } from './helpers';
+import { createActionPayload, normalizeActionsOptions } from './helpers';
 import { useActionTypes, useSaveAction } from './hooks';
-import { ActionGroupPayload, MetricsGroup } from './types';
+import { ActionGroupPayload, MetricsGroup, Action } from './types';
 
 type Props = {
   onGoBack: Function;
   metricsGroup: MetricsGroup;
+  circleId: string;
+  action?: Action;
 };
 
 export type ActionForm = {
@@ -39,28 +41,34 @@ export type ActionForm = {
   circleId?: string;
 };
 
-const AddAction = ({ onGoBack, metricsGroup }: Props) => {
+const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const {
     handleSubmit,
     register,
     errors,
     control,
-    watch,
     formState: { isValid }
-  } = useForm<ActionForm>({ mode: 'onChange' });
-  const { saveAction } = useSaveAction();
+  } = useForm<ActionForm>({ mode: 'onChange', defaultValues: action ?? {} });
+  const { saveAction } = useSaveAction(action?.id);
   const { getAllActionsTypesData } = useActionTypes();
+  const [actionsTypeResponse, setActionsTypeResponse] = useState([]);
+  const [selectedAction, setSelectedAction] = useState('');
   const { getCirclesData } = useCirclesData();
-  const actionId = watch('actionId');
+
+  console.log(action);
 
   useEffect(() => {
-    getAllActionsTypesData();
+    getAllActionsTypesData().then(response => {
+      setActionsTypeResponse(response);
+    });
   }, [getAllActionsTypesData]);
 
   const onSubmit = (data: ActionForm) => {
     const newPayload: ActionGroupPayload = createActionPayload(
       data,
-      metricsGroup
+      metricsGroup,
+      circleId,
+      selectedAction
     );
     saveAction(newPayload);
   };
@@ -73,19 +81,6 @@ const AddAction = ({ onGoBack, metricsGroup }: Props) => {
     500
   );
 
-  const options = [
-    {
-      value: 'CIRCLE_DEPLOY',
-      label: 'Circle promotion',
-      description: 'This action promotes a complete circle'
-    },
-    {
-      value: 'XYZ',
-      label: 'Xyz',
-      description: 'Xyz ffdj sfljds fsdhjfds'
-    }
-  ];
-
   return (
     <div data-testid="metric-group-action-form">
       <Styled.Layer>
@@ -97,13 +92,14 @@ const AddAction = ({ onGoBack, metricsGroup }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <Text.h2 color="light">
-          {/* {action?.id ? 'Update action' : 'Add action'} */}
-          Add action
+          {action?.id ? 'Update action' : 'Add action'}
         </Text.h2>
       </Styled.Layer>
       <Styled.Layer>
         <Text.h5 color="dark">
-          Fill in the information below to create an action.
+          {`Fill in the information below to ${
+            action?.id ? 'update' : 'create'
+          } an action.`}
         </Text.h5>
       </Styled.Layer>
       <Styled.Form
@@ -127,11 +123,12 @@ const AddAction = ({ onGoBack, metricsGroup }: Props) => {
             control={control}
             name="actionId"
             customOption={CustomOption.Description}
-            options={options}
+            options={normalizeActionsOptions(actionsTypeResponse)}
+            onChange={e => setSelectedAction(e?.type)}
             label="Select a action type"
             isDisabled={false}
           />
-          {actionId === 'CIRCLE_DEPLOY' && (
+          {selectedAction === 'circledeployment' && (
             <Styled.SelectAsync
               control={control}
               name="circleId"

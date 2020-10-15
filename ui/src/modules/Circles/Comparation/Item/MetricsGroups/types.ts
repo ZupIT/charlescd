@@ -31,7 +31,7 @@ export type MetricsGroup = {
   metrics?: Metric[];
   actions?: Action[];
   status?: string;
-  circleId: string;
+  circleId?: string;
 };
 
 export type Action = {
@@ -118,4 +118,14 @@ export type ChartData = {
 export type Data = {
   total: number;
   period: number;
+};
+
+export type ActionType = {
+  id: string;
+  createdAt: string;
+  workspaceId: string;
+  nickname: string;
+  type: string;
+  description: string;
+  configuration: string;
 };

@@ -109,7 +109,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   }, [isBasicQuery, watchDataSourceId, getAllDataSourceMetrics]);
 
   const onSubmit = (data: Metric) => {
-    console.log(metric, id);
     const filtersPayload = data.filters?.map(({ id, ...rest }) => {
       return id ? { id, ...rest } : rest;
     });

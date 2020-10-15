@@ -31,9 +31,11 @@ import {
   updateMetricGroup,
   deleteMetricGroup,
   deleteMetricByMetricId,
+  deleteActionByActionId,
   getChartDataByQuery,
   getAllActionsTypes,
-  createAction
+  createAction,
+  updateAction
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
@@ -44,7 +46,8 @@ import {
   Metric,
   DataSource,
   ChartDataByQuery,
-  ActionGroupPayload
+  ActionGroupPayload,
+  ActionType
 } from './types';
 import { ValidationError } from 'core/interfaces/ValidationError';
 
@@ -366,7 +369,9 @@ export const useMetricQuery = () => {
 };
 
 export const useActionTypes = () => {
-  const getAllActionsTypesRequest = useFetchData<any>(getAllActionsTypes);
+  const getAllActionsTypesRequest = useFetchData<ActionType[]>(
+    getAllActionsTypes
+  );
 
   const getAllActionsTypesData = useCallback(async () => {
     try {
@@ -384,8 +389,8 @@ export const useActionTypes = () => {
 };
 
 export const useSaveAction = (actionId?: string) => {
-  // const saveRequest = metricId ? updateMetric : createAction;
-  const saveActionPayload = useFetchData<ActionGroupPayload>(createAction);
+  const saveRequest = actionId ? updateAction : createAction;
+  const saveActionPayload = useFetchData<ActionGroupPayload>(saveRequest);
   const status = useFetchStatus();
   const dispatch = useDispatch();
   const [validationError, setValidationError] = useState<ValidationError>();
@@ -429,5 +434,41 @@ export const useSaveAction = (actionId?: string) => {
     saveAction,
     status,
     validationError
+  };
+};
+
+export const useDeleteAction = () => {
+  const deleteActionRequest = useFetchData<MetricsGroup>(
+    deleteActionByActionId
+  );
+  const dispatch = useDispatch();
+
+  const deleteAction = useCallback(
+    async (actionId: string) => {
+      try {
+        const deleteActionResponse = await deleteActionRequest(actionId);
+
+        dispatch(
+          toogleNotification({
+            text: `Success deleting action`,
+            status: 'success'
+          })
+        );
+
+        return deleteActionResponse;
+      } catch (e) {
+        dispatch(
+          toogleNotification({
+            text: `Error metric delete`,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [deleteActionRequest, dispatch]
+  );
+
+  return {
+    deleteAction
   };
 };
