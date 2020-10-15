@@ -33,7 +33,7 @@ import (
 
 const dbLog = false
 
-const BigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method.`
+const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method.`
 
 func clearDatabase(db *gorm.DB) {
 	db.Exec("DELETE FROM actions_executions")
@@ -87,7 +87,7 @@ func newBasicAction() action.Action {
 	return action.Action{
 		WorkspaceId:   uuid.New(),
 		Nickname:      "nickname",
-		Type:          "ACTION_TYPE",
+		Type:          "validaction",
 		Description:   "Some description",
 		Configuration: json.RawMessage(`{"someProperty": "someValue"}`),
 		DeletedAt:     nil,
