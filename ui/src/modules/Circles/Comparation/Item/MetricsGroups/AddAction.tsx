@@ -59,9 +59,14 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const [actionsTypeResponse, setActionsTypeResponse] = useState([]);
   const [loadingActionsData, setLoadingActionsData] = useState(false);
   const [selectedAction, setSelectedAction] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
   const { getCirclesData } = useCirclesData();
-  const { getActionGroup, actionData } = useActionTypeById();
+  const {
+    getActionGroup,
+    actionData,
+    isLoading: isLoadingActionData
+  } = useActionTypeById();
   const [{ circleResponse, loading }, { loadCircle }] = useCircle();
 
   useEffect(() => {
@@ -101,6 +106,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   }, [getAllActionsTypesData]);
 
   const onSubmit = (data: ActionForm) => {
+    setIsSaving(true);
     const newPayload: ActionGroupPayload = createActionPayload(
       data,
       metricsGroup,
@@ -116,7 +122,8 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
       })
       .catch(error => {
         console.log(error);
-      });
+      })
+      .finally(() => setIsSaving(false));
   };
 
   const loadCirclesByName = debounce(
@@ -162,10 +169,12 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           {!!errors.nickname && (
             <Styled.FieldErrorWrapper>
               <Icon name="error" color="error" />
-              <Text.h6 color="error">{errors.nickname.message}</Text.h6>
+              <Text.h6 color="error">
+                {errors.nickname.message || 'Type a valid nickname'}
+              </Text.h6>
             </Styled.FieldErrorWrapper>
           )}
-          {!loadingActionsData && (
+          {!loadingActionsData && !isLoadingActionData && (
             <Styled.Select
               control={control}
               name="actionId"
@@ -196,7 +205,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           )}
           <Button
             type="submit"
-            isLoading={false}
+            isLoading={isSaving}
             isDisabled={!isValid}
             id="submit"
           >

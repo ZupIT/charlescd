@@ -62,7 +62,7 @@ const ActionCard = ({
         title={action.triggeredAt}
         data-testid={`${action.triggeredAt}-action-triggered`}
       >
-        {action.triggeredAt}
+        {action.triggeredAt ?? ' - '}
       </Styled.ActionTypeTriggeredAt>
       <Styled.MetricDropdown>
         <NewDropDown icon="vertical-dots" size="16px">
