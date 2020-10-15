@@ -447,7 +447,6 @@ public class UpdateBuildInfoInteractorTest {
         Exception exception = assertThrows(ResourceNotFoundException.class, interactor::execute);
 
         assertThat(exception.getMessage(), is("Resource DOCKER_REGISTRY not found"));
-        assertThat(1, is(2));
     }
 
     private void mockComponentsByModule(Map<ModuleEntity, List<ComponentEntity>> mockData) {
