@@ -47,6 +47,7 @@ const groupActionQuery = `
          			INNER JOIN actions a 			ON mga.action_id = a.id	
 					LEFT JOIN actions_executions ae ON mga.id = ae.group_action_id
 					WHERE mga.metrics_group_id = ? 
+					AND mga.deleted_at IS NULL
 					ORDER BY execution DESC`
 
 func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupActions, error) {
