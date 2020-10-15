@@ -133,7 +133,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     public Optional<KeyMetadata> getCircleByPercentage(List<KeyMetadata> percentageCircles) {
         if (percentageCircles.size() > 1) {
             IntStream.range(1, percentageCircles.size())
-                    .forEach( i-> this.sumValuesPercentage(percentageCircles.get(i), percentageCircles.get(i - 1)));
+                    .forEach(i -> this.sumValuesPercentage(percentageCircles.get(i), percentageCircles.get(i - 1)));
         }
         return this.findMatchedCircle(this.pickRandomValue(), percentageCircles);
     }
