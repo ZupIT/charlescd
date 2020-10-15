@@ -116,7 +116,7 @@ class PatchCircleInteractorImplTest extends Specification {
         assert response.deployment.tag == build.tag
     }
 
-    def "should patch a circle /percentage"() {
+    def "should patch a circle /rules"() {
         given:
         def authorId = "5952df12-fc50-4697-9cd9-a7c41fec2bc3"
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
@@ -134,7 +134,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def request = new PatchCircleRequest(patches)
 
         def user = getDummyUser(authorId)
-        def circle = getD(circleId, user, nodePart, workspaceId, false)
+        def circle = getDummyCircle(circleId, user, nodePart, workspaceId, false)
         def workspace = getDummyWorkspace(workspaceId, user)
         def deployment = getDummyDeployment(deploymentId, user, circle, buildId, workspaceId)
         def build = getDummyBuild(workspaceId, user, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
