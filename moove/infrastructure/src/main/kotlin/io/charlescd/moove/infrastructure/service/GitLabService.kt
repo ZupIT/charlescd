@@ -137,6 +137,19 @@ class GitLabService(private val gitLabClientFactoryLegacy: GitLabClientFactory) 
         }
     }
 
+    override fun testConnection(
+        gitCredentials: GitCredentials
+    ): Boolean {
+        log.info("Testing connection into GitLab")
+        return try {
+            getClient(gitCredentials).projectApi.getProjects(0,1) != null
+        } catch (e: Exception) {
+            log.error("failed to connect  into GitLab with error: ${e.message}")
+            handleResponseError(error = e)
+            false
+        }
+    }
+
     override fun findBranch(
         gitCredentials: GitCredentials,
         repository: String,

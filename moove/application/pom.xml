@@ -52,6 +52,18 @@
             <artifactId>cglib-nodep</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.charlescd.moove</groupId>
+            <artifactId>infrastructure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.charlescd.moove</groupId>
+            <artifactId>infrastructure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.charlescd.moove</groupId>
+            <artifactId>infrastructure</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

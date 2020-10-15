@@ -32,6 +32,7 @@ import org.eclipse.egit.github.core.client.RequestException
 import org.eclipse.egit.github.core.service.CommitService
 import org.eclipse.egit.github.core.service.DataService
 import org.eclipse.egit.github.core.service.RepositoryService
+import org.eclipse.egit.github.core.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
@@ -169,6 +170,20 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
             logger.error("failed to find branch: $branchName with error: ${exception.message}")
             handleResponseError(error = exception, repository = repository, branchName = branchName)
             Optional.empty()
+        }
+    }
+
+    override fun testConnection(gitCredentials: GitCredentials): Boolean {
+        logger.info("Testing connection into GitHub")
+        val client = getClient(gitCredentials)
+        val userService = UserService(client)
+        val repositoryService = RepositoryService(client)
+        return try {
+            userService.user != null && repositoryService.repositories != null
+        } catch (exception: Exception) {
+            logger.error("failed to connect to GitHub with error: ${exception.message}")
+            handleResponseError(error = exception)
+            return false
         }
     }
 

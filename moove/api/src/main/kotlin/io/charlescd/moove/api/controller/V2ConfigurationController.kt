@@ -20,8 +20,10 @@ import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.configuration.*
 import io.charlescd.moove.application.configuration.request.CreateGitConfigurationRequest
 import io.charlescd.moove.application.configuration.request.CreateMetricConfigurationRequest
+import io.charlescd.moove.application.configuration.request.TestConnectionGitConfigurationRequest
 import io.charlescd.moove.application.configuration.request.UpdateGitConfigurationRequest
 import io.charlescd.moove.application.configuration.response.GitConfigurationResponse
+import io.charlescd.moove.application.configuration.response.GitConnectionResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.domain.MetricConfiguration
@@ -42,6 +44,7 @@ class V2ConfigurationController(
     private val deleteGitConfigurationByIdInteractor: DeleteGitConfigurationByIdInteractor,
     private val createMetricConfigurationInteractor: CreateMetricConfigurationInteractor,
     private val updateGitConfigurationInteractor: UpdateGitConfigurationInteractor,
+    private val gitStatusConfigurationInteractor: GitConnectionStatusConfigurationInteractor,
     private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor
 ) {
 
@@ -70,6 +73,21 @@ class V2ConfigurationController(
     ): ResourcePageResponse<GitConfigurationResponse> {
         return this.findGitConfigurationsInteractor.execute(workspaceId, pageRequest)
     }
+
+    @ApiOperation(value = "Verify git connection")
+    @ApiImplicitParam(
+        name = "request",
+        value = "Git Configuration",
+        required = true,
+        dataType = "TestConnectionGitConfigurationRequest"
+    )
+    @GetMapping("/git/connection-status")
+    @ResponseStatus(HttpStatus.OK)
+    fun verifyGitConnection(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestBody request: TestConnectionGitConfigurationRequest
+    ): GitConnectionResponse =
+        gitStatusConfigurationInteractor.execute(request)
 
     @ApiOperation(value = "Delete Git Configuration By Id")
     @ApiImplicitParam(
