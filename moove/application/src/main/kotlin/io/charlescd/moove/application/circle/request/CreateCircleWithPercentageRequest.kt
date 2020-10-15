@@ -16,7 +16,7 @@ class CreateCircleWithPercentageRequest(
     @field:NotBlank
     val authorId: String,
 
-    @field:Min(1)
+    @field:Min(0)
     @field:Max(100)
     @field:NotNull
     val percentage: Int
