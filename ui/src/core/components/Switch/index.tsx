@@ -19,13 +19,14 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 
 interface Props {
+  className?: string;
   label: string;
   active?: boolean;
   onChange?: (value: boolean) => void;
   name?: string;
 }
 
-const Switch = ({ label, active, onChange, name }: Props) => {
+const Switch = ({ className, label, active, onChange, name }: Props) => {
   const [isActive, setIsActive] = useState(active);
 
   const id = `switch-${name}`;
@@ -36,7 +37,7 @@ const Switch = ({ label, active, onChange, name }: Props) => {
   };
 
   return (
-    <Styled.Switch>
+    <Styled.Switch className={className}>
       <Styled.Input
         data-testid={id}
         type="checkbox"

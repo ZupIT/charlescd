@@ -33,6 +33,7 @@ import { find, map } from 'lodash';
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
   const [isDisabled, setIsDisabled] = useState(true);
+  const [datasourceHealth, setDatasourceHealth] = useState(false)
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins()
   const { control, register, handleSubmit } = useForm<
@@ -48,7 +49,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     save({
       ...datasource,
       pluginSrc: plugin.src,
-      healthy: (plugin.inputParameters as PluginDatasource)['health'],
+      healthy: datasourceHealth,
     });
   };
 
@@ -65,16 +66,35 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const renderFields = () => (
     <>
+
       <Card.Config
         icon="prometheus"
         description={plugin.name}
         onClose={() => onClose()}
       />
+      {(plugin.inputParameters as PluginDatasource).health && (
+        <Styled.HealthWrapper>
+          <Styled.HealthSwitch
+            name="healthy"
+            label="Datasource health"
+            active={datasourceHealth}
+            onChange={() => setDatasourceHealth(!datasourceHealth)}
+          />
+          <Popover
+            title="Why do we ask for a source of health datasource?"
+            icon="info"
+            link={`${CHARLES_DOC}/reference/metrics`}
+            linkLabel="View documentation"
+            description="Marking a health datasource enables Charles pre-configured health metrics."
+          />
+        </Styled.HealthWrapper>
+      )}
       <Styled.Input
         ref={register}
         name="name"
         label="Datasource name"
       />
+
       {map((plugin.inputParameters as PluginDatasource)['configurationInputs'], input => (
         <Styled.Input
           key={input.name}
