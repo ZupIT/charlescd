@@ -95,8 +95,8 @@ func (s *Suite) TestValidate() {
 
 func (s *Suite) TestValidateNameLength() {
 	datasource := datasource2.DataSource{
-		Name:      BigString,
-		PluginSrc: BigString,
+		Name:      bigString,
+		PluginSrc: bigString,
 	}
 	var errList = s.repository.Validate(datasource)
 
