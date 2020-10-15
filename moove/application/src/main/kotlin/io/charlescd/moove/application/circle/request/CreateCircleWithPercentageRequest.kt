@@ -1,12 +1,10 @@
 package io.charlescd.moove.application.circle.request
 
-import io.charlescd.moove.commons.extension.toJsonNode
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MatcherTypeEnum
 import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
-import javax.validation.Valid
 import javax.validation.constraints.*
 
 class CreateCircleWithPercentageRequest(
@@ -20,8 +18,7 @@ class CreateCircleWithPercentageRequest(
     @field:Max(100)
     @field:NotNull
     val percentage: Int
-)
-{
+) {
     fun toDomain(user: User, workspaceId: String) = Circle(
         id = UUID.randomUUID().toString(),
         name = name,

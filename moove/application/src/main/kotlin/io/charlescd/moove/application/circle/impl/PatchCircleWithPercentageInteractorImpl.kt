@@ -22,10 +22,8 @@ import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.CircleService
 import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.WorkspaceService
-import io.charlescd.moove.application.circle.PatchCircleInteractor
-import io.charlescd.moove.application.circle.PatchCirclePercentageInteractor
+import io.charlescd.moove.application.circle.PatchCircleWithPercentageInteractor
 import io.charlescd.moove.application.circle.request.PatchCirclePercentageRequest
-import io.charlescd.moove.application.circle.request.PatchCircleRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MatcherTypeEnum
@@ -37,13 +35,13 @@ import javax.inject.Named
 import javax.transaction.Transactional
 
 @Named
-open class PatchCirclePercentageInteractorImpl(
+open class PatchCircleWithPercentageInteractorImpl(
     private val circleMatcherService: CircleMatcherService,
     private val workspaceService: WorkspaceService,
     private val deploymentService: DeploymentService,
     private val buildService: BuildService,
     private val circleService: CircleService
-) : PatchCirclePercentageInteractor {
+) : PatchCircleWithPercentageInteractor {
 
     @Transactional
     override fun execute(id: String, request: PatchCirclePercentageRequest): CircleResponse {

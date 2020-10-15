@@ -19,10 +19,9 @@ package io.charlescd.moove.application.circle.impl
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.NullNode
 import io.charlescd.moove.application.*
-import io.charlescd.moove.application.circle.PatchCirclePercentageInteractor
+import io.charlescd.moove.application.circle.PatchCircleWithPercentageInteractor
 import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.application.circle.request.PatchCirclePercentageRequest
-import io.charlescd.moove.application.circle.request.PatchCircleRequest
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.*
@@ -33,7 +32,7 @@ import java.time.LocalDateTime
 
 class PatchCirclePercentageInteractorImplTest extends Specification {
 
-    private PatchCirclePercentageInteractor patchCirclePercentageInteractor
+    private PatchCircleWithPercentageInteractor patchCirclePercentageInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
@@ -43,7 +42,7 @@ class PatchCirclePercentageInteractorImplTest extends Specification {
     private BuildRepository buildRepository = Mock(BuildRepository)
 
     void setup() {
-        this.patchCirclePercentageInteractor = new PatchCirclePercentageInteractorImpl(
+        this.patchCirclePercentageInteractor = new PatchCircleWithPercentageInteractorImpl(
                 circleMatcherService,
                 new WorkspaceService(workspaceRepository, userRepository),
                 new DeploymentService(deploymentRepository),

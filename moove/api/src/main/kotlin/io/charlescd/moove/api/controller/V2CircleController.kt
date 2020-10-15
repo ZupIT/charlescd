@@ -36,7 +36,7 @@ import org.springframework.web.multipart.MultipartFile
 class V2CircleController(
     private val createCircleInteractor: CreateCircleInteractor,
     private val patchCircleInteractor: PatchCircleInteractor,
-    private val patchCirclePercentageInteractor: PatchCirclePercentageInteractor,
+    private val patchCirclePercentageInteractor: PatchCircleWithPercentageInteractor,
     private val findCircleByIdInteractor: FindCircleByIdInteractor,
     private val deleteCircleByIdInteractor: DeleteCircleByIdInteractor,
     private val findAllCirclesInteractor: FindAllCirclesInteractor,

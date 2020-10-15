@@ -19,7 +19,7 @@ package io.charlescd.moove.application.circle
 import io.charlescd.moove.application.circle.request.PatchCirclePercentageRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 
-interface PatchCirclePercentageInteractor {
+interface PatchCircleWithPercentageInteractor {
 
     fun execute(id: String, request: PatchCirclePercentageRequest): CircleResponse
 }

@@ -16,8 +16,6 @@
 
 package io.charlescd.moove.application.circle.request
 
-import com.fasterxml.jackson.module.kotlin.convertValue
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.charlescd.moove.application.BasePatchRequest
 import io.charlescd.moove.application.OpCodeEnum
 import io.charlescd.moove.application.PatchOperation
