@@ -93,7 +93,8 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     setActiveMetric(metric);
   };
 
-  const handleEditAction = (action: Action) => {
+  const handleEditAction = (action: Action, metricsGroup: MetricsGroup) => {
+    setActiveMetricsGroup(metricsGroup);
     setActiveTab(TABS.ACTION);
     setActiveAction(action);
   };
