@@ -36,7 +36,11 @@ export type MetricsGroup = {
 
 export type Action = {
   id: string;
+  createdAt?: string;
+  metricsGroupsId?: string;
+  actionId?: string;
   nickname: string;
+  executionParameters?: ExecutionParameters;
   status: string;
   triggeredAt: string;
   actionType: string;

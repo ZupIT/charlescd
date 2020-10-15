@@ -35,7 +35,8 @@ import {
   getChartDataByQuery,
   getAllActionsTypes,
   createAction,
-  updateAction
+  updateAction,
+  getGroupActionById
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
@@ -47,7 +48,8 @@ import {
   DataSource,
   ChartDataByQuery,
   ActionGroupPayload,
-  ActionType
+  ActionType,
+  Action
 } from './types';
 import { ValidationError } from 'core/interfaces/ValidationError';
 
@@ -399,7 +401,10 @@ export const useSaveAction = (actionId?: string) => {
     async (ActionGroupPayload: ActionGroupPayload) => {
       try {
         status.pending();
-        const savedActionResponse = await saveActionPayload(ActionGroupPayload);
+        const savedActionResponse = await saveActionPayload(
+          ActionGroupPayload,
+          actionId
+        );
 
         status.resolved();
 
@@ -414,10 +419,10 @@ export const useSaveAction = (actionId?: string) => {
       } catch (error) {
         status.rejected();
         console.log(error);
-        // error.text().then((errorMessage: string) => {
-        //   const parsedError = JSON.parse(errorMessage);
-        setValidationError(error);
-        // });
+        error.text().then((errorMessage: string) => {
+          const parsedError = JSON.parse(errorMessage);
+          setValidationError(parsedError);
+        });
 
         dispatch(
           toogleNotification({
@@ -427,7 +432,7 @@ export const useSaveAction = (actionId?: string) => {
         );
       }
     },
-    [saveActionPayload, status, dispatch]
+    [saveActionPayload, status, dispatch, actionId]
   );
 
   return {
@@ -470,5 +475,30 @@ export const useDeleteAction = () => {
 
   return {
     deleteAction
+  };
+};
+
+export const useActionTypeById = () => {
+  const getActionGroupById = useFetchData<Action>(getGroupActionById);
+  const [actionData, setActionData] = useState<Action>();
+
+  const getActionGroup = useCallback(
+    async (actionId: string) => {
+      try {
+        const response = await getActionGroupById(actionId);
+
+        setActionData(response);
+
+        return response;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [getActionGroupById]
+  );
+
+  return {
+    getActionGroup,
+    actionData
   };
 };

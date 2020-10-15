@@ -69,7 +69,7 @@ const ActionCard = ({
           <Dropdown.Item
             icon="edit"
             name="Edit action"
-            onClick={() => handleEditAction(action)}
+            onClick={() => handleEditAction(action, metricGroup)}
           />
           <Dropdown.Item
             icon="delete"

@@ -19,13 +19,18 @@ import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button/Default';
+import isUndefined from 'lodash/isUndefined';
 import Styled from './styled';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import debounce from 'debounce-promise';
-import { useCirclesData } from 'modules/Circles/hooks';
+import { useCircle, useCirclesData } from 'modules/Circles/hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
-import { createActionPayload, normalizeActionsOptions } from './helpers';
-import { useActionTypes, useSaveAction } from './hooks';
+import {
+  createActionPayload,
+  getSelectDefaultValue,
+  normalizeActionsOptions
+} from './helpers';
+import { useActionTypes, useSaveAction, useActionTypeById } from './hooks';
 import { ActionGroupPayload, MetricsGroup, Action } from './types';
 
 type Props = {
@@ -52,15 +57,47 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const { saveAction } = useSaveAction(action?.id);
   const { getAllActionsTypesData } = useActionTypes();
   const [actionsTypeResponse, setActionsTypeResponse] = useState([]);
+  const [loadingActionsData, setLoadingActionsData] = useState(false);
   const [selectedAction, setSelectedAction] = useState('');
+  const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
   const { getCirclesData } = useCirclesData();
-
-  console.log(action);
+  const { getActionGroup, actionData } = useActionTypeById();
+  const [{ circleResponse, loading }, { loadCircle }] = useCircle();
 
   useEffect(() => {
-    getAllActionsTypesData().then(response => {
-      setActionsTypeResponse(response);
-    });
+    action && getActionGroup(action.id);
+  }, [getActionGroup, action]);
+
+  useEffect(() => {
+    if (actionData && selectedAction === 'circledeployment') {
+      loadCircle(actionData.executionParameters.destinationCircleId);
+    }
+  }, [actionData, selectedAction, loadCircle]);
+
+  useEffect(() => {
+    if (!isUndefined(circleResponse) && selectedAction === 'circledeployment') {
+      setCurrentCircleOptions(normalizeSelectOptions([circleResponse]));
+    }
+  }, [circleResponse, selectedAction]);
+
+  useEffect(() => {
+    if (actionData && actionsTypeResponse) {
+      const selectedActionType = getSelectDefaultValue(
+        actionData?.actionId,
+        actionsTypeResponse
+      );
+      setSelectedAction(selectedActionType?.type);
+    }
+  }, [actionData, actionsTypeResponse]);
+
+  useEffect(() => {
+    setLoadingActionsData(true);
+    getAllActionsTypesData()
+      .then(response => {
+        const normalizedData = normalizeActionsOptions(response);
+        setActionsTypeResponse(normalizedData);
+      })
+      .finally(() => setLoadingActionsData(false));
   }, [getAllActionsTypesData]);
 
   const onSubmit = (data: ActionForm) => {
@@ -70,14 +107,23 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
       circleId,
       selectedAction
     );
-    saveAction(newPayload);
+
+    saveAction(newPayload)
+      .then(response => {
+        if (response) {
+          onGoBack();
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   const loadCirclesByName = debounce(
     name =>
-      getCirclesData({ name, active: true }).then(response =>
+      getCirclesData({ name, active: true }).then(response => (
         normalizeSelectOptions(response.content)
-      ),
+      )),
     500
   );
 
@@ -119,23 +165,33 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
               <Text.h6 color="error">{errors.nickname.message}</Text.h6>
             </Styled.FieldErrorWrapper>
           )}
-          <Styled.Select
-            control={control}
-            name="actionId"
-            customOption={CustomOption.Description}
-            options={normalizeActionsOptions(actionsTypeResponse)}
-            onChange={e => setSelectedAction(e?.type)}
-            label="Select a action type"
-            isDisabled={false}
-          />
+          {!loadingActionsData && (
+            <Styled.Select
+              control={control}
+              name="actionId"
+              customOption={CustomOption.Description}
+              options={actionsTypeResponse}
+              onChange={e => setSelectedAction(e?.type)}
+              label="Select a action type"
+              isDisabled={false}
+              defaultValue={getSelectDefaultValue(
+                actionData?.actionId,
+                actionsTypeResponse
+              )}
+            />
+          )}
           {selectedAction === 'circledeployment' && (
             <Styled.SelectAsync
               control={control}
               name="circleId"
-              options={[]}
-              label="Select a user group"
+              options={currentCircleOptions}
+              label="Select a circle to deploy"
               isDisabled={false}
               loadOptions={loadCirclesByName}
+              defaultValue={getSelectDefaultValue(
+                actionData?.executionParameters.destinationCircleId,
+                currentCircleOptions
+              )}
             />
           )}
           <Button

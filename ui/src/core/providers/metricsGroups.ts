@@ -88,5 +88,8 @@ export const createAction = (actionGroupPayload: ActionGroupPayload) =>
 export const deleteActionByActionId = (actionId: string) =>
   deleteRequest(`${endpoint}/group-actions/${actionId}`);
 
-export const updateAction = (actionPayload: Action) =>
-  putRequest(`${endpoint}/group-actions/${actionPayload.id}`, actionPayload);
+export const updateAction = (actionPayload: Action, actionId: string) =>
+  putRequest(`${endpoint}/group-actions/${actionId}`, actionPayload);
+
+export const getGroupActionById = (actionId: string) =>
+  baseRequest(`${endpoint}/group-actions/${actionId}`);
