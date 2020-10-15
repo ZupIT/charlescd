@@ -49,9 +49,9 @@ func getErrorMoreThanOneResultByQuery(query string) error {
 }
 
 func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult model.Vector) ([]datasource.Value, error) {
-	// if prometheusResult.Len() > 1 {
-	// 	return nil, getErrorMoreThanOneResultByQuery(string(query))
-	// }
+	if prometheusResult.Len() > 1 {
+		return nil, getErrorMoreThanOneResultByQuery(string(query))
+	}
 
 	datasourceValues := []datasource.Value{}
 	for _, value := range prometheusResult {
@@ -74,9 +74,9 @@ func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult 
 }
 
 func getDatasourceValuesByPrometheusVectorMetrix(query string, prometheusResult model.Matrix) ([]datasource.Value, error) {
-	// if prometheusResult.Len() > 1 {
-	// 	return nil, getErrorMoreThanOneResultByQuery(string(query))
-	// }
+	if prometheusResult.Len() > 1 {
+		return nil, getErrorMoreThanOneResultByQuery(string(query))
+	}
 
 	datasourceValues := []datasource.Value{}
 	for _, matrixVector := range prometheusResult {
