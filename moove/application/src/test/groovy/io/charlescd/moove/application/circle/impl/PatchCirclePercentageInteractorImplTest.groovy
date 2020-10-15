@@ -17,9 +17,11 @@
 package io.charlescd.moove.application.circle.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.NullNode
 import io.charlescd.moove.application.*
-import io.charlescd.moove.application.circle.PatchCircleInteractor
+import io.charlescd.moove.application.circle.PatchCirclePercentageInteractor
 import io.charlescd.moove.application.circle.request.NodePart
+import io.charlescd.moove.application.circle.request.PatchCirclePercentageRequest
 import io.charlescd.moove.application.circle.request.PatchCircleRequest
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
@@ -29,9 +31,9 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class PatchCircleInteractorImplTest extends Specification {
+class PatchCirclePercentageInteractorImplTest extends Specification {
 
-    private PatchCircleInteractor patchCircleInteractor
+    private PatchCirclePercentageInteractor patchCirclePercentageInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
@@ -41,7 +43,7 @@ class PatchCircleInteractorImplTest extends Specification {
     private BuildRepository buildRepository = Mock(BuildRepository)
 
     void setup() {
-        this.patchCircleInteractor = new PatchCircleInteractorImpl(
+        this.patchCirclePercentageInteractor = new PatchCirclePercentageInteractorImpl(
                 circleMatcherService,
                 new WorkspaceService(workspaceRepository, userRepository),
                 new DeploymentService(deploymentRepository),
@@ -57,21 +59,18 @@ class PatchCircleInteractorImplTest extends Specification {
         def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
         def buildId = "97f508ad-cdbd-45df-969f-07781cc00513"
         def deploymentId = "037533c9-f3f5-42ee-8d53-1fab77038a25"
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/name", "Men")]
-        def request = new PatchCircleRequest(patches)
+        def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "Men")]
+        def request = new PatchCirclePercentageRequest(patches)
 
-        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
-        def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
         def user = getDummyUser(authorId)
-        def circle = getDummyCircle(circleId, user, nodePart, workspaceId, false)
+        def circle = getDummyCirclePercentage(circleId, user, null, workspaceId, false, 20)
         def workspace = getDummyWorkspace(workspaceId, user)
         def deployment = getDummyDeployment(deploymentId, user, circle, buildId, workspaceId)
         def build = getDummyBuild(workspaceId, user, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
 
         when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
+        def response = this.patchCirclePercentageInteractor.execute(circleId, request)
 
         then:
         1 * this.circleRepository.findById(_) >> Optional.of(circle)
@@ -107,7 +106,7 @@ class PatchCircleInteractorImplTest extends Specification {
         assert response.default == circle.defaultCircle
         assert response.workspaceId == circle.workspaceId
         assert response.importedKvRecords == circle.importedKvRecords
-        assert response.rules == circle.rules
+        assert response.rules instanceof NullNode
         assert response.importedAt == circle.importedAt
         assert response.createdAt == circle.createdAt
         assert response.author.id == circle.author.id
@@ -123,24 +122,18 @@ class PatchCircleInteractorImplTest extends Specification {
         def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
         def buildId = "97f508ad-cdbd-45df-969f-07781cc00513"
         def deploymentId = "037533c9-f3f5-42ee-8d53-1fab77038a25"
-        def rulePart = new NodePart.RulePart("age", NodePart.ConditionEnum.EQUAL, ["18"])
 
-        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
-        def rules = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.AND, [rule], null)
-
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rules], null)
-
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
-        def request = new PatchCircleRequest(patches)
+        def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/percentage", 30)]
+        def request = new PatchCirclePercentageRequest(patches)
 
         def user = getDummyUser(authorId)
-        def circle = getD(circleId, user, nodePart, workspaceId, false)
+        def circle = getDummyCirclePercentage(circleId, user, null, workspaceId, false, 20)
         def workspace = getDummyWorkspace(workspaceId, user)
         def deployment = getDummyDeployment(deploymentId, user, circle, buildId, workspaceId)
         def build = getDummyBuild(workspaceId, user, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
 
         when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
+        def response = this.patchCirclePercentageInteractor.execute(circleId, request)
 
         then:
         1 * this.circleRepository.findById(_) >> Optional.of(circle)
@@ -149,7 +142,7 @@ class PatchCircleInteractorImplTest extends Specification {
             def patchedCircle = arguments[0]
 
             assert patchedCircle instanceof Circle
-            assert patchedCircle.name == "Women"
+            assert patchedCircle.percentage == 30
 
             return patchedCircle
         }
@@ -159,7 +152,7 @@ class PatchCircleInteractorImplTest extends Specification {
             def matcherUri = arguments[2]
 
             assert patchedCircle instanceof Circle
-            assert patchedCircle.name == "Women"
+            assert patchedCircle.percentage == 30
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
         }
@@ -174,7 +167,7 @@ class PatchCircleInteractorImplTest extends Specification {
         assert response.default == circle.defaultCircle
         assert response.workspaceId == circle.workspaceId
         assert response.importedKvRecords == circle.importedKvRecords
-        assert response.rules != circle.rules
+        assert response.rules instanceof NullNode
         assert response.importedAt == circle.importedAt
         assert response.createdAt == circle.createdAt
         assert response.author.id == circle.author.id
@@ -183,89 +176,25 @@ class PatchCircleInteractorImplTest extends Specification {
         assert response.deployment.tag == build.tag
     }
 
-    def "should patch a circle /rules with 1 segment"() {
-        given:
-        def authorId = "5952df12-fc50-4697-9cd9-a7c41fec2bc3"
-        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
-        def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
-        def buildId = "97f508ad-cdbd-45df-969f-07781cc00513"
-        def deploymentId = "037533c9-f3f5-42ee-8d53-1fab77038a25"
-        def rulePart = new NodePart.RulePart("age", NodePart.ConditionEnum.EQUAL, ["18"])
-
-        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.RULE, NodePart.LogicalOperatorRequest.OR, [rule], null)
-
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
-        def request = new PatchCircleRequest(patches)
-
-        def user = getDummyUser(authorId)
-        def circle = getDummyCircle(circleId, user, nodePart, workspaceId, false)
-        def workspace = getDummyWorkspace(workspaceId, user)
-        def deployment = getDummyDeployment(deploymentId, user, circle, buildId, workspaceId)
-        def build = getDummyBuild(workspaceId, user, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
-
-        when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
-
-        then:
-        1 * this.circleRepository.findById(_) >> Optional.of(circle)
-        1 * this.workspaceRepository.find(_) >> Optional.of(workspace)
-        1 * this.circleRepository.update(_) >> { arguments ->
-            def patchedCircle = arguments[0]
-
-            assert patchedCircle instanceof Circle
-            assert patchedCircle.name == "Women"
-
-            return patchedCircle
-        }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
-            def patchedCircle = arguments[0]
-            def previousReference = arguments[1]
-            def matcherUri = arguments[2]
-
-            assert patchedCircle instanceof Circle
-            assert patchedCircle.name == "Women"
-            assert previousReference == circle.reference
-            assert matcherUri == workspace.circleMatcherUrl
-        }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
-        1 * buildRepository.findById(_) >> Optional.of(build)
-
-        assert response != null
-        assert response.id == circle.id
-        assert response.name == circle.name
-        assert response.reference != circle.reference
-        assert response.matcherType == circle.matcherType
-        assert response.default == circle.defaultCircle
-        assert response.workspaceId == circle.workspaceId
-        assert response.importedKvRecords == circle.importedKvRecords
-        assert response.rules != circle.rules
-        assert response.importedAt == circle.importedAt
-        assert response.createdAt == circle.createdAt
-        assert response.author.id == circle.author.id
-        assert response.deployment != null
-        assert response.deployment.id == deployment.id
-        assert response.deployment.tag == build.tag
-    }
 
     def "should patch a circle and return an response with no active deployment"() {
         given:
         def authorId = "5952df12-fc50-4697-9cd9-a7c41fec2bc3"
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
         def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/name", "Men")]
-        def request = new PatchCircleRequest(patches)
+        def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "Men")]
+        def request = new PatchCirclePercentageRequest(patches)
 
         def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
         def user = getDummyUser(authorId)
-        def circle = getDummyCircle(circleId, user, nodePart, workspaceId, false)
+        def circle = getDummyCirclePercentage(circleId, user, nodePart, workspaceId, false, 10)
         def workspace = getDummyWorkspace(workspaceId, user)
 
         when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
+        def response = this.patchCirclePercentageInteractor.execute(circleId, request)
 
         then:
         1 * this.circleRepository.findById(_) >> Optional.of(circle)
@@ -298,7 +227,7 @@ class PatchCircleInteractorImplTest extends Specification {
         assert response.default == circle.defaultCircle
         assert response.workspaceId == circle.workspaceId
         assert response.importedKvRecords == circle.importedKvRecords
-        assert response.rules == circle.rules
+        assert response.rules instanceof NullNode
         assert response.importedAt == circle.importedAt
         assert response.createdAt == circle.createdAt
         assert response.author.id == circle.author.id
@@ -310,15 +239,12 @@ class PatchCircleInteractorImplTest extends Specification {
         def authorId = "5952df12-fc50-4697-9cd9-a7c41fec2bc3"
         def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
 
-        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
-        def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
         def user = getDummyUser(authorId)
-        def circle = getDummyCircle(circleId, user, nodePart, workspaceId, true)
+        def circle = getDummyCirclePercentage(circleId, user, null, workspaceId, true, 20)
 
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCirclePercentageInteractor.execute(circleId, request)
 
         then:
         1 * this.circleRepository.findById(_) >> Optional.of(circle)
@@ -328,12 +254,12 @@ class PatchCircleInteractorImplTest extends Specification {
 
         where:
         circleId                               | request                                                                      | message
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/name", "Men")]) | "cannot.update.default.circle"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/name", "Men")]) | "cannot.update.default.circle"
     }
 
     def "should throw an exception when the value of allowed paths is null"() {
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCirclePercentageInteractor.execute(circleId, request)
 
         then:
         def exception = thrown(IllegalArgumentException)
@@ -341,13 +267,13 @@ class PatchCircleInteractorImplTest extends Specification {
 
         where:
         circleId                               | request                                                                      | message
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/name", null)])  | "Name cannot be null."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/rules", null)]) | "Rules cannot be null."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/name", null)])  | "Name cannot be null."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/percentage", null)]) | "Percentage cannot be null."
     }
 
     def "should throw an exception when the patch operation is equal to REMOVE"() {
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCirclePercentageInteractor.execute(circleId, request)
 
         then:
         def exception = thrown(IllegalArgumentException)
@@ -355,12 +281,12 @@ class PatchCircleInteractorImplTest extends Specification {
 
         where:
         circleId                               | request                                                                        | message
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.REMOVE, "/name", null)]) | "Remove operation not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REMOVE, "/name", null)]) | "Remove operation not allowed."
     }
 
     def "should throw an exception when one patch path is not allowed list"() {
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCirclePercentageInteractor.execute(circleId, request)
 
         then:
         def exception = thrown(IllegalArgumentException)
@@ -368,89 +294,18 @@ class PatchCircleInteractorImplTest extends Specification {
 
         where:
         circleId                               | request                                                                                                               | message
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/id", "5rED80951-94b1-4894-b784-c0b069994888")])          | "Path /id is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/reference", "5rED80951-94b1-4894-b784-c0b069994888")])   | "Path /reference is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/author", null)])                                         | "Path /author is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/createdAt", LocalDateTime.now())])                       | "Path /createdAt is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/matcherType", MatcherTypeEnum.REGULAR)])                 | "Path /matcherType is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/importedKvRecords", 0)])                                 | "Path /importedKvRecords is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/importedAt", LocalDateTime.now())])                      | "Path /importedAt is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/defaultCircle", false)])                                 | "Path /defaultCircle is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/workspaceId", "5rED80951-94b1-4894-b784-c0b069994888")]) | "Path /workspaceId is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/id", "5rED80951-94b1-4894-b784-c0b069994888")])          | "Path /id is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/reference", "5rED80951-94b1-4894-b784-c0b069994888")])   | "Path /reference is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/author", null)])                                         | "Path /author is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/createdAt", LocalDateTime.now())])                       | "Path /createdAt is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/matcherType", MatcherTypeEnum.REGULAR)])                 | "Path /matcherType is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/importedKvRecords", 0)])                                 | "Path /importedKvRecords is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/importedAt", LocalDateTime.now())])                      | "Path /importedAt is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/defaultCircle", false)])                                 | "Path /defaultCircle is not allowed."
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/workspaceId", "5rED80951-94b1-4894-b784-c0b069994888")]) | "Path /workspaceId is not allowed."
     }
 
-    def "should throw an exception when clauses is null"() {
-        given:
-        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, null)
 
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
-        def request = new PatchCircleRequest(patches)
-
-        when:
-        this.patchCircleInteractor.execute(circleId, request)
-
-        then:
-        def exception = thrown(IllegalArgumentException)
-        exception.message == "Clauses cannot be null."
-    }
-
-    def "should throw an exception when key is null"() {
-        given:
-        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
-        def rulePart = new NodePart.RulePart(null, NodePart.ConditionEnum.EQUAL, ["zup"])
-        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
-        def rules = new NodePart(NodePart.NodeTypeRequest.CLAUSE, null, [rule], null)
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rules], null)
-
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
-        def request = new PatchCircleRequest(patches)
-
-        when:
-        this.patchCircleInteractor.execute(circleId, request)
-
-        then:
-        def exception = thrown(IllegalArgumentException)
-        exception.message == "Key cannot be null."
-    }
-
-    def "should throw an exception when key is blank"() {
-        given:
-        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
-        def rulePart = new NodePart.RulePart("", NodePart.ConditionEnum.EQUAL, ["zup"])
-        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
-        def rules = new NodePart(NodePart.NodeTypeRequest.CLAUSE, null, [rule], null)
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rules], null)
-
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
-        def request = new PatchCircleRequest(patches)
-
-        when:
-        this.patchCircleInteractor.execute(circleId, request)
-
-        then:
-        def exception = thrown(IllegalArgumentException)
-        exception.message == "Key cannot be blank."
-    }
-
-    def "should throw an exception when condition is null"() {
-        given:
-        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
-        def rulePart = new NodePart.RulePart("username", null, ["zup"])
-        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
-        def rules = new NodePart(NodePart.NodeTypeRequest.CLAUSE, null, [rule], null)
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rules], null)
-
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
-        def request = new PatchCircleRequest(patches)
-
-        when:
-        this.patchCircleInteractor.execute(circleId, request)
-
-        then:
-        def exception = thrown(IllegalArgumentException)
-        exception.message == "Condition cannot be null."
-    }
 
     private Deployment getDummyDeployment(String deploymentId, User user, Circle circle, String buildId, String workspaceId) {
         new Deployment(
@@ -537,5 +392,21 @@ class PatchCircleInteractorImplTest extends Specification {
                 'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', buildStatusEnum,
                 workspaceId, deploymentList)
         build
+    }
+
+    private static Circle getDummyCirclePercentage(String circleId, User author, NodePart nodePart, String workspaceId, Boolean isDefault, int percentage) {
+        new Circle(
+                circleId,
+                "Women",
+                "9d109f66-351b-426d-ad69-a49bbc329914",
+                author, LocalDateTime.now(),
+                MatcherTypeEnum.PERCENTAGE,
+                null,
+                0,
+                null,
+                isDefault,
+                workspaceId,
+                percentage
+        )
     }
 }
