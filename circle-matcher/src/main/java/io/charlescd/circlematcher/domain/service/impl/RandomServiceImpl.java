@@ -17,18 +17,20 @@
 package io.charlescd.circlematcher.domain.service.impl;
 
 import io.charlescd.circlematcher.domain.service.RandomService;
-import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
-@Component
+import org.springframework.stereotype.Service;
+
+@Service
 public class RandomServiceImpl implements RandomService {
+
     private SecureRandom secureRandom;
-    private RandomServiceImpl()
-    {
+
+    private RandomServiceImpl() {
         this.secureRandom = new SecureRandom();
     }
 
     public int getRandomNumber(int number) {
-        return this.secureRandom.nextInt(number)+1;
+        return this.secureRandom.nextInt(number) + 1;
     }
 
 }

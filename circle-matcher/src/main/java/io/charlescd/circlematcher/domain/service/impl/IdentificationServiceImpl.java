@@ -26,7 +26,6 @@ import io.charlescd.circlematcher.domain.service.RandomService;
 import io.charlescd.circlematcher.infrastructure.SegmentationKeyUtils;
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository;
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -37,7 +36,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import org.paukov.combinatorics3.Generator;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +82,10 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private List<KeyMetadata> extractIntersection(List<String> keySubsets, List<KeyMetadata> keyMetadata) {
         return keyMetadata.stream()
-                .filter(item -> keySubsets.contains(SegmentationKeyUtils.extract(item.getKey())) || item.getIsDefault() || item.isPercentage())
+                .filter(
+                        item -> keySubsets.contains(SegmentationKeyUtils.extract(item.getKey()))
+                                || item.getIsDefault() || item.isPercentage()
+                )
                 .collect(Collectors.toList());
     }
 
@@ -118,8 +119,8 @@ public class IdentificationServiceImpl implements IdentificationService {
                     .sorted(Comparator.comparing(KeyMetadata::getPercentage))
                     .collect(Collectors.toList());
             if (!percentageMatched.isEmpty()) {
-                this.getCircleByPercentage(percentageMatched).
-                        ifPresent(keyMetadata -> matched.add(Circle.from(keyMetadata)));
+                this.getCircleByPercentage(percentageMatched)
+                        .ifPresent(keyMetadata -> matched.add(Circle.from(keyMetadata)));
             }
         }
         if (matched.isEmpty()) {
@@ -130,9 +131,9 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     public Optional<KeyMetadata> getCircleByPercentage(List<KeyMetadata> percentageCircles) {
-        if(percentageCircles.size() > 1) {
-            IntStream.range(1,percentageCircles.size())
-                    .forEach( i-> this.sumValuesPercentage(percentageCircles.get(i),percentageCircles.get(i-1)));
+        if (percentageCircles.size() > 1) {
+            IntStream.range(1, percentageCircles.size())
+                    .forEach( i-> this.sumValuesPercentage(percentageCircles.get(i), percentageCircles.get(i - 1)));
         }
         return this.findMatchedCircle(this.pickRandomValue(), percentageCircles);
     }
@@ -166,7 +167,8 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private boolean isMatched(IdentificationRequest request, Segmentation item) {
         return item.getType().equals(SegmentationType.SIMPLE_KV)
-                || (!item.getType().equals(SegmentationType.PERCENTAGE) && this.scriptManagerService.isMatch(item.getNode(), request.getRequestData()));
+                || (!item.getType().equals(SegmentationType.PERCENTAGE)
+                && this.scriptManagerService.isMatch(item.getNode(), request.getRequestData()));
     }
 
     private Circle createDefaultCircleFrom(List<KeyMetadata> metadata) {
