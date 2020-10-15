@@ -15,6 +15,7 @@
  */
 
 import styled from 'styled-components';
+import Text from 'core/components/Text';
 
 interface Dot {
   color: string;
@@ -34,7 +35,12 @@ const Dot = styled.div<Dot>`
   margin-right: 5px;
 `;
 
+const Name = styled(Text.h5)`
+  line-height: 15px;
+`;
+
 export default {
   Item,
-  Dot
+  Dot,
+  Name
 };

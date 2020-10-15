@@ -229,24 +229,21 @@ const ActionNickname = styled(Text.h5)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 125px;
-  margin-left: -15px;
+  width: 180px;
 `;
 
 const ActionType = styled(Text.h5)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 125px;
-  margin-left: 10px;
+  width: 150px;
 `;
 
 const ActionTypeTriggeredAt = styled(Text.h5)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 125px;
-  margin-left: 10px;
+  width: 110px;
 `;
 
 export default {

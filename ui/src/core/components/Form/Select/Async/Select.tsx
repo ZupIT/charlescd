@@ -22,6 +22,7 @@ import FloatingLabel from 'core/components/Form/Select/FloatingLabel';
 import customStyles from '../customStyle';
 import { Props, Option } from '../interfaces';
 import Styled from '../styled';
+import { isEmpty } from 'lodash';
 
 const Select = ({
   placeholder,
@@ -35,30 +36,34 @@ const Select = ({
   customOption,
   loadOptions,
   hasError
-}: Props) => (
-  <div data-testid="react-select">
-    <Styled.AsyncSelect
-      className={className}
-      defaultValue={defaultValue}
-      isDisabled={isDisabled}
-      placeholder={placeholder}
-      hasError={hasError}
-      components={{
-        ValueContainer: FloatingLabel,
-        Option: customOption ? customOption : components.Option,
-        SingleValue,
-        IndicatorSeparator: null,
-        DropdownIndicator: () => <DownSVG />
-      }}
-      styles={customStyles}
-      cacheOptions
-      options={options}
-      defaultOptions={defaultOptions ?? true}
-      loadOptions={loadOptions}
-      onInputChange={onInputChange}
-      onChange={(option: Option) => onChange(option)}
-    />
-  </div>
-);
+}: Props) => {
+  const selectDefaultOptions = isEmpty(defaultOptions) ? true : defaultOptions;
+
+  return (
+    <div data-testid="react-select">
+      <Styled.AsyncSelect
+        className={className}
+        defaultValue={defaultValue}
+        isDisabled={isDisabled}
+        placeholder={placeholder}
+        hasError={hasError}
+        components={{
+          ValueContainer: FloatingLabel,
+          Option: customOption ? customOption : components.Option,
+          SingleValue,
+          IndicatorSeparator: null,
+          DropdownIndicator: () => <DownSVG />
+        }}
+        styles={customStyles}
+        cacheOptions
+        options={options}
+        defaultOptions={selectDefaultOptions}
+        loadOptions={loadOptions}
+        onInputChange={onInputChange}
+        onChange={(option: Option) => onChange(option)}
+      />
+    </div>
+  );
+};
 
 export default Select;

@@ -480,15 +480,18 @@ export const useDeleteAction = () => {
 
 export const useActionTypeById = () => {
   const getActionGroupById = useFetchData<Action>(getGroupActionById);
+  const [isLoading, setIsLoading] = useState(false);
   const [actionData, setActionData] = useState<Action>();
 
   const getActionGroup = useCallback(
     async (actionId: string) => {
       try {
-        const response = await getActionGroupById(actionId);
+        setIsLoading(true);
 
+        const response = await getActionGroupById(actionId);
         setActionData(response);
 
+        setIsLoading(false);
         return response;
       } catch (e) {
         console.log(e);
@@ -499,6 +502,7 @@ export const useActionTypeById = () => {
 
   return {
     getActionGroup,
-    actionData
+    actionData,
+    isLoading
   };
 };

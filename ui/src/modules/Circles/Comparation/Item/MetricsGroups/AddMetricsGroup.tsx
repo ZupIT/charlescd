@@ -54,7 +54,9 @@ const AddMetricsGroup = ({
   return (
     <Modal.Default onClose={() => onCloseModal()}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Modal.Title color="light">Add metrics group</Styled.Modal.Title>
+        <Styled.Modal.Title color="light">
+          {metricGroup?.id ? 'Edit metrics group' : 'Add metrics group'}
+        </Styled.Modal.Title>
         <Styled.Modal.Input
           name="name"
           label="Type a name for the metrics group"
