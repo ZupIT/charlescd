@@ -44,6 +44,8 @@ type Props = {
   handleEditMetric: Function;
   handleAddAction: Function;
   handleEditGroup: Function;
+  handleDeleteAction: Function;
+  handleEditAction: Function;
 };
 
 const MetricsGroupCard = ({
@@ -54,7 +56,9 @@ const MetricsGroupCard = ({
   handleDeleteMetric,
   handleEditMetric,
   handleAddAction,
-  handleEditGroup
+  handleEditGroup,
+  handleDeleteAction,
+  handleEditAction
 }: Props) => {
   const normalizedSelectOptions = normalizeSelectOptionsNickname(
     metricGroup.metrics
@@ -101,8 +105,8 @@ const MetricsGroupCard = ({
             action={action}
             metricGroup={metricGroup}
             key={action.id}
-            // handleDeleteMetric={handleDeleteMetric}
-            // handleEditMetric={handleEditMetric}
+            handleDeleteAction={handleDeleteAction}
+            handleEditAction={handleEditAction}
           />
         ))}
       </Styled.MetricsGroupsCardContent>

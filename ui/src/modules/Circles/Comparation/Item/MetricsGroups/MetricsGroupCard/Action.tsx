@@ -24,9 +24,16 @@ import { Action, MetricsGroup } from '../types';
 interface Props {
   action: Action;
   metricGroup?: MetricsGroup;
+  handleDeleteAction: Function;
+  handleEditAction: Function;
 }
 
-const ActionCard = ({ action, metricGroup }: Props) => {
+const ActionCard = ({
+  action,
+  metricGroup,
+  handleDeleteAction,
+  handleEditAction
+}: Props) => {
   return (
     <Styled.ActionCardBody
       key={action.id}
@@ -62,12 +69,12 @@ const ActionCard = ({ action, metricGroup }: Props) => {
           <Dropdown.Item
             icon="edit"
             name="Edit action"
-            onClick={() => console.log('edit action', metricGroup)}
+            onClick={() => handleEditAction(action)}
           />
           <Dropdown.Item
             icon="delete"
             name="Delete action"
-            onClick={() => console.log('delete action', metricGroup)}
+            onClick={() => handleDeleteAction(action.id)}
           />
         </NewDropDown>
       </Styled.MetricDropdown>

@@ -16,11 +16,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Text from 'core/components/Text';
-import { Metric, MetricsGroup } from './types';
+import { Metric, MetricsGroup, Action } from './types';
 import {
   useMetricsGroups,
   useDeleteMetricsGroup,
-  useDeleteMetric
+  useDeleteMetric,
+  useDeleteAction
 } from './hooks';
 import Styled from './styled';
 import AddMetric from './AddMetric';
@@ -40,8 +41,10 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   const [toggleModal, setToggleModal] = useState(false);
   const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
   const [activeMetric, setActiveMetric] = useState<Metric>();
+  const [ativeAction, setActiveAction] = useState<Action>();
   const { deleteMetricsGroup } = useDeleteMetricsGroup();
   const { deleteMetric } = useDeleteMetric();
+  const { deleteAction } = useDeleteAction();
   const { getMetricsGroups, metricsGroups, status } = useMetricsGroups();
 
   useEffect(() => {
@@ -51,7 +54,6 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   }, [getMetricsGroups, id, status.isIdle]);
 
   const handleAddMetric = (metricGroup: MetricsGroup) => {
-    console.log(metricGroup);
     setActiveMetricsGroup(metricGroup);
     setActiveTab(TABS.METRIC);
   };
@@ -80,10 +82,20 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     getMetricsGroups(id);
   };
 
+  const handleDeleteAction = async (actionId: string) => {
+    await deleteAction(actionId);
+    getMetricsGroups(id);
+  };
+
   const handleEditMetric = (metric: Metric, metricsGroup: MetricsGroup) => {
     setActiveMetricsGroup(metricsGroup);
     setActiveTab(TABS.METRIC);
     setActiveMetric(metric);
+  };
+
+  const handleEditAction = (action: Action) => {
+    setActiveTab(TABS.ACTION);
+    setActiveAction(action);
   };
 
   const handleGoBack = () => {
@@ -155,6 +167,8 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               handleEditMetric={handleEditMetric}
               handleDeleteMetric={handleDeleteMetric}
               handleAddAction={handleAddAction}
+              handleDeleteAction={handleDeleteAction}
+              handleEditAction={handleEditAction}
             />
           ))
         )}
@@ -171,7 +185,12 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   );
 
   const renderCreateAction = () => (
-    <AddAction onGoBack={handleGoBack} metricsGroup={activeMetricsGroup} />
+    <AddAction
+      onGoBack={handleGoBack}
+      metricsGroup={activeMetricsGroup}
+      circleId={id}
+      action={ativeAction}
+    />
   );
 
   const renderContentByTab = () => {
