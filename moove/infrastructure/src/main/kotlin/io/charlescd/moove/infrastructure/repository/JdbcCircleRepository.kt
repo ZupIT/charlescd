@@ -51,6 +51,7 @@ class JdbcCircleRepository(
                        circles.imported_at         AS circle_imported_at,
                        circles.default_circle      AS circle_default,
                        circles.workspace_id        AS circle_workspace_id,
+                       circles.percentage          AS circle_percentage,
                        circle_user.id              AS circle_user_id,
                        circle_user.name            AS circle_user_name,
                        circle_user.email           AS circle_user_email,
@@ -197,7 +198,8 @@ class JdbcCircleRepository(
                         matcher_type        = ?,
                         rules               = ?,
                         imported_at         = ?,
-                        imported_kv_records = ?
+                        imported_kv_records = ?,
+                        percentage          = ?
                     WHERE id = ?
                 """
         )
@@ -209,7 +211,8 @@ class JdbcCircleRepository(
             ps.setObject(4, circle.rules, Types.OTHER)
             ps.setObject(5, circle.importedAt)
             ps.setObject(6, circle.importedKvRecords)
-            ps.setObject(7, circle.id)
+            ps.setObject(7, circle.percentage)
+            ps.setObject(8, circle.id)
         }
 
         return findById(circle.id).get()
@@ -279,6 +282,7 @@ class JdbcCircleRepository(
                            circles.imported_at         AS circle_imported_at,
                            circles.default_circle      AS circle_default,
                            circles.workspace_id        AS circle_workspace_id,
+                           circles.percentage          AS circle_percentage,
                            circle_user.id              AS circle_user_id,
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,
@@ -311,6 +315,7 @@ class JdbcCircleRepository(
                            circles.imported_at         AS circle_imported_at,
                            circles.default_circle      AS circle_default,
                            circles.workspace_id        AS circle_workspace_id,
+                           circles.percentage          AS circle_percentage,
                            circle_user.id              AS circle_user_id,
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,

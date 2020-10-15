@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile
 class V2CircleController(
     private val createCircleInteractor: CreateCircleInteractor,
     private val patchCircleInteractor: PatchCircleInteractor,
+    private val patchCirclePercentageInteractor: PatchCirclePercentageInteractor,
     private val findCircleByIdInteractor: FindCircleByIdInteractor,
     private val deleteCircleByIdInteractor: DeleteCircleByIdInteractor,
     private val findAllCirclesInteractor: FindAllCirclesInteractor,
@@ -181,7 +182,7 @@ class V2CircleController(
 
     @ApiOperation(value = "Create circle with Percentage")
     @PostMapping("/percentage")
-    @ApiImplicitParam(name = "request", value = "Circle Details", required = true, dataType = "CreateCircleRequest")
+    @ApiImplicitParam(name = "request", value = "Circle Details", required = true, dataType = "CreateCirclePercentageRequest")
     @ResponseStatus(HttpStatus.CREATED)
     fun createWithPercentage(
         @RequestHeader("x-workspace-id") workspaceId: String,
@@ -191,5 +192,17 @@ class V2CircleController(
             request,
             workspaceId
         )
+    }
+
+    @ApiOperation(value = "Patch percentage circle")
+    @ApiImplicitParam(name = "request", value = "Circle Details", required = true, dataType = "PatchCirclePercentageRequest")
+    @PatchMapping(path = ["/{id}/percentage"])
+    @ResponseStatus(HttpStatus.OK)
+    fun patchCirclePercentage(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable(name = "id") id: String,
+        @RequestBody @Valid request: PatchCirclePercentageRequest
+    ): CircleResponse {
+        return this.patchCirclePercentageInteractor.execute(id, request)
     }
 }
