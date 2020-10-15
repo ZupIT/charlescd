@@ -225,6 +225,19 @@ func (s *SuiteMetricGroup) TestSave() {
 	require.Equal(s.T(), createMetricGroup, metricgroup)
 }
 
+func (s *SuiteMetricGroup) TestSaveError() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Close()
+	_, err := s.repository.Save(metricgroup)
+	require.Error(s.T(), err)
+}
+
 func (s *SuiteMetricGroup) TestUpdate() {
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
@@ -241,6 +254,22 @@ func (s *SuiteMetricGroup) TestUpdate() {
 
 	metricgroup.BaseModel = createMetricGroup.BaseModel
 	require.Equal(s.T(), createMetricGroup, metricgroup)
+}
+
+func (s *SuiteMetricGroup) TestUpdateError() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+	metricgroup.Name = "group 2"
+	metricgroup.CircleID = uuid.New()
+	s.DB.Close()
+
+	_, err := s.repository.Update(metricgroup.ID.String(), metricgroup)
+	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestUpdateName() {
@@ -288,6 +317,20 @@ func (s *SuiteMetricGroup) TestDelete() {
 
 	err := s.repository.Remove(metricgroup.ID.String())
 	require.NoError(s.T(), err)
+}
+
+func (s *SuiteMetricGroup) TestDeleteError() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+
+	s.DB.Close()
+	err := s.repository.Remove(metricgroup.ID.String())
+	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
@@ -401,6 +444,12 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 	}
 }
 
+func (s *SuiteMetricGroup) TestResumeByCircleError() {
+	s.DB.Close()
+	_, err := s.repository.ResumeByCircle("")
+	require.Error(s.T(), err)
+}
+
 func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
 	circleID := uuid.New()
 	datasource := datasource.DataSource{
@@ -446,6 +495,31 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
 	s.DB.Create(&metric1)
 	s.DB.Create(&metric2)
 
+	_, err := s.repository.QueryByGroupID(metricgroup.ID.String(), datasource2.Period{Value: 5, Unit: "d"}, datasource2.Period{Value: 30, Unit: "m"})
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetricGroup) TestQueryByGroupIDDatabaseError() {
+	circleID := uuid.New()
+	datasource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "datasource/prometheus/prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasource)
+
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+	}
+	s.DB.Create(&metricgroup)
+
+	s.DB.Close()
 	_, err := s.repository.QueryByGroupID(metricgroup.ID.String(), datasource2.Period{Value: 5, Unit: "d"}, datasource2.Period{Value: 30, Unit: "m"})
 	require.Error(s.T(), err)
 }

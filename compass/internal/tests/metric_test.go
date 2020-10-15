@@ -221,6 +221,15 @@ func (s *SuiteMetric) TestRemoveMetric() {
 	require.Nil(s.T(), resErr)
 }
 
+func (s *SuiteMetric) TestRemoveMetricError() {
+	id := uuid.New()
+
+	s.DB.Close()
+	resErr := s.repository.RemoveMetric(id.String())
+
+	require.Error(s.T(), resErr)
+}
+
 func (s *SuiteMetric) TestFindMetricById() {
 	circleId := uuid.New()
 
