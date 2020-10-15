@@ -16,6 +16,10 @@
 
 package io.charlescd.circlematcher.domain;
 
+
+
+import java.time.LocalDateTime;
+
 public class Segmentation {
 
     private String name;
@@ -34,6 +38,8 @@ public class Segmentation {
 
     private Integer percentage;
 
+    private LocalDateTime createdAt;
+
     public Segmentation() {
     }
 
@@ -44,7 +50,8 @@ public class Segmentation {
                         SegmentationType type,
                         String workspaceId,
                         Boolean isDefault,
-                        Integer percentage) {
+                        Integer percentage,
+                        LocalDateTime createdAt) {
         this.name = name;
         this.node = node;
         this.reference = reference;
@@ -53,6 +60,7 @@ public class Segmentation {
         this.workspaceId = workspaceId;
         this.isDefault = isDefault;
         this.percentage = percentage;
+        this.createdAt = createdAt;
     }
 
     public static Segmentation of(KeyMetadata metadata) {
@@ -64,7 +72,8 @@ public class Segmentation {
                 metadata.getType(),
                 metadata.getWorkspaceId(),
                 metadata.getIsDefault(),
-                metadata.getPercentage());
+                metadata.getPercentage(),
+                metadata.getCreatedAt());
     }
 
     public String getName() {
@@ -89,6 +98,14 @@ public class Segmentation {
 
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Boolean getIsDefault() {

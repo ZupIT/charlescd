@@ -29,6 +29,7 @@ import io.charlescd.circlematcher.infrastructure.repository.SegmentationReposito
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -101,25 +102,26 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .collect(Collectors.toList());
     }
 
-    private Set<Circle> findMatchedCircles(IdentificationRequest request, List<KeyMetadata> metadata) {
+    private LinkedHashSet<Circle> findMatchedCircles(IdentificationRequest request, List<KeyMetadata> metadata) {
         var matched = metadata.stream()
                 .parallel()
                 .map(item -> findSegmentation(item, request))
                 .filter(item -> item.isPresent() && isMatched(request, item.get()))
+                .sorted((Comparator.comparing(item -> item.get().getCreatedAt(),
+                Comparator.nullsLast(Comparator.reverseOrder()))))
                 .map(item -> new Circle(item.get().getCircleId(), item.get().getName()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         if (matched.isEmpty()) {
-            var percentageCircles = metadata.stream()
+            var percentageMatched = metadata.stream()
                     .parallel()
                     .filter(KeyMetadata::isPercentage)
                     .sorted(Comparator.comparing(KeyMetadata::getPercentage))
                     .collect(Collectors.toList());
-            if (!percentageCircles.isEmpty()) {
-                var matchedByPercentage = this.getCircleByPercentage(percentageCircles);
-                matchedByPercentage.ifPresent(keyMetadata -> matched.add(Circle.from(keyMetadata)));
+            if (!percentageMatched.isEmpty()) {
+                this.getCircleByPercentage(percentageMatched).
+                        ifPresent(keyMetadata -> matched.add(Circle.from(keyMetadata)));
             }
         }
-
         if (matched.isEmpty()) {
             matched.add(createDefaultCircleFrom(metadata));
         }

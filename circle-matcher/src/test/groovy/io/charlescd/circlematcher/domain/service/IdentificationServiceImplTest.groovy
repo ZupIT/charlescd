@@ -28,6 +28,8 @@ import io.charlescd.circlematcher.infrastructure.repository.SegmentationReposito
 import io.charlescd.circlematcher.utils.TestUtils
 import spock.lang.Specification
 
+import java.time.LocalDateTime
+
 class IdentificationServiceImplTest extends Specification {
 
     private IdentificationService identificationService
@@ -298,7 +300,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
-                15
+                15,
+                LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
                 node,
@@ -307,7 +310,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
-                10
+                10,
+                LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
         def keyMetadataPercentage20 = new KeyMetadata(composedKey, segmentationPercentage20)
@@ -348,7 +352,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
-                15
+                15,
+                LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
                 node,
@@ -357,7 +362,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
-                10
+                10,
+                LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
         def keyMetadataPercentage20 = new KeyMetadata(composedKey, segmentationPercentage20)
@@ -398,7 +404,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
-                15
+                15,
+                LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
                 node,
@@ -407,7 +414,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
-                10
+                10,
+                LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
         def keyMetadataPercentage20 = new KeyMetadata(composedKey, segmentationPercentage20)
@@ -448,7 +456,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
-                15
+                15,
+                LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
                 node,
@@ -457,7 +466,8 @@ class IdentificationServiceImplTest extends Specification {
                 SegmentationType.PERCENTAGE,
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
-                10
+                10,
+                LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
         def keyMetadataPercentage20 = new KeyMetadata(composedKey, segmentationPercentage20)

@@ -16,6 +16,8 @@
 
 package io.charlescd.circlematcher.domain;
 
+import java.time.LocalDateTime;
+
 public class KeyMetadata {
 
     private String reference;
@@ -34,6 +36,8 @@ public class KeyMetadata {
 
     private Integer percentage;
 
+    private LocalDateTime createdAt;
+
     public KeyMetadata() {
     }
 
@@ -46,6 +50,7 @@ public class KeyMetadata {
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
         this.percentage = segmentation.getPercentage();
+        this.createdAt = segmentation.getCreatedAt();
     }
 
     public String getReference() {
@@ -90,5 +95,13 @@ public class KeyMetadata {
 
     public int sumPercentage(Integer percentageToSum) {
         return this.percentage += percentageToSum;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

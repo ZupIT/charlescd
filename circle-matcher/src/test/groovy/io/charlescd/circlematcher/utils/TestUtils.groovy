@@ -19,6 +19,7 @@ package io.charlescd.circlematcher.utils
 import io.charlescd.circlematcher.api.request.CreateSegmentationRequest
 import io.charlescd.circlematcher.api.request.UpdateSegmentationRequest
 import io.charlescd.circlematcher.domain.*
+import java.time.LocalDateTime
 
 class TestUtils {
 
@@ -38,7 +39,8 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 false,
-                null)
+                null,
+                LocalDateTime.now())
     }
 
     static Segmentation createDefaultSegmentation(Node node, SegmentationType type) {
@@ -49,7 +51,8 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 true,
-                null)
+                null,
+                LocalDateTime.now())
     }
 
     static Segmentation createPercentageSegmentation(Node node, SegmentationType type, Integer percentage) {
@@ -60,7 +63,8 @@ class TestUtils {
                 type,
                 "bde0c670-96c9-41f7-afac-f284a785c287",
                 false,
-                percentage)
+                percentage,
+                LocalDateTime.now())
     }
 
     static createSegmentationRequest(Node node, SegmentationType type) {
@@ -71,6 +75,8 @@ class TestUtils {
         createSegmentationRequest.circleId = "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85"
         createSegmentationRequest.type = type
         createSegmentationRequest.isDefault = false
+        createSegmentationRequest.createdAt = LocalDateTime.now()
+        createSegmentationRequest.percentage = 20
         return createSegmentationRequest
     }
 
@@ -83,6 +89,8 @@ class TestUtils {
         request.node = node
         request.type = type
         request.isDefault = false
+        request.createdAt = LocalDateTime.now()
+        request.percentage = 20
         return request
     }
 }
