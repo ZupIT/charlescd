@@ -174,12 +174,10 @@ export class DeploymentHandlerUseCase {
   }
 
   public async updateComponentsRunningStatus(deployment: DeploymentEntity, status: boolean): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
-    deployment.components = deployment.components.map(c => {
-      c.running = status
-      return c
-    })
-    const updated = await this.deploymentsRepository.save(deployment, { reload: true })
-    return updated
+    for await (const c of deployment.components) {
+      await this.componentsRepository.update({ id: c.id }, { running: status })
+    }
+    return this.deploymentsRepository.findOneOrFail(deployment.id)
   }
 
   public async getOverlappingComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
