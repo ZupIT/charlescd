@@ -62,7 +62,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
   const { getCirclesData } = useCirclesData();
   const { getActionGroup, actionData } = useActionTypeById();
-  const [{ circleResponse, loading }, { loadCircle }] = useCircle();
+  const [{ circleResponse }, { loadCircle }] = useCircle();
 
   useEffect(() => {
     action && getActionGroup(action.id);
@@ -121,9 +121,9 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
 
   const loadCirclesByName = debounce(
     name =>
-      getCirclesData({ name, active: true }).then(response => (
+      getCirclesData({ name, active: true }).then(response =>
         normalizeSelectOptions(response.content)
-      )),
+      ),
     500
   );
 
