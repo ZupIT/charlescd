@@ -16,7 +16,7 @@
 
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { render, screen, wait, fireEvent } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import AddAction from '../AddAction';
 import { MetricsGroupData } from './fixtures';
@@ -32,11 +32,12 @@ test('render Add Action default value', async () => {
     <AddAction
       onGoBack={handleGoBack}
       metricsGroup={MetricsGroupData[0]}
+      circleId="123"
     />
   );
 
-  const goBackButton = screen.getByTestId('icon-arrow-left');
-  const submitButton = screen.getByTestId('button-default-submit');
+  const goBackButton = await screen.findByTestId('icon-arrow-left');
+  const submitButton = await screen.findByTestId('button-default-submit');
 
   userEvent.click(goBackButton);
 
@@ -51,12 +52,13 @@ test('add New action', async () => {
     <AddAction
       onGoBack={handleGoBack}
       metricsGroup={MetricsGroupData[0]}
+      circleId="123"
     />
   );
-  
-  const inputNickname = screen.getByTestId('input-text-nickname');
-  const selectActionType = screen.getByTestId('select-actionId');
 
-  userEvent.type(inputNickname, 'nickname');
+  const inputNickname = await screen.findByTestId('input-text-nickname');
+  const selectActionType = await screen.findByTestId('select-actionId');
+
+  await act(() => userEvent.type(inputNickname, 'nickname'));
   userEvent.selectOptions(selectActionType, 'CIRCLE_DEPLOY');
 });

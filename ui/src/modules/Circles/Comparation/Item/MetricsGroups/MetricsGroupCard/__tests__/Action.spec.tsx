@@ -20,7 +20,13 @@ import { actionData } from '../../__tests__/fixtures';
 import ActionCard from '../Action';
 
 test('render Action Card', async () => {
-  render(<ActionCard action={actionData} />);
+  render(
+    <ActionCard
+      handleDeleteAction={jest.fn()}
+      handleEditAction={jest.fn()}
+      action={actionData}
+    />
+    );
 
   const staus = screen.getByTestId('action-status-success');
   const nickname = screen.getByText('action');
