@@ -17,6 +17,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { buildHeaders, basePath } from 'core/providers/base';
 import { logout } from 'core/utils/auth';
+import { getCircleId } from 'core/utils/circle';
 
 function loadWorker(workerFile: Function) {
   const code = workerFile.toString();
@@ -43,7 +44,7 @@ const useWorker = <T>(
       worker.current = loadWorker(workerFile);
       worker.current.postMessage({
         apiParams,
-        headers: buildHeaders(),
+        headers: buildHeaders(false, getCircleId()),
         basePath
       });
       worker.current.addEventListener('message', (event: MessageEvent) => {
