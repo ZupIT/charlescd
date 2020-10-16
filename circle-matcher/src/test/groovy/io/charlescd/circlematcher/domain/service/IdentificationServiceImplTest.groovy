@@ -60,7 +60,7 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
         def metadataList = new ArrayList()
@@ -101,7 +101,7 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
         def metadataList = new ArrayList()
@@ -144,7 +144,7 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def defaultSegmentation = TestUtils.createDefaultSegmentation(null, SegmentationType.REGULAR)
         def defaultMetadata = new KeyMetadata(defaultComposedKey, defaultSegmentation)
@@ -195,14 +195,14 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
         def secondaryValues = new ArrayList()
         secondaryValues.add(secondValue)
         def secondaryContent = TestUtils.createContent(secondaryValues)
         def secondaryNode = TestUtils.createNode(secondaryContent)
-        def secondarySegmentation = TestUtils.createSegmentation(secondaryNode, SegmentationType.SIMPLE_KV)
+        def secondarySegmentation = TestUtils.createSegmentation(secondaryNode, SegmentationType.SIMPLE_KV, true)
         def secondaryKeyMetadata = new KeyMetadata(secondaryComposedKey, secondarySegmentation)
 
         def metadataList = new ArrayList()
@@ -235,14 +235,11 @@ class IdentificationServiceImplTest extends Specification {
         def composedKey = "username:28840781-d86e-4803-a742-53566c140e56:SIMPLE_KV"
         def value = "user@zup.com.br"
 
-        def secondKey = "age"
-        def secondaryComposedKey = "age:28840781-d86e-4803-a742-53566c140e56:SIMPLE_KV"
-        def secondValue = "30"
+
 
         def workspaceId = "78094351-7f16-4571-ac7a-7681db81e146"
         def data = new HashMap()
         data.put(key, value)
-        data.put(secondKey, secondValue)
         def request = new IdentificationRequest(workspaceId, data)
 
         def values = new ArrayList()
@@ -250,7 +247,7 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createInactiveSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, false)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
 
@@ -268,5 +265,47 @@ class IdentificationServiceImplTest extends Specification {
         1 * segmentationRepository.isMember(composedKey, value) >> true
 
         thrown(NoSuchElementException)
+    }
+
+    def "should  identify a circle without active property"() {
+
+        given:
+
+        def key = "username"
+        def composedKey = "username:28840781-d86e-4803-a742-53566c140e56:SIMPLE_KV"
+        def value = "user@zup.com.br"
+
+        def workspaceId = "78094351-7f16-4571-ac7a-7681db81e146"
+        def data = new HashMap()
+        data.put(key, value)
+        def request = new IdentificationRequest(workspaceId, data)
+
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, null)
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+
+
+        def metadataList = new ArrayList()
+        metadataList.add(keyMetadata)
+
+        when:
+
+        def response = identificationService.identify(request)
+
+        then:
+
+        assert response != null
+        assert response.size() == 1
+        assert response[0].id == "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85"
+        assert response[0].name == "Men"
+
+        1 * keyMetadataRepository.findByWorkspaceId(workspaceId) >> metadataList
+        1 * segmentationRepository.isMember(composedKey, value) >> true
+
+        notThrown()
     }
 }
