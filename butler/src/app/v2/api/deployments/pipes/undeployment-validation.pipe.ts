@@ -15,7 +15,7 @@
  */
 
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { Injectable, PipeTransform, UnprocessableEntityException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ComponentsRepositoryV2 } from '../repository/component.repository'
@@ -34,7 +34,11 @@ export class UndeploymentValidation implements PipeTransform {
   public async transform(deploymentId: string): Promise<string> {
     const deployment = await this.deploymentsRepository.findOneOrFail({ id: deploymentId })
     if (deployment.active === false) {
-      throw new BadRequestException('Cannot undeploy not active deployment')
+      throw new UnprocessableEntityException('Cannot undeploy not active deployment')
+    }
+
+    if (deployment.circleId === null) {
+      throw new UnprocessableEntityException('Cannot undeploy from default circle')
     }
 
     const circleId = deployment.circleId
@@ -46,7 +50,7 @@ export class UndeploymentValidation implements PipeTransform {
       const componentIds = runningComponents.map( c => c.id)
       const components = await this.componentsRepository.findByIds(componentIds, { relations: ['deployment', 'deployment.executions'] })
       const executionIds = uniq(flatMap(components, c => c.deployment.executions.map(e => e.id)))
-      throw new BadRequestException(`Simultaneous undeployments are not allowed for a given circle. The following executions are not finished: ${executionIds}`)
+      throw new UnprocessableEntityException(`Simultaneous undeployments are not allowed for a given circle. The following executions are not finished: ${executionIds}`)
     }
 
     return deploymentId

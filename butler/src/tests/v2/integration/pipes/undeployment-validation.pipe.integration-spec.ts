@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BadRequestException, INestApplication } from '@nestjs/common'
+import { INestApplication, UnprocessableEntityException } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
@@ -53,7 +53,7 @@ describe('DeploymentCleanupHandler', () => {
 
     await expect(
       pipe.transform(nonExistingDeploymentId)
-    ).rejects.toThrow(new BadRequestException(errorMessage))
+    ).rejects.toThrow(new UnprocessableEntityException(errorMessage))
 
   })
 
@@ -81,7 +81,7 @@ describe('DeploymentCleanupHandler', () => {
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, false, false)
     await expect(
       pipe.transform(deployment.id)
-    ).rejects.toThrow(new BadRequestException('Cannot undeploy not active deployment'))
+    ).rejects.toThrow(new UnprocessableEntityException('Cannot undeploy not active deployment'))
   })
 
   it('allows undeployment of active deployment', async() => {
@@ -107,6 +107,33 @@ describe('DeploymentCleanupHandler', () => {
 
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, true, false)
     expect(await pipe.transform(deployment.id)).toEqual(deployment.id)
+  })
+
+  it('does not allow undeployment of default circle', async() => {
+    const componentName = 'component-name'
+
+    const params = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: null,
+      components: [
+        {
+          helmRepository: 'https://some-helm.repo',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: componentName
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+    }
+
+    const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, true, false)
+    await expect(
+      pipe.transform(deployment.id)
+    ).rejects.toThrow(new UnprocessableEntityException('Cannot undeploy from default circle'))
+
   })
 
 })
