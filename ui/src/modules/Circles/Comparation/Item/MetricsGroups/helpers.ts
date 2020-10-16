@@ -25,8 +25,6 @@ import filter from 'lodash/filter';
 import { ActionForm } from './AddAction';
 import {
   MetricsGroup,
-  MetricFilter,
-  Metric,
   ChartDataByQuery,
   Data,
   ChartData,
