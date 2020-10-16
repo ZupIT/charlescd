@@ -166,9 +166,7 @@ export const useDeleteCircle = (): [Function, string] => {
 };
 
 export const useCirclesData = () => {
-  const getCirclesData = useFetchData<Pagination<Circle>>(
-    findAllCirclesWithoutActive
-  );
+  const getCirclesData = useFetchData<Pagination<Circle>>(findAllCircles);
 
   return {
     getCirclesData
