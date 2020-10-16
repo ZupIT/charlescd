@@ -23,7 +23,7 @@ export const getAllPlugins = () => baseRequest(`${endpoint}/plugins?category=dat
 
 export const getAllDatasources = () => baseRequest(`${endpoint}/datasources`);
 
-export const testConnection = (payload: TestConnectionRequest) => baseRequest(`${endpoint}/datasources/test-connection`, payload);
+export const testConnection = (payload: TestConnectionRequest) => postRequest(`${endpoint}/datasources/test-connection`, payload);
 
 export const createDatasource = (datasourcePayload: Datasource) => postRequest(`${endpoint}/datasources`, datasourcePayload)
 

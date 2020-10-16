@@ -24,7 +24,7 @@ import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { Datasource, Plugin, PluginDatasource, TestConnectionResponse } from './interfaces';
-import { serializePlugins } from './helpers';
+import { serializePlugins, transformValues } from './helpers';
 import { Props } from '../interfaces';
 import { useDatasource, usePlugins, useTestConnection } from './hooks';
 import Styled from './styled';
@@ -67,8 +67,13 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const handleTestConnection = () => {
-    const { data } = getValues()
-    testConnection({ pluginSrc: plugin.src, data })
+    const values = getValues()
+    const data = transformValues(values)
+
+    testConnection({
+      pluginSrc: plugin.src,
+      data
+    })
   }
 
   const renderFields = () => (
