@@ -58,10 +58,12 @@ export class DeploymentsController {
   }
 
   private validateCircleIdHeader(incomingCircleId: string | null) {
-    if (incomingCircleId) {
-      if (!uuidValidate(incomingCircleId)) {
-        throw new UnprocessableEntityException('x-circle-id must be UUID')
-      }
+    if (incomingCircleId === null) {
+      return
+    }
+
+    if (!uuidValidate(incomingCircleId) || incomingCircleId === '') {
+      throw new UnprocessableEntityException('x-circle-id must be UUID')
     }
   }
 }

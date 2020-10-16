@@ -43,7 +43,7 @@ export const useCircleMatcher = (): {
           saveCircleId(circle?.id);
         }
       } catch (e) {
-        // saveCircleId(CIRCLE_UNMATCHED);
+        saveCircleId('');
       }
     },
     [getCircleMatcher]
