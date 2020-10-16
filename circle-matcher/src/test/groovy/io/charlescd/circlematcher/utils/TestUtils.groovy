@@ -81,4 +81,16 @@ class TestUtils {
         request.createdAt = LocalDateTime.now()
         return request
     }
+
+    static Segmentation createInactiveSegmentation(Node node, SegmentationType type) {
+        new Segmentation("Men",
+                node,
+                "28840781-d86e-4803-a742-53566c140e56",
+                "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85",
+                type,
+                "78094351-7f16-4571-ac7a-7681db81e146",
+                false,
+                false,
+                LocalDateTime.now())
+    }
 }
