@@ -20,29 +20,7 @@ import ConnectionStatus from '../ConnectionStatus';
 
 test('render Connection status default component', async () => {
   render(
-    <ConnectionStatus status={''}/>
-  );
-
-  await wait();
-
-  expect(screen.getByTestId('connection-error')).toBeInTheDocument();
-  expect(screen.getByText('Failed to reach the metrics provider.')).toBeInTheDocument();
-});
-
-test('render Connection fail status component', async () => {
-  render(
-    <ConnectionStatus status={'FAILED'}/>
-  );
-
-  await wait();
-
-  expect(screen.getByTestId('connection-error')).toBeInTheDocument();
-  expect(screen.getByText('Connection to metric provider failed.')).toBeInTheDocument();
-});
-
-test('render Connection suceful status component', async () => {
-  render(
-    <ConnectionStatus status={'SUCCESS'}/>
+    <ConnectionStatus message={undefined} />
   );
 
   await wait();
@@ -50,3 +28,15 @@ test('render Connection suceful status component', async () => {
   expect(screen.getByTestId('connection-success')).toBeInTheDocument();
   expect(screen.getByText('Successful connection with the metrics provider.')).toBeInTheDocument();
 });
+
+test('render Connection fail status component', async () => {
+  render(
+    <ConnectionStatus message={'Fail message'} />
+  );
+
+  await wait();
+
+  expect(screen.getByTestId('connection-error')).toBeInTheDocument();
+  expect(screen.getByText('Fail message')).toBeInTheDocument();
+});
+

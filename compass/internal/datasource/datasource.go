@@ -155,6 +155,29 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 	return list, nil
 }
 
+func (main Main) TestConnection(pluginSrc string, datasourceData json.RawMessage) error {
+	plugin, err := main.pluginMain.GetPluginBySrc(pluginSrc)
+	if err != nil {
+		logger.Error(util.OpenPluginGetMetricsError, "TestConnection", err, plugin)
+		return err
+	}
+
+	testConnection, err := plugin.Lookup("TestConnection")
+	if err != nil {
+		logger.Error(util.PluginLookupError, "TestConnection", err, plugin)
+		return err
+	}
+
+	configurationData, _ := json.Marshal(datasourceData)
+	err = testConnection.(func(configurationData []byte) error)(configurationData)
+	if err != nil {
+		logger.Error(util.PluginListError, "TestConnection", err, configurationData)
+		return err
+	}
+
+	return nil
+}
+
 func (main Main) VerifyHealthAtWorkspace(workspaceId string) (bool, error) {
 	var count int8
 	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true AND deleted_at IS NULL", workspaceId).Count(&count)
