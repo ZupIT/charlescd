@@ -69,7 +69,7 @@ func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 	if strings.TrimSpace(action.Description) == "" {
 		ers = append(ers, util.ErrorUtil{Field: "description", Error: errors.New("description is required").Error()})
 	} else if len(action.Description) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("description is limited to 100 characters maximum").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "description", Error: errors.New("description is limited to 100 characters maximum").Error()})
 	}
 
 	if action.Configuration == nil || len(action.Configuration) == 0 {
@@ -82,8 +82,11 @@ func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 	}
 
 	if strings.TrimSpace(action.Type) == "" {
-		ers = append(ers, util.ErrorUtil{Field: "type", Error: errors.New("action type is required").Error()})
 		needConfigValidation = false
+		ers = append(ers, util.ErrorUtil{Field: "type", Error: errors.New("action type is required").Error()})
+	} else if len(action.Type) > 100 {
+		needConfigValidation = false
+		ers = append(ers, util.ErrorUtil{Field: "type", Error: errors.New("action type is limited to 100 characters maximum").Error()})
 	}
 
 	if needConfigValidation {

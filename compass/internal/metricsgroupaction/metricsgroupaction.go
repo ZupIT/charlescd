@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"io"
+	"sort"
 	"strings"
 	"time"
 )
@@ -66,8 +67,7 @@ const groupActionQuery = `
          			INNER JOIN actions a 			ON mga.action_id = a.id	
 					LEFT JOIN actions_executions ae ON mga.id = ae.group_action_id
 					WHERE mga.metrics_group_id = ? 
-					AND mga.deleted_at IS NULL
-					ORDER BY started_at DESC`
+					AND mga.deleted_at IS NULL`
 
 func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupActions, error) {
 	var mgAct MetricsGroupActions
@@ -163,13 +163,13 @@ func (main Main) validateExecutionConfig(actionType string, executionConfigurati
 	plugin, err := main.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", actionType, actionType))
 	if err != nil {
 		logger.Error("error finding plugin", "ValidateExecutionConfig", err, actionType)
-		return []util.ErrorUtil{{Field: "actionId", Error: errors.New("action is invalid").Error()}}
+		return []util.ErrorUtil{{Field: "action", Error: errors.New("action is invalid").Error()}}
 	}
 
 	pluginErrs, err := plugin.Lookup("ValidateExecutionConfiguration")
 	if err != nil {
 		logger.Error("error looking up for plugin", "ValidateExecutionConfig", err, fmt.Sprintf("%+v", plugin))
-		return []util.ErrorUtil{{Field: "actionId", Error: errors.New("action is invalid").Error()}}
+		return []util.ErrorUtil{{Field: "action", Error: errors.New("action is invalid").Error()}}
 	}
 
 	configErs := pluginErrs.(func(executionConfig []byte) []error)(executionConfiguration)
@@ -237,6 +237,16 @@ func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupA
 		logger.Error(util.ListGroupActionExecutionStatusError, "ListGroupActionExecutionResumeByGroup", result.Error, groupID)
 		return nil, result.Error
 	}
+
+	sort.Slice(executions, func(i, j int) bool {
+		if executions[i].StartedAt == nil {
+			return false
+		} else if executions[j].StartedAt == nil {
+			return true
+		}
+
+		return executions[i].StartedAt.After(*executions[j].StartedAt)
+	})
 
 	return executions, nil
 }
