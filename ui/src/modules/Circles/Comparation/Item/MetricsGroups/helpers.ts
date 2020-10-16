@@ -48,30 +48,6 @@ export const getOperator = (operator: string) =>
 export const getSelectDefaultValue = (id: string, options: Option[]) =>
   find(options, { value: id });
 
-const buildMetricFilters = (
-  formFilters?: MetricFilter[],
-  metricFilters?: MetricFilter[]
-) =>
-  map(formFilters, (item, index) => ({
-    ...item,
-    id: metricFilters?.[index]?.id
-  }));
-
-export const buildMetricPayload = (formData: Metric, metric: Metric) => {
-  const filters = metric?.id
-    ? buildMetricFilters(formData.filters, metric?.filters)
-    : formData.filters;
-
-  const payload = {
-    ...formData,
-    threshold: Number(formData.threshold),
-    filters,
-    id: metric?.id
-  } as Metric;
-
-  return payload;
-};
-
 export const getThresholdStatus = (status: string) => {
   switch (status) {
     case 'REACHED': {
@@ -130,7 +106,7 @@ export const filterMetricsSeries = (
 
   return filteredData as ChartData[];
 };
-//create tests
+
 export const createCirclePromotionPayload = (
   data: ActionForm,
   circleId: string
