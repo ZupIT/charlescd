@@ -148,3 +148,143 @@ test('render metrics groups and delete a metrics group', async () => {
 
   expect(screen.queryByText('test 1a')).not.toBeInTheDocument();
 });
+
+test('render metrics groups and edit a metrics group', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const metricsGroupMenu = screen.getByTestId('icon-vertical-dots');
+
+  fireEvent.click(metricsGroupMenu);
+  fireEvent.click(screen.getByText('Edit'));
+
+  const submit = screen.getByTestId('button-default-save');
+
+  expect(screen.queryByText('Edit metrics group')).toBeInTheDocument();
+  
+  fireEvent.click(submit);
+});
+
+test('render metrics groups and open new metric form', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const addMetric = screen.getByTestId('button-default-add-metric');
+  
+  fireEvent.click(addMetric);
+
+  const addMetricForm = screen.getByTestId('add-metric');
+
+  expect(addMetricForm).toBeInTheDocument();
+});
+
+test('render metrics groups and open new action form', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const actionTab = screen.getByTestId('tab-1');
+
+  fireEvent.click(actionTab);
+
+  const addAction = screen.getByTestId('button-default-add-action');
+  
+  fireEvent.click(addAction);
+
+  const addActionForm = screen.getByTestId('metric-group-action-form');
+
+  expect(addActionForm).toBeInTheDocument();
+});
+  
+test('render metrics groups and delete metric', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
+
+  fireEvent.click(metricDropdown[1]);
+  fireEvent.click(screen.getByText('Delete'));
+});
+
+test('render metrics groups and edit metric', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
+
+  fireEvent.click(metricDropdown[1]);
+  fireEvent.click(screen.getByText('Edit metric'));
+
+  const addMetricForm = screen.getByTestId('add-metric');
+
+  expect(addMetricForm).toBeInTheDocument();
+});
+
+test('render metrics groups and delete action', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const actionTab = screen.getByTestId('tab-1');
+
+  fireEvent.click(actionTab);
+
+  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
+
+  fireEvent.click(metricDropdown[1]);
+  fireEvent.click(screen.getByText('Delete action'));
+});
+
+test('render metrics groups and edit action', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const actionTab = screen.getByTestId('tab-1');
+
+  fireEvent.click(actionTab);
+
+  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
+
+  fireEvent.click(metricDropdown[1]);
+  fireEvent.click(screen.getByText('Edit action'));
+
+  const addActionForm = screen.getByTestId('metric-group-action-form');
+  const goBack = screen.getByTestId('icon-arrow-left');
+  
+  expect(addActionForm).toBeInTheDocument();
+
+  fireEvent.click(goBack);
+});
