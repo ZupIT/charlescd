@@ -27,7 +27,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 
@@ -51,7 +50,7 @@ func (s *SuiteHealth) SetupSuite() {
 	setupEnv()
 }
 
-func (s *SuiteHealth) BeforeTest(suiteName, testName string) {
+func (s *SuiteHealth) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
@@ -71,11 +70,10 @@ func (s *SuiteHealth) BeforeTest(suiteName, testName string) {
 	mooveMain := moove.NewAPIClient(s.server.URL, 45*time.Second)
 	s.repository = health.NewMain(s.DB, datasourceMain, pluginMain, mooveMain)
 
-	s.DB.Exec("DELETE FROM metrics_groups")
-	s.DB.Exec("DELETE FROM data_sources")
+	clearDatabase(s.DB)
 }
 
-func (s *SuiteHealth) AfterTest(suiteName, testName string) {
+func (s *SuiteHealth) AfterTest(_, _ string) {
 	s.DB.Close()
 	s.server.Close()
 }
@@ -94,7 +92,6 @@ func (s SuiteHealth) TestComponentsHealthDataSourceError() {
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
-	os.Setenv("PLUGINS_DIR", "../../dist")
 	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	datasourceStruct := datasource.DataSource{
@@ -113,7 +110,6 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
-	os.Setenv("PLUGINS_DIR", "../../dist")
 	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	datasourceStruct := datasource.DataSource{
