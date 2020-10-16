@@ -78,7 +78,7 @@ func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
 	}
 }
 
-func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupActions) {
+func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupAction) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
@@ -131,7 +131,7 @@ func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []met
 		}
 	}
 
-	return true
+	return len(metrics) > 0
 }
 
 func (dispatcher *ActionDispatcher) getInterval() (time.Duration, error) {

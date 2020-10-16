@@ -38,11 +38,11 @@ import (
 
 type MetricsGroup struct {
 	util.BaseModel
-	Name        string                                   `json:"name"`
-	Metrics     []metric.Metric                          `json:"metrics"`
-	WorkspaceID uuid.UUID                                `json:"-"`
-	CircleID    uuid.UUID                                `json:"circleId"`
-	Actions     []metricsgroupaction.MetricsGroupActions `json:"actions"`
+	Name        string                                  `json:"name"`
+	Metrics     []metric.Metric                         `json:"metrics"`
+	WorkspaceID uuid.UUID                               `json:"-"`
+	CircleID    uuid.UUID                               `json:"circleId"`
+	Actions     []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
 
 type MetricsGroupRepresentation struct {
