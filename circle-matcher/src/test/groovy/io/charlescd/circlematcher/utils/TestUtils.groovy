@@ -19,6 +19,7 @@ package io.charlescd.circlematcher.utils
 import io.charlescd.circlematcher.api.request.CreateSegmentationRequest
 import io.charlescd.circlematcher.api.request.UpdateSegmentationRequest
 import io.charlescd.circlematcher.domain.*
+import java.time.LocalDateTime
 
 class TestUtils {
 
@@ -38,7 +39,8 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 false,
-                true)
+                true,
+                LocalDateTime.now())
     }
 
     static Segmentation createDefaultSegmentation(Node node, SegmentationType type) {
@@ -49,8 +51,8 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 true,
-                true
-        )
+                true,
+                LocalDateTime.now())
     }
 
     static createSegmentationRequest(Node node, SegmentationType type) {
@@ -62,6 +64,7 @@ class TestUtils {
         createSegmentationRequest.type = type
         createSegmentationRequest.isDefault = false
         createSegmentationRequest.active = true
+        createSegmentationRequest.createdAt = LocalDateTime.now()
         return createSegmentationRequest
     }
 
@@ -75,6 +78,7 @@ class TestUtils {
         request.type = type
         request.isDefault = false
         request.active = true
+        request.createdAt = LocalDateTime.now()
         return request
     }
 }

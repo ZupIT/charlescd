@@ -51,7 +51,7 @@ spec:
             - name: REACT_APP_AUTH_URI
               value: {{ .Values.ui.authUri }}
             - name: REACT_APP_AUTH_REALM
-              value: charlescd
+              value: {{ .Values.ui.authRealm }}
             - name: REACT_APP_AUTH_CLIENT_ID
               value: charlescd-client
             - name: REACT_APP_IDM
