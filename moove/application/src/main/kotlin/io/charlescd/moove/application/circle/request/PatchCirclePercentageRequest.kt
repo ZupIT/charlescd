@@ -58,5 +58,4 @@ data class PatchCirclePercentageRequest(override val patches: List<PatchOperatio
         val percentage = patch.value as Int
         Assert.isTrue(percentage in 0..100, "Percentage must be between 0 and 100")
     }
-
 }
