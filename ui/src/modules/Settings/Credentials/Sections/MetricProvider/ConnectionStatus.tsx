@@ -19,6 +19,7 @@ import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { TestConnectionResponse } from './interfaces';
 import Styled from './styled';
+import { isEmpty } from 'lodash';
 
 type Props = {
   message?: TestConnectionResponse[];
@@ -40,7 +41,7 @@ const MessageStatus = ({ status, messagemText }: MessageProps) => (
 );
 
 const ConnectionStatus = ({ message }: Props) => {
-  if (message)
+  if (!isEmpty(message))
     return MessageStatus({
       status: 'error',
       messagemText: 'Connection to metric provider failed.'
