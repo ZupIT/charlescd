@@ -21,7 +21,6 @@ package io.charlescd.moove.application.configuration
 
 import io.charlescd.moove.application.configuration.request.TestConnectionGitConfigurationRequest
 import io.charlescd.moove.application.configuration.response.GitConnectionResponse
-import io.charlescd.moove.domain.GitServiceProvider
 
 interface GitConnectionStatusConfigurationInteractor {
 

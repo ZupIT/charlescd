@@ -13,6 +13,7 @@ class GitLabServiceTest extends Specification {
     private GitLabService gitLabService
     private GitLabClientFactory gitLabClientFactory = Mock(GitLabClientFactory)
     private GitLabApi gitLabApi = Mock(GitLabApi)
+    private ProjectApi projectApi = Mock(ProjectApi)
     private RepositoryApi repositoryApi = Mock(RepositoryApi)
     private MergeRequestApi mergeRequestApi = Mock(MergeRequestApi)
     private TagsApi tagsApi = Mock(TagsApi)
@@ -24,6 +25,39 @@ class GitLabServiceTest extends Specification {
         this.gitLabService = new GitLabService(gitLabClientFactory)
         this.mergeRequestFilter = new MergeRequestFilter()
         this.mergeRequest = new MergeRequest()
+    }
+
+    def "when trying to test connection  if does not work return 'false'"() {
+        given:
+        def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
+
+        when:
+        def testConnection = gitLabService.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
+        1 * gitLabApi.getProjectApi() >> projectApi
+        1 * projectApi.getProjects(0, 1) >> null
+
+        assert !testConnection
+    }
+
+    def "when trying to test connection  if works return 'true'"() {
+        given:
+        def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
+        def response = new ArrayList<Project>()
+        response.add(new Project())
+        when:
+        def testConnection = gitLabService.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
+        1 * gitLabApi.getProjectApi() >> projectApi
+        1 * projectApi.getProjects(0, 1) >> response
+
+        assert testConnection
     }
 
     def "when trying to create branch if it does not exist should create it"() {
@@ -43,6 +77,21 @@ class GitLabServiceTest extends Specification {
         1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
         1 * gitLabApi.getRepositoryApi() >> repositoryApi
         1 * repositoryApi.createBranch(repositoryName, newBranchName, baseBranchName) >> branch
+    }
+
+    def "when trying to connect in GitLab server if does not works should throw exception"() {
+        given:
+        def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
+
+        when:
+        gitLabService.testConnection(gitCredentials)
+
+        then:
+        1 * gitLabClientFactory.buildGitClient(gitCredentials) >> { throw new GitLabApiException("git.Forbidden", 403) }
+
+        def exception = thrown(BusinessException.class)
+
+        assert exception.errorCode == MooveErrorCode.GIT_ERROR_FORBIDDEN
     }
 
     def "when trying to create branch if base branch does not exist should throw exception"() {
@@ -483,7 +532,7 @@ class GitLabServiceTest extends Specification {
         then:
         1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
         1 * gitLabApi.getRepositoryApi() >> repositoryApi
-        1 * repositoryApi.deleteBranch(repositoryName, branchName) >> { throw new  GitLabApiException("404 Branch Not Found", 404) }
+        1 * repositoryApi.deleteBranch(repositoryName, branchName) >> { throw new GitLabApiException("404 Branch Not Found", 404) }
 
         def exception = thrown(BusinessException.class)
         assert exception.errorCode == MooveErrorCode.GIT_ERROR_BRANCH_NOT_FOUND

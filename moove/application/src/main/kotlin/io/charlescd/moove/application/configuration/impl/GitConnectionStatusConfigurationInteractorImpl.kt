@@ -22,22 +22,22 @@ package io.charlescd.moove.application.configuration.impl
 import io.charlescd.moove.application.configuration.GitConnectionStatusConfigurationInteractor
 import io.charlescd.moove.application.configuration.request.TestConnectionGitConfigurationRequest
 import io.charlescd.moove.application.configuration.response.GitConnectionResponse
-import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.infrastructure.mapper.GitServiceMapper
 import org.springframework.stereotype.Service
 
 @Service
-class GitConnectionStatusInteractorImpl(
+class GitConnectionStatusConfigurationInteractorImpl(
     private val gitServiceMapper: GitServiceMapper
 ) : GitConnectionStatusConfigurationInteractor {
 
     override fun execute(request: TestConnectionGitConfigurationRequest): GitConnectionResponse {
-        return toGitConnectionResponse(this.gitServiceMapper.getByType(request.credentials.serviceProvider).testConnection(request.credentials.toGitCredentials()))
+        return toGitConnectionResponse(
+            this.gitServiceMapper.getByType(request.credentials.serviceProvider
+            ).testConnection(request.credentials.toGitCredentials()))
     }
 
     fun toGitConnectionResponse(status: Boolean): GitConnectionResponse {
         if (status) return GitConnectionResponse("SUCCESS")
         return GitConnectionResponse("FAILED")
     }
-
 }

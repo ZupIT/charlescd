@@ -142,7 +142,7 @@ class GitLabService(private val gitLabClientFactoryLegacy: GitLabClientFactory) 
     ): Boolean {
         log.info("Testing connection into GitLab")
         return try {
-            getClient(gitCredentials).projectApi.getProjects(0,1) != null
+            getClient(gitCredentials).projectApi.getProjects(0, 1) != null
         } catch (e: Exception) {
             log.error("failed to connect  into GitLab with error: ${e.message}")
             handleResponseError(error = e)
