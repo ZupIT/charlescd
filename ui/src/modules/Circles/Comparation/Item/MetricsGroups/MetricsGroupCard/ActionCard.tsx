@@ -17,6 +17,7 @@
 import React from 'react';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
+import { dateTimeFormatter } from 'core/utils/date';
 import camelCase from 'lodash/camelCase';
 import Styled from './styled';
 import { Action, MetricsGroup } from '../types';
@@ -62,7 +63,7 @@ const ActionCard = ({
         title={action.triggeredAt}
         data-testid={`${action.triggeredAt}-action-triggered`}
       >
-        {action.triggeredAt ?? ' - '}
+        {dateTimeFormatter(action.triggeredAt) ?? ' - '}
       </Styled.ActionTypeTriggeredAt>
       <Styled.MetricDropdown>
         <NewDropDown icon="vertical-dots" size="16px">
