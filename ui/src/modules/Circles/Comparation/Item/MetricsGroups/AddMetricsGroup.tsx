@@ -70,6 +70,7 @@ const AddMetricsGroup = ({
           type="submit"
           isDisabled={!isValid}
           isLoading={status.isPending}
+          id="save"
         >
           Save group
         </Styled.Modal.Button>
