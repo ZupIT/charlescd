@@ -104,9 +104,10 @@ public class Segmentation {
         return this.active == null || this.active;
     }
 
-    public void setActive(Boolean active){
-            this.active = active;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
