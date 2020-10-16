@@ -17,7 +17,6 @@
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 
-
 @ValidatorConstraint({ name: 'imageTagValidation', async: false })
 export class ImageTagValidation implements ValidatorConstraintInterface {
 

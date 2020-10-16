@@ -43,7 +43,7 @@ export const useCircleMatcher = (): {
           saveCircleId(circle?.id);
         }
       } catch (e) {
-        // saveCircleId(CIRCLE_UNMATCHED);
+        console.info('No circle was detected for this user');
       }
     },
     [getCircleMatcher]
