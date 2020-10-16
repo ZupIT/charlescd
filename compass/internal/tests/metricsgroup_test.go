@@ -160,14 +160,14 @@ func (s *SuiteMetricGroup) TestFindAll() {
 			Metrics:     []metric.Metric{},
 			CircleID:    uuid.New(),
 			WorkspaceID: uuid.New(),
-			Actions:     []metricsgroupaction.MetricsGroupActions{},
+			Actions:     []metricsgroupaction.MetricsGroupAction{},
 		},
 		{
 			Name:        "group 2",
 			Metrics:     []metric.Metric{},
 			CircleID:    uuid.New(),
 			WorkspaceID: uuid.New(),
-			Actions:     []metricsgroupaction.MetricsGroupActions{},
+			Actions:     []metricsgroupaction.MetricsGroupAction{},
 		},
 	}
 
@@ -198,7 +198,7 @@ func (s *SuiteMetricGroup) TestFindById() {
 		Metrics:     []metric.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupActions{},
+		Actions:     []metricsgroupaction.MetricsGroupAction{},
 	}
 
 	s.DB.Create(&metricgroup)
@@ -340,7 +340,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 		Metrics:     []metric.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupActions{},
+		Actions:     []metricsgroupaction.MetricsGroupAction{},
 	}
 
 	metricgroup2 := metricsgroup.MetricsGroup{
@@ -348,7 +348,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 		Metrics:     []metric.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupActions{},
+		Actions:     []metricsgroupaction.MetricsGroupAction{},
 	}
 
 	metricgroup3 := metricsgroup.MetricsGroup{
@@ -356,7 +356,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 		Metrics:     []metric.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupActions{},
+		Actions:     []metricsgroupaction.MetricsGroupAction{},
 	}
 
 	s.DB.Create(&metricgroup1)
