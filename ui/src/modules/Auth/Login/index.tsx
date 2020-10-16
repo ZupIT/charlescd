@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import Icon from 'core/components/Icon';
 import Form from 'core/components/Form';
 import { validFields } from 'core/utils/validation';
 import routes from 'core/constants/routes';
+import { redirectTo } from 'core/utils/routes';
 import Styled from '../styled';
 import { useLogin } from './hook';
 
@@ -38,9 +39,7 @@ const Login = () => {
   }, [getValues, watchFields, setIsDisabled]);
 
   useEffect(() => {
-    if (status === 'resolved') {
-      history.push({ pathname: routes.workspaces });
-    }
+    if (status === 'resolved') redirectTo(routes.workspaces);
   }, [status, history]);
 
   const onSubmit = () => {
@@ -49,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <Fragment>
       <Icon name="charles-logo" />
       <Styled.Form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Title color="light">
@@ -78,6 +77,7 @@ const Login = () => {
           )}
         </Styled.Field>
         <Styled.Button
+          id="submit"
           type="submit"
           size="EXTRA_SMALL"
           isDisabled={isDisabled}
@@ -86,7 +86,7 @@ const Login = () => {
           Continue
         </Styled.Button>
       </Styled.Form>
-    </>
+    </Fragment>
   );
 };
 
