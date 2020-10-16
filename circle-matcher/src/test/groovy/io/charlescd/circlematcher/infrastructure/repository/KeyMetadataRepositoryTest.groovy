@@ -54,7 +54,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList()
@@ -87,7 +87,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
@@ -126,7 +126,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
@@ -165,7 +165,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
@@ -204,7 +204,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
