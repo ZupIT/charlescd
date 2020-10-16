@@ -28,12 +28,18 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"os"
 	"time"
 )
 
 const dbLog = false
 
 const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method.`
+
+func setupEnv() {
+	os.Setenv("ENV", "TEST")
+	os.Setenv("PLUGINS_DIR", "../../dist")
+}
 
 func clearDatabase(db *gorm.DB) {
 	db.Exec("DELETE FROM actions_executions")
