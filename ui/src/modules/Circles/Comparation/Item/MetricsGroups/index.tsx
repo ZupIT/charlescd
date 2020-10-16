@@ -82,8 +82,8 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     getMetricsGroups(id);
   };
 
-  const handleDeleteAction = async (actionId: string) => {
-    await deleteAction(actionId);
+  const handleDeleteAction = async (actionId: string, actionName: string) => {
+    await deleteAction(actionId, actionName);
     getMetricsGroups(id);
   };
 

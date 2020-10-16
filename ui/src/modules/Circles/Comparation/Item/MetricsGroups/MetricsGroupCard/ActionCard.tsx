@@ -74,7 +74,7 @@ const ActionCard = ({
           <Dropdown.Item
             icon="delete"
             name="Delete action"
-            onClick={() => handleDeleteAction(action.id)}
+            onClick={() => handleDeleteAction(action.id, action.nickname)}
           />
         </NewDropDown>
       </Styled.MetricDropdown>

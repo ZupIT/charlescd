@@ -410,7 +410,9 @@ export const useSaveAction = (actionId?: string) => {
 
         dispatch(
           toogleNotification({
-            text: `The action ${ActionGroupPayload.nickname} has been created`,
+            text: `The action ${ActionGroupPayload.nickname} was successfully ${
+              actionId ? `edit` : `added`
+            }`,
             status: 'success'
           })
         );
@@ -425,7 +427,9 @@ export const useSaveAction = (actionId?: string) => {
 
         dispatch(
           toogleNotification({
-            text: `An error occurred while trying to create the ${ActionGroupPayload.nickname} action`,
+            text: `An error occurred while trying to create the ${
+              ActionGroupPayload.nickname
+            } ${actionId ? `edit` : `added`}`,
             status: 'error'
           })
         );
@@ -448,13 +452,13 @@ export const useDeleteAction = () => {
   const dispatch = useDispatch();
 
   const deleteAction = useCallback(
-    async (actionId: string) => {
+    async (actionId: string, actionName: string) => {
       try {
         const deleteActionResponse = await deleteActionRequest(actionId);
 
         dispatch(
           toogleNotification({
-            text: `Success deleting action`,
+            text: `The action ${actionName} was successfully deleted.`,
             status: 'success'
           })
         );
@@ -463,7 +467,7 @@ export const useDeleteAction = () => {
       } catch (e) {
         dispatch(
           toogleNotification({
-            text: `Error metric delete`,
+            text: `Error deleting the action ${actionName}`,
             status: 'error'
           })
         );

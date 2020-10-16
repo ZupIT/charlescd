@@ -128,7 +128,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
 
   const loadCirclesByName = debounce(
     name =>
-      getCirclesData({ name, active: true }).then(response =>
+      getCirclesData({ name }).then(response =>
         normalizeSelectOptions(response.content)
       ),
     500
