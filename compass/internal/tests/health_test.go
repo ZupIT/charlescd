@@ -48,8 +48,7 @@ type SuiteHealth struct {
 }
 
 func (s *SuiteHealth) SetupSuite() {
-	os.Setenv("ENV", "TEST")
-
+	setupEnv()
 }
 
 func (s *SuiteHealth) BeforeTest(suiteName, testName string) {

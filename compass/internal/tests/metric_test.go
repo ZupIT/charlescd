@@ -27,7 +27,6 @@ import (
 	datasourcePKG "compass/pkg/datasource"
 	"encoding/json"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -46,7 +45,7 @@ type SuiteMetric struct {
 }
 
 func (s *SuiteMetric) SetupSuite() {
-	os.Setenv("ENV", "TEST")
+	setupEnv()
 }
 
 func (s *SuiteMetric) BeforeTest(_, _ string) {
@@ -356,7 +355,6 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 }
 
 func (s *SuiteMetric) TestResultQuery() {
-	os.Setenv("PLUGINS_DIR", "../../dist")
 	circleId := uuid.New()
 
 	metricGroup := metricsgroup.MetricsGroup{
