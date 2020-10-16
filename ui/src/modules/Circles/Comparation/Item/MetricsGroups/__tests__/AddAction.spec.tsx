@@ -19,7 +19,7 @@ import userEvent from '@testing-library/user-event';
 import { render, screen, act } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import AddAction from '../AddAction';
-import { MetricsGroupData } from './fixtures';
+import { metricsGroupData } from './fixtures';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -31,7 +31,7 @@ test('render Add Action default value', async () => {
   render(
     <AddAction
       onGoBack={handleGoBack}
-      metricsGroup={MetricsGroupData[0]}
+      metricsGroup={metricsGroupData[0]}
       circleId="123"
     />
   );
@@ -51,7 +51,7 @@ test('add New action', async () => {
   render(
     <AddAction
       onGoBack={handleGoBack}
-      metricsGroup={MetricsGroupData[0]}
+      metricsGroup={metricsGroupData[0]}
       circleId="123"
     />
   );

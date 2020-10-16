@@ -15,8 +15,8 @@
  */
 
 import { 
-  OptionsValues,
-  ThresholdStatusResponse,
+  optionsValues,
+  thresholdStatusResponse,
   dataForMetricsSeriesTests,
   dataFormatted,
   allSelect, 
@@ -50,14 +50,14 @@ test('must get Operator', () => {
 });
 
 test('must get Select Default Value', () => {
-  expect(getSelectDefaultValue('1', OptionsValues)).toEqual(OptionsValues[0]);
-  expect(getSelectDefaultValue('2', OptionsValues)).not.toEqual(OptionsValues[0]);
+  expect(getSelectDefaultValue('1', optionsValues)).toEqual(optionsValues[0]);
+  expect(getSelectDefaultValue('2', optionsValues)).not.toEqual(optionsValues[0]);
 });
 
 test('must get Threshold Status text', () => {
-  expect(getThresholdStatus('REACHED')).toEqual(ThresholdStatusResponse[0]);
-  expect(getThresholdStatus('ERROR')).toEqual(ThresholdStatusResponse[1]);
-  expect(getThresholdStatus(' ')).toEqual(ThresholdStatusResponse[2]);
+  expect(getThresholdStatus('REACHED')).toEqual(thresholdStatusResponse[0]);
+  expect(getThresholdStatus('ERROR')).toEqual(thresholdStatusResponse[1]);
+  expect(getThresholdStatus(' ')).toEqual(thresholdStatusResponse[2]);
 });
 
 test('must format Metric Series', () => {
