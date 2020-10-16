@@ -24,8 +24,7 @@ import {
   updateCircleWithFile,
   createCircleWithFile,
   createCircleManually,
-  updateCircleManually,
-  findAllCirclesWithoutActive
+  updateCircleManually
 } from 'core/providers/circle';
 import { undeploy } from 'core/providers/deployment';
 import { useDispatch } from 'core/state/hooks';
