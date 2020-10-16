@@ -70,7 +70,7 @@ open class CreateCircleWithPercentageInteractorImpl(
         if (actualPercentage + percentageRequest > 100) {
             val percentageRemaining = 100 - actualPercentage
             throw BusinessException.of(MooveErrorCode.LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED)
-              .withParameters("Percentage remaining: $percentageRemaining")
+                .withParameters("Percentage remaining: $percentageRemaining")
         }
     }
 }
