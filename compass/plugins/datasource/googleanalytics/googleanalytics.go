@@ -63,32 +63,6 @@ func getServices(configuration Configuration) (analytics.Service, analyticsrepor
 	return *analyticsService, *analyticsReportingService, nil
 }
 
-func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
-	configuration, err := parseDatasourceConfiguration(datasourceConfiguration)
-	if err != nil {
-		return nil, err
-	}
-
-	analyticsService, _, err := getServices(configuration)
-	if err != nil {
-		return nil, err
-	}
-
-	defaultColumnReference := "ga"
-	metadataColumns := analyticsService.Metadata.Columns.List(defaultColumnReference)
-	res, err := metadataColumns.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	metrics := []string{}
-	for _, item := range res.Items {
-		metrics = append(metrics, item.Id)
-	}
-
-	return metrics, nil
-}
-
 func doRequest(request datasource.QueryRequest) (analyticsreporting.GetReportsResponse, error) {
 	configuration, err := parseDatasourceConfiguration(request.DatasourceConfiguration)
 	if err != nil {
@@ -158,6 +132,41 @@ func getUnixTimestampByDimension(dimension string) (string, error) {
 	}
 
 	return fmt.Sprintf("%d", date.Unix()), nil
+}
+
+func TestConnection(datasourceConfiguration []byte) error {
+	_, err := GetMetrics(datasourceConfiguration)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
+	configuration, err := parseDatasourceConfiguration(datasourceConfiguration)
+	if err != nil {
+		return nil, err
+	}
+
+	analyticsService, _, err := getServices(configuration)
+	if err != nil {
+		return nil, err
+	}
+
+	defaultColumnReference := "ga"
+	metadataColumns := analyticsService.Metadata.Columns.List(defaultColumnReference)
+	res, err := metadataColumns.Do()
+	if err != nil {
+		return nil, err
+	}
+
+	metrics := []string{}
+	for _, item := range res.Items {
+		metrics = append(metrics, item.Id)
+	}
+
+	return metrics, nil
 }
 
 func Query(request datasource.QueryRequest) ([]datasource.Value, error) {

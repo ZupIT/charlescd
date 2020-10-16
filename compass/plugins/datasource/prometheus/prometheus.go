@@ -100,6 +100,15 @@ func getDatasourceValuesByPrometheusVectorMetrix(query string, prometheusResult 
 	return datasourceValues, nil
 }
 
+func TestConnection(datasourceConfiguration []byte) error {
+	_, err := GetMetrics(datasourceConfiguration)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
 	if err != nil {
