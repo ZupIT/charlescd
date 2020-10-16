@@ -418,8 +418,7 @@ export const useSaveAction = (actionId?: string) => {
         return savedActionResponse;
       } catch (error) {
         status.rejected();
-        console.log(error);
-        error.text().then((errorMessage: string) => {
+        error?.text?.().then((errorMessage: string) => {
           const parsedError = JSON.parse(errorMessage);
           setValidationError(parsedError);
         });
