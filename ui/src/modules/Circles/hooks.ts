@@ -24,7 +24,8 @@ import {
   updateCircleWithFile,
   createCircleWithFile,
   createCircleManually,
-  updateCircleManually
+  updateCircleManually,
+  findAllCirclesWithoutActive
 } from 'core/providers/circle';
 import { undeploy } from 'core/providers/deployment';
 import { useDispatch } from 'core/state/hooks';
@@ -165,7 +166,9 @@ export const useDeleteCircle = (): [Function, string] => {
 };
 
 export const useCirclesData = () => {
-  const getCirclesData = useFetchData<Pagination<Circle>>(findAllCircles);
+  const getCirclesData = useFetchData<Pagination<Circle>>(
+    findAllCirclesWithoutActive
+  );
 
   return {
     getCirclesData
