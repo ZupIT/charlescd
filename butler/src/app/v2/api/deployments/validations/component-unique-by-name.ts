@@ -18,7 +18,6 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments 
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 import { countBy } from 'lodash'
 
-
 @ValidatorConstraint({ name: 'componentUniqueByProp', async: false })
 export class ComponentUniqueProp implements ValidatorConstraintInterface {
 

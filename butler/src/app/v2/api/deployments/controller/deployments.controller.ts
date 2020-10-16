@@ -40,10 +40,10 @@ export class DeploymentsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
-    @Headers('x-circle-id') incomingCircleId: string | null,
+    @Headers('x-circle-id') incomingCircleId: string | undefined,
   ): Promise<ReadDeploymentDto> {
-    this.validateCircleIdHeader(incomingCircleId)
-    return this.createDeploymentUseCase.execute(createDeploymentRequestDto, incomingCircleId)
+    const processedIncomingCircleId = this.processIncomingCircleIdHeader(incomingCircleId)
+    return this.createDeploymentUseCase.execute(createDeploymentRequestDto, processedIncomingCircleId)
   }
 
   @Post('/:id/undeploy')
@@ -51,19 +51,21 @@ export class DeploymentsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createUndeployment(
     @Param('id') deploymentId: string,
-    @Headers('x-circle-id') incomingCircleId: string | null
+    @Headers('x-circle-id') incomingCircleId: string | undefined
   ): Promise<ReadUndeploymentDto> {
-    this.validateCircleIdHeader(incomingCircleId)
-    return this.createUndeploymentUseCase.execute(deploymentId, incomingCircleId)
+    const processedIncomingCircleId = this.processIncomingCircleIdHeader(incomingCircleId)
+    return this.createUndeploymentUseCase.execute(deploymentId, processedIncomingCircleId)
   }
 
-  private validateCircleIdHeader(incomingCircleId: string | null) {
-    if (incomingCircleId === null) {
-      return
+  private processIncomingCircleIdHeader(incomingCircleId: string | undefined): string | null {
+    if (incomingCircleId === undefined) {
+      return null
     }
 
-    if (!uuidValidate(incomingCircleId) || incomingCircleId === '') {
+    if (!uuidValidate(incomingCircleId)) {
       throw new UnprocessableEntityException('x-circle-id must be UUID')
     }
+
+    return incomingCircleId
   }
 }
