@@ -31,12 +31,12 @@ test('render Connection status default component', async () => {
 
 test('render Connection fail status component', async () => {
   render(
-    <ConnectionStatus message={'Fail message'} />
+    <ConnectionStatus message={[]} />
   );
 
   await wait();
 
   expect(screen.getByTestId('connection-error')).toBeInTheDocument();
-  expect(screen.getByText('Fail message')).toBeInTheDocument();
+  expect(screen.getByText('Connection to metric provider failed.')).toBeInTheDocument();
 });
 
