@@ -97,8 +97,6 @@ This installation is recommended for who has already setup your infrastructure d
 | postgresql.postgresqlPassword                | root password                                                               | firstpassword                                     |
 | redis.enabled                                | enables the installation of redis. (use only if using the circle-matcher)   | true                                              |
 | redis.password                               | password of redis                                                           | hb2Fj9MGKjBkZ6zV                                  |
-| mongodb.enabled                              | enables the installation of redis. (use only if using the octopipe)         | true                                              |
-| mongodb.mongodbRootPassword                  | password of root user                                                       | octopipe                                          |
 | nginx.enabled                                | enable nginx ingress (documentation)                                        | true                                              |
 | nginx.ui.enabled                             | enable nginx ingress to frontend                                            | true                                              |
 | nginx.moove.enabled                          | enable nginx ingress to moove                                               | true                                              |
