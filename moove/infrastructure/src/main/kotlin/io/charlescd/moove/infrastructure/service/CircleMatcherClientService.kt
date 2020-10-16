@@ -96,7 +96,8 @@ class CircleMatcherClientService(
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
-            active = isActive
+            active = isActive,
+            createdAt = circle.createdAt
         )
 
     private fun createMatcherRequest(circle: Circle, isActive: Boolean, previousReference: String? = null): CircleMatcherRequest =
@@ -114,6 +115,7 @@ class CircleMatcherClientService(
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
-            active = isActive
+            active = isActive,
+            createdAt = circle.createdAt
         )
 }

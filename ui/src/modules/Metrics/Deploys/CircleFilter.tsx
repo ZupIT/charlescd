@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, memo, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import Styled from './styled';
 import { Control } from 'react-hook-form';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
@@ -29,15 +29,15 @@ type Props = {
 
 const CircleFilter = ({ control, setValue }: Props) => {
   const [loading, filterCircles, , data] = useCircles(CIRCLE_TYPES.list);
-  const circles = useCallback(() => {
+  const getCircles = useCallback(() => {
     return normalizeSelectOptions(data?.content);
   }, [data]);
 
   useEffect(() => {
     if (data) {
-      setValue('circles', [allOption, ...circles()]);
+      setValue('circles', [allOption, ...getCircles()]);
     }
-  }, [data, circles, setValue]);
+  }, [data, getCircles, setValue]);
 
   useEffect(() => {
     filterCircles('', CIRCLE_STATUS.active);
@@ -49,11 +49,11 @@ const CircleFilter = ({ control, setValue }: Props) => {
       name="circles"
       isLoading={loading}
       customOption={CustomOption.Check}
-      options={circles()}
+      options={getCircles()}
       label="Select Circles"
       defaultValue={[allOption]}
     />
   );
 };
 
-export default memo(CircleFilter);
+export default CircleFilter;
