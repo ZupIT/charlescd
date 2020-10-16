@@ -17,7 +17,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from 'unit-test/testUtils';
 import { actionData } from '../../__tests__/fixtures';
-import ActionCard from '../Action';
+import ActionCard from '../ActionCard';
 
 test('render Action Card', async () => {
   render(

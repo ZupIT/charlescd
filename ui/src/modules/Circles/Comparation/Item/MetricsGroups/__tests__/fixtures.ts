@@ -1,4 +1,5 @@
-import { Metric, Action, ChartData } from "../types";
+import { ActionForm } from "../AddAction";
+import { Metric, Action, ChartData, ActionType } from "../types";
 
 export const metricsGroupChartData = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
@@ -37,6 +38,24 @@ export const actionData: Action = {
   triggeredAt: '10/08/2015 12:35',
   actionType: 'Circle promotion'
 };
+
+export const actionForm = {
+  actionId: '1',
+  nickname: 'foobar',
+  circleId: '4'
+}
+
+export const actionType = {
+  id: '1',
+  createdAt: '2020',
+  workspaceId: '123',
+  nickname: 'foobar',
+  type: 'circledeployment',
+  description: 'description x',
+  configuration: '{ "fake": "json" }'
+}
+
+export const actionsType = [actionType];
 
 export const metricGroupItem = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
