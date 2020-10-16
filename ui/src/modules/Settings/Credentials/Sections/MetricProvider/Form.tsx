@@ -117,7 +117,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       ))}
 
       {testConnectionResponse && (
-        <ConnectionStatus message={(testConnectionResponse as TestConnectionResponse)?.message} />
+        <ConnectionStatus message={(testConnectionResponse as TestConnectionResponse[])} />
       )}
       <Styled.TestConnectionButton
         type="button"

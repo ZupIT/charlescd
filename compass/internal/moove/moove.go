@@ -31,8 +31,6 @@ import (
 func (api APIClient) GetMooveComponents(circleIDHeader, circleId, workspaceId string) ([]byte, error) {
 	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleId)
 
-	fmt.Println(mooveUrl)
-
 	request, err := http.NewRequest(http.MethodGet, mooveUrl, nil)
 	if err != nil {
 		return nil, err
