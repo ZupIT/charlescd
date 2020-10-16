@@ -17,10 +17,12 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
+import { TestConnectionResponse } from './interfaces';
 import Styled from './styled';
+import { isEmpty } from 'lodash';
 
 type Props = {
-  message?: string;
+  message?: TestConnectionResponse[];
 };
 
 type MessageProps = {
@@ -39,10 +41,10 @@ const MessageStatus = ({ status, messagemText }: MessageProps) => (
 );
 
 const ConnectionStatus = ({ message }: Props) => {
-  if (message)
+  if (!isEmpty(message))
     return MessageStatus({
       status: 'error',
-      messagemText: message
+      messagemText: 'Connection to metric provider failed.'
     });
 
   return MessageStatus({
