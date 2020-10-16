@@ -29,7 +29,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 	"time"
@@ -46,7 +45,7 @@ type MetricsGroupActionSuite struct {
 }
 
 func (s *MetricsGroupActionSuite) SetupSuite() {
-	os.Setenv("ENV", "TEST")
+	setupEnv()
 }
 
 func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
@@ -189,7 +188,7 @@ func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupActionError() {
 	require.Error(s.T(), err)
 }
 
-func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
+func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionResume() {
 	act := newBasicAction()
 	s.DB.Create(&act)
 
@@ -213,38 +212,51 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
 	groupAction4.MetricsGroupID = group1.ID
 	now := time.Now()
 	groupAction4.DeletedAt = &now
+	groupAction5 := newBasicGroupAction()
+	groupAction5.ActionID = act.ID
+	groupAction5.MetricsGroupID = group1.ID
 	s.DB.Create(&groupAction1)
 	s.DB.Create(&groupAction2)
 	s.DB.Create(&groupAction3)
 	s.DB.Create(&groupAction4)
+	s.DB.Create(&groupAction5)
 
 	ga1Execution := newBasicActionExecution()
 	ga1Execution.GroupActionId = groupAction1.ID
-	ga2Execution := newBasicActionExecution()
-	ga2Execution.GroupActionId = groupAction2.ID
+	ge1Start := time.Now()
+	ga1Execution.StartedAt = &ge1Start
+	ga5Execution := newBasicActionExecution()
+	ga5Execution.GroupActionId = groupAction5.ID
+	ge5Start := time.Now().Add(5000)
+	ga5Execution.StartedAt = &ge5Start
 
 	s.DB.Create(&ga1Execution)
-	s.DB.Create(&ga2Execution)
+	s.DB.Create(&ga5Execution)
 
 	res, err := s.repository.ListGroupActionExecutionResumeByGroup(group1.ID.String())
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
-	require.Len(s.T(), res, 2)
-	require.Equal(s.T(), groupAction1.ID.String(), res[0].Id)
-	require.Equal(s.T(), groupAction1.Nickname, res[0].Nickname)
+	require.Len(s.T(), res, 3)
+	require.Equal(s.T(), groupAction5.ID.String(), res[0].Id)
+	require.Equal(s.T(), groupAction5.Nickname, res[0].Nickname)
 	require.Equal(s.T(), act.Nickname, res[0].ActionType)
 	require.Equal(s.T(), "IN_EXECUTION", res[0].Status)
 	require.NotNil(s.T(), res[0].StartedAt)
-	require.Equal(s.T(), groupAction2.ID.String(), res[1].Id)
-	require.Equal(s.T(), groupAction2.Nickname, res[1].Nickname)
+	require.Equal(s.T(), groupAction1.ID.String(), res[1].Id)
+	require.Equal(s.T(), groupAction1.Nickname, res[1].Nickname)
 	require.Equal(s.T(), act.Nickname, res[1].ActionType)
 	require.Equal(s.T(), "IN_EXECUTION", res[1].Status)
 	require.NotNil(s.T(), res[1].StartedAt)
+	require.Equal(s.T(), groupAction2.ID.String(), res[2].Id)
+	require.Equal(s.T(), groupAction2.Nickname, res[2].Nickname)
+	require.Equal(s.T(), act.Nickname, res[2].ActionType)
+	require.Equal(s.T(), "NOT_EXECUTED", res[2].Status)
+	require.Nil(s.T(), res[2].StartedAt)
 
 }
 
-func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionError() {
+func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionResumeError() {
 	s.DB.Close()
 	_, err := s.repository.ListGroupActionExecutionResumeByGroup(uuid.New().String())
 	require.Error(s.T(), err)
@@ -269,10 +281,14 @@ func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupAction() {
 	require.Equal(s.T(), groupAction.ExecutionParameters, res.ExecutionParameters)
 }
 
-func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionError() {
-	s.DB.Close()
-
+func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionIdParseError() {
 	_, err := s.repository.UpdateGroupAction("12345", metricsgroupaction.MetricsGroupActions{})
+	require.Error(s.T(), err)
+}
+
+func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionIdError() {
+	s.DB.Close()
+	_, err := s.repository.UpdateGroupAction(uuid.New().String(), metricsgroupaction.MetricsGroupActions{})
 	require.Error(s.T(), err)
 }
 
@@ -638,7 +654,6 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionActionNotFound() {
 	groupAction := newBasicGroupAction()
 	groupAction.ActionID = uuid.New()
 	groupAction.MetricsGroupID = uuid.New()
-	groupAction.ExecutionParameters = json.RawMessage("")
 	groupAction.Configuration.Repeatable = true
 
 	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
@@ -652,11 +667,114 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionActionSearchError() {
 	groupAction := newBasicGroupAction()
 	groupAction.ActionID = uuid.New()
 	groupAction.MetricsGroupID = uuid.New()
-	groupAction.ExecutionParameters = json.RawMessage("")
 	groupAction.Configuration.Repeatable = true
 
 	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "action", res[0].Field)
 	require.Equal(s.T(), "action is invalid", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionNegativeCycles() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.NumberOfCycles = -5
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "configuration.NumberOfCycles", res[0].Field)
+	require.Equal(s.T(), "the number of cycle needs an positive integer", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionNotRepeatableZeroCycles() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.NumberOfCycles = 0
+	groupAction.Configuration.Repeatable = false
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "configuration.Repeatable", res[0].Field)
+	require.Equal(s.T(), "a not repeatable action needs a defined number of cycles", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionPluginNotFound() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	act.Type = "no_plugin_found"
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "action", res[0].Field)
+	require.Equal(s.T(), "action is invalid", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionLookupError() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	act.Type = "nofuncaction"
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "action", res[0].Field)
+	require.Equal(s.T(), "action is invalid", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionInvalid() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	act.Type = "invalidaction"
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "executionParameters", res[0].Field)
+	require.Equal(s.T(), "invalid config", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionOk() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 0)
 }

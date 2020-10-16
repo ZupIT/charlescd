@@ -28,7 +28,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 )
@@ -43,7 +42,7 @@ type ActionSuite struct {
 }
 
 func (s *ActionSuite) SetupSuite() {
-	os.Setenv("ENV", "TEST")
+	setupEnv()
 }
 
 func (s *ActionSuite) BeforeTest(_, _ string) {
@@ -54,6 +53,7 @@ func (s *ActionSuite) BeforeTest(_, _ string) {
 
 	s.DB.LogMode(dbLog)
 
+	s.plugins = plugin.NewMain()
 	s.repository = action.NewMain(s.DB, s.plugins)
 	clearDatabase(s.DB)
 }
@@ -104,13 +104,7 @@ func (s *ActionSuite) TestParseActionError() {
 }
 
 func (s *ActionSuite) TestFindActionById() {
-	actionToFind := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New(),
-		DeletedAt:     nil,
-	}
+	actionToFind := newBasicAction()
 
 	s.DB.Create(&actionToFind)
 	res, err := s.repository.FindActionById(actionToFind.ID.String())
@@ -128,13 +122,8 @@ func (s *ActionSuite) TestFindActionByIdError() {
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
 	workspaceID := uuid.New()
-	actionToFind := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   workspaceID,
-		DeletedAt:     nil,
-	}
+	actionToFind := newBasicAction()
+	actionToFind.WorkspaceId = workspaceID
 
 	s.DB.Create(&actionToFind)
 	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID.String(), workspaceID.String())
@@ -153,23 +142,11 @@ func (s *ActionSuite) TestFindActionByIdAndWorkspaceError() {
 
 func (s *ActionSuite) TestFindAllActionByWorkspace() {
 	wspID := uuid.New()
-	actionStruct1 := action.Action{
-		Nickname:      "ActionName1",
-		Type:          "CircleUp",
-		Description:   "Desc",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   wspID,
-		DeletedAt:     nil,
-	}
+	actionStruct1 := newBasicAction()
+	actionStruct1.WorkspaceId = wspID
 
-	actionStruct2 := action.Action{
-		Nickname:      "ActionName2",
-		Type:          "CircleDown",
-		Description:   "Desc",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   wspID,
-		DeletedAt:     nil,
-	}
+	actionStruct2 := newBasicAction()
+	actionStruct2.WorkspaceId = wspID
 
 	s.DB.Create(&actionStruct1)
 	s.DB.Create(&actionStruct2)
@@ -189,14 +166,7 @@ func (s *ActionSuite) TestFindByAllActionError() {
 }
 
 func (s *ActionSuite) TestSaveAction() {
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Description:   "Desc",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New(),
-		DeletedAt:     nil,
-	}
+	actionStruct := newBasicAction()
 
 	res, err := s.repository.SaveAction(actionStruct)
 	require.NoError(s.T(), err)
@@ -214,14 +184,7 @@ func (s *ActionSuite) TestSaveActionError() {
 }
 
 func (s *ActionSuite) TestDeleteAction() {
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Description:   "Desc",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New(),
-		DeletedAt:     nil,
-	}
+	actionStruct := newBasicAction()
 
 	s.DB.Create(&actionStruct)
 	err := s.repository.DeleteAction(actionStruct.ID.String())
@@ -232,4 +195,177 @@ func (s *ActionSuite) TestDeleteActionError() {
 	s.DB.Close()
 	err := s.repository.DeleteAction(uuid.New().String())
 	require.Error(s.T(), err)
+}
+
+func (s *ActionSuite) TestValidateActionEmptyNickname() {
+	act := newBasicAction()
+	act.Nickname = ""
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "nickname", res[0].Field)
+	require.Equal(s.T(), "action nickname is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionBlankNickname() {
+	act := newBasicAction()
+	act.Nickname = "  "
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "nickname", res[0].Field)
+	require.Equal(s.T(), "action nickname is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionTooLongNickname() {
+	act := newBasicAction()
+	act.Nickname = bigString
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "nickname", res[0].Field)
+	require.Equal(s.T(), "action nickname is limited to 100 characters maximum", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionEmptyDescription() {
+	act := newBasicAction()
+	act.Description = ""
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "description", res[0].Field)
+	require.Equal(s.T(), "description is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionBlankDescription() {
+	act := newBasicAction()
+	act.Description = "  "
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "description", res[0].Field)
+	require.Equal(s.T(), "description is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionTooLongDescription() {
+	act := newBasicAction()
+	act.Description = bigString
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "description", res[0].Field)
+	require.Equal(s.T(), "description is limited to 100 characters maximum", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionNilConfiguration() {
+	act := newBasicAction()
+	act.Configuration = nil
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "configuration", res[0].Field)
+	require.Equal(s.T(), "action configuration is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionEmptyConfiguration() {
+	act := newBasicAction()
+	act.Configuration = json.RawMessage("")
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "configuration", res[0].Field)
+	require.Equal(s.T(), "action configuration is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionNilWorkspace() {
+	act := newBasicAction()
+	act.WorkspaceId = uuid.Nil
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "workspaceId", res[0].Field)
+	require.Equal(s.T(), "workspaceId is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionEmptyType() {
+	act := newBasicAction()
+	act.Type = ""
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "type", res[0].Field)
+	require.Equal(s.T(), "action type is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionBlankType() {
+	act := newBasicAction()
+	act.Type = "  "
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "type", res[0].Field)
+	require.Equal(s.T(), "action type is required", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionTypeToo() {
+	act := newBasicAction()
+	act.Type = bigString
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "type", res[0].Field)
+	require.Equal(s.T(), "action type is limited to 100 characters maximum", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionPluginNotFound() {
+	act := newBasicAction()
+	act.Type = "no_plugin_found"
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "type", res[0].Field)
+	require.Equal(s.T(), "action type is invalid", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionPluginLookupError() {
+	act := newBasicAction()
+	act.Type = "nofuncaction"
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "type", res[0].Field)
+	require.Equal(s.T(), "action type is invalid", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionInvalidConfig() {
+	act := newBasicAction()
+	act.Type = "invalidaction"
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "configuration", res[0].Field)
+	require.Equal(s.T(), "invalid config", res[0].Error)
+}
+
+func (s *ActionSuite) TestValidateActionOk() {
+	act := newBasicAction()
+
+	res := s.repository.ValidateAction(act)
+
+	require.Len(s.T(), res, 0)
 }

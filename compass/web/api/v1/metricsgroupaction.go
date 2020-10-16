@@ -60,13 +60,13 @@ func (metricsGroupActionApi MetricsGroupActionApi) create(w http.ResponseWriter,
 		return
 	}
 
-	_, err = metricsGroupActionApi.main.SaveGroupAction(act)
+	savedGroupAct, err := metricsGroupActionApi.main.SaveGroupAction(act)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error creating action")})
 		return
 	}
 
-	api.NewRestSuccess(w, http.StatusOK, act)
+	api.NewRestSuccess(w, http.StatusOK, savedGroupAct)
 }
 
 func (metricsGroupActionApi MetricsGroupActionApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
