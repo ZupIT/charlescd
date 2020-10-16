@@ -73,13 +73,13 @@ func TestInitMetric(t *testing.T) {
 
 func (s *SuiteMetric) TestValidateMetric() {
 	filters := make([]datasourcePKG.MetricFilter, 0)
-	filters = append(filters, datasourcePKG.MetricFilter{Field: BigString, Value: BigString, Operator: "="})
+	filters = append(filters, datasourcePKG.MetricFilter{Field: bigString, Value: bigString, Operator: "="})
 
 	groupBy := make([]metricRepo.MetricGroupBy, 0)
-	groupBy = append(groupBy, metricRepo.MetricGroupBy{Field: BigString})
+	groupBy = append(groupBy, metricRepo.MetricGroupBy{Field: bigString})
 
 	metric := metricRepo.Metric{
-		Nickname: BigString,
+		Nickname: bigString,
 		Filters:  filters,
 		GroupBy:  groupBy,
 	}

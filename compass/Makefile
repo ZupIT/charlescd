@@ -27,7 +27,7 @@ tests:
 				$(GOTEST) ./...
 tests-dep-up:
 				docker-compose -f $(COMPOSE_TESTS) up -d --build db provider
-				sh build-plugins.sh
+				sh ./test/build-plugins.test.sh
 tests-dep-down:
 				docker-compose -f $(COMPOSE_TESTS) down
 cover:

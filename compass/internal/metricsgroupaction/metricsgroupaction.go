@@ -19,6 +19,7 @@
 package metricsgroupaction
 
 import (
+	"compass/internal/action"
 	"compass/internal/util"
 	"compass/pkg/logger"
 	"encoding/json"
@@ -60,13 +61,13 @@ const groupActionQuery = `
 						mga.nickname 							AS nickname,
 						a.nickname          					AS action_type,
        					coalesce (ae.status, 'NOT_EXECUTED')	AS status,
-       					ae.started_at 							AS execution
+       					ae.started_at 							AS started_at
 				FROM metrics_group_actions mga
          			INNER JOIN actions a 			ON mga.action_id = a.id	
 					LEFT JOIN actions_executions ae ON mga.id = ae.group_action_id
 					WHERE mga.metrics_group_id = ? 
 					AND mga.deleted_at IS NULL
-					ORDER BY execution DESC`
+					ORDER BY started_at DESC`
 
 func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupActions, error) {
 	var mgAct MetricsGroupActions
@@ -85,20 +86,6 @@ func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGrou
 func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupActions, workspaceID string) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 	needConfigValidation := true
-
-	if metricsGroupAction.ActionID == uuid.Nil {
-		ers = append(ers, util.ErrorUtil{
-			Field: "action",
-			Error: errors.New("action id is required").Error(),
-		})
-	}
-
-	if metricsGroupAction.MetricsGroupID == uuid.Nil {
-		ers = append(ers, util.ErrorUtil{
-			Field: "metricGroup",
-			Error: errors.New("metric group id is required").Error(),
-		})
-	}
 
 	if strings.TrimSpace(metricsGroupAction.Nickname) == "" {
 		ers = append(ers, util.ErrorUtil{
@@ -120,14 +107,31 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupActions, wor
 		})
 	}
 
-	act, err := main.actionRepo.FindActionByIdAndWorkspace(metricsGroupAction.ActionID.String(), workspaceID)
-	if err != nil || act.Type == "" {
-		needConfigValidation = false
-		logger.Error("error finding action", "ValidateGroupAction", err, metricsGroupAction.ActionID.String())
+	if metricsGroupAction.MetricsGroupID == uuid.Nil {
 		ers = append(ers, util.ErrorUtil{
-			Field: "actionId",
-			Error: errors.New("action is invalid").Error(),
+			Field: "metricGroup",
+			Error: errors.New("metric group id is required").Error(),
 		})
+	}
+
+	var act action.Action
+	if metricsGroupAction.ActionID == uuid.Nil {
+		needConfigValidation = false
+		ers = append(ers, util.ErrorUtil{
+			Field: "action",
+			Error: errors.New("action id is required").Error(),
+		})
+	} else {
+		var err error
+		act, err = main.actionRepo.FindActionByIdAndWorkspace(metricsGroupAction.ActionID.String(), workspaceID)
+		if err != nil || act.Type == "" {
+			needConfigValidation = false
+			logger.Error("error finding action", "ValidateGroupAction", err, metricsGroupAction.ActionID.String())
+			ers = append(ers, util.ErrorUtil{
+				Field: "action",
+				Error: errors.New("action is invalid").Error(),
+			})
+		}
 	}
 
 	ers = append(ers, main.validateJobConfiguration(metricsGroupAction.Configuration)...)
