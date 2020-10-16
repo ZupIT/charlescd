@@ -105,12 +105,12 @@ func newBasicConfig() json.RawMessage {
 	return config
 }
 
-func newBasicGroupAction() metricsgroupaction.MetricsGroupActions {
-	return metricsgroupaction.MetricsGroupActions{
-		Nickname:            "Nickname",
-		ExecutionParameters: json.RawMessage(`{"someProperty": "someValue"}`),
-		Configuration:       metricsgroupaction.ActionsConfigurations{},
-		DeletedAt:           nil,
+func newBasicGroupAction() metricsgroupaction.MetricsGroupAction {
+	return metricsgroupaction.MetricsGroupAction{
+		Nickname:             "Nickname",
+		ExecutionParameters:  json.RawMessage(`{"someProperty": "someValue"}`),
+		ActionsConfiguration: metricsgroupaction.ActionsConfiguration{},
+		DeletedAt:            nil,
 	}
 }
 
