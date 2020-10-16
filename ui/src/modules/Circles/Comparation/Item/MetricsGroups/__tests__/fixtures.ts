@@ -1,6 +1,6 @@
 import { Metric, Action, ChartData } from "../types";
 
-export const MetricsGroupChartData = {
+export const metricsGroupChartData = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   metric: "test 12",
   result: [
@@ -38,16 +38,18 @@ export const actionData: Action = {
   actionType: 'Circle promotion'
 };
 
-export const MetricsGroupData = [{
+export const metricGroupItem = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   name: "test 1",
   metrics: [metricsData],
   actions: [actionData],
   status: "ACTIVE"
-}];
+}
 
-export const MetricsGroupWithoutMetricData = [{
+export const metricsGroupData = [metricGroupItem];
+
+export const metricsGroupWithoutMetricData = [{
   id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   name: "test 1",
@@ -56,7 +58,7 @@ export const MetricsGroupWithoutMetricData = [{
   status: "ACTIVE"
 }];
 
-export const OptionsValues = [
+export const optionsValues = [
   {
     "label": "1",
     "value": "1"
@@ -67,7 +69,7 @@ export const OptionsValues = [
   }
 ];
 
-export const ThresholdStatusResponse = [
+export const thresholdStatusResponse = [
   {
     icon: 'bell',
     color: 'reached',

@@ -17,7 +17,7 @@
 import React from 'react';
 import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupData, MetricsGroupWithoutMetricData } from './fixtures';
+import { metricsGroupData, metricsGroupWithoutMetricData } from './fixtures';
 import MetricsGroups from '../index';
 
 beforeEach(() => {
@@ -26,7 +26,7 @@ beforeEach(() => {
 
 test('render default Metrics Groups', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   const handleClick = jest.fn();
@@ -47,7 +47,7 @@ test('render default Metrics Groups', async () => {
 
 test('render default Metrics Groups and toogle Chart', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -64,7 +64,7 @@ test('render default Metrics Groups and toogle Chart', async () => {
 
 test('render default Metrics Groups and filter Chart', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -84,7 +84,7 @@ test('render default Metrics Groups and filter Chart', async () => {
 
 test('render add metrics group modal', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -104,7 +104,7 @@ test('render add metrics group modal', async () => {
 
 test('render default Metrics Groups and refresh screen', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -119,7 +119,7 @@ test('render default Metrics Groups and refresh screen', async () => {
 
 test('render default Add metric to the group', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupWithoutMetricData)
+    JSON.stringify(metricsGroupWithoutMetricData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -135,7 +135,7 @@ test('render default Add metric to the group', async () => {
 
 test('render metrics groups and delete a metrics group', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupWithoutMetricData)
+    JSON.stringify(metricsGroupWithoutMetricData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
