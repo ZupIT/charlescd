@@ -32,6 +32,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 type MetricsGroupActionSuite struct {
@@ -55,6 +56,9 @@ func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
 	require.NoError(s.T(), err)
 
 	s.DB.LogMode(dbLog)
+
+	s.pluginRepo = plugin.NewMain()
+	s.actionRepo = action.NewMain(s.DB, s.pluginRepo)
 
 	s.repository = metricsgroupaction.NewMain(s.DB, s.pluginRepo, s.actionRepo)
 	clearDatabase(s.DB)
@@ -204,9 +208,15 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
 	groupAction3 := newBasicGroupAction()
 	groupAction3.ActionID = act.ID
 	groupAction3.MetricsGroupID = group2.ID
+	groupAction4 := newBasicGroupAction()
+	groupAction4.ActionID = act.ID
+	groupAction4.MetricsGroupID = group1.ID
+	now := time.Now()
+	groupAction4.DeletedAt = &now
 	s.DB.Create(&groupAction1)
 	s.DB.Create(&groupAction2)
 	s.DB.Create(&groupAction3)
+	s.DB.Create(&groupAction4)
 
 	ga1Execution := newBasicActionExecution()
 	ga1Execution.GroupActionId = groupAction1.ID
@@ -225,12 +235,12 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
 	require.Equal(s.T(), groupAction1.Nickname, res[0].Nickname)
 	require.Equal(s.T(), act.Nickname, res[0].ActionType)
 	require.Equal(s.T(), "IN_EXECUTION", res[0].Status)
-	require.Nil(s.T(), res[0].StartedAt)
+	require.NotNil(s.T(), res[0].StartedAt)
 	require.Equal(s.T(), groupAction2.ID.String(), res[1].Id)
 	require.Equal(s.T(), groupAction2.Nickname, res[1].Nickname)
 	require.Equal(s.T(), act.Nickname, res[1].ActionType)
 	require.Equal(s.T(), "IN_EXECUTION", res[1].Status)
-	require.Nil(s.T(), res[1].StartedAt)
+	require.NotNil(s.T(), res[1].StartedAt)
 
 }
 
@@ -504,4 +514,149 @@ func (s *MetricsGroupActionSuite) TestValidateActionCanBeExecutedError() {
 	s.DB.Close()
 	res := s.repository.ValidateActionCanBeExecuted(newBasicGroupAction())
 	require.False(s.T(), res)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyNickname() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.Type = "validaction"
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.Nickname = ""
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "nickname", res[0].Field)
+	require.Equal(s.T(), "action nickname is required", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionBlankNickname() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.Nickname = "   "
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "nickname", res[0].Field)
+	require.Equal(s.T(), "action nickname is required", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionNicknameTooLong() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.Nickname = bigString
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "nickname", res[0].Field)
+	require.Equal(s.T(), "nickname is limited to 100 characters maximum", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionNilMetricGroupID() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "metricGroup", res[0].Field)
+	require.Equal(s.T(), "metric group id is required", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionNilExecutionParameters() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ExecutionParameters = nil
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "executionParameters", res[0].Field)
+	require.Equal(s.T(), "execution parameters is required", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyExecutionParameters() {
+	workspaceID := uuid.New()
+	act := newBasicAction()
+	act.WorkspaceId = workspaceID
+	s.DB.Create(&act)
+
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = act.ID
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ExecutionParameters = json.RawMessage("")
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "executionParameters", res[0].Field)
+	require.Equal(s.T(), "execution parameters is required", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionNilActionID() {
+	groupAction := newBasicGroupAction()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "action", res[0].Field)
+	require.Equal(s.T(), "action id is required", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionActionNotFound() {
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = uuid.New()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ExecutionParameters = json.RawMessage("")
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "action", res[0].Field)
+	require.Equal(s.T(), "action is invalid", res[0].Error)
+}
+
+func (s *MetricsGroupActionSuite) TestValidateGroupActionActionSearchError() {
+	s.DB.Close()
+	groupAction := newBasicGroupAction()
+	groupAction.ActionID = uuid.New()
+	groupAction.MetricsGroupID = uuid.New()
+	groupAction.ExecutionParameters = json.RawMessage("")
+	groupAction.Configuration.Repeatable = true
+
+	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
+	require.Len(s.T(), res, 1)
+	require.Equal(s.T(), "action", res[0].Field)
+	require.Equal(s.T(), "action is invalid", res[0].Error)
 }
