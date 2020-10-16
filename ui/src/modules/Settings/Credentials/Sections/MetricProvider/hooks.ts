@@ -18,9 +18,9 @@ import { useCallback, useEffect } from 'react';
 
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
-import { Datasource, Plugin, Response } from './interfaces';
+import { Datasource, Plugin, Response, TestConnectionResponse, TestConnectionRequest } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { getAllDatasources, createDatasource as create, deleteDatasource, getAllPlugins } from 'core/providers/datasources';
+import { getAllDatasources, createDatasource as create, deleteDatasource, getAllPlugins, testConnection } from 'core/providers/datasources';
 
 export const useDatasource = (): FetchProps => {
   const dispatch = useDispatch();
@@ -119,5 +119,25 @@ export const usePlugins = (): FetchProps => {
     loading
   };
 };
+
+export const useTestConnection = (): FetchProps => {
+  const [testConnectionResponse, getTestConnection] = useFetch<
+    TestConnectionResponse
+  >(testConnection);
+  const { response, loading } = testConnectionResponse;
+
+  const save = useCallback(
+    (testConnectionRequest: TestConnectionRequest) => {
+      getTestConnection(testConnectionRequest);
+    },
+    [getTestConnection]
+  );
+
+  return {
+    save,
+    response,
+    loading
+  };
+}
 
 

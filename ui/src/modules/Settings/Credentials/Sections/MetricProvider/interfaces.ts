@@ -62,8 +62,13 @@ export interface Plugin {
   inputParameters?: any;
 }
 
+export interface TestConnectionRequest {
+  pluginSrc: string;
+  data: any
+}
+
 export interface TestConnectionResponse {
-  status?: string;
+  message?: string;
 }
 
 export enum ConnectionStatusEnum {
