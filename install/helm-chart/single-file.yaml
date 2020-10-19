@@ -463,28 +463,6 @@ metadata:
   name: charlescd-octopipe
   namespace: charles
 ---
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
----
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1051,7 +1029,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.3.10
+          image: zupcharles/charlescd-butler:0.3.11
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1131,7 +1109,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.3.10
+          image: zupcharles/charlescd-circle-matcher:0.3.11
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1205,7 +1183,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.3.10
+          image: zupcharles/charlescd-compass:0.3.11
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1286,7 +1264,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.3.10
+          image: zupcharles/charlescd-moove:0.3.11
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1369,7 +1347,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.3.10
+          image: zupcharles/charlescd-ui:0.3.11
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1447,7 +1425,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.3.10
+          image: zupcharles/charlescd-villager:0.3.11
           livenessProbe:
             failureThreshold: 3
             httpGet:
