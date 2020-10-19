@@ -34,9 +34,10 @@ test('render Section default component', async () => {
       showAction={props.showAction}
     />
   );
+  
   await wait();
 
-  expect(queryByTestId(`button-iconRounded-add`)).toBeInTheDocument();
+  expect(queryByTestId(`icon-add`)).toBeInTheDocument();
   expect(queryByTestId(`contentIcon-${props.name}`)).toBeInTheDocument();
 });
 

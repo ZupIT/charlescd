@@ -17,6 +17,7 @@
 import React, { memo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
+import routes from 'core/constants/routes';
 import { setUserAbilities } from 'core/utils/abilities';
 import { useDispatch, useGlobalState } from 'core/state/hooks';
 import {
@@ -25,7 +26,6 @@ import {
 } from 'modules/Workspaces/state/actions';
 import { hasPermission } from 'core/utils/auth';
 import { WORKSPACE_STATUS } from '../enums';
-import routes from 'core/constants/routes';
 import Styled from './styled';
 
 interface Props {
@@ -36,9 +36,9 @@ interface Props {
 }
 
 const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
-  const dispatch = useDispatch();
   const history = useHistory();
   const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
+  const dispatch = useDispatch();
 
   const handleClick = () => {
     saveWorkspace({ id, name });
