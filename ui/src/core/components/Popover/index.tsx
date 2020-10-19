@@ -22,27 +22,36 @@ import Styled from './styled';
 
 export const CHARLES_DOC = 'https://docs.charlescd.io';
 
-export interface Props {
-  icon?: string;
+interface Popover {
   title: string;
   size?: string;
   description: string;
   link?: string;
   linkLabel?: string;
   className?: string;
-  children?: ReactNode;
 }
 
-const Popover = ({
-  icon,
-  title,
-  size = '24px',
-  link = CHARLES_DOC,
-  linkLabel = 'View documentation',
-  description,
-  className,
-  children
-}: Props) => {
+interface WithIcon extends Popover {
+  icon: string;
+}
+
+interface WithChildren extends Popover {
+  children: ReactNode;
+}
+
+export type Props = WithChildren | WithIcon;
+
+const Popover = (props: Props) => {
+  const {
+    title,
+    size = '24px',
+    link = CHARLES_DOC,
+    linkLabel = 'View documentation',
+    description,
+    className
+  } = props;
+  const { icon } = props as WithIcon;
+  const { children } = props as WithChildren;
   const [toggle, setToggle] = useState(false);
   const ref = useRef<HTMLDivElement>();
 
@@ -65,8 +74,8 @@ const Popover = ({
 
   return (
     <Styled.Wrapper ref={ref} className={className}>
-      {!children && icon && renderIcon()}
-      {!icon && children && renderAnchor()}
+      {icon && renderIcon()}
+      {children && renderAnchor()}
       {toggle && (
         <Styled.Popover
           data-testid={`popover-${title}`}

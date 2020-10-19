@@ -15,7 +15,9 @@
  */
 
 import styled, { css } from 'styled-components';
-import ComponentPopover from 'core/components/Popover';
+import ComponentPopover, {
+  Props as PopoverProps
+} from 'core/components/Popover';
 import ComponentText from 'core/components/Text';
 
 interface LabelProps {
@@ -37,7 +39,7 @@ const RadioCards = styled.div`
   }
 `;
 
-const Popover = styled(ComponentPopover)`
+const Popover = styled(ComponentPopover)<PopoverProps>`
   .popover-container {
     top: 18px;
     left: 50px;
