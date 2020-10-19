@@ -23,9 +23,10 @@ interface Props {
   active?: boolean;
   onChange?: (value: boolean) => void;
   name?: string;
+  className?: string;
 }
 
-const Switch = ({ label, active, onChange, name }: Props) => {
+const Switch = ({ label, active, onChange, name, className }: Props) => {
   const [isActive, setIsActive] = useState(active);
 
   const id = `switch-${name}`;
@@ -36,7 +37,7 @@ const Switch = ({ label, active, onChange, name }: Props) => {
   };
 
   return (
-    <Styled.Switch>
+    <Styled.Switch className={className}>
       <Styled.Input
         data-testid={id}
         type="checkbox"

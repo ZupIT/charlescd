@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import Trigger from './Trigger';
-import Default from './Default';
-import Wizard from './Wizard';
+import { ModalWizard } from './ModalWizard';
 
-export default { Default, Trigger, Wizard };
+export interface ModalWizardState {
+  wizard: ModalWizard;
+}
