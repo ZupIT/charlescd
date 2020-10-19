@@ -40,9 +40,9 @@ const ActionCard = ({
 
   const deleteBody = () => (
     <Styled.ActionCardBodyDelete>
-      <Styled.ActionNickname color="light">
+      <Styled.ActionNicknameDeleteCard color="light">
         {action.nickname}
-      </Styled.ActionNickname>
+      </Styled.ActionNicknameDeleteCard>
       <Styled.ActionType color="light">Are you sure?</Styled.ActionType>
       <Styled.ActionDeleteCardText
         color="light"

@@ -260,7 +260,8 @@ const ActionNicknameDeleteCard = styled(Text.h5)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 110px;
+  width: 215px;
+  margin-left: 20px;
 `;
 
 const ActionDeleteCardText = styled(Text.h5)`
