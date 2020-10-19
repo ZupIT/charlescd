@@ -19,7 +19,6 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 
 interface Props {
-  className?: string;
   label: string;
   active?: boolean;
   onChange?: (value: boolean) => void;
