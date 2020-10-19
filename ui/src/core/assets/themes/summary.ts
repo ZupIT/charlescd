@@ -17,7 +17,7 @@
 import {
   COLOR_MOUNTAIN_MEADOW,
   COLOR_FREE_SPEECH_BLUE,
-  COLOR_NEON_BLUE,
+  COLOR_DODGER_BLUE,
   COLOR_RED_ORANGE
 } from 'core/assets/colors';
 
@@ -27,7 +27,7 @@ export const dark = {
   colors: {
     green: COLOR_MOUNTAIN_MEADOW,
     darkBlue: COLOR_FREE_SPEECH_BLUE,
-    lightBlue: COLOR_NEON_BLUE,
+    lightBlue: COLOR_DODGER_BLUE,
     red: COLOR_RED_ORANGE
   }
 };

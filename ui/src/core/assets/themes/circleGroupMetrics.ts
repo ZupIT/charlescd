@@ -23,7 +23,7 @@ import {
   COLOR_PAYNES_GREY,
   COLOR_MOUNTAIN_MEADOW,
   COLOR_FREE_SPEECH_BLUE,
-  COLOR_NEON_BLUE
+  COLOR_DODGER_BLUE
 } from '../colors';
 
 export const light = {};
@@ -46,7 +46,7 @@ export const dark = {
       success: COLOR_MOUNTAIN_MEADOW,
       failed: COLOR_RED_ORANGE,
       inExecution: COLOR_FREE_SPEECH_BLUE,
-      notExecuted: COLOR_NEON_BLUE
+      notExecuted: COLOR_DODGER_BLUE
     }
   },
   chart: {
