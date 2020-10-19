@@ -92,7 +92,6 @@ describe('Octopipe Service', () => {
         awsSecret: 'secret',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -189,7 +188,6 @@ describe('Octopipe Service', () => {
         awsSecret: 'secret',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -379,7 +377,6 @@ describe('Octopipe Service', () => {
         caData: 'ca-data',
         gitToken: 'some-github-token',
         host: 'https://k8s.com',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -475,8 +472,7 @@ describe('Octopipe Service', () => {
         gitProvider: GitProvidersEnum.GITHUB,
         caData: 'ca-data',
         gitToken: 'some-github-token',
-        host: 'https://k8s.com',
-        namespace: 'some-app-namespace'
+        host: 'https://k8s.com'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -661,8 +657,7 @@ describe('Octopipe Service', () => {
       const octopipeConfiguration: OctopipeConfigurationData = {
         provider: ClusterProviderEnum.DEFAULT,
         gitProvider: GitProvidersEnum.GITHUB,
-        gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
+        gitToken: 'some-github-token'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -744,7 +739,6 @@ describe('Octopipe Service', () => {
         provider: ClusterProviderEnum.DEFAULT,
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -928,7 +922,6 @@ describe('Octopipe Service', () => {
         provider: ClusterProviderEnum.DEFAULT,
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -1109,8 +1102,7 @@ describe('Octopipe Service', () => {
         awsSID: 'sid',
         awsSecret: 'secret',
         gitProvider: GitProvidersEnum.GITHUB,
-        gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
+        gitToken: 'some-github-token'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {

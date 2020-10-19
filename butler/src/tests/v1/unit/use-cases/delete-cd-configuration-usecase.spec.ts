@@ -44,7 +44,7 @@ describe('DeleteCdConfigurationUsecase', () => {
     cdConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
     cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url' },
       'config-name',
       'authorId',
       workspaceId
