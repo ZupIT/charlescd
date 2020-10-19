@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
+import Text from 'core/components/Text';
 import { dateTimeFormatter } from 'core/utils/date';
 import camelCase from 'lodash/camelCase';
 import Styled from './styled';
@@ -35,7 +36,20 @@ const ActionCard = ({
   handleDeleteAction,
   handleEditAction
 }: Props) => {
-  return (
+  const [deleteView, setDeleteView] = useState(false);
+
+  const deleteBody = () => (
+    <Styled.ActionCardBodyDelete>
+      <Text.h5>{action.nickname}</Text.h5>
+      <Text.h5>Are you sure?</Text.h5>
+      <Text.h5 onClick={() => console.log('asdf')}>Yes, delete</Text.h5>
+      <Text.h5 onClick={() => setDeleteView(false)}>No</Text.h5>
+    </Styled.ActionCardBodyDelete>
+  );
+
+  return deleteView ? (
+    deleteBody()
+  ) : (
     <Styled.ActionCardBody
       key={action.id}
       data-testid={`metric-group-card-${action.nickname}`}
@@ -75,8 +89,13 @@ const ActionCard = ({
           <Dropdown.Item
             icon="delete"
             name="Delete action"
-            onClick={() => handleDeleteAction(action.id, action.nickname)}
+            onClick={() => setDeleteView(true)}
           />
+          {/* <Dropdown.Item
+            icon="delete"
+            name="Delete action"
+            onClick={() => handleDeleteAction(action.id, action.nickname)}
+          /> */}
         </NewDropDown>
       </Styled.MetricDropdown>
     </Styled.ActionCardBody>

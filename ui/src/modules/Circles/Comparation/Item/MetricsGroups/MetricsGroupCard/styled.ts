@@ -212,6 +212,16 @@ const ActionCardBody = styled.div`
   height: 40px;
 `;
 
+const ActionCardBodyDelete = styled.div`
+  background-color: ${({ theme }) => theme.circleGroupMetrics.content.delete};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  height: 40px;
+`;
+
 interface Line {
   status: string;
 }
@@ -268,5 +278,6 @@ export default {
   ActionCardStauts,
   ActionNickname,
   ActionType,
-  ActionTypeTriggeredAt
+  ActionTypeTriggeredAt,
+  ActionCardBodyDelete
 };

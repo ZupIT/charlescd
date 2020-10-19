@@ -31,7 +31,8 @@ export const light = {};
 export const dark = {
   content: {
     background: COLOR_BASTILLE,
-    card: COLOR_BLACK_MARLIN
+    card: COLOR_BLACK_MARLIN,
+    delete: COLOR_RED_ORANGE
   },
   execution: {
     status: {
