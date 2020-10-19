@@ -37,22 +37,6 @@ type: Opaque
 data:
   password: "Zmlyc3RwYXNzd29yZA=="
 ---
-# Source: Charles-CD/charts/mongodb/templates/secrets.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-type: Opaque
-data:
-  mongodb-root-password:  "b2N0b3BpcGU="
-  mongodb-password:  "Zmlyc3RwYXNzd29yZA=="
----
 # Source: Charles-CD/charts/postgresql/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
@@ -173,7 +157,6 @@ data:
 apiVersion: v1
 data:
   nginx.conf: |-
-    user       nginx;
     worker_processes  5;
     worker_rlimit_nofile 8192;
     events {
@@ -181,7 +164,13 @@ data:
     }
 
     http {
-        index    index.html index.htm index.php;
+        resolver kube-dns.kube-system.svc.cluster.local;
+        lua_package_path '/usr/local/openresty/site/?.lua;;';
+        # cache for discovery metadata documents
+        lua_shared_dict discovery 1m;
+        # cache for JWKs
+        lua_shared_dict jwks 1m;    
+
         default_type application/octet-stream;
         log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
                         '$status $body_bytes_sent "$http_referer" '
@@ -189,13 +178,10 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
-        # server {
-        #     listen 80;
-        #     server_name charles-prod.continuousplatform.com;
-        #     return 301 https://charles-prod.continuousplatform.com$request_uri;
-        # }
+
         server {
             listen 80;
+
             
             location / {
                 proxy_http_version 1.1;
@@ -203,6 +189,22 @@ data:
             }
             
             location /moove/ {
+
+                access_by_lua '
+                    local opts = {
+                      discovery = "http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/.well-known/openid-configuration",
+                      token_signing_alg_values_expected = { "RS256" },
+                      ssl_verify = "no"
+                    }
+                    -- call bearer_jwt_verify for OAuth 2.0 JWT validation
+                    local res, err = require("resty.openidc").bearer_jwt_verify(opts)
+                    if err or not res then
+                      ngx.status = 401
+                      ngx.say(err and err or "no access_token provided")
+                      ngx.exit(ngx.HTTP_UNAUTHORIZED)
+                    end
+                ';
+
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-moove:8080/;
                 if ($request_method = 'OPTIONS') {
@@ -264,6 +266,50 @@ data:
                 proxy_set_header Host $host;
                 proxy_pass      http://charlescd-keycloak-http;
             }
+            
+            location /compass/ {
+                proxy_http_version 1.1;
+                proxy_pass http://charlescd-compass:8080/;
+                if ($request_method = 'OPTIONS') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Max-Age' 1728000;
+                    add_header 'Content-Type' 'text/plain; charset=utf-8';
+                    add_header 'Content-Length' 0;
+                    return 204;
+                }
+                if ($request_method = 'POST') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'GET') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'PUT') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'PATCH') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'DELETE') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+            }
         }
     }
 kind: ConfigMap
@@ -281,7 +327,7 @@ metadata:
     release: "charlescd"
     heritage: "Helm"
 data:
-  charlescd-extensions.sh: |-
+  charlescd-extensions.sh: |
     #!/bin/bash
     export PGUSER=postgres
     export PGPASSWORD=firstpassword
@@ -300,6 +346,11 @@ data:
     psql -c "CREATE DATABASE keycloak"
     psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
     psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
+  
+    psql -c "CREATE DATABASE charlescd_compass"
+    psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+    psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+    psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
 ---
 # Source: Charles-CD/charts/redis/templates/configmap.yaml
 apiVersion: v1
@@ -404,23 +455,13 @@ data:
     "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
     exit $exit_status
 ---
-# Source: Charles-CD/charts/mongodb/templates/pvc-standalone.yaml
-kind: PersistentVolumeClaim
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
 apiVersion: v1
+kind: ServiceAccount
 metadata:
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    heritage: Helm
-    release: charlescd
-  name: charlescd-mongodb
+  annotations:
+  name: charlescd-octopipe
   namespace: charles
-spec:
-  accessModes:
-    - "ReadWriteOnce"
-  resources:
-    requests:
-      storage: "8Gi"
 ---
 # Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
 apiVersion: v1
@@ -611,27 +652,6 @@ spec:
     app.kubernetes.io/name: keycloak
     app.kubernetes.io/instance: "charlescd"
 ---
-# Source: Charles-CD/charts/mongodb/templates/svc-standalone.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-spec:
-  type: ClusterIP
-  ports:
-    - name: mongodb
-      port: 27017
-      targetPort: mongodb
-  selector:
-    app: mongodb
-    release: "charlescd"
----
 # Source: Charles-CD/charts/nginx/templates/nginx-service.yaml
 apiVersion: v1
 kind: Service
@@ -642,8 +662,7 @@ metadata:
 spec:
   externalTrafficPolicy: Cluster
   ports:
-  - nodePort: 30803
-    port: 80
+  - port: 80
     protocol: TCP
     targetPort: 80
   selector:
@@ -815,6 +834,25 @@ spec:
     app: charlescd-circle-matcher
   type: ClusterIP
 ---
+# Source: Charles-CD/templates/charlescd-compass-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: charlescd-compass
+    service: charlescd-compass
+  name: charlescd-compass
+  namespace: charles
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    
+  selector:
+    app: charlescd-compass
+  type: ClusterIP
+---
 # Source: Charles-CD/templates/charlescd-moove-service.yaml
 apiVersion: v1
 kind: Service
@@ -872,101 +910,6 @@ spec:
   selector:
     app: charlescd-villager
 ---
-# Source: Charles-CD/charts/mongodb/templates/deployment-standalone.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-spec:
-  strategy:
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      app: mongodb
-      release: "charlescd"
-  template:
-    metadata:
-      labels:
-        app: mongodb
-        release: "charlescd"
-        chart: mongodb-7.14.2
-    spec:
-      serviceAccountName: charlescd-mongodb
-      securityContext:
-        fsGroup: 1001      
-      initContainers:
-      containers:
-        - name: charlescd-mongodb
-          image: docker.io/bitnami/mongodb:4.2.7-debian-10-r0
-          imagePullPolicy: "IfNotPresent"
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1001
-          env:
-            - name: MONGODB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: charlescd-mongodb
-                  key: mongodb-password
-            - name: MONGODB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: charlescd-mongodb
-                  key: mongodb-root-password
-            - name: MONGODB_USERNAME
-              value: "mongodb"
-            - name: MONGODB_SYSTEM_LOG_VERBOSITY
-              value: "0"
-            - name: MONGODB_DISABLE_SYSTEM_LOG
-              value: "no"
-            - name: MONGODB_DATABASE
-              value: "octopipe"
-            - name: MONGODB_ENABLE_IPV6
-              value: "no"
-            - name: MONGODB_ENABLE_DIRECTORY_PER_DB
-              value: "no"
-          ports:
-            - name: mongodb
-              containerPort: 27017
-          livenessProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          volumeMounts:
-            - name: data
-              mountPath: /bitnami/mongodb
-              subPath: 
-          resources:
-            {}
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: charlescd-mongodb
----
 # Source: Charles-CD/charts/nginx/templates/nginx.deployment.yaml
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
@@ -988,12 +931,12 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
+          image: zupcharles/openresty:openidc
           ports:
           - containerPort: 80        
           volumeMounts:
             - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
+              mountPath: /usr/local/openresty/nginx/conf/nginx.conf
               subPath: nginx.conf
       volumes:
         - name: nginx-config
@@ -1055,8 +998,6 @@ spec:
           env:
           - name: APP_PORT
             value: "8080"
-          - name: DB_URL
-            value: "mongodb://root:octopipe@charlescd-mongodb:27017"
           - name: KUBECONFIG
             value: "IN_CLUSTER"
           - name: TIMEOUT_RESOURCE_VERIFICATION
@@ -1102,9 +1043,15 @@ spec:
         app: charlescd-butler
         version: charlescd-butler
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.3.4-rc.2
+          image: zupcharles/charlescd-butler:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1184,7 +1131,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.3.4-rc.2
+          image: zupcharles/charlescd-circle-matcher:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1227,6 +1174,87 @@ spec:
               cpu: 128m
               memory: 128Mi
 ---
+# Source: Charles-CD/templates/charlescd-compass-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: charlescd-compass
+  namespace: charles
+  labels:
+    app: charlescd-compass
+    version: charlescd-compass
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: charlescd-compass
+      version: charlescd-compass
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: charlescd-compass
+        version: charlescd-compass
+    spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: charlescd-compass
+          image: zupcharles/charlescd-compass:0.3.10
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP  
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1 
+          imagePullPolicy: Always
+          env:
+          - name: DB_HOST
+            value: "charlescd-postgresql"
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_USER
+            value: "charlescd_compass"
+          - name: DB_PASSWORD
+            value: "C1UinUu6N0vc"
+          - name: DB_NAME
+            value: "charlescd_compass"
+          - name: DB_SSL
+            value: "disable"
+          - name: PLUGINS_DIR
+            value: "./plugins"
+          - name: ENV
+            value: "DEV"
+          - name: DISPATCHER_INTERVAL
+            value: "15s"
+          
+          resources:
+            limits:
+              cpu: 128m
+              memory: 128Mi
+            requests:
+              cpu: 64m
+              memory: 64Mi
+---
 # Source: Charles-CD/templates/charlescd-moove-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1250,9 +1278,15 @@ spec:
         app: charlescd-moove
         version: charlescd-moove
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.3.4-rc.2
+          image: zupcharles/charlescd-moove:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1287,10 +1321,14 @@ spec:
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
               value: "http://charlescd-keycloak-http/keycloak/auth"
+            - name: KEYCLOAK_PUBLIC_CLIENT_ID
+              value: "charlescd-client"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
               value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
+            - name: INTERNAL_IDM_ENABLED
+              value: "true"
             - name: ORIGIN_HOSTS
               value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://charles.info.example"
             - name: ENCRYPTION_KEY
@@ -1331,7 +1369,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.3.4-rc.2
+          image: zupcharles/charlescd-ui:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1362,6 +1400,14 @@ spec:
               value: charlescd
             - name: REACT_APP_AUTH_CLIENT_ID
               value: charlescd-client
+            - name: REACT_APP_IDM
+              value: "0"
+            - name: REACT_APP_IDM_LOGIN_URI
+              value: /protocol/openid-connect/auth
+            - name: REACT_APP_IDM_LOGOUT_URI
+              value: /protocol/openid-connect/logout
+            - name: REACT_APP_IDM_REDIRECT_URI
+              value: http://charles.info.example
           resources:
             limits:
               cpu: 128m
@@ -1393,9 +1439,15 @@ spec:
         app: charlescd-villager
         version: charlescd-villager
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.3.4-rc.2
+          image: zupcharles/charlescd-villager:0.3.10
           livenessProbe:
             failureThreshold: 3
             httpGet:

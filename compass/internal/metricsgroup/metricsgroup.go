@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package metricsgroup
 
 import (
@@ -7,6 +25,7 @@ import (
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"regexp"
 	"sort"
@@ -238,6 +257,15 @@ func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, err
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update(&metricsGroup)
 	if db.Error != nil {
 		logger.Error(util.UpdateMetricsGroupError, "Update", db.Error, metricsGroup)
+		return MetricsGroup{}, db.Error
+	}
+	return metricsGroup, nil
+}
+
+func (main Main) UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, error) {
+	db := main.db.Table("metrics_groups").Where("id = ?", id).Update("name", metricsGroup.Name)
+	if db.Error != nil {
+		logger.Error(util.UpdateNameMetricsGroupError, "UpdateName", db.Error, fmt.Sprintf("metricGroup: id = %s, name = %s", id, metricsGroup.Name))
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil

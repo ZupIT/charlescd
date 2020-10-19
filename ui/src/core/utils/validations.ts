@@ -1,1 +1,1 @@
-export const normalizeValidationFields = () => { }
+export const normalizeValidationFields = () => '';

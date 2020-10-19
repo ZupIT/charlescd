@@ -27,13 +27,9 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagInteractor {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetDockerRegistryTagInteractorImpl.class);
 
     private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
     private RegistryClient registryClient;
@@ -49,9 +45,8 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
     @Override
     public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
 
-        var optionalEntity =
-                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId());
-        var entity = optionalEntity
+        var entity =
+                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
@@ -60,17 +55,23 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
                     "This docker registry does not belongs to the request application id.");
         }
 
-        this.registryClient.configureAuthentication(entity.type, entity.connectionData);
+        try {
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
 
-        var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
+            var response =
+                    this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
 
-        if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
-            return Optional.empty();
+            if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new ComponentTagDTO(
+                    input.getName(),
+                    entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
+            ));
+        } finally {
+            this.registryClient.closeQuietly();
         }
 
-        return Optional.of(new ComponentTagDTO(
-                input.getName(),
-                entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
-        ));
     }
 }

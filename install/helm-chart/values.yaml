@@ -11,7 +11,7 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.3.4-rc.2
+    name: zupcharles/charlescd-butler:0.3.10
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -20,18 +20,19 @@ butler:
       - name: http
         port: 3000
   resources:
-   limits:
-    cpu: 128m
-    memory: 256Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
+    limits:
+      cpu: 128m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 moove:
   enabled: true
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
   keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
+  internalIdmEnabled: true
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -40,22 +41,22 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:0.3.4-rc.2
+    name: zupcharles/charlescd-moove:0.3.10
     pullPolicy: Always
   service:
     name: charlescd-moove
     type: ClusterIP
     ports:
-    - name: http
-      port: 8080
+      - name: http
+        port: 8080
   resources:
-   limits:
-    cpu: 1
-    memory: 1024Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
-  
+    limits:
+      cpu: 1
+      memory: 1024Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
+
 sidecarIstio:
   enabled: true
 
@@ -71,30 +72,35 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.3.4-rc.2
+    name: zupcharles/charlescd-villager:0.3.10
     pullPolicy: Always
   service:
     name: charlescd-villager
     type: ClusterIP
     ports:
-    - name: http
-      port: 8080
+      - name: http
+        port: 8080
   resources:
-   limits:
-    cpu: 256m
-    memory: 512Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi   
+    limits:
+      cpu: 256m
+      memory: 512Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 ui:
   enabled: true
   name: charlescd-ui
   apiHost: http://charles.info.example
-  keycloakHost: http://charles.info.example/keycloak
+  authUri: http://charles.info.example/keycloak
+  authRealm: charlescd
+  isIdmEnabled: "0"
+  idmLoginUri: /protocol/openid-connect/auth
+  idmLogoutUri: /protocol/openid-connect/logout
+  idmRedirectHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.3.4-rc.2
+    name: zupcharles/charlescd-ui:0.3.10
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -103,12 +109,12 @@ ui:
       - name: http
         port: 3000
   resources:
-   limits:
-    cpu: 128m
-    memory: 128Mi
-   requests:
-    cpu: 64m
-    memory: 64Mi
+    limits:
+      cpu: 128m
+      memory: 128Mi
+    requests:
+      cpu: 64m
+      memory: 64Mi
 
 circlematcher:
   enabled: true
@@ -121,7 +127,7 @@ circlematcher:
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.3.4-rc.2
+    name: zupcharles/charlescd-circle-matcher:0.3.10
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
@@ -130,33 +136,33 @@ circlematcher:
       - name: http
         port: 8080
   resources:
-   limits:
-    cpu: 256m
-    memory: 256Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
+    limits:
+      cpu: 256m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 keycloak:
   enabled: true
   keycloak:
     extraEnv: |
-        - name: PROXY_ADDRESS_FORWARDING
-          value: "true"
-        - name: DB_USER
-          value: "keycloak"
-        - name: DB_PASSWORD
-          value: "DCWYW66Mq2ca6w8u"
-        - name: DB_VENDOR
-          value: "POSTGRES"
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_ADDR
-          value: "charlescd-postgresql"
-        - name: DB_DATABASE
-          value: "keycloak"
-        - name: DB_SCHEMA
-          value: "public"
+      - name: PROXY_ADDRESS_FORWARDING
+        value: "true"
+      - name: DB_USER
+        value: "keycloak"
+      - name: DB_PASSWORD
+        value: "DCWYW66Mq2ca6w8u"
+      - name: DB_VENDOR
+        value: "POSTGRES"
+      - name: DB_PORT
+        value: "5432"
+      - name: DB_ADDR
+        value: "charlescd-postgresql"
+      - name: DB_DATABASE
+        value: "keycloak"
+      - name: DB_SCHEMA
+        value: "public"
 
     replicas: 1
     persistence:
@@ -175,10 +181,6 @@ redis:
   enabled: true
   password: "hb2Fj9MGKjBkZ6zV"
 
-mongodb:
-  enabled: true
-  mongodbRootPassword: "octopipe"
-
 nginx:
   enabled: true
   ui:
@@ -191,15 +193,52 @@ nginx:
     enabled: true
   octopipe:
     enabled: true
+  idm:
+    endpoint: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/.well-known/openid-configuration
+    alg: RS256
 
 octopipe:
   enabled: true
   envVars:
     - name: APP_PORT
       value: "8080"
-    - name: DB_URL
-      value: "mongodb://root:octopipe@charlescd-mongo-mongodb:27017"
     - name: KUBECONFIG
       value: "IN_CLUSTER"
     - name: TIMEOUT_RESOURCE_VERIFICATION
       value: "300"
+
+compass:
+  enabled: true
+  name: "charlescd-compass"
+  database:
+    name: charlescd_compass
+    host: charlescd-postgresql
+    port: 5432
+    user: charlescd_compass
+    password: C1UinUu6N0vc
+  replicaCount: 1
+  envVars:
+    - name: DB_SSL
+      value: "disable"
+    - name: PLUGINS_DIR
+      value: "./plugins"
+    - name: ENV
+      value: "DEV"
+    - name: DISPATCHER_INTERVAL
+      value: "15s"
+  image:
+    name: zupcharles/charlescd-compass:0.3.10
+    pullPolicy: Always
+  service:
+    name: charlescd-compass
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 8080
+  resources:
+    limits:
+      cpu: 128m
+      memory: 128Mi
+    requests:
+      cpu: 64m
+      memory: 64Mi

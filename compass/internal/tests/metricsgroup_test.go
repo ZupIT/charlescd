@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package tests
 
 import (
@@ -30,9 +48,11 @@ type SuiteMetricGroup struct {
 }
 
 func (s *SuiteMetricGroup) SetupSuite() {
-	var err error
-
 	os.Setenv("ENV", "TEST")
+}
+
+func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
+	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
@@ -42,13 +62,14 @@ func (s *SuiteMetricGroup) SetupSuite() {
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
-
 	s.repository = metricsgroup.NewMain(s.DB, metricMain, datasourceMain, pluginMain)
-}
 
-func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
 	s.DB.Exec("DELETE FROM metrics_groups")
 	s.DB.Exec("DELETE FROM data_sources")
+}
+
+func (s *SuiteMetricGroup) AfterTest(suiteName, testName string) {
+	s.DB.Close()
 }
 
 func TestInitMetricGroup(t *testing.T) {
@@ -158,6 +179,13 @@ func (s *SuiteMetricGroup) TestFindAll() {
 	}
 }
 
+func (s *SuiteMetricGroup) TestFindAllError() {
+	s.DB.Close()
+
+	_, err := s.repository.FindAll()
+	require.Error(s.T(), err)
+}
+
 func (s *SuiteMetricGroup) TestFindById() {
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
@@ -200,11 +228,46 @@ func (s *SuiteMetricGroup) TestUpdate() {
 	s.DB.Create(&metricgroup)
 
 	metricgroup.Name = "group 2"
+	metricgroup.CircleID = uuid.New()
 	createMetricGroup, err := s.repository.Update(metricgroup.ID.String(), metricgroup)
 	require.NoError(s.T(), err)
 
 	metricgroup.BaseModel = createMetricGroup.BaseModel
 	require.Equal(s.T(), createMetricGroup, metricgroup)
+}
+
+func (s *SuiteMetricGroup) TestUpdateName() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+
+	newName := "group 2"
+	metricgroup.Name = newName
+	createMetricGroup, err := s.repository.UpdateName(metricgroup.ID.String(), metricgroup)
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), createMetricGroup.Name, newName)
+}
+
+func (s *SuiteMetricGroup) TestUpdateNameError() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+
+	newName := "group 2"
+	metricgroup.Name = newName
+	s.DB.Close()
+	_, err := s.repository.UpdateName(metricgroup.ID.String(), metricgroup)
+
+	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestDelete() {
@@ -287,11 +350,11 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 
 	expectedGroupResume := []metricsgroup.MetricGroupResume{
 		{
-			Name: metricgroup.Name,
-			Thresholds: 2,
+			Name:              metricgroup.Name,
+			Thresholds:        2,
 			ThresholdsReached: 0,
-			Metrics: 2,
-			Status: "ACTIVE",
+			Metrics:           2,
+			Status:            "ACTIVE",
 		},
 	}
 
