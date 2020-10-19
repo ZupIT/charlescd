@@ -34,12 +34,8 @@ import Dropdown from 'core/components/Dropdown';
 interface Props {
   onClickHelp?: (status: boolean) => void;
 }
-
 const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
-  const [form, setForm] = useState<string>('');
-  const [, loadWorkspace, , updateWorkspace] = useWorkspace();
-  const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
   const { register, handleSubmit } = useForm();
