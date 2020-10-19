@@ -53,7 +53,7 @@ class SegmentationRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
 
         when:

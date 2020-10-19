@@ -99,11 +99,12 @@ public class IdentificationServiceImpl implements IdentificationService {
         var matched = metadata.stream()
                 .parallel()
                 .map(item -> findSegmentation(item, request))
-                .filter(item -> item.isPresent() && isMatched(request, item.get()))
+                .filter(item -> item.isPresent() && isMatched(request, item.get()) && isActive(item.get()))
                 .sorted((Comparator.comparing(item -> item.get().getCreatedAt(),
                         Comparator.nullsLast(Comparator.reverseOrder()))))
                 .map(item -> new Circle(item.get().getCircleId(), item.get().getName()))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+
         if (matched.isEmpty()) {
             matched.add(createDefaultCircleFrom(metadata));
         }
@@ -139,5 +140,9 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .findFirst()
                 .map(m -> new Circle(m.getCircleId(), m.getName()))
                 .orElseThrow(() -> new NoSuchElementException("Default circle metadata not found."));
+    }
+
+    private boolean isActive(Segmentation segmentation) {
+        return segmentation.getActive();
     }
 }
