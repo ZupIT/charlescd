@@ -24,7 +24,6 @@ import (
 	"compass/internal/plugin"
 	"encoding/json"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -43,7 +42,7 @@ type Suite struct {
 }
 
 func (s *Suite) SetupSuite() {
-	os.Setenv("ENV", "TEST")
+	setupEnv()
 }
 
 func (s *Suite) BeforeTest(suiteName, testName string) {
@@ -275,4 +274,19 @@ func (s *Suite) TestGetMetricsError() {
 	_, err := s.repository.GetMetrics(dataSource.ID.String(), "")
 
 	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestConnectionPluginError() {
+	jsonData := json.RawMessage(`{"data": "prometheus"}`)
+	err := s.repository.TestConnection("datasource/prometheus/prometheus", jsonData)
+
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestConnection() {
+	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
+	err := s.repository.TestConnection("datasource/prometheus/prometheus", jsonData)
+
+	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 }
