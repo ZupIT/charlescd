@@ -17,7 +17,6 @@
 package io.charlescd.moove.domain
 
 import com.fasterxml.jackson.databind.JsonNode
-import jdk.jfr.Percentage
 import java.time.Duration
 import java.time.LocalDateTime
 
