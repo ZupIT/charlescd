@@ -491,12 +491,21 @@ class JdbcCircleRepository(
     }
 
     override fun countPercentageByWorkspaceId(workspaceId: String): Int {
-        val parameters = mutableListOf(workspaceId)
+        val parameters = mutableListOf(workspaceId, workspaceId)
         val query = StringBuilder(
             """
                     SELECT  SUM(circles.percentage)   AS total
                     FROM circles circles
+                     
                     WHERE circles.workspace_id = ?
+                    AND
+                      circles.id IN
+                      (
+                               SELECT DISTINCT d.circle_id
+                               FROM deployments d
+                               WHERE d.status IN ('DEPLOYING', 'DEPLOYED', 'UNDEPLOYING')
+                               AND d.workspace_id = ?
+                           )
             """
         )
         return this.jdbcTemplate.queryForObject(

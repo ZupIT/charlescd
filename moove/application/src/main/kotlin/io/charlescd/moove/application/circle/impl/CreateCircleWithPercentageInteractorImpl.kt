@@ -41,7 +41,7 @@ open class CreateCircleWithPercentageInteractorImpl(
 
     @Transactional
     override fun execute(request: CreateCircleWithPercentageRequest, workspaceId: String): CircleResponse {
-        checkIfLimitOfPercentageReached(request.percentage, workspaceId)
+        circleService.checkIfLimitOfPercentageReached(request.percentage, workspaceId)
         val circle = circleService.save(createCircle(request, workspaceId))
         createCircleOnCircleMatcher(workspaceId, circle)
         return CircleResponse.from(circle)
@@ -59,18 +59,5 @@ open class CreateCircleWithPercentageInteractorImpl(
         val author = userService.find(request.authorId)
         return request.toDomain(author, workspaceId)
     }
-    private fun checkIfLimitOfPercentageReached(percentageRequest: Int, workspaceId: String) {
-        this.circleService.findSumPercentageCirclesValuesInWorkspace(workspaceId)
-            .let {
-                actualPercentage -> verifyLimitReached(actualPercentage, percentageRequest)
-            }
-    }
 
-    private fun verifyLimitReached(actualPercentage: Int, percentageRequest: Int) {
-        if (actualPercentage + percentageRequest > 100) {
-            val percentageRemaining = 100 - actualPercentage
-            throw BusinessException.of(MooveErrorCode.LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED)
-                .withParameters("Percentage remaining: $percentageRemaining")
-        }
-    }
 }

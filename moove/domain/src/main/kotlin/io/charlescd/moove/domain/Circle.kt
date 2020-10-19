@@ -17,6 +17,7 @@
 package io.charlescd.moove.domain
 
 import com.fasterxml.jackson.databind.JsonNode
+import jdk.jfr.Percentage
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -41,6 +42,8 @@ data class Circle(
     fun isDefaultCircle(): Boolean = this.defaultCircle
 
     fun canBeUpdated(): Boolean = !this.isDefaultCircle()
+
+    fun isPercentage(): Boolean = this.matcherType == MatcherTypeEnum.PERCENTAGE
 }
 
 data class SimpleCircle(

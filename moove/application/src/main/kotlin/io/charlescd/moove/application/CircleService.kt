@@ -19,8 +19,10 @@
 package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
 import java.util.*
@@ -71,7 +73,19 @@ class CircleService(private val circleRepository: CircleRepository) {
         return this.circleRepository.findDefaultByWorkspaceId(workspaceId)
     }
 
-    fun findSumPercentageCirclesValuesInWorkspace(workspaceId: String): Int {
+    private fun findSumPercentageCirclesValuesInWorkspace(workspaceId: String): Int {
         return this.circleRepository.countPercentageByWorkspaceId(workspaceId)
+    }
+
+    fun checkIfLimitOfPercentageReached(percentageRequest: Int, workspaceId: String) {
+        verifyLimitReached(this.findSumPercentageCirclesValuesInWorkspace(workspaceId), percentageRequest)
+    }
+
+    private fun verifyLimitReached(actualPercentage: Int, percentageRequest: Int) {
+        if (actualPercentage + percentageRequest > 100) {
+            val percentageRemaining = 100 - actualPercentage
+            throw BusinessException.of(MooveErrorCode.LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED)
+                .withParameters("Percentage remaining: $percentageRemaining")
+        }
     }
 }
