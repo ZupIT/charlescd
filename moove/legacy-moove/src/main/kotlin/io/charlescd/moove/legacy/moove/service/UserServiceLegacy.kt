@@ -18,6 +18,8 @@
 
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
@@ -50,36 +52,40 @@ class UserServiceLegacy(
     }
 
     fun update(id: String, updateUserRequest: UpdateUserRequest): UserRepresentation {
-        return userRepository.findById(id)
-            .map(this.updateUserData(updateUserRequest))
-            .map(this::saveAndFlushUser)
-            .map(this::toRepresentation)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
+        if (internalIdmEnabled)
+            return userRepository.findById(id)
+                .map(this.updateUserData(updateUserRequest))
+                .map(this::saveAndFlushUser)
+                .map(this::toRepresentation)
+                .orElseThrow { NotFoundExceptionLegacy("user", id) }
+        else
+            throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN)
     }
 
     @Transactional
     fun delete(id: String): UserRepresentation {
-        return userRepository.findById(id)
-            .map(this::deleteUser)
-            .map(this::deleteOnKeycloak)
-            .map(this::toRepresentation)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
+        if (internalIdmEnabled)
+            return userRepository.findById(id)
+                .map(this::deleteUser)
+                .map(this::deleteOnKeycloak)
+                .map(this::toRepresentation)
+                .orElseThrow { NotFoundExceptionLegacy("user", id) }
+        else
+            throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN)
     }
 
     private fun deleteOnKeycloak(it: User): User {
-        if (internalIdmEnabled) {
-            keycloakService.deleteUserByEmail(it.email)
-        }
+        keycloakService.deleteUserByEmail(it.email)
         return it
     }
 
     private fun updateUserData(updateUserRequest: UpdateUserRequest): (User) -> User = { user ->
-            user.copy(
-                name = updateUserRequest.name,
-                email = updateUserRequest.email.toLowerCase(),
-                photoUrl = updateUserRequest.photoUrl
-            )
-        }
+        user.copy(
+            name = updateUserRequest.name,
+            email = updateUserRequest.email.toLowerCase(),
+            photoUrl = updateUserRequest.photoUrl
+        )
+    }
 
     private fun saveAndFlushUser(user: User): User =
         userRepository.saveAndFlush(user)
@@ -90,10 +96,12 @@ class UserServiceLegacy(
     private fun toRepresentation(user: User): UserRepresentation = user.toRepresentation()
 
     fun resetPassword(email: String, request: ResetPasswordRequest) {
-
-        keycloakService.resetPassword(
-            email,
-            request.newPassword
-        )
+        if (internalIdmEnabled)
+            keycloakService.resetPassword(
+                email,
+                request.newPassword
+            )
+        else
+            throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN)
     }
 }
