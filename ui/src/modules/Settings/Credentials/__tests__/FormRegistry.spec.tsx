@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait, act, cleanup } from 'unit-test/testUtils';
+import { render, fireEvent, wait, act, screen } from 'unit-test/testUtils';
 import FormRegistry from '../Sections/Registry/Form';
 import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
+import selectEvent from 'react-select-event';
 
 (global as any).MutationObserver = MutationObserver;
 
@@ -76,82 +77,73 @@ test('render Registry form default component', async () => {
 });
 
 test('render Registry form with azure values', async () => {
-  const { container, getByTestId } = render(
+  const { container } = render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AZURE");
-  fireEvent.click(radioButton)
-  await wait();
-  expect(container.innerHTML).toMatch("Enter the username");
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  selectEvent.select(registryLabel, 'Azure');
+
+  await wait(() => expect(container.innerHTML).toMatch("Enter the username"));
 });
 
 test('render Registry form with AWS values', async () => {
-  const { container, getByTestId } = render(
+  const { container } = render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AWS");
-  fireEvent.click(radioButton)
-  await wait();
-  expect(container.innerHTML).toMatch("Enter the region");
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  selectEvent.select(registryLabel, 'AWS');
+
+  await wait(() => expect(container.innerHTML).toMatch("Enter the region"));
 });
 
 test('render Registry form with AWS values and secret input', async () => {
-    const { container, getByTestId } = render(
-      <FormRegistry onFinish={mockOnFinish}/>
-    );
+  const { container, getByTestId } = render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
   
-    await wait();
-    const radioButton = getByTestId("radio-group-registry-item-AWS");
-    fireEvent.click(radioButton)
-    await wait();
-    const radioAuthButton = getByTestId("switch-aws-auth-handler")
-    fireEvent.click(radioAuthButton)
-    expect(container.innerHTML).toMatch("Enter the access key");
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'AWS'));
+
+  const radioAuthButton = getByTestId("switch-aws-auth-handler")
+  fireEvent.click(radioAuthButton)
+  expect(container.innerHTML).toMatch("Enter the access key");
 });
 
 
 test('render Registry form without AWS values and secret input', async () => {
-    const { container, getByTestId } = render(
-      <FormRegistry onFinish={mockOnFinish}/>
-    );
+  const { container } = render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
   
-    await wait();
-    const radioButton = getByTestId("radio-group-registry-item-AWS");
-    fireEvent.click(radioButton)
-    await wait();
-    expect(container.innerHTML).not.toMatch("Enter the access key");
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'AWS'));
+  await wait(() => expect(container.innerHTML).not.toMatch("Enter the access key"));
 });
 
 test('render Registry form with GCP form', async () => {
-  const { container, getByTestId } = render(
+  const { container } = render(
     <FormRegistry onFinish={mockOnFinish} />
   );
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-GCP');
-  fireEvent.click(radioButton);
-  await wait();
-  expect(container.innerHTML).toMatch('organization');
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'GCP'));
+
+  await wait(() => expect(container.innerHTML).toMatch('organization'));
 });
 
 test('Not trigger onSubmit on json parse error with GCP form', async () => {
-  const { container, getByTestId, getByText } = render(
-    <FormRegistry onFinish={mockOnFinish} />
-  );
+  render(<FormRegistry onFinish={mockOnFinish} />);
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-GCP');
-  fireEvent.click(radioButton);
-  await wait();
-  const inputGCPName = getByTestId('input-text-name');
-  const inputGCPAddress = getByTestId('input-text-address');
-  const inputGCPOrganization = getByTestId('input-text-organization');
-  const inputGCPJsonKey = getByTestId('input-text-jsonKey');
-  const submitButton = getByTestId('button-default-submit-registry');
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'GCP'));
+
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
   await act(async () => {
     fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
     fireEvent.change(inputGCPAddress, {
@@ -167,19 +159,16 @@ test('Not trigger onSubmit on json parse error with GCP form', async () => {
 });
 
 test('Trigger submit on json parse success with GCP form', async () => {
-  const { container, getByTestId, getByText } = render(
-    <FormRegistry onFinish={mockOnFinish} />
-  );
+  render(<FormRegistry onFinish={mockOnFinish} />);
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-GCP');
-  fireEvent.click(radioButton);
-  await wait();
-  const inputGCPName = getByTestId('input-text-name');
-  const inputGCPAddress = getByTestId('input-text-address');
-  const inputGCPOrganization = getByTestId('input-text-organization');
-  const inputGCPJsonKey = getByTestId('input-text-jsonKey');
-  const submitButton = getByTestId('button-default-submit-registry');
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'GCP'));
+
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
   await act(async () => {
     fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
     fireEvent.change(inputGCPAddress, {
@@ -197,36 +186,32 @@ test('Trigger submit on json parse success with GCP form', async () => {
 });
 
 test('render Registry form with Docker Hub form', async () => {
-  const { container, getByTestId } = render(
+  const { container } = render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-DOCKER_HUB');
-  fireEvent.click(radioButton)
-  await wait();
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'Docker Hub'));
+
   expect(container.innerHTML).toMatch('Enter the username');
   expect(container.innerHTML).not.toMatch('Enter the address');
 });
 
 test('execute onSubmit', async () => {
-  const { container, getByTestId } = render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
+  render(<FormRegistry onFinish={mockOnFinish}/>);
 
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AWS");
-  fireEvent.click(radioButton)
-  await wait();
-  const radioAuthButton = getByTestId("switch-aws-auth-handler");
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'AWS'));
+
+  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
   fireEvent.click(radioAuthButton);
   await wait();
-  const inputAwsName = getByTestId("input-text-name");
-  const inputAwsAddress = getByTestId("input-text-address");
-  const inputAwsAccessKey = getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = getByTestId("input-text-secretKey");
-  const inputAwsRegion = getByTestId("input-text-region");
-  const submitButton = getByTestId("button-default-submit-registry")
+  const inputAwsName = screen.getByTestId("input-text-name");
+  const inputAwsAddress = screen.getByTestId("input-text-address");
+  const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
+  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsRegion = screen.getByTestId("input-text-region");
+  const submitButton = screen.getByTestId("button-default-submit-registry")
 
   await act(async () => {
     fireEvent.change(inputAwsName, {target: {value: "fake-name"}})
@@ -241,22 +226,21 @@ test('execute onSubmit', async () => {
 });
 
 test('should not execute onSubmit because validation (missing name)', async () => {
-  const { container, getByTestId } = render(
+  const { container } = render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AWS");
-  fireEvent.click(radioButton)
-  await wait();
-  const radioAuthButton = getByTestId("switch-aws-auth-handler");
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  await act(() => selectEvent.select(registryLabel, 'AWS'));
+
+  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
   fireEvent.click(radioAuthButton);
   await wait();
-  const inputAwsAddress = getByTestId("input-text-address");
-  const inputAwsAccessKey = getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = getByTestId("input-text-secretKey");
-  const inputAwsRegion = getByTestId("input-text-region");
-  const submitButton = getByTestId("button-default-submit-registry")
+  const inputAwsAddress = screen.getByTestId("input-text-address");
+  const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
+  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsRegion = screen.getByTestId("input-text-region");
+  const submitButton = screen.getByTestId("button-default-submit-registry")
 
   await act(async () => {
     fireEvent.change(inputAwsAddress, {target: {value: "http://fake-host"}})
