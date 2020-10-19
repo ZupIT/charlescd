@@ -30,12 +30,19 @@ const RadioCards = styled.div`
 
 const Radio = styled.div`
   display: flex;
+  border-radius: 4px;
   flex-direction: row;
   justify-content: center;
   position: relative;
+  transition: box-shadow 0.2s linear;
 
   :not(:first-child) {
     margin-top: 8px;
+  }
+
+  :hover {
+    box-shadow: 0px 0px 0px 2px
+      ${({ theme }) => theme.radio.card.checked.border};
   }
 `;
 
@@ -61,6 +68,7 @@ const Label = styled.label<LabelProps>`
 `;
 
 const Checkmark = styled.span`
+  cursor: pointer;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -96,13 +104,6 @@ const Input = styled.input`
     & + ${Label} {
       background-color: ${({ theme }) => theme.radio.card.checked.background};
       border: 1px ${({ theme }) => theme.radio.card.checked.border} solid;
-      transition: box-shadow 0.2s linear;
-
-      :hover {
-        box-shadow: 0px 0px 0px 2px
-          ${({ theme }) => theme.radio.card.checked.border};
-        /* transform: scale(1.1); */
-      }
 
       ${Title}, ${Description} {
         color: ${({ theme }) => theme.radio.card.checked.color};
@@ -122,13 +123,6 @@ const Input = styled.input`
 
   :not(:checked) + ${Label} {
     background-color: ${({ theme }) => theme.radio.card.unchecked.background};
-    transition: box-shadow 0.2s linear;
-
-    :hover {
-      box-shadow: 0px 0px 0px 2px
-        ${({ theme }) => theme.radio.card.checked.border};
-      /* transform: scale(1.1); */
-    }
 
     ${Title}, ${Description} {
       color: ${({ theme }) => theme.radio.card.unchecked.color};
