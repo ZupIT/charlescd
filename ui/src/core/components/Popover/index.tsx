@@ -23,7 +23,7 @@ import Styled from './styled';
 export const CHARLES_DOC = 'https://docs.charlescd.io';
 
 export interface Props {
-  icon: string;
+  icon?: string;
   title: string;
   size?: string;
   description: string;
@@ -60,12 +60,7 @@ const Popover = ({
   );
 
   const renderAnchor = () => (
-    <Styled.Anchor
-      onMouseEnter={() => setToggle(true)}
-      onMouseLeave={() => setToggle(false)}
-    >
-      {children}
-    </Styled.Anchor>
+    <Styled.Anchor onClick={() => setToggle(!toggle)}>{children}</Styled.Anchor>
   );
 
   return (
@@ -73,7 +68,10 @@ const Popover = ({
       {!children && icon && renderIcon()}
       {!icon && children && renderAnchor()}
       {toggle && (
-        <Styled.Popover data-testid={`popover-${title}`}>
+        <Styled.Popover
+          data-testid={`popover-${title}`}
+          className="popover-container"
+        >
           <Text.h4 color="light">{title}</Text.h4>
           <Styled.Content>
             <Text.h5 color="dark">{description}</Text.h5>

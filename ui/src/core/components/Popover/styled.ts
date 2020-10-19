@@ -21,7 +21,10 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const Anchor = styled.div``;
+const Anchor = styled.div`
+  width: auto;
+  height: auto;
+`;
 
 const Content = styled.div``;
 

@@ -114,6 +114,7 @@ const CardBoard = forwardRef(
     const renderModalRemove = () => (
       <CardRemove
         id={card.id}
+        isProtected={card.isProtected}
         onRemove={onRemove}
         onClose={() => setToggleModalRemove(false)}
       />

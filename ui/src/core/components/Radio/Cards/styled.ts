@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import ComponentPopover from 'core/components/Popover';
 import ComponentText from 'core/components/Text';
 
 interface LabelProps {
@@ -22,13 +23,28 @@ interface LabelProps {
   value: string;
 }
 
+interface WrapperProps {
+  disabled: boolean;
+}
+
 const RadioCards = styled.div`
   display: flex;
   flex-direction: column;
   width: 311px;
+
+  > * + * {
+    margin-top: 8px;
+  }
 `;
 
-const Radio = styled.div`
+const Popover = styled(ComponentPopover)`
+  .popover-container {
+    top: 18px;
+    left: 50px;
+  }
+`;
+
+const Radio = styled.div<WrapperProps>`
   display: flex;
   border-radius: 4px;
   flex-direction: row;
@@ -36,14 +52,21 @@ const Radio = styled.div`
   position: relative;
   transition: box-shadow 0.2s linear;
 
-  :not(:first-child) {
-    margin-top: 8px;
-  }
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      cursor: default;
+      opacity: 0.3;
+    `}
 
-  :hover {
-    box-shadow: 0px 0px 0px 2px
-      ${({ theme }) => theme.radio.card.checked.border};
-  }
+  ${({ disabled }) =>
+    !disabled &&
+    css`
+      :hover {
+        box-shadow: 0px 0px 0px 2px
+          ${({ theme }) => theme.radio.card.checked.border};
+      }
+    `}
 `;
 
 const Title = styled(ComponentText.h4)``;
@@ -138,6 +161,7 @@ const Input = styled.input`
 export default {
   Input,
   Label,
+  Popover,
   Title,
   Description,
   Radio,

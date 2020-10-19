@@ -37,8 +37,8 @@ const Radio = ({ name, data, onChange }: Props) => {
   const { title, description, value, checked, disabled } = data;
   const id = `radio-cards-${name}-item-${value}`;
 
-  return (
-    <Styled.Radio key={id}>
+  const renderContent = () => (
+    <Styled.Radio key={id} disabled={disabled}>
       <Styled.Input
         id={id}
         ref={radioRef}
@@ -57,6 +57,17 @@ const Radio = ({ name, data, onChange }: Props) => {
       <Styled.Checkmark onClick={() => radioRef.current.click()} />
     </Styled.Radio>
   );
+
+  const renderWithPopover = () => (
+    <Styled.Popover
+      title="Why we can’t delete this  branch?"
+      description="The associated branch was a protected branch. Charles can't delete protected branches. "
+    >
+      {renderContent()}
+    </Styled.Popover>
+  );
+
+  return disabled ? renderWithPopover() : renderContent();
 };
 
 export default Radio;

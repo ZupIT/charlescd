@@ -25,11 +25,12 @@ import set from 'lodash/set';
 
 interface Props {
   id: string;
+  isProtected?: boolean;
   onClose: () => void;
   onRemove: () => void;
 }
 
-const CardRemove = ({ id, onClose }: Props) => {
+const CardRemove = ({ id, isProtected, onClose }: Props) => {
   const [isDeleteBranch, setIsDeleteBranch] = useState(false);
   const [options, setOptions] = useState<RadioCard[]>(null);
   const { removeById, responseRemove, loadingRemove } = useCard();
@@ -42,10 +43,10 @@ const CardRemove = ({ id, onClose }: Props) => {
 
   useEffect(() => {
     if (radios) {
-      set(radios, '[1].disabled', true);
+      set(radios, '[1].disabled', isProtected);
       setOptions(radios);
     }
-  }, []);
+  }, [isProtected]);
 
   const onChange = (value: string) => {
     setIsDeleteBranch(value === 'card-branch');

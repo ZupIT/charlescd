@@ -75,6 +75,7 @@ export interface Card {
   description?: string;
   column?: Column;
   author?: Author;
+  isProtected: boolean;
 }
 
 export interface Comment {
