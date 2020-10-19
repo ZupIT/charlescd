@@ -26,10 +26,10 @@ export const headers = {
   'Content-Type': 'application/json'
 };
 
-export const buildHeaders = (isFormData = false) => ({
+export const buildHeaders = (isFormData = false, circleId: string | undefined) => ({
   Authorization: `Bearer ${getAccessToken()}`,
   'x-workspace-id': getWorkspaceId(),
-  'x-circle-id': getCircleId(),
+  ...(circleId && { 'x-circle-id': circleId }),
   ...(!isFormData && { 'Content-Type': 'application/json' })
 });
 
@@ -118,7 +118,7 @@ export const baseRequest = (
 ): ((options: RequestInit) => Promise<Response>) => {
   const isFormData = body instanceof FormData;
   const defaultOptions = {
-    headers: buildHeaders(isFormData),
+    headers: buildHeaders(isFormData, getCircleId()),
     body: buildBody(body, isFormData)
   };
   const mergedOptions = defaultsDeep(options, defaultOptions);
