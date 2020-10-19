@@ -78,7 +78,7 @@ func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
 	}
 }
 
-func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupActions) {
+func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupAction) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
@@ -109,10 +109,10 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 		return
 	}
 
-	result := exec.(func(actionConfig []byte, executionConfig []byte) error)
+	result := exec.(func(actionConfig []byte, executionConfig []byte) error)(act.Configuration, groupAction.ExecutionParameters)
 	if result != nil {
-		logger.Error("error executing plugin do action", "doAction", err, actionPlugin)
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		logger.Error("error executing plugin do action", "doAction", result, actionPlugin)
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), result.Error())
 		if err != nil {
 			logger.Error("error setting execution as failed", "doAction", err, act)
 		}
@@ -131,7 +131,7 @@ func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []met
 		}
 	}
 
-	return true
+	return len(metrics) > 0
 }
 
 func (dispatcher *ActionDispatcher) getInterval() (time.Duration, error) {
