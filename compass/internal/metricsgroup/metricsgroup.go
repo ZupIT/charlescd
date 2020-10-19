@@ -31,6 +31,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -43,6 +44,7 @@ type MetricsGroup struct {
 	WorkspaceID uuid.UUID                               `json:"-"`
 	CircleID    uuid.UUID                               `json:"circleId"`
 	Actions     []metricsgroupaction.MetricsGroupAction `json:"actions"`
+	DeletedAt   *time.Time                              `json:"-"`
 }
 
 type MetricsGroupRepresentation struct {
@@ -329,17 +331,17 @@ func (main Main) QueryByGroupID(id string, period, interval datasource.Period) (
 		return []datasource.MetricValues{}, nil
 	}
 
-	for _, metric := range metricsGroup.Metrics {
+	for _, metr := range metricsGroup.Metrics {
 
-		query, err := main.metricMain.Query(metric, period, interval)
+		query, err := main.metricMain.Query(metr, period, interval)
 		if err != nil {
-			logger.Error(util.QueryByGroupIdError, "QueryByGroupID", err, metric)
+			logger.Error(util.QueryByGroupIdError, "QueryByGroupID", err, metr)
 			return []datasource.MetricValues{}, err
 		}
 
 		metricsValues = append(metricsValues, datasource.MetricValues{
-			ID:       metric.ID,
-			Nickname: metric.Nickname,
+			ID:       metr.ID,
+			Nickname: metr.Nickname,
 			Values:   query,
 		})
 	}
@@ -349,17 +351,17 @@ func (main Main) QueryByGroupID(id string, period, interval datasource.Period) (
 
 func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, error) {
 	var metricsResults []datasource.MetricResult
-	for _, metric := range group.Metrics {
+	for _, metr := range group.Metrics {
 
-		result, err := main.metricMain.ResultQuery(metric)
+		result, err := main.metricMain.ResultQuery(metr)
 		if err != nil {
-			logger.Error(util.ResultQueryError, "ResultByGroup", err, metric)
+			logger.Error(util.ResultQueryError, "ResultByGroup", err, metr)
 			return nil, err
 		}
 
 		metricsResults = append(metricsResults, datasource.MetricResult{
-			ID:       metric.ID,
-			Nickname: metric.Nickname,
+			ID:       metr.ID,
+			Nickname: metr.Nickname,
 			Result:   result,
 		})
 	}

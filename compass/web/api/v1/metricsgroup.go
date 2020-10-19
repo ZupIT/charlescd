@@ -48,7 +48,7 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 	return metricsGroupApi
 }
 
-func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, _ string) {
 	circles, err := metricsGroupApi.metricsGroupMain.FindAll()
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
@@ -58,7 +58,7 @@ func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, r *http.Reque
 	api.NewRestSuccess(w, http.StatusOK, circles)
 }
 
-func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ string) {
 	circleId := r.URL.Query().Get("circleId")
 
 	metricGroups, err := metricsGroupApi.metricsGroupMain.ResumeByCircle(circleId)
@@ -93,7 +93,7 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 	api.NewRestSuccess(w, http.StatusOK, createdCircle)
 }
 
-func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.FindById(id)
 	if err != nil {
@@ -104,14 +104,14 @@ func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, r *http.Reque
 	api.NewRestSuccess(w, http.StatusOK, metricsGroup)
 }
 
-func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
 
 	periodParameter := r.URL.Query().Get("period")
 	intervalParameter := r.URL.Query().Get("interval")
 	if periodParameter == "" || intervalParameter == "" {
 		api.NewRestError(w, http.StatusInternalServerError, []error{
-			errors.New("Query param period or interval is empty"),
+			errors.New("query param period or interval is empty"),
 		})
 		return
 	}
@@ -137,7 +137,7 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 	api.NewRestSuccess(w, http.StatusOK, queryResult)
 }
 
-func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
 
 	queryResult, err := metricsGroupApi.metricsGroupMain.ResultByID(id)
@@ -149,7 +149,7 @@ func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, r *http.Req
 	api.NewRestSuccess(w, http.StatusOK, queryResult)
 }
 
-func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
 	if err != nil {
@@ -166,7 +166,7 @@ func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Req
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
 }
 
-func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
 	metricsGroupAux, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
 
@@ -190,9 +190,9 @@ func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
 }
 
-func (metricsGroupApi MetricsGroupApi) delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
-	err := metricsGroupApi.metricsGroupMain.Remove(string(id))
+	err := metricsGroupApi.metricsGroupMain.Remove(id)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

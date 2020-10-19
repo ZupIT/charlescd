@@ -104,7 +104,7 @@ func getUserByEmail(email string, url string) (UserResponse, error) {
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = errors.New(fmt.Sprintf("error finding user with http error: %s", strconv.Itoa(response.StatusCode)))
+		err = errors.New(fmt.Sprintf("error finding user with http error: %s and message %s", strconv.Itoa(response.StatusCode), string(responseBody)))
 		logger.Error("GET_USER_BY_EMAIL", "getUserByEmail", err, string(responseBody))
 		return UserResponse{}, err
 	}

@@ -42,7 +42,7 @@ func (healthApi HealthApi) components(w http.ResponseWriter, r *http.Request, ps
 	projectionType := r.URL.Query().Get("projectionType")
 	metricType := r.URL.Query().Get("metricType")
 	workspaceID := r.Header.Get("x-workspace-id")
-	circleIDHeader := r.Header.Get(("x-circle-id"))
+	circleIDHeader := r.Header.Get("x-circle-id")
 	circleId := ps.ByName("circleId")
 
 	circles, err := healthApi.healthMain.Components(circleIDHeader, workspaceID, circleId, projectionType, metricType)
@@ -56,7 +56,7 @@ func (healthApi HealthApi) components(w http.ResponseWriter, r *http.Request, ps
 
 func (healthApi HealthApi) componentsHealth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	workspaceID := r.Header.Get("x-workspace-id")
-	circleIDHeader := r.Header.Get(("x-circle-id"))
+	circleIDHeader := r.Header.Get("x-circle-id")
 	circleId := ps.ByName("circleId")
 
 	circles, err := healthApi.healthMain.ComponentsHealth(circleIDHeader, workspaceID, circleId)
