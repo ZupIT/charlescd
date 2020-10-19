@@ -198,7 +198,7 @@ const ActionCardHead = styled.div`
   padding-top: 20px;
 
   span {
-    margin: 0 90px 10px 20px;
+    margin: 0 100px 10px 20px;
   }
 `;
 
@@ -253,6 +253,20 @@ const ActionTypeTriggeredAt = styled(Text.h5)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 125px;
+`;
+
+const ActionNicknameDeleteCard = styled(Text.h5)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 110px;
+`;
+
+const ActionDeleteCardText = styled(Text.h5)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   width: 110px;
 `;
 
@@ -279,5 +293,7 @@ export default {
   ActionNickname,
   ActionType,
   ActionTypeTriggeredAt,
-  ActionCardBodyDelete
+  ActionCardBodyDelete,
+  ActionDeleteCardText,
+  ActionNicknameDeleteCard
 };

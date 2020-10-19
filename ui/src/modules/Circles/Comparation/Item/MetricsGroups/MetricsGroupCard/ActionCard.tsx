@@ -17,7 +17,6 @@
 import React, { useState } from 'react';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
-import Text from 'core/components/Text';
 import { dateTimeFormatter } from 'core/utils/date';
 import isEmpty from 'lodash/isEmpty';
 import camelCase from 'lodash/camelCase';
@@ -41,18 +40,22 @@ const ActionCard = ({
 
   const deleteBody = () => (
     <Styled.ActionCardBodyDelete>
-      <Styled.ActionNickname
-        color="light"
-        title={action.nickname}
-        data-testid={`${action.nickname}-action-nickname`}
-      >
+      <Styled.ActionNickname color="light">
         {action.nickname}
       </Styled.ActionNickname>
-      <Text.h5 color="light">Are you sure?</Text.h5>
-      <Text.h5 onClick={handleDeleteAction(action.id, action.nickname)}>
-        Yes, delete
-      </Text.h5>
-      <Text.h5 onClick={() => console.log('asdf')}>No</Text.h5>
+      <Styled.ActionType color="light">Are you sure?</Styled.ActionType>
+      <Styled.ActionDeleteCardText
+        color="light"
+        onClick={() => handleDeleteAction(action.id, action.nickname)}
+      >
+        <u>Yes, delete</u>
+      </Styled.ActionDeleteCardText>
+      <Styled.ActionDeleteCardText
+        color="light"
+        onClick={() => setDeleteView(false)}
+      >
+        No
+      </Styled.ActionDeleteCardText>
     </Styled.ActionCardBodyDelete>
   );
 
