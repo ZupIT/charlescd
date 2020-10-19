@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, wait } from 'unit-test/testUtils';
 import { Datasources } from './fixtures';
 import MetricProvider from '../index';
 
@@ -30,3 +30,5 @@ test('render Metrics Provider default component', async () => {
   expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
   expect(screen.getByText('Prometheus')).toBeInTheDocument();
 });
+
+

@@ -78,7 +78,6 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const renderFields = () => (
     <>
-
       <Card.Config
         icon="prometheus"
         description={plugin.name}
@@ -120,6 +119,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         <ConnectionStatus message={(testConnectionResponse as TestConnectionResponse[])} />
       )}
       <Styled.TestConnectionButton
+        id="test-connection"
         type="button"
         onClick={handleTestConnection}
         isLoading={loadingConnectionResponse}
