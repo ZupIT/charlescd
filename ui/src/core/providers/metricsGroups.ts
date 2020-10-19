@@ -46,8 +46,20 @@ export const updateMetric = (metricsGroupsId: string, metricPayload: Metric) =>
 export const getAllDataSourceMetrics = (datasourceId: string) =>
   baseRequest(`${endpoint}/datasources/${datasourceId}/metrics`);
 
-export const saveMetricGroup = (metricsGroupPayload: MetricsGroup) =>
+export const createMetricGroup = (metricsGroupPayload: MetricsGroup) =>
   postRequest(`${endpoint}/metrics-groups`, metricsGroupPayload);
+
+export const updateMetricGroup = (
+  metricsGroupPayload: MetricsGroup,
+  metricGroupId: string
+) =>
+  baseRequest(
+    `${endpoint}/metrics-groups/${metricGroupId}`,
+    metricsGroupPayload,
+    {
+      method: 'PATCH'
+    }
+  );
 
 export const deleteMetricGroup = (metricsGroupId: string) =>
   deleteRequest(`${endpoint}/metrics-groups/${metricsGroupId}`);

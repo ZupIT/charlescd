@@ -26,13 +26,16 @@ import { useGlobalState } from 'core/state/hooks';
 import TabPanel from 'core/components/TabPanel';
 import Layer from 'core/components/Layer';
 import Form from 'core/components/Form';
-import Can from 'containers/Can';
 import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 
-const Credentials = () => {
+interface Props {
+  onClickHelp?: (status: boolean) => void;
+}
+
+const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const [, loadWorkspace, , updateWorkspace] = useWorkspace();
@@ -67,13 +70,16 @@ const Credentials = () => {
 
   const renderDropdown = () => (
     <Dropdown>
-      <Can I="read" a="circles" passThrough>
-        <Dropdown.Item
-          icon="copy"
-          name="Copy ID"
-          onClick={() => copyToClipboard(id)}
-        />
-      </Can>
+      <Dropdown.Item
+        icon="copy"
+        name="Copy ID"
+        onClick={() => copyToClipboard(id)}
+      />
+      <Dropdown.Item
+        icon="help"
+        name="Help"
+        onClick={() => onClickHelp(true)}
+      />
     </Dropdown>
   );
 
