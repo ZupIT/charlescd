@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -14,8 +15,30 @@
  * limitations under the License.
  */
 
-import Trigger from './Trigger';
-import Default from './Default';
-import Wizard from './Wizard';
+const configKey = 'config';
 
-export default { Default, Trigger, Wizard };
+export const getConfig = () => {
+  try {
+    return JSON.parse(atob(localStorage.getItem(configKey)));
+  } catch (e) {
+    return {};
+  }
+};
+
+export const getConfigByKey = (key: string) => {
+  const config = getConfig();
+  return config?.[key];
+};
+
+export const setConfig = (key: string, value: unknown) => {
+  const config = getConfig() || {};
+  localStorage.setItem(
+    configKey,
+    btoa(
+      JSON.stringify({
+        ...config,
+        [key]: value
+      })
+    )
+  );
+};

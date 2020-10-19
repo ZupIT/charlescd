@@ -65,7 +65,7 @@ export const useSaveWorkspace = (): {
         })
       );
     }
-  }, [dispatch, error]);
+  }, [dispatch, error, response]);
 
   return { save, response, error, loading };
 };
