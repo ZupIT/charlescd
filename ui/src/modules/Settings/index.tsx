@@ -14,23 +14,43 @@
  * limitations under the License.
  */
 
-import React, { lazy } from 'react';
+import React, { lazy, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
+import Modal from 'core/components/Modal';
 import PrivateRoute from 'containers/PrivateRoute';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
+import { useGlobalState } from 'core/state/hooks';
+import isEmpty from 'lodash/isEmpty';
 import Menu from './Menu';
 import { SettingsMenu } from './constants';
+import { getWizardByUser, setWizard } from './helpers';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 
 const Credentials = lazy(() => import('modules/Settings/Credentials'));
 
 const Settings = () => {
   const profileName = getProfileByKey('name');
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
+  const [showWizard, setShowWizard] = useState(false);
+  const hasWizard = !isEmpty(getWizardByUser().email);
+  const [isVeteranUser, setIsVeteranUser] = useState<boolean>(hasWizard);
+
+  const onCloseWizard = (enabledWizard: boolean) => {
+    setWizard(enabledWizard);
+    setIsVeteranUser(true);
+    setShowWizard(false);
+  };
+
+  const showWizardModal =
+    (!isVeteranUser && workspace.status === WORKSPACE_STATUS.INCOMPLETE) ||
+    showWizard;
 
   return (
     <Page>
+      {showWizardModal && <Modal.Wizard onClose={onCloseWizard} />}
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>
@@ -38,7 +58,9 @@ const Settings = () => {
         <Switch>
           <PrivateRoute
             path={routes.credentials}
-            component={Credentials}
+            render={() => (
+              <Credentials onClickHelp={() => setShowWizard(true)} />
+            )}
             allowedRoles={['maintenance_write']}
           />
           <Route>
