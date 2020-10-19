@@ -87,7 +87,6 @@ const Login = () => {
         </Styled.Button>
       </Styled.Form>
     </Fragment>
-
   );
 };
 
