@@ -19,6 +19,7 @@ import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
 import Text from 'core/components/Text';
 import { dateTimeFormatter } from 'core/utils/date';
+import isEmpty from 'lodash/isEmpty';
 import camelCase from 'lodash/camelCase';
 import Styled from './styled';
 import { Action, MetricsGroup } from '../types';
@@ -33,7 +34,7 @@ interface Props {
 const ActionCard = ({
   action,
   metricGroup,
-  // handleDeleteAction,
+  handleDeleteAction,
   handleEditAction
 }: Props) => {
   const [deleteView, setDeleteView] = useState(false);
@@ -48,8 +49,10 @@ const ActionCard = ({
         {action.nickname}
       </Styled.ActionNickname>
       <Text.h5 color="light">Are you sure?</Text.h5>
-      <Text.h5 onClick={() => console.log('asdf')}>Yes, delete</Text.h5>
-      <Text.h5 onClick={() => setDeleteView(false)}>No</Text.h5>
+      <Text.h5 onClick={handleDeleteAction(action.id, action.nickname)}>
+        Yes, delete
+      </Text.h5>
+      <Text.h5 onClick={() => console.log('asdf')}>No</Text.h5>
     </Styled.ActionCardBodyDelete>
   );
 
@@ -83,7 +86,9 @@ const ActionCard = ({
         title={action.triggeredAt}
         data-testid={`${action.triggeredAt}-action-triggered`}
       >
-        {dateTimeFormatter(action.triggeredAt) ?? ' - '}
+        {isEmpty(action.triggeredAt)
+          ? ' - '
+          : dateTimeFormatter(action.triggeredAt)}
       </Styled.ActionTypeTriggeredAt>
       <Styled.MetricDropdown>
         <NewDropDown icon="vertical-dots" size="16px">
@@ -97,11 +102,6 @@ const ActionCard = ({
             name="Delete action"
             onClick={() => setDeleteView(true)}
           />
-          {/* <Dropdown.Item
-            icon="delete"
-            name="Delete action"
-            onClick={() => handleDeleteAction(action.id, action.nickname)}
-          /> */}
         </NewDropDown>
       </Styled.MetricDropdown>
     </Styled.ActionCardBody>
