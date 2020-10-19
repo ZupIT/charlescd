@@ -30,7 +30,7 @@ import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
-import { isRoot } from 'core/utils/auth';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';
@@ -52,7 +52,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
   const [loadingUpdate, updateProfile] = useUpdateProfile();
-  const isAbleToReset = loggedUserId !== user?.id;
+  const isAbleToReset = !isIDMEnabled() && loggedUserId !== user?.id;
 
   const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
 
@@ -107,11 +107,13 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         name="Copy link"
         onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
-      <Dropdown.Item
-        icon="delete"
-        name="Delete"
-        onClick={() => setAction('Delete')}
-      />
+      {!isIDMEnabled() && (
+        <Dropdown.Item
+          icon="delete"
+          name="Delete"
+          onClick={() => setAction('Delete')}
+        />
+      )}
     </Dropdown>
   );
 

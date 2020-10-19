@@ -62,11 +62,20 @@ const ListItem = styled(LabeledIcon)`
   display: flex;
 `;
 
-interface LinkProps {
+interface ActionProps {
   isActive: boolean;
 }
 
-const Link = styled('button')<LinkProps>`
+const Button = styled.button<ActionProps>`
+  padding: 0;
+  background: none;
+  border: none;
+  text-decoration: none;
+  background-color: ${({ isActive }) =>
+    isActive ? COLOR_BLACK_MARLIN : 'transparent'};
+`;
+
+const Link = styled.button<ActionProps>`
   background: none;
   border: none;
   text-decoration: none;
@@ -83,6 +92,7 @@ export default {
   Actions,
   Content,
   Icon,
+  Button,
   Link,
   List,
   ListItem,

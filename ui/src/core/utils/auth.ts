@@ -101,7 +101,7 @@ export const clearSession = () => {
   clearWorkspace();
 };
 
-export const isIDMAuthFlow = (): boolean => {
+export const isIDMEnabled = (): boolean => {
   const IDMEnabled = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM;
 
   return Boolean(parseInt(IDMEnabled));
@@ -121,7 +121,7 @@ export const redirectToIDM = () => {
 };
 
 export const logout = () => {
-  if (isIDMAuthFlow()) {
+  if (isIDMEnabled()) {
     const refreshToken = getRefreshToken();
     const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogout}`;
 

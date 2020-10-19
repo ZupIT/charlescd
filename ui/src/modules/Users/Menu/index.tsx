@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
@@ -27,6 +27,7 @@ import Styled from './styled';
 import Loader from './Loaders';
 import useQueryStrings from 'core/utils/query';
 import { addParam, delParam } from 'core/utils/path';
+import { isIDMEnabled } from 'core/utils/auth';
 
 interface Props {
   items: UserPaginationItem[];
@@ -57,21 +58,23 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
     ));
 
   return (
-    <>
-      <Styled.Actions>
-        <Styled.Link onClick={() => toggleUser('create')} isActive={false}>
-          <LabeledIcon icon="plus-circle" marginContent="5px">
-            <Text.h5 color="dark">Create user</Text.h5>
-          </LabeledIcon>
-        </Styled.Link>
-      </Styled.Actions>
+    <Fragment>
+      {!isIDMEnabled() && (
+        <Styled.Actions>
+          <Styled.Button onClick={() => toggleUser('create')} isActive={false}>
+            <LabeledIcon icon="plus-circle" marginContent="5px">
+              <Text.h5 color="dark">Create user</Text.h5>
+            </LabeledIcon>
+          </Styled.Button>
+        </Styled.Actions>
+      )}
       <Styled.Content>
         <Styled.SearchInput resume onSearch={onSearch} />
         <Styled.List>
           {isEmpty(items) && isLoading ? <Loader.List /> : renderUsers()}
         </Styled.List>
       </Styled.Content>
-    </>
+    </Fragment>
   );
 };
 

@@ -27,7 +27,7 @@ import Placeholder from 'core/components/Placeholder';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
-import { isRoot } from 'core/utils/auth';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
 import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateProfile } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
@@ -122,13 +122,15 @@ const Account = () => {
 
   const renderTabActions = () => (
     <Styled.Actions>
-      <LabeledIcon
-        icon="account"
-        marginContent="5px"
-        onClick={() => setToggleModal(true)}
-      >
-        <Text.h5 color="dark">Change password</Text.h5>
-      </LabeledIcon>
+      {!isIDMEnabled() && (
+        <LabeledIcon
+          icon="account"
+          marginContent="5px"
+          onClick={() => setToggleModal(true)}
+        >
+          <Text.h5 color="dark">Change password</Text.h5>
+        </LabeledIcon>
+      )}
     </Styled.Actions>
   );
 
