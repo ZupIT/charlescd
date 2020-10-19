@@ -182,7 +182,7 @@ redis:
   password: "hb2Fj9MGKjBkZ6zV"
 
 nginx:
-  enabled: true
+  enabled: false
   ui:
     enabled: true
   moove:
