@@ -33,15 +33,21 @@ interface Props {
 const ActionCard = ({
   action,
   metricGroup,
-  handleDeleteAction,
+  // handleDeleteAction,
   handleEditAction
 }: Props) => {
   const [deleteView, setDeleteView] = useState(false);
 
   const deleteBody = () => (
     <Styled.ActionCardBodyDelete>
-      <Text.h5>{action.nickname}</Text.h5>
-      <Text.h5>Are you sure?</Text.h5>
+      <Styled.ActionNickname
+        color="light"
+        title={action.nickname}
+        data-testid={`${action.nickname}-action-nickname`}
+      >
+        {action.nickname}
+      </Styled.ActionNickname>
+      <Text.h5 color="light">Are you sure?</Text.h5>
       <Text.h5 onClick={() => console.log('asdf')}>Yes, delete</Text.h5>
       <Text.h5 onClick={() => setDeleteView(false)}>No</Text.h5>
     </Styled.ActionCardBodyDelete>
