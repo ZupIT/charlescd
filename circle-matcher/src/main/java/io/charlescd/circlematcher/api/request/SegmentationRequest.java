@@ -50,6 +50,7 @@ public abstract class SegmentationRequest {
     @NotNull
     private Boolean active;
 
+    @NotNull
     private LocalDateTime createdAt;
 
     public String getName() {
