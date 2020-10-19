@@ -429,6 +429,44 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 	require.Error(s.T(), err)
 }
 
+func (s *SuiteMetric) TestQuery() {
+	circleId := uuid.New()
+
+	metricGroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metricRepo.Metric{},
+		CircleID:    circleId,
+		WorkspaceID: uuid.New(),
+	}
+
+	dataSource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "datasource/prometheus/prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+
+	s.DB.Create(&dataSource)
+	s.DB.Create(&metricGroup)
+	metricStruct := metricRepo.Metric{
+		MetricsGroupID: metricGroup.ID,
+		DataSourceID:   dataSource.ID,
+		Metric:         "MetricName",
+		Filters:        []datasourcePKG.MetricFilter{},
+		GroupBy:        []metricRepo.MetricGroupBy{},
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleId,
+	}
+
+	res, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 1, Unit: "h"})
+
+	require.Empty(s.T(), res)
+	require.NoError(s.T(), err)
+}
+
 func (s *SuiteMetric) TestQueryDatasourceError() {
 	metricStruct := metricRepo.Metric{
 		MetricsGroupID: uuid.New(),
