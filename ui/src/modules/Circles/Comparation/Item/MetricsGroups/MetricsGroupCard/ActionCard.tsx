@@ -17,7 +17,7 @@
 import React, { useState } from 'react';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
-import { dateTimeFormatter } from 'core/utils/date';
+import { newDateTimeFormatter } from 'core/utils/date';
 import isEmpty from 'lodash/isEmpty';
 import camelCase from 'lodash/camelCase';
 import Styled from './styled';
@@ -91,7 +91,7 @@ const ActionCard = ({
       >
         {isEmpty(action.triggeredAt)
           ? ' - '
-          : dateTimeFormatter(action.triggeredAt)}
+          : newDateTimeFormatter(action.triggeredAt)}
       </Styled.ActionTypeTriggeredAt>
       <Styled.MetricDropdown>
         <NewDropDown icon="vertical-dots" size="16px">
