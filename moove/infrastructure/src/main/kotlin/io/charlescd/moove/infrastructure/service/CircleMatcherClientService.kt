@@ -94,7 +94,8 @@ class CircleMatcherClientService(
             circleId = circle.id,
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
-            isDefault = circle.defaultCircle
+            isDefault = circle.defaultCircle,
+            createdAt = circle.createdAt
         )
 
     private fun createMatcherRequest(circle: Circle, previousReference: String? = null) =
@@ -111,6 +112,7 @@ class CircleMatcherClientService(
             circleId = circle.id,
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
-            isDefault = circle.defaultCircle
+            isDefault = circle.defaultCircle,
+            createdAt = circle.createdAt
         )
 }
