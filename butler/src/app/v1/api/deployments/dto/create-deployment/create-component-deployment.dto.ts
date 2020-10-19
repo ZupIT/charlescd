@@ -46,7 +46,7 @@ export class CreateComponentDeploymentDto {
   public readonly gatewayName!: string
 
   public toComponentModuleEntity(): ComponentDeploymentEntity {
-    
+
     return new ComponentDeploymentEntity(
       this.componentId,
       this.componentName,
