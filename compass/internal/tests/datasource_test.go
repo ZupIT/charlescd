@@ -24,6 +24,7 @@ import (
 	"compass/internal/plugin"
 	"encoding/json"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -276,7 +277,7 @@ func (s *Suite) TestGetMetricsError() {
 	require.Error(s.T(), err)
 }
 
-func (s *Suite) TestConnectionPluginError() {
+func (s *Suite) TestConnectionJsonError() {
 	jsonData := json.RawMessage(`{"data": "prometheus"}`)
 	err := s.repository.TestConnection("datasource/prometheus/prometheus", jsonData)
 
@@ -289,4 +290,13 @@ func (s *Suite) TestConnection() {
 
 	require.NoError(s.T(), err)
 	require.Nil(s.T(), err)
+}
+
+func (s *Suite) TestConnectionPluginDirError() {
+	os.Setenv("PLUGINS_DIR", "/dist")
+
+	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
+	err := s.repository.TestConnection("datasource/prometheus/prometheus", jsonData)
+
+	require.Error(s.T(), err)
 }
