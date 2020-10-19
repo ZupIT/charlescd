@@ -54,6 +54,7 @@ type DeploymentRequest struct {
 func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url string) (DeploymentResponse, error) {
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/circles/%s", url, circleID), nil)
 	if err != nil {
+		logger.Error("GET_CIRCLE_BY_ID", "getCurrentDeploymentAtCircle", err, nil)
 		return DeploymentResponse{}, err
 	}
 	request.Header.Add("x-workspace-id", workspaceId)
@@ -61,12 +62,14 @@ func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url strin
 
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
+		logger.Error("GET_CIRCLE_BY_ID", "getCurrentDeploymentAtCircle", err, nil)
 		return DeploymentResponse{}, err
 	}
 	defer response.Body.Close()
 
 	responseBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
+		logger.Error("GET_CIRCLE_BY_ID", "getCurrentDeploymentAtCircle", err, nil)
 		return DeploymentResponse{}, err
 	}
 
@@ -79,6 +82,7 @@ func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url strin
 	var circle CircleResponse
 	err = json.Unmarshal(responseBody, &circle)
 	if err != nil {
+		logger.Error("GET_CIRCLE_BY_ID", "getCurrentDeploymentAtCircle", err, string(responseBody))
 		return DeploymentResponse{}, err
 	}
 
@@ -88,18 +92,21 @@ func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url strin
 func getUserByEmail(email string, url string) (UserResponse, error) {
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/users/%s", url, email), nil)
 	if err != nil {
+		logger.Error("GET_USER_BY_EMAIL", "getUserByEmail", err, nil)
 		return UserResponse{}, err
 	}
 	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
+		logger.Error("GET_USER_BY_EMAIL", "getUserByEmail", err, nil)
 		return UserResponse{}, err
 	}
 	defer response.Body.Close()
 
 	responseBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
+		logger.Error("GET_USER_BY_EMAIL", "getUserByEmail", err, nil)
 		return UserResponse{}, err
 	}
 
@@ -112,6 +119,7 @@ func getUserByEmail(email string, url string) (UserResponse, error) {
 	var user UserResponse
 	err = json.Unmarshal(responseBody, &user)
 	if err != nil {
+		logger.Error("GET_USER_BY_EMAIL", "getUserByEmail", err, string(responseBody))
 		return UserResponse{}, err
 	}
 
@@ -121,11 +129,13 @@ func getUserByEmail(email string, url string) (UserResponse, error) {
 func deployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId string, url string) error {
 	requestBody, err := json.Marshal(deploymentRequest)
 	if err != nil {
+		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, nil)
 		return err
 	}
 
 	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v2/deployments", url), bytes.NewBuffer(requestBody))
 	if err != nil {
+		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, nil)
 		return err
 	}
 	request.Header.Add("Content-type", "application/json")
@@ -134,12 +144,14 @@ func deployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId string
 
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
+		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, nil)
 		return err
 	}
 	defer response.Body.Close()
 
 	responseBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
+		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, nil)
 		return err
 	}
 

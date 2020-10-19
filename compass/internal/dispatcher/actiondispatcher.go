@@ -116,6 +116,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 		if err != nil {
 			logger.Error("error setting execution as failed", "doAction", err, act)
 		}
+		return
 	}
 
 	_, err = dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID.String(), "action executed with success")
