@@ -5,10 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	log "github.com/sirupsen/logrus"
-	"golang.org/x/sync/errgroup"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
+
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
 )
 
 func (manager Manager) executeV2Manifests(
