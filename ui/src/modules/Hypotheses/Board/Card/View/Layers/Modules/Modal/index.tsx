@@ -53,7 +53,8 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     mode: 'onBlur'
   });
 
-  const branchName = watch('branchName') as string;
+  const branchName =
+    card.feature?.branchName || (watch('branchName') as string);
 
   const handleClose = () => onClose();
 
@@ -121,8 +122,8 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
         disabled={!isEmpty(card.feature?.branchName)}
         defaultValue={card.feature?.branchName}
         tipTitle="Why we ask for a branch name?"
-        maxLength={MAX_LENGTH_BRANCH_NAME}
         tipDescription="When a module is add to a card, Charles creates a new git branch for the client that is directly stored in the used SCM, Git or Gitlab, for example. When the branch already exists, Charles only links the card with the branch."
+        maxLength={MAX_LENGTH_BRANCH_NAME}
         ref={register({
           required: true,
           maxLength: MAX_LENGTH_BRANCH_NAME

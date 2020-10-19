@@ -18,13 +18,7 @@ import React from 'react';
 import map from 'lodash/map';
 import { ChangeInputEvent } from 'core/interfaces/InputEvents';
 import Styled from './styled';
-
-export interface RadioCard {
-  title: string;
-  description: string;
-  value: string;
-  checked?: boolean;
-}
+import Radio, { RadioCard } from './Item';
 
 export interface Props {
   items: RadioCard[];
@@ -32,31 +26,21 @@ export interface Props {
   onChange?: (event: ChangeInputEvent) => void;
 }
 
-const RadioCards = ({ name, items, onChange }: Props) => (
-  <Styled.RadioCards data-testid={`radio-group-${name}`}>
-    {map(items, item => {
-      const { title, description, value } = item;
-      const id = `radio-cards-${name}-item-${value}`;
+const RadioCards = ({ name, items, onChange }: Props) => {
+  const renderContent = (item: RadioCard, index: number) => (
+    <Radio
+      key={`${name}-${index}`}
+      name={name}
+      data={item}
+      onChange={onChange}
+    />
+  );
 
-      return (
-        <Styled.Radio key={id}>
-          <Styled.Input
-            id={id}
-            data-testid={id}
-            type="radio"
-            name={name}
-            value={value}
-            onChange={onChange}
-          />
-          <Styled.Label value={value} htmlFor={id}>
-            <Styled.Title color="dark">{title}</Styled.Title>
-            <Styled.Description color="dark">{description}</Styled.Description>
-          </Styled.Label>
-          <Styled.Checkmark />
-        </Styled.Radio>
-      );
-    })}
-  </Styled.RadioCards>
-);
+  return (
+    <Styled.RadioCards data-testid={`radio-group-${name}`}>
+      {map(items, (item, index) => renderContent(item, index))}
+    </Styled.RadioCards>
+  );
+};
 
 export default RadioCards;

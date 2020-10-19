@@ -40,6 +40,7 @@ export const useCircleMatcher = (): {
         const response = await getCircleMatcher(data);
         if (response) {
           const [circle] = response?.circles;
+          console.log('CIRCLE', circle, response?.circles);
           saveCircleId(circle?.id);
         }
       } catch (e) {

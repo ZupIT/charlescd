@@ -17,9 +17,11 @@
 import React, { useEffect, useState } from 'react';
 import Radio from 'core/components/Radio';
 import { ChangeInputEvent } from 'core/interfaces/InputEvents';
+import { RadioCard } from 'core/components/Radio/Cards/Item';
 import { useCard } from '../../hooks';
 import { radios } from './constants';
 import Styled from './styled';
+import set from 'lodash/set';
 
 interface Props {
   id: string;
@@ -28,8 +30,8 @@ interface Props {
 }
 
 const CardRemove = ({ id, onClose }: Props) => {
-  const [isReady, setIsReady] = useState(false);
   const [isDeleteBranch, setIsDeleteBranch] = useState(false);
+  const [options, setOptions] = useState<RadioCard[]>(null);
   const { removeById, responseRemove, loadingRemove } = useCard();
 
   useEffect(() => {
@@ -38,8 +40,14 @@ const CardRemove = ({ id, onClose }: Props) => {
     }
   }, [onClose, responseRemove]);
 
+  useEffect(() => {
+    if (radios) {
+      set(radios, '[1].disabled', true);
+      setOptions(radios);
+    }
+  }, []);
+
   const onChange = (value: string) => {
-    setIsReady(true);
     setIsDeleteBranch(value === 'card-branch');
   };
 
@@ -54,12 +62,11 @@ const CardRemove = ({ id, onClose }: Props) => {
       continueLabel="Delete"
       onContinue={onRemove}
       onDismiss={onClose}
-      isDisabled={!isReady}
       isLoading={loadingRemove}
     >
       <Radio.Cards
         name={`radio-cards-remove-${id}`}
-        items={radios}
+        items={options}
         onChange={(event: ChangeInputEvent) =>
           onChange(event.currentTarget.value)
         }

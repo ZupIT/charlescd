@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RadioCard } from 'core/components/Radio/Cards';
+import { RadioCard } from 'core/components/Radio/Cards/Item';
 
 export const radios: RadioCard[] = [
   {
@@ -27,6 +27,7 @@ export const radios: RadioCard[] = [
   {
     title: 'Card and Branch',
     description: 'We will delete the card and the git branch.',
-    value: 'card-branch'
+    value: 'card-branch',
+    disabled: false
   }
 ];

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useRef } from 'react';
+import React, { ReactNode, useState, useRef } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import useOutsideClick from 'core/hooks/useClickOutside';
@@ -30,6 +30,7 @@ export interface Props {
   link?: string;
   linkLabel?: string;
   className?: string;
+  children?: ReactNode;
 }
 
 const Popover = ({
@@ -39,23 +40,38 @@ const Popover = ({
   link = CHARLES_DOC,
   linkLabel = 'View documentation',
   description,
-  className
+  className,
+  children
 }: Props) => {
-  const [toggle, switchToggle] = useState(false);
+  const [toggle, setToggle] = useState(false);
   const ref = useRef<HTMLDivElement>();
 
   useOutsideClick(ref, () => {
-    switchToggle(false);
+    setToggle(false);
   });
+
+  const renderIcon = () => (
+    <Icon
+      name={icon}
+      color="dark"
+      size={size}
+      onClick={() => setToggle(!toggle)}
+    />
+  );
+
+  const renderAnchor = () => (
+    <Styled.Anchor
+      onMouseEnter={() => setToggle(true)}
+      onMouseLeave={() => setToggle(false)}
+    >
+      {children}
+    </Styled.Anchor>
+  );
 
   return (
     <Styled.Wrapper ref={ref} className={className}>
-      <Icon
-        name={icon}
-        color="dark"
-        size={size}
-        onClick={() => switchToggle(!toggle)}
-      />
+      {!children && icon && renderIcon()}
+      {!icon && children && renderAnchor()}
       {toggle && (
         <Styled.Popover data-testid={`popover-${title}`}>
           <Text.h4 color="light">{title}</Text.h4>
