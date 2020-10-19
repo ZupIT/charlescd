@@ -1,5 +1,54 @@
 # Changelog
 
+## 0.3.11 (19/10/2020)
+- [#606](https://github.com/ZupIT/charlescd/pull/606) Protected branches list configuration
+- [#349](https://github.com/ZupIT/charlescd/pull/349) Feature wizard
+- [#558](https://github.com/ZupIT/charlescd/pull/558) K3s docker compose
+- [#598](https://github.com/ZupIT/charlescd/pull/598) Unmatched x-circle-id header validation
+- [#596](https://github.com/ZupIT/charlescd/pull/596) Fix login error in password with special characters
+- [#548](https://github.com/ZupIT/charlescd/pull/548) Force redirect to refresh chunk references
+- [#595](https://github.com/ZupIT/charlescd/pull/595) Validate buildImageTag
+- [#594](https://github.com/ZupIT/charlescd/pull/594) Metric actions
+- [#593](https://github.com/ZupIT/charlescd/pull/593) Compass actions health
+- [#469](https://github.com/ZupIT/charlescd/pull/469) Create priority circles
+- [#591](https://github.com/ZupIT/charlescd/pull/591) Dont use typeorm .save for updating
+- [#590](https://github.com/ZupIT/charlescd/pull/590) validate undeployment on non existing deployment
+- [#588](https://github.com/ZupIT/charlescd/pull/588) Fix undeploy race condition
+- [#586](https://github.com/ZupIT/charlescd/pull/586) remove unmatched header when no circled is matched
+- [#585](https://github.com/ZupIT/charlescd/pull/585) Butler v2 explicit update
+- [#581](https://github.com/ZupIT/charlescd/pull/581) Return execution id on simultaneous deployment error message
+- [#560](https://github.com/ZupIT/charlescd/pull/560) Fix label and input text overlapping in login screen
+- [#575](https://github.com/ZupIT/charlescd/pull/575) Formatting
+- [#574](https://github.com/ZupIT/charlescd/pull/574) Including status badges
+- [#573](https://github.com/ZupIT/charlescd/pull/573) Including status badges
+- [#528](https://github.com/ZupIT/charlescd/pull/528) Octo butler v2
+- [#504](https://github.com/ZupIT/charlescd/pull/504) Format subset names to conform with k8s format
+- [#547](https://github.com/ZupIT/charlescd/pull/547) Remove mongodb
+- [#554](https://github.com/ZupIT/charlescd/pull/554) CI Update of charts and changelog
+- [#542](https://github.com/ZupIT/charlescd/pull/542) Create update name of metric groups operation
+- [#569](https://github.com/ZupIT/charlescd/pull/569) check execution on simultaneous-deployment pipe
+- [#563](https://github.com/ZupIT/charlescd/pull/563) Create NavTabs component
+- [#568](https://github.com/ZupIT/charlescd/pull/568) Add prefix in bucket
+- [#539](https://github.com/ZupIT/charlescd/pull/539) Fixing validation on PATCH at circle segments
+- [#565](https://github.com/ZupIT/charlescd/pull/565) New summary component
+
+---
+
+## 0.3.10 (01/10/2020)
+- [#545](https://github.com/ZupIT/charlescd/pull/545) Workflow prod oidc
+- [#553](https://github.com/ZupIT/charlescd/pull/553) change npm to yarn in prodrelease
+- [#550](https://github.com/ZupIT/charlescd/pull/550) Matcher s3 sync
+- [#552](https://github.com/ZupIT/charlescd/pull/552) wrong react-select version change required props
+- [#534](https://github.com/ZupIT/charlescd/pull/534) Add dockerhub support
+- [#551](https://github.com/ZupIT/charlescd/pull/551) Matcher s3 sync keycloak login
+- [#519](https://github.com/ZupIT/charlescd/pull/519) Fixing filter when adding user groups at workspace
+- [#492](https://github.com/ZupIT/charlescd/pull/492) Filter within the metrics group
+- [#544](https://github.com/ZupIT/charlescd/pull/544) fix nginx error in single file installation
+- [#543](https://github.com/ZupIT/charlescd/pull/543) CharleCD code of conduct
+- [#541](https://github.com/ZupIT/charlescd/pull/541) CI Update of charts and changelog
+
+---
+
 ## 0.3.9 (25/09/2020)
 - [#540](https://github.com/ZupIT/charlescd/pull/540) Issues
 - [#538](https://github.com/ZupIT/charlescd/pull/538) CI Update of charts and changelog

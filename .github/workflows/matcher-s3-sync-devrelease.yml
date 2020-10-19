@@ -1,0 +1,43 @@
+name: matcher-s3-sync dev-release
+
+on:
+  push:
+    branches: [ release-darwin-* ]
+
+jobs:
+  build_and_push_prerelease:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - run: npm ci
+      working-directory: ./utils/matcher-s3-sync
+      
+    - run: npm run build --if-present
+      working-directory: ./utils/matcher-s3-sync
+      env:
+        CI: true
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
+      with:
+        path: ./utils/matcher-s3-sync
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/matcher-s3-sync
+        dockerfile: ./utils/matcher-s3-sync/Dockerfile
+        tags: latest
+        tag_with_ref: false
+        tag_with_sha: false
