@@ -89,3 +89,15 @@ export const updateCircleWithFile = (
   data: CreateCircleWithFilePayload,
   circleId: string
 ) => baseRequest(`${endpoint}/${circleId}/csv`, data, { method: 'PUT' });
+
+export const findAllCirclesWithoutActive = (
+  filter: CircleFilter = initialCircleFilter
+) => {
+  const sizeFixed = 200;
+  const params = new URLSearchParams({
+    size: `${sizeFixed}`,
+    name: filter?.name
+  });
+
+  return baseRequest(`${endpoint}?${params}`);
+};

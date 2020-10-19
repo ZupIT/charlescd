@@ -18,16 +18,20 @@ import React, { useState } from 'react';
 import { OptionTypeBase } from 'react-select';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
-import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
 import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
+import NavTabs from 'core/components/NavTabs';
+import Button from 'core/components/Button';
+import Summary from 'core/components/Summary';
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import MonitoringMetrics from './MonitoringMetrics';
-import MetricsCard from './Metrics';
+import MetricsCard from './MetricCard';
+import ActionCard from './ActionCard';
+import CardHeader from './CardHeader';
 import Styled from './styled';
 import { MetricsGroup } from '../types';
 
@@ -38,7 +42,10 @@ type Props = {
   handleDeleteMetricsGroup: Function;
   handleDeleteMetric: Function;
   handleEditMetric: Function;
+  handleAddAction: Function;
   handleEditGroup: Function;
+  handleDeleteAction: Function;
+  handleEditAction: Function;
 };
 
 const MetricsGroupCard = ({
@@ -48,7 +55,10 @@ const MetricsGroupCard = ({
   handleDeleteMetricsGroup,
   handleDeleteMetric,
   handleEditMetric,
-  handleEditGroup
+  handleAddAction,
+  handleEditGroup,
+  handleDeleteAction,
+  handleEditAction
 }: Props) => {
   const normalizedSelectOptions = normalizeSelectOptionsNickname(
     metricGroup.metrics
@@ -76,80 +86,129 @@ const MetricsGroupCard = ({
     return false;
   };
 
+  const renderActionContent = () => (
+    <>
+      <Summary>
+        <Summary.Item name="Executed" color="green" />
+        <Summary.Item name="Executing" color="darkBlue" />
+        <Summary.Item name="Not executed" color="lightBlue" />
+        <Summary.Item name="Failed" color="red" />
+      </Summary>
+      <Styled.ActionCardHead>
+        <Text.h5 color="dark">Nickname</Text.h5>
+        <Text.h5 color="dark">Type</Text.h5>
+        <Text.h5 color="dark">Triggered at</Text.h5>
+      </Styled.ActionCardHead>
+      <Styled.MetricsGroupsCardContent>
+        {map(metricGroup.actions, action => (
+          <ActionCard
+            action={action}
+            metricGroup={metricGroup}
+            key={action.id}
+            handleDeleteAction={handleDeleteAction}
+            handleEditAction={handleEditAction}
+          />
+        ))}
+      </Styled.MetricsGroupsCardContent>
+    </>
+  );
+
+  const renderMetricsContent = () => (
+    <>
+      <Styled.MonitoringMetricsFilter isOpen={!chartOpen}>
+        <LabeledIcon
+          isActive={chartOpen}
+          icon={chartOpen ? 'view' : 'no-view'}
+          onClick={handleViewChart}
+        >
+          <Text.h5 color={chartOpen ? 'light' : 'dark'}>View Chart</Text.h5>
+        </LabeledIcon>
+        {chartOpen && (
+          <LabeledIcon icon="filter" isActive={!renderLabelText()}>
+            <Styled.MultiSelect
+              control={control}
+              name="metrics"
+              isLoading={loadingStatus}
+              customOption={CustomOption.Check}
+              options={normalizedSelectOptions}
+              label={renderLabelText() && 'Select metrics'}
+              defaultValue={[allOption, ...normalizedSelectOptions]}
+              onChange={e => setSelectMetric(e)}
+            />
+          </LabeledIcon>
+        )}
+      </Styled.MonitoringMetricsFilter>
+      {chartOpen && (
+        <MonitoringMetrics
+          metricsGroupId={metricGroup.id}
+          selectFilters={selectMetric}
+          onChangePeriod={handleChangePeriod}
+        />
+      )}
+      <Styled.MetricCardTableHead>
+        <Text.h5 color="dark">Nickname</Text.h5>
+        <Text.h5 color="dark">Condition Threshold</Text.h5>
+        <Text.h5 color="dark">Last Value</Text.h5>
+      </Styled.MetricCardTableHead>
+      <Styled.MetricsGroupsCardContent>
+        {map(metricGroup.metrics, metric => (
+          <MetricsCard
+            metric={metric}
+            metricGroup={metricGroup}
+            key={metric.id}
+            handleDeleteMetric={handleDeleteMetric}
+            handleEditMetric={handleEditMetric}
+          />
+        ))}
+      </Styled.MetricsGroupsCardContent>
+    </>
+  );
+
   return (
     <Styled.MetricsGroupsCard key={metricGroup.id}>
-      <Styled.MetricsGroupsCardHeader>
-        <Text.h2 color="light" title={metricGroup.name}>
-          {metricGroup.name}
-        </Text.h2>
-        <Dropdown icon="vertical-dots" size="16px">
-          <Dropdown.Item
-            icon="edit"
-            name="Edit group name"
-            onClick={() => handleEditGroup(metricGroup)}
-          />
-          <Dropdown.Item
-            icon="add"
-            name="Add metric"
-            onClick={() => handleAddMetric(metricGroup)}
-          />
-          <Dropdown.Item
-            icon="delete"
-            name="Delete"
-            onClick={() => handleDeleteMetricsGroup(metricGroup.id)}
-          />
-        </Dropdown>
-      </Styled.MetricsGroupsCardHeader>
-      {!isEmpty(metricGroup.metrics) && (
-        <>
-          <Styled.MonitoringMetricsFilter isOpen={!chartOpen}>
-            <LabeledIcon
-              isActive={chartOpen}
-              icon={chartOpen ? 'view' : 'no-view'}
-              onClick={handleViewChart}
-            >
-              <Text.h5 color={chartOpen ? 'light' : 'dark'}>View Chart</Text.h5>
-            </LabeledIcon>
-            {chartOpen && (
-              <LabeledIcon icon="filter" isActive={!renderLabelText()}>
-                <Styled.MultiSelect
-                  control={control}
-                  name="metrics"
-                  isLoading={loadingStatus}
-                  customOption={CustomOption.Check}
-                  options={normalizedSelectOptions}
-                  label={renderLabelText() && 'Select metrics'}
-                  defaultValue={[allOption, ...normalizedSelectOptions]}
-                  onChange={e => setSelectMetric(e)}
-                />
-              </LabeledIcon>
-            )}
-          </Styled.MonitoringMetricsFilter>
-          {chartOpen && (
-            <MonitoringMetrics
-              metricsGroupId={metricGroup.id}
-              selectFilters={selectMetric}
-              onChangePeriod={handleChangePeriod}
+      <CardHeader
+        metricGroup={metricGroup}
+        handleDeleteMetricsGroup={handleDeleteMetricsGroup}
+        handleEditGroup={handleEditGroup}
+      />
+      <NavTabs>
+        <NavTabs.Tab title="Metrics">
+          {!isEmpty(metricGroup.metrics) ? (
+            renderMetricsContent()
+          ) : (
+            <NavTabs.Placeholder
+              title="No metric in this  group."
+              subTitle="You can add metrics and monitor the health of your activities."
             />
           )}
-          <Styled.MetricCardTableHead>
-            <Text.h5 color="dark">Nickname</Text.h5>
-            <Text.h5 color="dark">Condition Threshold</Text.h5>
-            <Text.h5 color="dark">Last Value</Text.h5>
-          </Styled.MetricCardTableHead>
-          <Styled.MetricsGroupsCardContent>
-            {map(metricGroup.metrics, metric => (
-              <MetricsCard
-                metric={metric}
-                metricGroup={metricGroup}
-                key={metric.id}
-                handleDeleteMetric={handleDeleteMetric}
-                handleEditMetric={handleEditMetric}
-              />
-            ))}
-          </Styled.MetricsGroupsCardContent>
-        </>
-      )}
+          <Styled.MetricsGroupsFooter>
+            <Button.Default
+              onClick={() => handleAddMetric(metricGroup)}
+              id={'add-metric'}
+            >
+              Add metric
+            </Button.Default>
+          </Styled.MetricsGroupsFooter>
+        </NavTabs.Tab>
+        <NavTabs.Tab title="Actions">
+          {!isEmpty(metricGroup.actions) ? (
+            renderActionContent()
+          ) : (
+            <NavTabs.Placeholder
+              title="No actions in this metrics group."
+              subTitle="An action is an automated workflow that connects your applications and services through metrics triggers."
+            />
+          )}
+          <Styled.MetricsGroupsFooter>
+            <Button.Default
+              onClick={() => handleAddAction(metricGroup)}
+              id={'add-action'}
+            >
+              Add action
+            </Button.Default>
+          </Styled.MetricsGroupsFooter>
+        </NavTabs.Tab>
+      </NavTabs>
     </Styled.MetricsGroupsCard>
   );
 };
