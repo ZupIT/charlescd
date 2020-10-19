@@ -31,7 +31,7 @@ test('render Connection status default component', async () => {
 
 test('render Connection fail status component', async () => {
   render(
-    <ConnectionStatus message={[]} />
+    <ConnectionStatus message={[{}]} />
   );
 
   await wait();

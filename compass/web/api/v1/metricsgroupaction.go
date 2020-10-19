@@ -50,7 +50,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) create(w http.ResponseWriter,
 		return
 	}
 
-	act.Configuration = metricsgroupaction.ActionsConfigurations{
+	act.ActionsConfiguration = metricsgroupaction.ActionsConfiguration{
 		Repeatable:     false,
 		NumberOfCycles: 1,
 	}
@@ -101,7 +101,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) update(w http.ResponseWriter,
 		return
 	}
 
-	act.Configuration = metricsgroupaction.ActionsConfigurations{
+	act.ActionsConfiguration = metricsgroupaction.ActionsConfiguration{
 		Repeatable:     false,
 		NumberOfCycles: 1,
 	}

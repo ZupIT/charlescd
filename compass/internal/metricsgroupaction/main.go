@@ -27,16 +27,16 @@ import (
 )
 
 type UseCases interface {
-	ValidateGroupAction(metricsGroupAction MetricsGroupActions, workspaceID string) []util.ErrorUtil
-	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupActions, error)
-	FindGroupActionById(id string) (MetricsGroupActions, error)
-	SaveGroupAction(metricsGroupAction MetricsGroupActions) (MetricsGroupActions, error)
+	ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID string) []util.ErrorUtil
+	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, error)
+	FindGroupActionById(id string) (MetricsGroupAction, error)
+	SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
 	ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, error)
-	UpdateGroupAction(id string, metricsGroupAction MetricsGroupActions) (MetricsGroupActions, error)
+	UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
 	DeleteGroupAction(id string) error
 	SetExecutionFailed(actionExecutionID string, executionLog string) (ActionsExecutions, error)
 	SetExecutionSuccess(actionExecutionID string, executionLog string) (ActionsExecutions, error)
-	ValidateActionCanBeExecuted(metricsGroupAction MetricsGroupActions) bool
+	ValidateActionCanBeExecuted(metricsGroupAction MetricsGroupAction) bool
 	CreateNewExecution(groupActionID string) (ActionsExecutions, error)
 }
 

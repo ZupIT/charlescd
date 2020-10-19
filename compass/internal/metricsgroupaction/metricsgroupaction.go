@@ -32,21 +32,21 @@ import (
 	"time"
 )
 
-type MetricsGroupActions struct {
+type MetricsGroupAction struct {
 	util.BaseModel
-	MetricsGroupID      uuid.UUID             `json:"metricsGroupId"`
-	ActionID            uuid.UUID             `json:"actionId"`
-	Nickname            string                `json:"nickname"`
-	ExecutionParameters json.RawMessage       `json:"executionParameters"`
-	Configuration       ActionsConfigurations `json:"configuration"`
-	DeletedAt           *time.Time            `json:"-"`
+	MetricsGroupID       uuid.UUID            `json:"metricsGroupId"`
+	ActionID             uuid.UUID            `json:"actionId"`
+	Nickname             string               `json:"nickname"`
+	ExecutionParameters  json.RawMessage      `json:"executionParameters"`
+	ActionsConfiguration ActionsConfiguration `json:"configuration"`
+	DeletedAt            *time.Time           `json:"-"`
 }
 
-type ActionsConfigurations struct {
+type ActionsConfiguration struct {
 	util.BaseModel
-	MetricActionId uuid.UUID `json:"-"`
-	Repeatable     bool      `json:"repeatable"`
-	NumberOfCycles int16     `json:"numberOfCycles"`
+	MetricsGroupActionID uuid.UUID `json:"-"`
+	Repeatable           bool      `json:"repeatable"`
+	NumberOfCycles       int16     `json:"numberOfCycles"`
 }
 
 type GroupActionExecutionStatusResume struct {
@@ -69,13 +69,13 @@ const groupActionQuery = `
 					WHERE mga.metrics_group_id = ? 
 					AND mga.deleted_at IS NULL`
 
-func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupActions, error) {
-	var mgAct MetricsGroupActions
+func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, error) {
+	var mgAct MetricsGroupAction
 
 	err := json.NewDecoder(metricsGroupAction).Decode(&mgAct)
 	if err != nil {
 		logger.Error(util.GeneralParseError, "ParseAction", err, mgAct)
-		return MetricsGroupActions{}, err
+		return MetricsGroupAction{}, err
 	}
 
 	mgAct.Nickname = strings.TrimSpace(mgAct.Nickname)
@@ -83,7 +83,7 @@ func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGrou
 	return mgAct, nil
 }
 
-func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupActions, workspaceID string) []util.ErrorUtil {
+func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID string) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 	needConfigValidation := true
 
@@ -134,7 +134,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupActions, wor
 		}
 	}
 
-	ers = append(ers, main.validateJobConfiguration(metricsGroupAction.Configuration)...)
+	ers = append(ers, main.validateJobConfiguration(metricsGroupAction.ActionsConfiguration)...)
 
 	if needConfigValidation {
 		ers = append(ers, main.validateExecutionConfig(act.Type, metricsGroupAction.ExecutionParameters)...)
@@ -143,7 +143,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupActions, wor
 	return ers
 }
 
-func (main Main) validateJobConfiguration(configuration ActionsConfigurations) []util.ErrorUtil {
+func (main Main) validateJobConfiguration(configuration ActionsConfiguration) []util.ErrorUtil {
 	errs := make([]util.ErrorUtil, 0)
 
 	if configuration.NumberOfCycles < 0 {
@@ -182,46 +182,46 @@ func (main Main) validateExecutionConfig(actionType string, executionConfigurati
 	return ers
 }
 
-func (main Main) SaveGroupAction(metricsGroupAction MetricsGroupActions) (MetricsGroupActions, error) {
+func (main Main) SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
 	db := main.db.Create(&metricsGroupAction)
 	if db.Error != nil {
 		logger.Error(util.SaveActionError, "SaveAction", db.Error, metricsGroupAction)
-		return MetricsGroupActions{}, db.Error
+		return MetricsGroupAction{}, db.Error
 	}
 
 	return metricsGroupAction, nil
 }
 
-func (main Main) UpdateGroupAction(id string, metricsGroupAction MetricsGroupActions) (MetricsGroupActions, error) {
+func (main Main) UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		logger.Error(util.UpdateActionError, "UpdateAction", err, fmt.Sprintf("Id: %s", id))
-		return MetricsGroupActions{}, err
+		return MetricsGroupAction{}, err
 	}
 
 	metricsGroupAction.BaseModel.ID = parsedId
 	db := main.db.Save(&metricsGroupAction)
 	if db.Error != nil {
 		logger.Error(util.UpdateActionError, "UpdateAction", db.Error, metricsGroupAction)
-		return MetricsGroupActions{}, db.Error
+		return MetricsGroupAction{}, db.Error
 	}
 
 	return metricsGroupAction, nil
 }
 
-func (main Main) FindGroupActionById(id string) (MetricsGroupActions, error) {
-	metricsGroupAction := MetricsGroupActions{}
+func (main Main) FindGroupActionById(id string) (MetricsGroupAction, error) {
+	metricsGroupAction := MetricsGroupAction{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroupAction)
 	if db.Error != nil {
 		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
-		return MetricsGroupActions{}, db.Error
+		return MetricsGroupAction{}, db.Error
 	}
 
 	return metricsGroupAction, nil
 }
 
 func (main Main) DeleteGroupAction(id string) error {
-	db := main.db.Model(&MetricsGroupActions{}).Where("id = ?", id).Delete(&MetricsGroupActions{})
+	db := main.db.Model(&MetricsGroupAction{}).Where("id = ?", id).Delete(&MetricsGroupAction{})
 	if db.Error != nil {
 		logger.Error(util.DeleteActionError, "DeleteAction", db.Error, "Id = "+id)
 		return db.Error
@@ -251,12 +251,12 @@ func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupA
 	return executions, nil
 }
 
-func (main Main) ValidateActionCanBeExecuted(metricsGroupAction MetricsGroupActions) bool {
+func (main Main) ValidateActionCanBeExecuted(metricsGroupAction MetricsGroupAction) bool {
 	count, err := main.getNumberOfActionExecutions(metricsGroupAction.ID)
 	if err != nil {
 		logger.Error(util.ActionExecutionValidateError, "ValidateActionCanBeExecuted", err, fmt.Sprintf("%+v", metricsGroupAction))
 		return false
 	}
 
-	return metricsGroupAction.Configuration.Repeatable || int64(metricsGroupAction.Configuration.NumberOfCycles) > count
+	return metricsGroupAction.ActionsConfiguration.Repeatable || int64(metricsGroupAction.ActionsConfiguration.NumberOfCycles) > count
 }
