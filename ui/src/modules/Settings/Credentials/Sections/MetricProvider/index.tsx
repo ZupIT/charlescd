@@ -14,76 +14,49 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
-import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
-import { getWorkspaceId } from 'core/utils/workspace';
-import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useMetricProvider, useSectionTestConnection } from './hooks';
+import { useDatasource } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
-import { ConnectionStatusEnum as statusConnection } from './interfaces';
+import { Datasource } from './interfaces';
 import FormMetricProvider from './Form';
-import Styled from './styled';
+import { filter, map } from 'lodash';
 
 interface Props {
   form: string;
   setForm: Function;
-  data: MetricConfiguration;
+  data: Datasource[];
 }
 
 const MetricProvider = ({ form, setForm, data }: Props) => {
-  const [isAction, setIsAction] = useState(true);
-  const { remove, loadingRemove, responseRemove } = useMetricProvider();
-  const {
-    testProviderConnectionSection,
-    response
-  } = useSectionTestConnection();
+  const [datasources, setDatasource] = useState(data);
+  const { remove, loadingRemove } = useDatasource();
 
-  useEffect(() => {
-    setIsAction(true);
-  }, [responseRemove]);
-
-  useEffect(() => {
-    if (data) {
-      setIsAction(false);
-      testProviderConnectionSection(
-        { metricConfigurationId: data.id },
-        getWorkspaceId()
-      );
-    }
-  }, [data, testProviderConnectionSection]);
-
-  const renderConnectionMessage = () => (
-    <Styled.StatusWrapper status="error">
-      <Icon size="10px" name="error" />
-      <Text.h5>Connection to metric provider failed.</Text.h5>
-    </Styled.StatusWrapper>
-  );
+  const handleClose = async (id: string) => {
+    await remove(id);
+    setDatasource(filter(datasources, item => item.id !== id));
+  };
 
   const renderSection = () => (
     <Section
-      name="Metrics Provider"
+      name="Datasources"
       icon="metrics"
-      showAction={isAction}
+      showAction
       action={() => setForm(FORM_METRIC_PROVIDER)}
     >
-      {data && !responseRemove && (
-        <>
-          <Card.Config
-            icon="metrics"
-            description={data.provider}
-            isLoading={loadingRemove}
-            onClose={() => remove()}
-          />
-          {response?.status === statusConnection.FAILED &&
-            renderConnectionMessage()}
-        </>
-      )}
-    </Section>
+      {map(datasources, datasource => (
+        <Card.Config
+          key={datasource.id}
+          icon="metrics"
+          description={datasource.name}
+          isLoading={loadingRemove}
+          onClose={() => handleClose(datasource.id)}
+        />
+      ))}
+    </Section >
   );
 
   const renderForm = () =>

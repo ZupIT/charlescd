@@ -23,92 +23,126 @@ import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
-import ConnectionStatus from './ConnectionStatus';
-import { MetricProvider } from './interfaces';
+import { Datasource, Plugin, PluginDatasource, TestConnectionResponse } from './interfaces';
+import { serializePlugins, transformValues } from './helpers';
 import { Props } from '../interfaces';
-import { useMetricProvider, useFromTestConnection } from './hooks';
-import { metricProviders } from 'core/constants/metrics-providers';
+import { useDatasource, usePlugins, useTestConnection } from './hooks';
 import Styled from './styled';
+import { find, map } from 'lodash';
+import ConnectionStatus from './ConnectionStatus';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
-  const { responseAdd, save, loadingSave, loadingAdd } = useMetricProvider();
-  const {
-    testProviderConnectionForm,
-    response,
-    loading
-  } = useFromTestConnection();
+  const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
+  const { response: testConnectionResponse, loading: loadingConnectionResponse, save: testConnection } = useTestConnection()
   const [isDisabled, setIsDisabled] = useState(true);
-  const [provider, setProvider] = useState<Option>();
+  const [datasourceHealth, setDatasourceHealth] = useState(false)
+  const [plugin, setPlugin] = useState<Plugin>();
+  const { response: plugins, getAll } = usePlugins()
   const { control, register, handleSubmit, getValues } = useForm<
-    MetricProvider
+    Datasource
   >();
 
   useEffect(() => {
-    if (responseAdd) onFinish();
-  }, [onFinish, responseAdd]);
+    getAll()
+    if (responseSave) onFinish();
+  }, [onFinish, responseSave, getAll]);
 
-  const onSubmit = (metricProvider: MetricProvider) => {
+  const onSubmit = (datasource: Datasource) => {
     save({
-      ...metricProvider,
-      authorId: getProfileByKey('id'),
-      provider: provider.value
+      ...datasource,
+      pluginSrc: plugin.src,
+      healthy: datasourceHealth,
     });
   };
 
-  const onClick = () => {
-    const { url } = getValues();
-    testProviderConnectionForm({ provider: url, providerType: provider.value });
-  };
 
   const onChange = (option: Option) => {
-    setProvider(option);
-    setIsDisabled(!isEmpty(option));
+    setPlugin(find((plugins as Plugin[]), { id: option['value'] }));
+    setIsDisabled(!isEmpty(plugin));
   };
 
   const onClose = () => {
-    setProvider(null);
+    setPlugin(null);
     setIsDisabled(true);
   };
 
+  const handleTestConnection = () => {
+    const values = getValues()
+    const data = transformValues(values)
+
+    testConnection({
+      pluginSrc: plugin.src,
+      data
+    })
+  }
+
   const renderFields = () => (
     <>
+
       <Card.Config
-        icon={provider.icon}
-        description={provider.label}
+        icon="prometheus"
+        description={plugin.name}
         onClose={() => onClose()}
       />
+      {(plugin.inputParameters as PluginDatasource).health && (
+        <Styled.HealthWrapper>
+          <Styled.HealthSwitch
+            name="healthy"
+            label="Datasource health"
+            active={datasourceHealth}
+            onChange={() => setDatasourceHealth(!datasourceHealth)}
+          />
+          <Popover
+            title="Why do we ask for a source of health datasource?"
+            icon="info"
+            link={`${CHARLES_DOC}/reference/metrics`}
+            linkLabel="View documentation"
+            description="Marking a health datasource enables Charles pre-configured health metrics."
+          />
+        </Styled.HealthWrapper>
+      )}
       <Styled.Input
         ref={register}
-        name="url"
-        label="Insert the url"
-        onChange={({ currentTarget }) => setIsDisabled(!currentTarget.value)}
+        name="name"
+        label="Datasource name"
       />
-      {response && <ConnectionStatus status={response.status} />}
+
+      {map((plugin.inputParameters as PluginDatasource)['configurationInputs'], input => (
+        <Styled.Input
+          key={input.name}
+          ref={register}
+          name={`data.${input.name}`}
+          label={input.label}
+        />
+      ))}
+
+      {testConnectionResponse && (
+        <ConnectionStatus message={(testConnectionResponse as TestConnectionResponse[])} />
+      )}
       <Styled.TestConnectionButton
         type="button"
-        onClick={() => onClick()}
-        isLoading={loading}
+        onClick={handleTestConnection}
+        isLoading={loadingConnectionResponse}
         isDisabled={isDisabled}
       >
         Test connection
       </Styled.TestConnectionButton>
     </>
-  );
+  )
 
   const renderSelect = () => (
     <Select.Single
       control={control}
       name="url"
-      label="Select a type server"
-      options={metricProviders}
+      label="Select a datasource plugin"
+      options={serializePlugins(plugins as Plugin[])}
       onChange={option => onChange(option)}
     />
   );
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      {provider ? renderFields() : renderSelect()}
+      {plugin ? renderFields() : renderSelect()}
       <div>
         <Button.Default
           type="submit"
@@ -124,7 +158,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   return (
     <Styled.Content>
       <Text.h2 color="light">
-        Add Metrics Provider
+        Add Datasource
         <Popover
           title="Why we ask for Metrics Provider?"
           icon="info"

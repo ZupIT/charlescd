@@ -21,13 +21,12 @@ package tests
 import (
 	"compass/internal/configuration"
 	"compass/internal/datasource"
-	metric2 "compass/internal/metric"
+	metricRepo "compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
-	datasource2 "compass/pkg/datasource"
+	datasourcePKG "compass/pkg/datasource"
 	"encoding/json"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -41,15 +40,16 @@ type SuiteMetric struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository metric2.UseCases
-	metric     *metric2.Metric
+	repository metricRepo.UseCases
+	metric     *metricRepo.Metric
 }
 
 func (s *SuiteMetric) SetupSuite() {
+	setupEnv()
+}
+
+func (s *SuiteMetric) BeforeTest(_, _ string) {
 	var err error
-
-	os.Setenv("ENV", "TEST")
-
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
@@ -58,15 +58,12 @@ func (s *SuiteMetric) SetupSuite() {
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
-	s.repository = metric2.NewMain(s.DB, datasourceMain, pluginMain)
+	s.repository = metricRepo.NewMain(s.DB, datasourceMain, pluginMain)
+	clearDatabase(s.DB)
 }
 
-func (s *SuiteMetric) BeforeTest(suiteName, testName string) {
-	s.DB.Exec("DELETE FROM metric_filters")
-	s.DB.Exec("DELETE FROM metric_group_bies")
-	s.DB.Exec("DELETE FROM metrics")
-	s.DB.Exec("DELETE FROM metrics_groups")
-	s.DB.Exec("DELETE FROM data_sources")
+func (s *SuiteMetric) AfterTest(_, _ string) {
+	s.DB.Close()
 }
 
 func TestInitMetric(t *testing.T) {
@@ -74,14 +71,14 @@ func TestInitMetric(t *testing.T) {
 }
 
 func (s *SuiteMetric) TestValidateMetric() {
-	filters := make([]datasource2.MetricFilter, 0)
-	filters = append(filters, datasource2.MetricFilter{Field: BigString, Value: BigString, Operator: "="})
+	filters := make([]datasourcePKG.MetricFilter, 0)
+	filters = append(filters, datasourcePKG.MetricFilter{Field: bigString, Value: bigString, Operator: "="})
 
-	groupBy := make([]metric2.MetricGroupBy, 0)
-	groupBy = append(groupBy, metric2.MetricGroupBy{Field: BigString})
+	groupBy := make([]metricRepo.MetricGroupBy, 0)
+	groupBy = append(groupBy, metricRepo.MetricGroupBy{Field: bigString})
 
-	metric := metric2.Metric{
-		Nickname: BigString,
+	metric := metricRepo.Metric{
+		Nickname: bigString,
 		Filters:  filters,
 		GroupBy:  groupBy,
 	}
@@ -132,7 +129,7 @@ func (s *SuiteMetric) TestSaveMetric() {
 
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []metricRepo.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
 	}
@@ -149,7 +146,7 @@ func (s *SuiteMetric) TestSaveMetric() {
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricgroup)
 
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   dataSource.ID,
 		Query:          "group_metric_example_2",
@@ -174,7 +171,7 @@ func (s *SuiteMetric) TestUpdateMetric() {
 
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -190,7 +187,7 @@ func (s *SuiteMetric) TestUpdateMetric() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricgroup)
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
@@ -223,12 +220,21 @@ func (s *SuiteMetric) TestRemoveMetric() {
 	require.Nil(s.T(), resErr)
 }
 
+func (s *SuiteMetric) TestRemoveMetricError() {
+	id := uuid.New()
+
+	s.DB.Close()
+	resErr := s.repository.RemoveMetric(id.String())
+
+	require.Error(s.T(), resErr)
+}
+
 func (s *SuiteMetric) TestFindMetricById() {
 	circleId := uuid.New()
 
 	metricGroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -244,12 +250,12 @@ func (s *SuiteMetric) TestFindMetricById() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricGroup)
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
-		GroupBy:        []metric2.MetricGroupBy{},
+		Filters:        []datasourcePKG.MetricFilter{},
+		GroupBy:        []metricRepo.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
@@ -268,7 +274,7 @@ func (s *SuiteMetric) TestFindMetricById() {
 func (s *SuiteMetric) TestSaveMetricError() {
 	circleId := uuid.New()
 
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		Query:     "group_metric_example_2",
 		Metric:    "MetricName",
 		Filters:   nil,
@@ -286,7 +292,7 @@ func (s *SuiteMetric) TestSaveMetricError() {
 func (s *SuiteMetric) TestUpdateMetricError() {
 	circleId := uuid.New()
 
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		Metric:    "MetricName",
 		Filters:   nil,
 		GroupBy:   nil,
@@ -316,7 +322,7 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 
 	metricGroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -332,12 +338,12 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricGroup)
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
-		GroupBy:        []metric2.MetricGroupBy{},
+		Filters:        []datasourcePKG.MetricFilter{},
+		GroupBy:        []metricRepo.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
@@ -348,12 +354,50 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 	require.Error(s.T(), err)
 }
 
+func (s *SuiteMetric) TestResultQuery() {
+	circleId := uuid.New()
+
+	metricGroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metricRepo.Metric{},
+		CircleID:    circleId,
+		WorkspaceID: uuid.New(),
+	}
+
+	dataSource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "datasource/prometheus/prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+
+	s.DB.Create(&dataSource)
+	s.DB.Create(&metricGroup)
+	metricStruct := metricRepo.Metric{
+		MetricsGroupID: metricGroup.ID,
+		DataSourceID:   dataSource.ID,
+		Metric:         "MetricName",
+		Filters:        []datasourcePKG.MetricFilter{},
+		GroupBy:        []metricRepo.MetricGroupBy{},
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleId,
+	}
+
+	res, err := s.repository.ResultQuery(metricStruct)
+
+	require.NoError(s.T(), err)
+	require.NotNil(s.T(), res)
+}
+
 func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 	circleId := uuid.New()
 
 	metricGroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -369,52 +413,52 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricGroup)
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
-		GroupBy:        []metric2.MetricGroupBy{},
+		Filters:        []datasourcePKG.MetricFilter{},
+		GroupBy:        []metricRepo.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
 	}
 
-	_, err := s.repository.Query(metricStruct, "13", "1")
+	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 1, Unit: "h"})
 
 	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetric) TestQueryDatasourceError() {
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		MetricsGroupID: uuid.New(),
 		DataSourceID:   uuid.New(),
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
-		GroupBy:        []metric2.MetricGroupBy{},
+		Filters:        []datasourcePKG.MetricFilter{},
+		GroupBy:        []metricRepo.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       uuid.New(),
 	}
 
-	_, err := s.repository.Query(metricStruct, "13", "1")
+	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 13, Unit: "h"})
 	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetric) TestCountMetrics() {
-	metrics := make([]metric2.Metric, 0)
+	metrics := make([]metricRepo.Metric, 0)
 
-	metricStruct := metric2.Metric{
+	metricStruct := metricRepo.Metric{
 		MetricsGroupID: uuid.New(),
 		DataSourceID:   uuid.New(),
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
-		GroupBy:        []metric2.MetricGroupBy{},
+		Filters:        []datasourcePKG.MetricFilter{},
+		GroupBy:        []metricRepo.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      5,
 		CircleID:       uuid.New(),
 	}
-	execution := metric2.MetricExecution{
+	execution := metricRepo.MetricExecution{
 		MetricID:  metricStruct.ID,
 		LastValue: 5,
 		Status:    "REACHED",
@@ -427,4 +471,45 @@ func (s *SuiteMetric) TestCountMetrics() {
 	require.Equal(s.T(), 1, all)
 	require.Equal(s.T(), 1, reached)
 	require.Equal(s.T(), 1, configured)
+}
+
+func (s *SuiteMetric) TestFindAllByGroup() {
+	ds := newBasicDatasource()
+	s.DB.Create(&ds)
+
+	group1 := newBasicMetricGroup()
+	group2 := newBasicMetricGroup()
+	s.DB.Create(&group1)
+	s.DB.Create(&group2)
+
+	metric1 := newBasicMetric()
+	metric1.DataSourceID = ds.ID
+	metric1.MetricsGroupID = group1.ID
+
+	metric2 := newBasicMetric()
+	metric2.DataSourceID = ds.ID
+	metric2.MetricsGroupID = group1.ID
+
+	metric3 := newBasicMetric()
+	metric3.DataSourceID = ds.ID
+	metric3.MetricsGroupID = group2.ID
+
+	s.DB.Create(&metric1)
+	s.DB.Create(&metric2)
+	s.DB.Create(&metric3)
+
+	listedMetrics, err := s.repository.FindAllByGroup(group1.ID.String())
+
+	require.NoError(s.T(), err)
+	require.Len(s.T(), listedMetrics, 2)
+	require.Equal(s.T(), metric1.ID, listedMetrics[0].ID)
+	require.Equal(s.T(), metric2.ID, listedMetrics[1].ID)
+}
+
+func (s *SuiteMetric) TestFindAllByGroupError() {
+	s.DB.Close()
+
+	_, err := s.repository.FindAllByGroup(uuid.New().String())
+
+	require.Error(s.T(), err)
 }

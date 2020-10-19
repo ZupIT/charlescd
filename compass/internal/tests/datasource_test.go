@@ -23,14 +23,15 @@ import (
 	datasource2 "compass/internal/datasource"
 	"compass/internal/plugin"
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 type Suite struct {
@@ -55,7 +56,7 @@ func (s *Suite) BeforeTest(suiteName, testName string) {
 
 	var pluginMain = plugin.NewMain()
 	s.repository = datasource2.NewMain(s.DB, pluginMain)
-	s.DB.Exec("DELETE FROM data_sources")
+	clearDatabase(s.DB)
 }
 
 func (s *Suite) AfterTest(suiteName, testName string) {
@@ -94,8 +95,8 @@ func (s *Suite) TestValidate() {
 
 func (s *Suite) TestValidateNameLength() {
 	datasource := datasource2.DataSource{
-		Name:      BigString,
-		PluginSrc: BigString,
+		Name:      bigString,
+		PluginSrc: bigString,
 	}
 	var errList = s.repository.Validate(datasource)
 

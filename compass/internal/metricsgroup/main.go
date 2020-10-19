@@ -21,6 +21,7 @@ package metricsgroup
 import (
 	"compass/internal/datasource"
 	"compass/internal/metric"
+	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"compass/internal/util"
 	datasourcePKG "compass/pkg/datasource"
@@ -30,7 +31,7 @@ import (
 )
 
 type UseCases interface {
-	PeriodValidate(currentPeriod string) error
+	PeriodValidate(currentPeriod string) (datasourcePKG.Period, error)
 	Parse(metricsGroup io.ReadCloser) (MetricsGroup, error)
 	FindAll() ([]MetricsGroup, error)
 	ResumeByCircle(circleId string) ([]MetricGroupResume, error)
@@ -39,22 +40,23 @@ type UseCases interface {
 	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
 	UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
 	Remove(id string) error
-	QueryByGroupID(id, period, interval string) ([]datasourcePKG.MetricValues, error)
+	QueryByGroupID(id string, period, interval datasourcePKG.Period) ([]datasourcePKG.MetricValues, error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
-	FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
+	ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, error)
 	Validate(metricsGroup MetricsGroup) []util.ErrorUtil
 }
 
 type Main struct {
-	db             *gorm.DB
-	metricMain     metric.UseCases
-	datasourceMain datasource.UseCases
-	pluginMain     plugin.UseCases
+	db               *gorm.DB
+	metricMain       metric.UseCases
+	datasourceMain   datasource.UseCases
+	pluginMain       plugin.UseCases
+	groupActionsMain metricsgroupaction.UseCases
 }
 
 func NewMain(
-	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain plugin.UseCases,
+	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain plugin.UseCases, groupActionsMain metricsgroupaction.UseCases,
 ) UseCases {
-	return Main{db, metricMain, datasourceMain, pluginMain}
+	return Main{db, metricMain, datasourceMain, pluginMain, groupActionsMain}
 }

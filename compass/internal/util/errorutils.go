@@ -62,6 +62,7 @@ const (
 	QueryFindDatasourceError = "QUERY_FIND_DATASOURCE_ERROR"
 	QueryGetPluginError      = "QUERY_GET_PLUGIN_ERROR"
 	QueryByGroupIdError      = "QUERY_BY_GROUP_ID_ERROR"
+	ListAllByGroupError      = "LIST_ALL_BY_GROUP_ERROR"
 )
 
 const (
@@ -73,6 +74,27 @@ const (
 
 const (
 	ResultByGroupMetricError = "RESULT_BY_GROUP_METRIC_ERROR"
+)
+
+const (
+	FindActionError                     = "FIND_ACTION_ERROR"
+	SaveActionError                     = "SAVE_ACTION_ERROR"
+	UpdateActionError                   = "UPDATE_ACTION_ERROR"
+	DeleteActionError                   = "DELETE_ACTION_ERROR"
+	SaveActionConfigurationError        = "SAVE_ACTION_CONFIGURATION_ERROR"
+	ListGroupActionExecutionStatusError = "LIST_GROUP_ACTION_EXECUTION_STATUS_ERROR"
+	ActionExecutionValidateError        = "VALIDATE_ACTION_CAN_BE_EXECUTED_ERROR"
+)
+
+const (
+	FindActionExecutionError        = "FIND_ACTION_EXECUTION_ERROR"
+	CreateActionExecutionError      = "CREATE_ACTION_EXECUTION_ERROR"
+	SetExecutionFailedError         = "SET_ACTION_EXECUTION_FAILED_ERROR"
+	SetExecutionFailedErrorFinding  = "SET_ACTION_EXECUTION_FAILED_FINDING_ERROR"
+	SetExecutionSuccessError        = "SET_ACTION_EXECUTION_SUCCESS_ERROR"
+	SetExecutionSuccessErrorFinding = "SET_ACTION_EXECUTION_SUCCESS_FINDING_ERROR"
+	ExecutionNotInExecution         = "ACTION_EXECUTION_NOT_IN_EXECUTION"
+	CountNumberOfExecutionsError    = "ACTION_EXECUTION_COUNT"
 )
 
 type ErrorUtil struct {

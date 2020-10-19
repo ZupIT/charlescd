@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.metrics.interactor
+package io.charlescd.moove.domain
 
-import io.charlescd.moove.metrics.api.ProjectionType
-import io.charlescd.moove.metrics.api.response.ComponentMetricRepresentation
-import io.charlescd.moove.metrics.domain.MetricType
-
-interface RetrieveCircleComponentsPeriodMetricInteractor {
-
-    fun execute(
-        circleId: String,
-        projectionType: ProjectionType,
-        metricType: MetricType,
-        workspaceId: String
-    ): ComponentMetricRepresentation
-}
+data class SimpleComponent(
+    val id: String,
+    val moduleId: String,
+    val name: String,
+    val workspaceId: String,
+    val errorThreshold: Int,
+    val latencyThreshold: Int,
+    val moduleName: String
+)

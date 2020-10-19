@@ -38,7 +38,11 @@ var initialValues = map[string]string{
 	"DB_SSL":              "disable",
 	"DB_PORT":             "5432",
 	"PLUGINS_DIR":         "./plugins",
+	"MOOVE_URL":           "http://charlescd-moove:8080",
 	"DISPATCHER_INTERVAL": "15s",
+	"MOOVE_USER":          "admin@admin",
+	"MOOVE_PATH":          "charlescd-moove:8080",
+	"MOOVE_AUTH":          "Bearer 123",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {

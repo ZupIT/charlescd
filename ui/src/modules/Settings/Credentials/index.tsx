@@ -30,6 +30,8 @@ import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
+import { useDatasource } from './Sections/MetricProvider/hooks';
+import { Datasource } from './Sections/MetricProvider/interfaces';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
@@ -39,6 +41,7 @@ const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const [, loadWorkspace, , updateWorkspace] = useWorkspace();
+  const { responseAll: datasources, getAll: getAllDatasources } = useDatasource();
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
@@ -52,7 +55,8 @@ const Credentials = ({ onClickHelp }: Props) => {
     if (isNull(form)) {
       loadWorkspace(id);
     }
-  }, [id, form, loadWorkspace]);
+    getAllDatasources();
+  }, [id, form, loadWorkspace, getAllDatasources]);
 
   const renderContent = () => (
     <Layer>
@@ -123,18 +127,18 @@ const Credentials = ({ onClickHelp }: Props) => {
       <Section.MetricProvider
         form={form}
         setForm={setForm}
-        data={workspace.metricConfiguration}
+        data={datasources as Datasource[]}
       />
     </TabPanel>
   );
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {status === 'pending' || isEmpty(workspace.id) ? (
+      {status === 'pending' || isEmpty(workspace.id) || !datasources ? (
         <Loader.Tab />
       ) : (
-        renderPanel()
-      )}
+          renderPanel()
+        )}
     </Styled.Wrapper>
   );
 };
