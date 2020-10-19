@@ -19,7 +19,6 @@ import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { login, circleMatcher } from 'core/providers/auth';
 import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
-import { CIRCLE_UNMATCHED } from './constants';
 import { useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
 
