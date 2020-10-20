@@ -19,6 +19,7 @@
 package action
 
 import (
+	"compass/internal/configuration"
 	"compass/internal/util"
 	"compass/pkg/logger"
 	"encoding/json"
@@ -36,6 +37,7 @@ type Action struct {
 	Nickname      string          `json:"nickname"`
 	Type          string          `json:"type"`
 	Description   string          `json:"description"`
+	UseDefault    bool            `json:"useDefaultConfiguration" gorm:"-"`
 	Configuration json.RawMessage `json:"configuration"`
 	DeletedAt     *time.Time      `json:"-"`
 }
@@ -52,6 +54,10 @@ func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
 	nAction.Nickname = strings.TrimSpace(nAction.Nickname)
 	nAction.Type = strings.TrimSpace(nAction.Type)
 	nAction.Description = strings.TrimSpace(nAction.Description)
+
+	if nAction.UseDefault {
+		nAction.Configuration = json.RawMessage(fmt.Sprintf(`{"mooveUrl": "%s"}`, configuration.GetConfiguration("MOOVE_PATH")))
+	}
 
 	return *nAction, nil
 }
@@ -121,7 +127,7 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionByIdAndWorkspace(id string, workspaceID string) (Action, error) {
+func (main Main) FindActionByIdAndWorkspace(id, workspaceID string) (Action, error) {
 	action := Action{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ? and workspace_id = ?", id, workspaceID).First(&action)
 	if db.Error != nil {

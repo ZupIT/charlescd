@@ -51,7 +51,7 @@ type DeploymentRequest struct {
 	BuildID  string `json:"buildId"`
 }
 
-func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url string) (DeploymentResponse, error) {
+func getCurrentDeploymentAtCircle(circleID, workspaceId, url string) (DeploymentResponse, error) {
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/circles/%s", url, circleID), nil)
 	if err != nil {
 		logger.Error("GET_CIRCLE_BY_ID", "getCurrentDeploymentAtCircle", err, nil)
@@ -89,7 +89,7 @@ func getCurrentDeploymentAtCircle(circleID string, workspaceId string, url strin
 	return circle.DeploymentResponse, nil
 }
 
-func getUserByEmail(email string, url string) (UserResponse, error) {
+func getUserByEmail(email, url string) (UserResponse, error) {
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/users/%s", url, email), nil)
 	if err != nil {
 		logger.Error("GET_USER_BY_EMAIL", "getUserByEmail", err, nil)
@@ -126,7 +126,7 @@ func getUserByEmail(email string, url string) (UserResponse, error) {
 	return user, nil
 }
 
-func deployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId string, url string) error {
+func deployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId, url string) error {
 	requestBody, err := json.Marshal(deploymentRequest)
 	if err != nil {
 		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, nil)
@@ -158,6 +158,16 @@ func deployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId string
 	if response.StatusCode != http.StatusCreated {
 		err = errors.New(fmt.Sprintf("error deploying at circle with http error: %s", strconv.Itoa(response.StatusCode)))
 		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, string(responseBody))
+		return err
+	}
+
+	return nil
+}
+
+func testConnection(url string) error {
+	_, err := http.Get(url)
+	if err != nil {
+		logger.Error("Connection Filed", "testConnection", err, url)
 		return err
 	}
 
