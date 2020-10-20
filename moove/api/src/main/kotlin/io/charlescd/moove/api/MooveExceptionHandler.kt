@@ -18,7 +18,10 @@ package io.charlescd.moove.api
 
 import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
+import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.InvalidIntegrationRequestExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
@@ -51,7 +54,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseBody
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
-        return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
+        return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -144,4 +147,23 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
         this.logger.error(ex.message, ex)
         return ResourceValueResponse(ex.resourceName, ex.id)
     }
+
+    @ExceptionHandler(IntegrationExceptionLegacy::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    fun integrationException(ex: IntegrationExceptionLegacy): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
+        return ErrorMessageResponse.of(ex.getErrorCode().name,message, ex.getDetails());
+    }
+
+    @ExceptionHandler(InvalidIntegrationRequestExceptionLegacy::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun invalidIntegrationRequestExceptionLegacy(ex: InvalidIntegrationRequestExceptionLegacy): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
+        return ErrorMessageResponse.of(ex.getErrorCode().name,message);
+    }
+
 }

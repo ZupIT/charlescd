@@ -19,9 +19,8 @@
 package io.charlescd.moove.commons.exceptions
 
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
-import org.hibernate.loader.plan.exec.internal.AbstractCollectionLoadQueryDetails
 
-open class CustomException : RuntimeException {
+open class CustomExceptionLegacy : RuntimeException {
 
     private val errorCode: MooveErrorCodeLegacy
 
@@ -40,12 +39,12 @@ open class CustomException : RuntimeException {
 
     companion object {
 
-        fun of(errorCode: MooveErrorCodeLegacy): CustomException {
-            return CustomException(errorCode, errorCode.key)
+        fun of(errorCode: MooveErrorCodeLegacy): CustomExceptionLegacy {
+            return CustomExceptionLegacy(errorCode, errorCode.key)
         }
 
-        fun of(errorCode: MooveErrorCodeLegacy, message: String): CustomException {
-            return CustomException(errorCode, message)
+        fun of(errorCode: MooveErrorCodeLegacy, message: String): CustomExceptionLegacy {
+            return CustomExceptionLegacy(errorCode, message)
         }
     }
 
