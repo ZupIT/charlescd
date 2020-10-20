@@ -30,7 +30,6 @@ import (
 	datasource2 "compass/pkg/datasource"
 	"encoding/json"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -51,10 +50,10 @@ type SuiteMetricGroup struct {
 }
 
 func (s *SuiteMetricGroup) SetupSuite() {
-	os.Setenv("ENV", "TEST")
+	setupEnv()
 }
 
-func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
+func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
@@ -72,7 +71,7 @@ func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
 	clearDatabase(s.DB)
 }
 
-func (s *SuiteMetricGroup) AfterTest(suiteName, testName string) {
+func (s *SuiteMetricGroup) AfterTest(_, _ string) {
 	s.DB.Close()
 }
 
