@@ -53,9 +53,10 @@ func NewActionDispatcher(metricGroupRepo metricsgroup.UseCases, actionRepo actio
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
+	logger.Info("Starting action dispatcher ", time.Now())
 	metricGroups, err := dispatcher.metricGroupRepo.FindAll()
 	if err != nil {
-		logger.Error("Cannot find any metric group", "Dispatch", err, nil)
+		logger.Error("Error consulting metrics groups", "Dispatch", err, nil)
 	}
 
 	for _, group := range metricGroups {
@@ -64,7 +65,7 @@ func (dispatcher *ActionDispatcher) dispatch() {
 		}
 	}
 
-	logger.Info("After 5 seconds... ", time.Now())
+	logger.Info("Finishing action dispatcher ", time.Now())
 }
 
 func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
@@ -82,6 +83,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
+	logger.Info("Starting action execution", groupAction.ID)
 	execution, err := dispatcher.groupActionRepo.CreateNewExecution(groupAction.ID.String())
 	if err != nil {
 		logger.Error("error creating execution", "ActionDispatcherExecuteAction", err, nil)
@@ -123,6 +125,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 	if err != nil {
 		logger.Error("error setting execution as success", "doAction", err, act)
 	}
+	logger.Info("Finishing action execution", groupAction.ID)
 }
 
 func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []metric.Metric) bool {

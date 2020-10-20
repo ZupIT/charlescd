@@ -41,7 +41,7 @@ var initialValues = map[string]string{
 	"MOOVE_URL":           "http://charlescd-moove:8080",
 	"DISPATCHER_INTERVAL": "15s",
 	"MOOVE_USER":          "admin@admin",
-	"MOOVE_PATH":          "charlescd-moove:8080",
+	"MOOVE_PATH":          "http://charlescd-moove:8080",
 	"MOOVE_AUTH":          "Bearer 123",
 }
 

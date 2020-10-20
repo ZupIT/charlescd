@@ -71,10 +71,36 @@ func (s *ActionSuite) TestParseAction() {
     "nickname": "Open-sea up",
     "type": "  CircleUpstream  ",
     "description": "    ",
+	"useDefaultConfiguration": false,
     "configuration": {
         "authorId": "123456789",
         "destinyCircle": "open-sea"
     },
+    "workspaceId": "5b17f1ec-41ab-472a-b307-f0495e480a1c"
+}`)
+	stringReadCloser := ioutil.NopCloser(stringReader)
+
+	res, err := s.repository.ParseAction(stringReadCloser)
+
+	wsID, _ := uuid.Parse("5b17f1ec-41ab-472a-b307-f0495e480a1c")
+
+	require.NoError(s.T(), err)
+	require.NotNil(s.T(), res)
+
+	require.Equal(s.T(), "Open-sea up", res.Nickname)
+	require.Equal(s.T(), "CircleUpstream", res.Type)
+	require.Equal(s.T(), "", res.Description)
+	require.Equal(s.T(), wsID, res.WorkspaceId)
+	require.NotNil(s.T(), res.Configuration)
+	require.True(s.T(), len(res.Configuration) > 0)
+}
+
+func (s *ActionSuite) TestParseActionUseDefault() {
+	stringReader := strings.NewReader(`{
+    "nickname": "Open-sea up",
+    "type": "  CircleUpstream  ",
+    "description": "    ",
+	"useDefaultConfiguration": true
     "workspaceId": "5b17f1ec-41ab-472a-b307-f0495e480a1c"
 }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)

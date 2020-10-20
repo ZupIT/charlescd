@@ -41,14 +41,14 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 	var ac *actionConfiguration
 	err := json.Unmarshal(actionConfig, &ac)
 	if err != nil {
-		logger.Error("ACTION_PARSE_ERROR", "DoDeploymentAction", err, nil)
+		logger.Error("ACTION_PARSE_ERROR", "DoDeploymentAction", err, fmt.Sprintf("ActionConfig: %s", string(actionConfig)))
 		return err
 	}
 
 	var ec *executionConfiguration
 	err = json.Unmarshal(executionConfig, &ec)
 	if err != nil {
-		logger.Error("EXECUTION_PARSE_ERROR", "DoDeploymentAction", err, nil)
+		logger.Error("EXECUTION_PARSE_ERROR", "DoDeploymentAction", err, fmt.Sprintf("ExecutionConfig: %s", string(executionConfig)))
 		return err
 	}
 
@@ -123,7 +123,14 @@ func ValidateActionConfiguration(actionConfig []byte) []error {
 	}
 
 	if strings.TrimSpace(config.MooveURL) == "" {
+		logger.Error("VALIDATE_CIRCLE_ACTION_CONFIG", "ValidateActionConfiguration", err, fmt.Sprintf("%+v", config))
 		errs = append(errs, errors.New("moove url is required"))
+	}
+
+	err = testConnection(config.MooveURL)
+	if err != nil {
+		logger.Error("VALIDATE_CIRCLE_ACTION_CONFIG", "ValidateActionConfiguration", err, fmt.Sprintf("%+v", config))
+		errs = append(errs, errors.New("moove could not be reached"))
 	}
 
 	return errs

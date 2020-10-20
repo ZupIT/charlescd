@@ -56,11 +56,11 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if metric.Nickname == "" {
-		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("Metric nickname is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("metric nickname is required").Error()})
 	}
 
 	if metric.Query == "" && metric.Metric == "" {
-		ers = append(ers, util.ErrorUtil{Field: "query/metric", Error: errors.New("Metric name/query is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "query/metric", Error: errors.New("metric name/query is required").Error()})
 	}
 
 	if len(metric.Filters) > 0 {
@@ -276,9 +276,9 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 	}
 
 	return getQuery.(func(request datasource.ResultRequest) (float64, error))(datasource.ResultRequest{
-		dataSourceConfigurationData,
-		query,
-		metric.Filters,
+		DatasourceConfiguration: dataSourceConfigurationData,
+		Query:                   query,
+		Filters:                 metric.Filters,
 	})
 }
 
@@ -314,13 +314,13 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 	}
 
 	return getQuery.(func(request datasource.QueryRequest) ([]datasource.Value, error))(datasource.QueryRequest{
-		datasource.ResultRequest{
-			dataSourceConfigurationData,
-			query,
-			metric.Filters,
+		ResultRequest: datasource.ResultRequest{
+			DatasourceConfiguration: dataSourceConfigurationData,
+			Query:                   query,
+			Filters:                 metric.Filters,
 		},
-		period,
-		interval,
+		RangePeriod: period,
+		Interval:    interval,
 	})
 }
 
