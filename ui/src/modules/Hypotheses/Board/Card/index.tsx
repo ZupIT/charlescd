@@ -19,12 +19,14 @@ import {
   DraggableProvidedDraggableProps,
   DraggableProvidedDragHandleProps
 } from 'react-beautiful-dnd';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'core/utils/routes';
 import { setCard } from 'modules/Hypotheses/state/actions';
+import { CARD_TYPE_ACTION } from 'modules/Hypotheses/Board/Card/constants';
 import { useDispatch } from 'core/state/hooks';
 import { Card as CardProps } from '../interfaces';
 import { useCard, useBoard } from '../hooks';
 import CardView from './View';
+import CardRemove from './Remove';
 import Styled from './styled';
 
 interface Props {
@@ -35,6 +37,10 @@ interface Props {
   onSelect?: Function;
   isSelected?: boolean;
   isSelectable?: boolean;
+}
+
+interface Params {
+  hypothesisId: string;
 }
 
 const CardBoard = forwardRef(
@@ -50,31 +56,40 @@ const CardBoard = forwardRef(
     }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
-    const { hypothesisId } = useParams();
+    const { hypothesisId } = useParams<Params>();
     const dispatch = useDispatch();
     const { getAll } = useBoard();
-    const { removeBy, responseRemove, archiveBy, responseArchive } = useCard();
-    const [cardId, setCardId] = useState<string>();
-    const [toggleModal, setToggleModal] = useState(false);
+    const {
+      archiveBy,
+      responseArchive,
+      removeById,
+      responseRemove
+    } = useCard();
+    const [toggleModalView, setToggleModalView] = useState(false);
+    const [toggleModalRemove, setToggleModalRemove] = useState(false);
 
     useEffect(() => {
-      cardId && setToggleModal(true);
-    }, [cardId]);
-
-    useEffect(() => {
-      if (responseRemove || responseArchive) {
+      if (responseArchive || responseRemove) {
         getAll(hypothesisId);
       }
-    }, [responseRemove, responseArchive, getAll, hypothesisId]);
+    }, [responseArchive, responseRemove, getAll, hypothesisId]);
 
-    const handleClose = (updatedCard: CardProps) => {
-      setToggleModal(false);
-      setCardId(null);
-      dispatch(setCard(columnId, updatedCard));
+    const onCloseView = (cardUpdated: CardProps) => {
+      setToggleModalView(false);
+      dispatch(setCard(columnId, cardUpdated));
     };
 
-    const removeCard = () => {
-      removeBy(card.id);
+    const onRemove = () => {
+      setToggleModalRemove(false);
+      getAll(hypothesisId);
+    };
+
+    const handleRemove = () => {
+      if (card.type === CARD_TYPE_ACTION) {
+        removeById(card.id);
+      } else {
+        setToggleModalRemove(true);
+      }
     };
 
     const archiveCard = () => {
@@ -85,20 +100,30 @@ const CardBoard = forwardRef(
       if (isSelectable) {
         onSelect();
       } else {
-        setCardId(card.id);
+        setToggleModalView(true);
       }
     };
 
-    const renderModal = () => (
+    const renderModalView = () => (
       <CardView
-        id={cardId}
-        onClose={(updatedCard: CardProps) => handleClose(updatedCard)}
+        id={card.id}
+        onClose={(cardUpdated: CardProps) => onCloseView(cardUpdated)}
+      />
+    );
+
+    const renderModalRemove = () => (
+      <CardRemove
+        id={card.id}
+        isProtected={card.isProtected}
+        onRemove={onRemove}
+        onClose={() => setToggleModalRemove(false)}
       />
     );
 
     return (
       <Fragment>
-        {toggleModal && renderModal()}
+        {toggleModalView && renderModalView()}
+        {toggleModalRemove && renderModalRemove()}
         <Styled.Card
           ref={ref}
           type={card.type}
@@ -108,7 +133,7 @@ const CardBoard = forwardRef(
           isSelected={isSelected}
           isSelectable={isSelectable}
           onClick={() => handleClick()}
-          onRemove={() => removeCard()}
+          onRemove={() => handleRemove()}
           onArchive={() => archiveCard()}
           {...draggableProps}
           {...dragHandleProps}

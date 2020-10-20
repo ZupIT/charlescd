@@ -90,6 +90,13 @@ const Input = styled.input<InputProps>`
     `};
 `;
 
+const Tip = styled.div`
+  position: absolute;
+  display: block;
+  right: 0;
+  bottom: 5px;
+`;
+
 const Loading = styled(Icon)`
   position: absolute;
   display: block;
@@ -101,5 +108,6 @@ export default {
   Wrapper,
   Input,
   Label,
+  Tip,
   Loading
 };

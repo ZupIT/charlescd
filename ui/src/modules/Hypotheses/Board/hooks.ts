@@ -89,7 +89,7 @@ export const useBoard = (): BoardFetchProps => {
 
 interface Props extends FetchProps {
   getById: Function;
-  removeBy: Function;
+  removeById: Function;
   archiveBy: Function;
 }
 
@@ -117,15 +117,15 @@ export const useAddMember = (): AddMemberProps => {
 
 interface AddModuleProps {
   loading: boolean;
-  addModules: Function;
+  persistModules: Function;
 }
 
-export const useAddModule = (): AddModuleProps => {
+export const useModules = (): AddModuleProps => {
   const dispatch = useDispatch();
   const [data, updateCard] = useFetch(updateById);
   const { loading, error } = data;
 
-  const addModules = useCallback(
+  const persistModules = useCallback(
     (cardId: string, payload: CardPayload) => {
       updateCard(cardId, payload);
     },
@@ -145,7 +145,7 @@ export const useAddModule = (): AddModuleProps => {
 
   return {
     loading,
-    addModules
+    persistModules
   };
 };
 
@@ -156,7 +156,11 @@ export const useCard = (): Props => {
   const [archivedCard, archiveCard] = useFetch(archiveById);
   const [updateResponse, updateCard] = useFetch(updateById);
   const { response, loading, error } = card;
-  const { response: responseRemove, error: errorRemove } = removedCard;
+  const {
+    response: responseRemove,
+    error: errorRemove,
+    loading: loadingRemove
+  } = removedCard;
   const { response: responseArchive, error: errorArchive } = archivedCard;
   const { loading: loadingUpdate, error: errorUpdate } = updateResponse;
 
@@ -178,9 +182,9 @@ export const useCard = (): Props => {
     }
   }, [error, dispatch]);
 
-  const removeBy = useCallback(
-    (id: string) => {
-      removeCard(id);
+  const removeById = useCallback(
+    (id: string, branchDeletion: boolean) => {
+      removeCard(id, branchDeletion);
     },
     [removeCard]
   );
@@ -234,8 +238,9 @@ export const useCard = (): Props => {
 
   return {
     getById,
-    removeBy,
+    removeById,
     responseRemove,
+    loadingRemove,
     archiveBy,
     responseArchive,
     response,

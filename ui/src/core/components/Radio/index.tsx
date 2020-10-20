@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
+import React from 'react';
+import RadioButtons, { Props as RadioButtonsProps } from './Buttons';
+import RadioCards, { Props as RadioCardsProps } from './Cards';
 
-const getQueryStrings = () => new URLSearchParams(window.location.search);
-
-export type URLParams = {
-  [key: string]: boolean | string | number | string[] | number[];
+const Radio = {
+  Buttons: (props: RadioButtonsProps) => <RadioButtons {...props} />,
+  Cards: (props: RadioCardsProps) => <RadioCards {...props} />
 };
 
-export const buildParams = (data: URLParams) => {
-  const params = new URLSearchParams();
-
-  forEach(data, (value, key) => {
-    if (Array.isArray(data[key])) {
-      forEach(value as [], item => params.append(key, item));
-    } else {
-      params.append(key, value as string);
-    }
-  });
-
-  return params;
-};
-
-export default getQueryStrings;
+export default Radio;

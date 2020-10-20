@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render, fireEvent, wait, waitForDomChange } from 'unit-test/testUtils';
-import RadioGroup from '../';
+import RadioButtons from '../';
 
 const props = {
   name: 'git',
@@ -29,7 +29,7 @@ const props = {
 test('render RadioGroup default component', async () => {
   const onChange = jest.fn();
   const { queryByTestId } = render(
-    <RadioGroup
+    <RadioButtons
       name={props.name}
       items={props.radios}
       onChange={onChange}
@@ -48,7 +48,7 @@ test('render RadioGroup default component', async () => {
 test('render RadioGroup and trigger event', () => {
   const onChange = jest.fn();
   const { queryByTestId } = render(
-    <RadioGroup
+    <RadioButtons
       name={props.name}
       items={props.radios}
       onChange={onChange}
@@ -61,4 +61,4 @@ test('render RadioGroup and trigger event', () => {
   fireEvent.change(element, { currentTarget: { value }});
 
   wait(() => expect(onChange).toHaveBeenCalledWith(value));
-});
+}); 

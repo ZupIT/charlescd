@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
+import { RadioCard } from 'core/components/Radio/Cards/Item';
 
-const getQueryStrings = () => new URLSearchParams(window.location.search);
-
-export type URLParams = {
-  [key: string]: boolean | string | number | string[] | number[];
-};
-
-export const buildParams = (data: URLParams) => {
-  const params = new URLSearchParams();
-
-  forEach(data, (value, key) => {
-    if (Array.isArray(data[key])) {
-      forEach(value as [], item => params.append(key, item));
-    } else {
-      params.append(key, value as string);
-    }
-  });
-
-  return params;
-};
-
-export default getQueryStrings;
+export const radios: RadioCard[] = [
+  {
+    title: 'Card',
+    description:
+      'We will delete the card but the git branch will still exists.',
+    value: 'card',
+    checked: true
+  },
+  {
+    title: 'Card and Branch',
+    description: 'We will delete the card and the git branch.',
+    value: 'card-branch',
+    disabled: false
+  }
+];

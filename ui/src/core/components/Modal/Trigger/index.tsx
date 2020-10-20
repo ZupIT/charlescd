@@ -22,19 +22,25 @@ import Styled from './styled';
 
 export interface Props {
   title: string;
+  className?: string;
   dismissLabel: string;
   continueLabel?: string;
   onContinue?: Function;
   onDismiss: Function;
+  isDisabled?: boolean;
+  isLoading?: boolean;
   children: ReactNode;
 }
 
 const Trigger = ({
+  className,
   onContinue,
   onDismiss,
   continueLabel,
   dismissLabel,
   title,
+  isDisabled,
+  isLoading,
   children
 }: Props) => {
   const [toggle, switchToggle] = useState(true);
@@ -52,9 +58,13 @@ const Trigger = ({
 
   return (
     toggle && (
-      <Styled.Wrapper data-testid="modal-trigger" ref={menuRef}>
-        <Styled.Background />
-        <Styled.Content>
+      <Styled.Wrapper
+        ref={menuRef}
+        data-testid="modal-trigger"
+        className={className}
+      >
+        <Styled.Background className="modal-background" />
+        <Styled.Content className="modal-content">
           <Styled.Button.Container>
             <Icon
               name="cancel"
@@ -66,14 +76,21 @@ const Trigger = ({
           <Styled.Title weight="bold" color="light">
             {title}
           </Styled.Title>
-          <Text.h4 color="light">{children}</Text.h4>
-          <Styled.Buttons>
-            <Styled.Button.Dismiss id="dismiss" onClick={() => onDismiss()}>
+          {children}
+          <Styled.Buttons className="modal-buttons">
+            <Styled.Button.Dismiss
+              id="dismiss"
+              className="modal-button-dismiss"
+              onClick={() => handleDismiss()}
+            >
               <Text.h5 color="light">{dismissLabel}</Text.h5>
             </Styled.Button.Dismiss>
             {onContinue && (
               <Styled.Button.Continue
                 id="continue"
+                className="modal-button-continue"
+                isLoading={isLoading}
+                isDisabled={isDisabled}
                 onClick={() => onContinue()}
               >
                 <Text.h5 color="light">{continueLabel}</Text.h5>

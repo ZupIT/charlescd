@@ -21,6 +21,11 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
+const Anchor = styled.div`
+  width: auto;
+  height: auto;
+`;
+
 const Content = styled.div``;
 
 const Link = styled.a`
@@ -69,6 +74,7 @@ const Popover = styled.div`
 export default {
   Link,
   Wrapper,
+  Anchor,
   Content,
   Popover
 };

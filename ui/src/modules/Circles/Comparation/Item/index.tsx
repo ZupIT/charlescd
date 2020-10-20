@@ -235,8 +235,10 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       onContinue={() => handleDelete(circle?.deployment?.status)}
       onDismiss={() => setAction('Cancel')}
     >
-      When deleting this circle, users will be sent to Default and all metrics
-      in this circle will be lost. Do you wish to continue?
+      <Text.h4 color="light">
+        When deleting this circle, users will be sent to Default and all metrics
+        in this circle will be lost. Do you wish to continue?
+      </Text.h4>
     </Modal.Trigger>
   );
 

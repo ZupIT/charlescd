@@ -107,10 +107,10 @@ const ButtonIconRoundedPeriod = styled(ButtonIconRoundedComponent)`
   ${({ isActive }: ButtonIconProps) =>
     isActive &&
     css`
-      border: solid 1px ${({ theme }) => theme.radio.checked.color};
+      border: solid 1px ${({ theme }) => theme.radio.button.checked.color};
 
       span {
-        color: ${({ theme }) => theme.radio.checked.color};
+        color: ${({ theme }) => theme.radio.button.checked.color};
       }
     `};
 `;

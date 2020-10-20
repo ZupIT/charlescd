@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Radio } from 'core/components/RadioGroup';
+import { RadioButton } from 'core/components/Radio/Buttons';
 
 export const FORM_REGISTRY = 'registry';
 
-export const radios: Radio[] = [
+export const radios: RadioButton[] = [
   { icon: 'aws', name: 'AWS', value: 'AWS' },
   { icon: 'azure', name: 'Azure', value: 'AZURE' },
   { icon: 'gcp', name: 'GCP', value: 'GCP' },

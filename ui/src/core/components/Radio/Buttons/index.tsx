@@ -19,20 +19,20 @@ import map from 'lodash/map';
 import { ChangeInputEvent } from 'core/interfaces/InputEvents';
 import Styled from './styled';
 
-export interface Radio {
+export interface RadioButton {
   icon?: string;
   name?: string;
   value: string;
 }
 
-interface Props {
-  items: Radio[];
+export interface Props {
+  items: RadioButton[];
   name: string;
   onChange?: (event: ChangeInputEvent) => void;
 }
 
-const RadioGroup = ({ name, items, onChange }: Props) => (
-  <Styled.RadioGroup data-testid={`radio-group-${name}`}>
+const RadioButtons = ({ name, items, onChange }: Props) => (
+  <Styled.RadioButtons data-testid={`radio-group-${name}`}>
     {map(items, item => {
       const id = `radio-group-${name}-item-${item.value}`;
 
@@ -55,7 +55,7 @@ const RadioGroup = ({ name, items, onChange }: Props) => (
         </Styled.Radio>
       );
     })}
-  </Styled.RadioGroup>
+  </Styled.RadioButtons>
 );
 
-export default RadioGroup;
+export default RadioButtons;

@@ -16,6 +16,7 @@
 
 import { baseRequest, putRequest, deleteRequest, postRequest } from './base';
 import { Module } from 'modules/Modules/interfaces/Module';
+import { buildParams, URLParams } from 'core/utils/query';
 
 const endpoint = '/moove/cards';
 
@@ -43,7 +44,8 @@ export const archiveById = (cardId: string) =>
 export const updateById = (id: string, payload: Payload) =>
   putRequest(`${endpoint}/${id}`, payload);
 
-export const deleteById = (id: string) => deleteRequest(`${endpoint}/${id}`);
+export const deleteById = (id: string, branchDeletion: boolean) =>
+  deleteRequest(`${endpoint}/${id}?${buildParams({ branchDeletion })}`);
 
 export const createCard = (payload: Payload) =>
   postRequest(`${endpoint}`, payload);
