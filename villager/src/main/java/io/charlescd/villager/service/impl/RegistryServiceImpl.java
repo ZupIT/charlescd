@@ -16,6 +16,7 @@
 package io.charlescd.villager.service.impl;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
+import io.charlescd.villager.exceptions.IntegrationException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
@@ -24,7 +25,6 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.*;
 import io.charlescd.villager.service.RegistryService;
 import org.apache.http.HttpStatus;
-import org.hibernate.secure.spi.IntegrationException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -68,7 +68,7 @@ public class RegistryServiceImpl implements RegistryService {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, artifactName);
 
             return this.registryClient.getImage(artifactName, name, entity.connectionData);
-        } finally {
+        } finally           {
             this.registryClient.closeQuietly();
         }
     }
