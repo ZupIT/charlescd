@@ -100,7 +100,7 @@ func (s *ActionSuite) TestParseActionUseDefault() {
     "nickname": "Open-sea up",
     "type": "  CircleUpstream  ",
     "description": "    ",
-	"useDefaultConfiguration": true
+	"useDefaultConfiguration": true,
     "workspaceId": "5b17f1ec-41ab-472a-b307-f0495e480a1c"
 }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
