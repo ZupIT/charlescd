@@ -59,9 +59,9 @@ export class CreateDeploymentUseCase {
   }
 
   private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
-    this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
+    this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT')
     const deployment = await manager.save(createDeploymentDto.toCircleEntity())
-    this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
+    this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT')
     return deployment
   }
 

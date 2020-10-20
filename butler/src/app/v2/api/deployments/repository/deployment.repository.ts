@@ -16,12 +16,6 @@
 
 import { EntityRepository, Repository } from 'typeorm'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
-import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
-import { AppConstants } from '../../../../v1/core/constants'
-import { CommonTemplateUtils } from '../../../core/integrations/spinnaker/utils/common-template.utils'
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
-import { ComponentEntity } from '../../../../v1/api/components/entity'
-import { ComponentEntityV2 } from '../entity/component.entity'
 
 @EntityRepository(DeploymentEntityV2)
 export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
@@ -32,5 +26,4 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .where('deployment.active = true')
       .getMany()
   }
-
 }

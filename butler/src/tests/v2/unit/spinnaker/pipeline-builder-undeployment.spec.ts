@@ -66,7 +66,7 @@ const deploymentWith2Components: Deployment = {
       running: false,
       hostValue: null,
       gatewayName: null,
-      namespace: 'sandbox',
+      namespace: 'sandbox'
     }
   ]
 }
@@ -112,7 +112,7 @@ const deploymentWith2ComponentsHostnameGateway: Deployment = {
       running: false,
       hostValue: 'host-value-2',
       gatewayName: 'gateway-name-2',
-      namespace: 'sandbox',
+      namespace: 'sandbox'
     }
   ]
 }
@@ -458,9 +458,9 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          },
+          }
         },
-        namespace: 'sandbox',
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -492,7 +492,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         },
-        namespace: 'sandbox',
+        namespace: 'sandbox'
       }
     ]
 
@@ -630,7 +630,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         },
-        namespace: 'sandbox',
+        namespace: 'sandbox'
       }
     ]
 
@@ -695,6 +695,8 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
+
+
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -734,7 +736,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          },
+          }
         },
         namespace: 'sandbox',
       },
@@ -936,9 +938,9 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          },
+          }
         },
-        namespace: 'sandbox',
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -970,7 +972,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         },
-        namespace: 'sandbox',
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-8',
@@ -1034,7 +1036,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         },
-        namespace: 'sandbox',
+        namespace: 'sandbox'
       }
     ]
 

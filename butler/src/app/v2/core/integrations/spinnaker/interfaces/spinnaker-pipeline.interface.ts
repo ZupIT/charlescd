@@ -15,6 +15,7 @@
  */
 
 import { DeploymentNotificationRequestDto } from '../../../../api/deployments/dto/deployment-notification-request.dto'
+import { K8sManifest } from '../../interfaces/k8s-manifest.interface'
 
 interface StageDefaultArtifact {
     customKind: boolean
@@ -68,6 +69,7 @@ interface TrafficManagement {
     options: Options
 }
 
+<<<<<<< HEAD
 interface Metadata {
     name: string
     namespace: string
@@ -153,6 +155,8 @@ interface Manifest {
     spec: Spec
 }
 
+=======
+>>>>>>> 0384abb996e9cf270e10e99ff75d84fedc0ac970
 interface CustomHeaders {
     'x-circle-id': string
 }
@@ -199,7 +203,11 @@ interface Stage {
     skipExpressionEvaluation?: boolean
     source?: string
     trafficManagement?: TrafficManagement
+<<<<<<< HEAD
     manifests?: Manifest[]
+=======
+    manifests?: K8sManifest[]
+>>>>>>> 0384abb996e9cf270e10e99ff75d84fedc0ac970
     customHeaders?: CustomHeaders
     method?: string
     payload?: DeploymentNotificationRequestDto
@@ -250,8 +258,11 @@ interface SpinnakerPipeline {
 }
 
 export {
+<<<<<<< HEAD
   Subset,
   Http,
+=======
+>>>>>>> 0384abb996e9cf270e10e99ff75d84fedc0ac970
   Stage,
   ExpectedArtifact,
   SpinnakerPipeline

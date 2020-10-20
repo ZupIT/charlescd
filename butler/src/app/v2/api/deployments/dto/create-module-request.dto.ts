@@ -20,6 +20,7 @@ import { Type } from 'class-transformer'
 import { IsNotEmpty, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
 import { ComponentUniqueProp } from '../validations/component-unique-by-name'
 import { CompositeFieldSize } from '../validations/composite-field-size'
+import { ImageTagValidation } from '../validations/image-tag-validation'
 import { CreateComponentRequestDto } from './create-component-request.dto'
 
 export class CreateModuleDeploymentDto {
@@ -39,6 +40,7 @@ export class CreateModuleDeploymentDto {
   @Type(() => CreateComponentRequestDto)
   @Validate(ComponentUniqueProp, ['componentName'])
   @Validate(CompositeFieldSize)
+  @Validate(ImageTagValidation)
   public readonly components: CreateComponentRequestDto[]
 
   constructor(moduleId: string, helmRepository: string, components: CreateComponentRequestDto[]) {

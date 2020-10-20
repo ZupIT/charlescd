@@ -23,14 +23,13 @@ import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
-import { SpinnakerConnector } from '../../../core/integrations/spinnaker/connector'
-import { ConnectorResultError } from '../../../core/integrations/spinnaker/interfaces/'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
+import { CdStrategyFactory } from '../../../core/integrations/cd-strategy-factory'
 
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
@@ -47,7 +46,7 @@ export class DeploymentHandlerUseCase {
     private cdConfigurationsRepository: CdConfigurationsRepository,
     @Inject(forwardRef(() => PgBossWorker))
     private pgBoss: PgBossWorker,
-    private spinnakerConnector: SpinnakerConnector,
+    private cdStrategy: CdStrategyFactory,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private envConfiguration: IEnvConfiguration,
   ) { }
@@ -84,28 +83,44 @@ export class DeploymentHandlerUseCase {
 
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-    const cdResponse = await this.spinnakerConnector.createDeployment(
-      deployment,
-      activeComponents,
-      { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
-    )
-    return cdResponse.status === 'ERROR' ?
-      await this.handleCdError(job, cdResponse) :
-      await this.handleCdSuccess(job, deployment)
+
+    try {
+      await this.updateComponentsRunningStatus(deployment, true)
+      const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
+      const cdResponse = await cdConnector.createDeployment(
+        deployment,
+        activeComponents,
+        { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
+      )
+      return cdResponse.status === 'ERROR' ?
+        await this.handleCdError(job, cdResponse.error, deployment) :
+        await this.handleCdSuccess(job)
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:RUN_DEPLOYMENT_EXECUTION', { error })
+      return this.handleCdError(job, error, deployment)
+    }
   }
 
   private async runUndeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
     this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-    const cdResponse = await this.spinnakerConnector.createUndeployment(
-      deployment,
-      activeComponents,
-      { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
-    )
-    return cdResponse.status === 'ERROR' ?
-      await this.handleCdError(job, cdResponse) :
-      await this.handleCdSuccess(job, deployment)
+
+    try {
+      await this.updateComponentsRunningStatus(deployment, true)
+      const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
+      const cdResponse = await cdConnector.createUndeployment(
+        deployment,
+        activeComponents,
+        { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
+      )
+      return cdResponse.status === 'ERROR' ?
+        await this.handleCdError(job, cdResponse.error, deployment) :
+        await this.handleCdSuccess(job)
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:RUN_UNDEPLOYMENT_EXECUTION', { error })
+      return this.handleCdError(job, error, deployment)
+    }
   }
 
   private handleInvalidExecutionType(job: ExecutionJob): ExecutionJob {
@@ -132,16 +147,18 @@ export class DeploymentHandlerUseCase {
     return job
   }
 
-  public async handleCdSuccess(job: ExecutionJob, deployment: DeploymentEntity) : Promise<ExecutionJob> {
-    await this.updateComponentsToRunning(deployment)
+
+  public async handleCdSuccess(job: ExecutionJob) : Promise<ExecutionJob> {
     this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job.id })
     job.done()
     return job
   }
 
-  public async handleCdError(job: ExecutionJob, cdResponse: ConnectorResultError): Promise<ExecutionJob> {
-    this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job.id, error: cdResponse.error })
-    job.done(new Error(cdResponse.error))
+
+  public async handleCdError(job: ExecutionJob, error: string, deployment: DeploymentEntity): Promise<ExecutionJob> {
+    await this.updateComponentsRunningStatus(deployment, false)
+    this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job.id, error })
+    job.done(new Error(error))
     return job
   }
 
@@ -159,13 +176,11 @@ export class DeploymentHandlerUseCase {
     return await this.componentsRepository.find({ where: { name: In(names), deployment: deployment } })
   }
 
-  public async updateComponentsToRunning(deployment: DeploymentEntity): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
-    deployment.components = deployment.components.map(c => {
-      c.running = true
-      return c
-    })
-    const updated = await this.deploymentsRepository.save(deployment, { reload: true })
-    return updated
+  public async updateComponentsRunningStatus(deployment: DeploymentEntity, status: boolean): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
+    for await (const c of deployment.components) {
+      await this.componentsRepository.update({ id: c.id }, { running: status })
+    }
+    return this.deploymentsRepository.findOneOrFail(deployment.id)
   }
 
   public async getOverlappingComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {

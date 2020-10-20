@@ -17,7 +17,6 @@
 import { ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 
-
 @ValidatorConstraint({ name: 'compositeFieldSize', async: false })
 export class CompositeFieldSize implements ValidatorConstraintInterface {
   private invalidSizes!: CreateComponentRequestDto[]

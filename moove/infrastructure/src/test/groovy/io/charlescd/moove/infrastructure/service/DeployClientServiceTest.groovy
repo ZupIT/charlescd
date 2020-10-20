@@ -174,17 +174,19 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def undeployRequestCompare = new UndeployRequest("author-id", deployment.id)
+        def undeployRequestCompare = new UndeployRequest("author-id")
+        def deploymentIdCompare = deployment.id
 
         when:
         deployClientService.undeploy(deployment.id, "author-id")
 
         then:
-        1 * deployClient.undeploy(_) >> { arguments ->
-            def undeployRequest = arguments[0]
+        1 * deployClient.undeploy(_, _) >> { arguments ->
+            def deploymentId = arguments[0]
+            def undeployRequest = arguments[1]
+            assert deploymentId == deploymentIdCompare
             assert undeployRequest instanceof UndeployRequest
             assert undeployRequest.authorId == undeployRequestCompare.authorId
-            assert undeployRequest.deploymentId == undeployRequestCompare.deploymentId
         }
     }
 

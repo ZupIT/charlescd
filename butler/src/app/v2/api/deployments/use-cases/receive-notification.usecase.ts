@@ -24,6 +24,8 @@ import { MooveService } from '../../../../v1/core/integrations/moove'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { DateUtils } from '../../../core/utils/date.utils'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
+import { ComponentEntityV2 } from '../entity/component.entity'
+import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { ComponentsRepositoryV2 } from '../repository'
@@ -44,17 +46,20 @@ export class ReceiveNotificationUseCase {
   ) {}
 
   public async execute(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution>{
+    this.consoleLoggerService.log('START:RECEIVE_NOTIFICATION_USECASE', { executionId, notification: deploymentNotificationDto })
     switch (deploymentNotificationDto.type) {
       case ExecutionTypeEnum.DEPLOYMENT:
         return await this.handleDeploymentNotification(executionId, deploymentNotificationDto)
       case ExecutionTypeEnum.UNDEPLOYMENT:
         return await this.handleUndeploymentNotification(executionId, deploymentNotificationDto)
       default:
+        this.consoleLoggerService.log('ERROR:INVALID_EXECUTION_TYPE', { type: deploymentNotificationDto.type })
         throw new Error('Invalid Execution Type')
     }
   }
 
   private async handleDeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
+    this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_NOTIFICATION')
     const execution = await this.executionRepository.findOneOrFail({ id: executionId }, { relations: ['deployment', 'deployment.components'] })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: execution.deployment.circleId, active: true } })
 
@@ -80,24 +85,30 @@ export class ReceiveNotificationUseCase {
     const savedExecution = await getConnection().transaction(async transactionManager => {
       try {
         if (currentActiveDeployment) {
-          await transactionManager.save(currentActiveDeployment)
+          await transactionManager.update(DeploymentEntityV2, { id: currentActiveDeployment.id }, { active: currentActiveDeployment.active })
         }
-        await transactionManager.save(execution.deployment.components)
-        await transactionManager.save(execution.deployment)
-        return await transactionManager.save(execution)
+        for await (const c of execution.deployment.components) {
+          transactionManager.update(ComponentEntityV2, { id: c.id }, { running: c.running })
+        }
+        await transactionManager.update(DeploymentEntityV2, { id: execution.deployment.id }, { active: execution.deployment.active })
+        await transactionManager.update(Execution, { id: execution.id }, { status: execution.status, finishedAt: DateUtils.now() })
+        return execution
       }
       catch (error) {
         if (error.constraint === QueuedDeploymentsConstraints.ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG) {
           this.consoleLoggerService.log('ERROR:Can only have one deployment active per circle')
           throw new InternalServerErrorException('Can only have one deployment active per circle')
         } else {
-          this.consoleLoggerService.log('ERROR:Failed to save deployment ')
+          this.consoleLoggerService.log('ERROR:Failed to save deployment')
+          this.consoleLoggerService.log(error)
           throw new InternalServerErrorException
         }
       }
     })
 
     await this.notifyMooveAndUpdateDeployment(savedExecution)
+    this.consoleLoggerService.log('FINISH:HANDLE_DEPLOYMENT_NOTIFICATION')
+
     return await this.executionRepository.findOneOrFail(savedExecution.id, { relations: ['deployment', 'deployment.components'] })
   }
 
@@ -114,7 +125,7 @@ export class ReceiveNotificationUseCase {
     }
 
     const notificationResult = await this.sendMooveNotification(
-      execution.id,
+      execution.id, //TODO unnecessary parameter
       notificationStatus,
       execution.deployment.callbackUrl,
       execution.incomingCircleId
@@ -133,6 +144,8 @@ export class ReceiveNotificationUseCase {
   }
 
   private async handleUndeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
+
+    this.consoleLoggerService.log('START:HANDLE_UNDEPLOYMENT_NOTIFICATION')
     const execution = await this.executionRepository.findOneOrFail(executionId, { relations: ['deployment', 'deployment.components'] })
     execution.finishedAt = DateUtils.now()
     execution.deployment.components = execution.deployment.components.map(c => {
@@ -154,10 +167,11 @@ export class ReceiveNotificationUseCase {
       await this.componentRepository.save(execution.deployment.components)
       const updatedExecution = await this.executionRepository.save(execution)
       await this.notifyMooveAndUpdateDeployment(updatedExecution)
+      this.consoleLoggerService.log('FINISH:HANDLE_UNDEPLOYMENT_NOTIFICATION')
       return await this.executionRepository.findOneOrFail(updatedExecution.id, { relations: ['deployment', 'deployment.components'] })
     }
     catch (error) {
-      this.consoleLoggerService.log('ERROR:Failed to save deployment')
+      this.consoleLoggerService.log('ERROR:FAILED_TO_SAVE_DEPLOYMENT')
       throw new InternalServerErrorException()
     }
   }

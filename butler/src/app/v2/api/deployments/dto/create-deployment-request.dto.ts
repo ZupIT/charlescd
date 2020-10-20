@@ -68,7 +68,7 @@ export class CreateDeploymentRequestDto {
     authorId: string,
     callbackUrl: string,
     cdConfigurationId: string,
-    circle: CreateCircleDeploymentDto,
+    circle: CreateCircleDeploymentDto | null,
     status: DeploymentStatusEnum,
     modules: CreateModuleDeploymentDto[]
   ) {
