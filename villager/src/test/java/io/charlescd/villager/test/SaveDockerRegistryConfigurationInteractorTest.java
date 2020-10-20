@@ -37,6 +37,8 @@ import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.impl.SaveDockerRegistryConfigurationInteractorImpl;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import io.charlescd.villager.service.RegistryService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +52,9 @@ public class SaveDockerRegistryConfigurationInteractorTest {
 
     @Mock
     private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
+
+    @Mock
+    private RegistryService registryService;
 
     @Captor
     private ArgumentCaptor<DockerRegistryConfigurationEntity> captor;
@@ -69,7 +74,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
@@ -119,7 +124,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
@@ -174,7 +179,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
@@ -227,7 +232,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
@@ -269,7 +274,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         doThrow(new RuntimeException("Testing")).when(dockerRegistryConfigurationRepository).save(any());
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
@@ -294,7 +299,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
     public void testRegistryTypeNotSupported() {
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")

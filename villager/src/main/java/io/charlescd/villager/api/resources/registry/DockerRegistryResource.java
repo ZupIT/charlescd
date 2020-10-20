@@ -19,11 +19,11 @@ package io.charlescd.villager.api.resources.registry;
 import io.charlescd.villager.api.handlers.impl.CreateDockerRegistryRequestHandler;
 import io.charlescd.villager.api.handlers.impl.GetDockerRegistryTagHandler;
 import io.charlescd.villager.api.handlers.impl.ListDockerRegistryRequestHandler;
-import io.charlescd.villager.interactor.registry.DeleteDockerRegistryConfigurationInteractor;
-import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
-import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
+import io.charlescd.villager.api.handlers.impl.TestDockerRegistryConnectionHandler;
+import io.charlescd.villager.interactor.registry.*;
 import io.charlescd.villager.util.Constants;
+import org.jboss.resteasy.annotations.Status;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -48,16 +48,22 @@ public class DockerRegistryResource {
     private GetDockerRegistryTagInteractor getDockerRegistryTagInteractor;
     private SaveDockerRegistryConfigurationInteractor saveDockerRegistryConfigurationInteractor;
     private DeleteDockerRegistryConfigurationInteractor deleteDockerRegistryConfigurationInteractor;
+    private TestRegistryConnectivityInteractor testRegistryConnectivityInteractor;
+    private TestRegistryConfigInteractor testRegistryConfigInteractor;
 
     @Inject
     public DockerRegistryResource(ListDockerRegistryInteractor listDockerRegistryInteractor,
                                   GetDockerRegistryTagInteractor getDockerRegistryTagInteractor,
                                   SaveDockerRegistryConfigurationInteractor saveDockerRegistryConfigurationInteractor,
-                                  DeleteDockerRegistryConfigurationInteractor deleteDockerRegistryConfigInteractor) {
+                                  DeleteDockerRegistryConfigurationInteractor deleteDockerRegistryConfigInteractor,
+                                  TestRegistryConnectivityInteractor testRegistryConnectivityInteractor,
+                                  TestRegistryConfigInteractor testRegistryConfigInteractor) {
         this.listDockerRegistryInteractor = listDockerRegistryInteractor;
         this.getDockerRegistryTagInteractor = getDockerRegistryTagInteractor;
         this.saveDockerRegistryConfigurationInteractor = saveDockerRegistryConfigurationInteractor;
         this.deleteDockerRegistryConfigurationInteractor = deleteDockerRegistryConfigInteractor;
+        this.testRegistryConnectivityInteractor = testRegistryConnectivityInteractor;
+        this.testRegistryConfigInteractor = testRegistryConfigInteractor;
     }
 
     @POST
@@ -106,6 +112,28 @@ public class DockerRegistryResource {
         );
 
         return new RegistryTagsListRepresentation(componentTagList);
+    }
+
+    @POST
+    @Path("/config-validation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response testConnection(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId,
+                               @Valid CreateDockerRegistryConfigurationRequest request) {
+
+        var requestHandler = new CreateDockerRegistryRequestHandler(workspaceId, request);
+        this.testRegistryConfigInteractor.execute(requestHandler.handle());
+        return Response.status(200).build();
+    }
+
+    @POST
+    @Path("/connection-validation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response validateConfig(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId,
+                               @Valid TestDockerRegistryConnectionRequest request) {
+        var requestHandler =
+                new TestDockerRegistryConnectionHandler(workspaceId, request.artifactRepositoryConfigurationId);
+        this.testRegistryConnectivityInteractor.execute(requestHandler.handle());
+        return Response.status(200).build();
     }
 
     @DELETE
