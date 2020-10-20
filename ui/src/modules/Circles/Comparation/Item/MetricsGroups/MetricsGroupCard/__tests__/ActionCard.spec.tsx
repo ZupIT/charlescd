@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { Action } from '../../types';
 import { actionData } from '../../__tests__/fixtures';
 import ActionCard from '../ActionCard';
 
-test('render Action Card', async () => {
+test('render Action Card', () => {
   render(
     <ActionCard
       handleDeleteAction={jest.fn()}
@@ -28,13 +29,13 @@ test('render Action Card', async () => {
     />
     );
 
-  const staus = screen.getByTestId('action-status-success');
+  const status = screen.getByTestId('action-status-success');
   const nickname = screen.getByText('action');
   const actionType = screen.getByText('Circle promotion');
   const triggeredAt = screen.getByText('08/10/2015 • 12:35:00');
   const dropdown = screen.getByTestId('icon-vertical-dots');
 
-  expect(staus).toBeInTheDocument();
+  expect(status).toBeInTheDocument();
   expect(nickname).toBeInTheDocument();
   expect(actionType).toBeInTheDocument();
   expect(triggeredAt).toBeInTheDocument();
@@ -44,4 +45,59 @@ test('render Action Card', async () => {
 
   fireEvent.click(dropdown);
   fireEvent.click(screen.getByText('Delete action'));
+});
+
+
+
+test('render Action Card and confirm delete', async () => {
+  const deleteActionFn = jest.fn();
+
+  render(
+    <ActionCard
+      handleDeleteAction={deleteActionFn}
+      handleEditAction={jest.fn()}
+      action={actionData}
+    />
+  );
+
+  const dropdown = screen.getByTestId('icon-vertical-dots');
+  fireEvent.click(dropdown);
+  fireEvent.click(screen.getByText('Delete action'));
+  fireEvent.click(screen.getByText('Yes, delete'));
+  expect(deleteActionFn).toHaveBeenCalled()
+});
+
+test('render Action Card and dismiss delete', async () => {
+  const deleteActionFn = jest.fn();
+
+  render(
+    <ActionCard
+      handleDeleteAction={deleteActionFn}
+      handleEditAction={jest.fn()}
+      action={actionData}
+    />
+  );
+
+  const dropdown = screen.getByTestId('icon-vertical-dots');
+  fireEvent.click(dropdown);
+  fireEvent.click(screen.getByText('Delete action'));
+  fireEvent.click(screen.getByText('No'));
+  
+  expect(screen.queryByText('delete-action-card')).not.toBeInTheDocument();
+  expect(screen.getByTestId('metric-group-card-action')).toBeInTheDocument();
+});
+
+test('render Action Card with empty triggeredAt', async () => {
+  const deleteActionFn = jest.fn();
+  const actionData = { } as Action;
+
+  render(
+    <ActionCard
+      handleDeleteAction={deleteActionFn}
+      handleEditAction={jest.fn()}
+      action={actionData}
+    />
+  );
+
+  expect(screen.getByText('-')).toBeInTheDocument();
 });
