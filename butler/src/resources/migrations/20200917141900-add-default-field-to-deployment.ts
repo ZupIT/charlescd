@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from './'
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export interface Deployment {
-    id: string
+export class AddDefaultFieldToDeployment20200917141900 implements MigrationInterface {
 
-    authorId: string
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.addColumn('v2deployments', new TableColumn({
+      name: 'default',
+      type: 'boolean',
+      isNullable: true,
+    }))
+  }
 
-    callbackUrl: string
-
-    createdAt: Date
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string
-
-    components?: Component[]
-
-    defaultCircle: boolean
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropColumn('v2deployments', 'default')
+  }
 }

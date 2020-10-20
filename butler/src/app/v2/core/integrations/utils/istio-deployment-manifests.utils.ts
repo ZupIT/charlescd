@@ -32,9 +32,9 @@ const IstioDeploymentManifestsUtils = {
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
         hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
-        http: deployment.circleId ?
-          IstioDeploymentManifestsUtils.getCircleHTTPRules(component, deployment.circleId, activeByName) :
-          IstioDeploymentManifestsUtils.getDefaultCircleHTTPRules(component, activeByName)
+        http: deployment.defaultCircle ?
+          IstioDeploymentManifestsUtils.getDefaultCircleHTTPRules(component, activeByName) :
+          IstioDeploymentManifestsUtils.getCircleHTTPRules(component, deployment.circleId, activeByName)
       }
     }
   },

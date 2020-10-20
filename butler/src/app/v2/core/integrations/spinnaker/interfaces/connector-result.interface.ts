@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from './'
+export interface ConnectorResult {
+    status: 'SUCCEEDED'
+}
 
-export interface Deployment {
-    id: string
-
-    authorId: string
-
-    callbackUrl: string
-
-    createdAt: Date
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string
-
-    components?: Component[]
-
-    defaultCircle: boolean
+export interface ConnectorResultError {
+    status: 'ERROR'
+    error: string
 }

@@ -32,7 +32,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.active = true')
-      .andWhere('deployment.circle_id is null')
+      .andWhere('deployment.defaultCircle is true')
       .getMany()
   }
 
@@ -49,7 +49,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     return this.createQueryBuilder('c')
       .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
       .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
-      .where('d.circle_id is null')
+      .andWhere('deployment.defaultCircle is true')
       .andWhere('e.status = :status', { status: DeploymentStatusEnum.CREATED })
       .getMany()
   }

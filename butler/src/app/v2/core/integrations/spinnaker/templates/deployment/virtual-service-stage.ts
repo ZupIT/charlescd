@@ -18,6 +18,7 @@ import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurat
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 import { IstioDeploymentManifestsUtils } from '../../../utils/istio-deployment-manifests.utils'
+import { Http } from '../../../interfaces/k8s-manifest.interface'
 
 export const getVirtualServiceStage = (
   component: Component,
@@ -56,4 +57,130 @@ export const getVirtualServiceStage = (
     }
   },
   type: 'deployManifest'
+})
+
+const getCircleHTTPRules = (newComponent: Component, circleId: string, activeComponents: Component[]): Http[] => {
+  const rules: Http[] = []
+
+  rules.push(getHTTPCookieCircleRule(newComponent.name, newComponent.imageTag, circleId))
+  rules.push(getHTTPHeaderCircleRule(newComponent.name, newComponent.imageTag, circleId))
+
+  activeComponents.forEach(component => {
+    const activeCircleId = component.deployment?.circleId
+    if (activeCircleId && activeCircleId !== circleId) {
+      rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
+      rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
+    }
+  })
+
+  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
+  if (defaultComponent && defaultComponent.deployment) {
+    rules.push(getHTTPDefaultRule(defaultComponent.name,  defaultComponent.deployment?.circleId))
+  }
+  return rules
+}
+
+const getDefaultCircleHTTPRules = (newComponent: Component, activeComponents: Component[]): Http[] => {
+  const rules: Http[] = []
+
+  activeComponents.forEach(component => {
+    if (component.deployment && !component.deployment?.defaultCircle) {
+      rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, component.deployment?.circleId))
+      rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, component.deployment?.circleId))
+    }
+  })
+
+  if (newComponent.deployment) {
+    rules.push(getHTTPDefaultRule(newComponent.name, newComponent.deployment?.circleId))
+  }
+
+
+  return rules
+}
+
+const getHTTPCookieCircleRule = (name: string, tag: string, circle: string): Http => ({
+  match: [
+    {
+      headers: {
+        cookie: {
+          regex: `.*x-circle-id=${circle}.*`
+        }
+      }
+    }
+  ],
+  route: [
+    {
+      destination: {
+        host: name,
+        subset: circle
+      },
+      headers: {
+        request: {
+          set: {
+            'x-circle-source': circle
+          }
+        },
+        response: {
+          set: {
+            'x-circle-source': circle
+          }
+        }
+      }
+    }
+  ]
+})
+
+const getHTTPHeaderCircleRule = (name: string, tag: string, circle: string): Http => ({
+  match: [
+    {
+      headers: {
+        'x-circle-id': {
+          exact: circle
+        }
+      }
+    }
+  ],
+  route: [
+    {
+      destination: {
+        host: name,
+        subset: circle
+      },
+      headers: {
+        request: {
+          set: {
+            'x-circle-source': circle
+          }
+        },
+        response: {
+          set: {
+            'x-circle-source': circle
+          }
+        }
+      }
+    }
+  ]
+})
+
+const getHTTPDefaultRule = (name: string, circleId: string): Http => ({
+  route: [
+    {
+      destination: {
+        host: name,
+        subset: circleId
+      },
+      headers: {
+        request: {
+          set: {
+            'x-circle-source': circleId
+          }
+        },
+        response: {
+          set: {
+            'x-circle-source': circleId
+          }
+        }
+      }
+    }
+  ]
 })
