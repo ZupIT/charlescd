@@ -15,20 +15,25 @@
  */
 
 import React from 'react';
-import { OptionProps, OptionTypeBase } from 'react-select';
 import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
 import CustomOptionDescription from '../Description';
+import { customOptionDescriptionProps } from './fixtures';
 
-test('render CustomOptionDescription', async () => {
+test('render CustomOptionDescription', () => {
+  render(
+    <CustomOptionDescription {...customOptionDescriptionProps} />
+  );
+
+  expect(screen.getByText('foobar')).toBeInTheDocument();
+  expect(screen.getByText('desc')).toBeInTheDocument();
+  expect(screen.getByTestId('check-icon')).toHaveStyle('visibility: visible');
+});
+
+test('render CustomOptionDescription when is not selected', () => {
   const props = {
-    isSelected: true,
-    data: {
-      label: 'foobar',
-      description: 'desc',
-    },
-    getStyles: (name: string, props: any) => {},
-    cx: (state: {}, className: '') => ''
-  } as OptionProps<OptionTypeBase>;
+    ...customOptionDescriptionProps,
+    isSelected: false
+  }
 
   render(
     <CustomOptionDescription {...props} />
@@ -36,4 +41,5 @@ test('render CustomOptionDescription', async () => {
 
   expect(screen.getByText('foobar')).toBeInTheDocument();
   expect(screen.getByText('desc')).toBeInTheDocument();
-});
+  expect(screen.getByTestId('check-icon')).toHaveStyle('visibility: hidden');
+})
