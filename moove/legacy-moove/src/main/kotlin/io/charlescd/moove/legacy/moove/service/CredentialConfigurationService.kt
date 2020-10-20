@@ -221,7 +221,6 @@ class CredentialConfigurationService(
             }
     }
 
-
     private fun findUser(id: String): User =
         this.userRepository.findById(id)
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
