@@ -145,14 +145,14 @@ export class OctopipeRequestBuilder {
     }
   }
 
-  private getHelmConfig(component: Component, circleId: string | null): HelmConfig {
+  private getHelmConfig(component: Component, circleId: string ): HelmConfig {
     return {
       overrideValues: {
         'image.tag': component.imageUrl,
         deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
         component: component.name,
         tag: component.imageTag,
-        circleId: CommonTemplateUtils.getCircleId(circleId)
+        circleId: circleId
       }
     }
   }

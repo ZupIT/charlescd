@@ -98,7 +98,7 @@ const IstioUndeploymentManifestsUtils = {
       }
     })
 
-    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && !component.deployment.circleId)
+    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && component.deployment.defaultCircle)
     if (defaultComponent &&  defaultComponent.deployment && !subsets.find(subset => subset.name === defaultComponent.imageTag )) {
       subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(defaultComponent, defaultComponent.deployment.circleId))
     }
