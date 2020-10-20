@@ -47,10 +47,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
 
     override fun undeploy(deploymentId: String, authorId: String) {
         deployClient.undeploy(
-            UndeployRequest(
-                authorId,
-                deploymentId
-            )
+            deploymentId,
+            UndeployRequest(authorId)
         )
     }
 
