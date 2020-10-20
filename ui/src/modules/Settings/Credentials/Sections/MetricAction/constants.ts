@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-import Git from './Git';
-import Registry from './Registry';
-import CircleMatcher from './CircleMatcher';
-import MetricProvider from './MetricProvider';
-import CDConfiguration from './CDConfiguration';
-import UserGroup from './UserGroup';
-import MetricAction from './MetricAction';
+import { Radio } from 'core/components/RadioGroup';
+export const FORM_METRIC_ACTION = 'action';
 
-export default {
-  Git,
-  Registry,
-  CircleMatcher,
-  MetricProvider,
-  CDConfiguration,
-  UserGroup,
-  MetricAction
-};
+export const configType: Radio[] = [
+  {
+    name: 'Default',
+    value: 'DEFAULT'
+  },
+  {
+    name: 'Custom path',
+    value: 'CUSTOM'
+  }
+];

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import Git from './Git';
-import Registry from './Registry';
-import CircleMatcher from './CircleMatcher';
-import MetricProvider from './MetricProvider';
-import CDConfiguration from './CDConfiguration';
-import UserGroup from './UserGroup';
-import MetricAction from './MetricAction';
+export type Action = {
+  id: string;
+  nickname: string;
+};
 
-export default {
-  Git,
-  Registry,
-  CircleMatcher,
-  MetricProvider,
-  CDConfiguration,
-  UserGroup,
-  MetricAction
+export type ActionConfiguration = {
+  mooveUrl: string;
+};
+
+export type ActionPayload = {
+  nickname: string;
+  description: string;
+  type: string;
+  configuration: ActionConfiguration;
 };
