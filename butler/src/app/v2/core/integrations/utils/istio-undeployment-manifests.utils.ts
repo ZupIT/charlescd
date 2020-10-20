@@ -124,8 +124,8 @@ const IstioUndeploymentManifestsUtils = {
   },
   canPushSubset(component: Component, activeCircleId: string | undefined, subsets: Subset[]) {
     return !component.deployment?.defaultCircle &&
-      activeCircleId !== component.deployment?.circleId
-      && !subsets.find(subset => subset.name === component.imageTag)
+      activeCircleId !== component.deployment?.circleId &&
+      !subsets.find(subset => subset.name === component.imageTag)
   }
 }
 

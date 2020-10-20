@@ -16,8 +16,6 @@
 
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component } from '../../../api/deployments/interfaces'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
-import { AppConstants } from '../../../../v1/core/constants'
 
 const IstioManifestsUtils = {
 

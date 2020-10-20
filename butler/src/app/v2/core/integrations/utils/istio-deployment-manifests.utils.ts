@@ -72,13 +72,13 @@ const IstioDeploymentManifestsUtils = {
     return subsets
   },
 
-  getCircleHTTPRules : (newComponent: Component, circleId: string, activeComponents: Component[]): Http[] => {
+  getCircleHTTPRules: (newComponent: Component, circleId: string, activeByName: Component[]): Http[] => {
     const rules: Http[] = []
 
     rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(newComponent.name, newComponent.imageTag, circleId))
-    rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(newComponent.name, newComponent.imageTag, circleId))
+    rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(newComponent.name, newComponent.imageTag, circleId))
 
-    activeComponents.forEach(component => {
+    activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
       if (activeCircleId && activeCircleId !== circleId) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
@@ -86,7 +86,7 @@ const IstioDeploymentManifestsUtils = {
       }
     })
 
-    const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && component.deployment.defaultCircle)
+    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && component.deployment.defaultCircle)
     if (defaultComponent && defaultComponent.deployment) {
       rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(defaultComponent.name,  defaultComponent.deployment.circleId))
     }
@@ -94,7 +94,6 @@ const IstioDeploymentManifestsUtils = {
   },
   getDefaultCircleHTTPRules : (newComponent: Component, activeComponents: Component[], circleId: string): Http[] => {
     const rules: Http[] = []
-    console.log('here default')
 
     activeComponents.forEach(component => {
       if (component.deployment && !component.deployment?.defaultCircle) {
