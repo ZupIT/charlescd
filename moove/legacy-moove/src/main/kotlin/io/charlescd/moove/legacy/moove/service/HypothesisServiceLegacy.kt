@@ -27,14 +27,14 @@ import io.charlescd.moove.commons.representation.*
 import io.charlescd.moove.legacy.moove.request.hypothesis.*
 import io.charlescd.moove.legacy.repository.*
 import io.charlescd.moove.legacy.repository.entity.*
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
 import kotlin.streams.toList
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 
 @Service
 class HypothesisServiceLegacy(
@@ -44,8 +44,6 @@ class HypothesisServiceLegacy(
     private val cardColumnRepository: CardColumnRepository,
     private val cardRepository: CardRepository
 ) {
-
-
     @Value("\${charlescd.protected.branches}")
     lateinit var protectedBranches: Array<String>
 
