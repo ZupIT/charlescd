@@ -93,9 +93,10 @@ class CardController(private val service: CardService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestParam("branchDeletion", required = false) branchDeletion: Boolean = false,
         @PathVariable id: String
     ) =
-        service.delete(id, workspaceId)
+        service.delete(id, workspaceId, branchDeletion)
 
     @ApiOperation(value = "Add comment")
     @ApiImplicitParam(
