@@ -5,7 +5,7 @@ import Form from '../Form';
 
 const mockOnFinish = jest.fn();
 
-test('show test connection button', () => {
+test('show test connection button for GCP', () => {
   render(<Form onFinish={mockOnFinish} />);
 
   const gcpButton = screen.getByText(/GCP/);
