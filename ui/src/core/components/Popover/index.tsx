@@ -23,7 +23,6 @@ import Styled from './styled';
 export const CHARLES_DOC = 'https://docs.charlescd.io';
 
 interface Popover {
-  icon: string;
   title: string;
   size?: string;
   description: string;
