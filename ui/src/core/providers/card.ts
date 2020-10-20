@@ -16,7 +16,7 @@
 
 import { baseRequest, putRequest, deleteRequest, postRequest } from './base';
 import { Module } from 'modules/Modules/interfaces/Module';
-import { buildParams, URLParams } from 'core/utils/query';
+import { buildParams } from 'core/utils/query';
 
 const endpoint = '/moove/cards';
 
