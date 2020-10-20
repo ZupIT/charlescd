@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import { act, render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import CardView from '..'
 import { Card } from 'modules/Hypotheses/Board/interfaces';
@@ -68,11 +69,34 @@ const cardAction: Omit<Card, 'feature'> = {
   type: CARD_TYPE_ACTION,
 }
 
+const modules = {
+  content: [
+    {
+      id: "123",
+      name: "ZupIT",
+      gitRepositoryAddress: "https://github.com/ZupIT/",
+      helmRepository: "https://api.github.com/",
+      createdAt: "2020-10-01 12:00:01",
+      components: [
+        {
+          id: "123",
+          name: "zup",
+          createdAt: "2020-10-01 12:00:01",
+          errorThreshold: 10,
+          latencyThreshold: 10000,
+          hostValue: "",
+          gatewayName: ""
+        }
+      ]
+    }
+  ]
+}
+
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
-test('render CardView action', async () => {
+test('render CardView type.ACTION', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify(cardAction));
 
   render(<CardView {...props} />);
@@ -83,7 +107,7 @@ test('render CardView action', async () => {
   expect(CardViewContent).toBeInTheDocument();
 });
 
-test('render CardView feature', async () => {
+test('render CardView type.FEATURE', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify(cardFeature));
 
   render(<CardView {...props} />);
@@ -95,4 +119,44 @@ test('render CardView feature', async () => {
   
   const Module = await screen.findByTestId('input-group-feature-prepend');
   expect(Module).toBeInTheDocument();
+});
+
+test('render CardView type.FEATURE and try to add a module', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(cardFeature));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(modules));
+
+  render(<CardView {...props} />);
+
+  expect(screen.getByTestId('modal-default')).toBeInTheDocument();
+
+  const AddButtons = await screen.findAllByTestId('button-iconRounded-plus-circle');
+  expect(AddButtons.length).toBe(2);
+  
+  await act(async () => userEvent.click(AddButtons[1]));
+
+  const SaveModulesButton = await screen.findByTestId('button-default-save-modules');
+  expect(SaveModulesButton).toBeInTheDocument();
+
+  const InputBranchName = await screen.findByTestId('input-text-branchName');
+  expect(InputBranchName).toBeInTheDocument();
+});
+
+test('render CardView type.ACTION and try to add a module', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(cardAction));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(modules));
+
+  render(<CardView {...props} />);
+
+  expect(screen.getByTestId('modal-default')).toBeInTheDocument();
+
+  const AddButtons = await screen.findAllByTestId('button-iconRounded-plus-circle');
+  expect(AddButtons.length).toBe(2);
+  
+  await act(async () => userEvent.click(AddButtons[1]));
+
+  const SaveModulesButton = await screen.findByTestId('button-default-save-modules');
+  expect(SaveModulesButton).toBeInTheDocument();
+
+  const InputBranchName = screen.queryByTestId('input-text-branchName');
+  expect(InputBranchName).not.toBeInTheDocument();
 });

@@ -146,6 +146,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
       <Styled.Bottom onSubmit={handleSubmit(onSubmit)}>
         {!isEmpty(moduleIds) && renderBranchField()}
         <Button.Default
+          id="save-modules"
           isLoading={loading}
           isDisabled={!isEmpty(moduleIds) && isEmpty(branchName)}
           type="submit"
