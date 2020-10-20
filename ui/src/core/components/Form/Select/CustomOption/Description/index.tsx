@@ -18,7 +18,7 @@ import React from 'react';
 import { components, OptionTypeBase, OptionProps } from 'react-select';
 import Styled from './styled';
 
-const CustomOption = (props: OptionProps<OptionTypeBase>) => {
+const Description = (props: OptionProps<OptionTypeBase>) => {
   const { label, description } = props.data;
 
   return (
@@ -36,4 +36,4 @@ const CustomOption = (props: OptionProps<OptionTypeBase>) => {
   );
 };
 
-export default CustomOption;
+export default Description;

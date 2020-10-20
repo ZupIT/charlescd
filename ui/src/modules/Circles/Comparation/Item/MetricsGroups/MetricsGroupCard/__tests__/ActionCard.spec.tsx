@@ -88,12 +88,11 @@ test('render Action Card and dismiss delete', async () => {
 });
 
 test('render Action Card with empty triggeredAt', async () => {
-  const deleteActionFn = jest.fn();
   const actionData = { } as Action;
 
   render(
     <ActionCard
-      handleDeleteAction={deleteActionFn}
+      handleDeleteAction={jest.fn()}
       handleEditAction={jest.fn()}
       action={actionData}
     />
