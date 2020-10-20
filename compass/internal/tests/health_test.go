@@ -168,3 +168,25 @@ func (s SuiteHealth) TestComponentsMetricTypeDefaultError() {
 
 	s.Require().Error(err)
 }
+
+func (s SuiteHealth) TestComponents() {
+	circleIdHeader := uuid.New().String()
+	workspaceId := uuid.New()
+	circleId := uuid.New().String()
+	projectionType := "FIVE_MINUTES"
+	metricType := "REQUESTS_BY_CIRCLE"
+
+	datasourceStruct := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "datasource/prometheus/prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+		WorkspaceID: workspaceId,
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasourceStruct)
+
+	_, err := s.repository.Components(circleIdHeader, workspaceId.String(), circleId, projectionType, metricType)
+
+	require.NoError(s.T(), err)
+}
