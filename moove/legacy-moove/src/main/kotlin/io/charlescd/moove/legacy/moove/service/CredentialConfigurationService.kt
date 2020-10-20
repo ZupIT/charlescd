@@ -16,6 +16,8 @@
 
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.InvalidIntegrationRequestExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
@@ -25,6 +27,7 @@ import io.charlescd.moove.legacy.moove.api.VillagerApi
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.api.request.CreateVillagerRegistryConfigurationProvider
 import io.charlescd.moove.legacy.moove.api.request.CreateVillagerRegistryConfigurationRequest
+import io.charlescd.moove.legacy.moove.api.request.TestVillagerRegistryConnectionRequest
 import io.charlescd.moove.legacy.moove.api.response.CreateDeployCdConfigurationResponse
 import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfigurationResponse
 import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
@@ -37,6 +40,8 @@ import io.charlescd.moove.legacy.repository.entity.User
 import java.time.LocalDateTime
 import java.util.*
 import org.springframework.stereotype.Service
+import javax.ws.rs.BadRequestException
+import javax.ws.rs.ClientErrorException
 
 @Service
 class CredentialConfigurationService(
@@ -114,6 +119,36 @@ class CredentialConfigurationService(
         deployApi.deleteCdConfiguration(cdConfigurationId, workspaceId)
     }
 
+    fun testRegistryConfiguration(workspaceId: String,
+                                  request: CreateRegistryConfigurationRequest) {
+        val villagerRequest: CreateVillagerRegistryConfigurationRequest =
+            buildVillagerRegistryConfigurationRequest(request)
+
+        try {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } catch(illegalArgumentException: IllegalArgumentException) {
+            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION);
+        } catch (exception: Exception) {
+            throw exception;
+        }
+    }
+
+    fun testRegistryConnection(workspaceId: String,
+                                  request: TestRegistryConnectionRequest) {
+
+        val villagerRequest: TestVillagerRegistryConnectionRequest =
+            buildVillagerTestRegistryConnectionRequest(request)
+
+        try {
+            villagerApi.testRegistryConnection(villagerRequest, workspaceId)
+        } catch(illegalArgumentException: IllegalArgumentException) {
+            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION);
+
+        } catch (exception: Exception) {
+            throw exception;
+        }
+    }
+
     private fun checkIfCdConfigurationExists(id: String, workspaceId: String): Boolean {
         val cdConfigurationList = deployApi.getCdConfigurations(workspaceId)
         return cdConfigurationList.filter { cd ->
@@ -135,6 +170,12 @@ class CredentialConfigurationService(
             is CreateDockerHubRegistryConfigurationRequest -> buildDockerHubRegistryRequest(createRegistryConfigRequest)
             else -> throw IllegalArgumentException("Provider type not supported")
         }
+    }
+
+    private fun buildVillagerTestRegistryConnectionRequest(
+        request: TestRegistryConnectionRequest
+    ): TestVillagerRegistryConnectionRequest {
+        return TestVillagerRegistryConnectionRequest(request.artifactRepositoryConfigurationId);
     }
 
     private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {

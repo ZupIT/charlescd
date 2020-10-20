@@ -38,13 +38,16 @@ import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User
+import io.mockk.MockKStubScope
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
+import org.junit.Ignore
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
 import org.junit.Test
+import javax.ws.rs.core.Response
 
 class CredentialConfigurationServiceUnitTest {
 
@@ -452,6 +455,7 @@ class CredentialConfigurationServiceUnitTest {
 
         credentialConfigurationService.createRegistryConfig(request, workspaceId)
     }
+
 
     @Test
     fun `should correctly return registry configurations returned from charles-villager`() {

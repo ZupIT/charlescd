@@ -21,6 +21,7 @@ package io.charlescd.moove.legacy.moove.controller
 import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
 import io.charlescd.moove.legacy.moove.request.configuration.CreateCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.request.configuration.CreateRegistryConfigurationRequest
+import io.charlescd.moove.legacy.moove.request.configuration.TestRegistryConnectionRequest
 import io.charlescd.moove.legacy.moove.service.CredentialConfigurationService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -80,4 +81,38 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     ): CredentialConfigurationRepresentation {
         return this.credentialConfigurationService.getConfigurationById(id, workspaceId)
     }
+
+    @ApiOperation(value = "Test Registry Config")
+    @ApiImplicitParam(
+        name = "createRegistryConfigRequest",
+        value = "Create Registry Config",
+        required = true,
+        dataType = "CreateRegistryConfigurationRequest"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/registry/validation")
+    fun configurationValidation(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @Valid @RequestBody request: CreateRegistryConfigurationRequest
+    ) {
+        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+    }
+
+    @ApiOperation(value = "Test Registry Connection")
+    @ApiImplicitParam(
+        name = "testRegistryConnectionRequest",
+        value = "Test Registry Connection",
+        required = true,
+        dataType = "TestRegistryConnectionRequest"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/registry/connection-validation")
+    fun connectionValidation(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @Valid @RequestBody request: TestRegistryConnectionRequest
+    ) {
+        this.credentialConfigurationService.testRegistryConnection(workspaceId, request)
+    }
+
+
 }

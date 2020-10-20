@@ -20,7 +20,7 @@ package io.charlescd.moove.commons.exceptions
 
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 
-class InvalidIntegrationRequestException : CustomException {
+class InvalidIntegrationRequestExceptionLegacy : CustomExceptionLegacy {
 
 
     private constructor(errorCode: MooveErrorCodeLegacy) : super(errorCode) {}
@@ -31,8 +31,8 @@ class InvalidIntegrationRequestException : CustomException {
 
     companion object {
 
-        fun of(errorCode: MooveErrorCodeLegacy): InvalidIntegrationRequestException {
-            return InvalidIntegrationRequestException(errorCode, errorCode.key)
+        fun of(errorCode: MooveErrorCodeLegacy): InvalidIntegrationRequestExceptionLegacy {
+            return InvalidIntegrationRequestExceptionLegacy(errorCode, errorCode.key)
         }
     }
 }
