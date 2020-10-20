@@ -16,32 +16,29 @@
 
 package io.charlescd.villager.interactor.registry.impl;
 
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
-import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
+import io.charlescd.villager.interactor.registry.TestRegistryConfigInteractor;
 import io.charlescd.villager.service.RegistryService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDockerRegistryConfigurationInteractor {
+public class TestRegistryConfigInteractorImpl implements TestRegistryConfigInteractor {
 
-    private DockerRegistryConfigurationRepository repository;
     private RegistryService registryService;
 
     @Inject
-    public SaveDockerRegistryConfigurationInteractorImpl(DockerRegistryConfigurationRepository repository, RegistryService registryService) {
-        this.repository = repository;
+    public TestRegistryConfigInteractorImpl(
+            RegistryService registryService
+    ) {
         this.registryService = registryService;
     }
 
     @Override
-    public String execute(DockerRegistryConfigurationInput input) {
-        var entity = registryService.fromDockerRegistryConfigurationInput(input);
-        repository.save(entity);
-        return entity.id;
+    public void execute(DockerRegistryConfigurationInput input) {
+        DockerRegistryConfigurationEntity entity = registryService.fromDockerRegistryConfigurationInput(input);
+        registryService.testRegistryConnectivityConfig(entity);
     }
-
-
 }

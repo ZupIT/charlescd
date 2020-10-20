@@ -38,7 +38,7 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return Response.status(checkStatus(exception))
+            return Response.status(checkStatus(exception), exception.getMessage())
                     .entity(objectMapper.writeValueAsString(new ErrorRepresentation(exception.getMessage())))
                     .header("Content-Type", MediaType.APPLICATION_JSON)
                     .build();
@@ -49,11 +49,12 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
         }
     }
 
-    private Response.Status checkStatus(Exception ex) {
+    private int checkStatus(Exception ex) {
+
         if (ex instanceof IllegalArgumentException) {
-            return Response.Status.BAD_REQUEST;
+            return Response.Status.BAD_REQUEST.getStatusCode();
         } else {
-            return Response.Status.INTERNAL_SERVER_ERROR;
+            return Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         }
     }
 

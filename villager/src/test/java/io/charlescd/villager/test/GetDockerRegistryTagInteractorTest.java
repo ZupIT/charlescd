@@ -26,6 +26,7 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.impl.GetDockerRegistryTagInteractorImpl;
+import io.charlescd.villager.service.RegistryService;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.specimpl.BuiltResponse;
@@ -54,6 +55,11 @@ public class GetDockerRegistryTagInteractorTest {
 
     @Mock
     private RegistryClient registryClient;
+
+
+    @Mock
+    private RegistryService registryService;
+
 
     @Test
     public void testContainsTag() throws IOException {
@@ -84,7 +90,7 @@ public class GetDockerRegistryTagInteractorTest {
         });
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -115,7 +121,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> Optional.empty());
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -140,7 +146,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -170,7 +176,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.empty());
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")

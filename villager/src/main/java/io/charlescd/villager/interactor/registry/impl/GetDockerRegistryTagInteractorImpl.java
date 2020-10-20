@@ -16,62 +16,46 @@
 
 package io.charlescd.villager.interactor.registry.impl;
 
-import io.charlescd.villager.exceptions.IllegalAccessResourceException;
-import io.charlescd.villager.exceptions.ResourceNotFoundException;
-import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
-import java.util.Optional;
+import io.charlescd.villager.service.RegistryService;
+import org.apache.http.HttpStatus;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.apache.http.HttpStatus;
+import java.util.Optional;
 
 @ApplicationScoped
 public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagInteractor {
 
-    private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
-    private RegistryClient registryClient;
+    private RegistryService registryService;
 
     @Inject
     public GetDockerRegistryTagInteractorImpl(
-            DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository,
-            RegistryClient registryClient) {
-        this.dockerRegistryConfigurationRepository = dockerRegistryConfigurationRepository;
-        this.registryClient = registryClient;
+            RegistryService registryService) {
+        this.registryService = registryService;
     }
 
     @Override
     public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
 
         var entity =
-                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
+                registryService.getDockerRegistryConfigurationEntity(input.getWorkspaceId(), input.getArtifactRepositoryConfigurationId());
 
-        if (!entity.workspaceId.equals(input.getWorkspaceId())) {
-            throw new IllegalAccessResourceException(
-                    "This docker registry does not belongs to the request application id.");
+
+        var response =
+                registryService.getDockerRegistryTag(entity, input.getArtifactName(), input.getName());
+
+        if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
+            return Optional.empty();
         }
 
-        try {
-            this.registryClient.configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
+        return Optional.of(new ComponentTagDTO(
+                input.getName(),
+                entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
+        ));
 
-            var response =
-                    this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
-
-            if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
-                return Optional.empty();
-            }
-
-            return Optional.of(new ComponentTagDTO(
-                    input.getName(),
-                    entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
-            ));
-        } finally {
-            this.registryClient.closeQuietly();
-        }
 
     }
 }
