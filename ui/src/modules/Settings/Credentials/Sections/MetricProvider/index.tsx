@@ -42,6 +42,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
 
   const renderSection = () => (
     <Section
+      id="datasources"
       name="Datasources"
       icon="metrics"
       showAction
