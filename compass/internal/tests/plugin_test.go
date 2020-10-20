@@ -69,6 +69,16 @@ func (s *SuitePlugins) TestFindAll() {
 
 	expectedPlugins := []plugin.Plugin{
 		{
+			ID:          "datasourceerrorconnection",
+			Category:    "datasource",
+			Name:        "Fake Valid Datasource Error Connection",
+			Src:         "datasource/errorconnection/errorconnection",
+			Description: "Fake Valid Datasource Error Connection",
+			InputParameters: map[string]interface{}{
+				"configurationInputs": []interface{}{},
+			},
+		},
+		{
 			ID:          "googleanalytics",
 			Category:    "datasource",
 			Name:        "Google Analytics",
@@ -87,6 +97,16 @@ func (s *SuitePlugins) TestFindAll() {
 			InputParameters: map[string]interface{}{
 				"health":              true,
 				"configurationInputs": pInput,
+			},
+		},
+		{
+			ID:          "datasourcevalidaction",
+			Category:    "datasource",
+			Name:        "Fake Valid Datasource",
+			Src:         "datasource/validaction/validaction",
+			Description: "Fake Valid Datasource",
+			InputParameters: map[string]interface{}{
+				"configurationInputs": []interface{}{},
 			},
 		},
 	}

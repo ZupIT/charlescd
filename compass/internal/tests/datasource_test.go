@@ -279,14 +279,14 @@ func (s *Suite) TestGetMetricsError() {
 
 func (s *Suite) TestConnectionJsonError() {
 	jsonData := json.RawMessage(`{"data": "prometheus"}`)
-	err := s.repository.TestConnection("datasource/prometheus/prometheus", jsonData)
+	err := s.repository.TestConnection("datasource/errorconnection/errorconnection", jsonData)
 
 	require.Error(s.T(), err)
 }
 
 func (s *Suite) TestConnection() {
 	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
-	err := s.repository.TestConnection("datasource/prometheus/prometheus", jsonData)
+	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
 	require.NoError(s.T(), err)
 	require.Nil(s.T(), err)
@@ -296,7 +296,7 @@ func (s *Suite) TestConnectionPluginDirError() {
 	os.Setenv("PLUGINS_DIR", "/dist")
 
 	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
-	err := s.repository.TestConnection("datasource/prometheus/prometheus", jsonData)
+	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
 	require.Error(s.T(), err)
 }
