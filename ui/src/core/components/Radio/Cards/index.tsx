@@ -37,7 +37,7 @@ const RadioCards = ({ name, items, onChange }: Props) => {
   );
 
   return (
-    <Styled.RadioCards data-testid={`radio-group-${name}`}>
+    <Styled.RadioCards data-testid={`radio-cards-${name}`}>
       {map(items, (item, index) => renderContent(item, index))}
     </Styled.RadioCards>
   );

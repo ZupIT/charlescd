@@ -66,7 +66,7 @@ const CardRemove = ({ id, isProtected, onClose }: Props) => {
       isLoading={loadingRemove}
     >
       <Radio.Cards
-        name={`radio-cards-remove-${id}`}
+        name={`remove-${id}`}
         items={options}
         onChange={(event: ChangeInputEvent) =>
           onChange(event.currentTarget.value)

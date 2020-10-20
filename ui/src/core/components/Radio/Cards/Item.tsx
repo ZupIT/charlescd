@@ -60,7 +60,7 @@ const Radio = ({ name, data, onChange }: Props) => {
 
   const renderWithPopover = () => (
     <Styled.Popover
-      title="Why we can’t delete this  branch?"
+      title="Why we can’t delete this branch?"
       description="The associated branch was a protected branch. Charles can't delete protected branches. "
     >
       {renderContent()}
