@@ -44,7 +44,10 @@ class HypothesisServiceLegacy(
     private val cardColumnRepository: CardColumnRepository,
     private val cardRepository: CardRepository
 ) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/deletion-card-options
     @Value("\${charlescd.protected.branches}")
     lateinit var protectedBranches: Array<String>
 
@@ -392,7 +395,6 @@ class HypothesisServiceLegacy(
                     it.name == ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME
         } ?: throw RuntimeException("Invalid column")
     }
-    
     private fun isProtectedCard(hypothesis: Hypothesis): Boolean {
         val branchNames = hypothesis.cards.filterIsInstance<SoftwareCard>().toList().stream().map { it.feature.branchName }.toList()
         return branchNames.stream().filter { isProtectedBranch(it) }.findAny().isPresent

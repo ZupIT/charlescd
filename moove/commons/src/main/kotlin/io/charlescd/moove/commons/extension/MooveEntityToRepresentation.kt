@@ -81,7 +81,8 @@ fun SoftwareCard.buildSoftwareCardSimpleRepresentation(isProtected: Boolean): Si
     members = this.members.map { it.toRepresentation() },
     hypothesisId = this.hypothesis.id,
     feature = this.feature.toSimpleRepresentation(),
-    index = this.index
+    index = this.index,
+    isProtected = isProtected
 )
 
 fun ActionCard.buildActionCardSimpleRepresentation(): SimpleCardRepresentation = SimpleCardRepresentation(

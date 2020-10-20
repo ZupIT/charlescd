@@ -884,21 +884,21 @@ class HypothesisServiceTest {
     }
 
     private fun createSofwareCard(branchName: String = "feature-branch"): SoftwareCard =
-    SoftwareCard(
-        id = "cardId",
-        name = "Card Name",
-        description = "Description",
-        column = cardColumnToDo,
-        author = user,
-        createdAt = LocalDateTime.now(),
-        labels = listOf(label),
-        hypothesis = hypothesis,
-        status = CardStatus.ACTIVE,
-        type = SoftwareCardType.FEATURE,
-        workspaceId = workspaceId,
-        feature = Feature(
-            "featureId", "featureName", branchName,
-            user, LocalDateTime.now(), listOf(module2), workspaceId
+        SoftwareCard(
+            id = "cardId",
+            name = "Card Name",
+            description = "Description",
+            column = cardColumnToDo,
+            author = user,
+            createdAt = LocalDateTime.now(),
+            labels = listOf(label),
+            hypothesis = hypothesis,
+            status = CardStatus.ACTIVE,
+            type = SoftwareCardType.FEATURE,
+            workspaceId = workspaceId,
+            feature = Feature(
+                "featureId", "featureName", branchName,
+                user, LocalDateTime.now(), listOf(module2), workspaceId
+            )
         )
-    )
 }
