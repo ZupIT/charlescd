@@ -26,7 +26,7 @@ public class TestRegistryConnectivityInteractorImplTest {
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
         var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         var interactor =
                 new TestRegistryConnectivityInteractorImpl(registryService);
@@ -34,7 +34,7 @@ public class TestRegistryConnectivityInteractorImplTest {
         interactor.execute(input);
 
         verify(registryService, times(1))
-                .getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
@@ -48,7 +48,7 @@ public class TestRegistryConnectivityInteractorImplTest {
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
         var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         doThrow(new IllegalArgumentException("Invalid registry")).when(registryService).testRegistryConnectivityConfig(entity);
 
@@ -61,7 +61,7 @@ public class TestRegistryConnectivityInteractorImplTest {
         }
 
         verify(registryService, times(1))
-                .getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);

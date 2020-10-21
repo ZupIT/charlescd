@@ -20,11 +20,10 @@ import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import io.charlescd.villager.service.RegistryService;
-import org.apache.http.HttpStatus;
-
+import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Optional;
+import org.apache.http.HttpStatus;
 
 @ApplicationScoped
 public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagInteractor {
@@ -41,7 +40,8 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
     public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
 
         var entity =
-                registryService.getDockerRegistryConfigurationEntity(input.getWorkspaceId(), input.getArtifactRepositoryConfigurationId());
+                registryService.getRegistryConfigurationEntity(
+                        input.getWorkspaceId(), input.getArtifactRepositoryConfigurationId());
 
 
         var response =

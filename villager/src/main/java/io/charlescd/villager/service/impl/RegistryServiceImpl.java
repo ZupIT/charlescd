@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.charlescd.villager.service.impl;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
@@ -22,15 +23,18 @@ import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
-import io.charlescd.villager.interactor.registry.*;
+import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
+import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
 import io.charlescd.villager.service.RegistryService;
-import org.apache.http.HttpStatus;
-
+import java.util.Objects;
+import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import java.util.Objects;
-import java.util.Optional;
+import org.apache.http.HttpStatus;
 
 @ApplicationScoped
 public class RegistryServiceImpl implements RegistryService {
@@ -49,11 +53,13 @@ public class RegistryServiceImpl implements RegistryService {
         this.registryClient = registryClient;
     }
 
-    public DockerRegistryConfigurationEntity getDockerRegistryConfigurationEntity(String workspaceId, String artifactRepositoryConfigurationId) {
+    public DockerRegistryConfigurationEntity getRegistryConfigurationEntity(
+            String workspaceId, String registryConfigurationId) {
         var entity =
-                this.dockerRegistryConfigurationRepository.findById(artifactRepositoryConfigurationId)
+                this.dockerRegistryConfigurationRepository.findById(registryConfigurationId)
                         .orElseThrow(
-                                () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
+                                () -> new ResourceNotFoundException(
+                                        ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
         if (!entity.workspaceId.equals(workspaceId)) {
             throw new IllegalAccessResourceException(
@@ -63,7 +69,8 @@ public class RegistryServiceImpl implements RegistryService {
         return entity;
     }
 
-    public Optional<Response> getDockerRegistryTag(DockerRegistryConfigurationEntity entity, String artifactName, String name) {
+    public Optional<Response> getDockerRegistryTag(
+            DockerRegistryConfigurationEntity entity, String artifactName, String name) {
         try {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, artifactName);
 
@@ -81,7 +88,8 @@ public class RegistryServiceImpl implements RegistryService {
         validateResponse(entity.type, response);
     }
 
-    public DockerRegistryConfigurationEntity fromDockerRegistryConfigurationInput(DockerRegistryConfigurationInput input) {
+    public DockerRegistryConfigurationEntity fromDockerRegistryConfigurationInput(
+            DockerRegistryConfigurationInput input) {
         var entity = new DockerRegistryConfigurationEntity();
         entity.name = input.getName();
         entity.type = input.getRegistryType();
@@ -157,13 +165,17 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void validateGCPResponse(Optional<Response> response) {
-        if(Objects.nonNull(response)) {
-            if (response.get().getStatus() == HttpStatus.SC_UNAUTHORIZED || response.get().getStatus() == HttpStatus.SC_FORBIDDEN) {
+        if (Objects.nonNull(response)) {
+
+            int status = response.get().getStatus();
+
+            if (status == HttpStatus.SC_UNAUTHORIZED || status == HttpStatus.SC_FORBIDDEN) {
                 throw new IllegalArgumentException("Invalid registry config");
             }
 
-            if(!isSuccessfullyHttpStatus(response.get().getStatus()) && response.get().getStatus() != HttpStatus.SC_NOT_FOUND) {
-                throw new IntegrationException("GCP integration error: " + response.get().getStatusInfo().getReasonPhrase());
+            if (!isSuccessfullyHttpStatus(status) && status != HttpStatus.SC_NOT_FOUND) {
+                throw new IntegrationException(
+                        "GCP integration error: " + response.get().getStatusInfo().getReasonPhrase());
             }
         }
     }

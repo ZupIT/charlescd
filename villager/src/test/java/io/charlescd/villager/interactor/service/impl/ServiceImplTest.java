@@ -46,7 +46,7 @@ public class ServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        DockerRegistryConfigurationEntity responseEntity = serviceImpl.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+        DockerRegistryConfigurationEntity responseEntity = serviceImpl.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(dockerRegistryConfigurationRepository, times(1))
                 .findById(ID_DEFAULT_VALUE);
@@ -81,7 +81,7 @@ public class ServiceImplTest {
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
         Exception exception = assertThrows(IllegalAccessResourceException.class,
-                () -> serviceImpl.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE));
+                () -> serviceImpl.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE));
 
         verify(dockerRegistryConfigurationRepository, times(1))
                 .findById(ID_DEFAULT_VALUE);

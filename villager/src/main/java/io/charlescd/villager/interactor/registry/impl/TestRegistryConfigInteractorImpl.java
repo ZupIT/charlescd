@@ -20,7 +20,6 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.TestRegistryConfigInteractor;
 import io.charlescd.villager.service.RegistryService;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

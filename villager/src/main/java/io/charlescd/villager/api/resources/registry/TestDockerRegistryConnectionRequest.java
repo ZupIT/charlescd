@@ -19,14 +19,14 @@ package io.charlescd.villager.api.resources.registry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotEmpty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestDockerRegistryConnectionRequest {
 
     @JsonCreator
-    public TestDockerRegistryConnectionRequest(@JsonProperty("artifactRepositoryConfigurationId") String artifactRepositoryConfigurationId) {
+    public TestDockerRegistryConnectionRequest(
+            @JsonProperty("artifactRepositoryConfigurationId") String artifactRepositoryConfigurationId) {
         this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
     }
 

@@ -20,7 +20,6 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.TestDockerRegistryConnectionInput;
 import io.charlescd.villager.interactor.registry.TestRegistryConnectivityInteractor;
 import io.charlescd.villager.service.RegistryService;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -38,7 +37,9 @@ public class TestRegistryConnectivityInteractorImpl implements TestRegistryConne
 
     @Override
     public void execute(TestDockerRegistryConnectionInput input) {
-        DockerRegistryConfigurationEntity entity = registryService.getDockerRegistryConfigurationEntity(input.getWorkspaceId(), input.getRegistryConfigurationId());
+        DockerRegistryConfigurationEntity entity =
+                registryService.getRegistryConfigurationEntity(
+                        input.getWorkspaceId(), input.getRegistryConfigurationId());
         registryService.testRegistryConnectivityConfig(entity);
     }
 }

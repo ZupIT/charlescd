@@ -20,10 +20,13 @@ import io.charlescd.villager.api.handlers.impl.CreateDockerRegistryRequestHandle
 import io.charlescd.villager.api.handlers.impl.GetDockerRegistryTagHandler;
 import io.charlescd.villager.api.handlers.impl.ListDockerRegistryRequestHandler;
 import io.charlescd.villager.api.handlers.impl.TestDockerRegistryConnectionHandler;
-import io.charlescd.villager.interactor.registry.*;
+import io.charlescd.villager.interactor.registry.DeleteDockerRegistryConfigurationInteractor;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+import io.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
+import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
+import io.charlescd.villager.interactor.registry.TestRegistryConfigInteractor;
+import io.charlescd.villager.interactor.registry.TestRegistryConnectivityInteractor;
 import io.charlescd.villager.util.Constants;
-import org.jboss.resteasy.annotations.Status;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;

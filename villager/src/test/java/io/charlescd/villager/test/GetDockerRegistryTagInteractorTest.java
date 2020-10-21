@@ -58,7 +58,7 @@ public class GetDockerRegistryTagInteractorTest {
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity( RegistryType.AZURE);
         var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
 
         when(registryService.getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME)).then(invocationOnMock -> {
 
@@ -89,7 +89,7 @@ public class GetDockerRegistryTagInteractorTest {
         assertThat(component.getName(), is("test"));
         assertThat(component.getArtifact(), is("registry.io.com/charles_cd:test"));
         verify(registryService, times(1))
-                .getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
         verify(registryService, times(1))
                 .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
 
@@ -101,7 +101,7 @@ public class GetDockerRegistryTagInteractorTest {
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
         var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
 
         var interactor =
                 new GetDockerRegistryTagInteractorImpl(registryService);
@@ -109,7 +109,7 @@ public class GetDockerRegistryTagInteractorTest {
         assertTrue(interactor.execute(input).isEmpty());
 
         verify(registryService, times(1))
-                .getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
         verify(registryService, times(1))
                 .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
     }
@@ -122,7 +122,7 @@ public class GetDockerRegistryTagInteractorTest {
 
         var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenThrow(IllegalAccessResourceException.class);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenThrow(IllegalAccessResourceException.class);
 
         var interactor =
                 new GetDockerRegistryTagInteractorImpl(registryService);
@@ -132,7 +132,7 @@ public class GetDockerRegistryTagInteractorTest {
         });
 
         verify(registryService, times(1))
-                .getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
         verify(registryService, times(0))
                 .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
 
@@ -144,7 +144,7 @@ public class GetDockerRegistryTagInteractorTest {
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
         var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenThrow(ResourceNotFoundException.class);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenThrow(ResourceNotFoundException.class);
 
         var interactor =
                 new GetDockerRegistryTagInteractorImpl(registryService);
@@ -155,7 +155,7 @@ public class GetDockerRegistryTagInteractorTest {
         });
 
         verify(registryService, times(1))
-                .getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
         verify(registryService, times(0))
                 .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
 

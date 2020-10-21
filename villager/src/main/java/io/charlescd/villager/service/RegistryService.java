@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.charlescd.villager.service;
 
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
-
-import javax.ws.rs.core.Response;
 import java.util.Optional;
+import javax.ws.rs.core.Response;
 
 public interface RegistryService {
 
-    DockerRegistryConfigurationEntity getDockerRegistryConfigurationEntity(String workspaceId, String artifactRepositoryConfigurationId);
+    DockerRegistryConfigurationEntity getRegistryConfigurationEntity(String workspaceId, String entityId);
 
     Optional<Response> getDockerRegistryTag(DockerRegistryConfigurationEntity entity, String artifactName, String name);
 

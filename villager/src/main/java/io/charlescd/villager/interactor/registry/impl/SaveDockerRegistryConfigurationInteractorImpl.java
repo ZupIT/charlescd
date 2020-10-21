@@ -20,7 +20,6 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import io.charlescd.villager.service.RegistryService;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -31,7 +30,8 @@ public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDocker
     private RegistryService registryService;
 
     @Inject
-    public SaveDockerRegistryConfigurationInteractorImpl(DockerRegistryConfigurationRepository repository, RegistryService registryService) {
+    public SaveDockerRegistryConfigurationInteractorImpl(
+            DockerRegistryConfigurationRepository repository, RegistryService registryService) {
         this.repository = repository;
         this.registryService = registryService;
     }
