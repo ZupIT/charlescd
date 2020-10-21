@@ -60,7 +60,7 @@ const Credentials = ({ onClickHelp }: Props) => {
     if (actionDataStatus.isIdle) {
       getActionData();
     }
-  }, [getActionData, actionDataStatus]); //refazer request ao criar ou deletar
+  }, [getActionData, actionDataStatus]);
 
   useEffect(() => {
     if (isNull(form)) {
