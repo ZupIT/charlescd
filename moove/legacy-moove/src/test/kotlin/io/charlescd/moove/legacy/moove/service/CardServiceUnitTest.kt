@@ -45,6 +45,7 @@ import org.junit.Test
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.test.util.ReflectionTestUtils
 
 class CardServiceUnitTest {
 
@@ -128,6 +129,8 @@ class CardServiceUnitTest {
 
     @Before
     fun setup() {
+        ReflectionTestUtils.setField(cardService, "protectedBranches", arrayOf("master", "main"))
+
         every {
             gitConfigurationRepository.findById(module1.workspace.gitConfigurationId!!)
         } returns Optional.of(gitConfiguration1)
@@ -395,7 +398,7 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should delete a card`() {
+    fun `should delete a card and branch`() {
         val card = buildSoftwareCard()
 
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
@@ -413,6 +416,30 @@ class CardServiceUnitTest {
         verify(exactly = 1) { cardRepository.delete(card) }
         verify(exactly = 1) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
         verify(exactly = 1) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
+        verify(exactly = 2) {
+            gitConfigurationRepository.findById(gitConfigurationId)
+        }
+    }
+
+    @Test
+    fun `should delete only the card`() {
+        val card = buildSoftwareCard("master")
+
+        val gitConfigurationId = module1.workspace.gitConfigurationId!!
+
+        every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
+        every { cardRepository.deleteLabelsRelationship(any()) } answers {}
+        every { cardRepository.deleteMembersRelationship(any()) } answers {}
+        every { cardRepository.delete(card) } answers {}
+        every { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) } answers {}
+        every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
+
+        cardService.delete(card.id, workspaceId)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
+        verify(exactly = 1) { cardRepository.delete(card) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
         verify(exactly = 2) {
             gitConfigurationRepository.findById(gitConfigurationId)
         }
@@ -950,7 +977,7 @@ class CardServiceUnitTest {
             workspaceId
         )
 
-    fun buildSoftwareCard(): SoftwareCard =
+    fun buildSoftwareCard(branchName: String = "feature-branch"): SoftwareCard =
         SoftwareCard(
             "id",
             cardName,
@@ -959,7 +986,7 @@ class CardServiceUnitTest {
             SoftwareCardType.FEATURE,
             user,
             LocalDateTime.now(),
-            createFeature(),
+            createFeature(branchName),
             listOf(label),
             mutableListOf(),
             hypothesis,
@@ -972,11 +999,11 @@ class CardServiceUnitTest {
     private fun buildCredentialConfig(type: CredentialConfigurationType): CredentialConfiguration =
         CredentialConfiguration(UUID.randomUUID().toString(), "name", type, LocalDateTime.now(), user, workspaceId)
 
-    private fun createFeature(): Feature =
+    private fun createFeature(branchName: String = "feature-branch"): Feature =
         Feature(
             "id",
             "featureName",
-            "feature-branch",
+            branchName,
             user,
             LocalDateTime.now(),
             listOf(module1, module2),
