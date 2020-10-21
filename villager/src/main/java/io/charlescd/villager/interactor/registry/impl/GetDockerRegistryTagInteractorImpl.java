@@ -41,7 +41,7 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
 
         var entity =
                 registryService.getRegistryConfigurationEntity(
-                        input.getWorkspaceId(), input.getArtifactRepositoryConfigurationId());
+                        input.getWorkspaceId(), input.getConfigurationId());
 
 
         var response =

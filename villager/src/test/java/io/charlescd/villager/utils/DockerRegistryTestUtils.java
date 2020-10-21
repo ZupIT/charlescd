@@ -58,7 +58,7 @@ public class DockerRegistryTestUtils {
         return GetDockerRegistryTagInput.builder()
                 .withArtifactName(ARTIFACT_NAME)
                 .withWorkspaceId(workspaceId)
-                .withArtifactRepositoryConfigurationId(ID_DEFAULT_VALUE)
+                .withConfigurationId(ID_DEFAULT_VALUE)
                 .withName(TAG_NAME)
                 .build();
     }

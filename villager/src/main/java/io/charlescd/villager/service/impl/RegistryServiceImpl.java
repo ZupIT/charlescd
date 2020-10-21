@@ -17,8 +17,8 @@
 package io.charlescd.villager.service.impl;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
-import io.charlescd.villager.exceptions.IntegrationException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
+import io.charlescd.villager.exceptions.ThirdyPartyIntegrationException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
@@ -75,7 +75,11 @@ public class RegistryServiceImpl implements RegistryService {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, artifactName);
 
             return this.registryClient.getImage(artifactName, name, entity.connectionData);
-        } finally           {
+        } catch (IllegalArgumentException exception) {
+            throw exception;
+        } catch (Exception ex) {
+            throw new ThirdyPartyIntegrationException(ex.getMessage());
+        } finally {
             this.registryClient.closeQuietly();
         }
     }
@@ -174,7 +178,7 @@ public class RegistryServiceImpl implements RegistryService {
             }
 
             if (!isSuccessfullyHttpStatus(status) && status != HttpStatus.SC_NOT_FOUND) {
-                throw new IntegrationException(
+                throw new ThirdyPartyIntegrationException(
                         "GCP integration error: " + response.get().getStatusInfo().getReasonPhrase());
             }
         }
