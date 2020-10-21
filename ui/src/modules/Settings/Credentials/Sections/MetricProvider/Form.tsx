@@ -23,7 +23,12 @@ import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { Datasource, Plugin, PluginDatasource, TestConnectionResponse } from './interfaces';
+import {
+  Datasource,
+  Plugin,
+  PluginDatasource,
+  TestConnectionResponse
+} from './interfaces';
 import { serializePlugins, transformValues } from './helpers';
 import { Props } from '../interfaces';
 import { useDatasource, usePlugins, useTestConnection } from './hooks';
@@ -33,17 +38,19 @@ import ConnectionStatus from './ConnectionStatus';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
-  const { response: testConnectionResponse, loading: loadingConnectionResponse, save: testConnection } = useTestConnection()
+  const {
+    response: testConnectionResponse,
+    loading: loadingConnectionResponse,
+    save: testConnection
+  } = useTestConnection();
   const [isDisabled, setIsDisabled] = useState(true);
-  const [datasourceHealth, setDatasourceHealth] = useState(false)
+  const [datasourceHealth, setDatasourceHealth] = useState(false);
   const [plugin, setPlugin] = useState<Plugin>();
-  const { response: plugins, getAll } = usePlugins()
-  const { control, register, handleSubmit, getValues } = useForm<
-    Datasource
-  >();
+  const { response: plugins, getAll } = usePlugins();
+  const { control, register, handleSubmit, getValues } = useForm<Datasource>();
 
   useEffect(() => {
-    getAll()
+    getAll();
     if (responseSave) onFinish();
   }, [onFinish, responseSave, getAll]);
 
@@ -51,13 +58,12 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     save({
       ...datasource,
       pluginSrc: plugin.src,
-      healthy: datasourceHealth,
+      healthy: datasourceHealth
     });
   };
 
-
   const onChange = (option: Option) => {
-    setPlugin(find((plugins as Plugin[]), { id: option['value'] }));
+    setPlugin(find(plugins as Plugin[], { id: option['value'] }));
     setIsDisabled(!isEmpty(plugin));
   };
 
@@ -67,14 +73,14 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const handleTestConnection = () => {
-    const values = getValues()
-    const data = transformValues(values)
+    const values = getValues();
+    const data = transformValues(values);
 
     testConnection({
       pluginSrc: plugin.src,
       data
-    })
-  }
+    });
+  };
 
   const renderFields = () => (
     <>
@@ -100,23 +106,24 @@ const FormMetricProvider = ({ onFinish }: Props) => {
           />
         </Styled.HealthWrapper>
       )}
-      <Styled.Input
-        ref={register}
-        name="name"
-        label="Datasource name"
-      />
+      <Styled.Input ref={register} name="name" label="Datasource name" />
 
-      {map((plugin.inputParameters as PluginDatasource)['configurationInputs'], input => (
-        <Styled.Input
-          key={input.name}
-          ref={register}
-          name={`data.${input.name}`}
-          label={input.label}
-        />
-      ))}
+      {map(
+        (plugin.inputParameters as PluginDatasource)['configurationInputs'],
+        input => (
+          <Styled.Input
+            key={input.name}
+            ref={register}
+            name={`data.${input.name}`}
+            label={input.label}
+          />
+        )
+      )}
 
       {testConnectionResponse && (
-        <ConnectionStatus message={(testConnectionResponse as TestConnectionResponse[])} />
+        <ConnectionStatus
+          message={testConnectionResponse as TestConnectionResponse[]}
+        />
       )}
       <Styled.TestConnectionButton
         id="test-connection"
@@ -128,7 +135,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         Test connection
       </Styled.TestConnectionButton>
     </>
-  )
+  );
 
   const renderSelect = () => (
     <Select.Single

@@ -57,7 +57,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
           onClose={() => handleClose(datasource.id)}
         />
       ))}
-    </Section >
+    </Section>
   );
 
   const renderForm = () =>
