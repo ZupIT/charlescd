@@ -29,7 +29,7 @@ import CardView from './View';
 import CardRemove from './Remove';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   card: CardProps;
   columnId: string;
   draggableProps: DraggableProvidedDraggableProps;
@@ -125,6 +125,7 @@ const CardBoard = forwardRef(
         {toggleModalView && renderModalView()}
         {toggleModalRemove && renderModalRemove()}
         <Styled.Card
+          data-testid={`card-board-${card.id}`}
           ref={ref}
           type={card.type}
           description={card.name}
