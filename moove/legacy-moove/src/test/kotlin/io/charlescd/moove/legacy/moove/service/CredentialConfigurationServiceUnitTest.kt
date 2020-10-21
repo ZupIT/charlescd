@@ -329,7 +329,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws IllegalArgumentException("")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -476,7 +476,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws IllegalArgumentException("")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -602,7 +602,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws IllegalArgumentException("")
 
         credentialConfigurationService.testRegistryConnection(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
@@ -829,7 +829,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws IllegalArgumentException("")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
