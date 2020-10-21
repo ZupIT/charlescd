@@ -57,21 +57,16 @@ public class ServiceImplTest {
 
     @Test
     public void testGetDockerRegistryConfigurationEntityNotFound() {
-        var registryType = RegistryType.GCP;
 
         when(dockerRegistryConfigurationRepository.findById(ID_DEFAULT_VALUE)).thenThrow(ResourceNotFoundException.class);
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        try {
-            serviceImpl.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
-        } catch (Exception ex) {
-        }
+        assertThrows(ResourceNotFoundException.class, () -> dockerRegistryConfigurationRepository.findById(ID_DEFAULT_VALUE));
 
         verify(dockerRegistryConfigurationRepository, times(1))
                 .findById(ID_DEFAULT_VALUE);
 
-        assertThrows(ResourceNotFoundException.class, () -> dockerRegistryConfigurationRepository.findById(ID_DEFAULT_VALUE));
     }
 
 
@@ -115,7 +110,7 @@ public class ServiceImplTest {
     }
 
     @Test
-    public void testTestRegistryConnectivityOK() {
+    public void testTestRegistryGCPConnectivityOK() {
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
 
@@ -135,7 +130,7 @@ public class ServiceImplTest {
     }
 
     @Test
-    public void testTestRegistryConnectivityInvalid() {
+    public void testTestRegistryGCPConnectivityInvalid() {
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
 
@@ -153,7 +148,7 @@ public class ServiceImplTest {
     }
 
     @Test
-    public void testTestRegistryConnectivityUnexpectedError() {
+    public void testTestRegistryGCPConnectivityUnexpectedError() {
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
 
@@ -169,4 +164,79 @@ public class ServiceImplTest {
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
 
     }
+
+    @Test
+    public void testFromDockerRegistryGCPConfigurationInput() {
+
+        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(RegistryType.GCP);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        DockerRegistryConfigurationEntity entity = serviceImpl.fromDockerRegistryConfigurationInput(input);
+
+        assertEquals(entity.authorId, input.getAuthorId());
+        assertEquals(entity.workspaceId, input.getWorkspaceId());
+        assertEquals(entity.type, RegistryType.GCP);
+        assertEquals(entity.connectionData.address, input.getAddress());
+    }
+
+    @Test
+    public void testFromDockerRegistryAzureConfigurationInput() {
+
+        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(RegistryType.AZURE);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        DockerRegistryConfigurationEntity entity = serviceImpl.fromDockerRegistryConfigurationInput(input);
+
+        assertEquals(entity.authorId, input.getAuthorId());
+        assertEquals(entity.workspaceId, input.getWorkspaceId());
+        assertEquals(entity.type, RegistryType.AZURE);
+        assertEquals(entity.connectionData.address, input.getAddress());
+    }
+
+    @Test
+    public void testFromDockerRegistryAWSConfigurationInput() {
+
+        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(RegistryType.AWS);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        DockerRegistryConfigurationEntity entity = serviceImpl.fromDockerRegistryConfigurationInput(input);
+
+        assertEquals(entity.authorId, input.getAuthorId());
+        assertEquals(entity.workspaceId, input.getWorkspaceId());
+        assertEquals(entity.type, RegistryType.AWS);
+        assertEquals(entity.connectionData.address, input.getAddress());
+    }
+
+    @Test
+    public void testFromDockerRegistryDockerHuberConfigurationInput() {
+
+        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(RegistryType.DOCKER_HUB);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        DockerRegistryConfigurationEntity entity = serviceImpl.fromDockerRegistryConfigurationInput(input);
+
+        assertEquals(entity.authorId, input.getAuthorId());
+        assertEquals(entity.workspaceId, input.getWorkspaceId());
+        assertEquals(entity.type, RegistryType.DOCKER_HUB);
+        assertEquals(entity.connectionData.address, input.getAddress());
+    }
+
+    @Test
+    public void testFromDockerInvalidRegistryConfigurationInput() {
+
+        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(RegistryType.UNSUPPORTED);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        Exception exception = assertThrows(IllegalStateException.class,
+                () ->   serviceImpl.fromDockerRegistryConfigurationInput(input));
+
+        assertThat(exception.getMessage(), is("Registry type not supported!"));
+
+    }
+
 }

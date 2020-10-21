@@ -95,6 +95,9 @@ public class DockerRegistryTestUtils {
                                 STRING_DEFAULT_VALUE,
                                 STRING_DEFAULT_VALUE);
                 break;
+            case UNSUPPORTED:
+                registryAuth = null;
+                break;
             default:
                 throw new IllegalStateException("Registry type not supported!");
 
