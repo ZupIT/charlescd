@@ -21,9 +21,8 @@ import Form from 'core/components/Form';
 import RadioGroup from 'core/components/RadioGroup';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import ConnectionStatus from './ConnectionStatus';
 import { getProfileByKey } from 'core/utils/profile';
-import { useRegistry } from './hooks';
+import { useRegistry, useRegistryTest } from './hooks';
 import { radios } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
@@ -32,25 +31,42 @@ import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 
 const FormRegistry = ({ onFinish }: Props) => {
-  const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
+  const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
+  const { test, loadingTest, responseTest, errorTest } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { register, handleSubmit, reset, control } = useForm<Registry>();
+  const isGCP = registryType === 'GCP';
+  const [isDisabled, setIsDisabled] = useState(isGCP);
+  // const isResponse = responseTest || errorTest;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    control,
+    formState: { isValid }
+  } = useForm<Registry>({ mode: 'onChange' });
   const profileId = getProfileByKey('id');
   const dispatch = useDispatch();
-  // TODO remove later
-  const response = true;
-  const [loading, setIsLoading] = useState(false);
-  const responseStatus = '400';
-  const responseMessage = 'sucesso!!';
 
   useEffect(() => {
     if (responseAdd) onFinish();
   }, [onFinish, responseAdd]);
+
+  useEffect(() => {
+    if (responseTest) {
+      console.log('responseTest', responseTest);
+      setIsDisabled(false);
+    }
+  }, [responseTest]);
+
+  useEffect(() => {
+    if (errorTest) {
+      console.log('errorTest', errorTest);
+    }
+  }, [errorTest]);
 
   const onChange = (value: string) => {
     reset();
@@ -64,7 +80,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       provider: registryType
     };
 
-    if (registryType === 'GCP') {
+    if (isGCP) {
       try {
         JSON.parse(registry.jsonKey);
       } catch (error) {
@@ -79,17 +95,6 @@ const FormRegistry = ({ onFinish }: Props) => {
     }
 
     save(registry);
-  };
-
-  // TODO to be refactored
-  const onClick = () => {
-    // make POST api call
-    // get and save status and message from response
-    console.log('[onClick]');
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
   };
 
   const renderAwsFields = () => {
@@ -145,7 +150,7 @@ const FormRegistry = ({ onFinish }: Props) => {
           name="organization"
           label="Enter the project id"
         />
-        <Styled.Subtitle fontSize={HEADINGS_FONT_SIZE.h4} color="dark">
+        <Styled.Subtitle color="dark">
           Enter the json key below:
         </Styled.Subtitle>
         <AceEditorForm
@@ -156,16 +161,16 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
-        {response && (
-          <ConnectionStatus status={responseStatus} message={responseMessage} />
-        )}
-        <Styled.TestConnectionButton
+        {/* {isResponse && <ConnectionStatus data={responseTest || errorTest} />} */}
+        <Button.Default
           type="button"
-          onClick={() => onClick()}
-          isLoading={loading}
+          id="test-connection"
+          onClick={() => test(getValues())}
+          isDisabled={!isValid}
+          isLoading={loadingTest}
         >
           Test connection
-        </Styled.TestConnectionButton>
+        </Button.Default>
       </>
     );
   };

@@ -18,25 +18,28 @@ import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
+import { HTTP_STATUS } from 'core/enums/HttpStatus';
 
 type Props = {
-  status: string;
-  message: string;
+  data: Response;
 };
 
-const ConnectionStatus = ({ status, message }: Props) => {
-  let statusText = 'error';
-  if (status === '200') statusText = 'success';
+const ConnectionStatus = ({ data }: Props) => {
+  console.log('ConnectionStatus (data)', data);
+  // let statusText = 'error';
+  // if (status === HTTP_STATUS.success) statusText = 'success';
 
-  return (
-    <Styled.StatusMessageWrapper
-      data-testid={`connection-${statusText}`}
-      status={statusText}
-    >
-      <Icon name={statusText} />
-      <Text.h5>{message}</Text.h5>
-    </Styled.StatusMessageWrapper>
-  );
+  return <></>;
+
+  // return (
+  //   <Styled.StatusMessageWrapper
+  //     data-testid={`connection-${statusText}`}
+  //     status={statusText}
+  //   >
+  //     <Icon name={statusText} />
+  //     <Text.h5>{message}</Text.h5>
+  //   </Styled.StatusMessageWrapper>
+  // );
 };
 
 export default ConnectionStatus;

@@ -16,7 +16,6 @@
 
 import styled from 'styled-components';
 import TextComponent from 'core/components/Text';
-import Button from 'core/components/Button';
 
 const Title = styled(TextComponent.h2)`
   display: flex;
@@ -28,7 +27,7 @@ const Title = styled(TextComponent.h2)`
   }
 `;
 
-const Subtitle = styled(TextComponent.h5)`
+const Subtitle = styled(TextComponent.h4)`
   margin-bottom: 10px;
 `;
 
@@ -50,11 +49,6 @@ const Fields = styled.div`
   > * {
     margin-top: 19px;
   }
-`;
-
-const TestConnectionButton = styled(Button.Default)`
-  margin-bottom: 10px;
-  margin-top: 30px;
 `;
 
 type status = {
@@ -81,6 +75,5 @@ export default {
   Subtitle,
   Form,
   Fields,
-  TestConnectionButton,
   StatusMessageWrapper
 };

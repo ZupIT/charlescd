@@ -15,7 +15,7 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { create, configPath } from 'core/providers/registry';
+import { create, configPath, validation } from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
@@ -83,5 +83,35 @@ export const useRegistry = (): FetchProps => {
     }
   }, [errorRemove, dispatch]);
 
-  return { responseAdd, save, responseRemove, remove, loadingSave, loadingAdd };
+  return {
+    responseAdd,
+    save,
+    responseRemove,
+    remove,
+    loadingSave,
+    loadingAdd
+  };
+};
+
+export const useRegistryTest = (): FetchProps => {
+  const [testData, testRegistry] = useFetch<Response>(validation);
+  const {
+    loading: loadingTest,
+    response: responseTest,
+    error: errorTest
+  } = testData;
+
+  const test = useCallback(
+    (registry: Registry) => {
+      testRegistry(registry);
+    },
+    [testRegistry]
+  );
+
+  return {
+    test,
+    loadingTest,
+    responseTest,
+    errorTest
+  };
 };
