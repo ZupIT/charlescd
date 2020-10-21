@@ -68,95 +68,6 @@ interface TrafficManagement {
     enabled: boolean
     options: Options
 }
-
-<<<<<<< HEAD
-interface Metadata {
-    name: string
-    namespace: string
-}
-
-interface Labels {
-    component: string
-    tag: string
-    circleId: string
-}
-
-interface Subset {
-    labels: Labels
-    name: string
-}
-
-interface Cookie {
-    regex: string
-}
-
-interface XCircleId {
-    exact: string
-}
-
-interface Headers {
-    cookie?: Cookie
-    'x-circle-id'?: XCircleId,
-    'unreachable-cookie-name'?: XCircleId
-}
-
-interface Match {
-    headers: Headers
-}
-
-interface Destination {
-    host: string
-    subset?: string
-}
-
-interface RequestSet {
-    'x-circle-source': string
-}
-
-interface Request {
-    set: RequestSet
-}
-
-interface ResponseSet {
-    'x-circle-source': string
-}
-
-interface Response {
-    set: ResponseSet
-}
-
-interface RouteHeaders {
-    request: Request
-    response: Response
-}
-
-interface Route {
-    destination: Destination
-    headers?: RouteHeaders
-}
-
-interface Http {
-    match?: Match[]
-    route: Route[]
-}
-
-interface Spec {
-    host?: string
-    subsets?: Subset[]
-    hosts?: string[]
-    http?: Http[]
-    gateways?: string[]
-}
-
-interface Manifest {
-    apiVersion: string
-    kind: string
-    metadata: Metadata
-    spec: Spec
-}
-
-=======
->>>>>>> 0384abb996e9cf270e10e99ff75d84fedc0ac970
 interface CustomHeaders {
     'x-circle-id': string
 }
@@ -203,11 +114,7 @@ interface Stage {
     skipExpressionEvaluation?: boolean
     source?: string
     trafficManagement?: TrafficManagement
-<<<<<<< HEAD
-    manifests?: Manifest[]
-=======
     manifests?: K8sManifest[]
->>>>>>> 0384abb996e9cf270e10e99ff75d84fedc0ac970
     customHeaders?: CustomHeaders
     method?: string
     payload?: DeploymentNotificationRequestDto
@@ -258,11 +165,6 @@ interface SpinnakerPipeline {
 }
 
 export {
-<<<<<<< HEAD
-  Subset,
-  Http,
-=======
->>>>>>> 0384abb996e9cf270e10e99ff75d84fedc0ac970
   Stage,
   ExpectedArtifact,
   SpinnakerPipeline

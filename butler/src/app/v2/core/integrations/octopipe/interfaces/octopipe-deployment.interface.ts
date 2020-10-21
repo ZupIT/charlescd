@@ -26,10 +26,10 @@ export interface OctopipeDeployment {
   helmRepositoryConfig: HelmRepositoryConfig
   helmConfig: HelmConfig
   rollbackIfFailed: boolean
+  namespace: string
 }
 
 export interface OctopipeDeploymentRequest {
-  namespace: string;
   deployments: OctopipeDeployment[],
   unusedDeployments: OctopipeDeployment[],
   proxyDeployments: K8sManifest[]

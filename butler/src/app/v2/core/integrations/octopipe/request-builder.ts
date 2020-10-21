@@ -41,7 +41,6 @@ export class OctopipeRequestBuilder {
   ): OctopipeDeploymentRequest {
 
     return {
-      namespace: (deployment.cdConfiguration?.configurationData as OctopipeConfigurationData).namespace,
       deployments: this.getDeploymentsArray(deployment, activeComponents),
       unusedDeployments: this.getUnusedDeploymentsArray(deployment, activeComponents),
       proxyDeployments: this.getProxyDeploymentsArray(deployment, activeComponents),
@@ -57,7 +56,6 @@ export class OctopipeRequestBuilder {
   ): OctopipeUndeploymentRequest {
 
     return {
-      namespace: (deployment.cdConfiguration?.configurationData as OctopipeConfigurationData).namespace,
       undeployments: this.getUndeploymentsArray(deployment),
       proxyDeployments: this.getProxyUndeploymentsArray(deployment, activeComponents),
       callbackUrl: UrlUtils.getDeploymentNotificationUrl(configuration.executionId),
@@ -73,7 +71,8 @@ export class OctopipeRequestBuilder {
       componentName: component.name,
       helmRepositoryConfig: this.getHelmRepositoryConfig(component, deployment.cdConfiguration),
       helmConfig: this.getHelmConfig(component, deployment.circleId),
-      rollbackIfFailed: !DeploymentUtils.getActiveSameCircleTagComponent(activeComponents, component, deployment.circleId)
+      rollbackIfFailed: !DeploymentUtils.getActiveSameCircleTagComponent(activeComponents, component, deployment.circleId),
+      namespace: component.namespace
     }))
   }
 
@@ -98,7 +97,8 @@ export class OctopipeRequestBuilder {
       componentName: component.name,
       helmRepositoryConfig: this.getHelmRepositoryConfig(component, deployment.cdConfiguration),
       helmConfig: this.getHelmConfig(component, deployment.circleId),
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: component.namespace
     }))
   }
 
@@ -130,7 +130,8 @@ export class OctopipeRequestBuilder {
           componentName: unusedComponent.name,
           helmRepositoryConfig: this.getHelmRepositoryConfig(unusedComponent, deployment.cdConfiguration),
           helmConfig: this.getHelmConfig(unusedComponent, deployment.circleId),
-          rollbackIfFailed: false
+          rollbackIfFailed: false,
+          namespace: component.namespace
         })
       }
     })
