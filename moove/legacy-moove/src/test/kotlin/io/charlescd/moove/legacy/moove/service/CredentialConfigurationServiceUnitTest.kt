@@ -330,7 +330,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+        } throws IllegalArgumentException("")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -537,7 +537,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+        } throws IllegalArgumentException()
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -747,7 +747,27 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConnection(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = IntegrationExceptionLegacy::class)
+    fun `when test actual gcp configuration and unexpected error on villager happens, method should throw IntegrationExceptionLegacy`() {
+        val request = TestRegistryConnectionRequest(
+            configurationId = "configurationId"
+        )
+
+        val villagerRequest = TestVillagerRegistryConnectionRequest(
+            configurationId = "configurationId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConnection(villagerRequest, workspaceId)
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
 
         credentialConfigurationService.testRegistryConnection(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
@@ -774,7 +794,7 @@ class CredentialConfigurationServiceUnitTest {
     }
 
     @Test(expected = Exception::class)
-    fun `when test actual gcp configuration and unexpected errors happens, method should throw ThirdyPartyIntegrationExceptionLegacy`() {
+    fun `when test actual gcp configuration and unexpected errors happens, method should throw Exception`() {
         val request = TestRegistryConnectionRequest(
             configurationId = "configurationId"
         )
@@ -849,7 +869,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+        } throws IllegalArgumentException()
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -880,7 +900,38 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = IntegrationExceptionLegacy::class)
+    fun `when test new gcp configuration  and unexpected error on villager happens, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateGCPRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            organization = "organization",
+            jsonKey = "jsonKey",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.GCP,
+            organization = "organization",
+            username = "_json_key",
+            jsonKey = "jsonKey",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_UNEXPECTED_ERROR, "")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -1056,7 +1107,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+        } throws IllegalArgumentException()
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
