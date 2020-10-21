@@ -92,8 +92,7 @@ const IstioUndeploymentManifestsUtils = {
 
     activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
-
-      if (activeCircleId && IstioUndeploymentManifestsUtils.canPushSubset(component, activeCircleId, subsets)) {
+      if (activeCircleId && IstioUndeploymentManifestsUtils.canPushSubset(component, circleId, subsets)) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
@@ -122,9 +121,9 @@ const IstioUndeploymentManifestsUtils = {
     }
     return rules
   },
-  canPushSubset(component: Component, activeCircleId: string | undefined, subsets: Subset[]) {
+  canPushSubset(component: Component, circleIdRequest: string | undefined, subsets: Subset[]) {
     return !component.deployment?.defaultCircle &&
-      activeCircleId !== component.deployment?.circleId &&
+      circleIdRequest !== component.deployment?.circleId &&
       !subsets.find(subset => subset.name === component.imageTag)
   }
 }
