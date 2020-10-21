@@ -14,20 +14,4 @@
  * limitations under the License.
  */
 
-import Git from './Git';
-import Registry from './Registry';
-import CircleMatcher from './CircleMatcher';
-import MetricProvider from './MetricProvider';
-import CDConfiguration from './CDConfiguration';
-import UserGroup from './UserGroup';
-import MetricAction from './MetricAction';
-
-export default {
-  Git,
-  Registry,
-  CircleMatcher,
-  MetricProvider,
-  CDConfiguration,
-  UserGroup,
-  MetricAction
-};
+export const FORM_METRIC_ACTION = 'action';

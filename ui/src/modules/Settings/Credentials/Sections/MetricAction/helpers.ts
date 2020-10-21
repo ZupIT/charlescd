@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-import Git from './Git';
-import Registry from './Registry';
-import CircleMatcher from './CircleMatcher';
-import MetricProvider from './MetricProvider';
-import CDConfiguration from './CDConfiguration';
-import UserGroup from './UserGroup';
-import MetricAction from './MetricAction';
+import { ActionForm } from './types';
 
-export default {
-  Git,
-  Registry,
-  CircleMatcher,
-  MetricProvider,
-  CDConfiguration,
-  UserGroup,
-  MetricAction
+export const buildActionPayload = (
+  formData: ActionForm,
+  defaultConfig: boolean
+) => {
+  if (defaultConfig) {
+    return {
+      ...formData,
+      useDefaultConfiguration: defaultConfig
+    };
+  } else {
+    return {
+      ...formData,
+      useDefaultConfiguration: defaultConfig,
+      configuration: {
+        mooveUrl: formData.configuration
+      }
+    };
+  }
 };

@@ -20,6 +20,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useWorkspace } from 'modules/Settings/hooks';
+import { useActionData } from './Sections/MetricAction/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
 import { useGlobalState } from 'core/state/hooks';
@@ -42,6 +43,11 @@ const Credentials = ({ onClickHelp }: Props) => {
   const [form, setForm] = useState<string>('');
   const [, loadWorkspace, , updateWorkspace] = useWorkspace();
   const { responseAll: datasources, getAll: getAllDatasources } = useDatasource();
+  const {
+    getActionData,
+    actionResponse,
+    status: actionDataStatus
+  } = useActionData();
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
@@ -50,6 +56,14 @@ const Credentials = ({ onClickHelp }: Props) => {
   const handleSaveClick = ({ name }: Record<string, string>) => {
     updateWorkspace(name);
   };
+
+  const getActions = () => getActionData();
+
+  useEffect(() => {
+    if (actionDataStatus.isIdle) {
+      getActionData();
+    }
+  }, [getActionData, actionDataStatus]);
 
   useEffect(() => {
     if (isNull(form)) {
@@ -129,6 +143,14 @@ const Credentials = ({ onClickHelp }: Props) => {
         setForm={setForm}
         data={datasources as Datasource[]}
       />
+      {actionDataStatus.isResolved && (
+        <Section.MetricAction
+          form={form}
+          setForm={setForm}
+          actions={actionResponse}
+          getNewActions={getActions}
+        />
+      )}
     </TabPanel>
   );
 
