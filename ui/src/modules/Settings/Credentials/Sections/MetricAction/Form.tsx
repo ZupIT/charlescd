@@ -155,7 +155,7 @@ const FormAddAction = ({ onFinish }: Props) => {
           icon="info"
           link={`${CHARLES_DOC}/reference/metrics`}
           linkLabel="View documentation"
-          description="You can create an action and add a trigger to perform an aitomatic task."
+          description="You can create an action and add a trigger to perform an automatic task."
         />
       </Text.h2>
       <FormContext {...formMethods}>
