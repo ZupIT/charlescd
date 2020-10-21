@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-export interface Props {
-  onSave: Function;
-}
+import React from 'react';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
+import Styled from './styled';
 
-export interface Credentials {
-  address: string;
-  accessToken: string;
-  serviceProvider: string;
-}
+type Props = {
+  status: string;
+  message: string;
+};
 
-export interface Registry {
-  name: string;
-  authorId: string;
-  address: string;
-  provider: string;
-  accessKey?: string;
-  secretKey?: string;
-  username?: string;
-  region?: string;
-  password?: string;
-  jsonKey?: string;
-  organization?: string;
-}
+const ConnectionStatus = ({ status, message }: Props) => {
+  let statusText = 'error';
+  if (status === '200') statusText = 'success';
 
-export interface Response {
-  id?: string;
-  registry?: Registry;
-}
+  return (
+    <Styled.StatusMessageWrapper
+      data-testid={`connection-${statusText}`}
+      status={statusText}
+    >
+      <Icon name={statusText} />
+      <Text.h5>{message}</Text.h5>
+    </Styled.StatusMessageWrapper>
+  );
+};
 
-export enum ConnectionStatusEnum {
-  FAILED = 'FAILED',
-  SUCCESS = 'SUCCESS'
-}
+export default ConnectionStatus;

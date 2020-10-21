@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait, act, cleanup } from 'unit-test/testUtils';
+import { render, fireEvent, wait, act } from 'unit-test/testUtils';
 import FormRegistry from '../Sections/Registry/Form';
 import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';

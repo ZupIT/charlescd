@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import TextComponent from 'core/components/Text';
+import Button from 'core/components/Button';
 
 const Title = styled(TextComponent.h2)`
   display: flex;
@@ -51,10 +52,35 @@ const Fields = styled.div`
   }
 `;
 
+const TestConnectionButton = styled(Button.Default)`
+  margin-bottom: 10px;
+  margin-top: 30px;
+`;
+
+type status = {
+  status: string;
+};
+
+const StatusMessageWrapper = styled.div<status>`
+  margin-bottom: -10px;
+  display: flex;
+
+  span {
+    margin-left: 10px;
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+
+  svg {
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+`;
+
 export default {
   Content,
   Title,
   Subtitle,
   Form,
-  Fields
+  Fields,
+  TestConnectionButton,
+  StatusMessageWrapper
 };

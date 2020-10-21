@@ -21,6 +21,7 @@ import Form from 'core/components/Form';
 import RadioGroup from 'core/components/RadioGroup';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import ConnectionStatus from './ConnectionStatus';
 import { getProfileByKey } from 'core/utils/profile';
 import { useRegistry } from './hooks';
 import { radios } from './constants';
@@ -37,9 +38,15 @@ const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   const { register, handleSubmit, reset, control } = useForm<Registry>();
   const profileId = getProfileByKey('id');
   const dispatch = useDispatch();
+  // TODO remove later
+  const response = true;
+  const [loading, setIsLoading] = useState(false);
+  const responseStatus = '400';
+  const responseMessage = 'sucesso!!';
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -72,6 +79,17 @@ const FormRegistry = ({ onFinish }: Props) => {
     }
 
     save(registry);
+  };
+
+  // TODO to be refactored
+  const onClick = () => {
+    // make POST api call
+    // get and save status and message from response
+    console.log('[onClick]');
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   };
 
   const renderAwsFields = () => {
@@ -138,6 +156,16 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
+        {response && (
+          <ConnectionStatus status={responseStatus} message={responseMessage} />
+        )}
+        <Styled.TestConnectionButton
+          type="button"
+          onClick={() => onClick()}
+          isLoading={loading}
+        >
+          Test connection
+        </Styled.TestConnectionButton>
       </>
     );
   };
@@ -194,6 +222,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
+        isDisabled={isDisabled}
       >
         Save
       </Button.Default>
