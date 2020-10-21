@@ -134,7 +134,7 @@ public class DockerRegistryResource {
     public Response validateConfig(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId,
                                @Valid TestDockerRegistryConnectionRequest request) {
         var requestHandler =
-                new TestDockerRegistryConnectionHandler(workspaceId, request.artifactRepositoryConfigurationId);
+                new TestDockerRegistryConnectionHandler(workspaceId, request.configurationId);
         this.testRegistryConnectivityInteractor.execute(requestHandler.handle());
         return Response.status(200).build();
     }

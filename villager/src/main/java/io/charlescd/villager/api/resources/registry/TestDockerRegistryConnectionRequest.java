@@ -26,15 +26,15 @@ public class TestDockerRegistryConnectionRequest {
 
     @JsonCreator
     public TestDockerRegistryConnectionRequest(
-            @JsonProperty("artifactRepositoryConfigurationId") String artifactRepositoryConfigurationId) {
-        this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
+            @JsonProperty("configurationId") String configurationId) {
+        this.configurationId = configurationId;
     }
 
     @NotEmpty
-    protected String artifactRepositoryConfigurationId;
+    protected String configurationId;
 
-    public String getArtifactRepositoryConfigurationId() {
-        return artifactRepositoryConfigurationId;
+    public String getConfigurationId() {
+        return configurationId;
     }
 
 

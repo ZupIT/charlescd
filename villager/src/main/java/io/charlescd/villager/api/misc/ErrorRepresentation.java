@@ -16,6 +16,9 @@
 
 package io.charlescd.villager.api.misc;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorRepresentation {
 
     private String code;
