@@ -262,7 +262,7 @@ const deploymentWith1ComponentCircle1CustomNamespace: Deployment = {
       running: false,
       gatewayName: null,
       hostValue: null,
-      namespace: 'sandbox'
+      namespace: 'custom-namespace'
     }
   ]
 }
@@ -1710,7 +1710,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
-        namespace: 'sandbox',
+        namespace: 'custom-namespace',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1742,7 +1742,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
-        namespace: 'sandbox',
+        namespace: 'custom-namespace',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1774,7 +1774,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
-        namespace: 'sandbox',
+        namespace: 'custom-namespace',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',

@@ -18,7 +18,6 @@ import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integra
 import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
 
 export const oneComponentSameTagSameCircleOctopipe: OctopipeDeploymentRequest = {
-  namespace: 'sandbox',
   deployments: [
     {
       componentName: 'A',
@@ -36,7 +35,8 @@ export const oneComponentSameTagSameCircleOctopipe: OctopipeDeploymentRequest = 
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     }
   ],
   unusedDeployments: [],

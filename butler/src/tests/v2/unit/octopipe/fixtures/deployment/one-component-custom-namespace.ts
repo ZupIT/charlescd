@@ -19,7 +19,6 @@ import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/con
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 
 export const oneComponentCustomNamespaceOctopipe: OctopipeDeploymentRequest = {
-  namespace: 'custom-namespace',
   deployments: [
     {
       componentName: 'A',
@@ -37,7 +36,8 @@ export const oneComponentCustomNamespaceOctopipe: OctopipeDeploymentRequest = {
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: true
+      rollbackIfFailed: true,
+      namespace: 'custom-namespace',
     }
   ],
   unusedDeployments: [],

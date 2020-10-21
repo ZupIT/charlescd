@@ -19,14 +19,13 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 
 export const completeOctopipeUndeploymentRequest: OctopipeUndeploymentRequest = {
-  namespace: 'sandbox',
   undeployments: [
     {
       componentName: 'A',
       helmRepositoryConfig: {
         type: GitProvidersEnum.GITHUB,
         url: 'http://localhost:2222/helm',
-        token: 'git-token'
+        token: 'git-token',
       },
       helmConfig: {
         overrideValues: {
@@ -37,7 +36,8 @@ export const completeOctopipeUndeploymentRequest: OctopipeUndeploymentRequest = 
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     },
     {
       componentName: 'B',
@@ -55,7 +55,8 @@ export const completeOctopipeUndeploymentRequest: OctopipeUndeploymentRequest = 
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     }
   ],
   proxyDeployments: [

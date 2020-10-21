@@ -19,7 +19,6 @@ import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/con
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 
 export const oneComponentHostnameGatewayOctopipe: OctopipeDeploymentRequest = {
-  namespace: 'sandbox',
   deployments: [
     {
       componentName: 'A',
@@ -37,7 +36,8 @@ export const oneComponentHostnameGatewayOctopipe: OctopipeDeploymentRequest = {
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: true
+      rollbackIfFailed: true,
+      namespace: 'sandbox'
     }
   ],
   unusedDeployments: [],

@@ -19,7 +19,7 @@ import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/con
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 
 export const oneComponentSameTagDiffCirclesUnusedOctopipe: OctopipeDeploymentRequest = {
-  namespace: 'sandbox',
+
   deployments: [
     {
       componentName: 'A',
@@ -37,7 +37,8 @@ export const oneComponentSameTagDiffCirclesUnusedOctopipe: OctopipeDeploymentReq
           circleId: 'circle-id2'
         }
       },
-      rollbackIfFailed: true
+      rollbackIfFailed: true,
+      namespace: 'sandbox'
     }
   ],
   unusedDeployments: [
@@ -57,7 +58,8 @@ export const oneComponentSameTagDiffCirclesUnusedOctopipe: OctopipeDeploymentReq
           circleId: 'circle-id2'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     }
   ],
   proxyDeployments: [

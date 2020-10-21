@@ -19,7 +19,7 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 
 export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRequest = {
-  namespace: 'sandbox',
+
   undeployments: [
     {
       componentName: 'A',
@@ -37,7 +37,8 @@ export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRe
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     },
     {
       componentName: 'B',
@@ -55,7 +56,8 @@ export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRe
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     }
   ],
   proxyDeployments: [

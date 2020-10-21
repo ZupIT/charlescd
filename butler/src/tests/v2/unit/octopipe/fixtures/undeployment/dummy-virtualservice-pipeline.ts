@@ -18,7 +18,6 @@ import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/con
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 
 export const dummyVirtualServicePipelineOctopipe: OctopipeUndeploymentRequest = {
-  namespace: 'sandbox',
   undeployments: [
     {
       componentName: 'A',
@@ -36,7 +35,8 @@ export const dummyVirtualServicePipelineOctopipe: OctopipeUndeploymentRequest = 
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     },
     {
       componentName: 'B',
@@ -54,7 +54,8 @@ export const dummyVirtualServicePipelineOctopipe: OctopipeUndeploymentRequest = 
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox'
     }
   ],
   proxyDeployments: [

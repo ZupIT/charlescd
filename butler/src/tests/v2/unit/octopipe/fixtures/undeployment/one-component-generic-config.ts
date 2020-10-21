@@ -20,7 +20,6 @@ import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integ
 import { ClusterProviderEnum } from '../../../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 export const completeOctopipeUndeploymentGenericRequest: OctopipeUndeploymentRequest = {
-  namespace: 'sandbox',
   undeployments: [
     {
       componentName: 'A',
@@ -38,7 +37,8 @@ export const completeOctopipeUndeploymentGenericRequest: OctopipeUndeploymentReq
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox',
     },
     {
       componentName: 'B',
@@ -56,7 +56,8 @@ export const completeOctopipeUndeploymentGenericRequest: OctopipeUndeploymentReq
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: false
+      rollbackIfFailed: false,
+      namespace: 'sandbox',
     }
   ],
   proxyDeployments: [

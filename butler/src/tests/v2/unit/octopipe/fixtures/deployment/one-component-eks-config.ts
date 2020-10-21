@@ -20,7 +20,6 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { ClusterProviderEnum } from '../../../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 export const oneComponentEKSOctopipe: OctopipeDeploymentRequest = {
-  namespace: 'sandbox',
   deployments: [
     {
       componentName: 'A',
@@ -38,7 +37,8 @@ export const oneComponentEKSOctopipe: OctopipeDeploymentRequest = {
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: true
+      rollbackIfFailed: true,
+      namespace: 'sandbox',
     }
   ],
   unusedDeployments: [],
