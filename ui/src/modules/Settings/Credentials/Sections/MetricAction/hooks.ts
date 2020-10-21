@@ -20,10 +20,12 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import {
   getAllActions,
   deleteActionById,
-  getPluginsByCategory
+  getPluginsByCategory,
+  createAction as createActionRequest
 } from 'core/providers/actions';
 import { useDispatch } from 'core/state/hooks';
-import { Action } from './types';
+import { Action, PluginsPayload, ActionPayload } from './types';
+import { ValidationError } from 'core/interfaces/ValidationError';
 
 export const useActionData = () => {
   const getActionsData = useFetchData<Action[]>(getAllActions);
@@ -87,7 +89,9 @@ export const useDeleteAction = () => {
 };
 
 export const usePlugins = () => {
-  const getPluginsRequest = useFetchData<any[]>(getPluginsByCategory);
+  const getPluginsRequest = useFetchData<PluginsPayload[]>(
+    getPluginsByCategory
+  );
   const [plugins, setPlugins] = useState([]);
 
   const getPlugins = useCallback(
@@ -108,5 +112,37 @@ export const usePlugins = () => {
   return {
     getPlugins,
     plugins
+  };
+};
+
+export const useCreateAction = () => {
+  const createActionPayload = useFetchData<ActionPayload>(createActionRequest);
+  const status = useFetchStatus();
+  const [validationError, setValidationError] = useState<ValidationError>();
+
+  const createAction = useCallback(
+    async (actionPayload: ActionPayload) => {
+      try {
+        status.pending();
+        const saveActionResponse = await createActionPayload(actionPayload);
+
+        status.resolved();
+
+        return saveActionResponse;
+      } catch (e) {
+        status.rejected();
+        e.text().then((errorMessage: string) => {
+          const parsedError = JSON.parse(errorMessage);
+          setValidationError(parsedError);
+        });
+      }
+    },
+    [createActionPayload, status]
+  );
+
+  return {
+    createAction,
+    status,
+    validationError
   };
 };

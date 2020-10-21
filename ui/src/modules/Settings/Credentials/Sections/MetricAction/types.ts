@@ -29,3 +29,31 @@ export type ActionPayload = {
   type: string;
   configuration: ActionConfiguration;
 };
+
+type executionInputs = {
+  label: string;
+  name: string;
+  required: boolean;
+  type: string;
+};
+
+type configurationInputs = {
+  label: string;
+  name: string;
+  required: boolean;
+  type: string;
+};
+
+type inputParameters = {
+  configurationInputs: configurationInputs[];
+  executionInputs: executionInputs[];
+};
+
+export type PluginsPayload = {
+  id: string;
+  category: string;
+  name: string;
+  src: string;
+  description: string;
+  inputParameters: inputParameters;
+};
