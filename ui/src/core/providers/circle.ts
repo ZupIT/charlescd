@@ -21,7 +21,7 @@ import {
   CreateCircleManuallyPayload
 } from 'modules/Circles/interfaces/Circle';
 
-const endpoint = '/moove/v2/circles';
+export const endpoint = '/moove/v2/circles';
 
 export interface CircleFilter {
   id?: string;
