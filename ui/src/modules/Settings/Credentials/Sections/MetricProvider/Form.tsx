@@ -37,7 +37,11 @@ import ConnectionStatus from './ConnectionStatus';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
-  const { response: testConnectionResponse, loading: loadingConnectionResponse, save: testConnection } = useTestConnection();
+  const {
+    response: testConnectionResponse,
+    loading: loadingConnectionResponse,
+    save: testConnection
+  } = useTestConnection();
   const [datasourceHealth, setDatasourceHealth] = useState(false);
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins();
@@ -50,7 +54,6 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     if (responseSave) onFinish();
   }, [onFinish, responseSave, getAll]);
 
-
   const onSubmit = (datasource: Datasource) => {
     save({
       ...datasource,
@@ -60,7 +63,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const onChange = (option: Option) => {
-    setPlugin(find((plugins as Plugin[]), { id: option['value'] }));
+    setPlugin(find(plugins as Plugin[], { id: option['value'] }));
   };
 
   const onClose = () => {
@@ -107,14 +110,17 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         label="Datasource name"
       />
 
-      {map((plugin.inputParameters as PluginDatasource)['configurationInputs'], input => (
-        <Styled.Input
-          key={input.name}
-          ref={register({ required: input.required })}
-          name={`data.${input.name}`}
-          label={input.label}
-        />
-      ))}
+      {map(
+        (plugin.inputParameters as PluginDatasource)['configurationInputs'],
+        input => (
+          <Styled.Input
+            key={input.name}
+            ref={register({ required: input.required })}
+            name={`data.${input.name}`}
+            label={input.label}
+          />
+        )
+      )}
 
       {testConnectionResponse && (
         <ConnectionStatus
