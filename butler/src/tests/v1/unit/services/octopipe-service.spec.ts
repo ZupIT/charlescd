@@ -962,7 +962,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [],
@@ -1040,7 +1040,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'some-app-name',
