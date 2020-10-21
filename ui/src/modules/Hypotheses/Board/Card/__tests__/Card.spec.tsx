@@ -135,6 +135,28 @@ test('render Card type.FEATURE and open view', async () => {
 test('render Card type.ACTION and open view', async () => {
   render(<CardBoard {...propsAction} />);
 
+  let ModalView;
+
+  const Card = await screen.findByTestId(`card-board-${propsAction.card.id}`);
+  expect(Card).toBeInTheDocument();
+
+  await act(async () => userEvent.click(Card));
+
+  ModalView = await screen.findByTestId("modal-default");
+  expect(ModalView).toBeInTheDocument();
+
+  const CloseIcon = await screen.findByTestId('icon-cancel');
+  expect(CloseIcon).toBeInTheDocument();
+  
+  await act(async () => userEvent.click(CloseIcon));
+
+  ModalView = screen.queryByTestId("modal-default");
+  expect(ModalView).not.toBeInTheDocument();
+});
+
+test('render Card type.ACTION and open view and close', async () => {
+  render(<CardBoard {...propsAction} />);
+
   const Card = await screen.findByTestId(`card-board-${propsAction.card.id}`);
   expect(Card).toBeInTheDocument();
 

@@ -33,6 +33,7 @@ const RadioCards = styled.div`
   display: flex;
   flex-direction: column;
   width: 311px;
+
   > * + * {
     margin-top: 8px;
   }
@@ -52,12 +53,14 @@ const Radio = styled.div<WrapperProps>`
   justify-content: center;
   position: relative;
   transition: box-shadow 0.2s linear;
+
   ${({ disabled }) =>
     disabled &&
     css`
       cursor: default;
       opacity: 0.3;
     `}
+
   ${({ disabled }) =>
     !disabled &&
     css`
@@ -83,6 +86,7 @@ const Label = styled.label<LabelProps>`
   border: 1px ${({ theme }) => theme.radio.card.unchecked.border} solid;
   background-color: ${({ theme }) => theme.radio.card.unchecked.background};
   cursor: pointer;
+
   > :not(:first-child) {
     margin-top: 8px;
   }
@@ -99,6 +103,7 @@ const Checkmark = styled.span`
   width: 25px;
   border: 1px ${({ theme }) => theme.radio.card.unchecked.checkmark} solid;
   border-radius: 50%;
+
   :after {
     content: '';
     position: absolute;
@@ -119,29 +124,36 @@ const Input = styled.input`
   position: absolute;
   pointer-events: none;
   margin: auto;
+
   :checked {
-    & + ${Label} {
+    + ${Label} {
       background-color: ${({ theme }) => theme.radio.card.checked.background};
       border: 1px ${({ theme }) => theme.radio.card.checked.border} solid;
+
       ${Title}, ${Description} {
         color: ${({ theme }) => theme.radio.card.checked.color};
       }
     }
+
     ~ ${Checkmark} {
       border: 2px ${({ theme }) => theme.radio.card.checked.checkmark} solid;
       background-color: transparent;
+
       :after {
         background-color: ${({ theme }) => theme.radio.card.checked.checkmark};
         display: block;
       }
     }
   }
+
   :not(:checked) + ${Label} {
     background-color: ${({ theme }) => theme.radio.card.unchecked.background};
+
     ${Title}, ${Description} {
       color: ${({ theme }) => theme.radio.card.unchecked.color};
     }
   }
+
   ~ ${Checkmark} {
     background-color: transparent;
     border: 2px ${({ theme }) => theme.radio.card.unchecked.checkmark} solid;
