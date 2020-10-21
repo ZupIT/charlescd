@@ -81,7 +81,10 @@ const FormRegistry = ({ onFinish }: Props) => {
     save(registry);
   };
 
+  // TODO to be refactored
   const onClick = () => {
+    // make POST api call
+    // get and save status and message from response
     console.log('[onClick]');
     setIsLoading(true);
     setTimeout(() => {
