@@ -39,10 +39,6 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
         this.request = request;
     }
 
-    public CreateDockerRegistryRequestHandler(CreateDockerRegistryConfigurationRequest request) {
-        this.request = request;
-    }
-
     @Override
     public DockerRegistryConfigurationInput handle() {
 
