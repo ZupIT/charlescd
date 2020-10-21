@@ -181,8 +181,8 @@ redis:
   enabled: true
   password: "hb2Fj9MGKjBkZ6zV"
 
-nginx:
-  enabled: false
+envoy:
+  enabled: true
   ui:
     enabled: true
   moove:
@@ -193,9 +193,14 @@ nginx:
     enabled: true
   octopipe:
     enabled: true
-  idm:
-    endpoint: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/.well-known/openid-configuration
-    alg: RS256
+  compass:
+    enabled: true
+  cors:
+    enabled: true
+  jwt_validation:
+    issuer: http://charles.info.example/keycloak/auth/realms/charlescd
+    jwks_certs: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/protocol/openid-connect/certs
+    cache_duration: 30
 
 octopipe:
   enabled: true

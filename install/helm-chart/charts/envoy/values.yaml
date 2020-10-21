@@ -1,0 +1,20 @@
+envoy:
+  enabled: true
+  ui:
+    enabled: true
+  moove:
+    enabled: true
+  circlematcher:
+    enabled: true
+  keycloak:
+    enabled: true
+  octopipe:
+    enabled: true
+  compass:
+    enabled: true
+  cors:
+    enabled: true
+  jwt_validation:
+    issuer: http://charles.info.example/keycloak/auth/realms/charlescd
+    jwks_certs: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/protocol/openid-connect/certs
+    cache_duration: 30
