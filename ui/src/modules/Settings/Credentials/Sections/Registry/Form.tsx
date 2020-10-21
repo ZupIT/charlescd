@@ -37,7 +37,8 @@ const FormRegistry = ({ onFinish }: Props) => {
   const { test, loadingTest, responseTest, errorTest } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const isGCP = registryType === 'GCP';
+  const [isDisabled, setIsDisabled] = useState(isGCP);
   // const isResponse = responseTest || errorTest;
   const {
     register,
@@ -79,7 +80,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       provider: registryType
     };
 
-    if (registryType === 'GCP') {
+    if (isGCP) {
       try {
         JSON.parse(registry.jsonKey);
       } catch (error) {
@@ -163,6 +164,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         {/* {isResponse && <ConnectionStatus data={responseTest || errorTest} />} */}
         <Button.Default
           type="button"
+          id="test-connection"
           onClick={() => test(getValues())}
           isDisabled={!isValid}
           isLoading={loadingTest}

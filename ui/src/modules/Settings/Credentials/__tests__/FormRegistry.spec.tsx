@@ -17,6 +17,7 @@
 import React from 'react';
 import { render, fireEvent, wait, act } from 'unit-test/testUtils';
 import FormRegistry from '../Sections/Registry/Form';
+import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
@@ -25,6 +26,7 @@ import { Controller as MockController } from 'react-hook-form';
 
 const mockOnFinish = jest.fn();
 const mockSave = jest.fn();
+const mockValidation = jest.fn();
 
 afterEach(() => {
   mockSave.mockClear();
@@ -35,6 +37,9 @@ jest.mock('../Sections/Registry/hooks', () => {
     __esModule: true,
     useRegistry: () => ({
       save: mockSave,
+    }),
+    useRegistryTest: () => ({
+      test: mockValidation,
     })
   };
 });
@@ -167,6 +172,8 @@ test('Not trigger onSubmit on json parse error with GCP form', async () => {
 });
 
 test('Trigger submit on json parse success with GCP form', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ message: 'response' }));
+
   const { container, getByTestId, getByText } = render(
     <FormRegistry onFinish={mockOnFinish} />
   );
@@ -180,6 +187,7 @@ test('Trigger submit on json parse success with GCP form', async () => {
   const inputGCPOrganization = getByTestId('input-text-organization');
   const inputGCPJsonKey = getByTestId('input-text-jsonKey');
   const submitButton = getByTestId('button-default-submit-registry');
+  const testConnectionButton = getByTestId('button-default-test-connection');
   await act(async () => {
     fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
     fireEvent.change(inputGCPAddress, {
@@ -191,6 +199,8 @@ test('Trigger submit on json parse success with GCP form', async () => {
     fireEvent.change(inputGCPJsonKey, {
       target: { value: '{ "testKey": "testValue"}' }
     });
+    fireEvent.click(testConnectionButton);
+    await wait();
     fireEvent.click(submitButton);
   });
   expect(mockSave).toBeCalledTimes(1);
@@ -226,7 +236,7 @@ test('execute onSubmit', async () => {
   const inputAwsAccessKey = getByTestId("input-password-accessKey");
   const inputAwsSecretKey = getByTestId("input-text-secretKey");
   const inputAwsRegion = getByTestId("input-text-region");
-  const submitButton = getByTestId("button-default-submit-registry")
+  const submitButton = getByTestId("button-default-submit-registry");
 
   await act(async () => {
     fireEvent.change(inputAwsName, {target: {value: "fake-name"}})
