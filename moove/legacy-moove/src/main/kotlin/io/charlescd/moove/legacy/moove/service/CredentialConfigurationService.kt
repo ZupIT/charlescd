@@ -40,8 +40,6 @@ import io.charlescd.moove.legacy.repository.entity.User
 import java.time.LocalDateTime
 import java.util.*
 import org.springframework.stereotype.Service
-import javax.ws.rs.BadRequestException
-import javax.ws.rs.ClientErrorException
 
 @Service
 class CredentialConfigurationService(
@@ -128,8 +126,8 @@ class CredentialConfigurationService(
 
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } catch(illegalArgumentException: IllegalArgumentException) {
-            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION);
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
         } catch (exception: Exception) {
             throw exception
         }
