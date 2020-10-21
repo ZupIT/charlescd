@@ -178,7 +178,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
-                .withAddress("http://test.io")
+                .withAddress("http://test.org")
                 .withRegistryType(RegistryType.GCP)
                 .withAuth(new GCPDockerRegistryAuth("organization", "_json_key", "jsonKey"))
                 .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
@@ -198,8 +198,9 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.authorId, is("456337ed-7af2-4f0d-9dfb-6e285ad00ee0"));
         assertThat(entityCaptured.workspaceId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
         assertThat(entityCaptured.createdAt, is(createdAt));
-        assertThat(entityCaptured.connectionData.address, is("http://test.io"));
-        assertThat(entityCaptured.connectionData.host, is("test.io/organization"));
+        assertThat(entityCaptured.connectionData.address, is("http://test.org"));
+        assertThat(entityCaptured.connectionData.host, is("test.org/organization"));
+        assertThat(entityCaptured.connectionData.organization, is("organization"));
         assertThat(
                 ((DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) entityCaptured.connectionData).username,
                 is("_json_key"));
@@ -228,7 +229,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
 
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
-                .withAddress("http://test.io")
+                .withAddress("http://test.org")
                 .withRegistryType(RegistryType.DOCKER_HUB)
                 .withAuth(new DockerHubDockerRegistryAuth("organization", "usertest", "userpass"))
                 .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
@@ -248,8 +249,9 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.authorId, is("456337ed-7af2-4f0d-9dfb-6e285ad00ee0"));
         assertThat(entityCaptured.workspaceId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
         assertThat(entityCaptured.createdAt, is(createdAt));
-        assertThat(entityCaptured.connectionData.address, is("http://test.io"));
-        assertThat(entityCaptured.connectionData.host, is("test.io/organization"));
+        assertThat(entityCaptured.connectionData.address, is("http://test.org"));
+        assertThat(entityCaptured.connectionData.host, is("test.org/organization"));
+        assertThat(entityCaptured.connectionData.organization, is("organization"));
         assertThat(
                 ((DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) entityCaptured.connectionData).username,
                 is("usertest"));
