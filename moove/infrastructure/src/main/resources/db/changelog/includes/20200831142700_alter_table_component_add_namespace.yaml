@@ -10,4 +10,4 @@ databaseChangeLog:
               name: namespace
               type: varchar(255)
               constraints:
-                nullable: false
+                nullable: true
