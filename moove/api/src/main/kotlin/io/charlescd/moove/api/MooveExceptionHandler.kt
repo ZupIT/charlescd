@@ -20,7 +20,7 @@ import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
-import io.charlescd.moove.commons.exceptions.InvalidIntegrationRequestExceptionLegacy
+import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
@@ -156,10 +156,10 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
         return ErrorMessageResponse.of(ex.getErrorCode().name, message, ex.getDetails())
     }
 
-    @ExceptionHandler(InvalidIntegrationRequestExceptionLegacy::class)
+    @ExceptionHandler(InvalidRegistryExceptionLegacy::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    fun invalidIntegrationRequestExceptionLegacy(ex: InvalidIntegrationRequestExceptionLegacy): ErrorMessageResponse {
+    fun invalidIntegrationRequestExceptionLegacy(ex: InvalidRegistryExceptionLegacy): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
         return ErrorMessageResponse.of(ex.getErrorCode().name, message)

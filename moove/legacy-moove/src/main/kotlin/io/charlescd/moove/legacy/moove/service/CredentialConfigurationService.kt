@@ -17,8 +17,10 @@
 package io.charlescd.moove.legacy.moove.service
 
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
-import io.charlescd.moove.commons.exceptions.InvalidIntegrationRequestExceptionLegacy
+import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
@@ -113,7 +115,6 @@ class CredentialConfigurationService(
         if (!checkIfCdConfigurationExists(cdConfigurationId, workspaceId)) {
             throw NotFoundExceptionLegacy("cdConfigurationId", cdConfigurationId)
         }
-
         deployApi.deleteCdConfiguration(cdConfigurationId, workspaceId)
     }
 
@@ -127,7 +128,11 @@ class CredentialConfigurationService(
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
         } catch (illegalArgumentException: IllegalArgumentException) {
-            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+            throw InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+        } catch (ex: ThirdyPartyIntegrationExceptionLegacy) {
+            throw ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        } catch (ex: IntegrationExceptionLegacy) {
+            checkIntegrationExceptionLegacy(ex)
         } catch (exception: Exception) {
             throw exception
         }
@@ -143,11 +148,22 @@ class CredentialConfigurationService(
 
         try {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } catch (illegalArgumentException: IllegalArgumentException) {
-            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION)
+        } catch (ex: IllegalArgumentException) {
+            throw InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION)
+        } catch (ex: ThirdyPartyIntegrationExceptionLegacy) {
+            throw ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        } catch (ex: IntegrationExceptionLegacy) {
+            checkIntegrationExceptionLegacy(ex)
         } catch (exception: Exception) {
             throw exception
         }
+    }
+
+    private fun checkIntegrationExceptionLegacy(ex: IntegrationExceptionLegacy) {
+        if (ex.getErrorCode() == MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR) {
+            throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        }
+        throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_GENERAL_ERROR, ex.getDetails())
     }
 
     private fun checkIfCdConfigurationExists(id: String, workspaceId: String): Boolean {

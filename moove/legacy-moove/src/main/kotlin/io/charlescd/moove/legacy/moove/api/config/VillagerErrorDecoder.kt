@@ -21,6 +21,7 @@ import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
 import java.lang.IllegalArgumentException
 
 class VillagerErrorDecoder : ErrorDecoder {
@@ -28,16 +29,38 @@ class VillagerErrorDecoder : ErrorDecoder {
         response?.let {
             val fromJson = Gson().fromJson<ResponseError>(it.body().toString(), ResponseError::class.java)
 
-            if (it.status() == 400) {
-                throw IllegalArgumentException(fromJson.message)
-            }
+            checkBadRequest(it.status(), fromJson)
+
+            checkThirdyPartyIntegrationError(it.status(), fromJson)
+
+            checkCommunicationServerError(it.status(), fromJson)
 
             throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, fromJson.message)
         }
-        throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+
+        throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_UNEXPECTED_ERROR, "")
+    }
+
+    private fun checkBadRequest(httpStatus: Int, response: ResponseError) {
+        if (httpStatus == 400) {
+            throw IllegalArgumentException(response.message)
+        }
+    }
+
+    private fun checkThirdyPartyIntegrationError(httpStatus: Int, response: ResponseError) {
+        if (httpStatus == 500 && response.code.isNotBlank() && response.code.contains("Thirdy", true)) {
+            throw ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTERNAL_INTEGRATION_ERROR, response.message)
+        }
+    }
+
+    private fun checkCommunicationServerError(httpStatus: Int, response: ResponseError) {
+        if (httpStatus == 503 || httpStatus == 502 || httpStatus == 504) {
+            throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, response.message)
+        }
     }
 
     data class ResponseError(
+        val code: String,
         val message: String
     )
 }

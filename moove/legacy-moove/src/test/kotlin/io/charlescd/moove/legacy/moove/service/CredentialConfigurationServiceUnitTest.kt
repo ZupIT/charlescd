@@ -20,8 +20,9 @@ package io.charlescd.moove.legacy.moove.service
 
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
-import io.charlescd.moove.commons.exceptions.InvalidIntegrationRequestExceptionLegacy
+import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
@@ -305,7 +306,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = InvalidIntegrationRequestExceptionLegacy::class)
+    @Test(expected = InvalidRegistryExceptionLegacy::class)
     fun `when test new invalid azure configuration, method should throw InvalidIntegrationRequestExceptionLegacy`() {
 
         val request = CreateAzureRegistryConfigurationRequest(
@@ -329,7 +330,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -359,7 +360,67 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    fun `when test new azure configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateAzureRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.Azure,
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = Exception::class)
+    fun `when test new azure configuration and unexpected errors happens, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateAzureRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.Azure,
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws Exception()
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -450,7 +511,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = InvalidIntegrationRequestExceptionLegacy::class)
+    @Test(expected = InvalidRegistryExceptionLegacy::class)
     fun `when test new invalid aws configuration, method should throw InvalidIntegrationRequestExceptionLegacy`() {
 
         val request = CreateAWSRegistryConfigurationRequest(
@@ -476,7 +537,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -508,7 +569,71 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    fun `when test new aws configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateAWSRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            accessKey = "accessKey",
+            secretKey = "secretKey",
+            region = "region",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.AWS,
+            accessKey = "accessKey",
+            secretKey = "secretKey",
+            region = "region",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = Exception::class)
+    fun `when test new aws configuration and unexpected errors happens, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateAWSRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            accessKey = "accessKey",
+            secretKey = "secretKey",
+            region = "region",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.AWS,
+            accessKey = "accessKey",
+            secretKey = "secretKey",
+            region = "region",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws Exception()
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -587,7 +712,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = InvalidIntegrationRequestExceptionLegacy::class)
+    @Test(expected = InvalidRegistryExceptionLegacy::class)
     fun `when test actual gcp configuration and is invalid, method should throw InvalidIntegrationRequestExceptionLegacy`() {
 
         val request = TestRegistryConnectionRequest(
@@ -602,7 +727,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws IllegalArgumentException("")
 
         credentialConfigurationService.testRegistryConnection(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
@@ -622,7 +747,47 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConnection(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    fun `when test actual gcp configuration and registry api not respond, method should throw ThirdyPartyIntegrationExceptionLegacy`() {
+        val request = TestRegistryConnectionRequest(
+            configurationId = "configurationId"
+        )
+
+        val villagerRequest = TestVillagerRegistryConnectionRequest(
+            configurationId = "configurationId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConnection(villagerRequest, workspaceId)
+        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConnection(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = Exception::class)
+    fun `when test actual gcp configuration and unexpected errors happens, method should throw ThirdyPartyIntegrationExceptionLegacy`() {
+        val request = TestRegistryConnectionRequest(
+            configurationId = "configurationId"
+        )
+
+        val villagerRequest = TestVillagerRegistryConnectionRequest(
+            configurationId = "configurationId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConnection(villagerRequest, workspaceId)
+        } throws Exception()
 
         credentialConfigurationService.testRegistryConnection(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
@@ -659,7 +824,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = InvalidIntegrationRequestExceptionLegacy::class)
+    @Test(expected = InvalidRegistryExceptionLegacy::class)
     fun `when test new invalid gcp configuration, method should throw InvalidIntegrationRequestExceptionLegacy`() {
 
         val request = CreateGCPRegistryConfigurationRequest(
@@ -684,7 +849,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -715,7 +880,69 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    fun `when test new gcp configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateGCPRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            organization = "organization",
+            jsonKey = "jsonKey",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.GCP,
+            organization = "organization",
+            username = "_json_key",
+            jsonKey = "jsonKey",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = Exception::class)
+    fun `when test new gcp configuration and unexpected errors happens, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateGCPRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            organization = "organization",
+            jsonKey = "jsonKey",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.GCP,
+            organization = "organization",
+            username = "_json_key",
+            jsonKey = "jsonKey",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws Exception()
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -804,7 +1031,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = InvalidIntegrationRequestExceptionLegacy::class)
+    @Test(expected = InvalidRegistryExceptionLegacy::class)
     fun `when test new invalid docker hub configuration, method should throw InvalidIntegrationRequestExceptionLegacy`() {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
@@ -829,7 +1056,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IllegalArgumentException("");
+        } throws InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -860,7 +1087,69 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    fun `when test new docker hub configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateDockerHubRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
+            organization = "username",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = Exception::class)
+    fun `when test new docker hub configuration and unexpected errors happens, method should throw IntegrationExceptionLegacy`() {
+
+        val request = CreateDockerHubRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
+            organization = "username",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } throws Exception()
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
