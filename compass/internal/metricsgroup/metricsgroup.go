@@ -31,6 +31,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -66,16 +67,18 @@ type MetricGroupResume struct {
 func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
-	if metricsGroup.Name == "" {
+	if strings.TrimSpace(metricsGroup.Name) == "" {
 		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("name is required").Error()})
+	} else if len(metricsGroup.Name) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("100 Maximum length in Name").Error()})
 	}
 
 	if metricsGroup.CircleID == uuid.Nil {
 		ers = append(ers, util.ErrorUtil{Field: "circleID", Error: errors.New("CircleID is required").Error()})
 	}
 
-	if metricsGroup.Name != "" && len(metricsGroup.Name) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("100 Maximum length in Name").Error()})
+	if metricsGroup.WorkspaceID == uuid.Nil {
+		ers = append(ers, util.ErrorUtil{Field: "workspaceID", Error: errors.New("workspaceID is required").Error()})
 	}
 
 	return ers
@@ -142,6 +145,9 @@ func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
 		logger.Error(util.GeneralParseError, "ParseAction", err, metricsGroup)
 		return MetricsGroup{}, err
 	}
+
+	newMetricsGroup.Name = strings.TrimSpace(newMetricsGroup.Name)
+
 	return *newMetricsGroup, nil
 }
 
