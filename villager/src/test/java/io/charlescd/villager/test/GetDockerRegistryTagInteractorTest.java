@@ -24,6 +24,7 @@ import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.impl.GetDockerRegistryTagInteractorImpl;
 import io.charlescd.villager.service.RegistryService;
 import io.charlescd.villager.utils.DockerRegistryTestUtils;
+import org.apache.http.HttpStatus;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.specimpl.BuiltResponse;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -113,6 +115,28 @@ public class GetDockerRegistryTagInteractorTest {
         verify(registryService, times(1))
                 .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
     }
+
+    @Test
+    public void testArtifactFoundButErrorHappensGettingTags() {
+
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
+        var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
+
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
+        when(registryService.getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME))
+                .thenReturn(Optional.of(Response.status(HttpStatus.SC_CONFLICT).build()));
+
+        var interactor =
+                new GetDockerRegistryTagInteractorImpl(registryService);
+
+        assertTrue(interactor.execute(input).isEmpty());
+
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+        verify(registryService, times(1))
+                .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
+    }
+
 
     @Test
     public void testDockerRegistryForbiddenWorkspace()  {
