@@ -14,4 +14,25 @@
  * limitations under the License.
  */
 
-export const FORM_METRIC_ACTION = 'action';
+import { ActionForm } from './types';
+
+export const buildActionPayload = (
+  formData: ActionForm,
+  defaultConfig: boolean
+) => {
+  if (defaultConfig) {
+    return {
+      ...formData,
+      configuration: {
+        mooveUrl: 'http://localhost:8081'
+      }
+    };
+  } else {
+    return {
+      ...formData,
+      configuration: {
+        mooveUrl: formData.configuration
+      }
+    };
+  }
+};

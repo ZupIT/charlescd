@@ -21,17 +21,18 @@ import Card from 'core/components/Card';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { normalizeSelectOptions } from 'core/utils/select';
 import Button from 'core/components/Button';
-import { usePlugins } from './hooks';
+import { usePlugins, useCreateAction } from './hooks';
 import { Props } from '../interfaces';
 import Styled from './styled';
-import { ActionPayload } from './types';
-import { configType as configOptions } from './constants';
+import { ActionForm } from './types';
+import { buildActionPayload } from './helpers';
 
 const FormAddAction = ({ onFinish }: Props) => {
   const [loadingPlugins, setLoadingPlugins] = useState(true);
-  const [configType, setConfigType] = useState('');
+  const [showConfigAction, setShowConfigAction] = useState(false);
+  const [isDefault, setIsDefault] = useState(true);
   const [pluginsOptions, setPluginsOptions] = useState([]);
-  const formMethods = useForm<ActionPayload>({ mode: 'onChange' });
+  const formMethods = useForm<ActionForm>({ mode: 'onChange' });
   const {
     handleSubmit,
     register,
@@ -42,6 +43,7 @@ const FormAddAction = ({ onFinish }: Props) => {
   const nickname = watch('nickname') as string;
 
   const { getPlugins } = usePlugins();
+  const { createAction, status } = useCreateAction();
 
   useEffect(() => {
     setLoadingPlugins(true);
@@ -53,28 +55,20 @@ const FormAddAction = ({ onFinish }: Props) => {
       .finally(() => setLoadingPlugins(false));
   }, [getPlugins]);
 
-  const onSubmit = (data: ActionPayload) => {
-    console.log(data);
-    // const filtersPayload = data.filters?.map(({ id, ...rest }) => {
-    //   return id ? { id, ...rest } : rest;
-    // });
-    // const payload = {
-    //   ...data,
-    //   id: metric?.id,
-    //   circleId: metric?.circleId,
-    //   filters: filtersPayload ?? [],
-    //   threshold: Number(data.threshold)
-    // };
+  const onSubmit = (data: ActionForm) => {
+    const payload = buildActionPayload(data, isDefault);
 
-    // saveMetric(id, payload)
-    //   .then(response => {
-    //     if (response) {
-    //       onGoBack();
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
+    console.log(payload);
+
+    createAction(payload)
+      .then(response => {
+        if (response) {
+          onFinish();
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   const renderActionConfig = () => (
@@ -82,29 +76,48 @@ const FormAddAction = ({ onFinish }: Props) => {
       <Card.Config
         icon="action"
         description={nickname}
-        onClose={() => console.log('reset Form')}
+        onClose={() => setShowConfigAction(false)}
       />
       <Styled.OptionText color="dark">
         You select an action configuration in a basic way or fill an advanced
         one.
       </Styled.OptionText>
-      <Styled.RadioGroupButtom
-        name="action-config-type"
-        items={configOptions}
-        onChange={({ currentTarget }) => setConfigType(currentTarget.value)}
-      />
-      {configType === configOptions[1].value && (
+      <Styled.ButtonGroup>
+        <Styled.ButtonIconRounded
+          color="dark"
+          onClick={() => setIsDefault(true)}
+          isActive={isDefault}
+        >
+          Default
+        </Styled.ButtonIconRounded>
+        <Styled.ButtonIconRounded
+          color="dark"
+          onClick={() => setIsDefault(false)}
+          isActive={!isDefault}
+        >
+          Custom path
+        </Styled.ButtonIconRounded>
+      </Styled.ButtonGroup>
+      {!isDefault && (
         <Styled.Input
           name="configuration"
-          ref={register()}
+          ref={register({ required: true })}
           label="Enter a action configuration"
         />
       )}
+      <Button.Default
+        id="save"
+        type="submit"
+        isDisabled={!isValid}
+        isLoading={status.isPending}
+      >
+        Save
+      </Button.Default>
     </>
   );
 
   const renderForm = () => (
-    <>
+    <Styled.FormContent showForm={!showConfigAction}>
       <Styled.Input
         name="nickname"
         ref={register({ required: true })}
@@ -124,8 +137,14 @@ const FormAddAction = ({ onFinish }: Props) => {
         options={pluginsOptions}
         rules={{ required: true }}
       />
-      {isValid && renderActionConfig()}
-    </>
+      <Button.Default
+        id="next"
+        isDisabled={!isValid}
+        onClick={() => setShowConfigAction(true)}
+      >
+        Next
+      </Button.Default>
+    </Styled.FormContent>
   );
 
   return (
@@ -146,14 +165,7 @@ const FormAddAction = ({ onFinish }: Props) => {
           data-testid="create-action"
         >
           {renderForm()}
-          <Button.Default
-            id="save"
-            type="submit"
-            isDisabled={!isValid}
-            // isLoading={loadingSave || loadingAdd}
-          >
-            Save
-          </Button.Default>
+          {showConfigAction && renderActionConfig()}
         </Styled.Form>
       </FormContext>
     </Styled.Content>

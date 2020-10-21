@@ -23,6 +23,13 @@ export type ActionConfiguration = {
   mooveUrl: string;
 };
 
+export type ActionForm = {
+  nickname: string;
+  description: string;
+  type: string;
+  configuration: string;
+};
+
 export type ActionPayload = {
   nickname: string;
   description: string;

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ComponentInput from 'core/components/Form/Input';
 import SelectComponent from 'core/components/Form/Select';
-import RadioGroup from 'core/components/RadioGroup';
 import Text from 'core/components/Text';
+import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 import { fadeIn } from 'core/assets/style/animate';
 
 const Content = styled.div`
@@ -60,8 +61,50 @@ const OptionText = styled(Text.h5)`
   padding: 15px 0;
 `;
 
-const RadioGroupButtom = styled(RadioGroup)`
+const ButtonGroup = styled.div`
+  display: flex;
   padding-bottom: 15px;
+
+  button {
+    padding-right: 20px;
+  }
+`;
+
+interface ButtonIconProps {
+  isActive: boolean;
+}
+
+const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
+  height: 40px;
+  padding: 15px 35px;
+  margin-right: 25px;
+
+  span {
+    font-weight: normal;
+    font-size: ${HEADINGS_FONT_SIZE.h6};
+    margin-right: 10px;
+  }
+
+  ${({ isActive }: ButtonIconProps) =>
+    isActive &&
+    css`
+      background-color: ${({ theme }) => theme.radio.checked.background};
+      span {
+        color: ${({ theme }) => theme.radio.checked.color};
+      }
+      i {
+        color: ${({ theme }) => theme.radio.checked.color};
+      }
+    `};
+`;
+
+
+type FormContertProps = {
+  showForm: boolean;
+};
+
+const FormContent = styled.div<FormContertProps>`
+  display: ${({ showForm }) => (showForm ? 'block' : 'none')};
 `;
 
 export default {
@@ -70,5 +113,7 @@ export default {
   Input,
   Select,
   OptionText,
-  RadioGroupButtom
+  ButtonGroup,
+  FormContent,
+  ButtonIconRounded
 };
