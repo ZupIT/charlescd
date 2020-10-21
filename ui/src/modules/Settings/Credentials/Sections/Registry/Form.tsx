@@ -37,8 +37,8 @@ const FormRegistry = ({ onFinish }: Props) => {
   const { test, loadingTest, responseTest, errorTest } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const isGCP = registryType === 'GCP';
-  const [isDisabled, setIsDisabled] = useState(isGCP);
   // const isResponse = responseTest || errorTest;
   const {
     register,
@@ -50,6 +50,10 @@ const FormRegistry = ({ onFinish }: Props) => {
   } = useForm<Registry>({ mode: 'onChange' });
   const profileId = getProfileByKey('id');
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setIsDisabled(isGCP);
+  }, [isGCP]);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -71,6 +75,17 @@ const FormRegistry = ({ onFinish }: Props) => {
   const onChange = (value: string) => {
     reset();
     setRegistryType(value);
+  };
+
+  const onClick = () => {
+    const registry = {
+      ...getValues(),
+      authorId: profileId,
+      provider: registryType,
+      username: '_json_key'
+    };
+
+    test(registry);
   };
 
   const onSubmit = (registry: Registry) => {
@@ -111,7 +126,7 @@ const FormRegistry = ({ onFinish }: Props) => {
           active={awsUseSecret}
           onChange={() => setAwsUseSecret(!awsUseSecret)}
         />
-        {awsUseSecret ? (
+        {awsUseSecret && (
           <>
             <Form.Password
               ref={register({ required: true })}
@@ -124,7 +139,7 @@ const FormRegistry = ({ onFinish }: Props) => {
               label="Enter the secret key"
             />
           </>
-        ) : null}
+        )}
       </>
     );
   };
@@ -165,7 +180,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         <Button.Default
           type="button"
           id="test-connection"
-          onClick={() => test(getValues())}
+          onClick={onClick}
           isDisabled={!isValid}
           isLoading={loadingTest}
         >

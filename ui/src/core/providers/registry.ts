@@ -17,12 +17,11 @@
 import { Registry } from 'modules/Settings/Credentials/Sections/Registry/interfaces';
 import { postRequest } from './base';
 
-const v1Endpoint = '/moove/config/registry';
-const endpoint = '/moove/v2/config/registry';
+const endpoint = '/moove/config/registry';
 export const configPath = '/registryConfigurationId';
 
 export const create = (registry: Registry) =>
-  postRequest(`${v1Endpoint}`, registry);
+  postRequest(`${endpoint}`, registry);
 
 export const validation = (registry: Registry) =>
   postRequest(`${endpoint}/validation`, registry);
