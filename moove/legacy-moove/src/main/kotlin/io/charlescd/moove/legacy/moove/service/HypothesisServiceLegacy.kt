@@ -44,10 +44,6 @@ class HypothesisServiceLegacy(
     private val cardColumnRepository: CardColumnRepository,
     private val cardRepository: CardRepository
 ) {
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/deletion-card-options
     @Value("\${charlescd.protected.branches}")
     lateinit var protectedBranches: Array<String>
 
