@@ -145,6 +145,9 @@ test('render CardView type.ACTION and try to add a module', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(cardAction));
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(modules));
 
+  let SaveModulesButton;
+  let InputBranchName;
+
   render(<CardView {...props} />);
 
   expect(screen.getByTestId('modal-default')).toBeInTheDocument();
@@ -154,9 +157,21 @@ test('render CardView type.ACTION and try to add a module', async () => {
   
   await act(async () => userEvent.click(AddButtons[1]));
 
-  const SaveModulesButton = await screen.findByTestId('button-default-save-modules');
+  SaveModulesButton = await screen.findByTestId('button-default-save-modules');
   expect(SaveModulesButton).toBeInTheDocument();
+  expect(SaveModulesButton).not.toBeDisabled();
 
-  const InputBranchName = screen.queryByTestId('input-text-branchName');
+  InputBranchName = screen.queryByTestId('input-text-branchName');
   expect(InputBranchName).not.toBeInTheDocument();
+
+  const AddIcons = await screen.findAllByTestId('icon-plus-circle');
+  expect(AddIcons.length).toBe(3);
+
+  await act(async () => userEvent.click(AddIcons[2]));
+
+  InputBranchName = await screen.findByTestId('input-text-branchName');
+  expect(InputBranchName).toBeInTheDocument();
+
+  SaveModulesButton = screen.queryByTestId('button-default-save-modules');
+  expect(SaveModulesButton).toBeDisabled();
 });
