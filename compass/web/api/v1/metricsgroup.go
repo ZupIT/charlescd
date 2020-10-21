@@ -20,6 +20,7 @@ package v1
 
 import (
 	"compass/internal/metricsgroup"
+	"compass/pkg/logger"
 	"compass/web/api"
 	"errors"
 	"net/http"
@@ -51,7 +52,8 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, _ string) {
 	circles, err := metricsGroupApi.metricsGroupMain.FindAll()
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error listing metrics groups", "list", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error listing metrics groups")})
 		return
 	}
 
@@ -63,7 +65,8 @@ func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Req
 
 	metricGroups, err := metricsGroupApi.metricsGroupMain.ResumeByCircle(circleId)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error listing metrics groups resume", "resume", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error listing metrics groups resume")})
 		return
 	}
 
@@ -72,9 +75,16 @@ func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Req
 
 func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
-
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error parsing metrics groups", "create", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error creating metrics group")})
+		return
+	}
+
+	metricsGroup.WorkspaceID, err = uuid.Parse(workspaceId)
+	if err != nil {
+		logger.Error("error parsing metrics groups workspace id", "create", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error creating metrics group")})
 		return
 	}
 
@@ -83,10 +93,10 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	metricsGroup.WorkspaceID, err = uuid.Parse(workspaceId)
 	createdCircle, err := metricsGroupApi.metricsGroupMain.Save(metricsGroup)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error saving metric group", "create", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error creating metrics group")})
 		return
 	}
 
@@ -97,7 +107,8 @@ func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, _ *http.Reque
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.FindById(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error finding metric group", "show", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error finding metric group")})
 		return
 	}
 
@@ -118,19 +129,22 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 
 	ragePeriod, err := metricsGroupApi.metricsGroupMain.PeriodValidate(periodParameter)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error querying metric group", "query", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error querying metric group")})
 		return
 	}
 
 	interval, err := metricsGroupApi.metricsGroupMain.PeriodValidate(intervalParameter)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error querying metric group", "query", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error querying metric group")})
 		return
 	}
 
 	queryResult, err := metricsGroupApi.metricsGroupMain.QueryByGroupID(id, ragePeriod, interval)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error querying metric group", "query", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error querying metric group")})
 		return
 	}
 
@@ -142,7 +156,8 @@ func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, _ *http.Req
 
 	queryResult, err := metricsGroupApi.metricsGroupMain.ResultByID(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error getting metric group result", "result", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error getting metric group result")})
 		return
 	}
 
@@ -153,13 +168,15 @@ func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Req
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error updating metric group", "update", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error updating ,metric group")})
 		return
 	}
 
 	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.Update(id, metricsGroup)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error updating metric group", "update", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error updating ,metric group")})
 		return
 	}
 
@@ -172,7 +189,8 @@ func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http
 
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.FindById(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error updating metric group name", "updateName", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error updating metric group name")})
 		return
 	}
 
@@ -184,7 +202,8 @@ func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http
 
 	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.UpdateName(id, metricsGroup)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error updating metric group name", "updateName", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error updating metric group name")})
 		return
 	}
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
@@ -194,7 +213,8 @@ func (metricsGroupApi MetricsGroupApi) delete(w http.ResponseWriter, _ *http.Req
 	id := ps.ByName("id")
 	err := metricsGroupApi.metricsGroupMain.Remove(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		logger.Error("error deleting metric group", "delete", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error deleting metric group")})
 		return
 	}
 
