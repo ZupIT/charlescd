@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Action } from "../types"
+import { Action, PluginsPayload, inputParameters } from "../types"
 
 export const actionsData: Action[] = [
   {
@@ -24,5 +24,24 @@ export const actionsData: Action[] = [
   {
     'id': '2',
     'nickname': 'Action 2'
+  }
+];
+
+export const pluginsData = [
+  {
+    'id': '1',
+    'category': 'actionDeploy',
+    'name': 'plugin 1',
+    'src': 'plugin/action/deploy',
+    'description': 'deploy plugin 1',
+    'inputParameters': 'input 1'
+  },
+  {
+    'id': '1',
+    'category': 'actionDeploy',
+    'name': 'plugin 1',
+    'src': 'plugin/action/deploy',
+    'description': 'deploy plugin 1',
+    'inputParameters': 'input 1'
   }
 ];
