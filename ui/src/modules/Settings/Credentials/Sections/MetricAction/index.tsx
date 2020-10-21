@@ -52,6 +52,7 @@ const SectionMetricAction = ({
 
   const renderSection = () => (
     <Section
+      data-testid="metric-action-section"
       name="Metric Action"
       icon="action"
       showAction

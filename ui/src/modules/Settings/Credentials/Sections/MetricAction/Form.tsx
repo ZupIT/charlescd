@@ -147,7 +147,7 @@ const FormAddAction = ({ onFinish }: Props) => {
   );
 
   return (
-    <Styled.Content>
+    <Styled.Content data-testid="add-action-form">
       <Text.h2 color="light" weight="bold">
         Add Action config
         <Popover
