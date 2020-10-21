@@ -15,7 +15,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
 import Card from 'core/components/Card';
 import Button from 'core/components/Button';
@@ -33,19 +32,19 @@ import ConnectionStatus from './ConnectionStatus';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
-  const { response: testConnectionResponse, loading: loadingConnectionResponse, save: testConnection } = useTestConnection()
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [datasourceHealth, setDatasourceHealth] = useState(false)
+  const { response: testConnectionResponse, loading: loadingConnectionResponse, save: testConnection } = useTestConnection();
+  const [datasourceHealth, setDatasourceHealth] = useState(false);
   const [plugin, setPlugin] = useState<Plugin>();
-  const { response: plugins, getAll } = usePlugins()
-  const { control, register, handleSubmit, getValues } = useForm<
+  const { response: plugins, getAll } = usePlugins();
+  const { control, register, handleSubmit, getValues, formState } = useForm<
     Datasource
-  >();
+  >({ mode: 'onChange' });
 
   useEffect(() => {
-    getAll()
+    getAll();
     if (responseSave) onFinish();
   }, [onFinish, responseSave, getAll]);
+
 
   const onSubmit = (datasource: Datasource) => {
     save({
@@ -58,12 +57,10 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const onChange = (option: Option) => {
     setPlugin(find((plugins as Plugin[]), { id: option['value'] }));
-    setIsDisabled(!isEmpty(plugin));
   };
 
   const onClose = () => {
     setPlugin(null);
-    setIsDisabled(true);
   };
 
   const handleTestConnection = () => {
@@ -101,7 +98,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         </Styled.HealthWrapper>
       )}
       <Styled.Input
-        ref={register}
+        ref={register({ required: true })}
         name="name"
         label="Datasource name"
       />
@@ -109,7 +106,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       {map((plugin.inputParameters as PluginDatasource)['configurationInputs'], input => (
         <Styled.Input
           key={input.name}
-          ref={register}
+          ref={register({ required: input.required })}
           name={`data.${input.name}`}
           label={input.label}
         />
@@ -123,7 +120,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         type="button"
         onClick={handleTestConnection}
         isLoading={loadingConnectionResponse}
-        isDisabled={isDisabled}
+        isDisabled={!formState.isValid}
       >
         Test connection
       </Styled.TestConnectionButton>
@@ -147,7 +144,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         <Button.Default
           type="submit"
           isLoading={loadingSave || loadingAdd}
-          isDisabled={isDisabled}
+          isDisabled={!formState.isValid}
         >
           Save
         </Button.Default>

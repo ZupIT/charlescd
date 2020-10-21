@@ -21,6 +21,7 @@ import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
 import { act } from 'react-test-renderer';
+import userEvent from '@testing-library/user-event';
 
 test('render Metrics Provider default component', async () => {
   const finish = jest.fn();
@@ -87,8 +88,18 @@ test('render button test connection', async () => {
   expect(screen.getByText('Datasource name')).toBeInTheDocument();
   expect(screen.getByText('Url')).toBeInTheDocument();
 
-  fireEvent.click(screen.getByTestId('button-default-test-connection'))
 
-  expect(testConnection).toHaveBeenCalled();
-  expect(screen.getByTestId('connection-success')).toBeInTheDocument();
+  await act(async () => {
+    fireEvent.change(screen.getByTestId('input-text-name'), { target: { value: 'name' } })
+    fireEvent.change(screen.getByTestId('input-text-data.url'), { target: { value: 'name' } })
+    expect(screen.getByTestId('button-default-test-connection')).not.toBeDisabled();
+
+    fireEvent.click(screen.getByTestId('button-default-test-connection'));
+  })
+
+  await wait(() => {
+    expect(testConnection).toHaveBeenCalled();
+    expect(screen.getByTestId('connection-success')).toBeInTheDocument();
+  })
+
 })
