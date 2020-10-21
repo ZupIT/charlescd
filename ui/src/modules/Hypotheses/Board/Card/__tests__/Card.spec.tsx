@@ -15,90 +15,13 @@
  */
 
 import React from 'react';
-import userEvent from '@testing-library/user-event';
-import { act, render, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import { act } from 'react-dom/test-utils';
 import { FetchMock } from 'jest-fetch-mock';
 import { dark as cardBoardTheme } from 'core/assets/themes/card/board';
-import { Card } from '../../interfaces';
-import { CARD_TYPE_ACTION, CARD_TYPE_FEATURE } from '../constants';
-import CardBoard, { Props as CardBoardProps } from '..'
-import {
-  DraggableProvidedDraggableProps,
-  DraggableProvidedDragHandleProps
-} from 'react-beautiful-dnd';
-
-const card: Omit<Card, 'type' | 'feature'> = {
-  id: '123',
-  hypothesisId: '098',
-  name: 'Card',
-  createdAt: '2020-01-01 12:00',
-  labels: [],
-  index: 0,
-  isProtected: false
-}
-
-const cardAction: Card = {
-  ...card,
-  feature: null,
-  type: CARD_TYPE_ACTION,
-}
-
-const cardFeature: Card = {
-  ...card,
-  type: CARD_TYPE_FEATURE,
-  feature: {
-    id: '456',
-    name: 'feature',
-    branches: ['https://github.com/charlescd/tree/feature'],
-    branchName: 'feature',
-    author: {
-      id: '123',
-      name: 'Charles',
-      email: 'charlescd@zup.com.br',
-      isRoot: false,
-      createdAt: '2020-01-01 12:00'
-    },
-    modules: [{
-      id: '789',
-      name: 'ZupIT/charlescd',
-      gitRepositoryAddress: '',
-      helmRepository: ''
-    }]
-  }
-}
-
-const draggableProps: DraggableProvidedDraggableProps = {
-  "data-rbd-draggable-context-id": "0",
-  "data-rbd-draggable-id": "123",
-  onTransitionEnd: null,
-  style: {
-    transform: null,
-    transition: null
-  },
-}
-
-const dragHandleProps: DraggableProvidedDragHandleProps = {
-  "aria-labelledby": "",
-  "data-rbd-drag-handle-context-id": "0",
-  "data-rbd-drag-handle-draggable-id": "123",
-  draggable: false,
-  onDragStart: jest.fn(),
-  tabIndex: 0
-}
-
-const propsFeature: CardBoardProps = {
-  card: cardFeature,
-  columnId: '123',
-  draggableProps,
-  dragHandleProps
-}
-
-const propsAction: CardBoardProps = {
-  card: cardAction,
-  columnId: '123',
-  draggableProps,
-  dragHandleProps
-}
+import { propsAction, propsFeature } from './mocks'
+import CardBoard from '..'
+import userEvent from '@testing-library/user-event';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -118,4 +41,41 @@ test('render Card type.ACTION', async () => {
   const Card = await screen.findByTestId(`card-board-${propsAction.card.id}`);
   expect(Card).toBeInTheDocument();
   expect(Card).toHaveStyle(`background-color: ${cardBoardTheme.ACTION.background};`);
+});
+
+test('render Card type.FEATURE and open view', async () => {
+  render(<CardBoard {...propsFeature} />);
+
+  const Card = await screen.findByTestId(`card-board-${propsFeature.card.id}`);
+  expect(Card).toBeInTheDocument();
+
+  await act(async () => userEvent.click(Card));
+
+  const ModalView = await screen.findByTestId("modal-default");
+  expect(ModalView).toBeInTheDocument();
+});
+
+test('render Card type.ACTION and open view', async () => {
+  render(<CardBoard {...propsAction} />);
+
+  const Card = await screen.findByTestId(`card-board-${propsAction.card.id}`);
+  expect(Card).toBeInTheDocument();
+
+  await act(async () => userEvent.click(Card));
+
+  const ModalView = await screen.findByTestId("modal-default");
+  expect(ModalView).toBeInTheDocument();
+});
+
+test('render Card type.ACTION and open dropdown options', async () => {
+  render(<CardBoard {...propsAction} />);
+
+  const Card = await screen.findByTestId(`card-board-${propsAction.card.id}`);
+  expect(Card).toBeInTheDocument();
+
+  const DropdownTrigger = await screen.findByTestId("icon-vertical-dots");
+  await act(async () => userEvent.click(DropdownTrigger));
+
+  const DropdownOptions = await screen.findByTestId("dropdown-actions");
+  expect(DropdownOptions).toBeInTheDocument();
 });

@@ -15,32 +15,37 @@
  */
 
 import { FetchMock } from 'jest-fetch-mock';
-import { findAllCircles, findCircleById } from '../circle';
+import { deleteById } from '../card';
+
+const id = '123';
+const message = 'card deleted';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
-test('login provider request', async () => {
+test('delete card by id', async () => {
+  const branchDeletion = false;
+
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify({ name: 'find all circles' })
+    JSON.stringify(message)
   );
 
-  const response = await findAllCircles()({});
+  const response = await deleteById(id, branchDeletion)({});
   const data = await response.json();
-
-  expect(data).toEqual({ name: 'find all circles' });
+  
+  expect(data).toEqual(message);
 });
 
-test('renew token provider request', async () => {
-  const id = 'circle-id';
+test('delete card and branch by id', async () => {
+  const branchDeletion = true;
 
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify({ name: 'find circle by id' })
+    JSON.stringify(message)
   );
 
-  const response = await findCircleById({ id })({});
+  const response = await deleteById(id, branchDeletion)({});
   const data = await response.json();
-
-  expect(data).toEqual({ name: 'find circle by id' });
+  
+  expect(data).toEqual(message);
 });
