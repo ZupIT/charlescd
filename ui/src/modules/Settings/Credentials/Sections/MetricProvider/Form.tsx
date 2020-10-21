@@ -22,7 +22,12 @@ import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { Datasource, Plugin, PluginDatasource, TestConnectionResponse } from './interfaces';
+import {
+  Datasource,
+  Plugin,
+  PluginDatasource,
+  TestConnectionResponse
+} from './interfaces';
 import { serializePlugins, transformValues } from './helpers';
 import { Props } from '../interfaces';
 import { useDatasource, usePlugins, useTestConnection } from './hooks';
@@ -50,10 +55,9 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     save({
       ...datasource,
       pluginSrc: plugin.src,
-      healthy: datasourceHealth,
+      healthy: datasourceHealth
     });
   };
-
 
   const onChange = (option: Option) => {
     setPlugin(find((plugins as Plugin[]), { id: option['value'] }));
@@ -64,14 +68,14 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const handleTestConnection = () => {
-    const values = getValues()
-    const data = transformValues(values)
+    const values = getValues();
+    const data = transformValues(values);
 
     testConnection({
       pluginSrc: plugin.src,
       data
-    })
-  }
+    });
+  };
 
   const renderFields = () => (
     <>
@@ -113,7 +117,9 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       ))}
 
       {testConnectionResponse && (
-        <ConnectionStatus message={(testConnectionResponse as TestConnectionResponse[])} />
+        <ConnectionStatus
+          message={testConnectionResponse as TestConnectionResponse[]}
+        />
       )}
       <Styled.TestConnectionButton
         id="test-connection"
@@ -125,7 +131,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         Test connection
       </Styled.TestConnectionButton>
     </>
-  )
+  );
 
   const renderSelect = () => (
     <Select.Single

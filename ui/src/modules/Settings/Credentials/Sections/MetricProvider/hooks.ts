@@ -18,9 +18,21 @@ import { useCallback, useEffect } from 'react';
 
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
-import { Datasource, Plugin, Response, TestConnectionResponse, TestConnectionRequest } from './interfaces';
+import {
+  Datasource,
+  Plugin,
+  Response,
+  TestConnectionResponse,
+  TestConnectionRequest
+} from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { getAllDatasources, createDatasource as create, deleteDatasource, getAllPlugins, testConnection } from 'core/providers/datasources';
+import {
+  getAllDatasources,
+  createDatasource as create,
+  deleteDatasource,
+  getAllPlugins,
+  testConnection
+} from 'core/providers/datasources';
 
 export const useDatasource = (): FetchProps => {
   const dispatch = useDispatch();
@@ -34,10 +46,7 @@ export const useDatasource = (): FetchProps => {
     response: responseSave,
     error: errorSave
   } = createData;
-  const {
-    loading: loadingAdd,
-    response: responseAdd,
-  } = delData;
+  const { loading: loadingAdd, response: responseAdd } = delData;
   const { response, error } = datasourceData;
   const { response: responseRemove, error: errorRemove } = delData;
 
@@ -74,9 +83,12 @@ export const useDatasource = (): FetchProps => {
     }
   }, [error, dispatch]);
 
-  const remove = useCallback((id: string) => {
-    delDatasource(id);
-  }, [delDatasource]);
+  const remove = useCallback(
+    (id: string) => {
+      delDatasource(id);
+    },
+    [delDatasource]
+  );
 
   useEffect(() => {
     if (errorRemove) {
@@ -100,17 +112,15 @@ export const useDatasource = (): FetchProps => {
     responseSave,
     loadingAdd
   };
-}
+};
 
 export const usePlugins = (): FetchProps => {
-  const [allPlugins, getPlugins] = useFetch<
-    Plugin[]
-  >(getAllPlugins);
+  const [allPlugins, getPlugins] = useFetch<Plugin[]>(getAllPlugins);
 
   const { response, loading } = allPlugins;
 
   const getAll = useCallback(() => {
-    getPlugins()
+    getPlugins();
   }, [getPlugins]);
 
   return {
@@ -138,6 +148,4 @@ export const useTestConnection = (): FetchProps => {
     response,
     loading
   };
-}
-
-
+};

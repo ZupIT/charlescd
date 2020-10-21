@@ -126,6 +126,7 @@ const FormAddAction = ({ onFinish }: Props) => {
         name="description"
         ref={register({ required: true })}
         label="Type a description"
+        maxLength={100}
       />
       <Styled.Select
         control={control}
@@ -146,7 +147,7 @@ const FormAddAction = ({ onFinish }: Props) => {
   );
 
   return (
-    <Styled.Content>
+    <Styled.Content data-testid="add-action-form">
       <Text.h2 color="light" weight="bold">
         Add Action config
         <Popover
