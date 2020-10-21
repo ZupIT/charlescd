@@ -42,7 +42,10 @@ const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const [, loadWorkspace, , updateWorkspace] = useWorkspace();
-  const { responseAll: datasources, getAll: getAllDatasources } = useDatasource();
+  const {
+    responseAll: datasources,
+    getAll: getAllDatasources
+  } = useDatasource();
   const {
     getActionData,
     actionResponse,
@@ -159,8 +162,8 @@ const Credentials = ({ onClickHelp }: Props) => {
       {status === 'pending' || isEmpty(workspace.id) || !datasources ? (
         <Loader.Tab />
       ) : (
-          renderPanel()
-        )}
+        renderPanel()
+      )}
     </Styled.Wrapper>
   );
 };

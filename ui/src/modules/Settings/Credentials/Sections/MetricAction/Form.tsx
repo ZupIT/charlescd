@@ -126,6 +126,7 @@ const FormAddAction = ({ onFinish }: Props) => {
         name="description"
         ref={register({ required: true })}
         label="Type a description"
+        maxLength={100}
       />
       <Styled.Select
         control={control}
