@@ -22,7 +22,7 @@ public class TestRegistryConfigInteractorImplTest {
     public void testGCPRegistryConfigIsOK() {
 
         var registryType = RegistryType.GCP;
-        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType, DockerRegistryTestUtils.getConnectionData(registryType));
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
         DockerRegistryConfigurationInput input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(registryType);
 
         when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
@@ -44,7 +44,7 @@ public class TestRegistryConfigInteractorImplTest {
     public void testGCPRegistryConfigIsInvalid() {
 
         var registryType = RegistryType.GCP;
-        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType, DockerRegistryTestUtils.getConnectionData(registryType));
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
         var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(registryType);
 
         when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);

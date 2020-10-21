@@ -23,7 +23,7 @@ public class TestRegistryConnectivityInteractorImplTest {
     public void testGCPRegistryConnectionIsOK() {
 
         var registryType = RegistryType.GCP;
-        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType, DockerRegistryTestUtils.getConnectionData(registryType));
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
         var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
         when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
@@ -45,7 +45,7 @@ public class TestRegistryConnectivityInteractorImplTest {
     public void testGCPRegistryConnectionIsInvalid() throws IllegalArgumentException {
 
         var registryType = RegistryType.GCP;
-        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType, DockerRegistryTestUtils.getConnectionData(registryType));
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
         var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
         when(registryService.getDockerRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
