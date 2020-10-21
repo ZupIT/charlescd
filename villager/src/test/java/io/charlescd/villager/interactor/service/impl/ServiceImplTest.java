@@ -125,18 +125,35 @@ public class ServiceImplTest {
 
         verify(registryClient, times(1))
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
-
-
     }
 
     @Test
-    public void testTestRegistryGCPConnectivityInvalid() {
+    public void testTestRegistryGCPConnectivityUnathorized() {
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
         when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(401).build()));
+
+        assertThrows(IllegalArgumentException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+
+        verify(registryClient, times(1))
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME); //TODO: Verify
+
+        verify(registryClient, times(1))
+                .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
+    }
+
+
+    @Test
+    public void testTestRegistryGCPConnectivityForbidden() {
+        var registryType = RegistryType.GCP;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(403).build()));
 
         assertThrows(IllegalArgumentException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
