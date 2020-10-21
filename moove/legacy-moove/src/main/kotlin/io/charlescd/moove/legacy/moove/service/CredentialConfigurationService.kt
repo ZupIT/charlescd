@@ -40,8 +40,6 @@ import io.charlescd.moove.legacy.repository.entity.User
 import java.time.LocalDateTime
 import java.util.*
 import org.springframework.stereotype.Service
-import javax.ws.rs.BadRequestException
-import javax.ws.rs.ClientErrorException
 
 @Service
 class CredentialConfigurationService(
@@ -119,33 +117,36 @@ class CredentialConfigurationService(
         deployApi.deleteCdConfiguration(cdConfigurationId, workspaceId)
     }
 
-    fun testRegistryConfiguration(workspaceId: String,
-                                  request: CreateRegistryConfigurationRequest) {
+    fun testRegistryConfiguration(
+        workspaceId: String,
+        request: CreateRegistryConfigurationRequest
+    ) {
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
             buildVillagerRegistryConfigurationRequest(request)
 
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } catch(illegalArgumentException: IllegalArgumentException) {
-            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION);
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
         } catch (exception: Exception) {
-            throw exception;
+            throw exception
         }
     }
 
-    fun testRegistryConnection(workspaceId: String,
-                                  request: TestRegistryConnectionRequest) {
+    fun testRegistryConnection(
+        workspaceId: String,
+        request: TestRegistryConnectionRequest
+    ) {
 
         val villagerRequest: TestVillagerRegistryConnectionRequest =
             buildVillagerTestRegistryConnectionRequest(request)
 
         try {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } catch(illegalArgumentException: IllegalArgumentException) {
-            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION);
-
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION)
         } catch (exception: Exception) {
-            throw exception;
+            throw exception
         }
     }
 
@@ -175,7 +176,7 @@ class CredentialConfigurationService(
     private fun buildVillagerTestRegistryConnectionRequest(
         request: TestRegistryConnectionRequest
     ): TestVillagerRegistryConnectionRequest {
-        return TestVillagerRegistryConnectionRequest(request.artifactRepositoryConfigurationId);
+        return TestVillagerRegistryConnectionRequest(request.artifactRepositoryConfigurationId)
     }
 
     private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
@@ -261,7 +262,6 @@ class CredentialConfigurationService(
                 )
             }
     }
-
 
     private fun findUser(id: String): User =
         this.userRepository.findById(id)

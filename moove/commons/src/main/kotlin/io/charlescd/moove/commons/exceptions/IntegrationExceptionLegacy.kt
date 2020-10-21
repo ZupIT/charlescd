@@ -24,16 +24,16 @@ class IntegrationExceptionLegacy : CustomExceptionLegacy {
 
     private var details: String? = null
 
-    private constructor(errorCode: MooveErrorCodeLegacy, details: String?) : super(errorCode){
-        this.details = details;
+    private constructor(errorCode: MooveErrorCodeLegacy, details: String?) : super(errorCode) {
+        this.details = details
     }
 
     private constructor (errorCode: MooveErrorCodeLegacy, cause: Throwable, details: String?) : super(errorCode, cause) {
-        this.details = details;
+        this.details = details
     }
 
     private constructor (errorCode: MooveErrorCodeLegacy, message: String, details: String?) : super(errorCode, message) {
-        this.details = details;
+        this.details = details
     }
 
     companion object {
@@ -41,7 +41,6 @@ class IntegrationExceptionLegacy : CustomExceptionLegacy {
         fun of(errorCode: MooveErrorCodeLegacy, details: String?): IntegrationExceptionLegacy {
             return IntegrationExceptionLegacy(errorCode, errorCode.key, details)
         }
-
     }
 
     fun getDetails(): String? {

@@ -13,15 +13,15 @@ class VillagerErrorDecoder : ErrorDecoder {
             val fromJson = Gson().fromJson<ResponseError>(it.body().toString(), ResponseError::class.java)
 
             if (it.status() == 400) {
-                throw IllegalArgumentException(fromJson.message);
+                throw IllegalArgumentException(fromJson.message)
             }
 
-            throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, fromJson.message);
+            throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, fromJson.message)
         }
-        throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "");
+        throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
     }
 
-    data class ResponseError (
+    data class ResponseError(
         val message: String
     )
 }

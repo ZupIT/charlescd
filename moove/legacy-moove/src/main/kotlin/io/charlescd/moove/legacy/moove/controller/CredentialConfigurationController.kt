@@ -113,6 +113,4 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     ) {
         this.credentialConfigurationService.testRegistryConnection(workspaceId, request)
     }
-
-
 }
