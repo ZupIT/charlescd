@@ -1,7 +1,7 @@
 package io.charlescd.villager.interactor.service.impl;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
-import io.charlescd.villager.exceptions.IntegrationException;
+import io.charlescd.villager.exceptions.ThirdyPartyIntegrationException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
@@ -139,7 +139,7 @@ public class ServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
         verify(registryClient, times(1))
-                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME); //TODO: Verify
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
 
         verify(registryClient, times(1))
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
@@ -158,7 +158,7 @@ public class ServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
         verify(registryClient, times(1))
-                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME); //TODO: Verify
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
 
         verify(registryClient, times(1))
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
@@ -173,9 +173,9 @@ public class ServiceImplTest {
 
         when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(504).build()));
 
-        assertThrows(IntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
         verify(registryClient, times(1))
-                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME); //TODO: Verify
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME); //TODO: Verify ARTIFACT_NAME
 
         verify(registryClient, times(1))
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
