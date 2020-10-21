@@ -74,7 +74,8 @@ describe('DeploymentController v2', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+      defaultCircle: false
     }
 
     const firstExecution = await createDeploymentAndExecution(params, cdConfiguration, manager)
@@ -169,7 +170,8 @@ describe('DeploymentController v2', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+      defaultCircle: false
     }
 
     await createDeploymentAndExecution(params, cdConfiguration, manager)

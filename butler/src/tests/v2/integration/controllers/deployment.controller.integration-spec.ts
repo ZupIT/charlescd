@@ -76,7 +76,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
 
     const expectedResponse : ReadDeploymentDto = {
@@ -141,7 +142,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: '067765f8-aa29-49f7-bf2b-3ec676a71583',
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -212,7 +214,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -285,7 +288,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     const errorMessages = [
       '2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
@@ -335,7 +339,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     await request(app.getHttpServer())
       .post('/v2/deployments')

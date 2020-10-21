@@ -51,7 +51,7 @@ describe('DeploymentCleanupHandler', () => {
   it('does not allow simultaneous deployment of same component on a circle when there is an execution with status CREATED', async() => {
     const circleId = '333365f8-bb29-49f7-bf2b-3ec956a71583'
     const componentName = 'component-name'
-
+    const defaultCircle = false
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: circleId,
@@ -66,11 +66,12 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: defaultCircle
     }
 
     await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
-    const createDeploymentDto = createDto(componentName, circleId)
+    const createDeploymentDto = createDto(componentName, circleId, defaultCircle)
     const execution = await manager.findOneOrFail(Execution)
 
     await expect(
@@ -81,9 +82,9 @@ describe('DeploymentCleanupHandler', () => {
 
 
   it('does not allow simultaneous deployment of same component on a default deployment when there is an execution with status CREATED', async() => {
-    const circleId = null
+    const circleId = 'ac137b62-37b6-4e76-b474-9c43bac00711'
     const componentName = 'component-name'
-
+    const defaultCircle = true
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: circleId,
@@ -98,11 +99,12 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: defaultCircle
     }
 
     await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
-    const createDeploymentDto = createDto(componentName, null)
+    const createDeploymentDto = createDto(componentName, circleId, defaultCircle)
     const execution = await manager.findOneOrFail(Execution)
     await expect(
       pipe.transform(createDeploymentDto)
@@ -112,7 +114,7 @@ describe('DeploymentCleanupHandler', () => {
 })
 
 
-const createDto = (componentName: string, circleId: string | null) => {
+const createDto = (componentName: string, circleId: string, defaultCircle: boolean) => {
   const components = new CreateComponentRequestDto(
     '777765f8-bb29-49f7-bf2b-3ec956a71583',
     'image.url',
@@ -128,7 +130,7 @@ const createDto = (componentName: string, circleId: string | null) => {
     [components]
   )
 
-  const circle = circleId ? new CreateCircleDeploymentDto(circleId) : null
+  const circle = new CreateCircleDeploymentDto(circleId)
 
   const createDeploymentDto = new CreateDeploymentRequestDto(
     '28a3f957-3702-4c4e-8d92-015939f39cf2',
@@ -137,7 +139,8 @@ const createDto = (componentName: string, circleId: string | null) => {
     '580a7726-a274-4fc3-9ec1-44e3563d58af',
     circle,
     DeploymentStatusEnum.CREATED,
-    [modules]
+    [modules],
+    defaultCircle
   )
 
   return createDeploymentDto
@@ -173,7 +176,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components
+    components,
+    params.defaultCircle
   ))
 
   await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, null, status))

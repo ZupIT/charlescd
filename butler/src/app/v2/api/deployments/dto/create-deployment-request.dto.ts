@@ -70,7 +70,7 @@ export class CreateDeploymentRequestDto {
     authorId: string,
     callbackUrl: string,
     cdConfigurationId: string,
-    circle: CreateCircleDeploymentDto | null,
+    circle: CreateCircleDeploymentDto,
     status: DeploymentStatusEnum,
     modules: CreateModuleDeploymentDto[],
     defaultCircle: boolean
