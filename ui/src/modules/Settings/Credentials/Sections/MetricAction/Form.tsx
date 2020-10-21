@@ -58,8 +58,6 @@ const FormAddAction = ({ onFinish }: Props) => {
   const onSubmit = (data: ActionForm) => {
     const payload = buildActionPayload(data, isDefault);
 
-    console.log(payload);
-
     createAction(payload)
       .then(response => {
         if (response) {

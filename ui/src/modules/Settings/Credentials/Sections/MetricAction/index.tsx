@@ -29,10 +29,26 @@ interface Props {
   form: string;
   setForm: Function;
   actions: Action[];
+  getNewActions: Function;
 }
 
-const SectionMetricAction = ({ form, setForm, actions }: Props) => {
+const SectionMetricAction = ({
+  form,
+  setForm,
+  actions,
+  getNewActions
+}: Props) => {
   const { deleteAction } = useDeleteAction();
+
+  const handleDeleteAction = async (actionId: string) => {
+    await deleteAction(actionId);
+    getNewActions();
+  };
+
+  const handleOnFinish = () => {
+    setForm(null);
+    getNewActions();
+  };
 
   const renderSection = () => (
     <Section
@@ -46,7 +62,7 @@ const SectionMetricAction = ({ form, setForm, actions }: Props) => {
           key={action.id}
           icon="action"
           description={action.nickname}
-          onClose={() => deleteAction(action.id)}
+          onClose={() => handleDeleteAction(action.id)}
         />
       ))}
     </Section>
@@ -55,7 +71,7 @@ const SectionMetricAction = ({ form, setForm, actions }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_METRIC_ACTION) && (
       <Layer action={() => setForm(null)}>
-        <FormAddAction onFinish={() => setForm(null)} />
+        <FormAddAction onFinish={handleOnFinish} />
       </Layer>
     );
 

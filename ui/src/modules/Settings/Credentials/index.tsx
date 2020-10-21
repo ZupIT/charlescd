@@ -54,11 +54,13 @@ const Credentials = ({ onClickHelp }: Props) => {
     updateWorkspace(name);
   };
 
+  const getActions = () => getActionData();
+
   useEffect(() => {
     if (actionDataStatus.isIdle) {
       getActionData();
     }
-  }, [getActionData, actionDataStatus]);
+  }, [getActionData, actionDataStatus]); //refazer request ao criar ou deletar
 
   useEffect(() => {
     if (isNull(form)) {
@@ -142,6 +144,7 @@ const Credentials = ({ onClickHelp }: Props) => {
           form={form}
           setForm={setForm}
           actions={actionResponse}
+          getNewActions={getActions}
         />
       )}
     </TabPanel>
