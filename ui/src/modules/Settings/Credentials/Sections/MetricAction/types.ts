@@ -34,7 +34,8 @@ export type ActionPayload = {
   nickname: string;
   description: string;
   type: string;
-  configuration: ActionConfiguration;
+  useDefaultConfiguration: boolean;
+  configuration?: ActionConfiguration;
 };
 
 type executionInputs = {

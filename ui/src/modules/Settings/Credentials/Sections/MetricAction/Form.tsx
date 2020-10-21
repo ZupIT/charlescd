@@ -24,7 +24,7 @@ import Button from 'core/components/Button';
 import { usePlugins, useCreateAction } from './hooks';
 import { Props } from '../interfaces';
 import Styled from './styled';
-import { ActionForm } from './types';
+import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
 
 const FormAddAction = ({ onFinish }: Props) => {
@@ -56,7 +56,7 @@ const FormAddAction = ({ onFinish }: Props) => {
   }, [getPlugins]);
 
   const onSubmit = (data: ActionForm) => {
-    const payload = buildActionPayload(data, isDefault);
+    const payload = buildActionPayload(data, isDefault) as ActionPayload;
 
     createAction(payload)
       .then(response => {

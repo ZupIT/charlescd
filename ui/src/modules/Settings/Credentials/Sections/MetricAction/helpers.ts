@@ -23,13 +23,12 @@ export const buildActionPayload = (
   if (defaultConfig) {
     return {
       ...formData,
-      configuration: {
-        mooveUrl: 'http://localhost:8081'
-      }
+      useDefaultConfiguration: defaultConfig
     };
   } else {
     return {
       ...formData,
+      useDefaultConfiguration: defaultConfig,
       configuration: {
         mooveUrl: formData.configuration
       }
