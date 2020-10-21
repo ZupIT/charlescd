@@ -17,8 +17,8 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useActionData, useDeleteAction, usePlugins } from '../hooks';
-import { Action } from '../types';
+import { useActionData, useCreateAction, useDeleteAction, usePlugins } from '../hooks';
+import { Action, ActionPayload } from '../types';
 import * as actions from 'core/components/Notification/state/actions';
 
 
@@ -109,6 +109,34 @@ test('error get plugin', async () => {
   let response: any;
   await act(async () => {
     response = await userResult.current.getPlugins('foobar');
+  });
+
+  await wait(() => expect(response).toBeUndefined());
+});
+
+test('should create action', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  const payload = { nickname: 'foobar' } as ActionPayload;
+  const { result } = renderHook(() => useCreateAction());
+  const { current } = result;
+
+  let response: ActionPayload;
+
+  await act(async () => {
+    response = await current.createAction(payload);
+  });
+
+  await wait(() => expect(response).toMatchObject({}));
+});
+
+test('error create action', async () => {
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
+  const payload = { nickname: 'foobar' } as ActionPayload;
+  const { result: userResult } = renderHook(() => useCreateAction());
+
+  let response: ActionPayload;
+  await act(async () => {
+    response = await userResult.current.createAction(payload);
   });
 
   await wait(() => expect(response).toBeUndefined());
