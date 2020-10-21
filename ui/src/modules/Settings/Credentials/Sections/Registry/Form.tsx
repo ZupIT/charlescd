@@ -45,6 +45,8 @@ const FormRegistry = ({ onFinish }: Props) => {
   // TODO remove later
   const response = true;
   const [loading, setIsLoading] = useState(false);
+  const responseStatus = '400';
+  const responseMessage = 'sucesso!!';
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -151,7 +153,9 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
-        {response && <ConnectionStatus status="FAILED" />}
+        {response && (
+          <ConnectionStatus status={responseStatus} message={responseMessage} />
+        )}
         <Styled.TestConnectionButton
           type="button"
           onClick={() => onClick()}

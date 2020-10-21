@@ -17,44 +17,26 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { ConnectionStatusEnum as statusEnum } from './interfaces';
 import Styled from './styled';
 
 type Props = {
   status: string;
+  message: string;
 };
 
-type MessageProps = {
-  status: string;
-  messagemText: string;
-};
+const ConnectionStatus = ({ status, message }: Props) => {
+  let statusText = 'error';
+  if (status === '200') statusText = 'success';
 
-const MessageStatus = ({ status, messagemText }: MessageProps) => (
-  <Styled.StatusMessageWrapper
-    data-testid={`connection-${status}`}
-    status={status}
-  >
-    <Icon name={status} />
-    <Text.h5>{messagemText}</Text.h5>
-  </Styled.StatusMessageWrapper>
-);
-
-const ConnectionStatus = ({ status }: Props) => {
-  if (status === statusEnum.FAILED)
-    return MessageStatus({
-      status: 'error',
-      messagemText: 'Connection to registry gcp failed.'
-    });
-  if (status === statusEnum.SUCCESS)
-    return MessageStatus({
-      status: 'success',
-      messagemText: 'Successful connection with registry gcp.'
-    });
-  else
-    return MessageStatus({
-      status: 'error',
-      messagemText: 'Failed to reach registry gcp.'
-    });
+  return (
+    <Styled.StatusMessageWrapper
+      data-testid={`connection-${statusText}`}
+      status={statusText}
+    >
+      <Icon name={statusText} />
+      <Text.h5>{message}</Text.h5>
+    </Styled.StatusMessageWrapper>
+  );
 };
 
 export default ConnectionStatus;
