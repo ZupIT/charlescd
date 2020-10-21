@@ -15,12 +15,11 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen, wait } from 'unit-test/testUtils';
+import { fireEvent, render, screen, wait, act } from 'unit-test/testUtils';
 import Form from '../Form';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
-import { act } from 'react-test-renderer';
 import userEvent from '@testing-library/user-event';
 
 test('render Metrics Provider default component', async () => {
@@ -64,42 +63,41 @@ test('render datasource input by datasource change', async () => {
 })
 
 test('render button test connection', async () => {
+  const testConnection = jest.fn()
+  const finish = jest.fn();
+
   jest.spyOn(MetricProviderHooks, 'usePlugins').mockImplementation(() => ({
     getAll: jest.fn,
     response: Plugins
   }));
-  const testConnection = jest.fn()
+
   jest.spyOn(MetricProviderHooks, 'useTestConnection').mockImplementation(() => ({
     save: testConnection,
     response: {}
   }));
-  const finish = jest.fn();
+
   render(
     <Form onFinish={finish} />
   );
 
-  await wait();
-
   const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
-  await act(async () => selectEvent.select(datasourcePlugin1, 'Prometheus'));
+  selectEvent.select(datasourcePlugin1, 'Prometheus');
+  const dataSourceHealth = await screen.findByText('Datasource health');
+  const dataSourceName = await screen.findByText('Datasource name');
+  const dataSourceUrl = await screen.findByText('Url');
 
+  expect(dataSourceHealth).toBeInTheDocument();
+  expect(dataSourceName).toBeInTheDocument();
+  expect(dataSourceUrl).toBeInTheDocument();
 
-  expect(screen.getByText('Datasource health')).toBeInTheDocument();
-  expect(screen.getByText('Datasource name')).toBeInTheDocument();
-  expect(screen.getByText('Url')).toBeInTheDocument();
+  await act(() => userEvent.type(screen.getByTestId('input-text-name'), 'name'));
+  await act(() => userEvent.type(screen.getByTestId('input-text-data.url'), 'name'));
+  
+  const btn = await screen.findByTestId('button-default-test-connection');
 
+  expect(btn).not.toBeDisabled();
 
-  await act(async () => {
-    fireEvent.change(screen.getByTestId('input-text-name'), { target: { value: 'name' } })
-    fireEvent.change(screen.getByTestId('input-text-data.url'), { target: { value: 'name' } })
-    expect(screen.getByTestId('button-default-test-connection')).not.toBeDisabled();
-
-    fireEvent.click(screen.getByTestId('button-default-test-connection'));
-  })
-
-  await wait(() => {
-    expect(testConnection).toHaveBeenCalled();
-    expect(screen.getByTestId('connection-success')).toBeInTheDocument();
-  })
-
+  fireEvent.click(screen.getByTestId('button-default-test-connection'));
+  expect(testConnection).toHaveBeenCalled();
+  expect(screen.getByTestId('connection-success')).toBeInTheDocument();
 })
