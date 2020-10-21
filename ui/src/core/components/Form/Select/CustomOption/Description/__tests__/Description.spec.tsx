@@ -15,8 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
-import CustomOptionDescription from '../Description';
+import { render, screen } from 'unit-test/testUtils';
+import CustomOptionDescription from '..';
 import { customOptionDescriptionProps } from './fixtures';
 
 test('render CustomOptionDescription', () => {
