@@ -24,6 +24,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -33,8 +34,8 @@ import (
 )
 
 type Configuration struct {
-	ViewId         string          `json:"viewId"`
-	ServiceAccount json.RawMessage `json:"serviceAccount"`
+	ViewId         string `json:"viewId"`
+	ServiceAccount string `json:"serviceAccount"`
 }
 
 func parseDatasourceConfiguration(datasourceConfiguration []byte) (Configuration, error) {
@@ -47,15 +48,31 @@ func parseDatasourceConfiguration(datasourceConfiguration []byte) (Configuration
 	return configuration, nil
 }
 
+func getServiceAccountJSON(serviceAccountData string) (json.RawMessage, error) {
+	var newServiceAccount json.RawMessage
+
+	err := json.Unmarshal([]byte(serviceAccountData), &newServiceAccount)
+	if err != nil {
+		return json.RawMessage{}, err
+	}
+
+	return newServiceAccount, nil
+}
+
 func getServices(configuration Configuration) (analytics.Service, analyticsreporting.Service, error) {
 	ctx := context.Background()
 
-	analyticsService, err := analytics.NewService(ctx, option.WithCredentialsJSON([]byte(configuration.ServiceAccount)))
+	serviceAccount, err := getServiceAccountJSON(configuration.ServiceAccount)
 	if err != nil {
 		return analytics.Service{}, analyticsreporting.Service{}, err
 	}
 
-	analyticsReportingService, err := analyticsreporting.NewService(ctx, option.WithCredentialsJSON(configuration.ServiceAccount))
+	analyticsService, err := analytics.NewService(ctx, option.WithCredentialsJSON(serviceAccount))
+	if err != nil {
+		return analytics.Service{}, analyticsreporting.Service{}, err
+	}
+
+	analyticsReportingService, err := analyticsreporting.NewService(ctx, option.WithCredentialsJSON(serviceAccount))
 	if err != nil {
 		return analytics.Service{}, analyticsreporting.Service{}, err
 	}
@@ -151,6 +168,7 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 
 	analyticsService, _, err := getServices(configuration)
 	if err != nil {
+		log.Println("ERROR GET SERVICE")
 		return nil, err
 	}
 
