@@ -24,7 +24,6 @@ open class CustomExceptionLegacy : RuntimeException {
 
     private val errorCode: MooveErrorCodeLegacy
 
-
     constructor(errorCode: MooveErrorCodeLegacy) : super() {
         this.errorCode = errorCode
     }

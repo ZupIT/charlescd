@@ -119,8 +119,10 @@ class CredentialConfigurationService(
         deployApi.deleteCdConfiguration(cdConfigurationId, workspaceId)
     }
 
-    fun testRegistryConfiguration(workspaceId: String,
-                                  request: CreateRegistryConfigurationRequest) {
+    fun testRegistryConfiguration(
+        workspaceId: String,
+        request: CreateRegistryConfigurationRequest
+    ) {
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
             buildVillagerRegistryConfigurationRequest(request)
 
@@ -129,23 +131,24 @@ class CredentialConfigurationService(
         } catch(illegalArgumentException: IllegalArgumentException) {
             throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION);
         } catch (exception: Exception) {
-            throw exception;
+            throw exception
         }
     }
 
-    fun testRegistryConnection(workspaceId: String,
-                                  request: TestRegistryConnectionRequest) {
+    fun testRegistryConnection(
+        workspaceId: String,
+        request: TestRegistryConnectionRequest
+    ) {
 
         val villagerRequest: TestVillagerRegistryConnectionRequest =
             buildVillagerTestRegistryConnectionRequest(request)
 
         try {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } catch(illegalArgumentException: IllegalArgumentException) {
-            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION);
-
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            throw InvalidIntegrationRequestExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION)
         } catch (exception: Exception) {
-            throw exception;
+            throw exception
         }
     }
 
@@ -175,7 +178,7 @@ class CredentialConfigurationService(
     private fun buildVillagerTestRegistryConnectionRequest(
         request: TestRegistryConnectionRequest
     ): TestVillagerRegistryConnectionRequest {
-        return TestVillagerRegistryConnectionRequest(request.artifactRepositoryConfigurationId);
+        return TestVillagerRegistryConnectionRequest(request.artifactRepositoryConfigurationId)
     }
 
     private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
@@ -260,23 +263,6 @@ class CredentialConfigurationService(
                     findUser(configuration.authorId).toSimpleRepresentation()
                 )
             }
-    }
-
-    private fun buildGitCredentialsWithToken(createGitConfigRequest: CreateGitConfigurationRequest): Map<String, Any> {
-        return mapOf(
-            "address" to createGitConfigRequest.address,
-            "accessToken" to createGitConfigRequest.accessToken.orEmpty(),
-            "serviceProvider" to createGitConfigRequest.serviceProvider.name
-        )
-    }
-
-    private fun buildGitCredentialsWithLogin(createGitConfigRequest: CreateGitConfigurationRequest): Map<String, Any> {
-        return mapOf(
-            "address" to createGitConfigRequest.address,
-            "username" to createGitConfigRequest.username.orEmpty(),
-            "password" to createGitConfigRequest.password.orEmpty(),
-            "serviceProvider" to createGitConfigRequest.serviceProvider.name
-        )
     }
 
     private fun findUser(id: String): User =

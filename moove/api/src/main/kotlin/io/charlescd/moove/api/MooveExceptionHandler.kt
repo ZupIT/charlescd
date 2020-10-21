@@ -18,7 +18,6 @@ package io.charlescd.moove.api
 
 import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
-import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
 import io.charlescd.moove.commons.exceptions.InvalidIntegrationRequestExceptionLegacy
@@ -154,7 +153,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun integrationException(ex: IntegrationExceptionLegacy): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
-        return ErrorMessageResponse.of(ex.getErrorCode().name,message, ex.getDetails());
+        return ErrorMessageResponse.of(ex.getErrorCode().name, message, ex.getDetails())
     }
 
     @ExceptionHandler(InvalidIntegrationRequestExceptionLegacy::class)
@@ -163,7 +162,6 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun invalidIntegrationRequestExceptionLegacy(ex: InvalidIntegrationRequestExceptionLegacy): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
-        return ErrorMessageResponse.of(ex.getErrorCode().name,message);
+        return ErrorMessageResponse.of(ex.getErrorCode().name, message)
     }
-
 }

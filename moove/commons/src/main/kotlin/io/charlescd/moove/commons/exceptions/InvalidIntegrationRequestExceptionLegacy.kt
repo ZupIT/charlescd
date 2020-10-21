@@ -22,7 +22,6 @@ import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 
 class InvalidIntegrationRequestExceptionLegacy : CustomExceptionLegacy {
 
-
     private constructor(errorCode: MooveErrorCodeLegacy) : super(errorCode) {}
 
     private constructor (errorCode: MooveErrorCodeLegacy, cause: Throwable) : super(errorCode, cause) {}
