@@ -176,7 +176,7 @@ class CredentialConfigurationService(
     private fun buildVillagerTestRegistryConnectionRequest(
         request: TestRegistryConnectionRequest
     ): TestVillagerRegistryConnectionRequest {
-        return TestVillagerRegistryConnectionRequest(request.artifactRepositoryConfigurationId)
+        return TestVillagerRegistryConnectionRequest(request.configurationId)
     }
 
     private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {

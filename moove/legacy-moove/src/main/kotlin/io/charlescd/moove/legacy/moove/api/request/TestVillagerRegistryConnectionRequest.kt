@@ -17,5 +17,5 @@
 package io.charlescd.moove.legacy.moove.api.request
 
 data class TestVillagerRegistryConnectionRequest(
-    val artifactRepositoryConfigurationId: String
+    val configurationId: String
 )
