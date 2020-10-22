@@ -29,7 +29,6 @@ const (
 	VerifyDatasourceHealthError   = "VERIFY_HEALTH_ERROR"
 	ExistingDatasourceHealthError = "EXISTING_HEALTHY_DATASOURCE_ERROR"
 	FindDatasourceError           = "FIND_DATASOURCE_ERROR"
-	FindDatasourceGetMetricsError = "FIND_DATASOURCE_GET_METRICS_ERROR"
 	DeleteDatasourceError         = "DELETE_ERROR"
 	OpenPluginGetMetricsError     = "OPEN_PLUGIN_GET_METRICS_ERROR"
 	PluginListError               = "PLUGIN_LIST_ERROR"
@@ -44,32 +43,29 @@ const (
 
 const (
 	FindAllMetricExecutionsError = "FIND_ALL_METRIC_EXECUTIONS_ERROR"
-	FindMetricExecutionByIdError = "FIND_METRIC_EXECUTION_BY_ID_ERROR"
 	SaveMetricExecutionError     = "SAVE_METRIC_EXECUTION_ERROR"
 	UpdateMetricExecutionError   = "UPDATE_METRIC_EXECUTION_ERROR"
 	RemoveMetricExecutionError   = "REMOVE_METRIC_EXECUTION_ERROR"
 )
 
 const (
-	PeriodValidateRegexError = "PERIOD_VALIDATE_REGEX_ERROR"
-	PeriodValidateError      = "PERIOD_VALIDATE_ERROR"
-	FindMetricsGroupError    = "FIND_METRICS_GROUP_ERROR"
-	ResumeByCircleError      = "RESUME_BY_CIRCLE_ERROR"
-	SaveMetricsGroupError    = "SAVE_METRICS_GROUP_ERROR"
-	UpdateMetricsGroupError  = "UPDATE_METRICS_GROUP_ERROR"
-	UpdateNameMetricsGroupError  = "UPDATE_NAME_METRICS_GROUP_ERROR"
-	RemoveMetricsGroupError  = "REMOVE_METRICS_GROUP_ERROR"
-	QueryFindDatasourceError = "QUERY_FIND_DATASOURCE_ERROR"
-	QueryGetPluginError      = "QUERY_GET_PLUGIN_ERROR"
-	QueryByGroupIdError      = "QUERY_BY_GROUP_ID_ERROR"
-	ListAllByGroupError      = "LIST_ALL_BY_GROUP_ERROR"
+	PeriodValidateRegexError    = "PERIOD_VALIDATE_REGEX_ERROR"
+	PeriodValidateError         = "PERIOD_VALIDATE_ERROR"
+	FindMetricsGroupError       = "FIND_METRICS_GROUP_ERROR"
+	ResumeByCircleError         = "RESUME_BY_CIRCLE_ERROR"
+	SaveMetricsGroupError       = "SAVE_METRICS_GROUP_ERROR"
+	UpdateMetricsGroupError     = "UPDATE_METRICS_GROUP_ERROR"
+	UpdateNameMetricsGroupError = "UPDATE_NAME_METRICS_GROUP_ERROR"
+	RemoveMetricsGroupError     = "REMOVE_METRICS_GROUP_ERROR"
+	QueryFindDatasourceError    = "QUERY_FIND_DATASOURCE_ERROR"
+	QueryGetPluginError         = "QUERY_GET_PLUGIN_ERROR"
+	QueryByGroupIdError         = "QUERY_BY_GROUP_ID_ERROR"
+	ListAllByGroupError         = "LIST_ALL_BY_GROUP_ERROR"
 )
 
 const (
 	FindPluginError    = "FIND_PLUGIN_ERROR"
 	GetPluginByIdError = "GET_PLUGIN_BY_ID_ERROR"
-	UpdatePluginError  = "UPDATE_PLUGIN_ERROR"
-	RemovePluginError  = "REMOVE_PLUGIN_ERROR"
 )
 
 const (
@@ -81,7 +77,6 @@ const (
 	SaveActionError                     = "SAVE_ACTION_ERROR"
 	UpdateActionError                   = "UPDATE_ACTION_ERROR"
 	DeleteActionError                   = "DELETE_ACTION_ERROR"
-	SaveActionConfigurationError        = "SAVE_ACTION_CONFIGURATION_ERROR"
 	ListGroupActionExecutionStatusError = "LIST_GROUP_ACTION_EXECUTION_STATUS_ERROR"
 	ActionExecutionValidateError        = "VALIDATE_ACTION_CAN_BE_EXECUTED_ERROR"
 )

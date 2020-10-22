@@ -32,10 +32,6 @@ import (
 	"time"
 )
 
-type ActionUseCases interface {
-	Start(stopChan chan bool) error
-}
-
 type ActionDispatcher struct {
 	metricGroupRepo metricsgroup.UseCases
 	actionRepo      action.UseCases

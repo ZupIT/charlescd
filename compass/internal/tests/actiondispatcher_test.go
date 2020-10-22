@@ -30,6 +30,7 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -50,7 +51,7 @@ func (s *SuiteActionDispatcher) SetupSuite() {
 	os.Setenv("ENV", "TEST")
 }
 
-func (s *SuiteActionDispatcher) afterTest(_, _ string) {
+func (s *SuiteActionDispatcher) AfterTest(_, _ string) {
 	s.DB.Close()
 }
 
@@ -74,25 +75,27 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 }
 
 func TestInitActionsDispatcher(t *testing.T) {
-	suite.Run(t, new(SuiteDispatcher))
+	suite.Run(t, new(SuiteActionDispatcher))
 }
 
-func (s *SuiteActionDispatcher) TestStartMetricProviderError() {
+func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	os.Setenv("DISPATCHER_INTERVAL", "1s")
+	os.Setenv("PLUGINS_DIR", "../../dist")
+
 	stopChan := make(chan bool, 1)
 	go s.repository.Start(stopChan)
 
 	circleID := uuid.New()
 	workspaceID := uuid.New()
-	datasource := datasource.DataSource{
+	datasourceStruct := datasource.DataSource{
 		Name:        "DataTest",
-		PluginSrc:   "prometheus",
+		PluginSrc:   "datasource/prometheus/prometheus",
 		Health:      true,
-		Data:        json.RawMessage(`{"url": "localhost:908"}`),
+		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
 		WorkspaceID: workspaceID,
 		DeletedAt:   nil,
 	}
-	s.DB.Create(&datasource)
+	s.DB.Create(&datasourceStruct)
 
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
@@ -104,7 +107,7 @@ func (s *SuiteActionDispatcher) TestStartMetricProviderError() {
 
 	metric1 := metric.Metric{
 		MetricsGroupID: metricgroup.ID,
-		DataSourceID:   datasource.ID,
+		DataSourceID:   datasourceStruct.ID,
 		Metric:         "MetricName1",
 		Filters:        nil,
 		GroupBy:        nil,
@@ -113,6 +116,13 @@ func (s *SuiteActionDispatcher) TestStartMetricProviderError() {
 		CircleID:       circleID,
 	}
 	s.DB.Create(&metric1)
+
+	metricExec := metric.MetricExecution{
+		MetricID:  metric1.ID,
+		LastValue: 1,
+		Status:    "REACHED",
+	}
+	s.DB.Create(&metricExec)
 
 	action := action.Action{
 		WorkspaceId:   workspaceID,
@@ -123,7 +133,6 @@ func (s *SuiteActionDispatcher) TestStartMetricProviderError() {
 	}
 	s.DB.Create(&action)
 
-	// metricgroupactionId := uuid.New()
 	actiongroup := metricsgroupaction.MetricsGroupAction{
 		MetricsGroupID:      metricgroup.ID,
 		ActionID:            action.ID,
@@ -137,4 +146,7 @@ func (s *SuiteActionDispatcher) TestStartMetricProviderError() {
 
 	_, err := s.metricsGroupActionMain.SaveGroupAction(actiongroup)
 	require.NoError(s.T(), err)
+
+	time.Sleep(2 * time.Second)
+	stopChan <- true
 }

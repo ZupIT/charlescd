@@ -47,7 +47,7 @@ func (s *SuiteDispatcher) SetupSuite() {
 	os.Setenv("ENV", "TEST")
 }
 
-func (s *SuiteDispatcher) afterTest(_, _ string) {
+func (s *SuiteDispatcher) AfterTest(_, _ string) {
 	s.DB.Close()
 }
 
