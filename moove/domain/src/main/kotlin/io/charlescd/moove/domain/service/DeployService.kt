@@ -28,7 +28,5 @@ interface DeployService {
 
     fun undeploy(deploymentId: String, authorId: String)
 
-    fun undeployV1(deploymentId: String, authorId: String)
-
     fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration?
 }
