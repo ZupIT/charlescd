@@ -15,10 +15,11 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, wait, act, waitForElement } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { metricsGroupData, metricsGroupWithoutMetricData } from './fixtures';
 import MetricsGroups from '../index';
+import userEvent from '@testing-library/user-event';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -32,8 +33,6 @@ test('render default Metrics Groups', async () => {
   const handleClick = jest.fn();
   render(<MetricsGroups id={'1'} onGoBack={handleClick}/>);
 
-  await wait();
-
   const goBack = screen.getByTestId('icon-arrow-left');
 
   expect(screen.getByText('Metrics groups')).toBeInTheDocument();
@@ -41,7 +40,7 @@ test('render default Metrics Groups', async () => {
   expect(screen.getByTestId('button-iconRounded-refresh')).toBeInTheDocument();
   expect(screen.getByTestId('button-iconRounded-add')).toBeInTheDocument();
 
-  fireEvent.click(goBack);
+  userEvent.click(goBack);
   expect(handleClick).toHaveBeenCalled();
 });
 
@@ -52,10 +51,8 @@ test('render default Metrics Groups and toogle Chart', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
-  const toogleChart = screen.getByTestId('labeledIcon-no-view');
-  fireEvent.click(toogleChart);
+  const toogleChart = await screen.findByTestId('labeledIcon-no-view');
+  userEvent.click(toogleChart);
 
   expect(screen.getByText('Metrics groups')).toBeInTheDocument();
   expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
@@ -69,13 +66,11 @@ test('render default Metrics Groups and filter Chart', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
-  const toogleChart = screen.getByTestId('labeledIcon-no-view');
-  fireEvent.click(toogleChart);
+  const toogleChart = await screen.findByTestId('labeledIcon-no-view');
+  userEvent.click(toogleChart);
 
   const openFilterSelect = screen.getByTestId('labeledIcon-filter');
-  fireEvent.click(openFilterSelect);
+  userEvent.click(openFilterSelect);
 
   expect(screen.getByText('Metrics groups')).toBeInTheDocument();
   expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
@@ -89,15 +84,13 @@ test('render add metrics group modal', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
   const addMetricsGroup = screen.getByText('Add metrics group');
-  fireEvent.click(addMetricsGroup);
+  userEvent.click(addMetricsGroup);
   
   expect(screen.getByTestId('modal-default')).toBeInTheDocument();
   
   const closeAddMetricsGroup = screen.getByTestId('icon-cancel');
-  fireEvent.click(closeAddMetricsGroup);
+  userEvent.click(closeAddMetricsGroup);
 
   expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument();
 });
@@ -109,10 +102,8 @@ test('render default Metrics Groups and refresh screen', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
   const refresh = screen.getByText('Refresh');
-  fireEvent.click(refresh);
+  userEvent.click(refresh);
   
   expect(screen.getByText('Metrics groups')).toBeInTheDocument();
 });
@@ -123,12 +114,10 @@ test('render default Add metric to the group', async () => {
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
-
-  await wait();
   
-  const metricsGroupMenu = screen.getByTestId('icon-vertical-dots');
-  fireEvent.click(metricsGroupMenu);
-  fireEvent.click(screen.getByText('Add metric'));
+  const metricsGroupMenu = await screen.findByTestId('icon-vertical-dots');
+  userEvent.click(metricsGroupMenu);
+  userEvent.click(screen.getByText('Add metric'));
   
   expect(screen.getByTestId('add-metric')).toBeInTheDocument();
 });
@@ -140,11 +129,9 @@ test('render metrics groups and delete a metrics group', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
-  const metricsGroupMenu = screen.getByTestId('icon-vertical-dots');
-  fireEvent.click(metricsGroupMenu);
-  fireEvent.click(screen.getByText('Delete'));
+  const metricsGroupMenu = await screen.findByTestId('icon-vertical-dots');
+  userEvent.click(metricsGroupMenu);
+  userEvent.click(screen.getByText('Delete'));
 
   expect(screen.queryByText('test 1a')).not.toBeInTheDocument();
 });
@@ -154,20 +141,14 @@ test('render metrics groups and edit a metrics group', async () => {
     JSON.stringify(metricsGroupWithoutMetricData)
   );
 
-  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+  render(<MetricsGroups id="1" onGoBack={jest.fn()}/>);
 
-  await wait();
+  const metricsGroupMenu = await screen.findByTestId('icon-vertical-dots');
 
-  const metricsGroupMenu = screen.getByTestId('icon-vertical-dots');
-
-  fireEvent.click(metricsGroupMenu);
-  fireEvent.click(screen.getByText('Edit'));
-
-  const submit = screen.getByTestId('button-default-save');
+  userEvent.click(metricsGroupMenu);
+  userEvent.click(screen.getByText('Edit'));
 
   expect(screen.queryByText('Edit metrics group')).toBeInTheDocument();
-  
-  fireEvent.click(submit);
 });
 
 test('render metrics groups and open new metric form', async () => {
@@ -177,14 +158,9 @@ test('render metrics groups and open new metric form', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
-  const addMetric = screen.getByTestId('button-default-add-metric');
-  
-  fireEvent.click(addMetric);
-
-  const addMetricForm = screen.getByTestId('add-metric');
-
+  const addMetric = await screen.findByTestId('button-default-add-metric');
+  userEvent.click(addMetric);
+  const addMetricForm = await screen.findByTestId('add-metric');
   expect(addMetricForm).toBeInTheDocument();
 });
 
@@ -195,18 +171,13 @@ test('render metrics groups and open new action form', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
+  const actionTab = await screen.findByTestId('tab-1');
+  userEvent.click(actionTab);
 
-  const actionTab = screen.getByTestId('tab-1');
+  const addAction = await screen.findByTestId('button-default-add-action');
+  userEvent.click(addAction);
 
-  fireEvent.click(actionTab);
-
-  const addAction = screen.getByTestId('button-default-add-action');
-  
-  fireEvent.click(addAction);
-
-  const addActionForm = screen.getByTestId('metric-group-action-form');
-
+  const addActionForm = await screen.findByTestId('metric-group-action-form');
   expect(addActionForm).toBeInTheDocument();
 });
   
@@ -217,12 +188,12 @@ test('render metrics groups and delete metric', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
-  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
-
-  fireEvent.click(metricDropdown[1]);
-  fireEvent.click(screen.getByText('Delete'));
+  const metricDropdown = await screen.findAllByTestId('icon-vertical-dots');
+  await act(async() => {
+    userEvent.click(metricDropdown[1]);
+  });  
+  const deleteElement = screen.getByText('Delete');
+  expect(deleteElement).toBeInTheDocument();
 });
 
 test('render metrics groups and edit metric', async () => {
@@ -232,15 +203,13 @@ test('render metrics groups and edit metric', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
-  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
-
-  fireEvent.click(metricDropdown[1]);
-  fireEvent.click(screen.getByText('Edit metric'));
-
-  const addMetricForm = screen.getByTestId('add-metric');
-
+  const metricDropdown = await screen.findAllByTestId('icon-vertical-dots');
+  await act(async() => {
+    userEvent.click(metricDropdown[1]);
+  });  
+  
+  userEvent.click(screen.getByText('Edit metric'));
+  const addMetricForm = await screen.findByTestId('add-metric');
   expect(addMetricForm).toBeInTheDocument();
 });
 
@@ -251,16 +220,11 @@ test('render metrics groups and delete action', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
-
-  const actionTab = screen.getByTestId('tab-1');
-
-  fireEvent.click(actionTab);
-
+  const actionTab = await screen.findByTestId('tab-1');
+  userEvent.click(actionTab);
   const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
-
-  fireEvent.click(metricDropdown[1]);
-  fireEvent.click(screen.getByText('Delete action'));
+  userEvent.click(metricDropdown[1]);
+  userEvent.click(screen.getByText('Delete action'));
 });
 
 test('render metrics groups and edit action', async () => {
@@ -270,21 +234,19 @@ test('render metrics groups and edit action', async () => {
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
-  await wait();
+  const actionTab = await screen.findByTestId('tab-1');
 
-  const actionTab = screen.getByTestId('tab-1');
-
-  fireEvent.click(actionTab);
+  userEvent.click(actionTab);
 
   const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
 
-  fireEvent.click(metricDropdown[1]);
-  fireEvent.click(screen.getByText('Edit action'));
+  await act(async() => {
+    userEvent.click(metricDropdown[1]);
+  });
+  userEvent.click(screen.getByText('Edit action'));
 
-  const addActionForm = screen.getByTestId('metric-group-action-form');
+  const addActionForm = await screen.findByTestId('metric-group-action-form');
   const goBack = screen.getByTestId('icon-arrow-left');
   
   expect(addActionForm).toBeInTheDocument();
-
-  fireEvent.click(goBack);
 });

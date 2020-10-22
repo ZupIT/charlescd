@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
 import { Action } from '../../types';
@@ -43,11 +44,9 @@ test('render Action Card', () => {
   fireEvent.click(dropdown);
   fireEvent.click(screen.getByText('Edit action'));
 
-  fireEvent.click(dropdown);
-  fireEvent.click(screen.getByText('Delete action'));
+  userEvent.click(dropdown);
+  userEvent.click(screen.getByText('Delete action'));
 });
-
-
 
 test('render Action Card and confirm delete', async () => {
   const deleteActionFn = jest.fn();
@@ -61,9 +60,9 @@ test('render Action Card and confirm delete', async () => {
   );
 
   const dropdown = screen.getByTestId('icon-vertical-dots');
-  fireEvent.click(dropdown);
-  fireEvent.click(screen.getByText('Delete action'));
-  fireEvent.click(screen.getByText('Yes, delete'));
+  userEvent.click(dropdown);
+  userEvent.click(screen.getByText('Delete action'));
+  userEvent.click(screen.getByText('Yes, delete'));
   expect(deleteActionFn).toHaveBeenCalled()
 });
 
@@ -79,9 +78,9 @@ test('render Action Card and dismiss delete', async () => {
   );
 
   const dropdown = screen.getByTestId('icon-vertical-dots');
-  fireEvent.click(dropdown);
-  fireEvent.click(screen.getByText('Delete action'));
-  fireEvent.click(screen.getByText('No'));
+  userEvent.click(dropdown);
+  userEvent.click(screen.getByText('Delete action'));
+  userEvent.click(screen.getByText('No'));
   
   expect(screen.queryByText('delete-action-card')).not.toBeInTheDocument();
   expect(screen.getByTestId('metric-group-card-action')).toBeInTheDocument();

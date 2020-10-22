@@ -184,7 +184,7 @@ const MetricsGroupCard = ({
           <Styled.MetricsGroupsFooter>
             <Button.Default
               onClick={() => handleAddMetric(metricGroup)}
-              id={'add-metric'}
+              id="add-metric"
             >
               Add metric
             </Button.Default>
