@@ -18,6 +18,7 @@ package io.charlescd.moove.infrastructure.service.client
 
 import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
 import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
+import io.charlescd.moove.infrastructure.service.client.request.UndeployRequestV1
 import io.charlescd.moove.infrastructure.service.client.response.DeployResponse
 import io.charlescd.moove.infrastructure.service.client.response.GetDeployCdConfigurationsResponse
 import io.charlescd.moove.infrastructure.service.client.response.UndeployResponse
@@ -51,6 +52,14 @@ interface DeployClient {
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun undeploy(@PathVariable("deploymentId") deploymentId: String, @RequestBody request: UndeployRequest): UndeployResponse
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(
+        value = ["/v1/undeployments"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun undeployV1(@RequestBody request: UndeployRequestV1): UndeployResponse
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(

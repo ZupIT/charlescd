@@ -76,6 +76,16 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         )
     }
 
+
+    override fun undeployV1(deploymentId: String, authorId: String) {
+        deployClient.undeployV1(
+            UndeployRequestV1(
+                authorId,
+                deploymentId
+            )
+        )
+    }
+
     override fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration? {
         return deployClient.getCdConfigurations(workspaceId).find { cdConfiguration ->
             cdConfiguration.id == cdConfigurationId
