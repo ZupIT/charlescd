@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
@@ -24,6 +24,7 @@ import { useRegistry, useRegistryConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import ConnectionStatus from './ConnectionStatus';
+import { FetchStatuses } from 'core/providers/base/hooks';
 
 interface Props {
   form: string;
@@ -32,10 +33,12 @@ interface Props {
 }
 
 const SectionRegistry = ({ form, setForm, data }: Props) => {
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const isLoading = status === 'pending';
   const [isAction, setIsAction] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
   const { remove, responseRemove, loadingRemove } = useRegistry();
-  const { testConnection, response, error, status } = useRegistryConnection();
+  const { testConnection, response, error } = useRegistryConnection();
 
   useEffect(() => {
     setIsAction(true);
@@ -55,10 +58,15 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
 
   useEffect(() => {
     if (data) {
-      testConnection(data.id);
       setIsAction(false);
+
+      (async () => {
+        setStatus('pending');
+        await testConnection(data.id);
+        setStatus('resolved');
+      })();
     }
-  }, [data]);
+  }, [testConnection, data]);
 
   const renderError = () => (
     <ConnectionStatus type="error" message={error.message} />
@@ -76,7 +84,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
           <Card.Config
             icon="server"
             description={data.name}
-            isLoading={loadingRemove || status.isPending}
+            isLoading={loadingRemove || isLoading}
             isDisabled={isDisabled}
             onClose={() => remove(data?.id)}
           />

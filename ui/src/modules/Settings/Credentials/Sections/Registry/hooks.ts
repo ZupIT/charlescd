@@ -33,7 +33,6 @@ import {
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
-import { identity } from 'lodash';
 
 export const useRegistry = (): FetchProps => {
   const dispatch = useDispatch();
@@ -152,9 +151,7 @@ export const useRegistryConnection = (): {
   testConnection: Function;
   response: Response;
   error: ResponseError;
-  status: FetchStatus;
 } => {
-  const status = useFetchStatus();
   const test = useFetchData<Response>(validationConnection);
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
@@ -163,29 +160,25 @@ export const useRegistryConnection = (): {
     async (configurationId: string) => {
       try {
         if (configurationId) {
-          status.pending();
           const res = await test(configurationId);
 
           setResponse(res);
-          status.resolved();
 
           return res;
         }
       } catch (e) {
-        status.rejected();
         const err = await e.json();
 
         setResponse(null);
         setError(err);
       }
     },
-    [test, status]
+    [test]
   );
 
   return {
     testConnection,
     response,
-    error,
-    status
+    error
   };
 };
