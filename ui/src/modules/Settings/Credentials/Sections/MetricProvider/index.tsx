@@ -29,15 +29,21 @@ interface Props {
   form: string;
   setForm: Function;
   data: Datasource[];
+  getNewDatasources: Function;
 }
 
-const MetricProvider = ({ form, setForm, data }: Props) => {
+const MetricProvider = ({ form, setForm, data, getNewDatasources }: Props) => {
   const [datasources, setDatasource] = useState(data);
   const { remove, loadingRemove } = useDatasource();
 
   const handleClose = async (id: string) => {
     await remove(id);
     setDatasource(filter(datasources, item => item.id !== id));
+  };
+
+  const handleOnFinish = () => {
+    setForm(null);
+    getNewDatasources();
   };
 
   const renderSection = () => (
@@ -63,7 +69,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_METRIC_PROVIDER) && (
       <Layer action={() => setForm(null)}>
-        <FormMetricProvider onFinish={() => setForm(null)} />
+        <FormMetricProvider onFinish={handleOnFinish} />
       </Layer>
     );
 

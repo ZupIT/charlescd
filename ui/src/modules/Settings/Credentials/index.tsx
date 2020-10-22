@@ -62,6 +62,8 @@ const Credentials = ({ onClickHelp }: Props) => {
 
   const getActions = () => getActionData();
 
+  const getDatasources = () => getAllDatasources();
+
   useEffect(() => {
     if (actionDataStatus.isIdle) {
       getActionData();
@@ -145,6 +147,7 @@ const Credentials = ({ onClickHelp }: Props) => {
         form={form}
         setForm={setForm}
         data={datasources as Datasource[]}
+        getNewDatasources={getDatasources}
       />
       {actionDataStatus.isResolved && (
         <Section.MetricAction
