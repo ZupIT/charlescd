@@ -1,10 +1,10 @@
 # How to contribute
 
-Be welcome! Please read the following sections to learn how to ask questions and how to work on something.
+:wave:Welcome! Please read the following sections to learn how to ask questions and how to work on something.
 
 ## Before you contribute
 ### Legal
-Keep in mind as you contribute, that code, docs and other material submitted to open source projects are usually considered licensed under the same terms as the rest of the work.
+As you contribute, keep in mind that the code, docs and other materials submitted to open source projects are usually considered licensed under the same terms as the rest of the work.
 
 CharlesCD is licensed over [ASL - Apache License](https://github.com/ZupIT/charlescd/blob/master/LICENSE), version 2, so new files must have the ASL version 2 header, please check [here](https://www.apache.org/licenses/LICENSE-2.0).
 
@@ -34,9 +34,9 @@ Make sure you’re on the latest version. If you’re not on the most recent ver
 Search under project [issues](https://github.com/ZupIT/charlescd/issues?q=is%3Aopen+is%3Aissue+label%3Abug) to make sure it’s not a known bug. If you don’t find a pre-existing issue, consider checking with the [mailing list](https://groups.google.com/forum/#!forum/charlescd-dev) in case the problem is non-bug-related.
 
 #### Reporting a new issue
-If you can't find an open problem for your issue, please [open a new one](https://github.com/ZupIT/charlescd/issues/new). Make sure that your issue describe the bare minimum bellow:
+If you can't find an open problem for your issue, please [open a new one](https://github.com/ZupIT/charlescd/issues/new). Make sure that your issue describe the bare minimum below:
   * A clear title and description with as much relevant information as possible
-  * The version of CharlesCD are you using
+  * The version of CharlesCD you are using
   * The rich description of the environment where CharlesCD are running
   * A code example (if applicable) or an executable test case that demonstrates the problem
   * Make sure that bug label is included
@@ -68,7 +68,7 @@ CharlesCD has many modules. The environment settings are different between them.
 ### Writing a new feature?
 1. Make sure your branch is based on master.
 2. We recommend follow [Our step-by-step making changes suggestion](#our-step-by-step-making-changes-suggestion).
-3. Update the documetation if applicable.
+3. Update the documentation if applicable.
 4. Open a new GitHub pull request with the new code.
 5. Ensure the PR description clearly describes the new feature, including the issue number.
 
@@ -78,4 +78,4 @@ Thank you for considering evoluting CharlesCD!!!:heart::heart::heart:
 
 Keep evolving.
 
-CharlesCD team
+**CharlesCD team**
