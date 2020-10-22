@@ -30,4 +30,4 @@ export const dark = {
   warning: COLOR_SUNFLOWER,
   primary: COLOR_DODGER_BLUE,
   secondary: COLOR_SANTAS_GREY
-};
+} as Record<string, string>;
