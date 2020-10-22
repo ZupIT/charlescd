@@ -17,12 +17,11 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { TestConnectionResponse } from './interfaces';
 import Styled from './styled';
-import { isEmpty } from 'lodash';
+import { CONNECTION_SUCCESS } from './constants';
 
 type Props = {
-  message?: TestConnectionResponse[];
+  status?: number;
 };
 
 type MessageProps = {
@@ -40,12 +39,13 @@ const MessageStatus = ({ status, messagemText }: MessageProps) => (
   </Styled.StatusMessageWrapper>
 );
 
-const ConnectionStatus = ({ message }: Props) => {
-  if (!isEmpty(message))
+const ConnectionStatus = ({ status }: Props) => {
+  if (status !== CONNECTION_SUCCESS) {
     return MessageStatus({
       status: 'error',
       messagemText: 'Connection to metric provider failed.'
     });
+  }
 
   return MessageStatus({
     status: 'success',

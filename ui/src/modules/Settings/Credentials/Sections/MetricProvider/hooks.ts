@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useFetch, FetchProps, useFetchData } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
 import {
   Datasource,
   Plugin,
   Response,
-  TestConnectionResponse,
   TestConnectionRequest
 } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -33,6 +32,7 @@ import {
   getAllPlugins,
   testConnection
 } from 'core/providers/datasources';
+import { CONNECTION_SUCCESS } from './constants';
 
 export const useDatasource = (): FetchProps => {
   const dispatch = useDispatch();
@@ -131,21 +131,29 @@ export const usePlugins = (): FetchProps => {
 };
 
 export const useTestConnection = (): FetchProps => {
-  const [testConnectionResponse, getTestConnection] = useFetch<
-    TestConnectionResponse
-  >(testConnection);
-  const { response, loading } = testConnectionResponse;
+  const [connectionResponse, setConnectionResponse] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const testConnectionFetchData = useFetchData<number>(testConnection);
+  const connectionFailed = 500
 
   const save = useCallback(
-    (testConnectionRequest: TestConnectionRequest) => {
-      getTestConnection(testConnectionRequest);
+    async (payload: TestConnectionRequest) => {
+      try {
+        setLoading(true)
+        await testConnectionFetchData(payload);
+        setLoading(false)
+        setConnectionResponse(CONNECTION_SUCCESS)
+      } catch (e) {
+        setLoading(false)
+        setConnectionResponse(connectionFailed)
+      }
     },
-    [getTestConnection]
+    [testConnectionFetchData]
   );
 
   return {
     save,
-    response,
+    response: connectionResponse,
     loading
   };
 };

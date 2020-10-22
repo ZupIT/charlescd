@@ -20,7 +20,7 @@ import ConnectionStatus from '../ConnectionStatus';
 
 test('render Connection status default component', async () => {
   render(
-    <ConnectionStatus message={undefined} />
+    <ConnectionStatus status={204} />
   );
 
   await wait();
@@ -31,7 +31,7 @@ test('render Connection status default component', async () => {
 
 test('render Connection fail status component', async () => {
   render(
-    <ConnectionStatus message={[{}]} />
+    <ConnectionStatus status={500} />
   );
 
   await wait();

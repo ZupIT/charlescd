@@ -92,12 +92,12 @@ test('render button test connection', async () => {
 
   await act(() => userEvent.type(screen.getByTestId('input-text-name'), 'name'));
   await act(() => userEvent.type(screen.getByTestId('input-text-data.url'), 'name'));
-  
+
   const btn = await screen.findByTestId('button-default-test-connection');
 
   expect(btn).not.toBeDisabled();
 
   fireEvent.click(screen.getByTestId('button-default-test-connection'));
   expect(testConnection).toHaveBeenCalled();
-  expect(screen.getByTestId('connection-success')).toBeInTheDocument();
+  expect(screen.getByTestId('connection-error')).toBeInTheDocument();
 })

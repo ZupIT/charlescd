@@ -26,7 +26,6 @@ import {
   Datasource,
   Plugin,
   PluginDatasource,
-  TestConnectionResponse
 } from './interfaces';
 import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
@@ -71,7 +70,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const handleTestConnection = () => {
-    const data = getValues({ nest: true });
+    const { data } = getValues({ nest: true });
 
     testConnection({
       pluginSrc: plugin.src,
@@ -122,9 +121,9 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         )
       )}
 
-      {testConnectionResponse && (
+      {!loadingConnectionResponse && testConnectionResponse && (
         <ConnectionStatus
-          message={testConnectionResponse as TestConnectionResponse[]}
+          status={testConnectionResponse as number}
         />
       )}
       <Styled.TestConnectionButton
