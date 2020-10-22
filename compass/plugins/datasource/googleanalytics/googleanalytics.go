@@ -241,5 +241,5 @@ func Result(request datasource.ResultRequest) (float64, error) {
 		return float64(value), nil
 	}
 
-	return 0, errors.New("Could not find metric result!")
+	return 0, nil
 }
