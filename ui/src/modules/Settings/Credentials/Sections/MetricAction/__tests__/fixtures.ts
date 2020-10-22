@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Action, PluginsPayload, inputParameters } from "../types"
+import { Action, ActionForm } from "../types"
 
 export const actionsData: Action[] = [
   {
@@ -45,3 +45,28 @@ export const pluginsData = [
     'inputParameters': 'input 1'
   }
 ];
+
+export const actionFormData: ActionForm = {
+  'nickname': 'test',
+  'description': 'description test',
+  'type': 'action type',
+  'configuration': 'test url'
+};
+
+export const actionDefaultPayload = {
+  'nickname': 'test',
+  'description': 'description test',
+  'type': 'action type',
+  'configuration': 'test url',
+  'useDefaultConfiguration': true
+};
+
+export const actionNotDefaultPayload = {
+  'nickname': 'test',
+  'description': 'description test',
+  'type': 'action type',
+  'useDefaultConfiguration': false,
+  'configuration': {
+    'mooveUrl': 'test url'
+  }
+};
