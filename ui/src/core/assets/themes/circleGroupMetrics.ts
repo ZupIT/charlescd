@@ -47,7 +47,7 @@ export const dark = {
       failed: COLOR_RED_ORANGE,
       inExecution: COLOR_FREE_SPEECH_BLUE,
       notExecuted: COLOR_DODGER_BLUE
-    }
+    } as Record<string, string>
   },
   chart: {
     gridColor: COLOR_BLACK_MARLIN
