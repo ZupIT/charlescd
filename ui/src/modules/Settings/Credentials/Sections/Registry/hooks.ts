@@ -131,7 +131,7 @@ export const useRegistryTest = (): {
         setError(err);
       }
     },
-    [test]
+    [test, status]
   );
 
   return {
