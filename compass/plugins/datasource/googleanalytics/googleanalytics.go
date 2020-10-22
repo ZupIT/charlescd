@@ -24,7 +24,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
@@ -168,7 +167,6 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 
 	analyticsService, _, err := getServices(configuration)
 	if err != nil {
-		log.Println("ERROR GET SERVICE")
 		return nil, err
 	}
 
@@ -179,9 +177,12 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 		return nil, err
 	}
 
+	metricType := "METRIC"
 	metrics := []string{}
 	for _, item := range res.Items {
-		metrics = append(metrics, item.Id)
+		if item.Attributes["type"] == metricType {
+			metrics = append(metrics, item.Id)
+		}
 	}
 
 	return metrics, nil
@@ -230,11 +231,15 @@ func Result(request datasource.ResultRequest) (float64, error) {
 		return 0, err
 	}
 
-	row := res.Reports[0].Data.Rows[0]
-	value, err := strconv.Atoi(row.Metrics[0].Values[0])
-	if err != nil {
-		return 0, nil
+	if len(res.Reports) > 0 && len(res.Reports[0].Data.Rows) > 0 {
+		row := res.Reports[0].Data.Rows[0]
+		value, err := strconv.Atoi(row.Metrics[0].Values[0])
+		if err != nil {
+			return 0, nil
+		}
+
+		return float64(value), nil
 	}
 
-	return float64(value), nil
+	return 0, errors.New("Could not find metric result!")
 }
