@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { actionsData } from './fixtures';
 import MetricAction from '../index';
