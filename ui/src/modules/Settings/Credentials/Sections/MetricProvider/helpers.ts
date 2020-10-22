@@ -8,15 +8,3 @@ export const serializePlugins = (plugins: Plugin[]): Option[] =>
     value: plugin.id,
     icon: 'prometheus'
   }));
-
-export const transformValues = (values: any) => {
-  const data: any = {};
-  for (const key in values) {
-    if (key.indexOf('data') !== -1) {
-      const nestedKey = key.split('.')[1];
-      data[nestedKey] = values[key];
-    }
-  }
-
-  return data;
-};

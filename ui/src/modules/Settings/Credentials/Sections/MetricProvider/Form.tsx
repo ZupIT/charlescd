@@ -28,7 +28,7 @@ import {
   PluginDatasource,
   TestConnectionResponse
 } from './interfaces';
-import { serializePlugins, transformValues } from './helpers';
+import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
 import { useDatasource, usePlugins, useTestConnection } from './hooks';
 import Styled from './styled';
@@ -68,14 +68,14 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const handleTestConnection = () => {
-    const values = getValues();
-    const data = transformValues(values);
+    const data = getValues({ nest: true });
 
     testConnection({
       pluginSrc: plugin.src,
       data
     });
   };
+
 
   const renderFields = () => (
     <>
