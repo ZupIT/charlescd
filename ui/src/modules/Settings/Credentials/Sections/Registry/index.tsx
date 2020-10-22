@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useRegistry } from './hooks';
+import { useRegistry, useRegistryConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
+import ConnectionStatus from './ConnectionStatus';
 
 interface Props {
   form: string;
@@ -32,30 +33,55 @@ interface Props {
 
 const SectionRegistry = ({ form, setForm, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
   const { remove, responseRemove, loadingRemove } = useRegistry();
+  const { testConnection, response, error, status } = useRegistryConnection();
 
   useEffect(() => {
     setIsAction(true);
   }, [responseRemove]);
 
   useEffect(() => {
-    if (data) setIsAction(false);
+    if (response) {
+      setIsDisabled(false);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    if (error) {
+      setIsDisabled(true);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data) {
+      testConnection(data.id);
+      setIsAction(false);
+    }
   }, [data]);
+
+  const renderError = () => (
+    <ConnectionStatus type="error" message={error.message} />
+  );
 
   const renderSection = () => (
     <Section
       name="Registry"
       icon="server"
-      showAction={isAction}
+      isAction={isAction}
       action={() => setForm(FORM_REGISTRY)}
     >
       {data && !responseRemove && (
-        <Card.Config
-          icon="server"
-          description={data.name}
-          isLoading={loadingRemove}
-          onClose={() => remove(data?.id)}
-        />
+        <Fragment>
+          <Card.Config
+            icon="server"
+            description={data.name}
+            isLoading={loadingRemove || status.isPending}
+            isDisabled={isDisabled}
+            onClose={() => remove(data?.id)}
+          />
+          {error && renderError()}
+        </Fragment>
       )}
     </Section>
   );

@@ -25,3 +25,6 @@ export const create = (registry: Registry) =>
 
 export const validation = (registry: Registry) =>
   postRequest(`${endpoint}/validation`, registry);
+
+export const validationConnection = (configurationId: string) =>
+  postRequest(`${endpoint}/connection-validation`, { configurationId });

@@ -15,7 +15,12 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { create, configPath, validation } from 'core/providers/registry';
+import {
+  create,
+  configPath,
+  validation,
+  validationConnection
+} from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import {
   useFetch,
@@ -28,6 +33,7 @@ import {
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
+import { identity } from 'lodash';
 
 export const useRegistry = (): FetchProps => {
   const dispatch = useDispatch();
@@ -117,6 +123,48 @@ export const useRegistryTest = (): {
         if (registry) {
           status.pending();
           const res = await test(registry);
+
+          setResponse(res);
+          status.resolved();
+
+          return res;
+        }
+      } catch (e) {
+        status.rejected();
+        const err = await e.json();
+
+        setResponse(null);
+        setError(err);
+      }
+    },
+    [test, status]
+  );
+
+  return {
+    testConnection,
+    response,
+    error,
+    status
+  };
+};
+
+export const useRegistryConnection = (): {
+  testConnection: Function;
+  response: Response;
+  error: ResponseError;
+  status: FetchStatus;
+} => {
+  const status = useFetchStatus();
+  const test = useFetchData<Response>(validationConnection);
+  const [response, setResponse] = useState<Response>(null);
+  const [error, setError] = useState<ResponseError>(null);
+
+  const testConnection = useCallback(
+    async (configurationId: string) => {
+      try {
+        if (configurationId) {
+          status.pending();
+          const res = await test(configurationId);
 
           setResponse(res);
           status.resolved();

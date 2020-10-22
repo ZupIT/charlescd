@@ -46,7 +46,7 @@ const SectionCDConfiguration = ({ form, setForm, data }: Props) => {
     <Section
       name="CD Configuration"
       icon="cd-configuration"
-      showAction={isAction}
+      isAction={isAction}
       action={() => setForm(FORM_CD_CONFIGURATION)}
     >
       {data && !responseRemove && (

@@ -45,7 +45,7 @@ const CircleMatcher = ({ form, setForm, data }: Props) => {
     <Section
       name="Circle Matcher"
       icon="circle-matcher"
-      showAction={isAction}
+      isAction={isAction}
       action={() => setForm(FORM_CIRCLE_MATCHER)}
     >
       {data && !responseRemove && (

@@ -29,8 +29,6 @@ import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
-import { useDispatch } from 'core/state/hooks';
-import { toogleNotification } from 'core/components/Notification/state/actions';
 import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
 
 const FormRegistry = ({ onFinish }: Props) => {
@@ -41,7 +39,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [message, setMessage] = useState<ConnectionProps>(null);
   const isGCP = registryType === 'GCP';
-  // const isResponse = responseTest || errorTest;
 
   const {
     register,
@@ -52,7 +49,6 @@ const FormRegistry = ({ onFinish }: Props) => {
     formState: { isValid }
   } = useForm<Registry>({ mode: 'onChange' });
   const profileId = getProfileByKey('id');
-  const dispatch = useDispatch();
 
   useEffect(() => {
     setIsDisabled(isGCP);
@@ -85,35 +81,18 @@ const FormRegistry = ({ onFinish }: Props) => {
     const registry = {
       ...getValues(),
       authorId: profileId,
-      provider: registryType,
-      username: '_json_key'
+      provider: registryType
     };
 
     testConnection(registry);
   };
 
   const onSubmit = (registry: Registry) => {
-    registry = {
+    save({
       ...registry,
       authorId: profileId,
       provider: registryType
-    };
-
-    if (isGCP) {
-      try {
-        JSON.parse(registry.jsonKey);
-      } catch (error) {
-        dispatch(
-          toogleNotification({
-            text: 'Error when validating json file: ' + error.message,
-            status: 'error'
-          })
-        );
-        return;
-      }
-    }
-
-    save(registry);
+    });
   };
 
   const renderAwsFields = () => {
