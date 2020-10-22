@@ -16,7 +16,13 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.charlescd.moove.application.CsvSegmentationService
 import io.charlescd.moove.application.WorkspaceService
+import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
@@ -39,11 +45,20 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
     private CircleMatcherService circleMatcherService
     private WorkspaceService workspaceService
+    private CsvSegmentationService csvSegmentationService
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
 
     void setup() {
         this.workspaceService = new WorkspaceService(workspaceRepository, userRepository)
         this.circleMatcherService = Mock(CircleMatcherService)
-        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(deploymentRepository, circleMatcherService, workspaceService)
+
+        this.csvSegmentationService = new CsvSegmentationService(objectMapper);
+        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(
+                deploymentRepository,
+                circleMatcherService,
+                workspaceService,
+                csvSegmentationService
+        )
 
     }
 
@@ -392,6 +407,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
             assert active == false
         }
     }
+
     def 'when callback of deploy is FAILED should not update status in circle matcher'() {
         given:
         def deploymentId = "314d7293-47d0-4d68-900c-02b834a15cef"
@@ -454,6 +470,69 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
 
         0 * this.circleMatcherService.update(_, _, _, )
+    }
+
+    def "when callback is of a circle created with csv should create the correct list of nodes "() {
+        given:
+        def deploymentId = "314d7293-47d0-4d68-900c-02b834a15cef"
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.SUCCEEDED)
+        def rulePart = new NodePart.RulePart("exampleId", NodePart.ConditionEnum.EQUAL, ["4567"])
+        def rulePart2 = new NodePart.RulePart("exampleId", NodePart.ConditionEnum.EQUAL, ["5678"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
+        def rule2 = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart2)
+        def clause = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.AND, [rule, rule2], null)
+        def clauses = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.AND, [clause], null)
+
+        def author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
+                new ArrayList<Workspace>(), false, LocalDateTime.now())
+        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
+        def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "Circle", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
+                LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, new ObjectMapper().valueToTree(clauses), null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+        def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED) >> Optional.of(previousDeployment)
+
+        1 * this.deploymentRepository.update(_)
+
+        1 * this.circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def nodes = arguments[2]
+            def matcherUrl = arguments[3]
+            def active = arguments[4]
+
+
+            assert nodes instanceof List<JsonNode>
+            assert nodes.size() == 2
+            def ruleCompare = objectMapper.treeToValue(nodes[0],NodePart.class)
+            def ruleCompare2 = objectMapper.treeToValue(nodes[1],NodePart.class)
+            assert ruleCompare.content.key == rule.content.key
+            assert ruleCompare.content.value == rule.content.value
+            assert ruleCompare2.content.value == rule2.content.value
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
+            assert matcherUrl.toString() == workspace.circleMatcherUrl
+            assert reference == circle.reference
+            assert active == true
+        }
+
     }
 
 }
