@@ -98,7 +98,7 @@ const IstioUndeploymentManifestsUtils = {
     })
 
     const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && component.deployment.defaultCircle)
-    if (defaultComponent &&  defaultComponent.deployment ) {
+    if (defaultComponent && defaultComponent.deployment ) {
       subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(defaultComponent, defaultComponent.deployment.circleId))
     }
     return subsets
