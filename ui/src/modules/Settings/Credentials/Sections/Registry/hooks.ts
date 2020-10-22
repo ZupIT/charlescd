@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { create, configPath, validation } from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  FetchProps,
+  ResponseError,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
@@ -93,25 +100,44 @@ export const useRegistry = (): FetchProps => {
   };
 };
 
-export const useRegistryTest = (): FetchProps => {
-  const [testData, testRegistry] = useFetch<Response>(validation);
-  const {
-    loading: loadingTest,
-    response: responseTest,
-    error: errorTest
-  } = testData;
+export const useRegistryTest = (): {
+  testConnection: Function;
+  response: Response;
+  error: ResponseError;
+  status: FetchStatus;
+} => {
+  const status = useFetchStatus();
+  const test = useFetchData<Response>(validation);
+  const [response, setResponse] = useState<Response>(null);
+  const [error, setError] = useState<ResponseError>(null);
 
-  const test = useCallback(
-    (registry: Registry) => {
-      testRegistry(registry);
+  const testConnection = useCallback(
+    async (registry: Registry) => {
+      try {
+        if (registry) {
+          status.pending();
+          const res = await test(registry);
+
+          setResponse(res);
+          status.resolved();
+
+          return res;
+        }
+      } catch (e) {
+        status.rejected();
+        const err = await e.json();
+
+        setResponse(null);
+        setError(err);
+      }
     },
-    [testRegistry]
+    [test]
   );
 
   return {
-    test,
-    loadingTest,
-    responseTest,
-    errorTest
+    testConnection,
+    response,
+    error,
+    status
   };
 };

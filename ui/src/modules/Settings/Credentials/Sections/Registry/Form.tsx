@@ -31,15 +31,18 @@ import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
+import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
-  const { test, loadingTest, responseTest, errorTest } = useRegistryTest();
+  const { testConnection, response, error, status } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [message, setMessage] = useState<ConnectionProps>(null);
   const isGCP = registryType === 'GCP';
   // const isResponse = responseTest || errorTest;
+
   const {
     register,
     handleSubmit,
@@ -60,17 +63,18 @@ const FormRegistry = ({ onFinish }: Props) => {
   }, [onFinish, responseAdd]);
 
   useEffect(() => {
-    if (responseTest) {
-      console.log('responseTest', responseTest);
+    if (response) {
+      setMessage({ type: 'success', message: 'Successful connection.' });
       setIsDisabled(false);
     }
-  }, [responseTest]);
+  }, [response]);
 
   useEffect(() => {
-    if (errorTest) {
-      console.log('errorTest', errorTest);
+    if (error) {
+      setMessage({ type: 'error', message: error.message });
+      setIsDisabled(true);
     }
-  }, [errorTest]);
+  }, [error]);
 
   const onChange = (value: string) => {
     reset();
@@ -85,7 +89,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       username: '_json_key'
     };
 
-    test(registry);
+    testConnection(registry);
   };
 
   const onSubmit = (registry: Registry) => {
@@ -169,20 +173,20 @@ const FormRegistry = ({ onFinish }: Props) => {
           Enter the json key below:
         </Styled.Subtitle>
         <AceEditorForm
-          width={'270px'}
+          width="270px"
           mode="json"
           name="jsonKey"
           rules={{ required: true }}
           control={control}
           theme="monokai"
         />
-        {/* {isResponse && <ConnectionStatus data={responseTest || errorTest} />} */}
+        {message && <ConnectionStatus {...message} />}
         <Button.Default
           type="button"
           id="test-connection"
           onClick={onClick}
           isDisabled={!isValid}
-          isLoading={loadingTest}
+          isLoading={status.isPending}
         >
           Test connection
         </Button.Default>
