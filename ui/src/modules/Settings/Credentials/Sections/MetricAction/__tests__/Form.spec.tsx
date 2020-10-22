@@ -15,8 +15,10 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { fireEvent, render, screen, wait, act, waitForElement } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
+import userEvent from '@testing-library/user-event';
+import selectEvent from 'react-select-event';
 import { pluginsData } from './fixtures';
 import FormAddAction from '../Form';
 
@@ -24,7 +26,7 @@ beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
-test.only('render Metric Action Section without data', async () => {
+test('render add Metric Action form', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(pluginsData)
   );
@@ -32,6 +34,74 @@ test.only('render Metric Action Section without data', async () => {
   const handleOnFinish = jest.fn();
 
   render(<FormAddAction onFinish={handleOnFinish}/>);
+
+  const actionForm = screen.getByTestId('add-action-form');
+
+  expect(actionForm).toBeInTheDocument();
+});
+
+test('render add Metric Action form and add a action', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(pluginsData)
+  );
+
+  const handleOnFinish = jest.fn();
+
+  render(<FormAddAction onFinish={handleOnFinish}/>);
+
+  const selectPlugin = screen.getByText('Select a plugin');
+  const nextButton = await waitForElement(() => screen.getByTestId('button-default-next'));
+
+  expect(nextButton).toBeDisabled();
+
+  await act(() => userEvent.type(screen.getByTestId('input-text-nickname'), 'nickname'));
+  await act(() => userEvent.type(screen.getByTestId('input-text-description'), 'description'));
+  selectEvent.select(selectPlugin, 'plugin 1');
+
+  await wait();
+
+  expect(nextButton).toBeEnabled();
+  userEvent.click(nextButton);
+
+  const defaultButton = screen.getByText('Default');
+  const customButton = screen.getByText('Custom path');
+  const saveButton = await waitForElement(() => screen.getByTestId('button-default-save'));
+
+  expect(saveButton).toBeEnabled();
+  userEvent.click(customButton);
+
+  await act(() => userEvent.type(screen.getByTestId('input-text-configuration'), 'url config'));
+
+  userEvent.click(defaultButton);
+  expect(saveButton).toBeEnabled();
+});
+
+test('render add Metric Action form and add a action close card', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(pluginsData)
+  );
+
+  const handleOnFinish = jest.fn();
+
+  render(<FormAddAction onFinish={handleOnFinish}/>);
+
+  const selectPlugin = screen.getByText('Select a plugin');
+  const NextButton = await waitForElement(() => screen.getByTestId('button-default-next'));
+
+  expect(NextButton).toBeDisabled();
+
+  await act(() => userEvent.type(screen.getByTestId('input-text-nickname'), 'nickname'));
+  await act(() => userEvent.type(screen.getByTestId('input-text-description'), 'description'));
+  selectEvent.select(selectPlugin, 'plugin 1');
+
+  await wait();
+
+  expect(NextButton).toBeEnabled();
+  userEvent.click(NextButton);
+
+  const cancelCard = screen.getByTestId('icon-cancel');
+  
+  userEvent.click(cancelCard);
 
   const actionForm = screen.getByTestId('add-action-form');
 
