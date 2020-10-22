@@ -16,7 +16,7 @@
 
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import { Action } from '../../types';
 import { actionData } from '../../__tests__/fixtures';
 import ActionCard from '../ActionCard';
