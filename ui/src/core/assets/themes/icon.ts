@@ -35,4 +35,4 @@ export const dark = {
   success: COLOR_MOUNTAIN_MEADOW,
   warning: COLOR_SUNFLOWER,
   stable: COLOR_MOUNTAIN_MEADOW
-};
+} as Record<string, string>;
