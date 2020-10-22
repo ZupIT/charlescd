@@ -43,7 +43,7 @@ export const dark = {
     cdConfig: COLOR_PURPLE_HEART,
     circleMatcher: COLOR_ORANGE_PEEL,
     metricsProvider: COLOR_MOUNTAIN_MEADOW
-  },
+  } as Record<string, string>,
   button: COLOR_PURPLE_HEART,
   text: {
     active: COLOR_LIGHT_DEFAULT,
