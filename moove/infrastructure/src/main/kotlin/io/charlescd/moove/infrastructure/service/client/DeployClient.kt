@@ -55,7 +55,7 @@ interface DeployClient {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
-        value = ["/v1/undeployments"],
+        value = ["/undeployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
