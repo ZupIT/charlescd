@@ -15,12 +15,13 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait, act } from 'unit-test/testUtils';
-import FormRegistry from '../Sections/Registry/Form';
+import { render, fireEvent, wait, act, screen } from 'unit-test/testUtils';
+import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
+import userEvent from '@testing-library/user-event';
 
 (global as any).MutationObserver = MutationObserver;
 
@@ -32,7 +33,11 @@ afterEach(() => {
   mockSave.mockClear();
 });
 
-jest.mock('../Sections/Registry/hooks', () => {
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+jest.mock('../hooks', () => {
   return {
     __esModule: true,
     useRegistry: () => ({
@@ -40,6 +45,7 @@ jest.mock('../Sections/Registry/hooks', () => {
     }),
     useRegistryTest: () => ({
       test: mockValidation,
+      status: {}
     })
   };
 });
@@ -171,38 +177,32 @@ test('Not trigger onSubmit on json parse error with GCP form', async () => {
   expect(mockSave).toBeCalledTimes(0);
 });
 
-test('Trigger submit on json parse success with GCP form', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ message: 'response' }));
+test.only('Trigger submit on json parse success with GCP form', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({ message: 'response' }));
 
-  const { container, getByTestId, getByText } = render(
-    <FormRegistry onFinish={mockOnFinish} />
-  );
+  render(<FormRegistry onFinish={mockOnFinish} />);
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-GCP');
-  fireEvent.click(radioButton);
-  await wait();
-  const inputGCPName = getByTestId('input-text-name');
-  const inputGCPAddress = getByTestId('input-text-address');
-  const inputGCPOrganization = getByTestId('input-text-organization');
-  const inputGCPJsonKey = getByTestId('input-text-jsonKey');
-  const submitButton = getByTestId('button-default-submit-registry');
-  const testConnectionButton = getByTestId('button-default-test-connection');
-  await act(async () => {
-    fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
-    fireEvent.change(inputGCPAddress, {
-      target: { value: 'http://fake-host' }
-    });
-    fireEvent.change(inputGCPOrganization, {
-      target: { value: 'fake-access-key' }
-    });
-    fireEvent.change(inputGCPJsonKey, {
-      target: { value: '{ "testKey": "testValue"}' }
-    });
-    fireEvent.click(testConnectionButton);
-    await wait();
-    fireEvent.click(submitButton);
-  });
+  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
+  await act(async () => userEvent.click(radioButton));
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+  const testConnectionButton = screen.getByTestId('button-default-test-connection');
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue"}');
+
+  // expect(submitButton).toBeDisabled();
+  // expect(testConnectionButton).toBeDisabled();
+  fireEvent.click(testConnectionButton);
+  fireEvent.click(submitButton);
+
+  // screen.debug();
+
   expect(mockSave).toBeCalledTimes(1);
 });
 
