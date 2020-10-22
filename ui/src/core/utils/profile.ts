@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { save, load, remove } from 'react-cookies';
-import { getCookieOptions } from './domain';
+import { User } from 'modules/Users/interfaces/User';
 
-const profileKey = 'profile';
+export const profileKey = 'profile';
 
 export const getProfile = () => {
   try {
-    const profile = load(profileKey);
+    const profile = localStorage.getItem(profileKey);
     return JSON.parse(atob(profile));
   } catch (e) {
     return {};
@@ -34,8 +33,9 @@ export const getProfileByKey = (key: string) => {
   return profile[key];
 };
 
-export const clearProfile = () => remove(profileKey, getCookieOptions());
+export const clearProfile = () => localStorage.removeItem(profileKey);
 
-export const saveProfile = (profile: string) => {
-  save(profileKey, profile, getCookieOptions());
+export const saveProfile = (profile: User) => {
+  const profileBase64 = btoa(JSON.stringify(profile));
+  localStorage.setItem(profileKey, profileBase64);
 };

@@ -16,9 +16,11 @@
 
 import { authRequest, unauthenticatedRequest } from './base';
 
-const clientId = window.ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
-const realm = window.ENVIRONMENT?.REACT_APP_AUTH_REALM;
-const workspaceId = window.ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
+const client = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
+const realm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
+const redirectUri = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
+const workspaceId =
+  window.CHARLESCD_ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
 
 const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
 const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
@@ -28,7 +30,8 @@ const headers = {
 
 export const login = (username: string, password: string) => {
   const grantType = 'password';
-  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}`;
+  const encodedPassword = encodeURIComponent(password);
+  const data = `grant_type=${grantType}&client_id=${client}&username=${username}&password=${encodedPassword}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
@@ -38,14 +41,22 @@ export const circleMatcher = (payload: unknown) => {
     requestData: payload,
     workspaceId
   };
+
   return unauthenticatedRequest(circleMatcherEndpoint, data, {
     method: 'POST'
   });
 };
 
+export const codeToTokens = (code: string) => {
+  const grantType = 'authorization_code';
+  const data = `grant_type=${grantType}&client_id=${client}&code=${code}&redirect_uri=${redirectUri}`;
+
+  return authRequest(endpoint, data, { method: 'POST', headers });
+};
+
 export const renewToken = (refreshToken: string) => {
   const grantType = 'refresh_token';
-  const data = `grant_type=${grantType}&client_id=${clientId}&refresh_token=${refreshToken}`;
+  const data = `grant_type=${grantType}&client_id=${client}&refresh_token=${refreshToken}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };

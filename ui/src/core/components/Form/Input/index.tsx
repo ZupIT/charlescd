@@ -67,7 +67,7 @@ const Input = React.forwardRef(
     const [isFocused, setIsFocused] = useState(true);
 
     useEffect(() => {
-      const isEmptyValue = isEmpty(rest.defaultValue?.toString());
+      const isEmptyValue = isEmpty(inputRef.current.value);
       setIsFocused(!isEmptyValue || disabled);
     }, [rest.defaultValue, disabled]);
 
@@ -85,7 +85,7 @@ const Input = React.forwardRef(
     const handleClick = () => {
       inputRef.current.focus();
       setIsFocused(true);
-    }
+    };
 
     return (
       <Styled.Wrapper

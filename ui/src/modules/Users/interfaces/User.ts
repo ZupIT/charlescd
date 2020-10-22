@@ -16,13 +16,18 @@
 
 export interface Workspace {
   id: string;
-  name: string;
+  name?: string;
+  permissions?: string[];
 }
 
 interface Base {
   name: string;
   email: string;
   photoUrl?: string;
+}
+
+export interface NewPassword {
+  newPassword: string;
 }
 
 export interface User extends Base {

@@ -18,11 +18,13 @@ import Input from './Input';
 import Password from './Password';
 import SearchInput from './SearchInput';
 import Select from './Select';
+import InputAction from './InputAction';
 import InputTitle from './InputTitle';
 import InputGroup from './InputGroup';
 import InputPhoto from './InputPhoto';
 import Number from './Number';
 import Link from './Link';
+import Checkbox from './Checkbox';
 
 export { Input, Password, SearchInput, Select };
 
@@ -31,9 +33,11 @@ export default {
   Password,
   SearchInput,
   Select,
+  InputAction,
   InputTitle,
   InputGroup,
   InputPhoto,
   Number,
-  Link
+  Link,
+  Checkbox
 };

@@ -56,5 +56,5 @@ test('render active ReleaseRow and show releases table', async () => {
 
   await wait();
 
-  expect(screen.getAllByText(/release /)).toHaveLength(2);
+  expect(screen.getByText('circle 1')).toBeInTheDocument();
 });

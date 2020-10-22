@@ -16,13 +16,14 @@
 
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
+import { OptionTypeBase } from 'react-select';
 import { Option } from '../interfaces';
 import Select from './Select';
 
 interface Props {
   name: string;
   control: Control<unknown>;
-  options: Option[];
+  options?: OptionTypeBase[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option[];
   className?: string;
@@ -44,19 +45,26 @@ const MultiCheck = ({
   className,
   defaultValue,
   label,
+  onChange,
   isLoading
 }: Props) => (
-  <Controller
-    as={Select}
-    options={options}
-    name={name}
-    control={control}
-    customOption={customOption}
-    className={className}
-    defaultValue={defaultValue}
-    label={label}
-    isLoading={isLoading}
-  />
+  <div data-testid={`select-${name}`}>
+    <Controller
+      as={<Select />}
+      options={options}
+      name={name}
+      control={control}
+      customOption={customOption}
+      className={className}
+      defaultValue={defaultValue}
+      label={label}
+      isLoading={isLoading}
+      onChange={([selectedOptions]) => {
+        onChange && onChange(selectedOptions);
+        return selectedOptions;
+      }}
+    />
+  </div>
 );
 
 export default MultiCheck;

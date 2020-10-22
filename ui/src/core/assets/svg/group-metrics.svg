@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="20px" viewBox="0 0 22 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M14,2 C14.553,2 15,2.448 15,3 L15,21 C15,21.553 14.553,22 14,22 L10,22 C9.448,22 9,21.553 9,21 L9,3 C9,2.448 9.448,2 10,2 L14,2 Z M22,7 C22.553,7 23,7.448 23,8 L23,21 C23,21.553 22.553,22 22,22 L18,22 C17.447,22 17,21.553 17,21 L17,8 C17,7.448 17.447,7 18,7 L22,7 Z M6,12 C6.552,12 7,12.448 7,13 L7,21 C7,21.553 6.552,22 6,22 L2,22 C1.448,22 1,21.553 1,21 L1,13 C1,12.448 1.448,12 2,12 L6,12 Z M13,4 L11,4 L11,20 L13,20 L13,4 Z M21,9 L19,9 L19,20 L21,20 L21,9 Z M5,14 L3,14 L3,20 L5,20 L5,14 Z" id="path-group-metrics"></path>
+    </defs>
+    <g id="Circles---Group-metrics" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Circles---2.0---Expand---0.1-circle---Metric-group-added" transform="translate(-470.000000, -540.000000)">
+            <g id="group/circles/active" transform="translate(438.000000, 0.000000)">
+                <g id="Release" transform="translate(31.000000, 402.000000)">
+                    <g id="Group" transform="translate(0.000000, 136.000000)">
+                        <mask id="mask-group-metrics" fill="white">
+                            <use xlink:href="#path-group-metrics"></use>
+                        </mask>
+                        <use id="Icon-Bar-Charts-1" fill="currentColor" xlink:href="#path-group-metrics"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

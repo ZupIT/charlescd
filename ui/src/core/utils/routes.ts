@@ -23,7 +23,6 @@ import {
 import forEach from 'lodash/forEach';
 import replace from 'lodash/replace';
 import toString from 'lodash/toString';
-import routes from 'core/constants/routes';
 
 const replaceRoute = (
   path: string,
@@ -70,15 +69,21 @@ const goTo = (path: string) => {
   window.open(path, '_blank');
 };
 
-const redirectToLegacy = (path: string) => {
+const redirectTo = (path: string) => {
   const { location } = window;
-  const { href } = location;
+  location.href = path;
+};
 
-  if (path === routes.login) {
-    location.href = `${path}?redirectTo=${href}`;
-  } else {
-    location.href = path;
-  }
+const getParamByHash = (param: string) => {
+  const path = new URLSearchParams(window.location.hash.replace('#', '?'));
+
+  return path.get(param);
+};
+
+const getParam = (param: string) => {
+  const path = new URLSearchParams(window.location.href);
+
+  return path.get(param);
 };
 
 export {
@@ -86,8 +91,10 @@ export {
   useLocation,
   useParams,
   useRouteMatch,
-  redirectToLegacy,
   getPath,
   replaceRoute,
-  goTo
+  goTo,
+  redirectTo,
+  getParam,
+  getParamByHash
 };

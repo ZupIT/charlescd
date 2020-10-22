@@ -139,16 +139,22 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
     }
 
     private boolean componentIsPresent(ComponentEntity component, String registryConfigurationId) {
-        var optionalEntity = this.dockerRegistryConfigurationRepository.findById(registryConfigurationId);
-        var entity = optionalEntity
+        var entity =
+                this.dockerRegistryConfigurationRepository.findById(registryConfigurationId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
-        this.registryClient.configureAuthentication(entity.type, entity.connectionData);
+        try {
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData, component.tagName);
 
-        // TODO: Verificar necessidade de serializacao
-        return registryClient.getImage(component.name, component.tagName).isPresent()
-                && registryClient.getImage(component.name, component.tagName).get().getStatus() == 200;
+            // TODO: Verificar necessidade de serializacao
+            return registryClient.getImage(component.name, component.tagName, entity.connectionData).isPresent()
+                    && registryClient.getImage(component.name, component.tagName, entity.connectionData)
+                    .get().getStatus() == 200;
+        } finally {
+            this.registryClient.closeQuietly();
+        }
+
     }
 
 }

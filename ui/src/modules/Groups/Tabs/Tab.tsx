@@ -41,7 +41,7 @@ interface Props {
 const Tab = ({ param }: Props) => {
   const history = useHistory();
   const [search, setSearch] = useState('');
-  const [isOpenModal, toggleModal] = useState(false);
+  const [isOpenModalUsers, toggleModalUsers] = useState(false);
   const [getUserGroup, userGroup] = useFindUserGroupByID();
   const [getAllUserGroups] = useFindAllUserGroup();
   const [editUserGroup, , editStatus] = useUpdateUserGroup();
@@ -107,15 +107,15 @@ const Tab = ({ param }: Props) => {
         <Styled.Tab>
           <Form
             userGroup={userGroup}
-            onAddUser={() => toggleModal(true)}
+            onAddUser={() => toggleModalUsers(true)}
             onEdit={name => editUserGroup(id, name)}
           />
         </Styled.Tab>
       </TabPanel>
       <Modal
         users={filteredUsers}
-        isOpen={isOpenModal}
-        onClose={() => toggleModal(false)}
+        isOpen={isOpenModalUsers}
+        onClose={() => toggleModalUsers(false)}
         onSearch={name => setSearch(name)}
         onSelected={handleModalUserSelect}
       />

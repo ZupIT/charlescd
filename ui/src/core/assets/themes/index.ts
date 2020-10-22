@@ -45,6 +45,9 @@ import { dark as darkBoard } from './board';
 import { dark as darkCircleMatcher } from './circleMatcher';
 import { dark as darkCircleSegmentation } from './circleSegmentation';
 import { dark as darkCheckbox } from './checkbox';
+import { dark as darkCircleGroupMetrics } from './circleGroupMetrics';
+import { dark as darkNavTabs } from './navTabs';
+import { dark as darkSummary } from './summary';
 import { zIndex } from '../zindex';
 
 const common = {
@@ -87,8 +90,13 @@ const dark = {
   board: darkBoard,
   circleMatcher: darkCircleMatcher,
   circleSegmentation: darkCircleSegmentation,
-  checkbox: darkCheckbox
+  checkbox: darkCheckbox,
+  circleGroupMetrics: darkCircleGroupMetrics,
+  navTabs: darkNavTabs,
+  summary: darkSummary
 };
+
+export type ThemeScheme = typeof dark;
 
 export default {
   dark,
