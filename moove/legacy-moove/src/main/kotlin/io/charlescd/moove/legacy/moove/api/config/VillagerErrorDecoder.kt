@@ -34,8 +34,6 @@ class VillagerErrorDecoder : ErrorDecoder {
             checkThirdyPartyIntegrationError(it.status(), fromJson)
 
             checkCommunicationServerError(it.status(), fromJson)
-
-            throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, fromJson.message)
         }
 
         throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_UNEXPECTED_ERROR, "")

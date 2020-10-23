@@ -39,7 +39,7 @@ enum class MooveErrorCodeLegacy(val key: String) {
     INVALID_REGISTRY_CONNECTION("invalid.registry.connection"),
     REGISTRY_INTEGRATION_ERROR("registry.integration.error"),
     VILLAGER_REGISTRY_INTEGRATION_ERROR("villager.registry.integration.error"),
-    REGISTRY_GENERAL_ERROR("registry.general.error="),
+    REGISTRY_GENERAL_ERROR("registry.general.error"),
     VILLAGER_INTERNAL_INTEGRATION_ERROR("villager.unexpected.error"),
     VILLAGER_INTEGRATION_ERROR("villager.unexpected.error"),
     VILLAGER_UNEXPECTED_ERROR("villager.unexpected.error")
