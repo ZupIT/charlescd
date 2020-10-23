@@ -44,7 +44,12 @@
     if (GA === 'enabled') {
       const ga = document.createElement('script');
       ga.src = "/ga.js";
+
+      const gaNs = document.createElement('noscript');
+      gaNs.src = "/ga-ns.html";
+
       document.body.appendChild(ga);
+      document.body.appendChild(gaNs);
     }
   </script>
 </body>
