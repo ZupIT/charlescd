@@ -4,16 +4,8 @@ const qs = require('qs')
 
 const mooveUrl = process.env.MOOVE_URL
 const keycloakUrl = process.env.KEYCLOAK_URL
-
-const client = new Client({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-})
+const username = process.env.USER
+const password = process.env.PASSWORD
 
 const getDeployed = async (client) => {
   try {
@@ -23,16 +15,10 @@ const getDeployed = async (client) => {
   }
 }
 
-// const getDeployed = (client) => {
-//   return client.query('select * from deployments where status = \'DEPLOYED\';')
-//   .then(res => { return res })
-//   .catch(e => console.log(e.stack))
-// }
-
-const login = () => {
+const login = async () => {
   const payload = {
-    username: 'charlesadmin@admin',
-    password: 'charlesadmin',
+    username: username,
+    password: password,
     grant_type: 'password',
     client_id: 'charlescd-client'
   }
@@ -41,54 +27,54 @@ const login = () => {
     headers: {
       'Accept': '*/*',
       'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    },
+    timeout: 10000
   }
-  return axios.post(`${keycloakUrl}:9090/keycloak/auth/realms/charlescd/protocol/openid-connect/token`,
-  qs.stringify(payload),
-  config
+  try {
+    return axios.post(
+      `${keycloakUrl}:9090/keycloak/auth/realms/charlescd/protocol/openid-connect/token`,
+      qs.stringify(payload),
+      config
   )
-  .then(resp => {return resp})
-  .catch(e => console.log(e))
+
+  } catch (error) {
+    console.log(error)
+  }
 }
 
-const v1UndeployRequest = (deployment) => {
-  return login().then(resp => {
-    const headers = {
+const v1UndeployRequest = async (deployment) => {
+  const loginResponse = await login()
+  const headers = {
       headers: {
         'x-workspace-id': deployment.workspace_id,
-        'Authorization': `Bearer ${resp.data.access_token}`
-      }
+        'Authorization': `Bearer ${loginResponse.data.access_token}`
+      },
+      timeout: 10000
     }
+  try {
     return axios.post(`${mooveUrl}/deployments/v1/${deployment.id}/undeploy`, {}, headers)
-    .then(resp => console.log(resp))
-    .catch(err => console.log(err))
-  })
+  } catch (error) {
+    console.log(err)
+  }
 }
 
-const v2DeployRequest = (deployment) => {
+const v2DeployRequest = async (deployment) => {
+    const loginResponse = await login()
+    const headers = {
+      "x-workspace-id": deployment.workspace_id,
+      'Authorization': `Bearer ${loginResponse.data.access_token}`,
+      timeout: 10000
+    }
     const payload = {
       authorId: 'migration-script',
       circleId: deployment.circleId,
       buildId: deployment.buildId
     }
-
-    return http.request({
-    host: mooveUrl,
-    port: 8080,
-    method: 'POST',
-    path: '/v2/deployments',
-    headers: {
-      "x-workspace-id": deployment.workspace_id
-    },
-    body: payload
-  }, (res) => {
-    res.resume()
-    res.on('end', () => {
-      if (!res.complete)
-        console.error(
-          'The connection was terminated while the message was still being sent')
-    })
-  })
+    try {
+      return axios.post(`${mooveUrl}/v2/deployments`, payload, headers)
+    } catch (error) {
+      console.log(error)
+    }
 }
 
 const sleep = (milliseconds) => {
@@ -132,6 +118,6 @@ const sleep = (milliseconds) => {
   console.log(result.rows)
 
   client.end()
-})()
+})().catch(e => console.log(e.stack))
 
 
