@@ -65,11 +65,18 @@ const Step = styled('div')<StepProp>`
   display: ${({ isDisabled }) => (isDisabled ? 'none' : 'block')};
 `;
 
+const ComponentContentIcon = styled(ContentIcon)`
+  > div {
+    width: 394px;
+  }
+`;
+
 export default {
   Layer,
   ButtonRounded,
   InputContentIcon,
   FormLink,
+  ComponentContentIcon,
   Component: {
     Card: ComponentCard,
     Wrapper: ComponentWrapper,

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="8px" viewBox="0 0 14 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>C08C7809-A47D-49DF-80A2-14E21D13DEF2svg/</title>
+    <defs>
+        <path d="M7.00025,8.00025 C6.74425,8.00025 6.48825,7.90225 6.29325,7.70725 L0.29325,1.70725 C-0.09775,1.31625 -0.09775,0.68425 0.29325,0.29325 C0.68425,-0.09775 1.31625,-0.09775 1.70725,0.29325 L7.00025,5.58625 L12.29325,0.29325 C12.68425,-0.09775 13.31625,-0.09775 13.70725,0.29325 C14.09825,0.68425 14.09825,1.31625 13.70725,1.70725 L7.70725,7.70725 C7.51225,7.90225 7.25625,8.00025 7.00025,8.00025" id="path-arrow-up"></path>
+    </defs>
+    <g id="Edit---Components---Modules" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Modules---0.4---namespace" transform="translate(-886.000000, -484.000000)">
+            <g id="Icons/Chevron/Right" transform="translate(886.000000, 484.000000)">
+                <mask id="mask-arrow-up" fill="white">
+                    <use xlink:href="#path-arrow-up"></use>
+                </mask>
+                <use id="Icon-Chevron-Up" fill="currentColor" transform="translate(7.000250, 4.000125) scale(1, -1) translate(-7.000250, -4.000125) " xlink:href="#path-arrow-up"></use>
+            </g>
+        </g>
+    </g>
+</svg>

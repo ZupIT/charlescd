@@ -121,6 +121,12 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           defaultValue={component?.name}
           ref={register({ required: true })}
         />
+        <Styled.Input
+          label="Namespace where to deploy"
+          name="namespace"
+          defaultValue={component?.namespace}
+          ref={register({ required: true })}
+        />
         <Styled.Number
           label="Latency Threshold (ms)"
           name="latencyThreshold"

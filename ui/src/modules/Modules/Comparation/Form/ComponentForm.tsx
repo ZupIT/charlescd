@@ -42,6 +42,11 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           name={`components[${index}].name`}
           ref={register({ required: true })}
         />
+        <Styled.Components.Input
+          label="Namespace where to deploy"
+          name={`components[${index}].namespace`}
+          ref={register({ required: true })}
+        />
         <Styled.Components.Number
           name={`components[${index}].latencyThreshold`}
           label="Latency Threshold (ms)"
