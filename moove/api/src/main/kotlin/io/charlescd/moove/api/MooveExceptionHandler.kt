@@ -24,11 +24,9 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.exceptions.NotFoundException
-import java.util.*
-import javax.servlet.http.HttpServletRequest
-import kotlin.collections.LinkedHashMap
 import org.slf4j.LoggerFactory
 import org.springframework.context.MessageSource
+import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError
@@ -40,6 +38,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.support.MissingServletRequestPartException
+import java.util.*
+import javax.servlet.http.HttpServletRequest
+import kotlin.collections.LinkedHashMap
 
 @ControllerAdvice
 class MooveExceptionHandler(private val messageSource: MessageSource) {
@@ -64,6 +65,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
             (fields.computeIfAbsent(field.field) { LinkedList() } as LinkedList<String>).add(field.defaultMessage!!)
         }
         return ErrorMessageResponse.of(MooveErrorCode.INVALID_PAYLOAD, fields)
+    }
+
+    @ExceptionHandler(DataAccessException::class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    fun handleDataAccessException(ex: DataAccessException): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of(MooveErrorCode.INVALID_PAYLOAD, ex.rootCause?.message)
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
