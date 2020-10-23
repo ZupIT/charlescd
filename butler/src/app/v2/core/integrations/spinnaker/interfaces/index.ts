@@ -15,8 +15,8 @@
  */
 
 import { SpinnakerPipeline } from './spinnaker-pipeline.interface'
-import { ConnectorResult } from './connector-result.interface'
-import { ConnectorResultError } from './connector-result.interface'
+import { ConnectorResult } from '../../interfaces/connector-result.interface'
+import { ConnectorResultError } from '../../interfaces/connector-result.interface'
 
 export {
   SpinnakerPipeline,

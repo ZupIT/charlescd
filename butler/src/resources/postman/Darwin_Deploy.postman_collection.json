@@ -1071,7 +1071,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/v2/deployments/{{deploymentId}}/notify",
+							"raw": "http://localhost:3000/v2/executions/{{executionId}}/notify",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1079,9 +1079,57 @@
 							"port": "3000",
 							"path": [
 								"v2",
-								"deployments",
-								"{{deploymentId}}",
+								"executions",
+								"{{executionId}}",
 								"notify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List not active executions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e0f03199-628b-480d-8bd3-350c425e8b1a",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"executionId\", response[\"executions\"][0][\"id\"]);",
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v2/executions?active=false&pageSize=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v2",
+								"executions"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "false"
+								},
+								{
+									"key": "pageSize",
+									"value": "1"
+								}
 							]
 						}
 					},

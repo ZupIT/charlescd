@@ -19,8 +19,8 @@ import {
   createEmptyVirtualService,
   createVirtualService
 } from '../../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/manifests/base-virtual-service'
+import expectedBaseVirtualServiceFormattedSubsets from '../../../../unit/conectors/spinnaker/fixtures/expected-base-virtual-service-formatted-subsets'
 import expectedBaseVirtualService from './fixtures/expected-base-virtual-service'
-import expectedBaseVirtualServiceFormattedSubsets from './fixtures/expected-base-virtual-service-formatted-subsets'
 import expectedEmptyVirtualService from './fixtures/expected-empty-virtual-service'
 
 it('creates the virtual service when there is no header on the circle', () => {

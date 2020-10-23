@@ -14,33 +14,7 @@
  * limitations under the License.
  */
 
-package v1
-
-import (
-	"github.com/gin-gonic/gin"
-)
-
-type API struct {
-	router *gin.Engine
-	v1     *gin.RouterGroup
-}
-
-const (
-	v1Path = "/api/v1"
-)
-
-func NewAPI() *API {
-	router := gin.Default()
-
-	v1 := router.Group(v1Path)
-	v1.GET("/health", health)
-	return &API{router, v1}
-}
-
-func health(context *gin.Context) {
-	context.JSON(200, "Hi :)")
-}
-
-func (api *API) Start() {
-	api.router.Run(":8080")
+export interface ConnectorConfiguration {
+  incomingCircleId: string | null
+  executionId: string
 }

@@ -15,10 +15,9 @@
  */
 
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
-import { Http, Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { AppConstants } from '../../../../../../v1/core/constants'
+import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
-import { CommonTemplateUtils } from '../../utils/common-template.utils'
+import { IstioDeploymentManifestsUtils } from '../../../utils/istio-deployment-manifests.utils'
 
 export const getVirtualServiceStage = (
   component: Component,
@@ -33,21 +32,7 @@ export const getVirtualServiceStage = (
   continuePipeline: true,
   failPipeline: false,
   manifests: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: `${component.name}`,
-        namespace: `${component.namespace}`
-      },
-      spec: {
-        gateways: component.gatewayName ? [component.gatewayName] : [],
-        hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
-        http: deployment.circleId ?
-          getCircleHTTPRules(component, deployment.circleId, activeComponents) :
-          getDefaultCircleHTTPRules(component, activeComponents)
-      }
-    }
+    IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeComponents)
   ],
   moniker: {
     app: 'default'
@@ -71,127 +56,4 @@ export const getVirtualServiceStage = (
     }
   },
   type: 'deployManifest'
-})
-
-const getCircleHTTPRules = (newComponent: Component, circleId: string, activeComponents: Component[]): Http[] => {
-  const rules: Http[] = []
-
-  rules.push(getHTTPCookieCircleRule(newComponent.name, newComponent.imageTag, circleId))
-  rules.push(getHTTPHeaderCircleRule(newComponent.name, newComponent.imageTag, circleId))
-
-  activeComponents.forEach(component => {
-    const activeCircleId = component.deployment?.circleId
-    if (activeCircleId && activeCircleId !== circleId) {
-      rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
-      rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
-    }
-  })
-
-  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
-  if (defaultComponent) {
-    rules.push(getHTTPDefaultRule(defaultComponent.name))
-  }
-  return rules
-}
-
-const getDefaultCircleHTTPRules = (newComponent: Component, activeComponents: Component[]): Http[] => {
-  const rules: Http[] = []
-
-  activeComponents.forEach(component => {
-    if (component.deployment?.circleId) {
-      rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, component.deployment.circleId))
-      rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, component.deployment.circleId))
-    }
-  })
-
-  rules.push(getHTTPDefaultRule(newComponent.name))
-
-  return rules
-}
-
-const getHTTPCookieCircleRule = (name: string, tag: string, circle: string): Http => ({
-  match: [
-    {
-      headers: {
-        cookie: {
-          regex: `.*x-circle-id=${circle}.*`
-        }
-      }
-    }
-  ],
-  route: [
-    {
-      destination: {
-        host: name,
-        subset: circle
-      },
-      headers: {
-        request: {
-          set: {
-            'x-circle-source': circle
-          }
-        },
-        response: {
-          set: {
-            'x-circle-source': circle
-          }
-        }
-      }
-    }
-  ]
-})
-
-const getHTTPHeaderCircleRule = (name: string, tag: string, circle: string): Http => ({
-  match: [
-    {
-      headers: {
-        'x-circle-id': {
-          exact: circle
-        }
-      }
-    }
-  ],
-  route: [
-    {
-      destination: {
-        host: name,
-        subset: circle
-      },
-      headers: {
-        request: {
-          set: {
-            'x-circle-source': circle
-          }
-        },
-        response: {
-          set: {
-            'x-circle-source': circle
-          }
-        }
-      }
-    }
-  ]
-})
-
-const getHTTPDefaultRule = (name: string): Http => ({
-  route: [
-    {
-      destination: {
-        host: name,
-        subset: AppConstants.DEFAULT_CIRCLE_ID
-      },
-      headers: {
-        request: {
-          set: {
-            'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
-          }
-        },
-        response: {
-          set: {
-            'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
-          }
-        }
-      }
-    }
-  ]
 })

@@ -19,8 +19,8 @@ import { Component, Deployment } from '../../../../../api/deployments/interfaces
 import { DeploymentStatusEnum } from '../../../../../../v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../api/deployments/enums'
 import { UrlUtils } from '../../../../utils/url.utils'
-import { ConnectorConfiguration } from '../../connector'
 import { UndeploymentTemplateUtils } from '../../utils/undeployment-template.utils'
+import { ConnectorConfiguration } from '../../../interfaces/connector-configuration.interface'
 
 export const getUndeploymentFailureWebhookStage = (deployment: Deployment, stageId: number, configuration: ConnectorConfiguration): Stage => ({
   completeOtherBranchesThenFail: false,

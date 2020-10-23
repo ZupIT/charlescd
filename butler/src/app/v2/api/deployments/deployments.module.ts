@@ -36,6 +36,9 @@ import { DeploymentRepositoryV2 } from './repository/deployment.repository'
 import { ExecutionRepository } from './repository/execution.repository'
 import { ExecutionsController } from './controller/executions.controller'
 import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.usecase'
+import { CdStrategyFactory } from '../../core/integrations/cd-strategy-factory'
+import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
+import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
 
 @Module({
   imports: [
@@ -65,7 +68,10 @@ import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.use
     DeploymentCleanupHandler,
     ConsoleLoggerService,
     SpinnakerConnector,
-    SpinnakerApiService
+    SpinnakerApiService,
+    CdStrategyFactory,
+    OctopipeConnector,
+    OctopipeApi
   ],
   exports: [
   ]

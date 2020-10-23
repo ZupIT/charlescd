@@ -110,7 +110,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token',
@@ -206,7 +206,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -228,7 +228,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [],
@@ -306,7 +306,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'some-app-name',
@@ -395,7 +395,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token',
@@ -491,7 +491,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -513,7 +513,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [],
@@ -591,7 +591,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'some-app-name',
@@ -676,7 +676,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token',
@@ -759,7 +759,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -781,7 +781,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [
@@ -861,7 +861,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'hostValue',
@@ -940,7 +940,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -962,7 +962,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [],
@@ -1040,7 +1040,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'some-app-name',
@@ -1124,7 +1124,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         circleId: 'circle-id',
         git: {
           provider: 'GITHUB',
