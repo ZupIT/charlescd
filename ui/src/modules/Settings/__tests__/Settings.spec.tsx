@@ -15,16 +15,36 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, wait } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import * as StateHooks from 'core/state/hooks';
 import Settings from '..';
 
-(global as any).MutationObserver = MutationObserver
+test('render settings wizard', () => {
+  jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValueOnce({
+      item: {
+        id: 'workspace-id',
+        status: WORKSPACE_STATUS.INCOMPLETE
+      },
+      status: 'resolved'
+    });
+  render(<Settings />);
 
-test('render Settings default component', async () => {
-  const { getByTestId } = render(
-    <Settings />
-  );
+  const nextButton = screen.getByTestId('button-iconRounded-next');
 
-  await wait(() => expect(getByTestId('placeholder-placeholder-settings')).toBeInTheDocument());
+  expect(screen.getByTestId('modal-wizard')).toBeInTheDocument();
+  expect(screen.getByTestId('modal-wizard-menu-item-welcome')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-git')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-registry')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-cdConfig')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-circle-matcher')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-metrics-provider')).toBeInTheDocument();
 });

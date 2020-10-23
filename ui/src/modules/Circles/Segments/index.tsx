@@ -115,17 +115,20 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
           top={group.top}
           verticalLine={group.height}
           hasGroup={hasGroup}
+          viewMode={viewMode}
         >
-          <Styled.Operator top={group.operator} hasGroup={hasGroup}>
-            <Styled.InputOperator
-              readOnly
-              type="text"
-              ref={register}
-              name="logicalOperator"
-              onClick={() => changeOperatorValue('logicalOperator', form)}
-              defaultValue={rules?.logicalOperator}
-            />
-          </Styled.Operator>
+          {!viewMode && (
+            <Styled.Operator top={group.operator} hasGroup={hasGroup}>
+              <Styled.InputOperator
+                readOnly
+                type="text"
+                ref={register}
+                name="logicalOperator"
+                onClick={() => changeOperatorValue('logicalOperator', form)}
+                defaultValue={rules?.logicalOperator}
+              />
+            </Styled.Operator>
+          )}
           <Styled.Input type="hidden" ref={form.register} name="type" />
           {renderGroups()}
         </Styled.Group>

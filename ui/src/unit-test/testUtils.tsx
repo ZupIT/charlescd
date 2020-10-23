@@ -61,6 +61,8 @@ export const ThemeProviderWrapper: React.FC<any> = ({ children }: { children: Re
   );
 };
 
+export const normalizeRGBColor = (RGBcolor: string) => RGBcolor?.replace(/\ /gi, '');
+
 const customRender = (ui: ReactElement, options = initialOptions) =>
   render(ui, {
     wrapper: AllTheProviders,

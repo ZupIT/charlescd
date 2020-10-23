@@ -71,6 +71,9 @@ export const findAll = () => {
   return baseRequest(`${v1Endpoint}?${params}`);
 };
 
+export const resetPasswordById = (id: string) =>
+  putRequest(`${endpoint}/${id}/reset-password`);
+
 export const updateProfileById = (id: string, profile: Profile) =>
   putRequest(`${v1Endpoint}/${id}`, profile);
 

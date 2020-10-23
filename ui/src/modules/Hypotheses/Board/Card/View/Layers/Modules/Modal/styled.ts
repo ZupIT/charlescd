@@ -21,7 +21,7 @@ import ComponentInput from 'core/components/Form/Input';
 import PanelComponent from 'core/components/Panel';
 
 const Modal = styled(ComponentModal.Default)`
-  .modal-content {
+  .modal-container {
     padding-top: 30px !important;
     padding-bottom: 30px !important;
     width: 500px !important;

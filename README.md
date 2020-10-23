@@ -1,4 +1,17 @@
-![CharlesCD Logo](/images/logo.png)
+![build butler](https://github.com/ZupIT/charlescd/workflows/build%20butler/badge.svg)
+![build circle-matcher](https://github.com/ZupIT/charlescd/workflows/build%20circle-matcher/badge.svg)
+![build compass](https://github.com/ZupIT/charlescd/workflows/build%20compass/badge.svg)
+![build moove](https://github.com/ZupIT/charlescd/workflows/build%20moove/badge.svg)
+![build octopipe](https://github.com/ZupIT/charlescd/workflows/build%20octopipe/badge.svg)
+![build villager](https://github.com/ZupIT/charlescd/workflows/build%20villager/badge.svg)
+[![codecov](https://codecov.io/gh/ZupIT/charlescd/branch/master/graph/badge.svg)](https://codecov.io/gh/ZupIT/charlescd)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+<br>
+<br>
+<br>
+
+<img class="special-img-class" src="/images/logo.png"  alt="CharlesCD logo"/>
 
 # About
 CharlesCD is an open source project that deploys quickly, continuously and securely, allowing development teams to simultaneously perform hypothesis validations with specific groups of users.
@@ -25,37 +38,3 @@ See our [documentation](https://docs.charlescd.io).
 We will be happy with your ideas! Please see our [contributing guide](CONTRIBUTING.md).
 
 Keep evolving.
-
-## Contributors
-
-* [@ricardorames ](https://github.com/ricardorames) 
-* [@maycommit](https://github.com/maycommit) 
-* [@emiteze](https://github.com/emiteze) 
-* [@lucassaleszup](https://github.com/lucassaleszup) 
-* [@washingtonsoares](https://github.com/washingtonsoares)
-* [@apucci](https://github.com/apucci)
-* [@lucasborgeszup](https://github.com/lucasborgeszup)
-* [@thallesfreitaszup](https://github.com/thallesfreitaszup)
-* [@mdcpmoreira](https://github.com/mdcpmoreira)
-* [@katanant](https://github.com/katanant)
-* [@monicarib](https://github.com/monicarib)
-* [@jeiassoareszup](https://github.com/jeiassoareszup)
-* [@nikolasnascimentozup](https://github.com/nikolasnascimentozup)
-* [@vitorferreirazup](https://github.com/vitorferreirazup)
-* [@eliasalveszup](https://github.com/eliasalveszup)
-* [@leandrolatini](https://github.com/leandrolatini)
-* [@lucasbfernandes](https://github.com/lucasbfernandes)
-* [@schumaiquer](https://github.com/schumaiquer)
-* [@mauricioneveszup](https://github.com/mauricioneveszup)
-* [@leandroqo](https://github.com/leandroqo)
-* [@angelicalimazup](https://github.com/angelicalimazup)
-* [@leticiaalcantaralima](https://github.com/leticiaalcantaralima)
-* [@cpgo](https://github.com/cpgo)
-* [@ifdouglas](https://github.com/ifdouglas)
-* [@luisaborgeszup](https://github.com/luisaborgeszup)
-* [@viniciusaparecidozup](https://github.com/viniciusaparecidozup)
-* [@jessica-tw](https://github.com/jessica-tw)
-* [@rogeriomanzan](https://github.com/rogeriomanzan)
-* [@williamokano](https://github.com/williamokano)
-* [@ismaley](https://github.com/ismaley)
-* [@adauto](https://github.com/adauto)

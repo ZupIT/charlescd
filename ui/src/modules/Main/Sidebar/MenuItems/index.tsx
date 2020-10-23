@@ -20,7 +20,7 @@ import startsWith from 'lodash/startsWith';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import { getExpandMode } from 'core/utils/sidebar';
 import { getActiveMenuId } from 'core/utils/menu';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import { Link as LinkProps, ExpandClick } from '../Types';
 import { getExpandIcon, getItems } from '../helpers';
 import Styled from '../styled';
@@ -33,7 +33,9 @@ interface Props {
 export const MenuItems = ({ isExpanded, expandMenu }: Props) => {
   const subMenuRef = useRef<HTMLDivElement>();
   const activeMenuId = getActiveMenuId();
-  const isActive = (id: string) => startsWith(activeMenuId, id);
+  const isActive = (id: string) => {
+    return startsWith(activeMenuId?.replace('-charlescd', ''), id);
+  };
 
   useOutsideClick(subMenuRef, () => {
     expandMenu({ status: getExpandMode(), persist: false });
@@ -68,13 +70,7 @@ export const MenuItems = ({ isExpanded, expandMenu }: Props) => {
   );
 
   const renderProtectedLink = (link: LinkProps) => (
-    <Can
-      key={link.icon}
-      I={link.action}
-      a={link.subject}
-      passThrough
-      allowedRoutes={link.icon === 'settings'}
-    >
+    <Can key={link.icon} I={link.action} a={link.subject} passThrough>
       {renderLink(link)}
     </Can>
   );

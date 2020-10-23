@@ -16,6 +16,8 @@
 
 package io.charlescd.moove.application.circle.request
 
+import com.fasterxml.jackson.module.kotlin.convertValue
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.charlescd.moove.application.BasePatchRequest
 import io.charlescd.moove.application.OpCodeEnum
 import io.charlescd.moove.application.PatchOperation
@@ -48,8 +50,29 @@ data class PatchCircleRequest(override val patches: List<PatchOperation>) : Base
         patches.forEach { patch ->
             when (patch.path) {
                 "/name" -> Assert.notNull(patch.value, "Name cannot be null.")
-                "/rules" -> Assert.notNull(patch.value, "Rules cannot be null.")
+                "/rules" -> validateClausesValues(patch)
             }
+        }
+    }
+
+    private fun validateClausesValues(patch: PatchOperation) {
+        Assert.notNull(patch.value, "Rules cannot be null.")
+        jacksonObjectMapper().convertValue<NodePart>(patch.value!!).let { node ->
+            Assert.notNull(node.clauses, "Clauses cannot be null.")
+            node.clauses!!.forEach { clauses ->
+                validateRulesValues(clauses)
+                clauses.clauses?.forEach { clause ->
+                    validateRulesValues(clause)
+                }
+            }
+        }
+    }
+
+    private fun validateRulesValues(nodePart: NodePart) {
+        if (nodePart.content != null) {
+            Assert.notNull(nodePart.content.key, "Key cannot be null.")
+            Assert.notNull(nodePart.content.condition, "Condition cannot be null.")
+            Assert.isTrue(nodePart.content.key!!.isNotBlank(), "Key cannot be blank.")
         }
     }
 }

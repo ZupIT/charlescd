@@ -14,35 +14,45 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
-import copyToClipboard from 'clipboard-copy';
+import isNull from 'lodash/isNull';
+import { copyToClipboard } from 'core/utils/clipboard';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
+import { useGlobalState } from 'core/state/hooks';
 import TabPanel from 'core/components/TabPanel';
 import Layer from 'core/components/Layer';
 import Form from 'core/components/Form';
-import Can from 'core/components/Can';
 import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 
-const Credentials = () => {
+interface Props {
+  onClickHelp?: (status: boolean) => void;
+}
+
+const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
-  const [form, setForm] = useState<string>(null);
-  const [workspace, loadWorkspace, , loading, update] = useWorkspace();
+  const [form, setForm] = useState<string>('');
+  const [, loadWorkspace, , updateWorkspace] = useWorkspace();
+  const { item: workspace, status } = useGlobalState(
+    ({ workspaces }) => workspaces
+  );
   const { register, handleSubmit } = useForm();
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
-    update(name);
+    updateWorkspace(name);
   };
 
   useEffect(() => {
-    !form && loadWorkspace(id);
-  }, [id, loadWorkspace, form]);
+    if (isNull(form)) {
+      loadWorkspace(id);
+    }
+  }, [id, form, loadWorkspace]);
 
   const renderContent = () => (
     <Layer>
@@ -60,13 +70,16 @@ const Credentials = () => {
 
   const renderDropdown = () => (
     <Dropdown>
-      <Can I="read" a="circles" passThrough>
-        <Dropdown.Item
-          icon="copy"
-          name="Copy ID"
-          onClick={() => copyToClipboard(id)}
-        />
-      </Can>
+      <Dropdown.Item
+        icon="copy"
+        name="Copy ID"
+        onClick={() => copyToClipboard(id)}
+      />
+      <Dropdown.Item
+        icon="help"
+        name="Help"
+        onClick={() => onClickHelp(true)}
+      />
     </Dropdown>
   );
 
@@ -117,7 +130,11 @@ const Credentials = () => {
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {loading || isEmpty(workspace) ? <Loader.Tab /> : renderPanel()}
+      {status === 'pending' || isEmpty(workspace.id) ? (
+        <Loader.Tab />
+      ) : (
+        renderPanel()
+      )}
     </Styled.Wrapper>
   );
 };
