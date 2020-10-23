@@ -55,8 +55,8 @@ type status = {
   status: string;
 };
 
-const StatusMessageWrapper = styled.div<status>`
-  margin-bottom: -10px;
+const Message = styled.div<status>`
+  margin-top: 25px;
   display: flex;
 
   span {
@@ -75,5 +75,5 @@ export default {
   Subtitle,
   Form,
   Fields,
-  StatusMessageWrapper
+  Message
 };

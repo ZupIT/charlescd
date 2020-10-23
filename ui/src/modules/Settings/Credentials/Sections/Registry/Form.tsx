@@ -29,17 +29,17 @@ import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
-import { useDispatch } from 'core/state/hooks';
-import { toogleNotification } from 'core/components/Notification/state/actions';
+import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
-  const { test, loadingTest, responseTest, errorTest } = useRegistryTest();
+  const { testConnection, response, error, status } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [message, setMessage] = useState<ConnectionProps>(null);
+  const profileId = getProfileByKey('id');
   const isGCP = registryType === 'GCP';
-  const [isDisabled, setIsDisabled] = useState(isGCP);
-  // const isResponse = responseTest || errorTest;
   const {
     register,
     handleSubmit,
@@ -48,53 +48,47 @@ const FormRegistry = ({ onFinish }: Props) => {
     control,
     formState: { isValid }
   } = useForm<Registry>({ mode: 'onChange' });
-  const profileId = getProfileByKey('id');
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (responseAdd) onFinish();
   }, [onFinish, responseAdd]);
 
   useEffect(() => {
-    if (responseTest) {
-      console.log('responseTest', responseTest);
+    if (response) {
+      setMessage({ type: 'success', message: 'Successful connection.' });
       setIsDisabled(false);
     }
-  }, [responseTest]);
+  }, [response]);
 
   useEffect(() => {
-    if (errorTest) {
-      console.log('errorTest', errorTest);
+    if (error) {
+      setMessage({ type: 'error', message: error.message });
+      setIsDisabled(true);
     }
-  }, [errorTest]);
+  }, [error]);
 
   const onChange = (value: string) => {
     reset();
+    setMessage(null);
     setRegistryType(value);
   };
 
-  const onSubmit = (registry: Registry) => {
-    registry = {
-      ...registry,
+  const onClick = () => {
+    const registry = {
+      ...getValues(),
       authorId: profileId,
       provider: registryType
     };
 
-    if (isGCP) {
-      try {
-        JSON.parse(registry.jsonKey);
-      } catch (error) {
-        dispatch(
-          toogleNotification({
-            text: 'Error when validating json file: ' + error.message,
-            status: 'error'
-          })
-        );
-        return;
-      }
-    }
+    testConnection(registry);
+  };
 
-    save(registry);
+  const onSubmit = (registry: Registry) => {
+    save({
+      ...registry,
+      authorId: profileId,
+      provider: registryType
+    });
   };
 
   const renderAwsFields = () => {
@@ -111,7 +105,7 @@ const FormRegistry = ({ onFinish }: Props) => {
           active={awsUseSecret}
           onChange={() => setAwsUseSecret(!awsUseSecret)}
         />
-        {awsUseSecret ? (
+        {awsUseSecret && (
           <>
             <Form.Password
               ref={register({ required: true })}
@@ -124,7 +118,7 @@ const FormRegistry = ({ onFinish }: Props) => {
               label="Enter the secret key"
             />
           </>
-        ) : null}
+        )}
       </>
     );
   };
@@ -154,20 +148,20 @@ const FormRegistry = ({ onFinish }: Props) => {
           Enter the json key below:
         </Styled.Subtitle>
         <AceEditorForm
-          width={'270px'}
+          width="270px"
           mode="json"
           name="jsonKey"
           rules={{ required: true }}
           control={control}
           theme="monokai"
         />
-        {/* {isResponse && <ConnectionStatus data={responseTest || errorTest} />} */}
+        {message && <ConnectionStatus {...message} />}
         <Button.Default
           type="button"
           id="test-connection"
-          onClick={() => test(getValues())}
+          onClick={onClick}
           isDisabled={!isValid}
-          isLoading={loadingTest}
+          isLoading={status.isPending}
         >
           Test connection
         </Button.Default>
@@ -196,12 +190,15 @@ const FormRegistry = ({ onFinish }: Props) => {
     if (registryType === 'AWS') {
       return renderAwsFields();
     }
+
     if (registryType === 'GCP') {
       return renderGCPFields();
     }
+
     if (registryType === 'DOCKER_HUB') {
       return renderDockerHubFields();
     }
+
     return renderAzureFields();
   };
 
@@ -227,7 +224,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
-        isDisabled={isDisabled}
+        isDisabled={isGCP ? isDisabled : !isValid}
       >
         Save
       </Button.Default>

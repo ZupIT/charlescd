@@ -68,7 +68,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
     <Section
       name="Metrics Provider"
       icon="metrics"
-      showAction={isAction}
+      isAction={isAction}
       action={() => setForm(FORM_METRIC_PROVIDER)}
     >
       {data && !responseRemove && (

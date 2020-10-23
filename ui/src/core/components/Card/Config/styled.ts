@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import CardBase from 'core/components/Card/Base';
 
-const CardConfig = styled(CardBase)`
+type StyledProps = {
+  isDisabled?: boolean;
+};
+
+const CardConfig = styled(CardBase)<StyledProps>`
   background-color: ${({ theme }) => theme.card.config.background};
+
+  ${({ isDisabled }) =>
+    isDisabled &&
+    css`
+      background-color: ${({ theme }) => theme.card.config.disabled.background};
+    `}
 `;
 
 export default {

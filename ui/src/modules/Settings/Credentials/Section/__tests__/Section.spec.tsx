@@ -22,7 +22,7 @@ test('render Section default component', async () => {
   const props: Props = {
     name: 'git',
     icon: 'git',
-    showAction: true,
+    isAction: true,
     action: () => {}
   }
 
@@ -31,7 +31,7 @@ test('render Section default component', async () => {
       name={props.name}
       icon={props.icon}
       action={props.action}
-      showAction={props.showAction}
+      isAction={props.isAction}
     />
   );
   await wait();
@@ -45,7 +45,7 @@ test('render Section default component with children', async () => {
     name: 'git',
     icon: 'git',
     children: 'children',
-    showAction: false,
+    isAction: false,
     action: () => {}
   }
 
@@ -54,7 +54,7 @@ test('render Section default component with children', async () => {
       name={props.name}
       icon={props.icon}
       action={props.action}
-      showAction={props.showAction}
+      isAction={props.isAction}
     >
       {props.children}
     </Section>

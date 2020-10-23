@@ -46,7 +46,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
     <Section
       name="User group"
       icon="users"
-      showAction
+      isAction
       action={() => setForm(FORM_USER_GROUP)}
     >
       {userGroups &&
