@@ -36,10 +36,10 @@ const FormRegistry = ({ onFinish }: Props) => {
   const { testConnection, response, error, status } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   const [message, setMessage] = useState<ConnectionProps>(null);
+  const profileId = getProfileByKey('id');
   const isGCP = registryType === 'GCP';
-
   const {
     register,
     handleSubmit,
@@ -48,11 +48,6 @@ const FormRegistry = ({ onFinish }: Props) => {
     control,
     formState: { isValid }
   } = useForm<Registry>({ mode: 'onChange' });
-  const profileId = getProfileByKey('id');
-
-  useEffect(() => {
-    setIsDisabled(isGCP);
-  }, [isGCP]);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -74,6 +69,7 @@ const FormRegistry = ({ onFinish }: Props) => {
 
   const onChange = (value: string) => {
     reset();
+    setMessage(null);
     setRegistryType(value);
   };
 
@@ -194,12 +190,15 @@ const FormRegistry = ({ onFinish }: Props) => {
     if (registryType === 'AWS') {
       return renderAwsFields();
     }
+
     if (registryType === 'GCP') {
       return renderGCPFields();
     }
+
     if (registryType === 'DOCKER_HUB') {
       return renderDockerHubFields();
     }
+
     return renderAzureFields();
   };
 
@@ -225,7 +224,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
-        isDisabled={isDisabled}
+        isDisabled={isGCP ? isDisabled : !isValid}
       >
         Save
       </Button.Default>

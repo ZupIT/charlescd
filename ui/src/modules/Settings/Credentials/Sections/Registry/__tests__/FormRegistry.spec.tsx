@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, act, screen } from 'unit-test/testUtils';
+import { render, fireEvent, act, screen, wait } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
@@ -26,28 +26,9 @@ import userEvent from '@testing-library/user-event';
 (global as any).MutationObserver = MutationObserver;
 
 const mockOnFinish = jest.fn();
-const mockSave = jest.fn();
-const mockValidation = jest.fn();
-
-afterEach(() => {
-  mockSave.mockClear();
-});
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
-});
-
-jest.mock('../hooks', () => {
-  return {
-    __esModule: true,
-    useRegistry: () => ({
-      save: mockSave,
-    }),
-    useRegistryTest: () => ({
-      test: mockValidation,
-      status: {}
-    })
-  };
 });
 
 jest.mock('core/components/Form/AceEditor', () => {
@@ -144,7 +125,7 @@ test('render Registry form with GCP form', () => {
   expect(projectIdInput).toBeInTheDocument();
 });
 
-test('Not trigger onSubmit on json parse error with GCP form', async () => {
+test('Not enabled submit button after partial filled GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
@@ -169,15 +150,13 @@ test('Not trigger onSubmit on json parse error with GCP form', async () => {
     userEvent.type(inputGCPName, 'fake-name');
     userEvent.type(inputGCPAddress, 'http://fake-host');
     userEvent.type(inputGCPOrganization, 'fake-access-key');
-    userEvent.type(inputGCPJsonKey, 'te');
-    userEvent.click(submitButton);
+    userEvent.type(inputGCPJsonKey, '');
   });
 
-  expect(mockSave).not.toBeCalled();
+  expect(submitButton).toBeDisabled();
 });
 
-// TODO
-test.skip('Trigger submit on json parse success with GCP form', async () => {
+test('Enabled submit button after fill GCP form', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify({ message: 'response' }));
 
   render(<FormRegistry onFinish={mockOnFinish} />);
@@ -188,26 +167,23 @@ test.skip('Trigger submit on json parse success with GCP form', async () => {
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
-  const submitButton = screen.getByTestId('button-default-submit-registry');
   const testConnectionButton = screen.getByTestId('button-default-test-connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
 
-  userEvent.type(inputGCPName, 'fake-name');
-  userEvent.type(inputGCPAddress, 'http://fake-host');
-  userEvent.type(inputGCPOrganization, 'fake-access-key');
-  // fireEvent.change(inputGCPJsonKey, '{ target: { value: {"testKey": "testValue"} } }');
-  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue"}');
+  await act(async () => {
+    userEvent.type(inputGCPName, 'fake-name');
+    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPOrganization, 'fake-access-key');
+    userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+  });
 
-  screen.debug();
-  fireEvent.click(testConnectionButton);
-  fireEvent.click(submitButton);
+  expect(testConnectionButton).not.toBeDisabled();
+  await act(async () => userEvent.click(testConnectionButton));
 
-  // expect(submitButton).toBeDisabled();
-  // expect(testConnectionButton).toBeDisabled();
-  expect(mockSave).toBeCalledTimes(1);
+  expect(testConnectionButton).not.toBeDisabled();
 });
 
-// TODO
-test.skip('render Registry form with Docker Hub form', async () => {
+test('render Registry form with Docker Hub form', async () => {
   const { container, getByTestId } = render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
@@ -220,7 +196,7 @@ test.skip('render Registry form with Docker Hub form', async () => {
   expect(container.innerHTML).not.toMatch('Enter the address');
 });
 
-test('execute onSubmit of AWS registry', async () => {
+test('Should enabled submit button after fill AWS form', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
@@ -254,13 +230,12 @@ test('execute onSubmit of AWS registry', async () => {
     userEvent.type(inputAwsAccessKey, 'fake-access-key');
     userEvent.type(inputAwsSecretKey, 'fake-secret-key');
     userEvent.type(inputAwsRegion, 'fake-region');
-    userEvent.click(submitButton);
   });
   
-  expect(mockSave).toBeCalledTimes(1);
+  expect(submitButton).not.toBeDisabled();
 });
 
-test('should not execute onSubmit because validation (missing name)', async () => {
+test('Should not enabled submit button after partial fill AWS form', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
@@ -269,7 +244,7 @@ test('should not execute onSubmit because validation (missing name)', async () =
   await act(async () => userEvent.click(radioButton));
   
   const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
-  userEvent.click(radioAuthButton);
+  await act(async () => userEvent.click(radioAuthButton));
   
   const inputAwsAddress = screen.getByTestId("input-text-address");
   expect(inputAwsAddress).toBeInTheDocument();
@@ -291,8 +266,7 @@ test('should not execute onSubmit because validation (missing name)', async () =
     userEvent.type(inputAwsAccessKey, 'fake-access-key');
     userEvent.type(inputAwsSecretKey, 'fake-secret-key');
     userEvent.type(inputAwsRegion, 'fake-region');
-    userEvent.click(submitButton);
   });
   
-  expect(mockSave).not.toBeCalled();
+  expect(submitButton).toBeDisabled();
 });
