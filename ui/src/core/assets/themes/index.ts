@@ -49,6 +49,7 @@ import { dark as darkCircleGroupMetrics } from './circleGroupMetrics';
 import { dark as darkNavTabs } from './navTabs';
 import { dark as darkSummary } from './summary';
 import { dark as darkAccordion } from './accordion';
+import { dark as darkModule } from './module';
 import { zIndex } from '../zindex';
 
 const common = {
@@ -95,7 +96,8 @@ const dark = {
   circleGroupMetrics: darkCircleGroupMetrics,
   navTabs: darkNavTabs,
   summary: darkSummary,
-  accordion: darkAccordion
+  accordion: darkAccordion,
+  module: darkModule
 };
 
 export type ThemeScheme = typeof dark;

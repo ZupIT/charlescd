@@ -14,6 +14,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
   const { register, unregister } = useFormContext();
   const [editMoreOptions, setEditMoreOptions] = useState(false);
   const one = 1;
+  const isMoreThanOne = fields.length > one;
 
   const handleMoreOptions = (index: number) => {
     if (editMoreOptions) {
@@ -28,35 +29,39 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
 
   return (
     <Styled.Components.ColumnWrapper key={field.id}>
-      <Styled.Components.Wrapper>
-        {fields.length > one && (
+      <Styled.Components.Wrapper isMoreThanOne={isMoreThanOne}>
+        <Styled.Components.Item className="component">
+          <Styled.Components.Input
+            label="Enter name component"
+            name={`components[${index}].name`}
+            ref={register({ required: true })}
+          />
+          <Styled.Components.Input
+            label="Namespace where to deploy"
+            name={`components[${index}].namespace`}
+            ref={register({ required: true })}
+          />
+        </Styled.Components.Item>
+        <Styled.Components.Item className="component">
+          <Styled.Components.Number
+            name={`components[${index}].latencyThreshold`}
+            label="Latency Threshold (ms)"
+            ref={register({ required: true })}
+          />
+          <Styled.Components.Number
+            name={`components[${index}].errorThreshold`}
+            label="Http Error Threshold (%)"
+            ref={register({ required: true })}
+          />
+        </Styled.Components.Item>
+        {isMoreThanOne && (
           <Styled.Components.Trash
             name="trash"
-            size="15px"
+            size="20px"
             color="light"
             onClick={() => remove(index)}
           />
         )}
-        <Styled.Components.Input
-          label="Enter name"
-          name={`components[${index}].name`}
-          ref={register({ required: true })}
-        />
-        <Styled.Components.Input
-          label="Namespace where to deploy"
-          name={`components[${index}].namespace`}
-          ref={register({ required: true })}
-        />
-        <Styled.Components.Number
-          name={`components[${index}].latencyThreshold`}
-          label="Latency Threshold (ms)"
-          ref={register({ required: true })}
-        />
-        <Styled.Components.Number
-          name={`components[${index}].errorThreshold`}
-          label="Http Error Threshold (%)"
-          ref={register({ required: true })}
-        />
       </Styled.Components.Wrapper>
       <Styled.Subtitle onClick={() => handleMoreOptions(index)} color="dark">
         {editMoreOptions ? 'Hide and clean ' : 'Show '}

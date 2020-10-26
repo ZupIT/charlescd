@@ -35,9 +35,9 @@ const Components = ({ fieldArray }: Props) => {
 
   return (
     <>
-      <Styled.Subtitle color="dark">
+      <Styled.Components.Title color="dark">
         Add components and enter SLO metrics:
-      </Styled.Subtitle>
+      </Styled.Components.Title>
       {fields.map((field: Component, index: number) => (
         <ComponentForm
           key={index}
