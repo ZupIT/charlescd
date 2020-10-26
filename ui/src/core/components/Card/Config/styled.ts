@@ -16,6 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import CardBase from 'core/components/Card/Base';
+import CardBody from 'core/components/Card/Body';
 
 type StyledProps = {
   isDisabled?: boolean;
@@ -31,6 +32,13 @@ const CardConfig = styled(CardBase)<StyledProps>`
     `}
 `;
 
+const Body = styled(CardBody)`
+  > :not(:first-child) {
+    margin-top: 10px;
+  }
+`;
+
 export default {
-  CardConfig
+  CardConfig,
+  Body
 };

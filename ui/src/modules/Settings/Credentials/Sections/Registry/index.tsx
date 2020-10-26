@@ -25,6 +25,7 @@ import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import ConnectionStatus from './ConnectionStatus';
 import { FetchStatuses } from 'core/providers/base/hooks';
+import Log from 'core/components/Log';
 
 interface Props {
   form: string;
@@ -69,7 +70,10 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
   }, [testConnection, data]);
 
   const renderError = () => (
-    <ConnectionStatus type="error" message={error.message} />
+    <Log
+      type="error"
+      content="This connection is unavailable. Check if the configuration information is correct or register a new configuration."
+    />
   );
 
   const renderSection = () => (
@@ -87,8 +91,9 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
             isLoading={loadingRemove || isLoading}
             isDisabled={isDisabled}
             onClose={() => remove(data?.id)}
-          />
-          {error && renderError()}
+          >
+            {renderError()}
+          </Card.Config>
         </Fragment>
       )}
     </Section>

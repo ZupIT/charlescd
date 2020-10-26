@@ -64,10 +64,10 @@ const CardConfig = ({
   );
 
   const renderBody = () => (
-    <Card.Body>
+    <Styled.Body>
       <Text.h4 color="light">{description}</Text.h4>
       {children}
-    </Card.Body>
+    </Styled.Body>
   );
 
   return (
