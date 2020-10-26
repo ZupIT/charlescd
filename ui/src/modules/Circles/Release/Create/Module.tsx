@@ -58,8 +58,8 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   }, [modules]);
 
   const resetVersion = () => {
-    setValue(`${prefixName}.tag`, '');
-    setValue(`${prefixName}.version`, '');
+    setValue(`${prefixName}.tag`, '', { shouldValidate: true });
+    setValue(`${prefixName}.version`, '', { shouldValidate: true });
     clearErrors([`${prefixName}.tag`, `${prefixName}.version`]);
     setIsEmptyTag(false);
   };
@@ -80,7 +80,8 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   ) => {
     setValue(`${prefixName}.tag`, '');
     const tag = await getComponentTag(moduleId, componentId, { name });
-    setValue(`${prefixName}.tag`, tag?.artifact);
+
+    setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
     setIsEmptyTag(isEmpty(tag?.artifact));
   };
 

@@ -86,10 +86,9 @@ export const checkIfComponentConflict = (modules: IModule[]) => {
 
 export const validationResolver = ({ modules }: { modules: IModule[] }) => {
   const error = checkIfComponentConflict(modules);
-  const values = {};
 
   return {
-    values: error ? {} : values,
+    values: {},
     errors: error
   };
 };
