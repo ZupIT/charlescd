@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, act, screen, wait } from 'unit-test/testUtils';
+import { render, act, screen } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
@@ -184,16 +184,16 @@ test('Enabled submit button after fill GCP form', async () => {
 });
 
 test('render Registry form with Docker Hub form', async () => {
-  const { container, getByTestId } = render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
+  render(<FormRegistry onFinish={mockOnFinish}/>);
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-DOCKER_HUB');
-  fireEvent.click(radioButton)
-  await wait();
-  expect(container.innerHTML).toMatch('Enter the username');
-  expect(container.innerHTML).not.toMatch('Enter the address');
+  const radioButton = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  await act(async () => userEvent.click(radioButton));
+
+  const enterUsername = screen.getByText('Enter the username');
+  expect(enterUsername).toBeInTheDocument();
+  
+  const enterAddress = screen.queryByText('Enter the address');
+  expect(enterAddress).not.toBeInTheDocument();
 });
 
 test('Should enabled submit button after fill AWS form', async () => {
