@@ -21,7 +21,7 @@ import { FetchMock } from 'jest-fetch-mock';
 import selectEvent from 'react-select-event';
 import FormUserGroup from '../Form';
 
-test.only('should select form user group', async () => {
+test('should select form user group', async () => {
   (fetch as FetchMock)
     .mockResponse(JSON.stringify({
       content: [
