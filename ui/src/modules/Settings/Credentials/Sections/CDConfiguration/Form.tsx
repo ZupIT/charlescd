@@ -201,7 +201,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
         />
       </Styled.Title>
       <Styled.Subtitle color="dark">
-        Choose witch one you want to add:
+        Choose which one you want to add:
       </Styled.Subtitle>
       <RadioGroup
         name="cd-configuration"
