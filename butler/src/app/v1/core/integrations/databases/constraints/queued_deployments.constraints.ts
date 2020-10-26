@@ -15,5 +15,6 @@
  */
 
 export enum QueuedDeploymentsConstraints {
-  UNIQUE_RUNNING_MODULE = 'queued_deployments_status_running_uniq'
+  UNIQUE_RUNNING_MODULE = 'queued_deployments_status_running_uniq',
+  ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG = 'only_one_active_for_circle'
 }
