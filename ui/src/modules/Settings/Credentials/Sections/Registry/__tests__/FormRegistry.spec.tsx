@@ -58,12 +58,17 @@ jest.mock('core/components/Form/AceEditor', () => {
   };
 });
 
-test('render Registry form default component', async () => {
-  const { container } = render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
+test('render Registry form default component', () => {
+  render(<FormRegistry onFinish={mockOnFinish}/>);
 
-  expect(container.innerHTML).toMatch("test");
+  const addRegistryText = screen.getByText('Add Registry');
+  expect(addRegistryText).toBeInTheDocument();
+
+  const infoIcon = screen.getByTestId('icon-info');
+  expect(infoIcon).toBeInTheDocument();
+
+  const chooseRegistryText = screen.getByText('Choose which one you want to add:');
+  expect(chooseRegistryText).toBeInTheDocument();
 });
 
 test('render Registry form with azure values', async () => {
