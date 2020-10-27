@@ -32,6 +32,7 @@ test('render default component with error log', () => {
 
   const element = screen.getByTestId('log-error');
   expect(element).toHaveStyle('background-color: rgb(255, 69, 58)');
+  expect(element).toHaveStyle('color: #FFF');
 })
 
 test('render default component with warning log', () => {
@@ -48,4 +49,5 @@ test('render default component with warning log', () => {
 
   const element = screen.getByTestId('log-warning');
   expect(element).toHaveStyle('background-color: #FFD60A');
+  expect(element).toHaveStyle('color: #FFF');
 })
