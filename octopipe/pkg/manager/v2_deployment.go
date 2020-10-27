@@ -21,19 +21,16 @@ import (
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
-type Metadata struct {
-	Name interface{}
-	Namespace interface{}
-}
+
 
 func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeline, incomingCircleId string) {
 	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "v2Pipeline": v2Pipeline}).Info("START:EXECUTE_V2_DEPLOYMENT_PIPELINE")
-	//err := manager.runV2Deployments(v2Pipeline)
-	//if err != nil {
-	//	manager.handleV2DeploymentError(v2Pipeline, err, incomingCircleId)
-	//	return
-	//}
-	err := manager.runV2ProxyDeployments(v2Pipeline)
+	err := manager.runV2Deployments(v2Pipeline)
+	if err != nil {
+		manager.handleV2DeploymentError(v2Pipeline, err, incomingCircleId)
+		return
+	}
+	err = manager.runV2ProxyDeployments(v2Pipeline)
 	if err != nil {
 		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
 		return
