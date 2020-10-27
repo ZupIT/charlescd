@@ -1213,7 +1213,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1288,7 +1287,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1297,7 +1295,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-
         },
         namespace: 'sandbox'
       },
@@ -1322,7 +1319,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',

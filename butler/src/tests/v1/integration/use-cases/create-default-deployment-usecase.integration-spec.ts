@@ -690,7 +690,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
     const expectedOctopipePayload1 = {
       appName: 'component-name',
-      appNamespace: 'qa',
+      appNamespace: 'sandbox',
       git: {
         provider: 'GITHUB',
         token: 'my-token'
@@ -721,7 +721,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
     const expectedOctopipePayload2 = {
       appName: 'component-name2',
-      appNamespace: 'qa',
+      appNamespace: 'sandbox',
       git: {
         provider: 'GITHUB',
         token: 'my-token'

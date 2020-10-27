@@ -37,4 +37,3 @@ export interface Component {
 
     deployment?: Deployment
 }
-

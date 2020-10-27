@@ -695,8 +695,6 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-
-
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',

@@ -80,10 +80,8 @@ export class DeploymentHandlerUseCase {
     if (!deployment.circleId) {
       deployment.components = deployment.components.filter(c => !c.merged)
     }
-
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-
     try {
       await this.updateComponentsRunningStatus(deployment, true)
       const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
@@ -147,13 +145,11 @@ export class DeploymentHandlerUseCase {
     return job
   }
 
-
   public async handleCdSuccess(job: ExecutionJob) : Promise<ExecutionJob> {
     this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job.id })
     job.done()
     return job
   }
-
 
   public async handleCdError(job: ExecutionJob, error: string, deployment: DeploymentEntity): Promise<ExecutionJob> {
     await this.updateComponentsRunningStatus(deployment, false)

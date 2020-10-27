@@ -69,7 +69,8 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             }
           ]
         }
@@ -134,7 +135,8 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             }
           ]
         }
@@ -204,7 +206,8 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             }
           ]
         }
@@ -247,37 +250,43 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com2 ',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl-ends-with-dash.com3-',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: `very-long-url${'4'.repeat(237)}.com`, // max is 253 because of kubernetes
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'quiz-app-backend',
               buildImageTag: 'tag1',
-              componentName: 'component-name'
+              componentName: 'component-name',
+              namespace: 'sandbox'
             }
           ]
         }
@@ -327,7 +336,8 @@ describe('DeploymentController v2', () => {
               buildImageTag: 'tag1',
               componentName: 'component-name',
               hostValue: 'host-value-1',
-              gatewayName: 'gateway-name-1'
+              gatewayName: 'gateway-name-1',
+              namespace: 'sandbox'
             }
           ]
         }
@@ -373,7 +383,8 @@ describe('DeploymentController v2', () => {
               buildImageTag: '11111111111111111111111111111111',
               componentName: '22222222222222222222222222222222',
               hostValue: 'host-value-1',
-              gatewayName: 'gateway-name-1'
+              gatewayName: 'gateway-name-1',
+              namespace: 'sandbox'
             }
           ]
         }
@@ -423,13 +434,15 @@ describe('DeploymentController v2', () => {
               buildImageTag: 'differentTag',
               componentName: 'my-component',
               hostValue: 'host-value-1',
-              gatewayName: 'gateway-name-1'
+              gatewayName: 'gateway-name-1',
+              namespace: 'sandbox'
             },
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl2.com:anotherTag',
               buildImageTag: 'anotherTag',
-              componentName: 'my-other-component'
+              componentName: 'my-other-component',
+              namespace: 'sandbox'
             }
           ]
         }
@@ -440,7 +453,8 @@ describe('DeploymentController v2', () => {
     }
 
     const errorMessages = [
-      '0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
+      '0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1",' +
+      '"namespace":"sandbox"}'
     ]
 
     await request(app.getHttpServer())

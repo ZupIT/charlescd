@@ -90,7 +90,7 @@ describe('DeploymentHandler', () => {
 
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -171,7 +171,7 @@ describe('DeploymentHandler', () => {
 
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/error', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/error' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -209,7 +209,7 @@ describe('DeploymentHandler', () => {
   it('stop the job when the deployment status is flagged as TIMED_OUT', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -253,7 +253,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      c.namespace
     )
   })
 

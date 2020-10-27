@@ -16,7 +16,6 @@
 
 import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
-import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 
 const IstioUndeploymentManifestsUtils = {

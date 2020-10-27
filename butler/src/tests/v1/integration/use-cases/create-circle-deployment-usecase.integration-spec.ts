@@ -686,7 +686,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const expectedOctopipePayload1 = {
       appName: 'component-name',
-      appNamespace: 'qa',
+      appNamespace: 'sandbox',
       git: {
         provider: 'GITHUB',
         token: 'my-token'
@@ -717,7 +717,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const expectedOctopipePayload2 = {
       appName: 'component-name2',
-      appNamespace: 'qa',
+      appNamespace: 'sandbox',
       git: {
         provider: 'GITHUB',
         token: 'my-token'

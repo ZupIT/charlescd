@@ -19,7 +19,6 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 
 export const undeployDiffSubsetsSameTagOctopipe: OctopipeUndeploymentRequest = {
-
   undeployments: [
     {
       componentName: 'A',

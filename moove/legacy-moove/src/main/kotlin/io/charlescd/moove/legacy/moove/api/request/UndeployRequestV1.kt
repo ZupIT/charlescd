@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+package io.charlescd.moove.legacy.moove.api.request
 
-import java.time.LocalDateTime
-
-data class Component(
-    val id: String,
-    val moduleId: String,
-    val name: String,
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-    val workspaceId: String,
-    val errorThreshold: Int,
-    val latencyThreshold: Int,
-    val hostValue: String?,
-    val gatewayName: String?,
-    val namespace: String
+data class UndeployRequestV1(
+    val authorId: String,
+    val deploymentId: String
 )

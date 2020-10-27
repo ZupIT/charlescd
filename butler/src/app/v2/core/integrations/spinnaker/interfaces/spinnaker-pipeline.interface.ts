@@ -68,6 +68,7 @@ interface TrafficManagement {
     enabled: boolean
     options: Options
 }
+
 interface CustomHeaders {
     'x-circle-id': string
 }

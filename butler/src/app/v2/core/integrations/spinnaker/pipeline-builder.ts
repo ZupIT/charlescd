@@ -217,7 +217,4 @@ export class SpinnakerPipelineBuilder {
     return [getUndeploymentsSuccessWebhookStage(deployment, this.currentStageId++, configuration)]
   }
 
-  private getActiveComponentsByName(activeComponents: Component[], name: string): Component[] {
-    return activeComponents.filter(component => component.name === name)
-  }
 }

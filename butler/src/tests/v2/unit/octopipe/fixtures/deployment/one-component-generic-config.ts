@@ -20,7 +20,6 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { ClusterProviderEnum } from '../../../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 export const oneComponentGenericOctopipe: OctopipeDeploymentRequest = {
-
   deployments: [
     {
       componentName: 'A',

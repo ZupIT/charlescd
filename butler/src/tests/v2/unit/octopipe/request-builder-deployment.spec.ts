@@ -137,7 +137,6 @@ const deploymentWith1ComponentCircle2: Deployment = {
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
       provider: ClusterProviderEnum.DEFAULT,
-
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -442,7 +441,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
-            deployments: null,
+            deployments: null
           }
         }
       },
@@ -786,7 +785,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             configurationData: {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
+              provider: ClusterProviderEnum.DEFAULT
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -818,7 +817,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             configurationData: {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
+              provider: ClusterProviderEnum.DEFAULT
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1723,7 +1722,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             configurationData: {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
+              provider: ClusterProviderEnum.DEFAULT
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',

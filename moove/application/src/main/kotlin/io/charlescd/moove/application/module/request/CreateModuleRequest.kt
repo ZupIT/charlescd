@@ -74,8 +74,7 @@ data class ComponentRequest(
 
     val gatewayName: String?
 
-
-    ) {
+) {
     fun toDomain(moduleId: String, workspaceId: String) = Component(
         id = UUID.randomUUID().toString(),
         name = this.name,

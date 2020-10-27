@@ -25,7 +25,6 @@ import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usec
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
 
-
 @Controller('v2/deployments')
 export class DeploymentsController {
 
