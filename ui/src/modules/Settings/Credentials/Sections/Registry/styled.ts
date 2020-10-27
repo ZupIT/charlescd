@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import TextComponent from 'core/components/Text';
+import { dark as darkTheme } from 'core/assets/themes/registry';
 
 const Title = styled(TextComponent.h2)`
   display: flex;
@@ -61,11 +62,11 @@ const Message = styled.div<status>`
 
   span {
     margin-left: 10px;
-    color: ${({ theme, status }) => theme.metrics.provider[status]};
+    color: ${({ status }) => darkTheme.message[status]};
   }
 
   svg {
-    color: ${({ theme, status }) => theme.metrics.provider[status]};
+    color: ${({ status }) => darkTheme.message[status]};
   }
 `;
 
