@@ -15,7 +15,6 @@
  */
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 

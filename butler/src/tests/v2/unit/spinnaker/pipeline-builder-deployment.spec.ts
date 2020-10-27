@@ -320,7 +320,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
-          defaultCircle: true,
+          defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',

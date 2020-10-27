@@ -111,12 +111,8 @@ describe('DeploymentHandler', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-<<<<<<< HEAD
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
       defaultCircle: false
-=======
-      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
     }
 
     const secondDeploymentId = 'a666cbe1-7da3-46a6-bad3-5a3553960f55'
@@ -197,12 +193,8 @@ describe('DeploymentHandler', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-<<<<<<< HEAD
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
       defaultCircle: false
-=======
-      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
     }
 
     const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
@@ -240,12 +232,8 @@ describe('DeploymentHandler', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-<<<<<<< HEAD
       deploymentStatus: DeploymentStatusEnum.TIMED_OUT,
       defaultCircle: false
-=======
-      deploymentStatus: DeploymentStatusEnum.TIMED_OUT
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
     }
 
     const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
@@ -278,12 +266,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-<<<<<<< HEAD
     components,
     params.defaultCircle
-=======
-    components
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
   ))
 
   const execution : Execution = await manager.save(new Execution(

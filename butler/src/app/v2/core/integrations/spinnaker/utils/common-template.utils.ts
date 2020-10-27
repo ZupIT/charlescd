@@ -15,7 +15,6 @@
  */
 
 import { Component } from '../../../../api/deployments/interfaces'
-import { AppConstants } from '../../../../../v1/core/constants'
 
 const CommonTemplateUtils = {
   getDeploymentName: (component: Component, circleId: string): string => {
