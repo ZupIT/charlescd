@@ -20,12 +20,12 @@ import filter from 'lodash/filter';
 import Styled from './styled';
 
 type AccordionProps = {
-  children: React.ReactElement[];
+  children: React.ReactElement | React.ReactElement[];
   multiples?: boolean;
 };
 
 type ItemProps = {
-  children: React.ReactElement[];
+  children: React.ReactElement | React.ReactElement[];
   index?: number;
   onAccordionClick?: (index: number) => void;
   active?: number[];
