@@ -13,3 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import Log from '../';
+
+test('render default component with error log', () => {
+  const type = 'error';
+  const content = 'Connection failed. Check if the configuration information is correct and try again';
+
+  render(<Log type={type} content={content} />);
+  
+  const errorIcon = screen.getByTestId('icon-error');
+  expect(errorIcon).toBeInTheDocument();
+
+  const logText = screen.getByText(content);
+  expect(logText).toBeInTheDocument();
+
+  const element = screen.getByTestId('log-error');
+  expect(element).toHaveStyle('background-color: rgb(255, 69, 58)');
+})
+
+test('render default component with warning log', () => {
+  const type = 'warning';
+  const content = 'Warning: Check if the configuration information is correct and try again';
+
+  render(<Log type={type} content={content} />);
+  
+  const warningIcon = screen.getByTestId('icon-warning');
+  expect(warningIcon).toBeInTheDocument();
+
+  const logText = screen.getByText(content);
+  expect(logText).toBeInTheDocument();
+
+  const element = screen.getByTestId('log-warning');
+  expect(element).toHaveStyle('background-color: #FFD60A');
+})
