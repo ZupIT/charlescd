@@ -18,19 +18,22 @@ package manager
 
 import (
 	"context"
-
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
+type Metadata struct {
+	Name interface{}
+	Namespace interface{}
+}
 
 func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeline, incomingCircleId string) {
 	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "v2Pipeline": v2Pipeline}).Info("START:EXECUTE_V2_DEPLOYMENT_PIPELINE")
-	err := manager.runV2Deployments(v2Pipeline)
-	if err != nil {
-		manager.handleV2DeploymentError(v2Pipeline, err, incomingCircleId)
-		return
-	}
-	err = manager.runV2ProxyDeployments(v2Pipeline)
+	//err := manager.runV2Deployments(v2Pipeline)
+	//if err != nil {
+	//	manager.handleV2DeploymentError(v2Pipeline, err, incomingCircleId)
+	//	return
+	//}
+	err := manager.runV2ProxyDeployments(v2Pipeline)
 	if err != nil {
 		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
 		return
@@ -77,8 +80,11 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) er
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
+		metadata := proxyDeployment["metadata"].(map[string]interface{})
+		namespace := metadata["namespace"].(string)
+
 		errs.Go(func() error {
-			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, namespace, DEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2ProxyDeployments"}).Info("FINISH:RUN_V2_PROXY_DEPLOYMENTS")
@@ -91,7 +97,7 @@ func (manager Manager) runV2UnusedDeployments(v2Pipeline V2DeploymentPipeline) e
 	for _, deployment := range v2Pipeline.UnusedDeployments {
 		currentUnusedDeployment := deployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentUnusedDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentUnusedDeployment, currentUnusedDeployment.Namespace, UNDEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2UnusedDeployments"}).Info("FINISH:RUN_V2_UNUSED_DEPLOYMENTS")

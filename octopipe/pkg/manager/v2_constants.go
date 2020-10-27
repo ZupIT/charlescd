@@ -25,7 +25,7 @@ type V2Deployment struct {
 	HelmRepositoryConfig repository.Repository  `json:"helmRepositoryConfig"`
 	HelmConfig   	     helm.HelmTemplate		`json:"helmConfig"`
 	RollbackIfFailed	 bool					`json:"rollbackIfFailed"`
-	Namespace 		 	string						`json:"namespace"`
+	Namespace 		 	 string					`json:"namespace"`
 }
 
 type V2DeploymentPipeline struct {

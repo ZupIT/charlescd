@@ -88,6 +88,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
     const stringConfigurationData = JSON.stringify(
       this.trimObject(configurationData)
     )
+    console.log(`PGP_SYM_ENCRYPT('${stringConfigurationData}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`)
     return () : string => `PGP_SYM_ENCRYPT('${stringConfigurationData}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`
   }
 
