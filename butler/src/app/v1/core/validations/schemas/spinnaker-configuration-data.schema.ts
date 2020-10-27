@@ -30,9 +30,6 @@ export const SpinnakerConfigurationDataSchema: ValidationSchema = {
     }],
     account: [{
       type: 'isNotEmpty'
-    }],
-    namespace: [{
-      type: 'isNotEmpty'
     }]
   }
 }

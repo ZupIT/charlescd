@@ -49,7 +49,7 @@ func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline) error {
 	for _, deployment := range v2Pipeline.Deployments {
 		currentDeployment := deployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, currentDeployment.Namespace, DEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("FINISH:RUN_V2_DEPLOYMENTS")
@@ -63,7 +63,7 @@ func (manager Manager) runV2Rollbacks(v2Pipeline V2DeploymentPipeline) error {
 		if deployment.RollbackIfFailed {
 			currentRollbackDeployment := deployment
 			errs.Go(func() error {
-				return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
+				return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, currentRollbackDeployment.Namespace, UNDEPLOY_ACTION)
 			})
 		}
 	}

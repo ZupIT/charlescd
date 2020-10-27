@@ -25,10 +25,10 @@ type V2Deployment struct {
 	HelmRepositoryConfig repository.Repository  `json:"helmRepositoryConfig"`
 	HelmConfig   	     helm.HelmTemplate		`json:"helmConfig"`
 	RollbackIfFailed	 bool					`json:"rollbackIfFailed"`
+	Namespace 		 	string						`json:"namespace"`
 }
 
 type V2DeploymentPipeline struct {
-	Namespace 		 	string						`json:"namespace"`
 	Deployments 	 	[]V2Deployment				`json:"deployments"`
 	UnusedDeployments 	[]V2Deployment				`json:"unusedDeployments"`
 	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
@@ -37,7 +37,6 @@ type V2DeploymentPipeline struct {
 }
 
 type V2UndeploymentPipeline struct {
-	Namespace 		 	string						`json:"namespace"`
 	Undeployments 	 	[]V2Deployment				`json:"undeployments"`
 	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
 	CallbackUrl   		string           			`json:"callbackUrl"`
