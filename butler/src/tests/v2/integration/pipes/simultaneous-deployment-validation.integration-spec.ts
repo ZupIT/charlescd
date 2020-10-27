@@ -119,7 +119,8 @@ const createDto = (componentName: string, circleId: string | null) => {
     'imageTag',
     componentName,
     undefined,
-    undefined
+    undefined,
+    'sandbox'
   )
 
   const modules = new CreateModuleDeploymentDto(
@@ -152,7 +153,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      c.namespace
     )
     component.running = true
     return component
@@ -160,7 +162,7 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
 
   const configEntity = new CdConfigurationEntity(
     CdTypeEnum.SPINNAKER,
-    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok' },
     'config-name',
     'authorId',
     'workspaceId'

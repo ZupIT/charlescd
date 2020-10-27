@@ -27,10 +27,10 @@ import io.charlescd.moove.application.module.response.ModuleResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.exceptions.BusinessException
-import org.springframework.dao.DuplicateKeyException
 import java.util.*
 import javax.inject.Named
 import javax.transaction.Transactional
+import org.springframework.dao.DuplicateKeyException
 
 @Named
 open class CreateModuleInteractorImpl(
@@ -58,7 +58,7 @@ open class CreateModuleInteractorImpl(
                     )
                 )
             )
-         } catch(exception: DuplicateKeyException) {
+        } catch (exception: DuplicateKeyException) {
             throw BusinessException.of(MooveErrorCode.COMPONENT_NAME_ALREADY_REGISTERED_IN_THIS_WORKSPACE_WITH_THIS_NAMESPACE)
         }
     }

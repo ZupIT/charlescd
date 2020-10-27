@@ -69,7 +69,7 @@ describe('CallbackController v2', () => {
   it('set deployment callback status and active boolean for success notification', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -82,7 +82,8 @@ describe('CallbackController v2', () => {
       'build-image-tag',
       'component-name',
       undefined,
-      undefined
+      undefined,
+      'namespace'
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
@@ -135,7 +136,8 @@ describe('CallbackController v2', () => {
             id: deployment.components[0].id,
             running: false,
             hostValue: null,
-            gatewayName: null
+            gatewayName: null,
+            namespace: 'namespace'
           }
         ],
         createdAt: expect.anything(),
@@ -165,7 +167,7 @@ describe('CallbackController v2', () => {
   it('set deployment callback status for failure callback', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -178,7 +180,8 @@ describe('CallbackController v2', () => {
       'build-image-tag',
       'component-name',
       undefined,
-      undefined
+      undefined,
+      'namespace'
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
@@ -232,7 +235,8 @@ describe('CallbackController v2', () => {
             id: deployment.components[0].id,
             running: false,
             hostValue: null,
-            gatewayName: null
+            gatewayName: null,
+            namespace: 'namespace'
           }
         ],
         createdAt: expect.anything(),
@@ -262,7 +266,7 @@ describe('CallbackController v2', () => {
   it('set undeployment callback status to inactive for success notification', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -275,7 +279,8 @@ describe('CallbackController v2', () => {
       'build-image-tag',
       'component-name',
       undefined,
-      undefined
+      undefined,
+      'sandbox'
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
@@ -329,7 +334,8 @@ describe('CallbackController v2', () => {
             id: execution.deployment.components[0].id,
             running: false,
             hostValue: null,
-            gatewayName: null
+            gatewayName: null,
+            namespace: 'sandbox'
           }
         ],
         createdAt: expect.anything(),
@@ -359,7 +365,7 @@ describe('CallbackController v2', () => {
   it('keeps the deployment as active if cd response is a failure', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -372,7 +378,8 @@ describe('CallbackController v2', () => {
       'build-image-tag',
       'component-name',
       undefined,
-      undefined
+      undefined,
+      'sandbox'
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
@@ -426,7 +433,8 @@ describe('CallbackController v2', () => {
             id: execution.deployment.components[0].id,
             running: false,
             hostValue: null,
-            gatewayName: null
+            gatewayName: null,
+            namespace: 'sandbox'
           }
         ],
         createdAt: expect.anything(),

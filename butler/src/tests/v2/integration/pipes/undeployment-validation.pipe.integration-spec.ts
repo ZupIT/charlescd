@@ -120,7 +120,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      c.namespace
     )
     component.running = running
     return component
@@ -128,7 +129,7 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
 
   const configEntity = new CdConfigurationEntity(
     CdTypeEnum.SPINNAKER,
-    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok' },
     'config-name',
     'authorId',
     'workspaceId'

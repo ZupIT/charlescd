@@ -161,7 +161,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     const expectedOctopipePayload1 = {
       appName: 'componentName2',
-      appNamespace: 'qa',
+      appNamespace: 'sandbox',
       circleId: undefined,
       git: {
         provider: 'GITHUB',
@@ -174,7 +174,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           kind: 'VirtualService',
           metadata: {
             name: 'componentName2',
-            namespace: 'qa'
+            namespace: 'sandbox'
           },
           spec: {
             hosts: [
@@ -207,7 +207,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           kind: 'DestinationRule',
           metadata: {
             name: 'componentName2',
-            namespace: 'qa'
+            namespace: 'sandbox'
           },
           spec: {
             host: 'componentName2',
@@ -227,7 +227,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     const expectedOctopipePayload2 = {
       appName: 'componentName',
-      appNamespace: 'qa',
+      appNamespace: 'sandbox',
       circleId: undefined,
       git: {
         provider: 'GITHUB',
@@ -240,7 +240,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           kind: 'VirtualService',
           metadata: {
             name: 'componentName',
-            namespace: 'qa'
+            namespace: 'sandbox'
           },
           spec: {
             hosts: [
@@ -273,7 +273,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           kind: 'DestinationRule',
           metadata: {
             name: 'componentName',
-            namespace: 'qa'
+            namespace: 'sandbox'
           },
           spec: {
             host: 'componentName',
