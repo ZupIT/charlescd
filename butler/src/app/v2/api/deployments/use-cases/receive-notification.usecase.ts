@@ -108,7 +108,6 @@ export class ReceiveNotificationUseCase {
 
     await this.notifyMooveAndUpdateDeployment(savedExecution)
     this.consoleLoggerService.log('FINISH:HANDLE_DEPLOYMENT_NOTIFICATION')
-
     return await this.executionRepository.findOneOrFail(savedExecution.id, { relations: ['deployment', 'deployment.components'] })
   }
 
@@ -144,7 +143,6 @@ export class ReceiveNotificationUseCase {
   }
 
   private async handleUndeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
-
     this.consoleLoggerService.log('START:HANDLE_UNDEPLOYMENT_NOTIFICATION')
     const execution = await this.executionRepository.findOneOrFail(executionId, { relations: ['deployment', 'deployment.components'] })
     execution.finishedAt = DateUtils.now()

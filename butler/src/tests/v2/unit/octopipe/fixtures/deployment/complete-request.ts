@@ -76,7 +76,7 @@ export const completeOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       },
       rollbackIfFailed: true,
       namespace: 'sandbox'
-    },
+    }
   ],
   unusedDeployments: [
     {

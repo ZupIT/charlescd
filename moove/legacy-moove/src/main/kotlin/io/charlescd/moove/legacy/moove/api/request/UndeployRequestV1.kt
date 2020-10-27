@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_RED_ORANGE,
-  COLOR_MOUNTAIN_MEADOW,
-  COLOR_DODGER_BLUE,
-  COLOR_SUNFLOWER,
-  COLOR_SANTAS_GREY
-} from '../colors';
+package io.charlescd.moove.legacy.moove.api.request
 
-export const light = {};
-
-export const dark = {
-  success: COLOR_MOUNTAIN_MEADOW,
-  error: COLOR_RED_ORANGE,
-  warning: COLOR_SUNFLOWER,
-  primary: COLOR_DODGER_BLUE,
-  secondary: COLOR_SANTAS_GREY
-} as Record<string, string>;
+data class UndeployRequestV1(
+    val authorId: String,
+    val deploymentId: String
+)

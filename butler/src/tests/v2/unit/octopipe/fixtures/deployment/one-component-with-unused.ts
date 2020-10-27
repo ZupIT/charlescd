@@ -38,7 +38,6 @@ export const oneComponentWithUnusedOctopipe: OctopipeDeploymentRequest = {
       },
       rollbackIfFailed: true,
       namespace: 'sandbox',
-
     }
   ],
   unusedDeployments: [

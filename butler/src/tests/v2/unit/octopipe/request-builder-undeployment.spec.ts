@@ -1376,7 +1376,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
             configurationData: {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
+              provider: ClusterProviderEnum.DEFAULT
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',

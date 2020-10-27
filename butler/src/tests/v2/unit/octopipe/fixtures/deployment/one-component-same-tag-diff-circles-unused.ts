@@ -19,7 +19,6 @@ import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/con
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 
 export const oneComponentSameTagDiffCirclesUnusedOctopipe: OctopipeDeploymentRequest = {
-
   deployments: [
     {
       componentName: 'A',
