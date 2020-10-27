@@ -31,5 +31,5 @@ export const dark = {
     BUILT: COLOR_PURPLE_HEART,
     BUILDING: COLOR_PURPLE_HEART,
     BUILD_FAILED: COLOR_RED_ORANGE
-  }
+  } as Record<string, string>
 };

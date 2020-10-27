@@ -17,15 +17,14 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"log"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/manager"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
-	v1 "octopipe/web/api/v1"
-
-	"github.com/joho/godotenv"
+	"octopipe/web/api"
 )
 
 func main() {
@@ -40,7 +39,8 @@ func main() {
 	deploymentMain := deployment.NewDeploymentMain()
 	managerMain := manager.NewManagerMain(templateMain, deploymentMain, cloudproviderMain, repositoryMain)
 
-	api := v1.NewAPI()
-	api.NewPipelineAPI(managerMain)
-	api.Start()
+	apiServer := api.NewAPI()
+	apiServer.NewPipelineAPI(managerMain)
+	apiServer.NewV2PipelineAPI(managerMain)
+	apiServer.Start()
 }

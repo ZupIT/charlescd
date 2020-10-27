@@ -84,7 +84,6 @@ const DismissButton = styled(DefaultButton)`
   height: 40px;
   width: 160px;
   box-sizing: border-box;
-  border: ${({ theme }) => theme.modal.trigger.border} 0.5px solid;
   display: flex;
   justify-content: center;
   background-color: transparent;
