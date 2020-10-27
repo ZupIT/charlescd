@@ -23,6 +23,7 @@ import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { useRegistry } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
+import Log from 'core/components/Log';
 
 interface Props {
   form: string;
@@ -55,7 +56,12 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
           description={data.name}
           isLoading={loadingRemove}
           onClose={() => remove(data?.id)}
-        />
+        >
+          <Log
+            type="warning"
+            content="luane caroline aquino cavalcanti luane caroline aquino cavalcanti"
+          />
+        </Card.Config>
       )}
     </Section>
   );

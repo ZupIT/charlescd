@@ -22,9 +22,6 @@ const Log = styled.div<Pick<Props, 'type'>>`
   display: flex;
   flex-direction: row;
   width: 231px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   align-items: center;
   padding: 2.5px 8px 2.5px 10px;
   border-radius: 9.5px;

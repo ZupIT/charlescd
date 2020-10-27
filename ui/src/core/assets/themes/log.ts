@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { COLOR_RED_ORANGE, COLOR_GOLD, COLOR_WHITE } from 'core/assets/colors';
+import {
+  COLOR_RED_ORANGE,
+  COLOR_GOLD,
+  COLOR_WHITE,
+  COLOR_BLACK_MARLIN
+} from 'core/assets/colors';
 
 export const light = {};
 
@@ -24,7 +29,7 @@ export const dark = {
     background: COLOR_RED_ORANGE
   },
   warning: {
-    color: COLOR_WHITE,
+    color: COLOR_BLACK_MARLIN,
     background: COLOR_GOLD
   }
 };

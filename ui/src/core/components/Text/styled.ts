@@ -33,7 +33,8 @@ const Text = styled.span<Props>`
   font-style: ${({ fontStyle }) => fontStyle};
   font-size: ${({ fontSize }) => fontSize};
   font-weight: ${({ weight }) => weight};
-  color: ${({ theme, color }) => theme.text[color]};
+  /* color: ${({ theme, color }) => theme.text[color]}; */
+  color: inherit;
   text-align: ${({ align }) => align};
   line-height: ${({ fontSize }) => fontSize};
 `;
