@@ -167,11 +167,6 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
           name="name"
           label="Type a name for configuration:"
         />
-        <Form.Input
-          ref={register({ required: true })}
-          name="configurationData.namespace"
-          label="Enter the namespace"
-        />
         {configType === first(radios).value
           ? renderCDConfigurationFields()
           : renderSpinnakerFields()}
