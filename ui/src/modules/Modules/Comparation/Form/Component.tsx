@@ -18,9 +18,6 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
-import pick from 'lodash/pick';
-import keys from 'lodash/keys';
-import isEqual from 'lodash/isEqual';
 import { Component as IComponent } from 'modules/Modules/interfaces/Component';
 import { Module } from 'modules/Modules/interfaces/Module';
 import Can from 'containers/Can';
@@ -30,14 +27,8 @@ import {
 } from 'modules/Modules/hooks/component';
 import routes from 'core/constants/routes';
 import { updateParam } from 'core/utils/path';
-import { validFields } from './helpers';
+import { validateNamespace } from './helpers';
 import Styled from './styled';
-
-interface MoreOptionsModel {
-  name: string;
-  latencyThreshold: string;
-  errorThreshold: string;
-}
 
 interface Props {
   component: IComponent;
@@ -47,37 +38,21 @@ interface Props {
 }
 
 const Component = ({ component, module, onClose, onUpdate }: Props) => {
-  const { register, handleSubmit, watch, getValues } = useForm();
-  const [isDisabled, setIsDisabled] = useState(true);
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm<IComponent>({ mode: 'onBlur' });
   const {
     saveComponent,
     loading,
     response: savedComponent
   } = useSaveComponent();
   const { updateComponent, response: updatedComponent } = useUpdateComponent();
-  const watchFields = watch();
   const isEdit = !isEmpty(component);
   const history = useHistory();
   const [editMoreOptions, setEditMoreOptions] = useState(false);
-
-  useEffect(() => {
-    const form = getValues();
-    const moreOptionsModel: MoreOptionsModel = {
-      name: '',
-      latencyThreshold: '',
-      errorThreshold: ''
-    };
-    const restForm = pick(form, keys(moreOptionsModel));
-    const isInvalid = !validFields(restForm);
-    const comp = {
-      name: component?.name || '',
-      latencyThreshold: component?.latencyThreshold?.toString() || '',
-      errorThreshold: component?.errorThreshold?.toString() || '',
-      hostValue: component?.hostValue?.toString() || '',
-      gatewayName: component?.gatewayName?.toString() || ''
-    };
-    setIsDisabled(isEqual(comp, form) || isInvalid);
-  }, [watchFields, getValues, component]);
 
   useEffect(() => {
     if (savedComponent) {
@@ -105,6 +80,8 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
     }
   };
 
+  console.log(errors?.name?.message);
+
   return (
     <Styled.Content>
       <Styled.Icon name="arrow-left" color="dark" onClick={() => onClose()} />
@@ -118,27 +95,34 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
         <Styled.Input
           label="Enter name component"
           name="name"
+          error={errors?.name?.message}
           defaultValue={component?.name}
-          ref={register({ required: true })}
+          ref={register({ required: 'required field' })}
         />
         <Styled.Input
           label="Namespace where to deploy"
           name="namespace"
+          error={errors?.namespace?.message}
           defaultValue={component?.namespace}
-          ref={register({ required: true })}
+          ref={register({
+            required: 'required field',
+            validate: validateNamespace
+          })}
         />
         <Styled.Number
           label="Latency Threshold (ms)"
           name="latencyThreshold"
+          error={errors?.latencyThreshold?.message}
           defaultValue={component?.latencyThreshold}
-          ref={register({ required: true })}
+          ref={register({ required: 'required field' })}
         />
         <Styled.FieldPopover>
           <Styled.Number
             label="Http Error Threshold (%)"
             name="errorThreshold"
+            error={errors?.errorThreshold?.message}
             defaultValue={component?.errorThreshold}
-            ref={register({ required: true })}
+            ref={register({ required: 'required field' })}
           />
         </Styled.FieldPopover>
         <Styled.Subtitle
@@ -165,7 +149,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
             ref={register()}
           />
         </Styled.Components.AdvancedOptionWrapper>
-        <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
+        <Can I="write" a="modules" isDisabled={!isValid} passThrough>
           <Styled.Button
             id="save-edit-module"
             type="submit"

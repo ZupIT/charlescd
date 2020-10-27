@@ -27,3 +27,10 @@ export const validFields = (fields: object) => {
   });
   return status;
 };
+
+export const validateNamespace = (value: string) => {
+  return (
+    value.match(/[a-z0-9-.]/g)?.length === value?.length ||
+    "must contain only lowercase alphanumeric characters, '-' or '.'"
+  );
+};

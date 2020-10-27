@@ -15,6 +15,7 @@
  */
 
 import React, { useImperativeHandle, useRef } from 'react';
+import { Message } from 'react-hook-form';
 import Styled from './styled';
 
 interface Props {
@@ -24,11 +25,22 @@ interface Props {
   className?: string;
   defaultValue?: string;
   maxLength?: number;
+  hasError?: boolean;
+  error?: string | Message;
 }
 
 const Number = React.forwardRef(
   (
-    { name, label, placeholder, className, defaultValue, maxLength }: Props,
+    {
+      name,
+      label,
+      placeholder,
+      className,
+      defaultValue,
+      maxLength,
+      hasError,
+      error
+    }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +56,8 @@ const Number = React.forwardRef(
         className={className}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        hasError={hasError}
+        error={error}
         maxLength={maxLength}
       />
     );

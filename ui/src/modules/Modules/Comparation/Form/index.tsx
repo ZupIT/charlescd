@@ -45,7 +45,8 @@ const FormModule = ({ module, onChange }: Props) => {
   const history = useHistory();
 
   const form = useForm<Module>({
-    defaultValues: { components: [component] }
+    defaultValues: { components: [component] },
+    mode: 'onBlur'
   });
 
   const { register, control, getValues, handleSubmit, watch } = form;

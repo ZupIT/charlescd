@@ -179,6 +179,10 @@ const AdvancedOptionWrapper = styled('div')<MoreOptions>`
   display: ${({ showMoreOptions }) => (showMoreOptions ? 'initial' : 'none')};
 `;
 
+const Error = styled(Text.h5)`
+  margin-top: -10px;
+`;
+
 export default {
   Content,
   Title,
@@ -190,6 +194,7 @@ export default {
   Popover,
   Icon,
   Button,
+  Error,
   Components: {
     Title: ComponentTitle,
     Wrapper: ComponentsWrapper,
