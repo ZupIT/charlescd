@@ -17,7 +17,6 @@
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
 import { CommonTemplateUtils } from '../../utils/common-template.utils'
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 
 export const getBakeStage = (component: Component, configuration: CdConfiguration, stageId: number, circleId: string | null): Stage => ({
   completeOtherBranchesThenFail: false,

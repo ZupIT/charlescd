@@ -17,7 +17,6 @@
 package io.charlescd.moove.domain
 
 import java.time.LocalDateTime
-import javax.xml.stream.events.Namespace
 
 data class Component(
     val id: String,
