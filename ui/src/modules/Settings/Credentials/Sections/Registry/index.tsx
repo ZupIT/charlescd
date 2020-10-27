@@ -23,7 +23,6 @@ import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { useRegistry, useRegistryConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
-import ConnectionStatus from './ConnectionStatus';
 import { FetchStatuses } from 'core/providers/base/hooks';
 import Log from 'core/components/Log';
 
