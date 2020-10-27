@@ -15,10 +15,6 @@
  */
 
 import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
-<<<<<<< HEAD
-=======
-import { AppConstants } from '../../../../../../app/v1/core/constants'
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 import { ClusterProviderEnum } from '../../../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
@@ -77,15 +73,9 @@ export const completeOctopipeUndeploymentEKSRequest: OctopipeUndeploymentRequest
             labels: {
               component: 'A',
               tag: 'v0',
-<<<<<<< HEAD
               circleId: 'default-circle-id'
             },
             name: 'default-circle-id'
-=======
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
-            },
-            name: AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
           }
         ]
       }
@@ -108,29 +98,17 @@ export const completeOctopipeUndeploymentEKSRequest: OctopipeUndeploymentRequest
               {
                 destination: {
                   host: 'A',
-<<<<<<< HEAD
                   subset: 'default-circle-id'
-=======
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
                 },
                 headers: {
                   request: {
                     set: {
-<<<<<<< HEAD
                       'x-circle-source': 'default-circle-id'
-=======
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
                     }
                   },
                   response: {
                     set: {
-<<<<<<< HEAD
                       'x-circle-source': 'default-circle-id'
-=======
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
                     }
                   }
                 }
@@ -154,15 +132,9 @@ export const completeOctopipeUndeploymentEKSRequest: OctopipeUndeploymentRequest
             labels: {
               component: 'B',
               tag: 'v0',
-<<<<<<< HEAD
               circleId: 'default-circle-id'
             },
             name: 'default-circle-id'
-=======
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
-            },
-            name: AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
           }
         ]
       }
@@ -185,29 +157,17 @@ export const completeOctopipeUndeploymentEKSRequest: OctopipeUndeploymentRequest
               {
                 destination: {
                   host: 'B',
-<<<<<<< HEAD
                   subset: 'default-circle-id'
-=======
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
                 },
                 headers: {
                   request: {
                     set: {
-<<<<<<< HEAD
                       'x-circle-source': 'default-circle-id'
-=======
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
                     }
                   },
                   response: {
                     set: {
-<<<<<<< HEAD
                       'x-circle-source': 'default-circle-id'
-=======
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
                     }
                   }
                 }
@@ -226,8 +186,4 @@ export const completeOctopipeUndeploymentEKSRequest: OctopipeUndeploymentRequest
     awsRegion: 'aws-region',
     awsClusterName: 'aws-cluster-name'
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 129c5513f16a1ee07ca6428031f098ea104ac6e0
