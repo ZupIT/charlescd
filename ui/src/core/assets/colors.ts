@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const COLOR_WHITE = '#FFF';
+export const COLOR_WHITE = 'rgb(255, 255, 255)';
 export const COLOR_SANTAS_GREY = '#98989E';
 export const COLOR_PAYNES_GREY = '#48484A';
 export const COLOR_BLACK_RUSSIAN = '#1C1C1E';
