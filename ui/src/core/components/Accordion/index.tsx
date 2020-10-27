@@ -20,12 +20,12 @@ import filter from 'lodash/filter';
 import Styled from './styled';
 
 type AccordionProps = {
-  children: React.ReactElement[];
+  children: React.ReactElement | React.ReactElement[];
   multiples?: boolean;
 };
 
 type ItemProps = {
-  children: React.ReactElement[];
+  children: React.ReactElement | React.ReactElement[];
   index?: number;
   onAccordionClick?: (index: number) => void;
   active?: number[];
@@ -51,7 +51,7 @@ const Accordion = ({ children, multiples }: AccordionProps) => {
   };
 
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper data-testid="accordion">
       {React.Children.map(children, (child, index) =>
         React.createElement(child.type, {
           ...child.props,
@@ -66,7 +66,7 @@ const Accordion = ({ children, multiples }: AccordionProps) => {
 
 Accordion.Item = ({ children, active, index, onAccordionClick }: ItemProps) => {
   return (
-    <Styled.Item>
+    <Styled.Item data-testid="accordion-item">
       {React.Children.map(children, child =>
         React.createElement(child.type, {
           ...child.props,
@@ -88,7 +88,10 @@ Accordion.Header = ({
   const name = includes(active, index) ? 'arrow-up' : 'arrow-down';
 
   return (
-    <Styled.Header onClick={() => onAccordionClick(index)}>
+    <Styled.Header
+      onClick={() => onAccordionClick(index)}
+      data-testid="accordion-header"
+    >
       {children}
       <Styled.Arrow name={name} color="light" />
     </Styled.Header>
@@ -96,7 +99,9 @@ Accordion.Header = ({
 };
 
 Accordion.Body = ({ children, active, index }: ItemProps) => {
-  return includes(active, index) ? <Styled.Body>{children}</Styled.Body> : null;
+  return includes(active, index) ? (
+    <Styled.Body data-testid="accordion-body">{children}</Styled.Body>
+  ) : null;
 };
 
 export default Accordion;
