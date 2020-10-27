@@ -22,10 +22,12 @@ import Icon from 'core/components/Icon';
 import routes from 'core/constants/routes';
 import { updateParam } from 'core/utils/path';
 import ContentIcon from 'core/components/ContentIcon';
+import Accordion from 'core/components/Accordion';
 import Can from 'containers/Can';
 import { Module } from 'modules/Modules/interfaces/Module';
 import { Component } from 'modules/Modules/interfaces/Component';
 import { useDeleteComponent } from 'modules/Modules/hooks/component';
+import groupBy from 'lodash/groupBy';
 import { FIRST, ONE } from './constants';
 import Styled from './styled';
 
@@ -66,7 +68,7 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
-        <ContentIcon icon="component">
+        <Styled.ComponentContentIcon icon="component">
           <Text.h2 color="light">Components</Text.h2>
           <Can I="write" a="modules" passThrough>
             <Styled.ButtonRounded
@@ -86,31 +88,55 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
               Add component
             </Styled.ButtonRounded>
           </Can>
-          {map(module?.components, (component: Component, index: number) => (
-            <Styled.Component.Card
-              icon="component"
-              key={component?.id}
-              isLoading={loading}
-              description={component?.name}
-              canClose={index !== FIRST || module.components.length > ONE}
-              onClose={() => removeComponent(module?.id, component?.id)}
-              onClick={() => onSelectComponent(component)}
-            >
-              <Styled.Component.Wrapper>
-                <Styled.Component.Info>
-                  <Icon name="latency" size="10px" color="light" />
-                  <Text.h5 color="light">
-                    {component?.latencyThreshold} ms
-                  </Text.h5>
-                </Styled.Component.Info>
-                <Styled.Component.Info>
-                  <Icon name="error-threshold" size="10px" color="light" />
-                  <Text.h5 color="light">{component?.errorThreshold} %</Text.h5>
-                </Styled.Component.Info>
-              </Styled.Component.Wrapper>
-            </Styled.Component.Card>
-          ))}
-        </ContentIcon>
+          <Accordion>
+            {map(
+              groupBy(module.components, 'namespace'),
+              (components: Component[], namespace: string) => (
+                <Accordion.Item key={namespace}>
+                  <Accordion.Header>
+                    <Text.h4 color="light">{namespace}</Text.h4>
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    {map(components, (component: Component, index: number) => (
+                      <Styled.Component.Card
+                        icon="component"
+                        key={component?.id}
+                        isLoading={loading}
+                        description={component?.name}
+                        canClose={
+                          index !== FIRST || module.components.length > ONE
+                        }
+                        onClose={() =>
+                          removeComponent(module?.id, component?.id)
+                        }
+                        onClick={() => onSelectComponent(component)}
+                      >
+                        <Styled.Component.Wrapper>
+                          <Styled.Component.Info>
+                            <Icon name="latency" size="10px" color="light" />
+                            <Text.h5 color="light">
+                              {component?.latencyThreshold} ms
+                            </Text.h5>
+                          </Styled.Component.Info>
+                          <Styled.Component.Info>
+                            <Icon
+                              name="error-threshold"
+                              size="10px"
+                              color="light"
+                            />
+                            <Text.h5 color="light">
+                              {component?.errorThreshold} %
+                            </Text.h5>
+                          </Styled.Component.Info>
+                        </Styled.Component.Wrapper>
+                      </Styled.Component.Card>
+                    ))}
+                  </Accordion.Body>
+                </Accordion.Item>
+              )
+            )}
+          </Accordion>
+        </Styled.ComponentContentIcon>
       </Styled.Layer>
     </>
   );

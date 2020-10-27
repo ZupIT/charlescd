@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import FormComponent from 'core/components/Form';
 import PopoverComponent from 'core/components/Popover';
 import ButtonComponent from 'core/components/Button';
@@ -32,6 +32,10 @@ const Title = styled(Text.h2)`
 
 const Subtitle = styled(Text.h5)`
   margin: 10px 0px;
+`;
+
+const ComponentTitle = styled(Text.h5)`
+  margin: 40px 0 0;
 `;
 
 const Content = styled.div`
@@ -77,7 +81,44 @@ const ComponentsColumnWrapper = styled.div`
   flex-direction: column;
 `;
 
-const ComponentsWrapper = styled.div`
+type WrapperProps = {
+  isMoreThanOne: boolean;
+};
+
+const ComponentsWrapper = styled.div<WrapperProps>`
+  position: relative;
+  width: 585px;
+  margin-top: 20px;
+
+  ${({ isMoreThanOne, theme }) =>
+    isMoreThanOne &&
+    css`
+      .component::after {
+        position: absolute;
+        content: '';
+        width: 1px;
+        height: 100%;
+        background-color: ${theme.module.component.border};
+        right: 44px;
+      }
+
+      .component:first-child::after {
+        height: 0;
+      }
+
+      .component::before {
+        position: absolute;
+        content: '';
+        width: 41px;
+        height: 1px;
+        bottom: 0;
+        right: 44px;
+        background-color: ${({ theme }) => theme.module.component.border};
+      }
+    `}
+`;
+
+const ComponentsItem = styled.div`
   display: flex;
   position: relative;
   margin-bottom: 0px;
@@ -85,19 +126,20 @@ const ComponentsWrapper = styled.div`
 `;
 
 const ComponentInput = styled(FormComponent.Input)`
-  width: 155px;
+  width: 240px;
   margin-right: 20px;
 `;
 
 const ComponentNumber = styled(FormComponent.Number)`
-  width: 155px;
+  width: 240px;
+  margin-top: 20px;
   margin-right: 20px;
 `;
 
 const ComponentTrash = styled(IconComponent)`
   position: absolute;
-  bottom: 5px;
-  left: -20px;
+  bottom: 20px;
+  right: 35px;
 `;
 
 const ComponentButton = styled(ButtonComponent.Default)`
@@ -149,7 +191,9 @@ export default {
   Icon,
   Button,
   Components: {
+    Title: ComponentTitle,
     Wrapper: ComponentsWrapper,
+    Item: ComponentsItem,
     ColumnWrapper: ComponentsColumnWrapper,
     Input: ComponentInput,
     Number: ComponentNumber,

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-export interface Component {
-  id?: string;
-  name?: string;
-  namespace?: string;
-  latencyThreshold?: string;
-  errorThreshold?: string;
-  hostValue?: string;
-  gatewayName?: string;
-}
+import { COLOR_PAYNES_GREY } from 'core/assets/colors';
+
+export const light = {};
+
+export const dark = {
+  component: {
+    border: COLOR_PAYNES_GREY
+  }
+};

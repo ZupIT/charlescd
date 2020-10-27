@@ -14,12 +14,36 @@
  * limitations under the License.
  */
 
-export interface Component {
-  id?: string;
-  name?: string;
-  namespace?: string;
-  latencyThreshold?: string;
-  errorThreshold?: string;
-  hostValue?: string;
-  gatewayName?: string;
-}
+import styled from 'styled-components';
+import Icon from 'core/components/Icon';
+
+const Wrapper = styled.div`
+  width: 100%;
+`;
+
+const Item = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.accordion.border};
+`;
+
+const Header = styled.div`
+  position: relative;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  cursor: pointer;
+`;
+
+const Arrow = styled(Icon)`
+  position: absolute;
+  top: 22px;
+  right: 0;
+`;
+
+const Body = styled.div``;
+
+export default {
+  Wrapper,
+  Item,
+  Header,
+  Arrow,
+  Body
+};
