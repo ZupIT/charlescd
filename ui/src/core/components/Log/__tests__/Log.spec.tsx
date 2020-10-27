@@ -17,6 +17,7 @@
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import Log from '../';
+import { dark as logTheme } from 'core/assets/themes/log';
 
 test('render default component with error log', () => {
   const type = 'error';
@@ -29,10 +30,13 @@ test('render default component with error log', () => {
 
   const logText = screen.getByText(content);
   expect(logText).toBeInTheDocument();
+  expect(logText).toHaveStyle('text-overflow: ellipsis');
 
   const element = screen.getByTestId('log-error');
-  expect(element).toHaveStyle('background-color: rgb(255, 69, 58)');
-  expect(element).toHaveStyle('color: #FFF');
+  expect(element).toHaveStyle(`background-color: ${logTheme.error.background}`);
+
+  const textElement = screen.getByText(content);
+  expect(textElement).toHaveStyle(`color: ${logTheme.error.color}`);
 })
 
 test('render default component with warning log', () => {
@@ -46,8 +50,11 @@ test('render default component with warning log', () => {
 
   const logText = screen.getByText(content);
   expect(logText).toBeInTheDocument();
+  expect(logText).toHaveStyle('text-overflow: ellipsis');
 
   const element = screen.getByTestId('log-warning');
-  expect(element).toHaveStyle('background-color: #FFD60A');
-  expect(element).toHaveStyle('color: #FFF');
+  expect(element).toHaveStyle(`background-color: ${logTheme.warning.background}`);
+
+  const textElement = screen.getByText(content);
+  expect(textElement).toHaveStyle(`color: ${logTheme.warning.color}`);
 })
