@@ -27,5 +27,5 @@ data class DeploymentCallbackRequest(
 }
 
 enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
+    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED, TIMED_OUT
 }
