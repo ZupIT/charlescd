@@ -21,6 +21,7 @@ import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
 import selectEvent from 'react-select-event';
+import userEvent from '@testing-library/user-event';
 
 (global as any).MutationObserver = MutationObserver;
 
@@ -107,7 +108,7 @@ test('render Registry form with AWS values and secret input', async () => {
   await act(() => selectEvent.select(registryLabel, 'AWS'));
 
   const radioAuthButton = getByTestId("switch-aws-auth-handler")
-  fireEvent.click(radioAuthButton)
+  userEvent.click(radioAuthButton)
   expect(container.innerHTML).toMatch("Enter the access key");
 });
 
