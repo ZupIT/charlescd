@@ -27,9 +27,9 @@ export const dark = {
   error: {
     color: COLOR_WHITE,
     background: COLOR_RED_ORANGE
-  },
+  } as Record<string, string>,
   warning: {
     color: COLOR_BLACK_MARLIN,
     background: COLOR_GOLD
-  }
+  } as Record<string, string>
 };
