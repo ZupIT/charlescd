@@ -19,6 +19,7 @@ import MutationObserver from 'mutation-observer'
 import { render, wait, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import ModulesComparation  from '..';
+import userEvent from '@testing-library/user-event';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -40,9 +41,33 @@ afterEach(() => {
 });
 
 test('render Modules comparation', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
+    name: 'workspace',
+    components: [
+      {
+        id: '1',
+        name: 'comp1',
+        namespace: 'charlescd'
+      },
+      {
+        id: '2',
+        name: 'comp2',
+        namespace: 'charlescd'
+      },
+      {
+        id: '3',
+        name: 'comp3',
+        namespace: 'test'
+      },
+    ]
+  }));
   render(<ModulesComparation />);
   await wait();
   const tabpanel = screen.queryByTestId('tabpanel-workspace');
+  const charlescdComponents = await screen.findByText('charlescd');
+  userEvent.click(charlescdComponents);
+  const component1 = await screen.findByText('comp1');
+
+  expect(component1).toBeInTheDocument();
   expect(tabpanel).toBeInTheDocument();
 });
