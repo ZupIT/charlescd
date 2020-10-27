@@ -85,6 +85,7 @@ data class NodePart(
         STARTS_WITH,
         NOT_EQUAL,
         ENDS_WITH,
-        MATCHES
+        MATCHES,
+        CONTAINS
     }
 }
