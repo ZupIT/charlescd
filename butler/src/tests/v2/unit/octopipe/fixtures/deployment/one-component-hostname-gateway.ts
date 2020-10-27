@@ -17,6 +17,7 @@
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
 import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
 
+
 export const oneComponentHostnameGatewayOctopipe: OctopipeDeploymentRequest = {
   namespace: 'sandbox',
   deployments: [

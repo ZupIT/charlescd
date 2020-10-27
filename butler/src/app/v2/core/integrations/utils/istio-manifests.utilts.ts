@@ -93,7 +93,6 @@ const IstioManifestsUtils = {
       }
     ]
   }),
-
   getVirtualServiceHTTPDefaultRule: (name: string, circleId: string): Http => ({
     route: [
       {

@@ -302,6 +302,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
                       response: {
                         set: {
                           'x-circle-source': 'default-circle-id'
+
                         }
                       }
                     }

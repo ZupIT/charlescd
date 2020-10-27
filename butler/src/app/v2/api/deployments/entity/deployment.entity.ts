@@ -47,8 +47,9 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => Execution, execution => execution.deployment)
   public executions!: Execution[]
 
-  @Column({ name: 'circle_id', nullable: true, type: 'varchar' })
+  @Column({ name: 'circle_id', nullable: false, type: 'varchar' })
   public circleId!: string
+
 
   @Column({ name: 'active' })
   public active!: boolean

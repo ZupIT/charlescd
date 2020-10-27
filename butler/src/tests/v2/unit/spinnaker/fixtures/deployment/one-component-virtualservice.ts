@@ -367,6 +367,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
                       request: {
                         set: {
                           'x-circle-source': 'default-circle-id'
+
                         }
                       },
                       response: {

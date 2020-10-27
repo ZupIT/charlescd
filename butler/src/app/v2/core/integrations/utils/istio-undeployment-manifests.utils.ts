@@ -86,7 +86,6 @@ const IstioUndeploymentManifestsUtils = {
       }
     }
   },
-
   getActiveComponentsSubsets: (circleId: string, activeByName: Component[]): Subset[] => {
     const subsets: Subset[] = []
 

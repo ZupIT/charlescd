@@ -44,8 +44,8 @@ const deploymentWith2Components: Deployment = {
     createdAt: new Date(),
     deployments: null
   },
+  defaultCircle: true,
   circleId: 'circle-id',
-  defaultCircle: false,
   createdAt: new Date(),
   components: [
     {

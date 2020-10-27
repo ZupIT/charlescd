@@ -109,78 +109,77 @@ describe('DeploymentCleanupHandler', () => {
     await expect(
       pipe.transform(createDeploymentDto)
     ).rejects.toThrow(new BadRequestException(`Simultaneous deployments are not allowed for a given circle. The following executions are not finished: ${execution.id}`))
-
   })
-})
 
 
-const createDto = (componentName: string, circleId: string, defaultCircle: boolean) => {
-  const components = new CreateComponentRequestDto(
-    '777765f8-bb29-49f7-bf2b-3ec956a71583',
-    'image.url',
-    'imageTag',
-    componentName,
-    undefined,
-    undefined
-  )
-
-  const modules = new CreateModuleDeploymentDto(
-    'acf45587-3684-476a-8e6f-b479820a8cd5',
-    'https://some-helm.repo',
-    [components]
-  )
-
-  const circle = new CreateCircleDeploymentDto(circleId)
-
-  const createDeploymentDto = new CreateDeploymentRequestDto(
-    '28a3f957-3702-4c4e-8d92-015939f39cf2',
-    'http://localhost:8883/deploy/notifications/deployment',
-    '77777777-3702-4c4e-8d92-015939f39cf2',
-    '580a7726-a274-4fc3-9ec1-44e3563d58af',
-    circle,
-    DeploymentStatusEnum.CREATED,
-    [modules],
-    defaultCircle
-  )
-
-  return createDeploymentDto
-}
-
-const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manager: any, status: DeploymentStatusEnum): Promise<DeploymentEntity> => {
-  const components = params.components.map((c: any) => {
-    const component = new ComponentEntity(
-      c.helmRepository,
-      c.buildImageTag,
-      c.buildImageUrl,
-      c.componentName,
-      c.componentId,
-      c.hostValue,
-      c.gatewayName
+  const createDto = (componentName: string, circleId: string, defaultCircle: boolean) => {
+    const components = new CreateComponentRequestDto(
+      '777765f8-bb29-49f7-bf2b-3ec956a71583',
+      'image.url',
+      'imageTag',
+      componentName,
+      undefined,
+      undefined
     )
-    component.running = true
-    return component
-  })
 
-  const configEntity = new CdConfigurationEntity(
-    CdTypeEnum.SPINNAKER,
-    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
-    'config-name',
-    'authorId',
-    'workspaceId'
-  )
-  const cdConfiguration = await fixtureUtilsService.createEncryptedConfiguration(configEntity)
+    const modules = new CreateModuleDeploymentDto(
+      'acf45587-3684-476a-8e6f-b479820a8cd5',
+      'https://some-helm.repo',
+      [components]
+    )
 
-  const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(
-    params.deploymentId,
-    params.authorId,
-    params.circle,
-    cdConfiguration,
-    params.callbackUrl,
-    components,
-    params.defaultCircle
-  ))
+    const circle = new CreateCircleDeploymentDto(circleId)
 
-  await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, null, status))
+    const createDeploymentDto = new CreateDeploymentRequestDto(
+      '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      'http://localhost:8883/deploy/notifications/deployment',
+      '77777777-3702-4c4e-8d92-015939f39cf2',
+      '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      circle,
+      DeploymentStatusEnum.CREATED,
+      [modules],
+      defaultCircle
+    )
 
-  return deployment
-}
+    return createDeploymentDto
+  }
+
+  const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manager: any, status: DeploymentStatusEnum): Promise<DeploymentEntity> => {
+    const components = params.components.map((c: any) => {
+      const component = new ComponentEntity(
+        c.helmRepository,
+        c.buildImageTag,
+        c.buildImageUrl,
+        c.componentName,
+        c.componentId,
+        c.hostValue,
+        c.gatewayName
+      )
+      component.running = true
+      return component
+    })
+
+    const configEntity = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    const cdConfiguration = await fixtureUtilsService.createEncryptedConfiguration(configEntity)
+
+    const deployment: DeploymentEntity = await manager.save(new DeploymentEntity(
+      params.deploymentId,
+      params.authorId,
+      params.circle,
+      cdConfiguration,
+      params.callbackUrl,
+      components,
+      params.defaultCircle
+    ))
+
+    await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, null, status))
+
+    return deployment
+  }
+})

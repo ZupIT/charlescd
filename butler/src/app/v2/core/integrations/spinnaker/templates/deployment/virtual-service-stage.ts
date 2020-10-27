@@ -18,7 +18,6 @@ import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurat
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 import { IstioDeploymentManifestsUtils } from '../../../utils/istio-deployment-manifests.utils'
-import { Http } from '../../../interfaces/k8s-manifest.interface'
 
 export const getVirtualServiceStage = (
   component: Component,
