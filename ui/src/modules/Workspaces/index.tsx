@@ -42,13 +42,15 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     if (!email) logout();
   }, [email]);
 
+  const handleOnSearch = (name: string) => !loading && setName(name);
+
   return (
     <Page>
       <Page.Menu>
         <Menu
           items={list?.content || workspaces}
           isLoading={loading}
-          onSearch={setName}
+          onSearch={handleOnSearch}
           selectedWorkspace={(name: string) => selectedWorkspace(name)}
         />
       </Page.Menu>
