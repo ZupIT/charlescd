@@ -23,7 +23,6 @@ import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { useGit } from './hooks';
 import { FORM_GIT } from './constants';
 import FormGit from './Form';
-import Notification from 'core/components/Notification';
 
 interface Props {
   form: string;
@@ -56,12 +55,7 @@ const SectionGit = ({ form, setForm, data }: Props) => {
           description={data.name}
           isLoading={loadingRemove}
           onClose={() => remove(data.id)}
-        >
-          <Notification.Log
-            type="warning"
-            content="babababbababababbabbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-          />
-        </Card.Config>
+        />
       )}
     </Section>
   );
