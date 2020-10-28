@@ -1,0 +1,23 @@
+{
+  "name": "migration",
+  "version": "1.0.0",
+  "description": "migrating namespace to components",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node script.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZupIT/charlescd.git"
+  },
+  "author": "thalles freitas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZupIT/charlescd/issues"
+  },
+  "homepage": "https://github.com/ZupIT/charlescd#readme",
+  "dependencies": {
+    "pg": "^8.4.1"
+  }
+}
