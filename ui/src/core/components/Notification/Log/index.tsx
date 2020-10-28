@@ -24,7 +24,7 @@ export interface Props {
 
 const Log = ({ type, content }: Props) => (
   <Styled.Log type={type} data-testid={`log-${type}`}>
-    <Styled.Icon name={type} type={type} size="10px" />
+    <Styled.Icon name={type} type={type} size="12px" />
     <Styled.Content>
       <Styled.Text type={type}>{content}</Styled.Text>
     </Styled.Content>
