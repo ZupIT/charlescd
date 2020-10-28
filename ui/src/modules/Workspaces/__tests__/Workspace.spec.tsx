@@ -15,8 +15,10 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, fireEvent, wait, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
+import * as WorkspaceHooks from '../hooks';
 import MutationObserver from 'mutation-observer';
 import Workspace from '../';
 
@@ -62,4 +64,19 @@ test('render Workspace modal', async () => {
   const cancelButton = screen.getByTestId('icon-cancel');
   fireEvent.click(cancelButton);
   await wait(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
+});
+
+test('render Workspace and search', async () => {
+  const workspaceRequest = jest.fn();
+
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  
+  render(<Workspace selectedWorkspace={jest.fn()} />);
+
+  const search = screen.getByTestId('input-text-search');
+
+  await act(() => userEvent.type(search , 'workspace'));
+
+  expect(workspaceRequest).toHaveBeenCalled();
 });

@@ -19,7 +19,7 @@ import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
-import { isRoot, getAccessTokenDecoded, logout } from 'core/utils/auth';
+import { getAccessTokenDecoded, logout } from 'core/utils/auth';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
 
@@ -35,7 +35,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
   useEffect(() => {
-    if (isRoot()) filterWorkspace(name);
+    filterWorkspace(name);
   }, [name, filterWorkspace]);
 
   useEffect(() => {
