@@ -69,10 +69,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
   }, [testConnection, data]);
 
   const renderError = () => (
-    <Notification.Log
-      type="error"
-      content="This connection is unavailable. Check if the configuration information is correct or register a new configuration."
-    />
+    <Notification.Log type="error" content={error.message} />
   );
 
   const renderSection = () => (
@@ -91,7 +88,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
             isDisabled={isDisabled}
             onClose={() => remove(data?.id)}
           >
-            {renderError()}
+            {error && renderError()}
           </Card.Config>
         </Fragment>
       )}
