@@ -1,10 +1,11 @@
 {
-  "name": "scripts",
+  "name": "v2-migration",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "migration.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node migration.js"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +14,8 @@
     "axios": "^0.20.0",
     "pg": "^8.4.1",
     "qs": "^6.9.4"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0"
   }
 }
