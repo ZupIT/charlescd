@@ -24,7 +24,7 @@ import { useRegistry, useRegistryConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import { FetchStatuses } from 'core/providers/base/hooks';
-import Log from 'core/components/Log';
+import Notification from 'core/components/Notification';
 
 interface Props {
   form: string;
@@ -69,7 +69,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
   }, [testConnection, data]);
 
   const renderError = () => (
-    <Log
+    <Notification.Log
       type="error"
       content="This connection is unavailable. Check if the configuration information is correct or register a new configuration."
     />
