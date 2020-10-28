@@ -15,17 +15,18 @@
  */
 
 import React from 'react';
-import { Notification } from './interfaces/Notification';
+import { Notification as NotificationProps } from './interfaces/Notification';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
+import Log from './Log';
 import Styled from './styled';
 
 interface Props {
-  notification: Notification;
+  notification: NotificationProps;
   onDismiss: Function;
 }
 
-const NotificationComponent = ({ notification, onDismiss }: Props) => (
+const Notification = ({ notification, onDismiss }: Props) => (
   <Styled.Notification color={notification.status} data-testid="notification">
     <Styled.Wrapper>
       <Icon name={notification.status} color="light" />
@@ -37,4 +38,6 @@ const NotificationComponent = ({ notification, onDismiss }: Props) => (
   </Styled.Notification>
 );
 
-export default NotificationComponent;
+Notification.Log = Log;
+
+export default Notification;
