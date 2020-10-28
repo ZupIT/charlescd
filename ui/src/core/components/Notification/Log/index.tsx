@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import Icon from 'core/components/Icon';
 import Styled from './styled';
 
 export interface Props {
@@ -25,7 +24,7 @@ export interface Props {
 
 const Log = ({ type, content }: Props) => (
   <Styled.Log type={type} data-testid={`log-${type}`}>
-    <Icon name={type} size="10px" />
+    <Styled.Icon name={type} type={type} size="12px" />
     <Styled.Content>
       <Styled.Text type={type}>{content}</Styled.Text>
     </Styled.Content>

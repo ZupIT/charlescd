@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import ComponentText from 'core/components/Text';
+import ComponentIcon from 'core/components/Icon';
 import { Props } from './';
 
 const Log = styled.div<Pick<Props, 'type'>>`
@@ -26,18 +27,7 @@ const Log = styled.div<Pick<Props, 'type'>>`
   padding: 2.5px 8px 2.5px 10px;
   border-radius: 9.5px;
   box-sizing: border-box;
-
-  ${({ theme, type }) =>
-    type === 'error' &&
-    css`
-      background-color: ${theme.log.error.background};
-    `}
-
-  ${({ theme, type }) =>
-    type === 'warning' &&
-    css`
-      background-color: ${theme.log.warning.background};
-    `}
+  background-color: ${({ theme, type }) => theme.log[type].background};
 `;
 
 const Text = styled(ComponentText.h5)<Pick<Props, 'type'>>`
@@ -46,18 +36,11 @@ const Text = styled(ComponentText.h5)<Pick<Props, 'type'>>`
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-left: 5px;
+  color: ${({ theme, type }) => theme.log[type].color};
+`;
 
-  ${({ theme, type }) =>
-    type === 'error' &&
-    css`
-      color: ${theme.log.error.color};
-    `}
-
-  ${({ theme, type }) =>
-    type === 'warning' &&
-    css`
-      color: ${theme.log.warning.color};
-    `}
+const Icon = styled(ComponentIcon)<Pick<Props, 'type'>>`
+  color: ${({ theme, type }) => theme.log[type].color};
 `;
 
 const Content = styled.div`
@@ -68,5 +51,6 @@ const Content = styled.div`
 export default {
   Log,
   Content,
-  Text
+  Text,
+  Icon
 };
