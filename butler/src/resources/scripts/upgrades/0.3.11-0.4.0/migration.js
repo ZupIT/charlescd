@@ -4,8 +4,12 @@ import qs from 'qs'
 
 const mooveUrl = process.env.MOOVE_URL
 const keycloakUrl = process.env.KEYCLOAK_URL
-const username = process.env.USER
-const password = process.env.PASSWORD
+const charlesUser = process.env.USER
+const charlesPassword = process.env.PASSWORD
+const dbHost = process.env.DATABASE_HOST
+const dbUser = process.env.DATABASE_USER
+const dbPassword = process.env.DATABASE_PASSWORD
+const dbName = process.env.DATABASE_NAME
 
 const getActiveDeployments = async (client) => {
   try {
@@ -24,8 +28,8 @@ const doLogin = async () => {
     const loginObject = axios.post(
       `${keycloakUrl}:9090/keycloak/auth/realms/charlescd/protocol/openid-connect/token`,
       qs.stringify({
-        username: username,
-        password: password,
+        username: charlesUser,
+        password: charlesPassword,
         grant_type: 'password',
         client_id: 'charlescd-client'
       }),
@@ -122,10 +126,10 @@ const closePgConnection = (pgClient) => {
 const getPgConnection = async () => {
   console.log('Creating postgresql client connection')
   const client = new PG.Client({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    host: dbHost,
+    user: dbUser,
+    password: dbPassword,
+    database: dbName,
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
