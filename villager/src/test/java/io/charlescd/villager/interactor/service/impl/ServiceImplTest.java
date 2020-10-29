@@ -121,7 +121,7 @@ public class ServiceImplTest {
         serviceImpl.testRegistryConnectivityConfig(entity);
 
         verify(registryClient, times(1))
-                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME); //TODO: Verify
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
 
         verify(registryClient, times(1))
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
@@ -175,7 +175,7 @@ public class ServiceImplTest {
 
         assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
         verify(registryClient, times(1))
-                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME); //TODO: Verify ARTIFACT_NAME
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
 
         verify(registryClient, times(1))
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
