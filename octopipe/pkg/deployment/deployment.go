@@ -94,7 +94,7 @@ func (deployment *Deployment) updateResource(
 	log.WithFields(log.Fields{"resource": resource.GetName(), "kind": resource.GetKind()}).Info("Start update")
 
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		err := mergo.Merge(&resource.Object, manifest.Object, mergo.WithOverride)
+		err := mergo.Merge(&resource.Object, manifest.Object, mergo.WithOverride, mergo.WithOverwriteWithEmptyValue)
 		if err != nil {
 			return deployment.getDeploymentError("Failed to merge between the existing resource and the new resource", err, manifest)
 		}

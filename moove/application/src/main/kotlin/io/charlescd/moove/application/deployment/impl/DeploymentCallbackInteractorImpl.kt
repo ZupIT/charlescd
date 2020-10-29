@@ -66,6 +66,7 @@ open class DeploymentCallbackInteractorImpl(
                 undeployedAt = LocalDateTime.now()
             )
             DeploymentRequestStatus.UNDEPLOY_FAILED -> deployment.copy(status = DeploymentStatusEnum.DEPLOYED)
+            DeploymentRequestStatus.TIMED_OUT -> deployment.copy(status = DeploymentStatusEnum.DEPLOY_FAILED)
         }
     }
 
