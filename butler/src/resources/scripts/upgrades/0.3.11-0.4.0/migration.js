@@ -15,10 +15,10 @@ const dbName = process.env.DATABASE_NAME
 
 const syncPrompt = prompt({})
 
-const getActiveDeployments = async (client) => {
+const getActiveDeployments = async (pgClient) => {
   try {
     console.log('Fetching active deployments')
-    const deployments = await client.query('select * from deployments where status = \'DEPLOYED\';')
+    const deployments = await pgClient.query('select * from deployments where status = \'DEPLOYED\';')
     console.log(`Active deployments: ${JSON.stringify(deployments.rows)}`)
     return deployments.rows
   } catch (error) {
@@ -29,7 +29,7 @@ const getActiveDeployments = async (client) => {
 const doLogin = async () => {
   try {
     console.log('Starting authentication')
-    const loginObject = axios.post(
+    const loginObject = await axios.post(
       `${charlesBaseUrl}/keycloak/auth/realms/charlescd/protocol/openid-connect/token`,
       qs.stringify({
         username: charlesUser,
@@ -54,8 +54,7 @@ const doLogin = async () => {
 
 const doV1UndeployRequest = async (deployment, loginObject) => {
   try {
-    console.log(`Undeploying ${deployment.id} with V1 api`)
-    const v1UndeployResponse = axios.post(
+    return await axios.post(
       `${charlesBaseUrl}/moove/deployments/v1/${deployment.id}/undeploy`,
       {},
       {
@@ -66,8 +65,6 @@ const doV1UndeployRequest = async (deployment, loginObject) => {
         timeout: 10000
       }
     )
-    console.log('V1 undeployment requested')
-    return v1UndeployResponse
   } catch (error) {
     console.error(chalk.red(`Error doing v1 undeployment: ${error}`))
   }
@@ -75,24 +72,33 @@ const doV1UndeployRequest = async (deployment, loginObject) => {
 
 const v2DeployRequest = async (deployment, loginObject) => {
   try {
-    console.log(`Deploying ${deployment.id} with V2 api`)
-    const v2DeploymentResponse = axios.post(
+    return await axios.post(
       `${charlesBaseUrl}/moove/v2/deployments`,
       {
-        authorId: 'migration-script',
-        circleId: deployment.circleId,
-        buildId: deployment.buildId
+        authorId: deployment.user_id,
+        circleId: deployment.circle_id,
+        buildId: deployment.build_id
       },
       {
-        'x-workspace-id': deployment.workspace_id,
-        'Authorization': `Bearer ${loginObject.data.access_token}`,
+        headers: {
+          'x-workspace-id': deployment.workspace_id,
+          'Authorization': `Bearer ${loginObject.data.access_token}`,
+          'Content-Type': 'application/json'
+        },
         timeout: 10000
       }
     )
-    console.log('V2 deployment requested')
-    return v2DeploymentResponse
   } catch (error) {
     console.error(chalk.red(`Error doing v2 deployment: ${error}`))
+  }
+}
+
+const checkForDefaultCircle = async (circleId, pgClient) => {
+  try {
+    const queryResult = await pgClient.query(`select * from circles where id = '${circleId}' and default_circle = true;`)
+    return queryResult.rows.length > 0
+  } catch(error) {
+    console.error(chalk.read(`Error checking if the deployment circle ${circleId} is default`))
   }
 }
 
@@ -106,19 +112,27 @@ const sleep = (milliseconds) => {
 
 const deployV2Deployments = async (deployments, loginObject) => {
   for (const deployment of deployments) {
-    console.log(`Deploying ${deployment.id}`)
+    console.log(`Deploying ${deployment.id} with V2 api`)
     await v2DeployRequest(deployment, loginObject)
+    console.log('V2 deployment requested')
     console.log('Sleeping for 2 seconds')
     sleep(2000)
   }
 }
 
-const undeployV1Deployments = async (deployments, loginObject) => {
+const undeployV1Deployments = async (deployments, loginObject, pgClient) => {
   console.log('Starting v1 undeployments')
   for (const deployment of deployments) {
-    await doV1UndeployRequest(deployment, loginObject)
-    console.log('Sleeping for 2 seconds')
-    sleep(2000)
+    const isDefaultCircle = await checkForDefaultCircle(deployment.circle_id, pgClient)
+    if (!isDefaultCircle) {
+      console.log(`Undeploying ${deployment.id} with V1 api`)
+      await doV1UndeployRequest(deployment, loginObject)
+      console.log('V1 undeployment requested')
+      console.log('Sleeping for 2 seconds')
+      sleep(2000)
+    } else {
+      console.log(`Not undeploying default circle deployment ${deployment.id}`)
+    }
   }
   console.log('Done v1 undeployments')
 }
@@ -156,8 +170,8 @@ const doV2Migration = async () => {
 
     const pgClient = await getPgConnection()
     const activeDeployments = await getActiveDeployments(pgClient)
-    const loginObject = await doLogin()
-    await undeployV1Deployments(activeDeployments, loginObject)
+    let loginObject = await doLogin()
+    await undeployV1Deployments(activeDeployments, loginObject, pgClient)
 
     console.log(chalk.bold.red('\nPlease check if all your undeployments finished before proceeding to the next step.\n'))
     let deployDecision = 'no'
