@@ -19,7 +19,11 @@ import { render, screen, fireEvent, wait, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
+import * as StateHooks from 'core/state/hooks';
+import { FetchMock } from 'jest-fetch-mock/types';
 import MutationObserver from 'mutation-observer';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import { workspaceResponce } from './fixtures';
 import Workspace from '../';
 
 (global as any).MutationObserver = MutationObserver;
@@ -66,6 +70,16 @@ test('render Workspace modal', async () => {
   await wait(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
 });
 
+test('render Workspace and see a placeholder', async () => {
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  
+  render(<Workspace selectedWorkspace={jest.fn()} />);
+
+  const placeholder = screen.queryByTestId('placeholder-empty-workspaces');
+
+  expect(placeholder).toBeInTheDocument();
+});
+
 test('render Workspace and search', async () => {
   const workspaceRequest = jest.fn();
 
@@ -79,14 +93,4 @@ test('render Workspace and search', async () => {
   await act(() => userEvent.type(search , 'workspace'));
 
   expect(workspaceRequest).toHaveBeenCalled();
-});
-
-test('render Workspace and see a placeholder', async () => {
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  
-  render(<Workspace selectedWorkspace={jest.fn()} />);
-
-  const placeholder = screen.queryByTestId('placeholder-empty-workspaces');
-
-  expect(placeholder).toBeInTheDocument();
 });
