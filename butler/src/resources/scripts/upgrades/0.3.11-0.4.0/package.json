@@ -1,7 +1,7 @@
 {
   "name": "v2-migration",
   "version": "1.0.0",
-  "description": "",
+  "description": "Migration script from  Charles v0.3.11 to v0.4.0",
   "main": "migration.js",
   "type": "module",
   "scripts": {
@@ -13,9 +13,12 @@
   "dependencies": {
     "axios": "^0.20.0",
     "pg": "^8.4.1",
-    "qs": "^6.9.4"
+    "qs": "^6.9.4",
+    "chalk": "^4.1.0",
+    "prompt-sync": "^4.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0"
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.12.1"
   }
 }

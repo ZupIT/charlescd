@@ -1,21 +1,25 @@
 import PG from 'pg'
 import axios from 'axios'
 import qs from 'qs'
+import chalk from 'chalk'
+import prompt from 'prompt-sync'
 
-const mooveUrl = process.env.MOOVE_URL
-const keycloakUrl = process.env.KEYCLOAK_URL
-const charlesUser = process.env.USER
-const charlesPassword = process.env.PASSWORD
+const charlesBaseUrl = process.env.CHARLES_BASEURL
+const charlesUser = process.env.CHARLES_USER
+const charlesPassword = process.env.CHARLES_PASSWORD
 const dbHost = process.env.DATABASE_HOST
+const dbPort = process.env.DATABASE_PORT
 const dbUser = process.env.DATABASE_USER
 const dbPassword = process.env.DATABASE_PASSWORD
 const dbName = process.env.DATABASE_NAME
+
+const syncPrompt = prompt({})
 
 const getActiveDeployments = async (client) => {
   try {
     console.log('Fetching active deployments')
     const deployments = await client.query('select * from deployments where status = \'DEPLOYED\';')
-    console.log(`Active deployments: ${deployments.rows}`)
+    console.log(`Active deployments: ${JSON.stringify(deployments.rows)}`)
     return deployments.rows
   } catch (error) {
     console.error(`Error fetching active deployments: ${error}`)
@@ -26,7 +30,7 @@ const doLogin = async () => {
   try {
     console.log('Starting authentication')
     const loginObject = axios.post(
-      `${keycloakUrl}:9090/keycloak/auth/realms/charlescd/protocol/openid-connect/token`,
+      `${charlesBaseUrl}/keycloak/auth/realms/charlescd/protocol/openid-connect/token`,
       qs.stringify({
         username: charlesUser,
         password: charlesPassword,
@@ -52,7 +56,7 @@ const doV1UndeployRequest = async (deployment, loginObject) => {
   try {
     console.log(`Undeploying ${deployment.id} with V1 api`)
     const v1UndeployResponse = axios.post(
-      `${mooveUrl}/deployments/v1/${deployment.id}/undeploy`,
+      `${charlesBaseUrl}/moove/deployments/v1/${deployment.id}/undeploy`,
       {},
       {
         headers: {
@@ -73,7 +77,7 @@ const v2DeployRequest = async (deployment, loginObject) => {
   try {
     console.log(`Deploying ${deployment.id} with V2 api`)
     const v2DeploymentResponse = axios.post(
-      `${mooveUrl}/v2/deployments`,
+      `${charlesBaseUrl}/moove/v2/deployments`,
       {
         authorId: 'migration-script',
         circleId: deployment.circleId,
@@ -120,13 +124,16 @@ const undeployV1Deployments = async (deployments, loginObject) => {
 }
 
 const closePgConnection = (pgClient) => {
+  console.log('Closing db connection')
   pgClient.end()
+  console.log('Finished closing db connection')
 }
 
 const getPgConnection = async () => {
   console.log('Creating postgresql client connection')
   const client = new PG.Client({
     host: dbHost,
+    port: dbPort,
     user: dbUser,
     password: dbPassword,
     database: dbName,
@@ -141,17 +148,28 @@ const getPgConnection = async () => {
 
 const doV2Migration = async () => {
   try {
-    console.log('Starting migration script')
+    console.log(chalk.bold.green('Butler migration script: v0.3.11 to v0.4.0\n'))
+    console.log(chalk.green('This script is divided in two steps:'))
+    console.log(chalk.green('1 - First, it needs to undeploy all charles releases using the 0.3.11 APIs'))
+    console.log(chalk.green('2 - Second, it needs to deploy the same releases using the 0.4.0 APIs\n'))
+    console.log(chalk.bold.red('Disclaimer: After the end of the script, there might be some stale resources in your cluster. Please remove them manually.\n'))
+
     const pgClient = await getPgConnection()
     const activeDeployments = await getActiveDeployments(pgClient)
     const loginObject = await doLogin()
     await undeployV1Deployments(activeDeployments, loginObject)
-    sleep(300000)
+
+    console.log(chalk.bold.red('\nPlease check if all your undeployments finished before proceeding to the next step.\n'))
+    let deployDecision = 'no'
+    do {
+      deployDecision = syncPrompt(chalk.bold('Start 0.4.0 deployments? (yes/no): '), 'no')
+    } while(deployDecision !== 'yes')
     await deployV2Deployments(activeDeployments, loginObject)
+
     closePgConnection(pgClient)
-    console.log('Migration finished with no errors')
+    console.log(chalk.bold.green('\nMigration finished'))
   } catch(error) {
-    console.error(`Error running migration script: ${error}`)
+    console.error(chalk.red(`Error running migration script: ${error}`))
   }
 }
 
