@@ -29,5 +29,5 @@ export const dark = {
     darkBlue: COLOR_FREE_SPEECH_BLUE,
     lightBlue: COLOR_NEON_BLUE,
     red: COLOR_RED_ORANGE
-  }
+  } as Record<string, string>
 };

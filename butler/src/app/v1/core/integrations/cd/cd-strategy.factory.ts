@@ -33,13 +33,13 @@ export class CdStrategyFactory {
   public create(type: CdTypeEnum): ICdServiceStrategy {
 
     switch (type) {
-    case CdTypeEnum.SPINNAKER:
-      return this.spinnakerService
-    case CdTypeEnum.OCTOPIPE:
-      return this.octopipeService
-    default:
-      this.consoleLoggerService.error('ERROR:INVALID_CD_TYPE_VALUE', type)
-      throw new Error('invalid cd type value')
+      case CdTypeEnum.SPINNAKER:
+        return this.spinnakerService
+      case CdTypeEnum.OCTOPIPE:
+        return this.octopipeService
+      default:
+        this.consoleLoggerService.error('ERROR:INVALID_CD_TYPE_VALUE', type)
+        throw new Error('invalid cd type value')
 
     }
   }
