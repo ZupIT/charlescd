@@ -30,10 +30,10 @@ import { getWarningText, WarningMessage } from './helpers';
 type SegmentType = 'CREATE_MANUALLY' | 'IMPORT_CSV';
 
 interface Props {
-  onGoBack: Function;
+  onGoBack: () => void;
   id: string;
   circle: Circle;
-  onSaveCircle: Function;
+  onSaveCircle: () => void;
 }
 
 const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {

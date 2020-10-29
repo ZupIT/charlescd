@@ -32,7 +32,7 @@ test('useFetch hook initial state', () => {
   expect(data.response).toEqual(undefined);
   expect(data.error).toEqual(null);
   expect(data.loading).toEqual(false);
-  expect(trigger).toEqual(expect.any(Function));
+  expect(trigger).toEqual(expect.any(: () => void));
 });
 
 test('useFetch hook trigger promise success', async () => {

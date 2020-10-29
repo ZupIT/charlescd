@@ -24,8 +24,8 @@ import { isNotBlank } from 'core/utils/validation';
 
 interface Props {
   id: string;
-  onCloseModal: Function;
-  onSaveGroup: Function;
+  onCloseModal: () => void;
+  onSaveGroup: () => void;
   metricGroup?: MetricsGroup;
 }
 

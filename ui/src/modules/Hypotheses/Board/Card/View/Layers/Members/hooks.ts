@@ -23,7 +23,7 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
 
 interface FetchProps {
-  getAllUsers: Function;
+  getAllUsers: () => void;
   loadingUsers: boolean;
   users: User[];
 }

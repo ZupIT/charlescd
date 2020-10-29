@@ -19,16 +19,16 @@ import { buildHeaders, basePath } from 'core/providers/base';
 import { logout } from 'core/utils/auth';
 import { getCircleId } from 'core/utils/circle';
 
-function loadWorker(workerFile: Function) {
+function loadWorker(workerFile: () => void) {
   const code = workerFile.toString();
   const blob = new Blob(['(' + code + ')()']);
   return new Worker(URL.createObjectURL(blob));
 }
 
 const useWorker = <T>(
-  workerFile: Function,
+  workerFile: () => void,
   initialValue?: T
-): [T, Function] => {
+): [T, () => void] => {
   const worker = useRef<Worker>();
   const [data, setData] = useState<T>(initialValue);
 

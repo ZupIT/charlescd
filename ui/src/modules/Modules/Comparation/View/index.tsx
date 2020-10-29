@@ -31,7 +31,7 @@ import Styled from './styled';
 
 interface Props {
   module: Module;
-  onChange: Function;
+  onChange: () => void;
   onSelectComponent: (component: Component) => void;
   mode: string;
 }

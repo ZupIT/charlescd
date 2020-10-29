@@ -31,5 +31,5 @@ test('useGlobalState', () => {
 test('useDispatch', () => {
   const { result } = renderHook(() => useDispatch(), { wrapper });
 
-  expect(result.current).toEqual(expect.any(Function));
+  expect(result.current).toEqual(expect.any(: () => void));
 });

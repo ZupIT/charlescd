@@ -29,7 +29,7 @@ import {
 import { buildParams, URLParams } from 'core/utils/query';
 
 interface CirclesMetrics extends FetchProps {
-  findAllCirclesData: Function;
+  findAllCirclesData: () => void;
   response: CirclesMetricData;
 }
 

@@ -31,7 +31,7 @@ import Styled from './styled';
 
 interface Props {
   form: string;
-  setForm: Function;
+  setForm: () => void;
   data: MetricConfiguration;
 }
 

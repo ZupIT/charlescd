@@ -30,7 +30,7 @@ export interface Props {
     >
   >;
   isGroup?: boolean;
-  onRemoveRule?: Function;
+  onRemoveRule?: () => void;
   hasGroup?: boolean;
 }
 

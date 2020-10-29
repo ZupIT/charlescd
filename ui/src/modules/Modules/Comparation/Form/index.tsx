@@ -33,7 +33,7 @@ import Styled from './styled';
 
 interface Props {
   module: Module;
-  onChange: Function;
+  onChange: () => void;
 }
 
 const FormModule = ({ module, onChange }: Props) => {

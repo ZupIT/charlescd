@@ -36,7 +36,7 @@ import {
 } from 'modules/Modules/state/actions';
 
 export const useFindAllModules = (): {
-  getAllModules: Function;
+  getAllModules: () => void;
   response: ModulePagination;
   loading: boolean;
 } => {
@@ -65,7 +65,7 @@ export const useFindAllModules = (): {
 };
 
 export const useFindModule = (): {
-  getModuleById: Function;
+  getModuleById: () => void;
   response: Module;
   error: Response;
   loading: boolean;
@@ -95,7 +95,7 @@ export const useFindModule = (): {
 
 export const useSaveModule = (): {
   loading: boolean;
-  saveModule: Function;
+  saveModule: () => void;
 } => {
   const [data, saveModule] = useFetch<Module>(create);
   const { getAllModules } = useFindAllModules();
@@ -126,7 +126,7 @@ export const useSaveModule = (): {
 export const useDeleteModule = (
   module: Module
 ): {
-  removeModule: Function;
+  removeModule: () => void;
   response: Module;
   error: Response;
   loading: boolean;
@@ -170,7 +170,7 @@ export const useDeleteModule = (
 };
 
 export const useUpdateModule = (): {
-  updateModule: Function;
+  updateModule: () => void;
   status: string;
 } => {
   const [, , updateModulePromise] = useFetch<Module>(update);

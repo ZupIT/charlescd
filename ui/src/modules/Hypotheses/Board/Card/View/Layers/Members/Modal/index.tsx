@@ -31,7 +31,7 @@ import Styled from './styled';
 
 interface Props {
   cardId: string;
-  onClose: Function;
+  onClose: () => void;
   users: User[];
   members: User[];
 }

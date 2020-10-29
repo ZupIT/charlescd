@@ -25,7 +25,7 @@ import { changePassword } from 'core/providers/users';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useChangePassword = (): {
-  updatePassword: Function;
+  updatePassword: () => void;
   status: FetchStatus;
 } => {
   const changePass = useFetchData<CheckPassword>(changePassword);

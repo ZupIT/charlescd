@@ -32,7 +32,7 @@ interface Props {
   columnId: string;
   draggableProps: DraggableProvidedDraggableProps;
   dragHandleProps: DraggableProvidedDragHandleProps;
-  onSelect?: Function;
+  onSelect?: () => void;
   isSelected?: boolean;
   isSelectable?: boolean;
 }

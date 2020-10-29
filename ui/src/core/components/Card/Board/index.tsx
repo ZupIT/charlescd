@@ -36,9 +36,9 @@ export interface Props {
   description: string;
   type: CardType;
   members?: Author[];
-  onClick?: Function;
-  onRemove: Function;
-  onArchive: Function;
+  onClick?: () => void;
+  onRemove: () => void;
+  onArchive: () => void;
   hideAction?: boolean;
 }
 

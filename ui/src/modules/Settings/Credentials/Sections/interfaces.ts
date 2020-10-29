@@ -15,5 +15,5 @@
  */
 
 export interface Props {
-  onFinish: Function;
+  onFinish: () => void;
 }

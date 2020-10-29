@@ -26,7 +26,7 @@ import Loader from '../../Loaders/index';
 type Props = {
   metricsGroupId: string;
   selectFilters: OptionTypeBase[];
-  onChangePeriod: Function;
+  onChangePeriod: () => void;
 };
 
 const MonitoringMetrics = ({

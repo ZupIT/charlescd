@@ -38,7 +38,7 @@ import { User, Profile, NewUser, NewPassword } from './interfaces/User';
 import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
-  findByEmail: Function;
+  findByEmail: (email: Pick<User, 'email'>) => void;
   user: User;
   error: ResponseError;
 } => {
@@ -81,7 +81,7 @@ export const useUser = (): {
 };
 
 export const useCreateUser = (): {
-  create: Function;
+  create: (user: NewUser) => void;
   newUser: User;
 } => {
   const dispatch = useDispatch();
@@ -118,7 +118,10 @@ export const useCreateUser = (): {
   };
 };
 
-export const useDeleteUser = (): [Function, string] => {
+export const useDeleteUser = (): [
+  (id: string, name: string) => void,
+  string
+] => {
   const [deleteData, deleteUser] = useFetch<User>(deleteUserById);
   const [userName, setUserName] = useState(undefined);
   const [userStatus, setUserStatus] = useState('');
@@ -155,7 +158,12 @@ export const useDeleteUser = (): [Function, string] => {
   return [delUser, userStatus];
 };
 
-export const useUpdateProfile = (): [boolean, Function, User, string] => {
+export const useUpdateProfile = (): [
+  boolean,
+  (id: string, profile: Profile) => void,
+  User,
+  string
+] => {
   const [status, setStatus] = useState<string>('');
   const [dataUpdate, , update] = useFetch<User>(updateProfileById);
   const { response, loading: updateLoading } = dataUpdate;
@@ -202,7 +210,7 @@ export const useResetPassword = (): {
   return { resetPassword, response, status };
 };
 
-export const useUsers = (): [Function, Function, boolean] => {
+export const useUsers = (): [(name: string) => void, () => void, boolean] => {
   const dispatch = useDispatch();
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response, error, loading } = usersData;

@@ -25,7 +25,7 @@ import { Deployment } from '../interfaces/Circle';
 
 interface Props {
   id: string;
-  onGoBack: Function;
+  onGoBack: () => void;
   onCreateRelease: (deploy: Deployment) => void;
 }
 

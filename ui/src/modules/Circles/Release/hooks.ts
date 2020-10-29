@@ -35,7 +35,7 @@ import { Deployment } from '../interfaces/Circle';
 import { Tag } from './interfaces/Tag';
 
 export const useComponentTags = (): {
-  getComponentTag: Function;
+  getComponentTag: () => void;
   tag: Tag;
   status: FetchStatus;
 } => {
@@ -72,7 +72,7 @@ export const useComponentTags = (): {
 };
 
 export const useComposeBuild = (): {
-  composeBuild: Function;
+  composeBuild: () => void;
   response: Build;
   loading: boolean;
 } => {
@@ -87,7 +87,7 @@ export const useComposeBuild = (): {
 };
 
 export const useCreateDeployment = (): {
-  createDeployment: Function;
+  createDeployment: () => void;
   response: Deployment;
   loading: boolean;
 } => {
@@ -109,7 +109,7 @@ export const useCreateDeployment = (): {
 };
 
 export const useFindBuilds = (): {
-  getBuilds: Function;
+  getBuilds: () => void;
   response: Pagination<Build>;
   loading: boolean;
 } => {

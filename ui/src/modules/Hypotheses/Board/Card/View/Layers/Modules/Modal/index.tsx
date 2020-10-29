@@ -32,7 +32,7 @@ import Styled from './styled';
 
 interface Props {
   card: Card;
-  onClose: Function;
+  onClose: () => void;
   modules: ModuleProps[];
   allModules: ModuleProps[];
 }

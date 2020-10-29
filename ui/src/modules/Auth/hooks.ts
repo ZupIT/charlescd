@@ -26,7 +26,7 @@ type Grants = {
 };
 
 export const useAuth = (): {
-  getTokens: Function;
+  getTokens: (code: string) => void;
   grants: Grants;
 } => {
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ export const useAuth = (): {
     async (code: string) => {
       try {
         if (code) {
-          const res = await codeToTokens(code);
+          const res = codeToTokens(code);
 
           res({}).then((response: Response) => {
             if (response.ok) {

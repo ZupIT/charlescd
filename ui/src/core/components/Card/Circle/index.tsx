@@ -33,7 +33,7 @@ export interface Props {
   deployedAt: string;
   children: ReactNode;
   footer?: ReactNode;
-  onClick?: Function;
+  onClick?: () => void;
 }
 
 const CardCircle = forwardRef(

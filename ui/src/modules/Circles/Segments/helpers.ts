@@ -89,7 +89,7 @@ export const getGroupVerticalLine = (
 
 export const changeOperatorValue = (
   name: string,
-  form: { getValues: Function; watch: Function; setValue: Function }
+  form: { getValues: () => void; watch: () => void; setValue: () => void }
 ) => {
   const values = form.getValues();
   const newValue = values[name] === 'AND' ? 'OR' : 'AND';

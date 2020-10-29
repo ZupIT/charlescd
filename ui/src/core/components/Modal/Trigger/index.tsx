@@ -24,8 +24,8 @@ export interface Props {
   title: string;
   dismissLabel: string;
   continueLabel?: string;
-  onContinue?: Function;
-  onDismiss: Function;
+  onContinue?: () => void;
+  onDismiss: () => void;
   children: ReactNode;
 }
 

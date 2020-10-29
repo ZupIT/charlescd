@@ -72,7 +72,7 @@ const order = (
   destinationId: string,
   columns: Props[],
   hypothesisId: string,
-  reorderColumn: Function
+  reorderColumn: () => void
 ) => {
   const column = find(columns, ({ id }) => id === destinationId);
 
@@ -85,7 +85,7 @@ const move = (
   columns: Props[],
   cardId: string,
   hypothesisId: string,
-  movingCard: Function
+  movingCard: () => void
 ) => {
   const source = find(columns, ({ id }) => id === sourceId);
   const destination = find(columns, ({ id }) => id === destinationId);
@@ -125,9 +125,9 @@ export const moving = (
   columns: Props[],
   cardId: string,
   hypothesisId: string,
-  setColumns: Function,
-  movingCard: Function,
-  reorderColumn: Function
+  setColumns: () => void,
+  movingCard: () => void,
+  reorderColumn: () => void
 ) => {
   const { droppableId: destinationId } = destination;
   const { droppableId: sourceId } = source;

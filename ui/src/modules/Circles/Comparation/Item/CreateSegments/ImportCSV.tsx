@@ -26,7 +26,7 @@ import Styled from './styled';
 interface Props {
   id: string;
   name: string;
-  onSaveCircle: Function;
+  onSaveCircle: () => void;
 }
 
 const ImportCSV = ({ id, name, onSaveCircle }: Props) => {

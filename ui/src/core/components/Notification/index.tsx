@@ -23,7 +23,7 @@ import Styled from './styled';
 
 interface Props {
   notification: NotificationProps;
-  onDismiss: Function;
+  onDismiss: () => void;
 }
 
 const Notification = ({ notification, onDismiss }: Props) => (

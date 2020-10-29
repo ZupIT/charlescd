@@ -100,7 +100,7 @@ export const useMetricProvider = (): FetchProps => {
 };
 
 interface FromTestConnection extends FetchProps {
-  testProviderConnectionForm: Function;
+  testProviderConnectionForm: () => void;
   response: TestConnectionResponse;
 }
 
@@ -127,7 +127,7 @@ export const useFromTestConnection = (): FromTestConnection => {
 };
 
 interface SectionTestConnection extends FetchProps {
-  testProviderConnectionSection: Function;
+  testProviderConnectionSection: () => void;
   response: TestConnectionResponse;
 }
 

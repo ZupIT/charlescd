@@ -19,7 +19,7 @@ import Layer from 'core/components/Layer';
 import Styled from './styled';
 
 interface Props {
-  action: Function;
+  action: () => void;
   children: ReactNode;
 }
 

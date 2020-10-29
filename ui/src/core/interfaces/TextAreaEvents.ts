@@ -19,7 +19,7 @@ import { FocusEvent, ChangeEvent } from 'react';
 export type ChangeTextAreaEvent = ChangeEvent<HTMLTextAreaElement>;
 
 export interface TextAreaEvents {
-  onFocus?: ((event: FocusEvent<HTMLTextAreaElement>) => void) & Function;
-  onBlur?: ((event: FocusEvent<HTMLTextAreaElement>) => void) & Function;
+  onFocus?: ((event: FocusEvent<HTMLTextAreaElement>) => void) & : () => void;
+  onBlur?: ((event: FocusEvent<HTMLTextAreaElement>) => void) & : () => void;
   onChange?: (event: ChangeEvent<HTMLTextAreaElement>) => void;
 }

@@ -22,7 +22,7 @@ import Styled from './styled';
 export interface Props {
   id: string;
   name: string;
-  onClick: Function;
+  onClick: () => void;
 }
 
 const MenuItem = ({ id, name, onClick }: Props) => {

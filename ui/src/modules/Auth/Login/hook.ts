@@ -29,7 +29,7 @@ interface CircleMatcherResponse {
 }
 
 export const useCircleMatcher = (): {
-  getCircleId: Function;
+  getCircleId: (data: unknown) => Promise<void>;
 } => {
   const getCircleMatcher = useFetchData<CircleMatcherResponse>(circleMatcher);
 
@@ -59,7 +59,7 @@ interface AuthResponse {
 }
 
 export const useLogin = (): {
-  doLogin: Function;
+  doLogin: (email: string, password: string) => Promise<void>;
   status: string;
   error: string;
 } => {

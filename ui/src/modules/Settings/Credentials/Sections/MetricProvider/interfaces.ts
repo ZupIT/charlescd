@@ -15,7 +15,7 @@
  */
 
 export interface Props {
-  onSave: Function;
+  onSave: () => void;
 }
 
 export interface Provider {

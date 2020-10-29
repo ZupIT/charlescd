@@ -20,8 +20,8 @@ import { FieldElement, ValidationOptions } from 'react-hook-form';
 export type ChangeInputEvent = ChangeEvent<HTMLInputElement>;
 
 export interface InputEvents {
-  onFocus?: ((event: FocusEvent<HTMLInputElement>) => void) & Function;
-  onBlur?: ((event: FocusEvent<HTMLInputElement>) => void) & Function;
+  onFocus?: ((event: FocusEvent<HTMLInputElement>) => void) & : () => void;
+  onBlur?: ((event: FocusEvent<HTMLInputElement>) => void) & : () => void;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 

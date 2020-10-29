@@ -26,7 +26,7 @@ import FormCDConfiguration from './Form';
 
 interface Props {
   form: string;
-  setForm: Function;
+  setForm: () => void;
   data: Configuration;
 }
 

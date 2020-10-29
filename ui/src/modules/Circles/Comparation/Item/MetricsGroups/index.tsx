@@ -30,7 +30,7 @@ import Loader from '../Loaders/index';
 
 interface Props {
   id: string;
-  onGoBack: Function;
+  onGoBack: () => void;
 }
 
 const MetricsGroups = ({ onGoBack, id }: Props) => {

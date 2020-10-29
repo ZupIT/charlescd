@@ -46,7 +46,7 @@ export const useHypothesis = (): FetchProps => {
 };
 
 interface CreateHypothesis extends FetchProps {
-  create: Function;
+  create: () => void;
   response: Hypothesis;
 }
 

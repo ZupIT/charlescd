@@ -24,7 +24,7 @@ import { normalizeSelectOptions } from 'core/utils/select';
 
 type Props = {
   control: Control<unknown>;
-  setValue: Function;
+  setValue: () => void;
 };
 
 const CircleFilter = ({ control, setValue }: Props) => {

@@ -84,7 +84,7 @@ export const useCircle = () => {
 };
 
 export const useCirclePolling = (): {
-  pollingCircle: Function;
+  pollingCircle: (id: string) => void;
   resetStatus: () => void;
   status: string;
   response: Circle;
@@ -117,7 +117,10 @@ export const useCirclePolling = (): {
   };
 };
 
-export const useDeleteCircle = (): [Function, string] => {
+export const useDeleteCircle = (): [
+  (id: string, deployStatus: string, circleName: string) => void,
+  string
+] => {
   const [deleteData, deleteCircle] = useFetch<Circle>(deleteCircleById);
   const [circleName, setCircleName] = useState(undefined);
   const [circleStatus, setCircleStatus] = useState('');
@@ -165,7 +168,12 @@ export const useDeleteCircle = (): [Function, string] => {
 
 export const useCircles = (
   type: CIRCLE_TYPES
-): [boolean, Function, Function, CirclePagination] => {
+): [
+  boolean,
+  (name: string, status: string) => void,
+  () => void,
+  CirclePagination
+] => {
   const dispatch = useDispatch();
   const [circlesData, getCircles] = useFetch<CirclePagination>(findAllCircles);
   const { response, error, loading } = circlesData;
@@ -196,7 +204,7 @@ export const useCircles = (
 
 export const useSaveCircleManually = (
   circleId: string
-): [Circle, Function, boolean] => {
+): [Circle, (circle: CreateCircleManuallyPayload) => void, boolean] => {
   const saveCircleRequest =
     circleId !== NEW_TAB ? updateCircleManually : createCircleManually;
   const [circleData, saveCircle] = useFetch<Circle>(saveCircleRequest);
@@ -226,7 +234,7 @@ export const useSaveCircleManually = (
 
 export const useSaveCircleWithFile = (
   circleId: string
-): [Circle, Function, boolean] => {
+): [Circle, (circle: CreateCircleWithFilePayload) => void, boolean] => {
   const saveCircleRequest =
     circleId !== NEW_TAB ? updateCircleWithFile : createCircleWithFile;
   const [circleData, saveCircle] = useFetch<Circle>(saveCircleRequest);
@@ -256,7 +264,7 @@ export const useSaveCircleWithFile = (
 };
 
 export const useCircleUndeploy = (): {
-  undeployRelease: Function;
+  undeployRelease: (deployment: Deployment) => void;
   status: string;
   resetStatus: () => void;
 } => {

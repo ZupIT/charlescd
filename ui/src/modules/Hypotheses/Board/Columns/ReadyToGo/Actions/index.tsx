@@ -22,10 +22,10 @@ import Styled from './styled';
 
 interface Props {
   status: Status;
-  setStatus: Function;
+  setStatus: () => void;
   toggleModal: (toggle: boolean) => void;
-  onAction: Function;
-  onCancel: Function;
+  onAction: () => void;
+  onCancel: () => void;
   isReady: boolean;
 }
 

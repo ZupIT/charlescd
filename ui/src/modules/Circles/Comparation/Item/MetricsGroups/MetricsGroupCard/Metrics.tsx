@@ -28,8 +28,8 @@ import { getThresholdStatus } from '../helpers';
 interface Props {
   metric: Metric;
   metricGroup: MetricsGroup;
-  handleDeleteMetric: Function;
-  handleEditMetric: Function;
+  handleDeleteMetric: () => void;
+  handleEditMetric: () => void;
 }
 
 const MetricCard = ({

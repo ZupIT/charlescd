@@ -42,8 +42,8 @@ interface MoreOptionsModel {
 interface Props {
   component: IComponent;
   module: Module;
-  onClose: Function;
-  onUpdate: Function;
+  onClose: () => void;
+  onUpdate: () => void;
 }
 
 const Component = ({ component, module, onClose, onUpdate }: Props) => {

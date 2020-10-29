@@ -22,12 +22,12 @@ import { CLAUSE, RULE } from './constants';
 const ONE = 1;
 
 type Form = {
-  getValues: Function;
+  getValues: () => void;
   setValue: (name: string, value: Record<string, string>) => void;
 };
 
 type FieldArray = {
-  append: Function;
+  append: () => void;
   remove: (index?: number | number[] | undefined) => void;
   insert: (
     index: number,

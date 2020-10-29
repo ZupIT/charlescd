@@ -26,7 +26,7 @@ interface Modules {
 }
 
 export const useModules = (): {
-  getAllModules: Function;
+  getAllModules: () => void;
   allModules: Module[];
   loading: boolean;
 } => {

@@ -18,7 +18,7 @@ import React, { FunctionComponent } from 'react';
 import TabPanel from 'core/components/TabPanel';
 import ContentLoader from 'react-content-loader';
 
-export const Loader: FunctionComponent = () => (
+export const Loader: () => voidComponent = () => (
   <TabPanel title="Loading..." name="workspace" size="15px">
     <ContentLoader
       speed={4}

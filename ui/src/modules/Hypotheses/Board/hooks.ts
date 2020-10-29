@@ -38,8 +38,8 @@ import { useDispatch } from 'core/state/hooks';
 import { Column, Card, CardMovement, NewRelease } from './interfaces';
 
 interface BoardFetchProps extends FetchProps {
-  movingCard: Function;
-  reorderColumn: Function;
+  movingCard: () => void;
+  reorderColumn: () => void;
 }
 
 export const useBoard = (): BoardFetchProps => {
@@ -88,14 +88,14 @@ export const useBoard = (): BoardFetchProps => {
 };
 
 interface Props extends FetchProps {
-  getById: Function;
-  removeBy: Function;
-  archiveBy: Function;
+  getById: () => void;
+  removeBy: () => void;
+  archiveBy: () => void;
 }
 
 interface AddMemberProps {
   loading: boolean;
-  addMembers: Function;
+  addMembers: () => void;
 }
 
 export const useAddMember = (): AddMemberProps => {
@@ -117,7 +117,7 @@ export const useAddMember = (): AddMemberProps => {
 
 interface AddModuleProps {
   loading: boolean;
-  addModules: Function;
+  addModules: () => void;
 }
 
 export const useAddModule = (): AddModuleProps => {
@@ -246,7 +246,7 @@ export const useCard = (): Props => {
 };
 
 interface GenerateRelease extends FetchProps {
-  generate: Function;
+  generate: () => void;
 }
 
 export const useGenerateRelease = (): GenerateRelease => {
@@ -289,7 +289,7 @@ export const useGenerateRelease = (): GenerateRelease => {
 };
 
 interface CreateCard extends FetchProps {
-  create: Function;
+  create: () => void;
   response: Card;
 }
 

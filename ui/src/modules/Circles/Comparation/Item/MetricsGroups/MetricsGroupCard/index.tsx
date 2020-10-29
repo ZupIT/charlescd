@@ -34,11 +34,11 @@ import { MetricsGroup } from '../types';
 type Props = {
   metricGroup: MetricsGroup;
   loadingStatus: boolean;
-  handleAddMetric: Function;
-  handleDeleteMetricsGroup: Function;
-  handleDeleteMetric: Function;
-  handleEditMetric: Function;
-  handleEditGroup: Function;
+  handleAddMetric: () => void;
+  handleDeleteMetricsGroup: () => void;
+  handleDeleteMetric: () => void;
+  handleEditMetric: () => void;
+  handleEditGroup: () => void;
 };
 
 const MetricsGroupCard = ({

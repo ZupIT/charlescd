@@ -27,7 +27,7 @@ import Styled from './styled';
 export interface Props {
   size?: string;
   profile: Profile;
-  onFinish?: Function;
+  onFinish?: () => void;
 }
 
 const Avatar = ({ size, profile, onFinish }: Props) => {

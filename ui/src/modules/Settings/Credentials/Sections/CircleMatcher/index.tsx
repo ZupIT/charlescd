@@ -25,7 +25,7 @@ import FormCircleMatcher from './Form';
 
 interface Props {
   form: string;
-  setForm: Function;
+  setForm: () => void;
   data: string;
 }
 

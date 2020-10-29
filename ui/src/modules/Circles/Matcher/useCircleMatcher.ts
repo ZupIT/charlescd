@@ -21,7 +21,7 @@ import { ParameterPayload, CircleMatcherResult } from './interfaces';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 
-const useCircleMatcher = (): [CircleMatcherResult[], boolean, Function] => {
+const useCircleMatcher = (): [CircleMatcherResult[], boolean, () => void] => {
   const dispatch = useDispatch();
   const [circles, getCircleMatcherCircles] = useFetch<CircleMatcherResult[]>(
     circleMatcherIdentify

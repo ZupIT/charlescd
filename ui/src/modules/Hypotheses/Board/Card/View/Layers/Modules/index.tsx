@@ -28,7 +28,7 @@ import Styled from './styled';
 
 interface Props {
   card: Card;
-  onFinish: Function;
+  onFinish: () => void;
 }
 
 const Modules = ({ card, onFinish }: Props) => {

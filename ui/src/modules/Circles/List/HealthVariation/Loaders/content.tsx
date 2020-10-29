@@ -17,7 +17,7 @@
 import React, { FunctionComponent } from 'react';
 import ContentLoader from 'react-content-loader';
 
-export const Loader: FunctionComponent = () => (
+export const Loader: () => voidComponent = () => (
   <ContentLoader
     speed={1}
     width={270}

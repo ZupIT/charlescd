@@ -18,7 +18,7 @@ import React, { FunctionComponent } from 'react';
 import map from 'lodash/map';
 import ContentLoader from 'react-content-loader';
 
-const Loader: FunctionComponent = () => (
+const Loader: () => voidComponent = () => (
   <ContentLoader
     speed={4}
     width={1530}

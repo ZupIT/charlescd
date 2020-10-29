@@ -28,7 +28,7 @@ import Styled from './styled';
 interface Props {
   hypothesisId: string;
   features: string[];
-  onClose: Function;
+  onClose: () => void;
 }
 
 const ModalGenerateRelease = ({ features, hypothesisId, onClose }: Props) => {

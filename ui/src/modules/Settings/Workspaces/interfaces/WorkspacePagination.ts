@@ -43,5 +43,5 @@ export interface WorkspaceSection {
   icon: string;
   content: string;
   onDelete: (id: string) => void;
-  component?: (id: string, onFinish: Function) => ReactNode;
+  component?: (id: string, onFinish: () => void) => ReactNode;
 }

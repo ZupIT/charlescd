@@ -25,7 +25,7 @@ export interface Props {
   size?: string;
   className?: string;
   isActive?: boolean;
-  onClick?: Function;
+  onClick?: () => void;
 }
 
 const LabeledIcon = ({

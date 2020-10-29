@@ -29,7 +29,7 @@ import FormUserGroup from './Form';
 
 interface Props {
   form: string;
-  setForm: Function;
+  setForm: () => void;
   data: UserGroup[];
 }
 

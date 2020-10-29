@@ -27,7 +27,7 @@ import Styled from './styled';
 interface Props {
   cardId: string;
   members: User[];
-  onFinish: Function;
+  onFinish: () => void;
 }
 
 const Members = ({ cardId, members, onFinish }: Props) => {

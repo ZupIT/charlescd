@@ -26,7 +26,7 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Module } from 'modules/Modules/interfaces/Module';
 
 export const useSaveComponent = (): {
-  saveComponent: Function;
+  saveComponent: () => void;
   response: Module;
   error: Response;
   loading: boolean;
@@ -55,7 +55,7 @@ export const useSaveComponent = (): {
 };
 
 export const useUpdateComponent = (): {
-  updateComponent: Function;
+  updateComponent: () => void;
   response: Module;
   error: Response;
   loading: boolean;
@@ -84,7 +84,7 @@ export const useUpdateComponent = (): {
 };
 
 export const useDeleteComponent = (): {
-  removeComponent: Function;
+  removeComponent: () => void;
   status: string;
   error: Response;
   loading: boolean;

@@ -46,7 +46,7 @@ import {
 import { ValidationError } from 'core/interfaces/ValidationError';
 
 export const useMetricsGroupsResume = (): {
-  getMetricsgroupsResume: Function;
+  getMetricsgroupsResume: () => void;
   resume: MetricsGroupsResume[];
   status: FetchStatus;
 } => {
@@ -82,7 +82,7 @@ export const useMetricsGroupsResume = (): {
 };
 
 export const useMetricsGroups = (): {
-  getMetricsGroups: Function;
+  getMetricsGroups: () => void;
   metricsGroups: MetricsGroup[];
   status: FetchStatus;
 } => {

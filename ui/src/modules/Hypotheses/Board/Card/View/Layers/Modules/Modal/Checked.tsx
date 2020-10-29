@@ -21,7 +21,7 @@ interface Props {
   checked: boolean;
   id: string;
   isLoading: boolean;
-  onChange: Function;
+  onChange: () => void;
 }
 
 const Checked = ({ checked, id, onChange, isLoading }: Props) => {

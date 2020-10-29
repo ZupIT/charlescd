@@ -23,7 +23,7 @@ import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
 
-export const useWorkspace = (): [Function, Function, boolean] => {
+export const useWorkspace = (): [: () => void, : () => void, boolean] => {
   const dispatch = useDispatch();
   const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
   const { response, error, loading } = workspacesData;
@@ -47,7 +47,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
 };
 
 export const useSaveWorkspace = (): {
-  save: Function;
+  save: () => void;
   response: Workspace;
   error: Response;
   loading: boolean;

@@ -36,7 +36,7 @@ import Icon from 'core/components/Icon';
 
 type Props = {
   id: string;
-  onGoBack: Function;
+  onGoBack: () => void;
   metric?: Metric;
 };
 

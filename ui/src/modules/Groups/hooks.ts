@@ -38,7 +38,7 @@ import { useHistory } from 'react-router-dom';
 import { FormAction } from '.';
 
 export const useFindAllUserGroup = (): [
-  Function,
+  (name?: string) => void,
   boolean,
   UserGroupPagination
 ] => {
@@ -49,7 +49,7 @@ export const useFindAllUserGroup = (): [
   const { response, loading } = userGroupData;
 
   const loadUserGroupList = useCallback(
-    (name: string) => {
+    (name?: string) => {
       getUserGroups({ name });
     },
     [getUserGroups]
@@ -64,7 +64,7 @@ export const useFindAllUserGroup = (): [
   return [loadUserGroupList, loading, response];
 };
 
-export const useFindUserGroupByID = (): [Function, UserGroup] => {
+export const useFindUserGroupByID = (): [(id: string) => void, UserGroup] => {
   const [userGroupData, getUserGroup] = useFetch<UserGroup>(findUserGroupById);
   const { response } = userGroupData;
 
@@ -78,7 +78,7 @@ export const useFindUserGroupByID = (): [Function, UserGroup] => {
   return [loadUserGroup, response];
 };
 
-export const useListUser = (): [Function, UserPagination] => {
+export const useListUser = (): [(email: string) => void, UserPagination] => {
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response } = usersData;
 
@@ -93,7 +93,7 @@ export const useListUser = (): [Function, UserPagination] => {
 };
 
 export const useCreateUserGroup = (): {
-  createUserGroup: Function;
+  createUserGroup: (name: string) => void;
   loading: boolean;
   response: UserGroup;
 } => {
@@ -123,7 +123,11 @@ export const useCreateUserGroup = (): {
   };
 };
 
-export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
+export const useUpdateUserGroup = (): [
+  (id: string, name: string) => void,
+  UserGroup,
+  string
+] => {
   const [data, update] = useFetch<UserGroup>(updateUserGroup);
   const [status, setStatus] = useState('');
   const { response } = data;
@@ -145,7 +149,11 @@ export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
   return [doUpdateUserGroup, response, status];
 };
 
-export const useDeleteUserGroup = (): [Function, UserGroup, boolean] => {
+export const useDeleteUserGroup = (): [
+  (id: string) => void,
+  UserGroup,
+  boolean
+] => {
   const dispatch = useDispatch();
   const [data, onDelete] = useFetch<UserGroup>(deleteUserGroup);
   const [getAllUserGroups, , userGroups] = useFindAllUserGroup();
@@ -192,7 +200,10 @@ export const useDeleteUserGroup = (): [Function, UserGroup, boolean] => {
   return [doDeleteUserGroup, response, isFinished];
 };
 
-export const useManagerMemberInUserGroup = (): [Function, string] => {
+export const useManagerMemberInUserGroup = (): [
+  (checked: boolean, groupId: string, memberId: string) => void,
+  string
+] => {
   const [, , onAddMemberUserGroup] = useFetch<UserGroup>(addMemberToUserGroup);
   const [, , onRemoveMemberUserGroup] = useFetch<UserGroup>(
     removeMemberToUserGroup

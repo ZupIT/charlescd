@@ -27,7 +27,7 @@ import Input from 'core/components/Form/Input';
 import Styled from './styled';
 
 interface Props {
-  onSave: Function;
+  onSave: () => void;
 }
 
 const FakeCard = forwardRef(({ onSave }: Props, ref: Ref<HTMLDivElement>) => {
