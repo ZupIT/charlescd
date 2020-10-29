@@ -70,16 +70,6 @@ test('render Workspace modal', async () => {
   await wait(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
 });
 
-test('render Workspace and see a placeholder', async () => {
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  
-  render(<Workspace selectedWorkspace={jest.fn()} />);
-
-  const placeholder = screen.queryByTestId('placeholder-empty-workspaces');
-
-  expect(placeholder).toBeInTheDocument();
-});
-
 test('render Workspace and search', async () => {
   const workspaceRequest = jest.fn();
 
@@ -93,4 +83,14 @@ test('render Workspace and search', async () => {
   await act(() => userEvent.type(search , 'workspace'));
 
   expect(workspaceRequest).toHaveBeenCalled();
+});
+
+test('render Workspace and see a placeholder', async () => {
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  
+  render(<Workspace selectedWorkspace={jest.fn()} />);
+
+  const placeholder = screen.queryByTestId('placeholder-empty-workspaces');
+
+  expect(placeholder).toBeInTheDocument();
 });
