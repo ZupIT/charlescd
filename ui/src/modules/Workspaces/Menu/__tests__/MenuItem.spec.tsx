@@ -15,11 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, wait, act } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-// import * as authUtils from 'core/utils/auth';
-// import * as WorkspaceHooks from '../hooks';
-// import MutationObserver from 'mutation-observer';
 import { workspaceItem } from './fixtures';
 import WorkspaceItem from '../MenuItem';
 
@@ -38,28 +35,21 @@ test('render Workspace item', async () => {
   expect(workspaceName).toBeInTheDocument();
 });
 
-// test.only('render Workspace item and click', async () => {
-//   render(
-//     <WorkspaceItem  
-//       id={workspaceItem.id}
-//       name={workspaceItem.name}
-//       status={workspaceItem.status}
-//       selectedWorkspace={null}
-//     />
-//   );
+test('render Workspace item and click', async () => {
+  const selectedWorkspace = jest.fn();
 
-//   const workspaceName = screen.getByText('workspace');
+  render(
+    <WorkspaceItem  
+      id={workspaceItem.id}
+      name={workspaceItem.name}
+      status={workspaceItem.status}
+      selectedWorkspace={selectedWorkspace}
+    />
+  );
 
-//   expect(workspaceName).toBeInTheDocument();
+  const workspaceName = screen.getByText('workspace');
 
-//   // const button = screen.getByTestId('button-default-workspaceModal');
-//   // fireEvent.click(button);
+  userEvent.click(workspaceName);
 
-//   // await wait(() => expect(screen.queryByTestId('modal-default')).toBeInTheDocument());
-  
-//   // const cancelButton = screen.getByTestId('icon-cancel');
-//   // fireEvent.click(cancelButton);
-//   // await wait(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
-// });
-
-//TO-DO Test wotkspace looking in the local storage
+  expect(selectedWorkspace).toHaveBeenCalled();
+});

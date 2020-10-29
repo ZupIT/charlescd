@@ -80,3 +80,13 @@ test('render Workspace and search', async () => {
 
   expect(workspaceRequest).toHaveBeenCalled();
 });
+
+test('render Workspace and see a placeholder', async () => {
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  
+  render(<Workspace selectedWorkspace={jest.fn()} />);
+
+  const placeholder = screen.queryByTestId('placeholder-empty-workspaces');
+
+  expect(placeholder).toBeInTheDocument();
+});
