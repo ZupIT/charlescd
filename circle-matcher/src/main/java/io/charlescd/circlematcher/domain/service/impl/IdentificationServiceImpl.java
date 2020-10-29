@@ -116,6 +116,7 @@ public class IdentificationServiceImpl implements IdentificationService {
             var percentageMatched = metadata.stream()
                     .parallel()
                     .filter(KeyMetadata::isPercentage)
+                    .filter(item -> item.getPercentage() > 0)
                     .sorted(Comparator.comparing(KeyMetadata::getPercentage))
                     .collect(Collectors.toList());
             if (!percentageMatched.isEmpty()) {
