@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import uppercase from 'lodash/upperCase';
 import first from 'lodash/first';
@@ -32,22 +32,22 @@ export interface Props {
 
 const Avatar = ({ size, profile, onFinish }: Props) => {
   const [url, setUrl] = useState<string>();
-  const [loadingUpdate, updateProfile, , status] = useUpdateProfile();
+  const { updateProfile, status } = useUpdateProfile();
   const { register, handleSubmit } = useForm<Profile>();
-  const [editAvatar, setEditAvatar] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     setUrl(profile.photoUrl);
   }, [profile]);
 
   useEffect(() => {
-    if (status === 'resolved') {
-      onFinish && onFinish();
+    if (status.isResolved && onFinish) {
+      onFinish();
     }
   }, [status, onFinish]);
 
   const onSubmit = (user: Profile) => {
-    setEditAvatar(false);
+    setIsEditMode(false);
     setUrl(user.photoUrl);
     updateProfile(profile.id, {
       name: profile.name,
@@ -56,7 +56,7 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
     });
   };
 
-  const renderEditAvatar = () => (
+  const renderEditMode = () => (
     <Form.InputTitle
       name="photoUrl"
       ref={register}
@@ -64,22 +64,28 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
     />
   );
 
-  const renderProfilePicture = () => (
-    <>
-      {isEmpty(url) ? (
-        <Styled.Avatar.WithoutPhoto data-testid="avatar" size={size}>
-          {uppercase(first(profile.name))}
-        </Styled.Avatar.WithoutPhoto>
-      ) : (
-        <Styled.Avatar.WithPhoto data-testid="avatar" size={size} src={url} />
-      )}
-      {
-        <Styled.Avatar.Edit
-          name="edit-avatar"
-          onClick={() => setEditAvatar(true)}
-        />
-      }
-    </>
+  const renderInitials = () => (
+    <Styled.Avatar.WithoutPhoto data-testid="avatar" size={size}>
+      {uppercase(first(profile.name))}
+    </Styled.Avatar.WithoutPhoto>
+  );
+
+  const renderPhoto = () => (
+    <Styled.Avatar.WithPhoto data-testid="avatar" size={size} src={url} />
+  );
+
+  const renderEditButton = () => (
+    <Styled.Avatar.Edit
+      name="edit-avatar"
+      onClick={() => setIsEditMode(true)}
+    />
+  );
+
+  const renderAvatar = () => (
+    <Fragment>
+      {isEmpty(url) ? renderInitials() : renderPhoto()}
+      {renderEditButton()}
+    </Fragment>
   );
 
   const renderLoader = () => (
@@ -88,15 +94,13 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
     </Styled.LoaderContainer>
   );
 
-  const renderAvatar = () => (
+  const render = () => (
     <Styled.Wrapper>
-      {status === 'idle' || loadingUpdate
-        ? renderLoader()
-        : renderProfilePicture()}
+      {status.isIdle || status.isPending ? renderLoader() : renderAvatar()}
     </Styled.Wrapper>
   );
 
-  return editAvatar ? renderEditAvatar() : renderAvatar();
+  return isEditMode ? renderEditMode() : render();
 };
 
 export default Avatar;
