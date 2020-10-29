@@ -25,8 +25,6 @@ import io.charlescd.moove.application.circle.CreateCircleWithPercentageInteracto
 import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.CircleMatcherService
 import javax.inject.Named
 import javax.transaction.Transactional
@@ -59,5 +57,4 @@ open class CreateCircleWithPercentageInteractorImpl(
         val author = userService.find(request.authorId)
         return request.toDomain(author, workspaceId)
     }
-
 }

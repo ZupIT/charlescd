@@ -40,6 +40,7 @@ class V2CircleController(
     private val findCircleByIdInteractor: FindCircleByIdInteractor,
     private val deleteCircleByIdInteractor: DeleteCircleByIdInteractor,
     private val findAllCirclesInteractor: FindAllCirclesInteractor,
+    private val findAllCirclesPercentageInteractor: FindCirclesPercentageInteractor,
     private val findCircleComponentsInteractor: FindCircleComponentsInteractor,
     private val createCircleWithCsvFileInteractor: CreateCircleWithCsvFileInteractor,
     private val updateCircleWithCsvFileInteractor: UpdateCircleWithCsvFileInteractor,
@@ -204,5 +205,17 @@ class V2CircleController(
         @RequestBody @Valid request: PatchCirclePercentageRequest
     ): CircleResponse {
         return this.patchCirclePercentageInteractor.execute(id, request)
+    }
+
+    @ApiOperation(value = "Find all Percentage")
+    @GetMapping("/percentage")
+    @ResponseStatus(HttpStatus.OK)
+    fun findPercentage(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestParam(name = "name", required = false) name: String?,
+        @RequestParam(name = "active", required = true) active: Boolean,
+        pageRequest: PageRequest
+    ): ResourcePageResponse<CircleResponse> {
+        return this.findAllCirclesPercentageInteractor.execute(workspaceId, name, active, pageRequest)
     }
 }
