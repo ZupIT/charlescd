@@ -22,7 +22,7 @@ const getActiveDeployments = async (client) => {
     console.log(`Active deployments: ${JSON.stringify(deployments.rows)}`)
     return deployments.rows
   } catch (error) {
-    console.error(`Error fetching active deployments: ${error}`)
+    console.error(chalk.red(`Error fetching active deployments: ${error}`))
   }
 }
 
@@ -48,7 +48,7 @@ const doLogin = async () => {
     console.log('Done authentication')
     return loginObject
   } catch (error) {
-    console.error(`Error authenticating: ${error}`)
+    console.error(chalk.red(`Error authenticating: ${error}`))
   }
 }
 
@@ -69,7 +69,7 @@ const doV1UndeployRequest = async (deployment, loginObject) => {
     console.log('V1 undeployment requested')
     return v1UndeployResponse
   } catch (error) {
-    console.error(`Error doing v1 undeployment: ${error}`)
+    console.error(chalk.red(`Error doing v1 undeployment: ${error}`))
   }
 }
 
@@ -92,7 +92,7 @@ const v2DeployRequest = async (deployment, loginObject) => {
     console.log('V2 deployment requested')
     return v2DeploymentResponse
   } catch (error) {
-    console.error(`Error doing v2 deployment: ${error}`)
+    console.error(chalk.red(`Error doing v2 deployment: ${error}`))
   }
 }
 
