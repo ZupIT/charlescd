@@ -283,6 +283,32 @@ class PatchCirclePercentageInteractorImplTest extends Specification {
         "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REMOVE, "/name", null)]) | "Remove operation not allowed."
     }
 
+    def "should throw an exception when the patch operation is /percentage and value is above 100"() {
+        when:
+        this.patchCirclePercentageInteractor.execute(circleId, request)
+
+        then:
+        def exception = thrown(IllegalArgumentException)
+        exception.message == message
+
+        where:
+        circleId                               | request                                                                        | message
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/percentage", 120)]) | "Percentage must be between 0 and 100"
+    }
+
+    def "should throw an exception when the patch operation is /percentage and value is negative"() {
+        when:
+        this.patchCirclePercentageInteractor.execute(circleId, request)
+
+        then:
+        def exception = thrown(IllegalArgumentException)
+        exception.message == message
+
+        where:
+        circleId                               | request                                                                        | message
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCirclePercentageRequest([new PatchOperation(OpCodeEnum.REPLACE, "/percentage", -1)]) | "Percentage must be between 0 and 100"
+    }
+
     def "should throw an exception when one patch path is not allowed list"() {
         when:
         this.patchCirclePercentageInteractor.execute(circleId, request)

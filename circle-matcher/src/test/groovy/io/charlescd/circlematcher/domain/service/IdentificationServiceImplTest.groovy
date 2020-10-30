@@ -449,6 +449,7 @@ class IdentificationServiceImplTest extends Specification {
         def metadataList = new ArrayList()
         def node = null
         def segmentationPercentage20 = TestUtils.createPercentageSegmentation(node, SegmentationType.PERCENTAGE, 20)
+        def segmentationPercentage0 = TestUtils.createPercentageSegmentation(node, SegmentationType.PERCENTAGE, 0)
         def segmentationPercentage15 = new Segmentation("Percentage15",
                 node,
                 "0f5f699a-df28-4517-9cd6-e98f2f775fe3",
@@ -473,10 +474,12 @@ class IdentificationServiceImplTest extends Specification {
         def keyMetadataPercentage20 = new KeyMetadata(composedKey, segmentationPercentage20)
         def keyMetadataPercentage15 = new KeyMetadata(composedKey, segmentationPercentage15)
         def keyMetadataPercentage10 = new KeyMetadata(composedKey, segmentationPercentage10)
+        def keyMetadataPercentage0 = new KeyMetadata(composedKey, segmentationPercentage0)
         def keyMetadataDefault = new KeyMetadata(composedKey, segmentationDefault)
         metadataList.add(keyMetadataPercentage20)
         metadataList.add(keyMetadataPercentage15)
         metadataList.add(keyMetadataPercentage10)
+        metadataList.add(keyMetadataPercentage0)
         metadataList.add(keyMetadataDefault)
         def request = new IdentificationRequest(workspaceId, data)
         when:
