@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, act, screen } from 'unit-test/testUtils';
+import { render, act, screen, wait } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
@@ -118,89 +118,6 @@ test('render Registry form without AWS values and secret input', async () => {
   expect(text).not.toBeInTheDocument();
 });
 
-test('render Registry form with GCP form', () => {
-  render(
-    <FormRegistry onFinish={mockOnFinish} />
-  );
-
-  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  act(() => userEvent.click(radioButton));
-  
-  const projectIdInput = screen.getByText('Enter the project id');
-  expect(projectIdInput).toBeInTheDocument();
-});
-
-test('Not enabled submit button after partial filled GCP form', async () => {
-  render(<FormRegistry onFinish={mockOnFinish} />);
-
-  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  act(() => userEvent.click(radioButton));
-  
-  const inputGCPName = screen.getByTestId('input-text-name');
-  expect(inputGCPName).toBeInTheDocument();
-
-  const inputGCPAddress = screen.getByTestId('input-text-address');
-  expect(inputGCPAddress).toBeInTheDocument();
-
-  const inputGCPOrganization = screen.getByTestId('input-text-organization');
-  expect(inputGCPOrganization).toBeInTheDocument();
-
-  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
-  expect(inputGCPJsonKey).toBeInTheDocument();
-
-  const submitButton = screen.getByTestId('button-default-submit-registry');
-  expect(submitButton).toBeInTheDocument();
-
-  await act(async () => {
-    userEvent.type(inputGCPName, 'fake-name');
-    userEvent.type(inputGCPAddress, 'http://fake-host');
-    userEvent.type(inputGCPOrganization, 'fake-access-key');
-    userEvent.type(inputGCPJsonKey, '');
-  });
-
-  expect(submitButton).toBeDisabled();
-});
-
-test('Enabled submit button after fill GCP form', async () => {
-  (fetch as FetchMock).mockResponse(JSON.stringify({ message: 'response' }));
-
-  render(<FormRegistry onFinish={mockOnFinish} />);
-
-  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  await act(async () => userEvent.click(radioButton));
-  const inputGCPName = screen.getByTestId('input-text-name');
-  const inputGCPAddress = screen.getByTestId('input-text-address');
-  const inputGCPOrganization = screen.getByTestId('input-text-organization');
-  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
-  const testConnectionButton = screen.getByTestId('button-default-test-connection');
-  const submitButton = screen.getByTestId('button-default-submit-registry');
-
-  await act(async () => {
-    userEvent.type(inputGCPName, 'fake-name');
-    userEvent.type(inputGCPAddress, 'http://fake-host');
-    userEvent.type(inputGCPOrganization, 'fake-access-key');
-    userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
-  });
-
-  expect(testConnectionButton).not.toBeDisabled();
-  await act(async () => userEvent.click(testConnectionButton));
-
-  expect(testConnectionButton).not.toBeDisabled();
-});
-
-test('render Registry form with Docker Hub form', async () => {
-  render(<FormRegistry onFinish={mockOnFinish}/>);
-
-  const radioButton = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
-  await act(async () => userEvent.click(radioButton));
-
-  const enterUsername = screen.getByText('Enter the username');
-  expect(enterUsername).toBeInTheDocument();
-  
-  const enterAddress = screen.queryByText('Enter the address');
-  expect(enterAddress).not.toBeInTheDocument();
-});
-
 test('Should enabled submit button after fill AWS form', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
@@ -275,3 +192,130 @@ test('Should not enabled submit button after partial fill AWS form', async () =>
   
   expect(submitButton).toBeDisabled();
 });
+
+test('render Registry form with Docker Hub form', async () => {
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const radioButton = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  await act(async () => userEvent.click(radioButton));
+
+  const enterUsername = screen.getByText('Enter the username');
+  expect(enterUsername).toBeInTheDocument();
+  
+  const enterAddress = screen.queryByText('Enter the address');
+  expect(enterAddress).not.toBeInTheDocument();
+});
+
+test('should render Registry form with GCP form', async () => {
+  render(<FormRegistry onFinish={mockOnFinish} />);
+
+  const gcp = screen.getByText('GCP');
+  await act(async () => userEvent.click(gcp));
+  
+  const projectIdInput = screen.getByText('Enter the project id');
+  expect(projectIdInput).toBeInTheDocument();
+});
+
+test('should not enable submit button after partially filled GCP form', async () => {
+  render(<FormRegistry onFinish={mockOnFinish} />);
+
+  const gcp = screen.getByText('GCP');
+  userEvent.click(gcp);
+
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const submitButton = screen.getByText('Save');
+
+  await act(async () => {
+    userEvent.type(inputGCPName, 'fake-name');
+    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPOrganization, 'fake-access-key');
+    userEvent.type(inputGCPJsonKey, '');
+  });
+    
+  expect(submitButton).toBeDisabled();
+});
+
+test('should enable submit button after fill GCP form', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({}));
+
+  render(<FormRegistry onFinish={mockOnFinish} />);
+
+  const gcp = screen.getByText('GCP');
+  userEvent.click(gcp);
+
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByText('Save');
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+
+  expect(testConnectionButton).not.toBeDisabled();
+  await act(async () => userEvent.click(testConnectionButton));
+  expect(submitButton).not.toBeDisabled();
+});
+
+test('should test connectivity with GCR successful', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({ }));
+
+  render(<FormRegistry onFinish={mockOnFinish} />);
+
+  const gcp = screen.getByText('GCP');
+  userEvent.click(gcp);
+  
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const testConnectionButton = screen.getByText('Test connection');
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+
+  await act(async () => userEvent.click(testConnectionButton));
+
+  const successMessage = screen.getByText('Successful connection.');
+  expect(successMessage).toBeInTheDocument();
+});
+
+test('should test connectivity with GCR error', async () => {
+  const error = {
+    status: '404',
+    message: 'invalid registry'
+  };
+  (fetch as FetchMock).mockRejectedValueOnce(new Response(JSON.stringify(error)));
+
+  render(<FormRegistry onFinish={mockOnFinish} />);
+
+  const gcp = screen.getByText('GCP');
+  userEvent.click(gcp);
+
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const testConnectionButton = screen.getByText('Test connection');
+
+  await act(async () => {
+    userEvent.type(inputGCPName, 'fake-name');
+    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPOrganization, 'fake-access-key');
+    userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+  });
+
+  userEvent.click(testConnectionButton);
+
+  const errorMessage = await screen.findByText('invalid registry');
+  await wait(() => expect(errorMessage).toBeInTheDocument());
+});
+
