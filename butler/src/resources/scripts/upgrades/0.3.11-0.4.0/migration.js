@@ -152,9 +152,15 @@ const doV2Migration = async () => {
   try {
     console.log(chalk.bold.green('Butler migration script: v0.3.11 to v0.4.0\n'))
     console.log(chalk.green('This script is divided in two steps:'))
-    console.log(chalk.green('1 - First, it needs to undeploy all charles releases using the 0.3.11 APIs'))
+    console.log(chalk.green('1 - First, it needs to undeploy all charles circle releases using the 0.3.11 APIs'))
     console.log(chalk.green('2 - Second, it needs to deploy the same releases using the 0.4.0 APIs\n'))
-    console.log(chalk.bold.red('Disclaimer: After the end of the script, there might be some stale resources in your cluster. Please remove them manually.\n'))
+    console.log(chalk.bold.red('Important: Please only proceed if you have already done your open sea deployments manually with the new version. If you did not do this, after this script your open sea components might be unreachable.\n'))
+
+    let startDecision = syncPrompt(chalk.bold('Start script? (yes/no): '), 'no')
+    if (startDecision !== 'yes') {
+      console.log('Exiting...')
+      return
+    }
 
     const pgClient = await getPgConnection()
     const activeDeployments = await getActiveCircleDeployments(pgClient)
