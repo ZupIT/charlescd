@@ -25,7 +25,7 @@ public class RandomServiceImpl implements RandomService {
 
     private SecureRandom secureRandom;
 
-    private RandomServiceImpl() {
+    public RandomServiceImpl() {
         this.secureRandom = new SecureRandom();
     }
 
