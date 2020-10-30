@@ -5,7 +5,7 @@ dependencies:
   condition: redis.enabled
 - name: octopipe-charlescd
   condition: octopipe.enabled
-- name: nginx
-  condition: nginx.enabled
+- name: envoy
+  condition: envoy.enabled
 - name: keycloak
   condition: keycloak.enabled
