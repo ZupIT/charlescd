@@ -42,7 +42,7 @@ test('render registry with error', async () => {
 
   const form = '';
   const setForm = jest.fn();
-  const data = {"name": "charles-cd", "id": "1234"};
+  const data = {"id": "1234", "name": "charles-cd" };
 
   render(<SectionRegistry form={form} setForm={setForm} data={data} />);
 
@@ -51,17 +51,14 @@ test('render registry with error', async () => {
 })
 
 test.only('render registry successful', () => {
-  const success = {
-    message: 'response'
-  };
-  (fetch as FetchMock).mockResponse(JSON.stringify(success));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({status: '200'}));
 
   const form = '';
   const setForm = jest.fn();
-  const data = {"name": "charles-cd", "id": "1234"};
+  const data = {"id": "1234", "name": "charles-cd" };
 
   render(<SectionRegistry form={form} setForm={setForm} data={data} />);
 
-  // const errorText = screen.queryByTestId('log-error');
-  // expect(errorText).not.toBeInTheDocument();
+  const errorText = screen.queryByTestId('log-error');
+  expect(errorText).not.toBeInTheDocument();
 })
