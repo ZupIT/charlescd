@@ -399,6 +399,43 @@ class CreateDeploymentInteractorImplTest extends Specification {
         deploymentResponse.deployedAt == null
     }
 
+    def 'when the deploy is in a percentage circle and the limit of active percentage circles should not allow the deploy'() {
+        given:
+        def author = getDummyUser()
+        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
+        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
+        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circleId)
+        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+
+        def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", 20)
+
+        def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
+                LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
+
+        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
+                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+
+        when:
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+
+        then:
+        1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
+        1 * circleRepository.countPercentageByWorkspaceId(workspaceId) >> 90
+        0 * deployService.undeploy(_, _)
+        1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment]
+        0 * deploymentRepository.save(_) >> _
+        0 * deployService.deploy(_, _, false, _) >> {}
+
+        def ex = thrown(BusinessException)
+        println(ex)
+        ex.message == 'limit.of.percentage.circles.exceeded'
+    }
+
     private static User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
@@ -421,7 +458,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 20)
 
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
