@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-import { FetchMock } from 'jest-fetch-mock/types';
 import React from 'react';
-import { render, act, screen } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock/types';
+import { render, screen, wait } from 'unit-test/testUtils';
 import SectionRegistry from '../';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
-
-// jest.mock('../Sections/Registry/hooks', () => {
-//   return {
-//     __esModule: true,
-//     useRegistry: () => ({
-//       remove: jest.fn(),
-//       responseRemove: null
-//     })
-//   };
-// });
 
 test('render registry with error', async () => {
   const error = {
@@ -50,8 +40,8 @@ test('render registry with error', async () => {
   expect(errorText).toBeInTheDocument();
 })
 
-test.only('render registry successful', () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({status: '200'}));
+test('render registry successful', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
 
   const form = '';
   const setForm = jest.fn();
@@ -60,5 +50,5 @@ test.only('render registry successful', () => {
   render(<SectionRegistry form={form} setForm={setForm} data={data} />);
 
   const errorText = screen.queryByTestId('log-error');
-  expect(errorText).not.toBeInTheDocument();
+  await wait(() => expect(errorText).not.toBeInTheDocument());
 })
