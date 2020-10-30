@@ -91,6 +91,7 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
         assert response.default == circle.defaultCircle
         assert response.percentage == circle.percentage
         assert !response.default
+        assert request.name == circle.name
     }
 
     def "should throw a NotFoundException when user does not exists"() {

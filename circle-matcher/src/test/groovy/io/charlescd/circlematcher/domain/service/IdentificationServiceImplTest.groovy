@@ -151,6 +151,7 @@ class IdentificationServiceImplTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
         def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def defaultSegmentation = TestUtils.createDefaultSegmentation(null, SegmentationType.REGULAR)
         def defaultMetadata = new KeyMetadata(defaultComposedKey, defaultSegmentation)
@@ -495,4 +496,60 @@ class IdentificationServiceImplTest extends Specification {
         1 * randomUtils.getRandomNumber(_) >> 70
 
     }
+
+    def "should identify default circle when segmentaton type is regular"() {
+
+        given:
+
+        def key = "username"
+        def composedKey = "username:28840781-d86e-4803-a742-53566c140e56:SIMPLE_KV"
+        def defaultComposedKey = "DEFAULT:28840781-d86e-4803-a742-53566c140e59:REGULAR"
+        def value = "user@zup.com.br"
+        def differentValue = "not_found@zup.com.br"
+        def wrongValue = "anotheruser@zup.com.br"
+
+        def workspaceId = "78094351-7f16-4571-ac7a-7681db81e146"
+        def data = new HashMap()
+        data.put(key, wrongValue)
+        def request = new IdentificationRequest(workspaceId, data)
+
+        def values = new ArrayList()
+        def differentValues = new ArrayList()
+        values.add(value)
+        differentValues.add(differentValue)
+
+        def content = TestUtils.createContent(values)
+        def differentContent = TestUtils.createContent(differentValues)
+        def node = TestUtils.createNode(content)
+        def differentNode = TestUtils.createNode(content)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def differentSegmentation = TestUtils.createSegmentation(differentNode, SegmentationType.REGULAR)
+
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+        def defaultSegmentation = TestUtils.createDefaultSegmentation(null, SegmentationType.REGULAR)
+        def defaultMetadata = new KeyMetadata(defaultComposedKey, defaultSegmentation)
+
+        def metadataList = new ArrayList()
+        metadataList.add(keyMetadata)
+        metadataList.add(defaultMetadata)
+
+        when:
+
+        def response = identificationService.identify(request)
+
+        then:
+
+        notThrown(NoSuchElementException)
+
+        assert response != null
+        assert response.size() == 1
+        assert response[0].name == "Default"
+        assert response[0].id == "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a89"
+
+        1 * keyMetadataRepository.findByWorkspaceId(workspaceId) >> metadataList
+        1 * segmentationRepository.isMember(composedKey, wrongValue) >> false
+        0 * segmentationRepository.isMember(composedKey, value)
+        1 * segmentationRepository.findByKey(defaultComposedKey) >> Optional.of(differentSegmentation)
+    }
+
 }
