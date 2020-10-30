@@ -281,7 +281,7 @@ class IdentificationServiceImplTest extends Specification {
         assert response[0].id == segmentationPercentage.circleId
         1 * keyMetadataRepository.findByWorkspaceId(workspaceId) >> metadataList
         0 * segmentationRepository.isMember(composedKey, request)
-        2 * segmentationRepository.findByKey(composedKey) >> Optional.empty()
+        2 * segmentationRepository.findByKey(composedKey) >> Optional.of(segmentationPercentage)
         1 * randomUtils.getRandomNumber(_) >> 15
 
     }
