@@ -491,7 +491,7 @@ class IdentificationServiceImplTest extends Specification {
         assert response[0].name == segmentationDefault.name
         1 * keyMetadataRepository.findByWorkspaceId(workspaceId) >> metadataList
         0 * segmentationRepository.isMember(composedKey, request)
-        4 * segmentationRepository.findByKey(composedKey) >> Optional.empty()
+        5 * segmentationRepository.findByKey(composedKey) >> Optional.empty()
         1 * randomUtils.getRandomNumber(_) >> 70
 
     }
