@@ -29,14 +29,13 @@ import javax.inject.Named
 class FindCirclesPercentageInteractorImpl(private val circleRepository: CircleRepository) : FindCirclesPercentageInteractor {
 
     override fun execute(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest): ResourcePageResponse<CircleResponse> {
-        val historyItems = circleRepository.findCirclesPercentage(workspaceId, name, active, pageRequest)
-
+        val circlesPercentage = circleRepository.findCirclesPercentage(workspaceId, name, active, pageRequest)
         return ResourcePageResponse.from(
-            historyItems.content.map { CircleResponse.from(it) },
-            historyItems.pageNumber,
-            historyItems.pageSize,
-            historyItems.isLast(),
-            historyItems.totalPages()
+            circlesPercentage.content.map { CircleResponse.from(it) },
+            circlesPercentage.pageNumber,
+            circlesPercentage.pageSize,
+            circlesPercentage.isLast(),
+            circlesPercentage.totalPages()
         )
     }
 }
