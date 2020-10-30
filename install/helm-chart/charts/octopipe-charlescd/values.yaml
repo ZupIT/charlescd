@@ -11,6 +11,10 @@ envVars:
     value: "IN_CLUSTER"
   - name: TIMEOUT_RESOURCE_VERIFICATION
     value: "300"
+  - name: LIMIT_REQUESTS_BY_SECOND
+    value: "10"
+  - name: LIMIT_REQUESTS_BURST_BY_SECOND
+    value: "10"
 
 appname: octopipe
 
