@@ -46,7 +46,7 @@ const SectionGit = ({ form, setForm, data }: Props) => {
     <Section
       name="Git"
       icon="git"
-      isAction={isAction}
+      showAction={isAction}
       action={() => setForm(FORM_GIT)}
     >
       {data && !responseRemove && (
