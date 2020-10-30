@@ -96,7 +96,7 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
 
   const render = () => (
     <Styled.Wrapper>
-      {status.isIdle || status.isPending ? renderLoader() : renderAvatar()}
+      {status.isPending ? renderLoader() : renderAvatar()}
     </Styled.Wrapper>
   );
 
