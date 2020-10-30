@@ -17,6 +17,7 @@
 import React from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { render, screen, wait } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import SectionRegistry from '../';
 
 beforeEach(() => {
@@ -38,7 +39,7 @@ test('render registry with error', async () => {
 
   const errorText = await screen.findByText('invalid registry');
   expect(errorText).toBeInTheDocument();
-})
+});
 
 test('render registry successful', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
@@ -51,4 +52,21 @@ test('render registry successful', async () => {
 
   const errorText = screen.queryByTestId('log-error');
   await wait(() => expect(errorText).not.toBeInTheDocument());
-})
+});
+
+test('should remove/cancel registry', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
+
+  const form = '';
+  const setForm = jest.fn();
+  const data = {"id": "1234", "name": "charles-cd" };
+
+  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+  
+  let cancelIcon = await screen.findByTestId('icon-cancel');
+  expect(cancelIcon).toBeInTheDocument();
+  userEvent.click(cancelIcon);
+
+  cancelIcon = screen.queryByTestId('icon-cancel');
+  await wait(() => expect(cancelIcon).not.toBeInTheDocument());
+});
