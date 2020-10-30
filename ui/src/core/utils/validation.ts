@@ -17,7 +17,7 @@
 import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
 
-export const validFields = (fields: object) => {
+export const validFields = (fields: Record<string, string>) => {
   let status = true;
   forEach(fields, (value: string) => {
     if (isEmpty(value)) {

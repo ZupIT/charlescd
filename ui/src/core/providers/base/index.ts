@@ -64,7 +64,7 @@ export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 
 export const authRequest = (
   url: string,
-  body: object | string | undefined = undefined,
+  body: Record<string, unknown> | string | undefined = undefined,
   options?: RequestInit
 ): ((options: RequestInit) => Promise<Response>) => {
   const defaultOptions = {
@@ -86,7 +86,7 @@ export const authRequest = (
 
 export const unauthenticatedRequest = (
   url: string,
-  body: object | string | undefined = undefined,
+  body: Record<string, unknown> | string | undefined = undefined,
   options?: RequestInit
 ): ((options: RequestInit) => Promise<Response>) => {
   const defaultOptions = {
@@ -108,7 +108,7 @@ export const unauthenticatedRequest = (
 };
 
 const buildBody = (
-  body: object | string | undefined = undefined,
+  body: Record<string, unknown> | string | undefined = undefined,
   isFormData: boolean
 ) => {
   return isString(body) || isFormData ? body : JSON.stringify(body);
@@ -116,7 +116,7 @@ const buildBody = (
 
 export const baseRequest = (
   url: string,
-  body: object | string | undefined = undefined,
+  body: Record<string, unknown> | string | undefined = undefined,
   options?: RequestInit
 ): ((options: RequestInit) => Promise<Response>) => {
   const isFormData = body instanceof FormData;
@@ -141,7 +141,7 @@ export const baseRequest = (
 
 export const postRequest = (
   url: string,
-  body: object | string | undefined = undefined
+  body: Record<string, unknown> | string | undefined = undefined
 ): ((options: RequestInit) => Promise<Response>) => {
   return baseRequest(url, body, {
     method: 'POST'
@@ -150,7 +150,7 @@ export const postRequest = (
 
 export const putRequest = (
   url: string,
-  body: object | string | undefined = undefined
+  body: Record<string, unknown> | string | undefined = undefined
 ): ((options: RequestInit) => Promise<Response>) => {
   return baseRequest(url, body, {
     method: 'PUT'

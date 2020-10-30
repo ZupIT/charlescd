@@ -27,7 +27,12 @@ import {
   statusWorkspaceAction
 } from 'modules/Workspaces/state/actions';
 
-export const useWorkspace = (): [Workspace, : () => void, : () => void, : () => void] => {
+export const useWorkspace = (): [
+  Workspace,
+  (id: string) => void,
+  () => void,
+  (name: string) => void
+] => {
   const getWorkspaceById = useFetchData<Workspace>(findById);
   const [workspace, setWorkspace] = useState(null);
   const [, , updateWorkspace] = useFetch(updateName);
@@ -76,7 +81,11 @@ export const useWorkspace = (): [Workspace, : () => void, : () => void, : () => 
   return [workspace, loadWorkspace, getWorkspaceById, update];
 };
 
-export const useWorkspaces = (): [: () => void, : () => void, WorkspacePagination] => {
+export const useWorkspaces = (): [
+  (name: string) => void,
+  () => void,
+  WorkspacePagination
+] => {
   const dispatch = useDispatch();
   const [workspaces, getWorkspaces] = useFetch<WorkspacePagination>(findAll);
   const { response, error } = workspaces;

@@ -19,16 +19,16 @@ import { buildHeaders, basePath } from 'core/providers/base';
 import { logout } from 'core/utils/auth';
 import { getCircleId } from 'core/utils/circle';
 
-function loadWorker(workerFile: () => void) {
+function loadWorker(workerFile: (obj: Record<string, unknown>) => void) {
   const code = workerFile.toString();
   const blob = new Blob(['(' + code + ')()']);
   return new Worker(URL.createObjectURL(blob));
 }
 
 const useWorker = <T>(
-  workerFile: () => void,
+  workerFile: (obj: Record<string, unknown>) => void,
   initialValue?: T
-): [T, () => void] => {
+): [T, (apiParams: Record<string, unknown>) => void] => {
   const worker = useRef<Worker>();
   const [data, setData] = useState<T>(initialValue);
 
@@ -36,7 +36,7 @@ const useWorker = <T>(
     worker.current.terminate();
   };
   const workerHook = useCallback(
-    (apiParams: object) => {
+    (apiParams: Record<string, unknown>) => {
       if (worker.current) {
         terminateWorker();
       }

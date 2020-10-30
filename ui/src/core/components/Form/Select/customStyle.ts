@@ -34,7 +34,7 @@ export default {
   input: (style: CSSProperties) => ({
     ...style,
     color: theme.select.color,
-    position: 'absolute' as 'absolute',
+    position: 'absolute' as const,
     top: '18px'
   }),
   placeholder: (style: CSSProperties, state: SelectComponentsProps) => {
@@ -46,7 +46,7 @@ export default {
 
     return {
       ...style,
-      position: 'absolute' as 'absolute',
+      position: 'absolute' as const,
       top: labelPos ? '7px' : '27px',
       transition: 'top 0.1s, font-size 0.1s',
       fontSize: labelPos ? '12px' : '14px',
@@ -55,13 +55,13 @@ export default {
   },
   loadingIndicator: (style: CSSProperties) => ({
     ...style,
-    position: 'absolute' as 'absolute',
+    position: 'absolute' as const,
     top: 0,
     right: 0
   }),
   indicatorsContainer: (style: CSSProperties) => ({
     ...style,
-    position: 'absolute' as 'absolute',
+    position: 'absolute' as const,
     bottom: '9px',
     right: 0
   }),

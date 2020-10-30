@@ -20,8 +20,8 @@ import defaultConfig from './config';
 import Styled from './styled';
 
 export interface Props {
-  series: object[];
-  options?: object;
+  series: Record<string, unknown>[];
+  options?: Record<string, unknown>;
   className?: string;
   width?: number | string;
   height?: number | string;

@@ -23,7 +23,11 @@ import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
 
-export const useWorkspace = (): [: () => void, : () => void, boolean] => {
+export const useWorkspace = (): [
+  (name: string) => void,
+  () => void,
+  boolean
+] => {
   const dispatch = useDispatch();
   const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
   const { response, error, loading } = workspacesData;
