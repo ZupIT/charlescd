@@ -76,7 +76,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
     <Section
       name="Registry"
       icon="server"
-      isAction={isAction}
+      showAction={isAction}
       action={() => setForm(FORM_REGISTRY)}
     >
       {data && !responseRemove && (
