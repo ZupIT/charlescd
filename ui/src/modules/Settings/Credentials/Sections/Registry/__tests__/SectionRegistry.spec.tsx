@@ -70,3 +70,14 @@ test('should remove/cancel registry', async () => {
   cancelIcon = screen.queryByTestId('icon-cancel');
   await wait(() => expect(cancelIcon).not.toBeInTheDocument());
 });
+
+test('should render form', async () => {
+  const form = 'registry';
+  const setForm = jest.fn();
+  const data = {"id": "1234", "name": "charles-cd" };
+
+  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+
+  const textElement = await screen.findByText('Add Registry');
+  expect(textElement).toBeInTheDocument();
+});
