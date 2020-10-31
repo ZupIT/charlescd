@@ -68,10 +68,8 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   });
 
   useEffect(() => {
-    if (status.isResolved) {
-      findByEmail(email);
-    }
-  }, [status, email, findByEmail]);
+    if (email) findByEmail(email);
+  }, [email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
