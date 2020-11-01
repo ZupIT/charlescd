@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, wait, waitForDomChange } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event'
 import { COLOR_WHITE } from 'core/assets/colors';
 import * as MetricEnums from '../enums';
 import CircleMetrics from '../index';
@@ -28,11 +29,11 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
-test('render circle metrics component', async () => {
+test('render circle metrics component', () => {
   const id = 'circle-id';
   const testId = `circle-metric-${id}`;
 
-  const { getByTestId } = render(
+  render(
     <CircleMetrics
       id={id}
       chartType={MetricEnums.CHART_TYPE.NORMAL}
@@ -40,12 +41,12 @@ test('render circle metrics component', async () => {
     />
   );
 
-  await wait(() => expect(getByTestId(testId)).toBeInTheDocument());
+  waitFor(() => expect(screen.getByTestId(testId)).toBeInTheDocument());
 });
 
-test('filter circle metrics to 30m', async () => {
+test('filter circle metrics to 30m', () => {
   const id = 'circle-id';
-  const { getByTestId, container } = render(
+  render(
     <CircleMetrics
       id={id}
       chartType={MetricEnums.CHART_TYPE.NORMAL}
@@ -53,11 +54,8 @@ test('filter circle metrics to 30m', async () => {
     />
   );
 
-  const control = getByTestId('circle-metric-control-30m');
-  control.click();
+  const control = screen.getByTestId('circle-metric-control-30m');
+  userEvent.click(control);
 
-  const controlStyle = window.getComputedStyle(control);
-
-  waitForDomChange({ container });
-  expect(controlStyle.border).toBe(`1px solid ${COLOR_WHITE.toLowerCase()}`);
+  expect(control).toHaveStyle(`border: 1px solid ${COLOR_WHITE.toLowerCase()}`);
 });
