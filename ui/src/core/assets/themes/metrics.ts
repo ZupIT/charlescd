@@ -99,7 +99,7 @@ export const dark = {
         background: COLOR_BLACK_MARLIN
       }
     }
-  } as Record<string, any>,
+  } as Record<string, unknown>,
   deploy: {
     deployed: COLOR_MOUNTAIN_MEADOW,
     deploying: COLOR_DODGER_BLUE,
@@ -114,5 +114,5 @@ export const dark = {
         background: COLOR_PAYNES_GREY
       }
     }
-  } as Record<string, any>
+  } as Record<string, unknown>
 };

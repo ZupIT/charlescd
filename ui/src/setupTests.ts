@@ -32,7 +32,7 @@ export interface CustomGlobal {
   fetch: FetchMock;
   localStorage?: Record<string, unknown>;
   document?: CustomDocument;
-  Worker: object;
+  Worker: unknown;
 }
 
 declare const global: CustomGlobal;

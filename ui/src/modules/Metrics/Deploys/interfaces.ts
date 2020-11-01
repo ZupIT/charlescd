@@ -75,3 +75,12 @@ export interface ReleaseHistoryComponents {
   moduleName: string;
   version: string;
 }
+
+export interface PlotOptions {
+  name: string;
+  type: string;
+  data: {
+    x: string;
+    y: number;
+  }[];
+}

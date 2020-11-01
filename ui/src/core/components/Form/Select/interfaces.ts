@@ -32,8 +32,8 @@ export interface Props {
   isLoading?: boolean;
   loadOptions?: (
     inputValue: string,
-    callback: (options: OptionsType<any>) => void
-  ) => Promise<any> | void;
+    callback: (options: OptionsType<unknown>) => void
+  ) => Promise<unknown> | void;
   className?: string;
   onChange?: (event: unknown) => void;
   onInputChange?: (value: string) => void;

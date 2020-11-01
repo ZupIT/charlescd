@@ -38,8 +38,8 @@ interface Props {
   hasError?: boolean;
   loadOptions?: (
     inputValue: string,
-    callback: (options: OptionsType<any>) => void
-  ) => Promise<any> | void;
+    callback: (options: OptionsType<unknown>) => void
+  ) => Promise<unknown> | void;
 }
 
 const AsyncSelect = ({

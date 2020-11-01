@@ -227,8 +227,8 @@ export const useCreateMetricsGroup = (metricGroupId: string) => {
         return createdMetricsGroupResponse;
       } catch (error) {
         status.rejected();
-        error.text().then((errorMessage: any) => {
-          const parsedError = JSON.parse(errorMessage);
+        error.text().then((errorMessage: unknown) => {
+          const parsedError = JSON.parse(errorMessage as string);
           dispatch(
             toogleNotification({
               text: parsedError?.[0].message ?? 'Error on save metric group',

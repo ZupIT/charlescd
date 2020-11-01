@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { DeployMetricData, MetricDataInPeriod } from './interfaces';
+import {
+  DeployMetricData,
+  MetricDataInPeriod,
+  PlotOptions
+} from './interfaces';
 import map from 'lodash/map';
 import dayjs from 'dayjs';
 
@@ -49,7 +53,7 @@ export const chartDateFormatter = (date: string) => {
   return dayjs(date, 'YYYY-MM-DD').format('DDMMM');
 };
 
-export const getPlotOption = (deploySeries: Array<any>) => {
+export const getPlotOption = (deploySeries: Array<PlotOptions>) => {
   const plotOptionsMin = { bar: { columnWidth: '25%' } };
   const plotOptionsMax = { bar: { columnWidth: '50%' } };
 

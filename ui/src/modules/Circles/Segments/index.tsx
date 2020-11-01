@@ -66,7 +66,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
   const hasGroup = fields.length > ONE;
 
   const renderGroup = (
-    group: Partial<ArrayField<Record<string, any>, 'id'>>,
+    group: Partial<ArrayField<Record<string, string>, 'id'>>,
     index: number
   ) => {
     return (

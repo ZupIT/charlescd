@@ -20,7 +20,8 @@
       "endOfLine": "auto"
     }],
     "@typescript-eslint/explicit-member-accessibility": 0,
-    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "react/display-name": 0,
     "react/prop-types": "off"
   },

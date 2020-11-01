@@ -25,7 +25,7 @@ import {
 import { buildParams, URLParams } from 'core/utils/query';
 
 interface DeployMetric extends FetchProps {
-  searchDeployMetrics: () => void;
+  searchDeployMetrics: (payload: URLParams) => void;
   response: DeployMetricData;
 }
 

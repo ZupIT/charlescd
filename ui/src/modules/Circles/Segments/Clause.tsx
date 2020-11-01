@@ -31,7 +31,7 @@ import {
 interface Props {
   prefixName: string;
   viewMode: boolean;
-  clauses: Partial<ArrayField<Record<string, object>, 'id'>>;
+  clauses: Partial<ArrayField<Record<string, Record<string, unknown>>, 'id'>>;
   onRemoveRule?: (clauseIndex: number) => void;
   hasGroup?: boolean;
 }
