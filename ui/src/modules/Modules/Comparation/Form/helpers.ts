@@ -16,7 +16,7 @@
 
 import forEach from 'lodash/forEach';
 
-export const validFields = (fields: object) => {
+export const validFields = (fields: Record<string, string>) => {
   let status = true;
   forEach(fields, (value: string) => {
     if (value === '') {

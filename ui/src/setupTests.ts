@@ -30,7 +30,7 @@ interface CustomDocument {
 
 export interface CustomGlobal {
   fetch: FetchMock;
-  localStorage?: object;
+  localStorage?: Record<string, unknown>;
   document?: CustomDocument;
   Worker: object;
 }
