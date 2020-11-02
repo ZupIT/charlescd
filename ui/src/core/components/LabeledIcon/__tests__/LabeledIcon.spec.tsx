@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import LabeledIcon from '../';
 
 test('renders LabeledIcon component with default properties', () => {
-  const { getByText, getByTestId } = render(
+  render(
     <LabeledIcon
       icon="charles"
     >
@@ -27,18 +27,18 @@ test('renders LabeledIcon component with default properties', () => {
     </LabeledIcon>
   );
 
-  const childElement = getByText('hello')
-  const labelElement = getByTestId('labeledIcon-charles').querySelector(':nth-child(2)')
-  const iconElement = getByTestId('icon-charles')
+  const textElement = screen.getByText('hello');
+  const labelElement = screen.getByTestId('labeledIcon-charles').querySelector(':nth-child(2)');
+  const iconElement = screen.getByTestId('icon-charles');
 
+  expect(textElement).toBeInTheDocument();
   expect(labelElement).toBeInTheDocument();
   expect(labelElement).toHaveStyle('margin-left: 5px;');
-  expect(childElement).toBeInTheDocument();
   expect(iconElement).toBeInTheDocument();
 });
 
 test('renders LabeledIcon component with marginContent', () => {
-  const { getByText, getByTestId } = render(
+  render(
     <LabeledIcon
       icon="charles"
       marginContent="20px"
@@ -47,12 +47,12 @@ test('renders LabeledIcon component with marginContent', () => {
     </LabeledIcon>
   );
 
-  const childElement = getByText('hello')
-  const labelElement = getByTestId('labeledIcon-charles').querySelector(':nth-child(2)')
-  const iconElement = getByTestId('icon-charles')
+  const textElement = screen.getByText('hello');
+  const labelElement = screen.getByTestId('labeledIcon-charles').querySelector(':nth-child(2)');
+  const iconElement = screen.getByTestId('icon-charles');
 
+  expect(textElement).toBeInTheDocument();
   expect(labelElement).toBeInTheDocument();
   expect(labelElement).toHaveStyle('margin-left: 20px;');
-  expect(childElement).toBeInTheDocument();
   expect(iconElement).toBeInTheDocument();
 });
