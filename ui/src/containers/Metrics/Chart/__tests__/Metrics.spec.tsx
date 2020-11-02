@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render, screen, waitFor } from 'unit-test/testUtils';
-import userEvent from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event';
 import { COLOR_WHITE } from 'core/assets/colors';
 import * as MetricEnums from '../enums';
 import CircleMetrics from '../index';
