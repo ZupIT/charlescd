@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Placeholder from '../';
 
 test('render Placeholder default component', () => {
@@ -25,12 +25,13 @@ test('render Placeholder default component', () => {
     subtitle: "Subtitle"
   }
 
-  const { getByText } = render(
+  render(
     <Placeholder icon={props.icon} title={props.title} subtitle={props.subtitle} />
   );
 
-  const titleElement = getByText(props.title);
-  const subtitleElement = getByText(props.subtitle);
+  const titleElement = screen.getByText(props.title);
+  const subtitleElement = screen.getByText(props.subtitle);
+  
   expect(titleElement).toHaveTextContent(props.title);
   expect(subtitleElement).toHaveTextContent(props.subtitle);
 });
