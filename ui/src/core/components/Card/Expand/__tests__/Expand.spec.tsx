@@ -15,23 +15,24 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, waitFor, screen, act, fireEvent } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import CardExpand from '../';
 
-test('render CardExpand with children', async () => {
+test('render CardExpand with children', () => {
   const onclick = jest.fn();
-  const { getByText } = render(
+  render(
     <CardExpand onClick={onclick}>
       <span>charles/ui:v1</span>
     </CardExpand>
   );
 
-  await wait(() => expect(getByText('charles/ui:v1')).toBeInTheDocument());
+  waitFor(() => expect(screen.getByText('charles/ui:v1')).toBeInTheDocument());
 });
-
+// TODO Warning: You seem to have overlapping act() calls
 test('click outside CardExpand', async () => {
   const onclick = jest.fn();
-  const { getByTestId } = render(
+  render(
     <div data-testid="wrapper-card-expand">
       <CardExpand onClick={onclick}>
         <span>item 2</span>
@@ -39,8 +40,8 @@ test('click outside CardExpand', async () => {
     </div>
   );
 
-  const CardWrapper = getByTestId('wrapper-card-expand');
-  fireEvent.click(CardWrapper);
+  const CardWrapper = await screen.findByTestId('wrapper-card-expand');
+  userEvent.click(CardWrapper);
 
-  await wait(() => expect(onclick).toHaveBeenCalled());
+  waitFor(() => expect(onclick).toHaveBeenCalled());
 });
