@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import AceEditor from '..';
 
 const props = {
@@ -27,6 +27,8 @@ test('render Ace Editor', () => {
   const { container } = render(
     <AceEditor {...props} />
   );
+
+  screen.debug()
 
   expect(container.innerHTML).toMatch("ace-editor")
 });
