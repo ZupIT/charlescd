@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait, waitForDomChange } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import RadioGroup from '../';
 
 const props = {
@@ -26,9 +27,9 @@ const props = {
   ]
 }
 
-test('render RadioGroup default component', async () => {
+test('render RadioGroup default component', () => {
   const onChange = jest.fn();
-  const { queryByTestId } = render(
+  render(
     <RadioGroup
       name={props.name}
       items={props.radios}
@@ -36,10 +37,8 @@ test('render RadioGroup default component', async () => {
     />
   );
 
-  const githubElement = queryByTestId(`radio-group-${props.name}-item-${props.radios[0].value}`);
-  const gitlabElement = queryByTestId(`radio-group-${props.name}-item-${props.radios[1].value}`);
-
-  await wait();
+  const githubElement = screen.getByTestId(`radio-group-${props.name}-item-${props.radios[0].value}`);
+  const gitlabElement = screen.getByTestId(`radio-group-${props.name}-item-${props.radios[1].value}`);
 
   expect(githubElement).toBeInTheDocument();
   expect(gitlabElement).toBeInTheDocument();
@@ -47,7 +46,7 @@ test('render RadioGroup default component', async () => {
 
 test('render RadioGroup and trigger event', () => {
   const onChange = jest.fn();
-  const { queryByTestId } = render(
+  render(
     <RadioGroup
       name={props.name}
       items={props.radios}
@@ -55,10 +54,8 @@ test('render RadioGroup and trigger event', () => {
     />
   );
 
-  const value = props.radios[0].value;
-  const element = queryByTestId(`radio-group-${props.name}-item-${value}`) as HTMLInputElement;
+  const element = screen.getByLabelText(/github/i);
+  userEvent.click(element);
 
-  fireEvent.change(element, { currentTarget: { value }});
-
-  wait(() => expect(onChange).toHaveBeenCalledWith(value));
+  expect(onChange).toHaveBeenCalledTimes(1);
 });
