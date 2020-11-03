@@ -22,6 +22,7 @@ import feign.codec.ErrorDecoder
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
 import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
+import java.io.Serializable
 import java.lang.IllegalArgumentException
 
 class VillagerErrorDecoder : ErrorDecoder {
@@ -60,5 +61,5 @@ class VillagerErrorDecoder : ErrorDecoder {
     data class ResponseError(
         val code: String,
         val message: String
-    )
+    ): Serializable
 }
