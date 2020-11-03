@@ -767,7 +767,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
+        } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_GENERAL_ERROR, "")
 
         credentialConfigurationService.testRegistryConnection(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }

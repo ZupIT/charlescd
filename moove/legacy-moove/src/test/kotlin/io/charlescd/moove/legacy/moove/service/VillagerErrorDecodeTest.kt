@@ -48,6 +48,15 @@ class VillagerErrorDecodeTest {
     }
 
     @Test
+    fun `when httpStatus 500 and code is blank, method should throw IntegrationExceptionLegacy`() {
+        assertFailsWith<IntegrationExceptionLegacy> {
+            villagerErrorDecode.decode(
+                "villagerTest", generateResponse(500, "")
+            )
+        }
+    }
+
+    @Test
     fun `when httpStatus 502, method should throw IntegrationExceptionLegacy`() {
         assertFailsWith<IntegrationExceptionLegacy> {
             villagerErrorDecode.decode(

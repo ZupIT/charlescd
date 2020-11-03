@@ -137,7 +137,7 @@ public class ServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.ok().build()));
+        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(404).build()));
 
         serviceImpl.testRegistryConnectivityConfig(entity);
 
