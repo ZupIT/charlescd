@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, act, waitForElement, screen, wait } from 'unit-test/testUtils';
+import { render, fireEvent, act, waitForElement } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer';
 import selectEvent from 'react-select-event';
 import { FetchMock } from 'jest-fetch-mock';
@@ -53,27 +53,25 @@ test('form should be valid', async () => {
   (fetch as FetchMock).mockResponseOnce(mockGetModules);
   (fetch as FetchMock).mockResponseOnce(mockGetTags);
 
-  render(
+  const { getByTestId, getByText } = render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-
-  const nameInput = screen.getByTestId('input-text-releaseName');
+  
+  const nameInput = getByTestId('input-text-releaseName');
   fireEvent.change(nameInput, { target: { value: 'release-name' }});
-
-  const moduleLabel = screen.getByText('Select a module');
+  
+  const moduleLabel = getByText('Select a module');
   await act(async() => selectEvent.select(moduleLabel, 'module-1'));
 
-  const componentLabel = screen.getByText('Select a component');
+  const componentLabel = getByText('Select a component');
   await act(async() => selectEvent.select(componentLabel, 'component-1'));
 
-  const versionInput = screen.getByTestId('input-text-modules[0].version');
+  const versionInput = getByTestId('input-text-modules[0].version');
   fireEvent.change(versionInput, { target: { value: 'version-1' }});
 
-  const submit = await screen.findByTestId('button-default-submit');
-  const addModule = await screen.findByTestId('button-default-add-module');
-  
+  const submit = await waitForElement(() => getByTestId('button-default-submit'));
+
   expect(submit).not.toBeDisabled();
-  expect(addModule).not.toBeDisabled();
 });
 
 test('form should be invalid when version name not found', async () => {
@@ -83,10 +81,10 @@ test('form should be invalid when version name not found', async () => {
   const { getByTestId, getByText } = render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-
+  
   const nameInput = getByTestId('input-text-releaseName');
   fireEvent.change(nameInput, { target: { value: 'release-name' }});
-
+  
   const moduleLabel = getByText('Select a module');
   await act(async() => selectEvent.select(moduleLabel, 'module-1'));
 
