@@ -87,9 +87,13 @@ public enum Condition {
 
     CONTAINS("(%s.indexOf(toStr(%s)) >= 0)") {
         public String expression(String key, List<String> values) {
-            return String.format(this.jsExpression,
-                    OpUtils.arrVal(values),
-                    key);
+            if (OpUtils.isSingleVal(values)) {
+                return defaultExpression(key, values);
+            } else {
+                return String.format(this.jsExpression,
+                        OpUtils.arrVal(values),
+                        key);
+            }
         }
     },
 

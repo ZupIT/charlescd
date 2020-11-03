@@ -179,6 +179,20 @@ class ConditionTest extends Specification {
         assert expression == "(['@zup.com.br','@itau-unibanco.com'].indexOf(toStr(getPath(input, 'email'))) >= 0)"
     }
 
+    def "Contains expression should compare the first value"() {
+
+        given:
+        def key = "username"
+        def values = ["zup"]
+        when:
+
+        def expression = Condition.CONTAINS.expression(OpUtils.inputValue(key), values)
+
+        then:
+
+        assert expression == "(getPath(input, 'username').indexOf(toStr('zup')) >= 0)"
+    }
+
     def "Not Contains expression should compare the values array"() {
 
         given:
