@@ -118,7 +118,7 @@ public class DockerRegistryResource {
     }
 
     @POST
-    @Path("/config-validation")
+    @Path("/configuration-validation")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response testConnection(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId,
                                @Valid CreateDockerRegistryConfigurationRequest request) {

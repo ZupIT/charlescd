@@ -39,7 +39,7 @@ interface VillagerApi {
         const val BUILD_URL = "/build"
         const val REGISTRY_URL = "/registry"
         const val COMPONENT_TAGS_URL = "$REGISTRY_URL/{registryConfigurationId}/components/{componentName}/tags"
-        const val TEST_REGISTRY_CONFIG_URL = "$REGISTRY_URL/config-validation"
+        const val TEST_REGISTRY_CONFIG_URL = "$REGISTRY_URL/configuration-validation"
         const val TEST_REGISTRY_CONNECTION_URL = "$REGISTRY_URL/connection-validation"
     }
 
