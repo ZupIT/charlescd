@@ -36,6 +36,14 @@ interface Props {
   onChange: Function;
 }
 
+const formDefaultValues = {
+  id: '',
+  name: '',
+  gitRepositoryAddress: '',
+  helmRepository: '',
+  components: [component]
+};
+
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
@@ -45,7 +53,7 @@ const FormModule = ({ module, onChange }: Props) => {
   const history = useHistory();
 
   const form = useForm<Module>({
-    defaultValues: { components: [component] }
+    defaultValues: formDefaultValues
   });
 
   const { register, control, getValues, handleSubmit, watch } = form;
