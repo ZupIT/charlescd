@@ -61,5 +61,5 @@ class VillagerErrorDecoder : ErrorDecoder {
     data class ResponseError(
         val code: String,
         val message: String
-    ): Serializable
+    ) : Serializable
 }

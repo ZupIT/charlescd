@@ -6,21 +6,19 @@ import feign.Response
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
 import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
 import io.charlescd.moove.legacy.moove.api.config.VillagerErrorDecoder
-import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.ObjectOutputStream
 import java.nio.charset.Charset
 import java.util.*
 import kotlin.test.assertFailsWith
-
+import org.junit.Test
 
 class VillagerErrorDecodeTest {
 
-    private val DEFAULT_CODE = "error";
+    private val DEFAULT_CODE = "error"
 
-    private val villagerErrorDecode = VillagerErrorDecoder(
-    )
+    private val villagerErrorDecode = VillagerErrorDecoder()
 
     @Test
     fun `when httpStatus 400, method should throw IllegalArgumentException`() {
@@ -35,7 +33,7 @@ class VillagerErrorDecodeTest {
     fun `when httpStatus 500 and code contains Thirdy, method should throw ThirdyPartyIntegrationExceptionLegacy`() {
         assertFailsWith<ThirdyPartyIntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
-                "villagerTest",generateResponse(500, "Thirdy")
+                "villagerTest", generateResponse(500, "Thirdy")
             )
         }
     }
@@ -44,7 +42,7 @@ class VillagerErrorDecodeTest {
     fun `when httpStatus 500 and code not contains Thirdy, method should throw IntegrationExceptionLegacy`() {
         assertFailsWith<IntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
-                "villagerTest",generateResponse(500, DEFAULT_CODE)
+                "villagerTest", generateResponse(500, DEFAULT_CODE)
             )
         }
     }
@@ -53,7 +51,7 @@ class VillagerErrorDecodeTest {
     fun `when httpStatus 502, method should throw IntegrationExceptionLegacy`() {
         assertFailsWith<IntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
-                "villagerTest",generateResponse(502, DEFAULT_CODE)
+                "villagerTest", generateResponse(502, DEFAULT_CODE)
             )
         }
     }
@@ -62,7 +60,7 @@ class VillagerErrorDecodeTest {
     fun `when httpStatus 503, method should throw IntegrationExceptionLegacy`() {
         assertFailsWith<IntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
-                "villagerTest",generateResponse(503, DEFAULT_CODE)
+                "villagerTest", generateResponse(503, DEFAULT_CODE)
             )
         }
     }
@@ -71,7 +69,7 @@ class VillagerErrorDecodeTest {
     fun `when httpStatus 504, method should throw IntegrationExceptionLegacy`() {
         assertFailsWith<IntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
-                "villagerTest",generateResponse(504, DEFAULT_CODE)
+                "villagerTest", generateResponse(504, DEFAULT_CODE)
             )
         }
     }
@@ -80,7 +78,7 @@ class VillagerErrorDecodeTest {
     fun `when response is null, method should throw IntegrationExceptionLegacy`() {
         assertFailsWith<IntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
-                "villagerTest",null
+                "villagerTest", null
             )
         }
     }
@@ -111,7 +109,7 @@ class VillagerErrorDecodeTest {
     private fun generateHeaders(): MutableMap<String, Collection<String>> {
         val headers: MutableMap<String, Collection<String>> = HashMap()
         headers.put("header", listOf("header"))
-        return headers;
+        return headers
     }
 
     private fun generateRequest(): Request? {
