@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ServiceImplTest {
+public class RegistryServiceImplTest {
 
     private static final String ARTIFACT_NAME = "charles_cd";
     private static final String STRING_DEFAULT_VALUE = "charlescd";
@@ -306,6 +306,22 @@ public class ServiceImplTest {
                 () ->   serviceImpl.fromDockerRegistryConfigurationInput(input));
 
         assertThat(exception.getMessage(), is("Registry type not supported!"));
+
+    }
+
+    @Test
+    public void testRegistryResponseIsNull() {
+        var registryType = RegistryType.GCP;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(null);
+
+        Exception exception =
+                assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+
+        assertThat(exception.getMessage(), is("Registry service not respond."));
 
     }
 

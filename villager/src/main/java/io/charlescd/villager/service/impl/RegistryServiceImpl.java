@@ -149,6 +149,10 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void validateResponse(RegistryType type, Optional<Response> response) {
+        if (Objects.isNull(response)) {
+            throw new ThirdyPartyIntegrationException("Registry service not respond.");
+        }
+
         switch (type) {
             case AWS:
                 //TODO: Implement
@@ -172,18 +176,15 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void validateGCPResponse(Optional<Response> response) {
-        if (Objects.nonNull(response)) {
+        int status = response.get().getStatus();
 
-            int status = response.get().getStatus();
+        if (status == HttpStatus.SC_UNAUTHORIZED || status == HttpStatus.SC_FORBIDDEN) {
+            throw new IllegalArgumentException("Invalid registry config");
+        }
 
-            if (status == HttpStatus.SC_UNAUTHORIZED || status == HttpStatus.SC_FORBIDDEN) {
-                throw new IllegalArgumentException("Invalid registry config");
-            }
-
-            if (!isSuccessfullyHttpStatus(status) && status != HttpStatus.SC_NOT_FOUND) {
-                throw new ThirdyPartyIntegrationException(
-                        "GCP integration error: " + response.get().getStatusInfo().getReasonPhrase());
-            }
+        if (!isSuccessfullyHttpStatus(status) && status != HttpStatus.SC_NOT_FOUND) {
+            throw new ThirdyPartyIntegrationException(
+                    "GCP integration error: " + response.get().getStatusInfo().getReasonPhrase());
         }
     }
 
