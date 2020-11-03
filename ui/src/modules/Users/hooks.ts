@@ -172,9 +172,11 @@ export const useUpdateProfile = (): {
       setResponse(data);
       status.resolved();
     } catch (e) {
+      const error = await e.json();
+
       dispatch(
         toogleNotification({
-          text: 'The password could not be reset.',
+          text: error?.message,
           status: 'error'
         })
       );

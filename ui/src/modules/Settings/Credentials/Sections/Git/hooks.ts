@@ -56,19 +56,25 @@ export const useGit = (): FetchProps => {
 
   useEffect(() => {
     if (errorSave) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorSave.status}] Git could not be saved.`,
-          status: 'error'
-        })
-      );
+      (async () => {
+        const e = await errorSave.json();
+        dispatch(
+          toogleNotification({
+            text: e?.message,
+            status: 'error'
+          })
+        );
+      })();
     } else if (errorAdd) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorAdd.status}] Git could not be patched.`,
-          status: 'error'
-        })
-      );
+      (async () => {
+        const e = await errorAdd.json();
+        dispatch(
+          toogleNotification({
+            text: e?.message,
+            status: 'error'
+          })
+        );
+      })();
     }
   }, [errorSave, errorAdd, dispatch]);
 
