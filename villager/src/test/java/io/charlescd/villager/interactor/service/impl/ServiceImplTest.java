@@ -92,7 +92,7 @@ public class ServiceImplTest {
 
     @Test
     public void testGetRegistryTagInvalidRegistryType() {
-        var registryType = RegistryType.GCP;
+        var registryType = RegistryType.UNSUPPORTED;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
         doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
 
@@ -114,7 +114,7 @@ public class ServiceImplTest {
     public void testGetRegistryTagGeneralError() {
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        doThrow(Exception.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+        doThrow(RuntimeException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
@@ -200,6 +200,22 @@ public class ServiceImplTest {
 
         verify(registryClient, times(1))
                 .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
+
+    }
+
+    @Test
+    public void testTestRegistryInvalidaRegistry() {
+        var registryType = RegistryType.UNSUPPORTED;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+
+        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+
+        verify(registryClient, times(1))
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
 
     }
 

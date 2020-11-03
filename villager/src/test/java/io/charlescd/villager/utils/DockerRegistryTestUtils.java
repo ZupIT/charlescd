@@ -144,7 +144,7 @@ public class DockerRegistryTestUtils {
                                 STRING_DEFAULT_VALUE);
                 break;
             default:
-                throw new IllegalStateException("Registry type not supported!");
+              connectionData = null;
 
 
         }
