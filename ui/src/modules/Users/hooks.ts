@@ -171,6 +171,8 @@ export const useUpdateProfile = (): {
       const data = await update(id, profile);
       setResponse(data);
       status.resolved();
+
+      return data;
     } catch (e) {
       const error = await e.json();
 

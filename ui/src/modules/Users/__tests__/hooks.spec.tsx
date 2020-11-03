@@ -17,7 +17,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useCreateUser } from '../hooks';
+import { useCreateUser, useUpdateProfile } from '../hooks';
 import { NewUser } from '../interfaces/User';
 
 beforeEach(() => {
@@ -29,9 +29,9 @@ jest.mock('core/state/hooks', () => ({
 }));
 
 const payload = {
-  name: 'name',
-  email: 'charles@zup.com.br',
-  password: '123457'
+  id: '123',
+  name: 'Charles',
+  email: 'charlescd@zup.com.br'
 };
 
 test('create a new user', async () => {
@@ -70,4 +70,33 @@ test('error create a new user', async () => {
   });
 
   await wait(() => expect(response).toBeUndefined());
+});
+
+test('update an user', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(payload));
+
+  const { result } = renderHook(() => useUpdateProfile());
+
+  await act(async () => {
+    result.current.updateProfile(payload.id, payload);
+  });
+
+  expect(result.current.response).toMatchObject(payload);
+});
+
+test('error to update an user', async () => {
+  const error = {
+    name: 'name',
+    message: 'The user charlescd@zup.com.br did not update.'
+  };
+
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify(error)));
+
+  const { result } = renderHook(() => useUpdateProfile());
+
+  await act(async () => {
+    result.current.updateProfile(payload.id, payload);
+  });
+
+  expect(result.current.response).toBeUndefined();
 });
