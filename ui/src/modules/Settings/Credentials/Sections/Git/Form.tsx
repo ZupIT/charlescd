@@ -90,7 +90,7 @@ const FormGit = ({ onFinish }: Props) => {
         />
       </Styled.Title>
       <Styled.Subtitle color="dark">
-        Choose which one you want to add:
+        Choose witch one you want to add:
       </Styled.Subtitle>
       <RadioGroup
         name="git"
