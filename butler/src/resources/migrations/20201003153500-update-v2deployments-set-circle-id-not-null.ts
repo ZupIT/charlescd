@@ -21,7 +21,7 @@ export class UpdateV2DeploymentsSetCircleIdNotNull20201003153500 implements Migr
 
   public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query(`
-    UPDATE v2deployments SET circle_id = '${AppConstants.DEFAULT_CIRCLE_ID}' WHERE circle_id = NULL
+    UPDATE v2deployments SET circle_id = '${AppConstants.DEFAULT_CIRCLE_ID}' WHERE circle_id IS NULL
     `)
     await queryRunner.query('ALTER TABLE v2deployments ALTER COLUMN circle_id SET NOT NULL ')
   }
