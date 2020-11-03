@@ -34,7 +34,7 @@ export const dark = {
       error: COLOR_RED_ORANGE,
       reached: COLOR_ORANGE_PEEL,
       active: COLOR_SANTAS_GREY
-    }
+    } as Record<string, string>
   },
   chart: {
     gridColor: COLOR_BLACK_MARLIN

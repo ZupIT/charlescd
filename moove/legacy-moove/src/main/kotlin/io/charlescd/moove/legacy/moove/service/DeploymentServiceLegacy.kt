@@ -25,6 +25,7 @@ import io.charlescd.moove.commons.representation.DeploymentRepresentation
 import io.charlescd.moove.commons.representation.ResourcePageRepresentation
 import io.charlescd.moove.legacy.moove.api.DeployApi
 import io.charlescd.moove.legacy.moove.api.request.UndeployRequest
+import io.charlescd.moove.legacy.moove.api.request.UndeployRequestV1
 import io.charlescd.moove.legacy.repository.DeploymentRepository
 import io.charlescd.moove.legacy.repository.entity.Deployment
 import io.charlescd.moove.legacy.repository.entity.DeploymentStatus
@@ -71,7 +72,15 @@ class DeploymentServiceLegacy(
         return deploymentRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("deployment", id) }
             .let { it.updateDeploymentStatus() }
-            .let { deployApi.undeploy(UndeployRequest(it.author.id, id)) }
+            .let { deployApi.undeploy(id, UndeployRequest(it.author.id)) }
+    }
+
+    @Transactional
+    fun undeployV1(id: String, workspaceId: String) {
+        return deploymentRepository.findByIdAndWorkspaceId(id, workspaceId)
+            .orElseThrow { NotFoundExceptionLegacy("deployment", id) }
+            .let { it.updateDeploymentStatus() }
+            .let { deployApi.undeployV1(UndeployRequestV1(it.author.id, id)) }
     }
 
     private fun Deployment.updateDeploymentStatus(): Deployment {
