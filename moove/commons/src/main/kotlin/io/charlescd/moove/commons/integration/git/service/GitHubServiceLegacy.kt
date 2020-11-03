@@ -42,6 +42,7 @@ class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFac
 
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val branchPrefix = "refs/heads/"
+    private val alternativeBaseBranch = "main"
 
     override fun mergeBranches(
         gitCredentials: GitCredentials,
@@ -57,8 +58,16 @@ class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFac
             )
             log.info("branch: $headBranch successfully merged into branch: $baseBranch")
         } catch (e: Exception) {
-            log.error("failed to merge branch: $headBranch into branch: $baseBranch with error: ${e.message}")
-            handleResponseError(error = e, repository = repository, baseBranch = baseBranch, headBranch = headBranch)
+            try {
+                RepositoryService(getClient(gitCredentials)).mergeBranches(
+                    repository, alternativeBaseBranch, headBranch,
+                    COMMIT_MESSAGE
+                )
+                log.info("branch: $headBranch successfully merged into branch: $baseBranch")
+            } catch (e: Exception) {
+                log.error("failed to merge branch: $headBranch into branch: $baseBranch with error: ${e.message}")
+                handleResponseError(error = e, repository = repository, baseBranch = baseBranch, headBranch = headBranch)
+            }
         }
     }
 
@@ -107,14 +116,23 @@ class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFac
                 log.info("release: $releaseName created successfully")
             }
         } catch (e: Exception) {
-            log.error("failed to create release: $releaseName with error: ${e.message}")
-            handleResponseError(
-                error = e,
-                repository = repository,
-                baseBranch = sourceBranch,
-                releaseName = releaseName
-            )
-            Optional.empty()
+            return try {
+                Optional.of(
+                    repositoryService.createRelease(repository, alternativeBaseBranch, releaseName, description).get("name")
+                        .asString
+                ).apply {
+                    log.info("release: $releaseName created successfully")
+                }
+            } catch (e: Exception) {
+                log.error("failed to create release: $releaseName with error: ${e.message}")
+                handleResponseError(
+                    error = e,
+                    repository = repository,
+                    baseBranch = sourceBranch,
+                    releaseName = releaseName
+                )
+                Optional.empty()
+            }
         }
     }
 
