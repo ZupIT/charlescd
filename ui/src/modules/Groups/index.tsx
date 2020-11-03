@@ -106,18 +106,16 @@ const UserGroups = () => {
           onCreate={() => setToggleModal(true)}
         />
       </Page.Menu>
-      <Suspense fallback="">
-        <Switch>
-          <Route path={routes.groupsShow} component={Tabs} />
-          <Route path={routes.groups}>
-            <Page.Placeholder
-              icon="empty-groups"
-              title={`Hello, ${profileName}!`}
-              subtitle="Create user group using the side menu."
-            />
-          </Route>
-        </Switch>
-      </Suspense>
+      <Switch>
+        <Route path={routes.groupsShow} component={Tabs} />
+        <Route path={routes.groups}>
+          <Page.Placeholder
+            icon="empty-groups"
+            title={`Hello, ${profileName}!`}
+            subtitle="Create user group using the side menu."
+          />
+        </Route>
+      </Switch>
     </Page>
   );
 };

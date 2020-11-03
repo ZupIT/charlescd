@@ -15,7 +15,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react-hooks';
-import { wait } from 'unit-test/testUtils';
+import { screen, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useCreateUserGroup } from '../hooks';
 import { UserGroup } from '../interfaces/UserGroups';
@@ -44,6 +44,7 @@ test('create a new user group', async () => {
   });
 
   await wait(() => expect(response).toMatchObject(newUserGroup));
+  await wait(() => expect(result.current.response).toMatchObject(newUserGroup));
 });
 
 test('error create a new user group', async () => {
@@ -63,4 +64,5 @@ test('error create a new user group', async () => {
   });
 
   await wait(() => expect(response).toBeUndefined());
+  await wait(() => expect(result.current.response).toBeUndefined());
 });

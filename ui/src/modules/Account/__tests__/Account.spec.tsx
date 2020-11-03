@@ -38,7 +38,6 @@ test('render account tab profile', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  // (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     id: '123',
     name: 'User',
