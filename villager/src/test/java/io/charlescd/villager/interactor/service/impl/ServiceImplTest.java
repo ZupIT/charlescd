@@ -131,13 +131,31 @@ public class ServiceImplTest {
     }
 
     @Test
-    public void testTestRegistryGCPConnectivityOK() {
+    public void testTestRegistryGCPConnectivityOKWhen404Return() {
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
         when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(404).build()));
+
+        serviceImpl.testRegistryConnectivityConfig(entity);
+
+        verify(registryClient, times(1))
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
+
+        verify(registryClient, times(1))
+                .getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData);
+    }
+
+    @Test
+    public void testTestRegistryGCPConnectivityOKWhen2xxReturn() {
+        var registryType = RegistryType.GCP;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.ok().build()));
 
         serviceImpl.testRegistryConnectivityConfig(entity);
 
