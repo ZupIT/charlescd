@@ -33,6 +33,6 @@ public class ExceptionHandlerTest {
         ExceptionHandler handler = new ExceptionHandler();
         Response response = handler.toResponse(new Exception());
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-        assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
+        assertThat(response.getEntity().toString(), is("{}"));
     }
 }
