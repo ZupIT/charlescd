@@ -125,20 +125,20 @@ test('render default Add metric to the group', async () => {
   await waitFor(() => expect(screen.getByTestId('add-metric')).toBeInTheDocument());
 });
 
-// TODO console.error verify
-test.skip('render metrics groups and delete a metrics group', async () => {
-  (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupWithoutMetricData)
-  );
+test('render metrics groups and delete a metrics group', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(MetricsGroupWithoutMetricData))
+    .mockResponseOnce(JSON.stringify({}))
+    .mockResponseOnce(JSON.stringify(MetricsGroupWithoutMetricData));
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
   const metricsGroupMenu = await screen.findByTestId('icon-vertical-dots');
-  await act(async () => userEvent.click(metricsGroupMenu));
+  userEvent.click(metricsGroupMenu);
 
   const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
 
-  await act(async () => userEvent.click(deleteButton));
+  act(() => userEvent.click(deleteButton));
 
   await waitFor(() => expect(screen.queryByText('test 1a')).not.toBeInTheDocument());
 });

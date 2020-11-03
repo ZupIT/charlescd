@@ -27,11 +27,12 @@ test('render CardExpand with children', () => {
     </CardExpand>
   );
 
-  waitFor(() => expect(screen.getByText('charles/ui:v1')).toBeInTheDocument());
+  expect(screen.getByText('charles/ui:v1')).toBeInTheDocument();
 });
-// TODO Warning: You seem to have overlapping act() calls
-test('click outside CardExpand', async () => {
+
+test('click outside CardExpand', () => {
   const onclick = jest.fn();
+
   render(
     <div data-testid="wrapper-card-expand">
       <CardExpand onClick={onclick}>
@@ -40,8 +41,7 @@ test('click outside CardExpand', async () => {
     </div>
   );
 
-  const CardWrapper = await screen.findByTestId('wrapper-card-expand');
-  await act(async () => userEvent.click(CardWrapper));
-
-  waitFor(() => expect(onclick).toHaveBeenCalled());
+  const CardWrapper = screen.getByTestId('wrapper-card-expand');
+  userEvent.click(CardWrapper);
+  expect(onclick).toHaveBeenCalled();
 });

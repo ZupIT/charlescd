@@ -59,7 +59,7 @@ const circle = {
     status: 'DEPLOYED'
   }
 }
-// TODO Warning: Can't perform a React state update on an unmounted component
+
 test('render CircleComparationItem default component', async () => {
   const handleChange = jest.fn();
 
@@ -100,7 +100,7 @@ test('render CircleComparationItem with release', async () => {
   await waitFor(() => expect(screen.getByText('Add Metrics Configuration')).toBeInTheDocument());
 });
 
-test.only('render CircleComparationItem Default Circle', async () => {
+test('render CircleComparationItem Default Circle', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
   const handleChange = jest.fn();
 

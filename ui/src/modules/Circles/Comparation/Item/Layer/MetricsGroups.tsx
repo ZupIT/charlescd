@@ -130,4 +130,4 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
   );
 };
 
-export default memo(LayerMetricsGroups);
+export default LayerMetricsGroups;
