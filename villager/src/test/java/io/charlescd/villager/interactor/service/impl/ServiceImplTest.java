@@ -62,7 +62,8 @@ public class ServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        assertThrows(ResourceNotFoundException.class, () -> dockerRegistryConfigurationRepository.findById(ID_DEFAULT_VALUE));
+       assertThrows(ResourceNotFoundException.class,
+                () -> serviceImpl.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE));
 
         verify(dockerRegistryConfigurationRepository, times(1))
                 .findById(ID_DEFAULT_VALUE);
@@ -97,7 +98,27 @@ public class ServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(RuntimeException.class,
+                () ->  serviceImpl.getDockerRegistryTag(entity, ID_DEFAULT_VALUE, ID_DEFAULT_VALUE));
+
+
+        verify(registryClient, times(1))
+                .configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+
+        verify(registryClient, times(0))
+                .getImage(STRING_DEFAULT_VALUE, STRING_DEFAULT_VALUE, entity.connectionData);
+
+    }
+
+    @Test
+    public void testGetRegistryTagGeneralError() {
+        var registryType = RegistryType.GCP;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+        doThrow(Exception.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        assertThrows(ThirdyPartyIntegrationException.class,
                 () ->  serviceImpl.getDockerRegistryTag(entity, ID_DEFAULT_VALUE, ID_DEFAULT_VALUE));
 
 
