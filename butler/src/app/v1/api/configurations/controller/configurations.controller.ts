@@ -22,24 +22,25 @@ import {
   Post,
   UsePipes
 } from '@nestjs/common'
+import { BaseController } from '../../base.controller'
 import {
   CreateCdConfigurationDto,
   ReadCdConfigurationDto
 } from '../dto'
+import { ValidConfigurationDataPipe } from '../pipes'
 import {
   CreateCdConfigurationUsecase, DeleteCdConfigurationUsecase,
   GetCdConfigurationsUsecase
 } from '../use-cases'
-import { ValidConfigurationDataPipe } from '../pipes'
 
 @Controller('configurations')
-export class ConfigurationsController {
+export class ConfigurationsController extends BaseController{
 
   constructor(
         private readonly createCdConfigurationUseCase: CreateCdConfigurationUsecase,
         private readonly getCdConfigurationsUseCase: GetCdConfigurationsUsecase,
         private readonly deleteCdConfigurationUsecase: DeleteCdConfigurationUsecase
-  ) { }
+  ) { super() }
 
     @UsePipes(ValidConfigurationDataPipe)
     @Post('cd')
