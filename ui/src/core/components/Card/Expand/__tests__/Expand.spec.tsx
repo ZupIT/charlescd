@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, waitFor, screen, act, fireEvent } from 'unit-test/testUtils';
+import { render, waitFor, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import CardExpand from '../';
 
@@ -41,7 +41,7 @@ test('click outside CardExpand', async () => {
   );
 
   const CardWrapper = await screen.findByTestId('wrapper-card-expand');
-  userEvent.click(CardWrapper);
+  await act(async () => userEvent.click(CardWrapper));
 
   waitFor(() => expect(onclick).toHaveBeenCalled());
 });
