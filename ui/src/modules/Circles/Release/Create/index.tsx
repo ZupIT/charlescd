@@ -29,7 +29,8 @@ import Module from './Module';
 import Styled from '../styled';
 
 const defaultValues = {
-  modules: [MODULE]
+  modules: [MODULE],
+  releaseName: ''
 };
 
 interface Props {
