@@ -67,9 +67,7 @@ public class ServiceImplTest {
 
         verify(dockerRegistryConfigurationRepository, times(1))
                 .findById(ID_DEFAULT_VALUE);
-
     }
-
 
     @Test
     public void testGetDockerRegistryConfigurationEntityInvalidWorkspace() {
@@ -311,4 +309,54 @@ public class ServiceImplTest {
 
     }
 
+    //TODO: Fix test after AWS Registry implementation
+    @Test
+    public void testTestRegistryAWS() {
+        var registryType = RegistryType.AWS;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+
+        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+
+        verify(registryClient, times(1))
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
+
+    }
+
+    //TODO: Fix test after AZURE Registry implementation
+    @Test
+    public void testTestRegistryAzure() {
+        var registryType = RegistryType.AZURE;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+
+        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+
+        verify(registryClient, times(1))
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
+
+    }
+
+    //TODO: Fix test after DOCKER_HUB Registry implementation
+    @Test
+    public void testTestRegistryDockerHub() {
+        var registryType = RegistryType.DOCKER_HUB;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+
+        var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+
+        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+
+        verify(registryClient, times(1))
+                .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
+
+    }
 }

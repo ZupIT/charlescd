@@ -152,16 +152,19 @@ public class RegistryServiceImpl implements RegistryService {
         switch (type) {
             case AWS:
                 //TODO: Implement
-                break;
+                throw new IllegalStateException("Registry type not implemented yet!");
+                //break;
             case GCP:
                 validateGCPResponse(response);
                 break;
             case AZURE:
                 //TODO: Implement
-                break;
+                throw new IllegalStateException("Registry type not implemented yet!");
+                //break;
             case DOCKER_HUB:
                 //TODO: Implement
-                break;
+                throw new IllegalStateException("Registry type not implemented yet!");
+                //break;
             default:
                 throw new IllegalStateException("Registry type not supported!");
 
