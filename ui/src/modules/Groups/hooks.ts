@@ -95,7 +95,7 @@ export const useListUser = (): [Function, UserPagination] => {
 };
 
 export const useCreateUserGroup = (): {
-  createUserGroup: (name: string) => void;
+  createUserGroup: (name: string) => Promise<UserGroup>;
   response: UserGroup;
   status: FetchStatus;
 } => {
@@ -110,6 +110,8 @@ export const useCreateUserGroup = (): {
       const data = await save({ name, authorId: getProfileByKey('id') });
       setResponse(data);
       status.resolved();
+
+      return data;
     } catch (e) {
       const error = await e.json();
 
