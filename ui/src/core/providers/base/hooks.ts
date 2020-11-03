@@ -145,7 +145,6 @@ export const useFetch = <T>(
 
         if (mounted.current) setResponse(data);
       } catch (error) {
-        console.log('error', error);
         if (mounted.current) setError(error);
       } finally {
         if (mounted.current) setLoading(false);
