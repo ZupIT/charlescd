@@ -17,6 +17,7 @@
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ApiModule } from './v1/api/api.module'
+import { ApiModule as ApiModuleV2 } from './v2/api/api.module'
 import { Configuration } from './v1/core/config/configurations'
 import { AppConstants } from './v1/core/constants'
 import { CoreModule } from './v1/core/core.module'
@@ -40,6 +41,7 @@ export class AppModule {
       imports: [
         CoreModule,
         ApiModule,
+        ApiModuleV2,
         TypeOrmModule.forRootAsync({
           useFactory: () => (
             DatabasesService.getPostgresConnectionOptions(envConfiguration)

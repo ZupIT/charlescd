@@ -45,7 +45,7 @@ test('should not match a circle id', async () => {
 
   await act(async () => current.getCircleId({ username: 'charlescd@zup.com.br' }));
 
-  expect(document.cookie).toContain(`${circleKey}=${CIRCLE_UNMATCHED}`);
+  expect(document.cookie).toContain('');
 });
 
 test('do login', async () => {
@@ -53,11 +53,11 @@ test('do login', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     access_token: 'abcdefghijklmn', refresh_token: 'opqrstuvwxyz'
   }));
-  
+
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     circles: [{ id, name: 'circle' }]
   }));
-  
+
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     id: '1',
     name: 'charlescd',
@@ -71,10 +71,10 @@ test('do login', async () => {
   await act(async () => current.doLogin({ email: 'charlescd@zup.com.br', password: '1235' }));
 
   expect(document.cookie).toContain(`${circleKey}=${id}`);
-  
+
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain('abcdefghijklmn');
-  
+
   const refreshToken = localStorage.getItem(refreshTokenKey);
   expect(refreshToken).toContain('opqrstuvwxyz');
 });
