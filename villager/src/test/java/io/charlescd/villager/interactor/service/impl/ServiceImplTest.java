@@ -317,9 +317,9 @@ public class ServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(404).build()));
 
-        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+        assertThrows(IllegalStateException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
         verify(registryClient, times(1))
                 .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
@@ -334,9 +334,9 @@ public class ServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(404).build()));
 
-        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+        assertThrows(IllegalStateException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
         verify(registryClient, times(1))
                 .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
@@ -351,9 +351,9 @@ public class ServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
+        when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(404).build()));
 
-        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+        assertThrows(IllegalStateException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
         verify(registryClient, times(1))
                 .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
