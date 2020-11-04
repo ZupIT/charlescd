@@ -26,7 +26,7 @@ data class DeployResponse(
     val circle: DeployCircleResponse?,
     val defaultCircle: Boolean,
     val authorId: String,
-    val status: String,
+    val status: String?,
     val createdAt: LocalDateTime
 )
 
@@ -34,7 +34,7 @@ data class DeployModuleResponse(
     val id: String,
     val moduleId: String,
     val componentsDeployments: List<DeployComponentResponse>,
-    val status: String,
+    val status: String?,
     val createdAt: LocalDateTime
 )
 
@@ -47,7 +47,7 @@ data class DeployComponentResponse(
     val contextPath: String?,
     val healthCheck: String?,
     val port: Int?,
-    val status: String,
+    val status: String?,
     val createdAt: LocalDateTime
 )
 

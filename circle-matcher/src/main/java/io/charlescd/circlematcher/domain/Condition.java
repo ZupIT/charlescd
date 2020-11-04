@@ -47,9 +47,23 @@ public enum Condition {
         }
     },
 
+    ENDS_WITH("toStr(%s).endsWith(toStr(%s))") {
+        public String expression(String key, List<String> values) {
+            return defaultExpression(key, values);
+        }
+    },
+
     LESS_THAN("toNumber(%s) < toNumber(%s)") {
         public String expression(String key, List<String> values) {
             return defaultExpression(key, values);
+        }
+    },
+
+    MATCHES("/%s/.test(%s)") {
+        public String expression(String key, List<String> values) {
+            return String.format(this.jsExpression,
+                    OpUtils.singleVal(values).orElseThrow(),
+                    key);
         }
     },
 
@@ -73,17 +87,25 @@ public enum Condition {
 
     CONTAINS("(%s.indexOf(toStr(%s)) >= 0)") {
         public String expression(String key, List<String> values) {
-            return String.format(this.jsExpression,
-                    OpUtils.arrVal(values),
-                    key);
+            if (OpUtils.isSingleVal(values)) {
+                return defaultExpression(key, values);
+            } else {
+                return String.format(this.jsExpression,
+                        OpUtils.arrVal(values),
+                        key);
+            }
         }
     },
 
     NOT_CONTAINS("(%s.indexOf(toStr(%s)) < 0)") {
         public String expression(String key, List<String> values) {
-            return String.format(this.jsExpression,
-                    OpUtils.arrVal(values),
-                    key);
+            if (OpUtils.isSingleVal(values)) {
+                return defaultExpression(key, values);
+            } else {
+                return String.format(this.jsExpression,
+                        OpUtils.arrVal(values),
+                        key);
+            }
         }
     },
 
