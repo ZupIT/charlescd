@@ -53,12 +53,14 @@ export class DeploymentHandlerUseCase {
 
   public async run(job: ExecutionJob): Promise<ExecutionJob> {
     const deployment = await this.validateDeployment(job)
+
     if (job.data.status === DeploymentStatusEnum.TIMED_OUT) { //TODO Create ExecutionStatusEnum or rename this enum
       const error = new Error('Deployment timed out')
       job.done(error)
       throw error
     }
     const overlappingComponents = await this.getOverlappingComponents(deployment)
+
     if (overlappingComponents.length > 0) {
       return await this.handleOverlap(job)
     }
@@ -159,6 +161,7 @@ export class DeploymentHandlerUseCase {
 
   public async deploymentFromExecution(execution: Execution): Promise<DeploymentEntity | undefined> {
     const deployment = await this.deploymentsRepository.findOne({ where: { id: execution.deployment.id }, relations: ['components', 'cdConfiguration'] })
+
     if (deployment)
       deployment.cdConfiguration = await this.cdConfigurationsRepository.findDecrypted(deployment.cdConfiguration.id)
 
