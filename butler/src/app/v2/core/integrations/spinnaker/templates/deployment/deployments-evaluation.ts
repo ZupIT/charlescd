@@ -16,8 +16,9 @@
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component } from '../../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
-export const getDeploymentsEvaluationStage = (components: Component[], stageId: number): Stage => ({
+export const getDeploymentsEvaluationStage = (components: DeploymentComponent[], stageId: number): Stage => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   failOnFailedExpressions: true,
@@ -34,7 +35,7 @@ export const getDeploymentsEvaluationStage = (components: Component[], stageId: 
   ]
 })
 
-const getRequisiteStageRefIds = (components: Component[]): string[] => {
+const getRequisiteStageRefIds = (components: DeploymentComponent[]): string[] => {
   let baseRefId = 0
   return components.map(() => {
     baseRefId += 2
@@ -42,7 +43,7 @@ const getRequisiteStageRefIds = (components: Component[]): string[] => {
   })
 }
 
-const getDeploymentResultExpression = (components: Component[]): string => {
+const getDeploymentResultExpression = (components: DeploymentComponent[]): string => {
   let expression = ''
   components.forEach((component, index)=> {
     expression = index === 0 ? '${' : expression

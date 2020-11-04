@@ -19,10 +19,11 @@ import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/i
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const IstioDeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'VirtualService',
@@ -40,7 +41,7 @@ const IstioDeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
@@ -55,13 +56,13 @@ const IstioDeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesSubsets: (newComponent: Component, circleId: string, activeByName: Component[]): Subset[] => {
+  getDestinationRulesSubsets: (newComponent: DeploymentComponent, circleId: string, activeByName: Component[]): Subset[] => {
     const subsets: Subset[] = []
     subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(newComponent, circleId))
 
     activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
-      if (activeCircleId && activeCircleId !== circleId && !DeploymentUtils.getIsDefault(component)) {
+      if (DeploymentUtils.isDistinctAndNotDefault(component, circleId)) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
@@ -73,15 +74,15 @@ const IstioDeploymentManifestsUtils = {
     return subsets
   },
 
-  getCircleHTTPRules: (newComponent: Component, circleId: string, activeByName: Component[]): Http[] => {
+  getCircleHTTPRules: (newComponent: DeploymentComponent, circleId: string, activeByName: Component[]): Http[] => {
     const rules: Http[] = []
 
     rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(newComponent.name, newComponent.imageTag, circleId))
     rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(newComponent.name, newComponent.imageTag, circleId))
 
     activeByName.forEach(component => {
-      const activeCircleId = component.deployment?.circleId
-      if (activeCircleId && activeCircleId !== circleId && !DeploymentUtils.getIsDefault(component)) {
+      const activeCircleId = component.deployment.circleId
+      if (DeploymentUtils.isDistinctAndNotDefault(component, circleId)) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
       }
@@ -93,7 +94,7 @@ const IstioDeploymentManifestsUtils = {
     }
     return rules
   },
-  getDefaultCircleHTTPRules: (newComponent: Component, activeByName: Component[], circleId: string): Http[] => {
+  getDefaultCircleHTTPRules: (newComponent: DeploymentComponent, activeByName: Component[], circleId: string): Http[] => {
     const rules: Http[] = []
 
     activeByName.forEach(component => {

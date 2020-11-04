@@ -21,6 +21,7 @@ import { ExecutionTypeEnum } from '../../../../../api/deployments/enums'
 import { UrlUtils } from '../../../../utils/url.utils'
 import { DeploymentTemplateUtils } from '../../utils/deployment-template.utils'
 import { ConnectorConfiguration } from '../../../interfaces/connector-configuration.interface'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
 export const getFailureWebhookStage = (deployment: Deployment, stageId: number, configuration: ConnectorConfiguration): Stage => ({
   completeOtherBranchesThenFail: false,
@@ -46,7 +47,7 @@ export const getFailureWebhookStage = (deployment: Deployment, stageId: number, 
   url: UrlUtils.getDeploymentNotificationUrl(configuration.executionId)
 })
 
-const getRequisiteStageRefIds = (components: Component[]): string[] => {
+const getRequisiteStageRefIds = (components: DeploymentComponent[]): string[] => {
   const deploymentsEvalId: number = DeploymentTemplateUtils.getDeploymentEvalStageId(components)
   const proxiesEvalId: number = DeploymentTemplateUtils.getProxyEvalStageId(components)
   return [

@@ -17,8 +17,9 @@
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { ExpectedArtifact } from '../../interfaces/spinnaker-pipeline.interface'
 import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
-export const getHelmTemplateObject = (component: Component, configuration: CdConfiguration): ExpectedArtifact => ({
+export const getHelmTemplateObject = (component: DeploymentComponent, configuration: CdConfiguration): ExpectedArtifact => ({
   defaultArtifact: {
     artifactAccount: (configuration.configurationData as ISpinnakerConfigurationData).gitAccount,
     id: `template-${component.name}-default-artifact`,

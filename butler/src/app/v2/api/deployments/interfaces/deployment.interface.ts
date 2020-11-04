@@ -29,7 +29,9 @@ export interface Deployment {
 
     circleId: string
 
-    components?: Component[]
+    components?: DeploymentComponent[]
 
     defaultCircle: boolean
 }
+
+export type DeploymentComponent = Omit<Component, 'deployment'>

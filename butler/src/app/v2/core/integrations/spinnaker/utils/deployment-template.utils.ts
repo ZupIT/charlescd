@@ -15,13 +15,14 @@
  */
 
 import { Component } from '../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../api/deployments/interfaces/deployment.interface'
 
 const DeploymentTemplateUtils = {
-  getDeploymentEvalStageId: (components: Component[]): number => {
+  getDeploymentEvalStageId: (components: DeploymentComponent[]): number => {
     return (components.length * 4) + 1
   },
 
-  getProxyEvalStageId: (components: Component[]): number => {
+  getProxyEvalStageId: (components: DeploymentComponent[]): number => {
     return (components.length * 4) + 2
   }
 }

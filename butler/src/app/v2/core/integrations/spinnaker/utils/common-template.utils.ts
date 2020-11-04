@@ -15,9 +15,10 @@
  */
 
 import { Component } from '../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../api/deployments/interfaces/deployment.interface'
 
 const CommonTemplateUtils = {
-  getDeploymentName: (component: Component, circleId: string): string => {
+  getDeploymentName: (component: DeploymentComponent, circleId: string): string => {
     return `${component.name}-${component.imageTag}-${circleId}`
   }
 }

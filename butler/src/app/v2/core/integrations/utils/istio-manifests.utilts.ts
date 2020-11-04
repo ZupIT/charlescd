@@ -16,10 +16,11 @@
 
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component } from '../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const IstioManifestsUtils = {
 
-  getDestinationRulesSubsetObject: (component: Component, circleId: string): Subset => {
+  getDestinationRulesSubsetObject: (component: DeploymentComponent, circleId: string): Subset => {
     return {
       labels: {
         component: component.name,
