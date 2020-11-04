@@ -37,6 +37,12 @@ const DeploymentUtils = {
     }
 
     return sameCircleComponent
+  },
+  getIsDefault: (component: Component | undefined): boolean => {
+    if (component?.deployment?.defaultCircle) {
+      return true
+    }
+    return false
   }
 }
 

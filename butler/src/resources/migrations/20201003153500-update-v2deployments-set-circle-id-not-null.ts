@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 import { AppConstants } from '../../app/v1/core/constants'
 
 export class UpdateV2DeploymentsSetCircleIdNotNull20201003153500 implements MigrationInterface {

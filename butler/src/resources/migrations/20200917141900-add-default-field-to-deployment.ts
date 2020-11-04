@@ -20,7 +20,7 @@ export class AddDefaultFieldToDeployment20200917141900 implements MigrationInter
 
   public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.addColumn('v2deployments', new TableColumn({
-      name: 'default',
+      name: 'default_circle',
       type: 'boolean',
       isNullable: false
     }))

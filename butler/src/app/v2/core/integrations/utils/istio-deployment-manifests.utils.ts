@@ -18,6 +18,7 @@ import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
 import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { DeploymentUtils } from './deployment.utils'
 
 const IstioDeploymentManifestsUtils = {
 
@@ -60,7 +61,7 @@ const IstioDeploymentManifestsUtils = {
 
     activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
-      if (activeCircleId && activeCircleId !== circleId && !component?.deployment?.defaultCircle) {
+      if (activeCircleId && activeCircleId !== circleId && !DeploymentUtils.getIsDefault(component)) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
@@ -80,7 +81,7 @@ const IstioDeploymentManifestsUtils = {
 
     activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
-      if (activeCircleId && activeCircleId !== circleId && !component?.deployment?.defaultCircle) {
+      if (activeCircleId && activeCircleId !== circleId && !DeploymentUtils.getIsDefault(component)) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
       }
@@ -96,7 +97,7 @@ const IstioDeploymentManifestsUtils = {
     const rules: Http[] = []
 
     activeByName.forEach(component => {
-      if (component.deployment && !component.deployment?.defaultCircle) {
+      if (component.deployment && !DeploymentUtils.getIsDefault(component)) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, component.deployment.circleId))
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, component.deployment.circleId))
       }

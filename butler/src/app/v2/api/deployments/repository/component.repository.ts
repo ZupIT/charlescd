@@ -49,7 +49,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     return this.createQueryBuilder('c')
       .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
       .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
-      .andWhere('deployment.defaultCircle is true')
+      .andWhere('d.defaultCircle is true')
       .andWhere('e.status = :status', { status: DeploymentStatusEnum.CREATED })
       .getMany()
   }

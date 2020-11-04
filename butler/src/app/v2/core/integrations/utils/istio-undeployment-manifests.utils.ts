@@ -18,6 +18,7 @@ import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { DeploymentUtils } from './deployment.utils'
 
 const IstioUndeploymentManifestsUtils = {
 
@@ -91,7 +92,7 @@ const IstioUndeploymentManifestsUtils = {
 
     activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
-      if (activeCircleId &&  !component.deployment?.defaultCircle && circleId !== component.deployment?.circleId) {
+      if (activeCircleId &&  !DeploymentUtils.getIsDefault(component) && circleId !== component.deployment?.circleId) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
@@ -108,7 +109,7 @@ const IstioUndeploymentManifestsUtils = {
 
     activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
-      if (activeCircleId && activeCircleId !== circleId && !component.deployment?.defaultCircle) {
+      if (activeCircleId && activeCircleId !== circleId && !DeploymentUtils.getIsDefault(component)) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
       }

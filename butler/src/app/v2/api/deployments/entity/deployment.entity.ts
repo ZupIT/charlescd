@@ -57,7 +57,7 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
-  @Column({ name: 'default' })
+  @Column({ name: 'default_circle' })
   public defaultCircle!: boolean
 
   constructor(
