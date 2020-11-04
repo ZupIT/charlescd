@@ -54,10 +54,10 @@ export class ValidConfigurationDataPipe implements PipeTransform {
   private async validateForProvider(createCdConfigurationDto: CreateCdConfigurationDto): Promise<ValidationError[]> {
     const configData = createCdConfigurationDto.configurationData as OctopipeConfigurationData
     switch (configData.provider) {
-    case 'EKS': return await validate('octopipeEKSConfigurationDataSchema', createCdConfigurationDto.configurationData)
-    case 'GENERIC': return await validate('octopipeGenericConfigurationDataSchema', createCdConfigurationDto.configurationData)
-    case 'DEFAULT': return await validate('octopipeDefaultConfigurationDataSchema', createCdConfigurationDto.configurationData)
-    default: throw new BadRequestException('Missing provider, must be EKS, GENERIC or DEFAULT')
+      case 'EKS': return await validate('octopipeEKSConfigurationDataSchema', createCdConfigurationDto.configurationData)
+      case 'GENERIC': return await validate('octopipeGenericConfigurationDataSchema', createCdConfigurationDto.configurationData)
+      case 'DEFAULT': return await validate('octopipeDefaultConfigurationDataSchema', createCdConfigurationDto.configurationData)
+      default: throw new BadRequestException('Missing provider, must be EKS, GENERIC or DEFAULT')
     }
   }
 }
