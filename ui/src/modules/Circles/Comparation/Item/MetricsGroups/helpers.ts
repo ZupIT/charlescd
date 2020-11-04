@@ -18,15 +18,17 @@ import { OptionTypeBase } from 'react-select';
 import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
+import { getWorkspaceId } from 'core/utils/workspace';
 import find from 'lodash/find';
 import isUndefined from 'lodash/isUndefined';
 import filter from 'lodash/filter';
+import { ActionForm } from './AddAction';
 import {
-  MetricFilter,
-  Metric,
+  MetricsGroup,
   ChartDataByQuery,
   Data,
-  ChartData
+  ChartData,
+  ActionType
 } from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
@@ -43,30 +45,6 @@ export const getOperator = (operator: string) =>
 
 export const getSelectDefaultValue = (id: string, options: Option[]) =>
   find(options, { value: id });
-
-const buildMetricFilters = (
-  formFilters?: MetricFilter[],
-  metricFilters?: MetricFilter[]
-) =>
-  map(formFilters, (item, index) => ({
-    ...item,
-    id: metricFilters?.[index]?.id
-  }));
-
-export const buildMetricPayload = (formData: Metric, metric: Metric) => {
-  const filters = metric?.id
-    ? buildMetricFilters(formData.filters, metric?.filters)
-    : formData.filters;
-
-  const payload = {
-    ...formData,
-    threshold: Number(formData.threshold),
-    filters,
-    id: metric?.id
-  } as Metric;
-
-  return payload;
-};
 
 export const getThresholdStatus = (status: string) => {
   switch (status) {
@@ -125,4 +103,44 @@ export const filterMetricsSeries = (
   });
 
   return filteredData as ChartData[];
+};
+
+export const createCirclePromotionPayload = (
+  data: ActionForm,
+  circleId: string
+) => {
+  return {
+    destinationCircleId: data.circleId,
+    originCircleId: circleId,
+    workspaceId: getWorkspaceId()
+  };
+};
+
+export const createActionPayload = (
+  data: ActionForm,
+  metricsGroup: MetricsGroup,
+  circleId: string,
+  selectedAction: string
+) => {
+  const { actionId, nickname } = data;
+
+  const payloadByAction = {
+    circledeployment: () => createCirclePromotionPayload(data, circleId)
+  } as Record<string, Function>;
+
+  return {
+    metricsGroupId: metricsGroup.id,
+    actionId,
+    nickname,
+    executionParameters: payloadByAction[selectedAction]()
+  };
+};
+
+export const normalizeActionsOptions = (actionsType: ActionType[]) => {
+  return map(actionsType, actionType => ({
+    ...actionType,
+    value: actionType.id,
+    label: actionType.nickname,
+    description: actionType.description
+  }));
 };

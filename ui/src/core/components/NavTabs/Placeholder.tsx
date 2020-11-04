@@ -15,19 +15,21 @@
  */
 
 import React from 'react';
+import Text from 'core/components/Text';
 import Styled from './styled';
 
-type Props = {
-  className?: string;
-  color: string;
-  name: string;
+export type Props = {
+  title: string;
+  subTitle: string;
 };
 
-const SummaryItem = ({ name, color, className }: Props) => (
-  <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
-    <Styled.Dot color={color} />
-    <Styled.Name color="dark">{name}</Styled.Name>
-  </Styled.Item>
-);
+const NavTabsPlaceholder = ({ title, subTitle }: Props) => {
+  return (
+    <Styled.Placeholder>
+      <Styled.PlaceholderTitle color="light">{title}</Styled.PlaceholderTitle>
+      <Text.h5 color="dark">{subTitle}</Text.h5>
+    </Styled.Placeholder>
+  );
+};
 
-export default SummaryItem;
+export default NavTabsPlaceholder;

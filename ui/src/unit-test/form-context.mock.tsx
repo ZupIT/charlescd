@@ -15,19 +15,20 @@
  */
 
 import React from 'react';
-import Styled from './styled';
+import { FormContext, useForm } from 'react-hook-form';
 
 type Props = {
-  className?: string;
-  color: string;
-  name: string;
+  children: React.ReactNode;
+}
+
+export const FormContextMock = ({ children }: Props) => {
+  const methods = useForm();
+
+  return (
+    <FormContext {...methods} >
+      <form>
+        {children}
+      </form>
+    </FormContext>
+  );
 };
-
-const SummaryItem = ({ name, color, className }: Props) => (
-  <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
-    <Styled.Dot color={color} />
-    <Styled.Name color="dark">{name}</Styled.Name>
-  </Styled.Item>
-);
-
-export default SummaryItem;

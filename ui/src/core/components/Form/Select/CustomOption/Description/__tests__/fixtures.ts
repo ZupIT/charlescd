@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Styled from './styled';
+import { OptionProps, OptionTypeBase } from 'react-select';
 
-type Props = {
-  className?: string;
-  color: string;
-  name: string;
-};
-
-const SummaryItem = ({ name, color, className }: Props) => (
-  <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
-    <Styled.Dot color={color} />
-    <Styled.Name color="dark">{name}</Styled.Name>
-  </Styled.Item>
-);
-
-export default SummaryItem;
+export const customOptionDescriptionProps = {
+  isSelected: true,
+  data: {
+    label: 'foobar',
+    description: 'desc',
+  },
+  getStyles: (name: string, props: any) => {},
+  cx: (state: {}, className: '') => ''
+} as OptionProps<OptionTypeBase>;
