@@ -30,7 +30,7 @@ export class SimultaneousDeploymentValidationPipe implements PipeTransform {
 
   public async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
     const circleId = createDeploymentDto.circle?.headerValue
-    const runningComponents = circleId ?
+    const runningComponents = !createDeploymentDto.defaultCircle ?
       await this.componentsRepository.findCircleRunningComponents(circleId) :
       await this.componentsRepository.findDefaultRunningComponents()
 
