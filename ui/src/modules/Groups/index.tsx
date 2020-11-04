@@ -82,6 +82,7 @@ const UserGroups = () => {
         />
         <Styled.Modal.Button
           type="submit"
+          id="user-group"
           isDisabled={isDisabled}
           isLoading={status.isPending}
         >

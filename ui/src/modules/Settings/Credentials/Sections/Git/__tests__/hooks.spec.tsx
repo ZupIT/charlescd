@@ -17,7 +17,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useGit  } from '../hooks';
+import { useGit } from '../hooks';
  
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
