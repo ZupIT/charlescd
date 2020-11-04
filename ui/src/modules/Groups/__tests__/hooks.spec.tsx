@@ -17,7 +17,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { screen, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useCreateUserGroup, useFindAllUserGroup, useFindUserGroupByID, useListUser, useUpdateUserGroup } from '../hooks';
+import { useCreateUserGroup, useDeleteUserGroup, useFindAllUserGroup, useFindUserGroupByID, useListUser, useManagerMemberInUserGroup, useUpdateUserGroup } from '../hooks';
 import { UserGroup } from '../interfaces/UserGroups';
 
 beforeEach(() => {
@@ -188,4 +188,28 @@ test('to update user group', async () => {
   });
 
   await wait(() => expect(result.current[1]).toMatchObject(userGroup));
+});
+
+test('to delete user group', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+
+  const { result } = renderHook(() => useDeleteUserGroup());
+
+  await act(async () => {
+    await result.current[0]('123');
+  });
+
+  await wait(() => expect(result.current[1]).toMatchObject({}));
+});
+
+test('to manager members in user group', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+
+  const { result } = renderHook(() => useManagerMemberInUserGroup());
+
+  await act(async () => {
+    await result.current[0](false, '123', '456');
+  });
+
+  await wait(() => expect(result.current[1]).toBe('resolved'));
 });

@@ -210,19 +210,27 @@ export const useManagerMemberInUserGroup = (): [Function, string] => {
   const [, , onRemoveMemberUserGroup] = useFetch<UserGroup>(
     removeMemberToUserGroup
   );
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const managerMemberUserGroup = useCallback(
     (checked: boolean, groupId: string, memberId: string) => {
-      setStatus('');
+      setStatus('pending');
       if (checked) {
-        onAddMemberUserGroup(groupId, { memberId }).then(() => {
-          setStatus('resolved');
-        });
+        onAddMemberUserGroup(groupId, { memberId })
+          .then(() => {
+            setStatus('resolved');
+          })
+          .catch(() => {
+            setStatus('rejected');
+          });
       } else {
-        onRemoveMemberUserGroup(groupId, memberId).then(() => {
-          setStatus('resolved');
-        });
+        onRemoveMemberUserGroup(groupId, memberId)
+          .then(() => {
+            setStatus('resolved');
+          })
+          .catch(() => {
+            setStatus('rejected');
+          });
       }
     },
     [onAddMemberUserGroup, onRemoveMemberUserGroup]
