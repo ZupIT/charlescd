@@ -79,9 +79,9 @@ export class DeploymentEntityV2 implements Deployment {
   }
 
   public toReadDto(): ReadDeploymentDto {
-    return this.circleId ?
-      this.getCircleDto(this.circleId) :
-      this.getDefaultDto()
+    return this.defaultCircle ?
+      this.getDefaultDto() :
+      this.getCircleDto(this.circleId)
   }
 
   private getCircleDto(circleId: string): ReadDeploymentDto {
