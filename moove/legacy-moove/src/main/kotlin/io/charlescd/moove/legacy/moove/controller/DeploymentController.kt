@@ -69,4 +69,14 @@ class DeploymentController(private val deploymentService: DeploymentServiceLegac
     ) {
         return this.deploymentService.undeploy(id, workspaceId)
     }
+
+    @ApiOperation(value = "Undeploy V1")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/v1/{id}/undeploy")
+    fun undeployV1(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable("id") id: String
+    ) {
+        return this.deploymentService.undeployV1(id, workspaceId)
+    }
 }

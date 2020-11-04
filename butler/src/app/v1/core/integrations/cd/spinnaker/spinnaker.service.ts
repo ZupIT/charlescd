@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { of, throwError, Observable } from 'rxjs'
+import { Observable, of, throwError } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { ISpinnakerConfigurationData } from '../../../../api/configurations/interfaces'
 import { AppConstants } from '../../../constants'
