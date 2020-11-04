@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'core/state/hooks';
 import {
   FetchStatus,
+  FetchStatuses,
   useFetch,
   useFetchData,
   useFetchStatus
@@ -131,12 +132,12 @@ export const useCreateUserGroup = (): {
 
 export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
   const [data, update] = useFetch<UserGroup>(updateUserGroup);
-  const [status, setStatus] = useState('');
-  const { response } = data;
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const { response, error } = data;
 
   const doUpdateUserGroup = useCallback(
     (id: string, name: string) => {
-      setStatus('');
+      setStatus('pending');
       update(id, { name, authorId: getProfileByKey('id') });
     },
     [update]
@@ -147,6 +148,12 @@ export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
       setStatus('resolved');
     }
   }, [setStatus, response]);
+
+  useEffect(() => {
+    if (error) {
+      setStatus('rejected');
+    }
+  }, [setStatus, error]);
 
   return [doUpdateUserGroup, response, status];
 };
