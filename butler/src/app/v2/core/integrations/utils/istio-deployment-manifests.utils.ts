@@ -98,7 +98,7 @@ const IstioDeploymentManifestsUtils = {
     const rules: Http[] = []
 
     activeByName.forEach(component => {
-      if (component.deployment && !DeploymentUtils.getIsDefault(component)) {
+      if (component.deployment && !component.deployment.defaultCircle) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, component.deployment.circleId))
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, component.deployment.circleId))
       }
