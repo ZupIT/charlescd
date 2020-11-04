@@ -15,7 +15,6 @@
  */
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { Component } from '../../../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
 export const getUndeploymentProxyEvaluationStage = (components: DeploymentComponent[], stageId: number): Stage => (    {

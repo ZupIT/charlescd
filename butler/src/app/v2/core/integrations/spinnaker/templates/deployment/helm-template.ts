@@ -16,7 +16,7 @@
 
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { ExpectedArtifact } from '../../interfaces/spinnaker-pipeline.interface'
-import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
+import { CdConfiguration } from '../../../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
 export const getHelmTemplateObject = (component: DeploymentComponent, configuration: CdConfiguration): ExpectedArtifact => ({

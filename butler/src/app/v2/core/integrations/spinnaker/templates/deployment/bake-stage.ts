@@ -15,7 +15,7 @@
  */
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
+import { CdConfiguration } from '../../../../../api/deployments/interfaces'
 import { CommonTemplateUtils } from '../../utils/common-template.utils'
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'

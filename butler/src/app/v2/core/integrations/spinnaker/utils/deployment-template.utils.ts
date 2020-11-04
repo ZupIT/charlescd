@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Component } from '../../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../../api/deployments/interfaces/deployment.interface'
 
 const DeploymentTemplateUtils = {
