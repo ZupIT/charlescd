@@ -21,13 +21,13 @@ Through the Moove APIs, you can explore it to:
  - [Docker Compose]
  - [Maven]
  
-Once the prerequisites were installed, if you want to run your application locally with both authentication and authorization, the following information must be filled at `application-local.properties` file:
+Once the prerequisites has been installed, if you want to run your application locally with both authentication and authorization, the following information must be filled at `application-local.properties` file:
 - `charlescd.keycloak.realm`: the name of your realm.
 - `charlescd.keycloak.serverUrl`: the URL of your keycloak server (for example: `https://your-keycloak.com/auth`)
 - `charlescd.keycloak.clientId`: a client identity token.
 - `charlescd.keycloak.clientSecret`: the client secret.
 
-All these information belongs to your [Keycloak] server.
+All this information belongs to your [Keycloak] server.
                                      
 After that, you have two options to start the application:
 
@@ -46,7 +46,7 @@ Once you run the command `docker-compose up` on your terminal, set the property 
 
 After both approaches, the application will be available on port 8080. Additionally, two containers will be running: a PostgreSQL database and a stub server.
  
-Moove provides a [Swagger API Documentation], and also an up to date [Postman Collection].
+Moove provides a [Swagger API Documentation], also an up to date [Postman Collection].
 
 ## Documentation
 
