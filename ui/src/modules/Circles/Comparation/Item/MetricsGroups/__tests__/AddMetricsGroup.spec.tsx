@@ -18,6 +18,7 @@ import React from 'react';
 import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
 import AddMetricsGroup from '../AddMetricsGroup';
 import { FetchMock } from 'jest-fetch-mock/types';
+import { metricGroupItem } from './fixtures';
 
 test('render Add Metric default value', async () => {
   (fetch as FetchMock).mockResponseOnce(
@@ -34,6 +35,7 @@ test('render Add Metric default value', async () => {
     />
   );
 
+  const modalTitle = screen.getByText('Add metrics group'); 
   const nameLabel = screen.getByText('Type a name for the metrics group');
   const nameInput = screen.getByTestId('input-text-name');
   const submitButton = screen.getByText('Save group');
@@ -43,5 +45,21 @@ test('render Add Metric default value', async () => {
 
   await wait();
   expect(onSaveGroup).toHaveBeenCalled();
+  expect(modalTitle).toBeInTheDocument();
   expect(nameLabel).toBeInTheDocument();
 });
+
+
+test('render edit Metric label', async () => {
+  render(
+    <AddMetricsGroup
+      id="1"
+      onCloseModal={jest.fn()}
+      onSaveGroup={jest.fn()}
+      metricGroup={metricGroupItem}
+    />
+  );
+
+  const modalTitle = screen.getByText('Edit metrics group');
+  expect(modalTitle).toBeInTheDocument();
+})

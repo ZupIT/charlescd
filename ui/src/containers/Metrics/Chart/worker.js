@@ -52,14 +52,14 @@ export default () => {
   const getMetricResource = apiParams => {
     const { circleId, chartType } = apiParams;
     const resource =
-      chartType === "COMPARISON" ? `circle/${circleId}/components` : "";
+      chartType === "COMPARISON" ? `${circleId}/components` : "";
 
     return `${resource}?${buildParams(apiParams)}`;
   };
 
   const fetchUrl = (apiParams, headers, basePath) => {
     fetch(
-      `${basePath}/moove/metrics/${getMetricResource(
+      `${basePath}/compass/api/v1/application-health/${getMetricResource(
         apiParams
       )}`,
       { headers }
@@ -79,8 +79,8 @@ export default () => {
         );
       })
       .catch(error => {
-        if (error.message === 401 ) {
-          self.postMessage({ unauthorized: true});
+        if (error.message === 401) {
+          self.postMessage({ unauthorized: true });
         }
         console.log(error);
       });

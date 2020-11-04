@@ -1,0 +1,8 @@
+{
+  "name": "Fake Valid Datasource Error Connection",
+  "id": "datasourceerrorconnection",
+  "description": "Fake Valid Datasource Error Connection",
+  "inputParameters": {
+    "configurationInputs": []
+  }
+}
