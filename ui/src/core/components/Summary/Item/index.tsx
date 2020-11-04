@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import Text from 'core/components/Text';
 import Styled from './styled';
 
 type Props = {
@@ -27,7 +26,7 @@ type Props = {
 const SummaryItem = ({ name, color, className }: Props) => (
   <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
     <Styled.Dot color={color} />
-    <Text.h5 color="dark">{name}</Text.h5>
+    <Styled.Name color="dark">{name}</Styled.Name>
   </Styled.Item>
 );
 
