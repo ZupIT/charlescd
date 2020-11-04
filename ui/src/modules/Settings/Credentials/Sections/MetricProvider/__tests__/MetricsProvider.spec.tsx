@@ -15,18 +15,68 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
-import { MetricConfiguration } from './fixtures';
+import { fireEvent, render, screen, wait } from 'unit-test/testUtils';
+import { Datasources } from './fixtures';
 import MetricProvider from '../index';
+import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
+import { FORM_METRIC_PROVIDER } from '../constants';
 
 test('render Metrics Provider default component', async () => {
   const setForm = jest.fn();
   render(
-    <MetricProvider form={null} setForm={setForm} data={MetricConfiguration}/>
+    <MetricProvider form={null} setForm={setForm} data={Datasources} />
   );
 
   await wait();
 
   expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
-  expect(screen.getByText('PROMETHEUS')).toBeInTheDocument();
+  expect(screen.getByText('Prometheus')).toBeInTheDocument();
 });
+
+test('toggle form have been called', async () => {
+  const setForm = jest.fn();
+  render(
+    <MetricProvider form={null} setForm={setForm} data={Datasources} />
+  );
+
+  await wait();
+
+  const addDatasource = screen.getByTestId('section-datasources')
+    .querySelector('[data-testid="button-iconRounded-add"]')
+
+  fireEvent.click(addDatasource)
+
+  expect(setForm).toHaveBeenCalled();
+});
+
+test('render datasource form', async () => {
+  const setForm = jest.fn();
+  render(
+    <MetricProvider form={FORM_METRIC_PROVIDER} setForm={setForm} data={Datasources} />
+  );
+
+  await wait();
+
+  expect(screen.getByTestId('select-url')).toBeInTheDocument();
+});
+
+test('should be delete Metric Provider', async () => {
+  const setForm = jest.fn();
+  const remove = jest.fn();
+  jest.spyOn(MetricProviderHooks, 'useDatasource').mockImplementation(() => ({
+    remove: remove,
+  }));
+  render(
+    <MetricProvider form={null} setForm={setForm} data={Datasources} />
+  );
+
+  await wait();
+
+  const deleteMetricIcon = screen.getByTestId('section-datasources')
+    .querySelector('[data-testid="icon-cancel"]')
+
+  fireEvent.click(deleteMetricIcon)
+
+  expect(remove).toHaveBeenCalled();
+});
+

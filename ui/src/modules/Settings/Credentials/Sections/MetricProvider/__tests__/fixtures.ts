@@ -14,7 +14,57 @@
  * limitations under the License.
  */
 
-export const MetricConfiguration = {
-  id: '1',
-  provider: 'PROMETHEUS'
-}
+import { Datasource, Plugin } from "../interfaces"
+
+export const Datasources: Datasource[] = [
+  {
+    id: 'prometheus',
+    name: 'Prometheus',
+    pluginSrc: 'datasource/prometheus/prometheus',
+    healthy: true,
+    data: {},
+  }
+]
+
+
+export const Plugins: Plugin[] = [
+  {
+    name: "Prometheus",
+    id: "prometheus",
+    description: "My prometheus",
+    src: "datasource/prometheus/prometheus",
+    inputParameters: {
+      health: true,
+      configurationInputs: [
+        {
+          name: "url",
+          label: "Url",
+          type: "text",
+          required: true
+        }
+      ]
+    }
+  },
+  {
+    name: "Google Analytics",
+    id: "googleanalytics",
+    description: "My google analytics",
+    src: "datasource/googleanalytics/googleanalytics",
+    inputParameters: {
+      configurationInputs: [
+        {
+          name: "viewId",
+          label: "View ID",
+          type: "text",
+          required: true
+        },
+        {
+          name: "serviceAccount",
+          label: "Service Account",
+          type: "textarea",
+          required: true
+        }
+      ]
+    }
+  }
+]
