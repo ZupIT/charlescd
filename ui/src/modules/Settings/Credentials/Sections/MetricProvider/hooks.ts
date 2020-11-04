@@ -14,75 +14,87 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
-import {
-  create,
-  configPath,
-  verifyProviderConnection,
-  metricProviderConfigConnection
-} from 'core/providers/metricProvider';
-import { addConfig, delConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
-import { useDispatch } from 'core/state/hooks';
-import { MetricProvider, Response, TestConnectionResponse } from './interfaces';
-import { buildParams, URLParams } from 'core/utils/query';
-import { toogleNotification } from 'core/components/Notification/state/actions';
+import { useCallback, useEffect, useState } from 'react';
 
-export const useMetricProvider = (): FetchProps => {
+import { useFetch, FetchProps, useFetchData } from 'core/providers/base/hooks';
+import { useDispatch } from 'core/state/hooks';
+import {
+  Datasource,
+  Plugin,
+  Response,
+  TestConnectionRequest
+} from './interfaces';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import {
+  getAllDatasources,
+  createDatasource as create,
+  deleteDatasource,
+  getAllPlugins,
+  testConnection
+} from 'core/providers/datasources';
+import { CONNECTION_SUCCESS } from './constants';
+
+export const useDatasource = (): FetchProps => {
   const dispatch = useDispatch();
-  const [createData, createMetricProvider] = useFetch<Response>(create);
-  const [addData, addMetricProvider] = useFetch(addConfig);
-  const [delData, delMetricProvider] = useFetch(delConfig);
+  const [createData, createDatasource] = useFetch<Response>(create);
+  const [datasourceData, getDatasources] = useFetch<Datasource[]>(
+    getAllDatasources
+  );
+  const [delData, delDatasource] = useFetch(deleteDatasource);
   const {
     loading: loadingSave,
     response: responseSave,
     error: errorSave
   } = createData;
-  const {
-    loading: loadingAdd,
-    response: responseAdd,
-    error: errorAdd
-  } = addData;
+  const { loading: loadingAdd, response: responseAdd } = delData;
+  const { response, error } = datasourceData;
   const { response: responseRemove, error: errorRemove } = delData;
 
   const save = useCallback(
-    (metricProvider: MetricProvider) => {
-      createMetricProvider(metricProvider);
+    (datasource: Datasource) => {
+      createDatasource(datasource);
     },
-    [createMetricProvider]
+    [createDatasource]
   );
-
-  useEffect(() => {
-    if (responseSave) addMetricProvider(configPath, responseSave?.id);
-  }, [addMetricProvider, responseSave]);
 
   useEffect(() => {
     if (errorSave) {
       dispatch(
         toogleNotification({
-          text: `[${errorSave.status}] Circle Matcher could not be saved.`,
-          status: 'error'
-        })
-      );
-    } else if (errorAdd) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorAdd.status}] Circle Matcher could not be patched.`,
+          text: `[${errorSave.status}] Datasource could not be saved.`,
           status: 'error'
         })
       );
     }
-  }, [errorSave, errorAdd, dispatch]);
+  }, [errorSave, dispatch]);
 
-  const remove = useCallback(() => {
-    delMetricProvider(configPath);
-  }, [delMetricProvider]);
+  const getAll = useCallback(() => {
+    getDatasources();
+  }, [getDatasources]);
+
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        toogleNotification({
+          text: `[${error.status}] Dat could not be fetched.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [error, dispatch]);
+
+  const remove = useCallback(
+    (id: string) => {
+      delDatasource(id);
+    },
+    [delDatasource]
+  );
 
   useEffect(() => {
     if (errorRemove) {
       dispatch(
         toogleNotification({
-          text: `[${errorRemove.status}] Metrics Provider could not be removed.`,
+          text: `[${errorRemove.status}] Datasource could not be removed.`,
           status: 'error'
         })
       );
@@ -90,65 +102,58 @@ export const useMetricProvider = (): FetchProps => {
   }, [errorRemove, dispatch]);
 
   return {
-    responseAdd,
+    getAll,
     save,
-    responseRemove,
     remove,
+    responseAll: response,
+    responseAdd,
+    responseRemove,
     loadingSave,
+    responseSave,
     loadingAdd
   };
 };
 
-interface FromTestConnection extends FetchProps {
-  testProviderConnectionForm: Function;
-  response: TestConnectionResponse;
-}
+export const usePlugins = (): FetchProps => {
+  const [allPlugins, getPlugins] = useFetch<Plugin[]>(getAllPlugins);
 
-export const useFromTestConnection = (): FromTestConnection => {
-  const [fromTestConnection, dispatchFormTestConnection] = useFetch<
-    TestConnectionResponse
-  >(verifyProviderConnection);
+  const { response, loading } = allPlugins;
 
-  const { response, loading } = fromTestConnection;
-
-  const testProviderConnectionForm = useCallback(
-    (payload: URLParams) => {
-      const params = buildParams(payload);
-      dispatchFormTestConnection(params);
-    },
-    [dispatchFormTestConnection]
-  );
+  const getAll = useCallback(() => {
+    getPlugins();
+  }, [getPlugins]);
 
   return {
-    testProviderConnectionForm,
+    getAll,
     response,
     loading
   };
 };
 
-interface SectionTestConnection extends FetchProps {
-  testProviderConnectionSection: Function;
-  response: TestConnectionResponse;
-}
+export const useTestConnection = (): FetchProps => {
+  const [connectionResponse, setConnectionResponse] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const testConnectionFetchData = useFetchData<number>(testConnection);
+  const connectionFailed = 500
 
-export const useSectionTestConnection = (): SectionTestConnection => {
-  const [sectionTestConnection, dispatchSectionTestConnection] = useFetch<
-    TestConnectionResponse
-  >(metricProviderConfigConnection);
-
-  const { response, loading } = sectionTestConnection;
-
-  const testProviderConnectionSection = useCallback(
-    (params: URLParams, workspaceId: string) => {
-      const urlParams = buildParams(params);
-      dispatchSectionTestConnection(urlParams, workspaceId);
+  const save = useCallback(
+    async (payload: TestConnectionRequest) => {
+      try {
+        setLoading(true)
+        await testConnectionFetchData(payload);
+        setLoading(false)
+        setConnectionResponse(CONNECTION_SUCCESS)
+      } catch (e) {
+        setLoading(false)
+        setConnectionResponse(connectionFailed)
+      }
     },
-    [dispatchSectionTestConnection]
+    [testConnectionFetchData]
   );
 
   return {
-    testProviderConnectionSection,
-    response,
+    save,
+    response: connectionResponse,
     loading
   };
 };
