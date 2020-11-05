@@ -19,6 +19,7 @@ import ComponentInput from 'core/components/Form/Input';
 import SelectComponent from 'core/components/Form/Select';
 import Button from 'core/components/Button';
 import { fadeIn } from 'core/assets/style/animate';
+import Switch from 'core/components/Switch';
 
 const Content = styled.div`
   display: flex;
@@ -107,6 +108,19 @@ const StatusWrapper = styled.div<status>`
   }
 `;
 
+const HealthSwitch = styled(Switch)`
+  justify-content: start;
+
+  span {
+    margin-left: 5px;
+  }
+`
+
+const HealthWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
 export default {
   Form,
   Content,
@@ -115,5 +129,7 @@ export default {
   Select,
   TestConnectionButton,
   StatusMessageWrapper,
-  StatusWrapper
+  StatusWrapper,
+  HealthWrapper,
+  HealthSwitch
 };

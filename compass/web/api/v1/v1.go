@@ -19,14 +19,18 @@
 package v1
 
 import (
+	"compass/internal/action"
 	"compass/internal/datasource"
+	healthPKG "compass/internal/health"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
+	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"compass/pkg/logger"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -38,6 +42,9 @@ type UseCases interface {
 	NewMetricApi(metricMain metric.UseCases, metricGroupMain metricsgroup.UseCases) MetricApi
 	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
 	NewCircleApi(circleMain metricsgroup.UseCases) CircleApi
+	NewHealthApi(healthMain healthPKG.UseCases) HealthApi
+	NewActionApi(actionMain action.UseCases) ActionApi
+	NewMetricsGroupActionApi(actionMain metricsgroupaction.UseCases) MetricsGroupActionApi
 }
 
 type V1 struct {
