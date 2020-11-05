@@ -43,3 +43,9 @@ jobs:
     - name: Code style
       run: mvn checkstyle:checkstyle
       working-directory: ./villager
+    - name: Horusec Security
+      working-directory: ./villager
+      run: |
+        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+        horus start -p ./
+
