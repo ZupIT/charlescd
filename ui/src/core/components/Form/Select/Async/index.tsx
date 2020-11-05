@@ -23,7 +23,7 @@ import { OptionsType } from 'react-select';
 interface Props {
   name: string;
   control: Control<unknown>;
-  options: Option[];
+  options?: Option[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option;
   className?: string;
@@ -35,6 +35,7 @@ interface Props {
   customOption?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
+  defaultOptions?: Option[];
   hasError?: boolean;
   loadOptions?: (
     inputValue: string,
@@ -58,12 +59,14 @@ const AsyncSelect = ({
   closeMenuOnSelect = true,
   hideSelectedOptions,
   hasError,
-  loadOptions
+  loadOptions,
+  defaultOptions
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
       as={
         <Select
+          defaultOptions={defaultOptions}
           placeholder={label}
           className={className}
           isDisabled={isDisabled}

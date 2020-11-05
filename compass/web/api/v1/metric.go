@@ -87,9 +87,15 @@ func (metricApi MetricApi) updateMetric(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
+	metricgroup, err := metricApi.metricGroupMain.FindById(groupID)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
 	metric.ID, _ = uuid.Parse(metricID)
 	metric.MetricsGroupID, _ = uuid.Parse(groupID)
-
+	metric.CircleID = metricgroup.CircleID
 	updatedMetric, err := metricApi.metricMain.UpdateMetric(metricID, metric)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})

@@ -31,7 +31,12 @@ import {
   updateMetricGroup,
   deleteMetricGroup,
   deleteMetricByMetricId,
-  getChartDataByQuery
+  deleteActionByActionId,
+  getChartDataByQuery,
+  getAllActionsTypes,
+  createAction,
+  updateAction,
+  getGroupActionById
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
@@ -41,7 +46,10 @@ import {
   MetricsGroupsResume,
   Metric,
   DataSource,
-  ChartDataByQuery
+  ChartDataByQuery,
+  ActionGroupPayload,
+  ActionType,
+  Action
 } from './types';
 import { ValidationError } from 'core/interfaces/ValidationError';
 
@@ -359,5 +367,145 @@ export const useMetricQuery = () => {
 
   return {
     getMetricByQuery
+  };
+};
+
+export const useActionTypes = () => {
+  const getAllActionsTypesRequest = useFetchData<ActionType[]>(
+    getAllActionsTypes
+  );
+
+  const getAllActionsTypesData = useCallback(async () => {
+    try {
+      const response = await getAllActionsTypesRequest();
+
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
+  }, [getAllActionsTypesRequest]);
+
+  return {
+    getAllActionsTypesData
+  };
+};
+
+export const useSaveAction = (actionId?: string) => {
+  const saveRequest = actionId ? updateAction : createAction;
+  const saveActionPayload = useFetchData<ActionGroupPayload>(saveRequest);
+  const status = useFetchStatus();
+  const dispatch = useDispatch();
+  const [validationError, setValidationError] = useState<ValidationError>();
+
+  const saveAction = useCallback(
+    async (ActionGroupPayload: ActionGroupPayload) => {
+      try {
+        status.pending();
+        const savedActionResponse = await saveActionPayload(
+          ActionGroupPayload,
+          actionId
+        );
+
+        status.resolved();
+
+        dispatch(
+          toogleNotification({
+            text: `The action ${ActionGroupPayload.nickname} was successfully ${
+              actionId ? `edit` : `added`
+            }`,
+            status: 'success'
+          })
+        );
+
+        return savedActionResponse;
+      } catch (error) {
+        status.rejected();
+        error?.text?.().then((errorMessage: string) => {
+          const parsedError = JSON.parse(errorMessage);
+          setValidationError(parsedError);
+        });
+
+        dispatch(
+          toogleNotification({
+            text: `An error occurred while trying to create the ${
+              ActionGroupPayload.nickname
+            } ${actionId ? `edit` : `added`}`,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [saveActionPayload, status, dispatch, actionId]
+  );
+
+  return {
+    saveAction,
+    status,
+    validationError
+  };
+};
+
+export const useDeleteAction = () => {
+  const deleteActionRequest = useFetchData<MetricsGroup>(
+    deleteActionByActionId
+  );
+  const dispatch = useDispatch();
+
+  const deleteAction = useCallback(
+    async (actionId: string, actionName: string) => {
+      try {
+        const deleteActionResponse = await deleteActionRequest(actionId);
+
+        dispatch(
+          toogleNotification({
+            text: `The action ${actionName} was successfully deleted.`,
+            status: 'success'
+          })
+        );
+
+        return deleteActionResponse;
+      } catch (e) {
+        dispatch(
+          toogleNotification({
+            text: `Error deleting the action ${actionName}`,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [deleteActionRequest, dispatch]
+  );
+
+  return {
+    deleteAction
+  };
+};
+
+export const useActionTypeById = () => {
+  const getActionGroupById = useFetchData<Action>(getGroupActionById);
+  const [isLoading, setIsLoading] = useState(false);
+  const [actionData, setActionData] = useState<Action>();
+
+  const getActionGroup = useCallback(
+    async (actionId: string) => {
+      try {
+        setIsLoading(true);
+
+        const response = await getActionGroupById(actionId);
+        setActionData(response);
+
+        setIsLoading(false);
+        return response;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [getActionGroupById]
+  );
+
+  return {
+    getActionGroup,
+    actionData,
+    isLoading
   };
 };

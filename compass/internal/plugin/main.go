@@ -23,7 +23,7 @@ import (
 )
 
 type UseCases interface {
-	FindAll() ([]Plugin, error)
+	FindAll(category string) ([]Plugin, error)
 	GetPluginBySrc(id string) (*plugin.Plugin, error)
 }
 

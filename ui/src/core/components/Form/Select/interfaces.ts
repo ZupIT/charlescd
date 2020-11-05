@@ -44,4 +44,5 @@ export interface Props {
   components?: SelectComponentsConfig<OptionTypeBase>;
   label?: string;
   hasError?: boolean;
+  defaultOptions?: Option[];
 }
