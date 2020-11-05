@@ -147,11 +147,10 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     }
 
     @ExceptionHandler(FeignException::class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    @Deprecated("Only for backwards compatibility")
     fun feignExceptions(request: HttpServletRequest, ex: FeignException): ErrorMessageResponse {
         this.logger.error(ex.contentUTF8(), ex)
-        return ErrorMessageResponse.of(MooveErrorCode.CANNOT_DEPLOY_RELEASE, ex.contentUTF8())
+        return ErrorMessageResponse.of(MooveErrorCode.INVALID_PAYLOAD, ex.contentUTF8())
     }
 }
