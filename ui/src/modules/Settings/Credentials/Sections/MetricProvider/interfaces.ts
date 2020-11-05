@@ -30,8 +30,45 @@ export interface MetricProvider {
   url: string;
 }
 
+export interface DatasourceData {
+  [key: string]: string
+}
+
+export interface Datasource {
+  id: string;
+  name: string;
+  pluginSrc: string;
+  healthy: boolean;
+  data: DatasourceData;
+}
+
+export interface Input {
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+}
+
+export interface PluginDatasource {
+  configurationInputs: Input[];
+  health: boolean;
+}
+
+export interface Plugin {
+  id: string;
+  name: string;
+  src: string;
+  description: string;
+  inputParameters?: any;
+}
+
+export interface TestConnectionRequest {
+  pluginSrc: string;
+  data: any
+}
+
 export interface TestConnectionResponse {
-  status?: string;
+  message?: string;
 }
 
 export enum ConnectionStatusEnum {

@@ -1,0 +1,21 @@
+{
+  "name": "Google Analytics",
+  "id": "googleanalytics",
+  "description": "My google analytics",
+  "inputParameters": {
+    "configurationInputs": [
+      {
+        "name": "viewId",
+        "label": "View ID",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "serviceAccount",
+        "label": "Service Account",
+        "type": "textarea",
+        "required": true
+      }
+    ]
+  }
+}
