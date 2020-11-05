@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.metrics.interactor
+package io.charlescd.moove.domain
 
-import io.charlescd.moove.metrics.api.response.CircleHealthRepresentation
-
-interface RetrieveCircleComponentsHealthInteractor {
-
-    fun execute(circleId: String, workspaceId: String): CircleHealthRepresentation
-}
+data class SimpleComponent(
+    val id: String,
+    val moduleId: String,
+    val name: String,
+    val workspaceId: String,
+    val errorThreshold: Int,
+    val latencyThreshold: Int,
+    val moduleName: String
+)

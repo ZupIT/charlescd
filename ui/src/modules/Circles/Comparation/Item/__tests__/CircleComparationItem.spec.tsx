@@ -24,6 +24,7 @@ import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
+import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -39,7 +40,7 @@ interface fakeCanProps {
 jest.mock('containers/Can', () => {
   return {
     __esModule: true,
-    default:  ({children}: fakeCanProps) => {
+    default: ({ children }: fakeCanProps) => {
       return <div>{children}</div>;
     }
   };
@@ -82,6 +83,10 @@ test('render CircleComparationItem with release', async () => {
     },
     status: 'resolved'
   }));
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [],
+    getAll: jest.fn
+  });
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify(circle))
     .mockResponseOnce(JSON.stringify(circle));
@@ -97,7 +102,7 @@ test('render CircleComparationItem with release', async () => {
   await waitFor(() => expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument());
   await waitFor(() => expect(screen.getByText('Override release')).toBeInTheDocument());
   await waitFor(() => expect(screen.getByText('Last release deployed')).toBeInTheDocument());
-  await waitFor(() => expect(screen.getByText('Add Metrics Configuration')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText('Add datasource health')).toBeInTheDocument());
 });
 
 test('render CircleComparationItem Default Circle', async () => {

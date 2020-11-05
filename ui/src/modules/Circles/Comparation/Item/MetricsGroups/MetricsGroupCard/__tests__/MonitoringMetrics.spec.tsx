@@ -18,7 +18,7 @@ import React from 'react';
 import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupChartData } from '../../__tests__/fixtures';
+import { metricsGroupChartData } from '../../__tests__/fixtures';
 import MonitoringMetrics from '../MonitoringMetrics';
 
 beforeEach(() => {
@@ -26,7 +26,7 @@ beforeEach(() => {
 });
 
 test('render Monitoring Metrics with data', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(metricsGroupChartData));
   const handleChangePeriod = jest.fn();
   
   render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]} onChangePeriod={handleChangePeriod}/>);
@@ -37,7 +37,7 @@ test('render Monitoring Metrics with data', async () => {
 });
 
 test('render Monitoring Metrics with data and toogle chart period', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(metricsGroupChartData));
   const handleChangePeriod = jest.fn();
   
   render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]} onChangePeriod={handleChangePeriod}/>);

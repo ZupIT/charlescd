@@ -18,7 +18,7 @@ import React from 'react';
 import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupData, MetricsGroupWithoutMetricData } from './fixtures';
+import { metricsGroupData, metricsGroupWithoutMetricData } from './fixtures';
 import MetricsGroups from '../';
 
 beforeEach(() => {
@@ -27,7 +27,7 @@ beforeEach(() => {
 
 test('render default Metrics Groups', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   const handleClick = jest.fn();
@@ -47,7 +47,7 @@ test('render default Metrics Groups', async () => {
 
 test('render default Metrics Groups and toogle Chart', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -64,7 +64,7 @@ test('render default Metrics Groups and toogle Chart', async () => {
 
 test('render default Metrics Groups and filter Chart', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -82,7 +82,7 @@ test('render default Metrics Groups and filter Chart', async () => {
 
 test('render add metrics group modal', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -100,7 +100,7 @@ test('render add metrics group modal', async () => {
 
 test('render default Metrics Groups and refresh screen', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupData)
+    JSON.stringify(metricsGroupData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -113,7 +113,7 @@ test('render default Metrics Groups and refresh screen', async () => {
 
 test('render default Add metric to the group', async () => {
   (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(MetricsGroupWithoutMetricData)
+    JSON.stringify(metricsGroupWithoutMetricData)
   );
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
@@ -127,9 +127,9 @@ test('render default Add metric to the group', async () => {
 
 test('render metrics groups and delete a metrics group', async () => {
   (fetch as FetchMock)
-    .mockResponseOnce(JSON.stringify(MetricsGroupWithoutMetricData))
+    .mockResponseOnce(JSON.stringify(metricsGroupWithoutMetricData))
     .mockResponseOnce(JSON.stringify({}))
-    .mockResponseOnce(JSON.stringify(MetricsGroupWithoutMetricData));
+    .mockResponseOnce(JSON.stringify(metricsGroupWithoutMetricData));
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
@@ -141,4 +141,119 @@ test('render metrics groups and delete a metrics group', async () => {
   act(() => userEvent.click(deleteButton));
 
   await waitFor(() => expect(screen.queryByText('test 1a')).not.toBeInTheDocument());
+});
+
+test('render metrics groups and edit a metrics group', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id="1" onGoBack={jest.fn()}/>);
+
+  const metricsGroupMenu = await screen.findByTestId('icon-vertical-dots');
+
+  userEvent.click(metricsGroupMenu);
+  userEvent.click(screen.getByText('Edit'));
+
+  expect(screen.queryByText('Edit metrics group')).toBeInTheDocument();
+});
+
+test('render metrics groups and open new metric form', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  const addMetric = await screen.findByTestId('button-default-add-metric');
+  userEvent.click(addMetric);
+  const addMetricForm = await screen.findByTestId('add-metric');
+  expect(addMetricForm).toBeInTheDocument();
+});
+
+test('render metrics groups and open new action form', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  const actionTab = await screen.findByTestId('tab-1');
+  userEvent.click(actionTab);
+
+  const addAction = await screen.findByTestId('button-default-add-action');
+  userEvent.click(addAction);
+
+  const addActionForm = await screen.findByTestId('metric-group-action-form');
+  expect(addActionForm).toBeInTheDocument();
+});
+  
+test('render metrics groups and delete metric', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  const metricDropdown = await screen.findAllByTestId('icon-vertical-dots');
+  await act(async() => {
+    userEvent.click(metricDropdown[1]);
+  });  
+  const deleteElement = screen.getByText('Delete');
+  expect(deleteElement).toBeInTheDocument();
+});
+
+test('render metrics groups and edit metric', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  const metricDropdown = await screen.findAllByTestId('icon-vertical-dots');
+  await act(async() => {
+    userEvent.click(metricDropdown[1]);
+  });  
+  
+  userEvent.click(screen.getByText('Edit metric'));
+  const addMetricForm = await screen.findByTestId('add-metric');
+  expect(addMetricForm).toBeInTheDocument();
+});
+
+test('render metrics groups and delete action', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  const actionTab = await screen.findByTestId('tab-1');
+  userEvent.click(actionTab);
+  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
+  userEvent.click(metricDropdown[1]);
+  userEvent.click(screen.getByText('Delete action'));
+});
+
+test('render metrics groups and edit action', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(metricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  const actionTab = await screen.findByTestId('tab-1');
+
+  userEvent.click(actionTab);
+
+  const metricDropdown = screen.getAllByTestId('icon-vertical-dots');
+
+  await act(async() => {
+    userEvent.click(metricDropdown[1]);
+  });
+  userEvent.click(screen.getByText('Edit action'));
+
+  const addActionForm = await screen.findByTestId('metric-group-action-form');
+  const goBack = screen.getByTestId('icon-arrow-left');
+  
+  expect(addActionForm).toBeInTheDocument();
 });

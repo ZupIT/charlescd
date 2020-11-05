@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, fireEvent, wait, screen, act } from 'unit-test/testUtils';
+import { render, fireEvent, wait, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
@@ -23,6 +23,8 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '../';
 import * as clipboardUtils from 'core/utils/clipboard';
 import { Actions, Subjects } from "core/utils/abilities";
+import * as MetricProviderHooks from '../Sections/MetricProvider/hooks';
+import { Datasources } from '../Sections/MetricProvider/__tests__/fixtures';
 
 interface fakeCanProps {
   I?: Actions;
@@ -51,7 +53,9 @@ test('render Credentials default component', () => {
   expect(screen.getByTestId("credentials")).toBeInTheDocument();
 });
 
-test('render Credentials items', () => {
+
+// TODO: Fix this test
+test('render Credentials items', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
@@ -60,9 +64,10 @@ test('render Credentials items', () => {
     },
     status: 'resolved'
   }));
+  
   render(<Credentials />);
 
-  expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
   expect(screen.getByTestId('contentIcon-users')).toBeInTheDocument();
   expect(screen.getByTestId('contentIcon-git')).toBeInTheDocument();
   expect(screen.getByTestId('contentIcon-server')).toBeInTheDocument();
@@ -79,9 +84,14 @@ test('render User Group credentials', async () => {
     },
     status: 'resolved'
   }));
+  
+  jest.spyOn(MetricProviderHooks, 'useDatasource').mockImplementation(() => ({
+    responseAll: [...Datasources],
+    getAll: jest.fn
+  }));
 
   render(<Credentials />);
-
+  
   const content = screen.getByTestId('contentIcon-users');
   expect(content).toBeInTheDocument();
 
