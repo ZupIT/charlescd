@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent, screen } from 'unit-test/testUtils';
+import { render, wait, fireEvent, screen, act } from 'unit-test/testUtils';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
@@ -24,7 +24,6 @@ import MutationObserver from 'mutation-observer';
 import Account from '../';
 import { saveProfile } from 'core/utils/profile';
 import userEvent from '@testing-library/user-event';
-import { act } from 'react-dom/test-utils';
 
 (global as any).MutationObserver = MutationObserver
 
