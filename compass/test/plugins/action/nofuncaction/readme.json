@@ -1,0 +1,9 @@
+{
+  "name": "Fake No Func Action",
+  "id": "nofuncaction",
+  "description": "Fake No Func Action",
+  "inputParameters": {
+    "configurationInputs": [],
+    "executionInputs": []
+  }
+}

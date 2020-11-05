@@ -52,6 +52,7 @@ func NewDispatcher(metric metric.UseCases) UseCases {
 }
 
 func (dispatcher *Dispatcher) dispatch() {
+	logger.Info("Starting metrics dispatcher", time.Now())
 	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
 		logger.Panic("Cannot find active metric executions", "Dispatch", err, nil)
@@ -61,7 +62,7 @@ func (dispatcher *Dispatcher) dispatch() {
 		go dispatcher.getMetricResult(execution)
 	}
 
-	logger.Info("After 5 seconds... ", time.Now())
+	logger.Info("Finishing metrics dispatcher", time.Now())
 }
 
 func compareResultWithMetricThreshold(result float64, threshold float64, condition string) bool {

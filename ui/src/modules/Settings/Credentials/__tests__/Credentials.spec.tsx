@@ -21,6 +21,8 @@ import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '..';
+import { Datasources } from '../Sections/MetricProvider/__tests__/fixtures';
+import * as MetricProviderHooks from '../Sections/MetricProvider/hooks';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -61,6 +63,10 @@ test('render User Group credentials', async () => {
       status: WORKSPACE_STATUS.COMPLETE
     },
     status: 'resolved'
+  }));
+  jest.spyOn(MetricProviderHooks, 'useDatasource').mockImplementation(() => ({
+    responseAll: [...Datasources],
+    getAll: jest.fn
   }));
   render(<Credentials />);
   const content = screen.queryByTestId('contentIcon-users');
@@ -136,7 +142,7 @@ test('click to copy to clipboard', async () => {
     status: 'resolved'
   }));
   render(<Credentials />);
-  
+
   const content = screen.queryByTestId('contentIcon-circle-matcher');
   const button = content.nextElementSibling.querySelector('button');
   await wait(() => fireEvent.click(button));
