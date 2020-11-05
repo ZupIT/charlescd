@@ -1,0 +1,9 @@
+{
+  "name": "Fake Invalid Action",
+  "id": "invalidaction",
+  "description": "Fake Invalid Action",
+  "inputParameters": {
+    "configurationInputs": [],
+    "executionInputs": []
+  }
+}

@@ -38,7 +38,9 @@ func (v1 V1) NewPluginApi(pluginMain plugin.UseCases) PluginApi {
 }
 
 func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
-	circles, err := pluginApi.pluginMain.FindAll()
+	category := r.URL.Query().Get("category")
+
+	circles, err := pluginApi.pluginMain.FindAll(category)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

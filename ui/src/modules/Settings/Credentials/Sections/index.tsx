@@ -20,6 +20,7 @@ import CircleMatcher from './CircleMatcher';
 import MetricProvider from './MetricProvider';
 import CDConfiguration from './CDConfiguration';
 import UserGroup from './UserGroup';
+import MetricAction from './MetricAction';
 
 export default {
   Git,
@@ -27,5 +28,6 @@ export default {
   CircleMatcher,
   MetricProvider,
   CDConfiguration,
-  UserGroup
+  UserGroup,
+  MetricAction
 };
