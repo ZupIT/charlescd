@@ -1,0 +1,16 @@
+{
+  "name": "Prometheus",
+  "id": "prometheus",
+  "description": "My prometheus",
+  "inputParameters": {
+    "health": true,
+    "configurationInputs": [
+      {
+        "name": "url",
+        "label": "Url",
+        "type": "text",
+        "required": true
+      }
+    ]
+  }
+}

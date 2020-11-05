@@ -160,7 +160,9 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
             {!!errors.nickname && (
               <Styled.FieldErrorWrapper>
                 <Icon name="error" color="error" />
-                <Text.h6 color="error">{errors.nickname.message}</Text.h6>
+                <Text.h6 color="error">
+                  {errors.nickname.message || 'Type a valid nickname'}
+                </Text.h6>
               </Styled.FieldErrorWrapper>
             )}
             {!loadingProviders && (
