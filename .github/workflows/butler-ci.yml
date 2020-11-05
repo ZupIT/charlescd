@@ -58,3 +58,9 @@ jobs:
       with:
         name: unit-test-coverage
         path: ./butler/coverage/lcov-report/
+    - name: Horusec Security
+      working-directory: ./butler
+      run: |
+        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+        horus start -p ./
+        
