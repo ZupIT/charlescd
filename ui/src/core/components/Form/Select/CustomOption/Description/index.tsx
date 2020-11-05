@@ -18,13 +18,13 @@ import React from 'react';
 import { components, OptionTypeBase, OptionProps } from 'react-select';
 import Styled from './styled';
 
-const CustomOption = (props: OptionProps<OptionTypeBase>) => {
+const Description = (props: OptionProps<OptionTypeBase>) => {
   const { label, description } = props.data;
 
   return (
     <components.Option {...props}>
       <Styled.Wrapper>
-        <Styled.Check isActive={props.isSelected}>
+        <Styled.Check isActive={props.isSelected} data-testid="check-icon">
           <Styled.Icon name="checkmark" color="light" size="20px" />
         </Styled.Check>
         <Styled.Content>
@@ -36,4 +36,4 @@ const CustomOption = (props: OptionProps<OptionTypeBase>) => {
   );
 };
 
-export default CustomOption;
+export default Description;
