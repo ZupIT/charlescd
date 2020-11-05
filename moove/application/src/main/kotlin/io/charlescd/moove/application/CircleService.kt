@@ -58,7 +58,7 @@ class CircleService(private val circleRepository: CircleRepository) {
         }
     }
 
-    fun find(name: String?, active: Boolean, workspaceId: String, pageRequest: PageRequest): Page<Circle> {
+    fun find(name: String?, active: Boolean?, workspaceId: String, pageRequest: PageRequest): Page<Circle> {
         return this.circleRepository.find(
             name,
             active,

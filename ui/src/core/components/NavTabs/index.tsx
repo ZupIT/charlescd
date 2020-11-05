@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import Tab, { Props as TabProps } from './Tab';
 import Text from 'core/components/Text';
 import Styled from './styled';
+import Placeholder from './Placeholder';
 
 type Child = Pick<TabProps, 'title'>;
 
@@ -56,5 +57,6 @@ const NavTabs = ({ children }: Props) => {
 };
 
 NavTabs.Tab = Tab;
+NavTabs.Placeholder = Placeholder;
 
 export default NavTabs;

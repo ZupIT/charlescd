@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import Button from 'core/components/Button';
@@ -31,6 +31,9 @@ import {
   getActiveMetricDescription
 } from '../helpers';
 import Styled from '../styled';
+import { useDatasource } from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
+import { some } from 'lodash';
+import { Datasource } from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
 
 interface Props {
   id: string;
@@ -41,10 +44,15 @@ const LayerMetrics = ({ id }: Props) => {
     ({ workspaces }) => workspaces
   );
   const history = useHistory();
+  const { responseAll, getAll } = useDatasource();
 
   const [activeMetricType, setActiveMetricType] = useState(
     METRICS_TYPE.REQUESTS_BY_CIRCLE
   );
+
+  useEffect(() => {
+    getAll()
+  }, [getAll])
 
   const handleChangeMetricTypes = (changeType: ChangeType) => {
     const activeMetric = getActiveMetric(changeType, activeMetricType);
@@ -74,20 +82,20 @@ const LayerMetrics = ({ id }: Props) => {
       color={'dark'}
       onClick={() => handleAddMetrics()}
     >
-      Add Metrics Configuration
+      Add datasource health
     </Button.Rounded>
   );
 
   const renderContent = () => {
-    return !isEmpty(response?.metricConfiguration) ? (
+    return some((responseAll as Datasource[]), { healthy: true }) ? (
       <CircleMetrics
         id={id}
         metricType={activeMetricType}
         chartType={CHART_TYPE.COMPARISON}
       />
     ) : (
-      renderNoMetrics()
-    );
+        renderNoMetrics()
+      );
   };
 
   return (

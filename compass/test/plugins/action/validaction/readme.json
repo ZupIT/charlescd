@@ -1,0 +1,9 @@
+{
+  "name": "Fake Valid Action",
+  "id": "validaction",
+  "description": "Fake Valid Action",
+  "inputParameters": {
+    "configurationInputs": [],
+    "executionInputs": []
+  }
+}

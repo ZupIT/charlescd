@@ -25,9 +25,11 @@ import (
 	metric2 "compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
+	"compass/internal/util"
 	"encoding/json"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -44,9 +46,11 @@ type SuiteMetricExecution struct {
 }
 
 func (s *SuiteMetricExecution) SetupSuite() {
-	var err error
-
 	os.Setenv("ENV", "TEST")
+}
+
+func (s *SuiteMetricExecution) BeforeTest(_, _ string) {
+	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
@@ -57,15 +61,11 @@ func (s *SuiteMetricExecution) SetupSuite() {
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
 	s.repository = metric.NewMain(s.DB, datasourceMain, pluginMain)
+	clearDatabase(s.DB)
 }
 
-func (s *SuiteMetricExecution) BeforeTest(suiteName, testName string) {
-	s.DB.Exec("DELETE FROM metric_filters")
-	s.DB.Exec("DELETE FROM metric_group_bies")
-	s.DB.Exec("DELETE FROM metrics")
-	s.DB.Exec("DELETE FROM metrics_groups")
-	s.DB.Exec("DELETE FROM data_sources")
-	s.DB.Exec("DELETE FROM metric_executions")
+func (s *SuiteMetricExecution) AfterTest(_, _ string) {
+	s.DB.Close()
 }
 
 func TestInitMetricExecutions(t *testing.T) {
@@ -205,4 +205,84 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 		LastValue: 0,
 		Status:    "REACHED",
 	}, newExecutions[0])
+}
+
+func (s *SuiteMetricExecution) TestUpdateMetricExecutionError() {
+	circleID := uuid.New()
+	datasource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasource)
+
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric2.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+	}
+	s.DB.Create(&metricgroup)
+
+	metric1 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName1",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleID,
+	}
+
+	metricCreated, err := s.repository.SaveMetric(metric1)
+	require.NoError(s.T(), err)
+
+	executions, err := s.repository.FindAllMetricExecutions()
+	require.NoError(s.T(), err)
+
+	require.Equal(s.T(), metric.MetricExecution{
+		BaseModel: executions[0].BaseModel,
+		MetricID:  metricCreated.ID,
+		LastValue: 0,
+		Status:    "ACTIVE",
+	}, executions[0])
+
+	updateExecution := metric.MetricExecution{
+		BaseModel: executions[0].BaseModel,
+		MetricID:  metricCreated.ID,
+		LastValue: 0,
+		Status:    "REACHED",
+	}
+
+	s.DB.Close()
+	_, err = s.repository.UpdateMetricExecution(updateExecution)
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetricExecution) TestFindAllMetricExecutionError() {
+	s.DB.Close()
+	_, err := s.repository.FindAllMetricExecutions()
+	require.Error(s.T(), err)
+}
+
+func (s SuiteMetricExecution) TestValidateIfMetricsReached() {
+	id := uuid.New()
+	metricId := uuid.New()
+
+	metricExecutionStruct := metric.MetricExecution{
+		BaseModel: util.BaseModel{
+			ID:        id,
+			CreatedAt: time.Time{},
+		},
+		MetricID:  metricId,
+		LastValue: 0,
+		Status:    "REACHED",
+	}
+	result := s.repository.ValidateIfExecutionReached(metricExecutionStruct)
+
+	require.True(s.T(), result)
 }
