@@ -1,6 +1,6 @@
 # CharlesCD Moove
 
-Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products and the delivery pipeline until it reaches your circles, facilitating the bridge between [Butler], [Villager], and [Circle Matcher]. 
+Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products, and the delivery pipeline until it reaches your circles, facilitating the bridge between [Butler], [Villager], and [Circle Matcher]. 
  
 ## How Moove Works
 
@@ -46,7 +46,7 @@ Once you run the command `docker-compose up` on your terminal, set the property 
 
 After both approaches, the application will be available on port 8080. Additionally, two containers will be running: a PostgreSQL database and a stub server.
  
-Moove provides a [Swagger API Documentation], also an up to date [Postman Collection].
+Moove provides a [Swagger API Documentation], and an up to date [Postman Collection].
 
 ## Documentation
 
