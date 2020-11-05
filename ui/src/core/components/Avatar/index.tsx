@@ -95,7 +95,7 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
   );
 
   const render = () => (
-    <Styled.Wrapper>
+    <Styled.Wrapper data-testid={`avatar-${profile?.id}`}>
       {status.isPending ? renderLoader() : renderAvatar()}
     </Styled.Wrapper>
   );

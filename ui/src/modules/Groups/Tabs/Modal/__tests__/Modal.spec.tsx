@@ -67,7 +67,7 @@ test('testing on click update button', async () => {
 
 test('testing deleting an user', async () => {
   const onSelected = jest.fn();
-  const { getByText, getByTestId, debug } = render(
+  const { getByText, getByTestId } = render(
     <Modal users={users} isOpen onSearch={jest.fn()} onSelected={onSelected} />
   );
 
