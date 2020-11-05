@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.api
 
+import feign.FeignException
 import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
@@ -143,5 +144,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun exceptions(request: HttpServletRequest, ex: NotFoundExceptionLegacy): ResourceValueResponse {
         this.logger.error(ex.message, ex)
         return ResourceValueResponse(ex.resourceName, ex.id)
+    }
+
+    @ExceptionHandler(FeignException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    @Deprecated("Only for backwards compatibility")
+    fun feignExceptions(request: HttpServletRequest, ex: FeignException): ErrorMessageResponse {
+        this.logger.error(ex.contentUTF8(), ex)
+        return ErrorMessageResponse.of(MooveErrorCode.CANNOT_DEPLOY_RELEASE, ex.contentUTF8())
     }
 }
