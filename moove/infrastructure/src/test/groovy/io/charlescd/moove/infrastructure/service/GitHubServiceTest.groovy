@@ -193,7 +193,7 @@ class GitHubServiceTest extends Specification {
         then:
         1 * gitHubClientFactory.buildGitClient(gitCredentials) >> gitClientSpy
         1 * spy.getDataService(gitClientSpy) >> dataService
-        1 * dataService.getReference(_, _) >> new Reference()
+        2 * dataService.getReference(_, _) >> new Reference()
 
         thrown(RuntimeException.class)
     }

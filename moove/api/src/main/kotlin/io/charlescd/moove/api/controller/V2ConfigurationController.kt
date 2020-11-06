@@ -81,7 +81,7 @@ class V2ConfigurationController(
         required = true,
         dataType = "TestConnectionGitConfigurationRequest"
     )
-    @GetMapping("/git/connection-status")
+    @PostMapping("/git/connection-status")
     @ResponseStatus(HttpStatus.OK)
     fun verifyGitConnection(
         @RequestHeader("x-workspace-id") workspaceId: String,
