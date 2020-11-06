@@ -111,7 +111,6 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.OK)
     fun updateGitConfiguration(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @PathVariable("id") id: String,
         @RequestBody request: UpdateGitConfigurationRequest
     ): GitConfigurationResponse {

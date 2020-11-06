@@ -48,10 +48,9 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
     def "when workspace does not exist should throw exception"() {
         given:
         def workspaceId = TestUtils.workspaceId
-        def authorId = TestUtils.authorId
         def authorization = TestUtils.authorization
         def credentialsPart = new GitCredentialsData("http://github.com", "zup", "123@zup", null, GitServiceProvider.GITHUB)
-        def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", authorId, credentialsPart)
+        def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", credentialsPart)
 
         when:
         this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization)
@@ -70,7 +69,7 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
         def credentialsPart = new GitCredentialsData("http://github.com", "zup", "123@zup", null, GitServiceProvider.GITHUB)
-        def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", author.id, credentialsPart)
+        def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", credentialsPart)
 
         when:
         this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization)
@@ -92,7 +91,7 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
 
         def credentialsPart = new GitCredentialsData("http://github.com", "zup", "123@zup", null, GitServiceProvider.GITHUB)
-        def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", authorId, credentialsPart)
+        def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", credentialsPart)
 
         when:
         def gitConfigurationResponse = this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization)

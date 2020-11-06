@@ -25,6 +25,7 @@ import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.KeyValueRule
+import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.SecurityService
 import java.util.*
@@ -43,9 +44,9 @@ open class CreateCircleWithCsvFileInteractorImpl(
 
     @Transactional
     override fun execute(request: CreateCircleWithCsvRequest, workspaceId: String, authorization: String): CircleResponse {
-        request.authorId = userService.findByToken(authorization).id
+        val user = userService.findByToken(authorization)
         csvSegmentationService.validate(request.content, request.keyName)
-        val circle = createCircle(request, workspaceId)
+        val circle = createCircle(request, workspaceId, user)
         val nodeList = csvSegmentationService.createJsonNodeList(request.content, request.keyName)
         val updatedCircle = updateMetadata(circle, nodeList)
         createKeyValueRules(nodeList, updatedCircle)
@@ -76,9 +77,9 @@ open class CreateCircleWithCsvFileInteractorImpl(
 
     private fun createCircle(
         request: CreateCircleWithCsvRequest,
-        workspaceId: String
+        workspaceId: String,
+        user: User
     ): Circle {
-        val user = userService.find(request.authorId)
         return circleService.save(request.toDomain(user, workspaceId))
     }
 

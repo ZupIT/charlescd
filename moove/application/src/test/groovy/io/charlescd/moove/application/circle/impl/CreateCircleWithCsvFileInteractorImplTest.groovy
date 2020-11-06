@@ -78,14 +78,13 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
 
-        def request = new CreateCircleWithCsvRequest(name, authorId, keyName, inputStream)
+        def request = new CreateCircleWithCsvRequest(name, keyName, inputStream)
 
         when:
         def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
 
         then:
         1 * securityService.getUser(authorization) >> author
-        1 * this.userRepository.findById(authorId) >> Optional.of(author)
         1 * this.circleRepository.save(_) >> { arguments ->
             def circle = arguments[0]
 
@@ -174,14 +173,13 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
         def authorization = TestUtils.authorization
 
-        def request = new CreateCircleWithCsvRequest(name, authorId, keyName, inputStream)
+        def request = new CreateCircleWithCsvRequest(name, keyName, inputStream)
 
         when:
         def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
 
         then:
         1 * securityService.getUser(authorization) >> author
-        1 * this.userRepository.findById(authorId) >> Optional.of(author)
         1 * this.circleRepository.save(_) >> { arguments ->
             def circle = arguments[0]
 

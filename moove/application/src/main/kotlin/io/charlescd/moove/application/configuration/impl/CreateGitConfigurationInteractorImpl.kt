@@ -37,7 +37,6 @@ class CreateGitConfigurationInteractorImpl(
         workspaceService.checkIfWorkspaceExists(workspaceId)
 
         val author = userService.findByToken(authorization)
-        request.authorId = author.id
 
         val saved = this.gitConfigurationRepository.save(request.toGitConfiguration(workspaceId, author))
 

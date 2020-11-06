@@ -54,17 +54,15 @@ class CreateCircleInteractorImplTest extends Specification {
         def workspace =  TestUtils.workspace
         def circle =  TestUtils.circle
         def workspaceId = TestUtils.workspaceId
-        def authorId = TestUtils.authorId
         def authorization = TestUtils.authorization
 
-        def request = new CreateCircleRequest("Women", authorId, TestUtils.nodePart)
+        def request = new CreateCircleRequest("Women", TestUtils.nodePart)
 
         when:
         def response = this.createCircleInteractor.execute(request, workspaceId, authorization)
 
         then:
         1 * securityService.getUser(authorization) >> author
-        1 * userRepository.findById(authorId) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * circleRepository.save(_) >> circle
         1 * circleMatcherService.create(circle, workspace.circleMatcherUrl)
@@ -90,7 +88,7 @@ class CreateCircleInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
 
         given:
-        def request = new CreateCircleRequest("Women", authorId, TestUtils.nodePart)
+        def request = new CreateCircleRequest("Women", TestUtils.nodePart)
 
         when:
         this.createCircleInteractor.execute(request, workspaceId, authorization)
@@ -109,17 +107,15 @@ class CreateCircleInteractorImplTest extends Specification {
         given:
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
-        def authorId = TestUtils.authorId
         def authorization = TestUtils.authorization
 
-        def request = new CreateCircleRequest("Women", authorId, TestUtils.nodePart)
+        def request = new CreateCircleRequest("Women", TestUtils.nodePart)
 
         when:
         this.createCircleInteractor.execute(request, workspaceId, authorization)
 
         then:
         1 * securityService.getUser(authorization) >> author
-        1 * userRepository.findById(authorId) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.empty()
 
         def exception = thrown(NotFoundException)

@@ -28,9 +28,7 @@ import javax.validation.constraints.NotNull
 data class CreateMetricConfigurationRequest(
     @field:NotNull
     val provider: MetricConfiguration.ProviderEnum,
-    @field:NotBlank
-    @field:NotNull
-    var authorId: String,
+
     @field:NotBlank
     @field:NotNull
     val url: String

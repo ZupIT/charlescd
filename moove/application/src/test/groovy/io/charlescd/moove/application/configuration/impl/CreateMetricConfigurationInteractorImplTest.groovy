@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.configuration.impl
 
 import io.charlescd.moove.application.MetricConfigurationService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateMetricConfigurationInteractor
@@ -27,6 +28,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.SecurityService
 import io.charlescd.moove.metrics.connector.compass.CompassApi
 import io.charlescd.moove.metrics.connector.compass.CompassCreateDatasourceRequest
 import io.charlescd.moove.metrics.connector.compass.CompassDatasourceResponse
@@ -42,6 +44,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
+    private SecurityService securityService = Mock(SecurityService)
 
     private CreateMetricConfigurationInteractor interactor
 
@@ -51,17 +54,18 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
 
     def setup() {
         this.interactor = new CreateMetricConfigurationInteractorImpl(new WorkspaceService(workspaceRepository, userRepository),
-                new UserService(userRepository), new MetricConfigurationService(metricConfigurationRepository, compassApi))
+                new UserService(userRepository, securityService), new MetricConfigurationService(metricConfigurationRepository, compassApi))
     }
 
     def 'when workspace does not exist should throw exception'() {
         given:
-        def workspaceId = '1d637429-4e69-4742-a8b0-af91c01d9608'
-        def request = new CreateMetricConfigurationRequest(MetricConfiguration.ProviderEnum.PROMETHEUS, '01f952ad-8fcf-456e-9aa5-40291548f544',
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def request = new CreateMetricConfigurationRequest(MetricConfiguration.ProviderEnum.PROMETHEUS,
                 'https://metric-provider.com.br')
 
         when:
-        interactor.execute(request, workspaceId)
+        interactor.execute(request, workspaceId, authorization)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> false
@@ -73,17 +77,18 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
 
     def 'when user does not exist should throw exception'() {
         given:
-        def authorId = '01f952ad-8fcf-456e-9aa5-40291548f544'
-        def workspaceId = '1d637429-4e69-4742-a8b0-af91c01d9608'
-        def request = new CreateMetricConfigurationRequest(MetricConfiguration.ProviderEnum.PROMETHEUS, authorId,
+        def authorId =  TestUtils.authorId
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def request = new CreateMetricConfigurationRequest(MetricConfiguration.ProviderEnum.PROMETHEUS,
                 'https://metric-provider.com.br')
 
         when:
-        interactor.execute(request, workspaceId)
+        interactor.execute(request, workspaceId, authorization)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> true
-        1 * userRepository.findById(authorId) >> Optional.empty()
+        1 * securityService.getUser(authorization) >> { throw new NotFoundException("user", authorId) }
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
@@ -92,9 +97,10 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
 
     def 'should create metric configuration successfully'() {
         given:
-        def author = new User('01f952ad-8fcf-456e-9aa5-40291548f544', "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
-        def workspaceId = '1d637429-4e69-4742-a8b0-af91c01d9608'
-        def request = new CreateMetricConfigurationRequest(MetricConfiguration.ProviderEnum.PROMETHEUS, author.id,
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def request = new CreateMetricConfigurationRequest(MetricConfiguration.ProviderEnum.PROMETHEUS,
                 'https://metric-provider.com.br')
         def datasourceResponseData = new DatasourceDataResponse(providerUrl)
         def datasourceResponse = new CompassDatasourceResponse('b763c8d9-ddf6-4fc5-b495-5e9a68e89390', new Timestamp(1580157300L),
@@ -102,11 +108,11 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
         def emptyList = []
 
         when:
-        def response = interactor.execute(request, workspaceId)
+        def response = interactor.execute(request, workspaceId, authorization)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> true
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * compassApi.findDatasource(workspaceId, true) >> emptyList
         1 * compassApi.saveHealthyDatasource(_, _) >> { arguments ->
             def workspaceRule = arguments[0]

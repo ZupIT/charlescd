@@ -86,8 +86,8 @@ class V2CircleController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createCircle(
-        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody request: CreateCircleRequest
     ): CircleResponse {
         return this.createCircleInteractor.execute(request, workspaceId, authorization)
@@ -122,14 +122,12 @@ class V2CircleController(
         @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name") name: String,
-        @RequestParam("authorId") authorId: String,
         @RequestParam("keyName") keyName: String,
         @RequestParam("file") file: MultipartFile
     ): CircleResponse {
         return this.createCircleWithCsvFileInteractor.execute(
             CreateCircleWithCsvRequest(
                 name,
-                authorId,
                 keyName,
                 file.inputStream
             ), workspaceId ,
