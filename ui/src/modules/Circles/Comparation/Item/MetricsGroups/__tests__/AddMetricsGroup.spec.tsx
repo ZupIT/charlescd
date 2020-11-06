@@ -15,9 +15,10 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import AddMetricsGroup from '../AddMetricsGroup';
 import { FetchMock } from 'jest-fetch-mock/types';
+import userEvent from '@testing-library/user-event';
 import { metricGroupItem } from './fixtures';
 
 test('render Add Metric default value', async () => {
@@ -40,13 +41,12 @@ test('render Add Metric default value', async () => {
   const nameInput = screen.getByTestId('input-text-name');
   const submitButton = screen.getByText('Save group');
 
-  fireEvent.change(nameInput, { target: {value: 'norris'}});
-  fireEvent.click(submitButton);
+  userEvent.type(nameInput, 'norris');
+  userEvent.click(submitButton);
 
-  await wait();
-  expect(onSaveGroup).toHaveBeenCalled();
-  expect(modalTitle).toBeInTheDocument();
+  await waitFor(() => expect(onSaveGroup).toHaveBeenCalled());
   expect(nameLabel).toBeInTheDocument();
+  expect(modalTitle).toBeInTheDocument();
 });
 
 
