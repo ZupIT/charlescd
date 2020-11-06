@@ -24,15 +24,15 @@ import io.charlescd.moove.application.*
 import io.charlescd.moove.application.circle.CreateCircleWithCsvFileInteractor
 import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
 import io.charlescd.moove.application.circle.request.NodePart
-import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.MatcherTypeEnum
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.domain.service.SecurityService
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 class CreateCircleWithCsvFileInteractorImplTest extends Specification {
 
@@ -45,10 +45,11 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
     private CsvSegmentationService csvSegmentationService = new CsvSegmentationService(objectMapper)
+    private SecurityService securityService = Mock(SecurityService)
 
     void setup() {
         this.createCircleWithCsvFileInteractor = new CreateCircleWithCsvFileInteractorImpl(
-                new UserService(userRepository),
+                new UserService(userRepository, securityService),
                 new CircleService(circleRepository),
                 circleMatcherService,
                 new KeyValueRuleService(keyValueRuleRepository),
@@ -68,20 +69,22 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def inputStream = new ByteArrayInputStream(fileContent.getBytes())
 
         def name = "Women"
-        def workspaceId = "8470abce-ac40-43ee-84e6-391778eae77f"
         def keyName = "IDs"
-        def authorId = "7cc8b676-a253-4350-a3c3-4fa0174fad98"
 
-        def author = getDummyUser(authorId)
-        def workspace = getDummyWorkspace(workspaceId, author)
+
+        def author = TestUtils.user
+        def workspace = TestUtils.workspace
+        def authorId = TestUtils.authorId
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
 
         def request = new CreateCircleWithCsvRequest(name, authorId, keyName, inputStream)
 
-
         when:
-        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId)
+        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
 
         then:
+        1 * securityService.getUser(authorization) >> author
         1 * this.userRepository.findById(authorId) >> Optional.of(author)
         1 * this.circleRepository.save(_) >> { arguments ->
             def circle = arguments[0]
@@ -164,20 +167,20 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def inputStream = new ByteArrayInputStream(fileContent.getBytes())
 
         def name = "Women"
-        def workspaceId = "8470abce-ac40-43ee-84e6-391778eae77f"
+        def workspaceId = TestUtils.workspaceId
         def keyName = "IDs"
-        def authorId = "7cc8b676-a253-4350-a3c3-4fa0174fad98"
-
-        def author = getDummyUser(authorId)
-        def workspace = getDummyWorkspace(workspaceId, author)
+        def authorId = TestUtils.authorId
+        def author = TestUtils.user
+        def workspace = TestUtils.workspace
+        def authorization = TestUtils.authorization
 
         def request = new CreateCircleWithCsvRequest(name, authorId, keyName, inputStream)
 
-
         when:
-        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId)
+        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
 
         then:
+        1 * securityService.getUser(authorization) >> author
         1 * this.userRepository.findById(authorId) >> Optional.of(author)
         1 * this.circleRepository.save(_) >> { arguments ->
             def circle = arguments[0]
@@ -245,33 +248,5 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         assert rules.type == NodePart.NodeTypeRequest.CLAUSE
         assert rules.clauses.size() == 1
         assert rules.clauses[0].clauses.size() == 5 //preview
-    }
-
-    private User getDummyUser(String authorId) {
-        new User(
-                authorId,
-                "charles",
-                "charles@zup.com.br",
-                "http://charles.com/dummy_photo.jpg",
-                [],
-                false,
-                LocalDateTime.now()
-        )
-    }
-
-    private Workspace getDummyWorkspace(String workspaceId, User author) {
-        new Workspace(
-                workspaceId,
-                "Charles",
-                author,
-                LocalDateTime.now(),
-                [],
-                WorkspaceStatusEnum.COMPLETE,
-                null,
-                "http://circle-matcher.com",
-                "aa3448d8-4421-4aba-99a9-184bdabe3046",
-                null,
-                null
-        )
     }
 }

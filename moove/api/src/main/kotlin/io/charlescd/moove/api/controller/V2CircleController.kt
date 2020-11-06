@@ -86,10 +86,11 @@ class V2CircleController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createCircle(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody request: CreateCircleRequest
     ): CircleResponse {
-        return this.createCircleInteractor.execute(request, workspaceId)
+        return this.createCircleInteractor.execute(request, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Patch Circle")
@@ -118,6 +119,7 @@ class V2CircleController(
     @PostMapping("/csv", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createWithCsv(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name") name: String,
         @RequestParam("authorId") authorId: String,
@@ -130,7 +132,8 @@ class V2CircleController(
                 authorId,
                 keyName,
                 file.inputStream
-            ), workspaceId
+            ), workspaceId ,
+            authorization
         )
     }
 

@@ -27,7 +27,7 @@ import java.util.*
 
 data class CreateCircleWithCsvRequest(
     val name: String,
-    val authorId: String,
+    var authorId: String,
     val keyName: String,
     val content: InputStream
 ) {
