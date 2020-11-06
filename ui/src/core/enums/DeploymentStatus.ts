@@ -16,5 +16,6 @@
 
 export enum DEPLOYMENT_STATUS {
   deploying = 'DEPLOYING',
-  undeploying = 'UNDEPLOYING'
+  undeploying = 'UNDEPLOYING',
+  deployed = 'DEPLOYED'
 }

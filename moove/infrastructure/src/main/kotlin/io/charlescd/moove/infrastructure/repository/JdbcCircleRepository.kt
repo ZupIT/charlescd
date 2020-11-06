@@ -76,7 +76,7 @@ class JdbcCircleRepository(
         return findCircleByIdAndWorkspaceId(id, workspaceId)
     }
 
-    override fun find(name: String?, active: Boolean, workspaceId: String, pageRequest: PageRequest): Page<Circle> {
+    override fun find(name: String?, active: Boolean?, workspaceId: String, pageRequest: PageRequest): Page<Circle> {
         val count = executeCountQuery(name, active, workspaceId)
 
         val result = this.jdbcTemplate.query(
@@ -106,23 +106,31 @@ class JdbcCircleRepository(
         deleteCircleById(id)
     }
 
-    private fun createParametersArray(name: String?, active: Boolean, workspaceId: String): Array<Any> {
+    private fun createParametersArray(name: String?, active: Boolean?, workspaceId: String): Array<Any> {
         val parameters = ArrayList<Any>()
-        if (!active) parameters.add(workspaceId)
+        if (active != null && !active) parameters.add(workspaceId)
         name?.let { parameters.add("%$name%") }
         parameters.add(workspaceId)
 
         return parameters.toTypedArray()
     }
 
-    private fun executeCountQuery(name: String?, active: Boolean, workspaceId: String): Int? {
-        return when (active) {
-            true -> executeActiveCircleCountQuery(name, workspaceId)
-            else -> executeInactiveCircleCountQuery(name, workspaceId)
+    private fun executeCountQuery(name: String?, active: Boolean?, workspaceId: String): Int? {
+        if (active != null) {
+            return when (active) {
+                true -> executeActiveCircleCountQuery(name, workspaceId)
+                else -> executeInactiveCircleCountQuery(name, workspaceId)
+            }
         }
+
+        return executeCircleCountQuery(name, workspaceId)
     }
 
-    private fun createQuery(name: String?, active: Boolean): String {
+    private fun createQuery(name: String?, active: Boolean?): String {
+        if (active == null) {
+            return createCircleQuery(name).toString()
+        }
+
         return when (active) {
             true -> createActiveCircleQuery(name)
             else -> createInactiveCircleQuery(name)
@@ -216,6 +224,27 @@ class JdbcCircleRepository(
         }
 
         return findById(circle.id).get()
+    }
+
+    private fun executeCircleCountQuery(name: String?, workspaceId: String): Int? {
+        val statement = StringBuilder(
+            """
+                SELECT DISTINCT COUNT(*)
+                FROM circles c
+                    INNER JOIN users circle_user ON c.user_id = circle_user.id
+                    LEFT JOIN deployments ON c.id = deployments.circle_id
+                WHERE 1 = 1
+            """
+        )
+        name?.let { statement.appendln("AND c.name ILIKE ?") }
+        statement.appendln("AND c.workspace_id = ?")
+
+        return this.jdbcTemplate.queryForObject(
+            statement.toString(),
+            createParametersArray(name, true, workspaceId)
+        ) { rs, _ ->
+            rs.getInt(1)
+        }
     }
 
     private fun executeActiveCircleCountQuery(name: String?, workspaceId: String): Int? {
@@ -333,6 +362,37 @@ class JdbcCircleRepository(
                                WHERE d.status IN ('DEPLOYING', 'DEPLOYED', 'UNDEPLOYING')
                                AND d.workspace_id = ?
                            ))
+                """
+        )
+
+        name?.let { statement.appendln("AND circles.name ILIKE ?") }
+        statement.appendln("AND circles.workspace_id = ?")
+
+        return statement
+    }
+
+    private fun createCircleQuery(name: String?): StringBuilder {
+        val statement = StringBuilder(
+            """
+                    SELECT circles.id                  AS circle_id,
+                           circles.name                AS circle_name,
+                           circles.reference           AS circle_reference,
+                           circles.created_at          AS circle_created_at,
+                           circles.matcher_type        AS circle_matcher_type,
+                           circles.rules               AS circle_rules,
+                           circles.imported_kv_records AS circle_imported_kv_records,
+                           circles.imported_at         AS circle_imported_at,
+                           circles.default_circle      AS circle_default,
+                           circles.workspace_id        AS circle_workspace_id,
+                           circle_user.id              AS circle_user_id,
+                           circle_user.name            AS circle_user_name,
+                           circle_user.email           AS circle_user_email,
+                           circle_user.photo_url       AS circle_user_photo_url,
+                           circle_user.created_at      AS circle_user_created_at
+                    FROM circles
+                             INNER JOIN users circle_user ON circles.user_id = circle_user.id
+                             LEFT JOIN deployments ON circles.id = deployments.circle_id
+                    WHERE 1 = 1
                 """
         )
 

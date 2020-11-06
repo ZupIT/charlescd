@@ -34,7 +34,7 @@ interface CircleRepository {
 
     fun find(id: String, workspaceId: String): Optional<Circle>
 
-    fun find(name: String?, active: Boolean, workspaceId: String, pageRequest: PageRequest): Page<Circle>
+    fun find(name: String?, active: Boolean?, workspaceId: String, pageRequest: PageRequest): Page<Circle>
 
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle>
 
