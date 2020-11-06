@@ -56,4 +56,4 @@ jobs:
         working-directory: ./octopipe
         run: |
           curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
-          horus start -p ./
+          horusec start -p ./
