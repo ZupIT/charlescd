@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Summary from '../';
 
 test('render Summary', async () => {

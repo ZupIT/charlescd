@@ -18,9 +18,11 @@ package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.Component
 import io.charlescd.moove.domain.ComponentHistory
+import io.charlescd.moove.domain.SimpleComponent
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.ComponentExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.ComponentHistoryExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.SimpleComponentExtractor
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Repository
 class JdbcComponentRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val componentExtractor: ComponentExtractor,
+    private val simpleComponentExtractor: SimpleComponentExtractor,
     private val componentHistoryExtractor: ComponentHistoryExtractor
 ) : ComponentRepository {
 
@@ -55,7 +58,7 @@ class JdbcComponentRepository(
         )
     }
 
-    override fun findAllDeployedAtCircle(circleId: String, workspaceID: String): List<Component> {
+    override fun findAllDeployedAtCircle(circleId: String, workspaceID: String): List<SimpleComponent> {
         val findDeployedComponentsAtCircle = """
                SELECT   components.id                   AS components_id,
                         components.name                 AS components_name,
@@ -65,7 +68,8 @@ class JdbcComponentRepository(
 	                    components.error_threshold      AS components_error_threshold,
 	                    components.latency_threshold    AS components_latency_threshold,
                         components.host_value           AS components_host_value,
-                        components.gateway_name         AS components_gateway_name
+                        components.gateway_name         AS components_gateway_name,
+                        module_snapshots.name           AS module_name
                 FROM components components
                     INNER JOIN component_snapshots component_snapshots  ON components.id = component_snapshots.component_id
                     INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id
@@ -80,7 +84,7 @@ class JdbcComponentRepository(
             .query(
                 findDeployedComponentsAtCircle,
                 arrayOf(circleId, workspaceID),
-                componentExtractor
+                simpleComponentExtractor
             )?.toList()
                 ?: emptyList()
     }

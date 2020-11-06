@@ -15,27 +15,29 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import TextArea from '..';
 
 test('renders textarea component with default properties', () => {
-  const { getByTestId } = render(
+  render(
     <TextArea name="keyName" autoComplete="off" />
   );
 
-  const textareaElement = getByTestId('textarea-keyName');
+  const textareaElement = screen.getByTestId('textarea-keyName');
   expect(textareaElement).toBeInTheDocument();
+
 });
 
 test('renders textarea component as a resume', () => {
-  const { getByTestId } = render(
-      <TextArea
-        resume      
-        name="keyName"
-        autoComplete="off"
-    />);
+  render(
+    <TextArea
+      resume      
+      name="keyName"
+      autoComplete="off"
+  />);
 
-  const textareaElement = getByTestId('textarea-keyName');
+  const textareaElement = screen.getByTestId('textarea-keyName');
+
   expect(textareaElement).toBeInTheDocument();
   expect(textareaElement).toHaveStyle('background: transparent;');
   expect(textareaElement).toHaveStyle('border: none;');
@@ -46,10 +48,16 @@ test('renders textarea component with label', () => {
   expect(container).toHaveTextContent('Label');
 });
 
-test('floating label when textarea has value', () => {
-  const { container } = render(<TextArea name="keyName" defaultValue="value" label="Label" />);
+test('renders textarea component with label', () => {
+  render(<TextArea name="keyName" label="Label" />);
 
-  const labelElement = container.getElementsByTagName('label').item(0);
-  const labelStyle = window.getComputedStyle(labelElement);
-  expect(labelStyle.top).toBe('0px');
+  const element = screen.getByText('Label');
+  expect(element).toBeInTheDocument();
+});
+
+test('floating label when textarea has value', () => {
+  render(<TextArea name="keyName" defaultValue="value" label="Label" />);
+
+  const labelElement = screen.getByText('Label');
+  expect(labelElement).toHaveStyle('top: 0px;');
 });

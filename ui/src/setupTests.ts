@@ -51,3 +51,9 @@ window.URL.createObjectURL = jest.fn();
 global.fetch = fetch as FetchMock;
 global.localStorage = storageMock();
 global.document.cookie = '';
+
+Object.assign(navigator, {
+  clipboard: {
+    writeText: () => undefined
+  }
+});
