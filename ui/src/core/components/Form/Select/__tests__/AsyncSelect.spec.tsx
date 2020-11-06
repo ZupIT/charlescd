@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { renderHook } from '@testing-library/react-hooks';
 import { useForm } from 'react-hook-form';
@@ -68,7 +69,7 @@ test('should call loadOptions', () => {
   );
 
   const select = container.getElementsByTagName('INPUT');
-  fireEvent.change(select[0], { target: { value: 'ap' }});
+  userEvent.type(select[0], "ap" );
 
   expect(loadOptions).toBeCalled();
 });

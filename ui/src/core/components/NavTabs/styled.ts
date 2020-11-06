@@ -15,6 +15,7 @@
  */
 
 import styled, { css } from 'styled-components';
+import Text from 'core/components/Text';
 
 type TabItemProps = {
   isActive?: boolean;
@@ -42,8 +43,20 @@ const TabItem = styled.div<TabItemProps>`
     `}
 `;
 
+const Placeholder = styled.div`
+  margin-top: 80px;
+  margin-bottom: 80px;
+  margin-left: 120px;
+`;
+
+const PlaceholderTitle = styled(Text.h2)`
+  margin-bottom: 10px;
+`;
+
 export default {
   TabList,
   Tab,
-  TabItem
+  TabItem,
+  Placeholder,
+  PlaceholderTitle
 };

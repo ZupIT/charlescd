@@ -19,8 +19,6 @@ package io.charlescd.moove.metrics.api
 import io.charlescd.moove.metrics.api.response.*
 import io.charlescd.moove.metrics.domain.HealthStatus
 import io.charlescd.moove.metrics.domain.MetricType
-import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
-import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.impl.RetrieveCirclesMetricsInteractorImpl
 import io.charlescd.moove.metrics.interactor.impl.RetrieveDeploymentsMetricsInteractorImpl
@@ -30,13 +28,10 @@ import java.time.LocalDate
 
 class MetricsControllerUnitTest extends Specification {
 
-    def retrieveCircleComponentsPeriodMetric = Mock(RetrieveCircleComponentsPeriodMetricInteractor)
     def retrieveCirclePeriodMetric = Mock(RetrieveCirclePeriodMetricInteractor)
-    def retrieveCircleComponentsHealth = Mock(RetrieveCircleComponentsHealthInteractor)
     def retrieveDeploymentsMetric = Mock(RetrieveDeploymentsMetricsInteractorImpl)
     def retrieveCirclesMetrics = Mock(RetrieveCirclesMetricsInteractorImpl)
-    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric,
-            retrieveCircleComponentsHealth, retrieveDeploymentsMetric, retrieveCirclesMetrics)
+    def metricsController = new MetricsController(retrieveCirclePeriodMetric, retrieveDeploymentsMetric, retrieveCirclesMetrics)
 
 
     def circleId = "circle-id"
@@ -69,74 +64,7 @@ class MetricsControllerUnitTest extends Specification {
         response.data.get(0).value == 10
     }
 
-    def 'should get components metrics'() {
-        given:
-        def period = ProjectionType.ONE_HOUR
-        def metricType = MetricType.REQUESTS_BY_CIRCLE
-
-        def metricDataList = Collections.singletonList(new MetricDataRepresentation(1580157300L, 10))
-        def components = Collections.singletonList(new ComponentRepresentation("component-name", "module-name", metricDataList))
-
-        def metricRepresentation = new ComponentMetricRepresentation(period, metricType, components)
-
-        when:
-        def response = metricsController.getComponentMetric(circleId, period, workspaceId, metricType)
-
-        then:
-        1 * retrieveCircleComponentsPeriodMetric.execute(circleId, period, metricType, workspaceId) >> metricRepresentation
-        0 * _
-
-        response != null
-        response.period == ProjectionType.ONE_HOUR
-        response.type == MetricType.REQUESTS_BY_CIRCLE
-        response.components != null
-        !response.components.isEmpty()
-        response.components.get(0).name == "component-name"
-        response.components.get(0).module == "module-name"
-        response.components.get(0).data != null
-        response.components.get(0).data.size() == 1
-        response.components.get(0).data.get(0) != null
-        response.components.get(0).data.get(0).timestamp == 1580157300L
-        response.components.get(0).data.get(0).value == 10
-    }
-
-    def 'should get components health'() {
-        given:
-        def requests = new CircleRequestsRepresentation(10, "req/s")
-        def latency = new CircleHealthTypeRepresentation("ms", [new CircleComponentHealthRepresentation("component-name", 50, 30D, HealthStatus.STABLE)])
-        def error = new CircleHealthTypeRepresentation("%", [new CircleComponentHealthRepresentation("component-name", 10, 8D, HealthStatus.WARNING)])
-
-        def circleHealthRepresentation = new CircleHealthRepresentation(requests, latency, error)
-
-        when:
-        def response = metricsController.getComponentHealth(circleId, workspaceId)
-
-        then:
-        1 * retrieveCircleComponentsHealth.execute(circleId, workspaceId) >> circleHealthRepresentation
-        0 * _
-
-        response != null
-        response.requests != null
-        response.requests.unit == "req/s"
-        response.requests.value == 10
-        response.latency != null
-        response.latency.unit == "ms"
-        !response.latency.circleComponents.isEmpty()
-        response.latency.circleComponents.size() == 1
-        response.latency.circleComponents.get(0).name == "component-name"
-        response.latency.circleComponents.get(0).status == HealthStatus.STABLE
-        response.latency.circleComponents.get(0).threshold == 50
-        response.latency.circleComponents.get(0).value == 30D
-
-        !response.errors.circleComponents.isEmpty()
-        response.errors.circleComponents.size() == 1
-        response.errors.circleComponents.get(0).name == "component-name"
-        response.errors.circleComponents.get(0).status == HealthStatus.WARNING
-        response.errors.circleComponents.get(0).threshold == 10
-        response.errors.circleComponents.get(0).value == 8D
-    }
-
-    def 'should get deployments metrics'() {
+   def 'should get deployments metrics'() {
         given:
         def period = PeriodType.ONE_MONTH
 

@@ -22,6 +22,7 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
 	"compass/internal/util"
+	datasourcePKG "compass/pkg/datasource"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -34,11 +35,13 @@ type UseCases interface {
 	SaveMetric(metric Metric) (Metric, error)
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	RemoveMetric(id string) error
-	Query(metric Metric, period string, interval string) (interface{}, error)
+	Query(metric Metric, period, interval datasourcePKG.Period) (interface{}, error)
 	ResultQuery(metric Metric) (float64, error)
 	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
 	FindAllMetricExecutions() ([]MetricExecution, error)
 	Validate(metric Metric) []util.ErrorUtil
+	ValidateIfExecutionReached(metric MetricExecution) bool
+	FindAllByGroup(metricGroupID string) ([]Metric, error)
 }
 
 type Main struct {

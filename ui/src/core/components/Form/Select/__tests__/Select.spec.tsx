@@ -15,22 +15,22 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import SelectSingle from '../Single/Select';
 import Select from '../Select';
 
 test('render select component', () => {
   const options = [{ value: 'apple', label: 'apple' }];
 
-  const { getByTestId } = render(<SelectSingle options={options} />);
+  render(<SelectSingle options={options} />);
 
-  expect(getByTestId('react-select')).toBeInTheDocument();
+  expect(screen.getByTestId('react-select')).toBeInTheDocument();
 });
 
 test('render select component', () => {
   const options = [{ value: 'apple', label: 'apple' }];
 
-  const { getByTestId } = render(<Select options={options} />);
+  render(<Select options={options} />);
 
-  expect(getByTestId('react-select')).toBeInTheDocument();
+  expect(screen.getByTestId('react-select')).toBeInTheDocument();
 });
