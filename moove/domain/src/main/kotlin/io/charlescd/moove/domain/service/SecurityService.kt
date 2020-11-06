@@ -18,13 +18,11 @@
 
 package io.charlescd.moove.domain.service
 
-import io.charlescd.moove.domain.Build
-import io.charlescd.moove.domain.RegistryConfiguration
-import io.charlescd.moove.domain.SimpleArtifact
+import io.charlescd.moove.domain.User
 
 interface
 SecurityService {
 
-    fun getAuthorId(authorization: String): String
+    fun getUser(authorization: String): User
 
 }

@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.application
 
+
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
@@ -25,10 +26,12 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.SecurityService
 import javax.inject.Named
 
+
 @Named
-class UserService(private val userRepository: UserRepository) {
+class UserService(private val userRepository: UserRepository, private val securityService: SecurityService) {
 
     fun find(userId: String): User {
         return this.userRepository.findById(
@@ -59,5 +62,9 @@ class UserService(private val userRepository: UserRepository) {
 
     fun save(user: User): User {
         return this.userRepository.save(user)
+    }
+
+    fun findByToken(authorization: String): User {
+        return securityService.getUser(authorization)
     }
 }
