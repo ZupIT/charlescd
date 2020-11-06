@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import Text from 'core/components/Text';
 import Card from 'core/components/Card';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -158,7 +158,7 @@ const FormAddAction = ({ onFinish }: Props) => {
           description="You can create an action and add a trigger to perform an automatic task."
         />
       </Text.h2>
-      <FormContext {...formMethods}>
+      <FormProvider {...formMethods}>
         <Styled.Form
           onSubmit={handleSubmit(onSubmit)}
           data-testid="create-action"
@@ -166,7 +166,7 @@ const FormAddAction = ({ onFinish }: Props) => {
           {renderForm()}
           {showConfigAction && renderActionConfig()}
         </Styled.Form>
-      </FormContext>
+      </FormProvider>
     </Styled.Content>
   );
 };
