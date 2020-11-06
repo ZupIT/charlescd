@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Avatar from '../';
 
 const profile = {
@@ -35,11 +36,11 @@ test('render Avatar with photo', () => {
   expect(element).toHaveStyle(`width: ${profile.size};`);
 });
 
-test('render Avatar with initial name as "profile photo"', () => {
+test('render Avatar with initial content', () => {
   render(<Avatar { ...profile } />);
 
-  const element = screen.getByTestId('avatar')
-  expect(element.firstChild.textContent).toBe('C');
+  const element = screen.getByText('C');
+  expect(element).toBeInTheDocument();
 });
 
 test('render Avatar and click to edit', () => {
@@ -49,6 +50,8 @@ test('render Avatar and click to edit', () => {
   expect(element).toHaveStyle(`width: ${profile.size};`);
 
   const editIcon = screen.getByTestId('icon-edit-avatar');
-  fireEvent.click(editIcon);
-  expect(screen.getByTestId('input-text-photoUrl')).toBeInTheDocument();
+  userEvent.click(editIcon);
+
+  const inputURL = screen.getByTestId('input-text-photoUrl');
+  expect(inputURL).toBeInTheDocument();
 });

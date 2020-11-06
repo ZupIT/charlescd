@@ -22,7 +22,7 @@ import { OptionsType } from 'react-select';
 
 interface Props {
   name: string;
-  control: Control<unknown>;
+  control: Control<any>;
   options?: Option[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option;
@@ -64,25 +64,29 @@ const AsyncSelect = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      as={
-        <Select
-          defaultOptions={defaultOptions}
-          placeholder={label}
-          className={className}
-          isDisabled={isDisabled}
-          isLoading={isLoading}
-          customOption={customOption}
-          onInputChange={onInputChange}
-          defaultValue={defaultValue}
-          closeMenuOnSelect={closeMenuOnSelect}
-          hideSelectedOptions={hideSelectedOptions}
-          loadOptions={loadOptions}
-          hasError={hasError}
-        />
-      }
-      onChange={([selected]) => {
-        onChange && onChange(selected);
-        return selected?.value;
+      render={({ onChange: onControllerChange }) => {
+        return (
+          <Select
+            defaultOptions={defaultOptions}
+            placeholder={label}
+            className={className}
+            isDisabled={isDisabled}
+            isLoading={isLoading}
+            customOption={customOption}
+            onInputChange={onInputChange}
+            defaultValue={defaultValue}
+            closeMenuOnSelect={closeMenuOnSelect}
+            hideSelectedOptions={hideSelectedOptions}
+            loadOptions={loadOptions}
+            hasError={hasError}
+            onChange={selected => {
+              onChange?.(selected);
+              onControllerChange(selected?.value);
+
+              return selected?.value;
+            }}
+          />
+        );
       }}
       defaultValue={defaultValue?.value}
       rules={rules}

@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Link from '../';
 
 test('render link component', () => {
@@ -23,11 +23,10 @@ test('render link component', () => {
     name: 'test',
     link: 'http://test.input.link'
   };
-  const { getByTestId, getByText } = render(
-    <Link name={props.name} link={props.link} />
-  );
 
-  const inputElement = getByTestId(`input-link-${props.name}`);
+  render(<Link name={props.name} link={props.link} />);
+
+  const inputElement = screen.getByTestId(`input-link-${props.name}`);
   expect(inputElement).toBeInTheDocument();
 });
 

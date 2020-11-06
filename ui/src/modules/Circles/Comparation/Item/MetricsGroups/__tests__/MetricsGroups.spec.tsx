@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import { render, screen, wait, act, waitForElement } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import { metricsGroupData, metricsGroupWithoutMetricData } from './fixtures';
-import MetricsGroups from '../index';
-import userEvent from '@testing-library/user-event';
+import MetricsGroups from '../';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -31,9 +31,10 @@ test('render default Metrics Groups', async () => {
   );
 
   const handleClick = jest.fn();
+  
   render(<MetricsGroups id={'1'} onGoBack={handleClick}/>);
 
-  const goBack = screen.getByTestId('icon-arrow-left');
+  const goBack = await screen.findByTestId('icon-arrow-left');
 
   expect(screen.getByText('Metrics groups')).toBeInTheDocument();
   expect(screen.getByTestId('metrics-groups-list')).toBeInTheDocument();
@@ -52,11 +53,13 @@ test('render default Metrics Groups and toogle Chart', async () => {
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
   const toogleChart = await screen.findByTestId('labeledIcon-no-view');
-  userEvent.click(toogleChart);
+  
+  await act(async () => userEvent.click(toogleChart));
 
   expect(screen.getByText('Metrics groups')).toBeInTheDocument();
   expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
   expect(screen.getByTestId('labeledIcon-view')).toBeInTheDocument();
+
 });
 
 test('render default Metrics Groups and filter Chart', async () => {
@@ -67,7 +70,7 @@ test('render default Metrics Groups and filter Chart', async () => {
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
   const toogleChart = await screen.findByTestId('labeledIcon-no-view');
-  userEvent.click(toogleChart);
+  await act(async () => userEvent.click(toogleChart));
 
   const openFilterSelect = screen.getByTestId('labeledIcon-filter');
   userEvent.click(openFilterSelect);
@@ -86,13 +89,13 @@ test('render add metrics group modal', async () => {
 
   const addMetricsGroup = screen.getByText('Add metrics group');
   userEvent.click(addMetricsGroup);
-  
+
   expect(screen.getByTestId('modal-default')).toBeInTheDocument();
   
   const closeAddMetricsGroup = screen.getByTestId('icon-cancel');
   userEvent.click(closeAddMetricsGroup);
-
-  expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument();
+  
+  await waitFor(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
 });
 
 test('render default Metrics Groups and refresh screen', async () => {
@@ -105,7 +108,7 @@ test('render default Metrics Groups and refresh screen', async () => {
   const refresh = screen.getByText('Refresh');
   userEvent.click(refresh);
   
-  expect(screen.getByText('Metrics groups')).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText('Metrics groups')).toBeInTheDocument());
 });
 
 test('render default Add metric to the group', async () => {
@@ -119,21 +122,25 @@ test('render default Add metric to the group', async () => {
   userEvent.click(metricsGroupMenu);
   userEvent.click(screen.getByText('Add metric'));
   
-  expect(screen.getByTestId('add-metric')).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByTestId('add-metric')).toBeInTheDocument());
 });
 
 test('render metrics groups and delete a metrics group', async () => {
-  (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(metricsGroupWithoutMetricData)
-  );
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(metricsGroupWithoutMetricData))
+    .mockResponseOnce(JSON.stringify({}))
+    .mockResponseOnce(JSON.stringify(metricsGroupWithoutMetricData));
 
   render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
 
   const metricsGroupMenu = await screen.findByTestId('icon-vertical-dots');
   userEvent.click(metricsGroupMenu);
-  userEvent.click(screen.getByText('Delete'));
 
-  expect(screen.queryByText('test 1a')).not.toBeInTheDocument();
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+
+  act(() => userEvent.click(deleteButton));
+
+  await waitFor(() => expect(screen.queryByText('test 1a')).not.toBeInTheDocument());
 });
 
 test('render metrics groups and edit a metrics group', async () => {
