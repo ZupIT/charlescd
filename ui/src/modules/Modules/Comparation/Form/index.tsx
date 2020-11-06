@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
-import { useForm, useFieldArray, FormContext } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
 import { getProfileByKey } from 'core/utils/profile';
@@ -36,6 +36,14 @@ interface Props {
   onChange: Function;
 }
 
+const formDefaultValues = {
+  id: '',
+  name: '',
+  gitRepositoryAddress: '',
+  helmRepository: '',
+  components: [component]
+};
+
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
@@ -45,7 +53,7 @@ const FormModule = ({ module, onChange }: Props) => {
   const history = useHistory();
 
   const form = useForm<Module>({
-    defaultValues: { components: [component] }
+    defaultValues: formDefaultValues
   });
 
   const { register, control, getValues, handleSubmit, watch } = form;
@@ -108,7 +116,7 @@ const FormModule = ({ module, onChange }: Props) => {
       <Styled.Subtitle color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
-      <FormContext {...form}>
+      <FormProvider {...form}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Input
             label="Name the module"
@@ -149,7 +157,7 @@ const FormModule = ({ module, onChange }: Props) => {
             </Styled.Button>
           </Can>
         </Styled.Form>
-      </FormContext>
+      </FormProvider>
     </Styled.Content>
   );
 };

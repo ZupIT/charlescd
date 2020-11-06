@@ -1,4 +1,3 @@
-import { FetchMock } from 'jest-fetch-mock/types';
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -16,8 +15,9 @@ import { FetchMock } from 'jest-fetch-mock/types';
  */
 
 import React from 'react';
-import { render, wait, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Auth from '..';
+import { FetchMock } from 'jest-fetch-mock/types';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -35,13 +35,13 @@ jest.mock('react-cookies', () => {
   };
 });
 
-test('render Auth default login', async () => {
+test('render Auth default login', () => {
   render(<Auth />);
 
-  await wait(() => expect(screen.getByTestId('auth')).toBeInTheDocument());
+  expect(screen.getByTestId('auth')).toBeInTheDocument();
 });
 
-test('render Auth IDM login', async () => {
+test('render Auth IDM login', () => {
   const originalWindow = { ...window };
   delete window.location;
 
@@ -55,7 +55,7 @@ test('render Auth IDM login', async () => {
 
   render(<Auth />);
 
-  await wait(() => expect(screen.queryByTestId('auth')).not.toBeInTheDocument());
+  expect(screen.queryByTestId('auth')).not.toBeInTheDocument();
 
   Object.assign(window, originalWindow);
 });
