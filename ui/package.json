@@ -128,6 +128,6 @@
     "react-scripts": "3.4.1",
     "react-select-event": "^4.1.4",
     "react-test-renderer": "^16.13.0",
-    "typescript": "~3.7.2"
+    "typescript": "3.8.3"
   }
 }

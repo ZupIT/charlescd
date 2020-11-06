@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
 import Button from 'core/components/Button';
 import Text from 'core/components/Text';

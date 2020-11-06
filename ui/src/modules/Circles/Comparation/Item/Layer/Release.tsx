@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Card from 'core/components/Card';
 import ContentIcon from 'core/components/ContentIcon';
 import Button from 'core/components/Button';
