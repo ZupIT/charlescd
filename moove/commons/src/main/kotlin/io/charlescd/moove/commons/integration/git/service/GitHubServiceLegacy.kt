@@ -58,16 +58,8 @@ class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFac
             )
             log.info("branch: $headBranch successfully merged into branch: $baseBranch")
         } catch (e: Exception) {
-            try {
-                RepositoryService(getClient(gitCredentials)).mergeBranches(
-                    repository, alternativeBaseBranch, headBranch,
-                    COMMIT_MESSAGE
-                )
-                log.info("branch: $headBranch successfully merged into branch: $baseBranch")
-            } catch (e: Exception) {
-                log.error("failed to merge branch: $headBranch into branch: $baseBranch with error: ${e.message}")
-                handleResponseError(error = e, repository = repository, baseBranch = baseBranch, headBranch = headBranch)
-            }
+            log.error("failed to merge branch: $headBranch into branch: $baseBranch with error: ${e.message}")
+            handleResponseError(error = e, repository = repository, baseBranch = baseBranch, headBranch = headBranch)
         }
     }
 
@@ -88,14 +80,23 @@ class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFac
             )
                 .also { log.info("new branch: $branchName created successfully") }
         } catch (e: Exception) {
-            log.error("failed to create branch: $branchName with error: ${e.message}")
-            handleResponseError(
-                error = e,
-                repository = repository,
-                baseBranch = baseBranchName,
-                branchName = branchName
-            )
-            Optional.empty()
+            return try {
+                val baseBranch = findBranchByName(service, repositoryId, alternativeBaseBranch)
+                Optional.of(service.createReference(repositoryId, Reference()
+                    .apply { `object` = baseBranch.`object` }
+                    .apply { ref = "$branchPrefix$branchName" }).ref.substringAfter(branchPrefix)
+                )
+                    .also { log.info("new branch: $branchName created successfully") }
+            } catch (e: Exception) {
+                log.error("failed to create branch: $branchName with error: ${e.message}")
+                handleResponseError(
+                    error = e,
+                    repository = repository,
+                    baseBranch = "$baseBranchName/$alternativeBaseBranch",
+                    branchName = branchName
+                )
+                Optional.empty()
+            }
         }
     }
 
