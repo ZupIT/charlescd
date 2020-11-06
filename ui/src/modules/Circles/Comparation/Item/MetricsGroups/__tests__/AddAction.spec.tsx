@@ -20,7 +20,7 @@ import selectEvent from 'react-select-event';
 import { render, screen, act } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import AddAction from '../AddAction';
-import { metricsGroupData } from './fixtures';
+import { metricsGroupData, actionsType } from './fixtures';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -46,8 +46,8 @@ test('render Add Action default value', async () => {
   expect(submitButton).toBeInTheDocument();
 });
 
-// TODO: fix this test
 test('add New action', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(actionsType));
   const handleGoBack = jest.fn();
 
   render(
@@ -62,5 +62,5 @@ test('add New action', async () => {
   const selectActionType = screen.getByText('Select a action type');
     
   await act(async () => userEvent.type(inputNickname, 'nickname'));
-  // await selectEvent.select(selectActionType, 'CIRCLE_DEPLOY');
+  await selectEvent.select(selectActionType, 'foobar');
 });

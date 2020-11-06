@@ -53,10 +53,10 @@ test('render Credentials default component', () => {
   expect(screen.getByTestId("credentials")).toBeInTheDocument();
 });
 
-
-// TODO: Fix this test
 test('render Credentials items', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123',

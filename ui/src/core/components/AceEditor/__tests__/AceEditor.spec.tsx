@@ -28,7 +28,5 @@ test('render Ace Editor', () => {
     <AceEditor {...props} />
   );
 
-  screen.debug()
-
   expect(container.innerHTML).toMatch("ace-editor")
 });
