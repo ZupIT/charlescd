@@ -17,6 +17,12 @@
 package io.charlescd.circlematcher.domain;
 
 public enum NodeType {
+    
     CLAUSE,
-    RULE
+    RULE;
+
+    public boolean isA(NodeType type) {
+        return this == type;
+    }
+
 }

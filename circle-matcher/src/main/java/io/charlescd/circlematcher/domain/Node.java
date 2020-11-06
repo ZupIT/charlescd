@@ -19,6 +19,7 @@ package io.charlescd.circlematcher.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.infrastructure.Constants;
 import java.util.List;
+import NodeType.CLAUSE;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node {
@@ -28,8 +29,7 @@ public class Node {
     private List<Node> clauses;
     private Content content;
 
-    public Node() {
-    }
+    public Node() {}
 
     public Node(NodeType type, LogicalOperatorType logicalOperator, List<Node> clauses, Content content) {
         this.type = type;
@@ -55,31 +55,30 @@ public class Node {
     }
 
     public String expression() {
-
-        if (NodeType.CLAUSE == type) {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.append(Constants.START_EXPRESSION);
-
-            if (clauses.size() == 1) {
-                return stringBuilder.append(clauses.get(0).expression())
-                        .append(this.logicalOperator.expression())
-                        .append(this.logicalOperator.valueForValidSingleExpression())
-                        .append(Constants.END_EXPRESSION)
-                        .toString();
-            }
-
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(Constants.START_EXPRESSION);
+        if (type.isA(CLAUSE)) {
             for (var clause : clauses) {
-                stringBuilder.append(clause.expression()).append(this.logicalOperator.expression());
+                stringBuilder.append(clause.expression())
+                        .append(logicalOperator.expression());
             }
-
-            stringBuilder.setLength(stringBuilder.length() - 2);
-            return stringBuilder.append(Constants.END_EXPRESSION)
-                    .toString();
+            if (hasOnlyOneClause()) {
+                stringBuilder.append(logicalOperator.valueForValidSingleExpression());
+            } else {
+                removeLastLogicalOperator(stringBuilder);
+            }
         } else {
-            return Constants.START_EXPRESSION
-                    + this.content.expression()
-                    + Constants.END_EXPRESSION;
+            stringBuilder.append(content.expression());
         }
+        return stringBuilder.append(Constants.END_EXPRESSION).toString();
+    }
+
+    private boolean hasOnlyOneClause() {
+        return clauses.size() == 1;
+    }
+
+    private void removeLastLogicalOperator(StringBuilder stringBuilder) {
+        stringBuilder.setLength(stringBuilder.length() - logicalOperator.length());
     }
 
 }

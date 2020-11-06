@@ -19,6 +19,7 @@ package io.charlescd.circlematcher.domain;
 import io.charlescd.circlematcher.infrastructure.Constants;
 
 public enum LogicalOperatorType {
+    
     AND {
         public String expression() {
             return Constants.AND;
@@ -26,6 +27,10 @@ public enum LogicalOperatorType {
 
         public String valueForValidSingleExpression() {
             return Constants.TRUE;
+        }
+
+        public abstract int length() {
+            return 3;
         }
     },
     OR {
@@ -36,9 +41,16 @@ public enum LogicalOperatorType {
         public String valueForValidSingleExpression() {
             return Constants.FALSE;
         }
+
+        public abstract int length() {
+            return 2;
+        }
     };
 
     public abstract String expression();
 
     public abstract String valueForValidSingleExpression();
+
+    public abstract int length();
+
 }
