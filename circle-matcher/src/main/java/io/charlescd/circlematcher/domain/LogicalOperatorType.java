@@ -19,7 +19,7 @@ package io.charlescd.circlematcher.domain;
 import io.charlescd.circlematcher.infrastructure.Constants;
 
 public enum LogicalOperatorType {
-    
+
     AND {
         public String expression() {
             return Constants.AND;
@@ -29,7 +29,7 @@ public enum LogicalOperatorType {
             return Constants.TRUE;
         }
 
-        public abstract int length() {
+        public int length() {
             return 3;
         }
     },
@@ -42,7 +42,7 @@ public enum LogicalOperatorType {
             return Constants.FALSE;
         }
 
-        public abstract int length() {
+        public int length() {
             return 2;
         }
     };
