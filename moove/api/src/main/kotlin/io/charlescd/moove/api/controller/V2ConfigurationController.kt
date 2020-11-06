@@ -56,9 +56,10 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createGitConfiguration(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody request: CreateGitConfigurationRequest
     ): GitConfigurationResponse {
-        return this.createGitConfigurationInteractor.execute(request, workspaceId)
+        return this.createGitConfigurationInteractor.execute(request, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Find git Configuration")
@@ -99,9 +100,10 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createMetricProvider(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody request: CreateMetricConfigurationRequest
     ): MetricConfigurationResponse {
-        return this.createMetricConfigurationInteractor.execute(request, workspaceId)
+        return this.createMetricConfigurationInteractor.execute(request, workspaceId, workspaceId)
     }
 
     @ApiOperation(value = "Update git Configuration")
@@ -109,6 +111,7 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.OK)
     fun updateGitConfiguration(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @PathVariable("id") id: String,
         @RequestBody request: UpdateGitConfigurationRequest
     ): GitConfigurationResponse {

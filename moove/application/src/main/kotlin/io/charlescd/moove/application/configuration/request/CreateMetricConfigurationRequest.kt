@@ -30,7 +30,7 @@ data class CreateMetricConfigurationRequest(
     val provider: MetricConfiguration.ProviderEnum,
     @field:NotBlank
     @field:NotNull
-    val authorId: String,
+    var authorId: String,
     @field:NotBlank
     @field:NotNull
     val url: String
