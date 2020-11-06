@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait, act } from 'unit-test/testUtils';
+import { render, screen, fireEvent, act, waitFor, wait } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
 import MutationObserver from 'mutation-observer';
@@ -58,11 +59,11 @@ test('render Workspace modal', async () => {
   const button = screen.getByTestId('button-default-workspaceModal');
   fireEvent.click(button);
 
-  await wait(() => expect(screen.queryByTestId('modal-default')).toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByTestId('modal-default')).toBeInTheDocument());
   
   const cancelButton = screen.getByTestId('icon-cancel');
   fireEvent.click(cancelButton);
-  await wait(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
 });
 
 test('render Workspace and search', async () => {
@@ -75,9 +76,9 @@ test('render Workspace and search', async () => {
 
   const search = screen.getByTestId('input-text-search');
 
-  await act(() => fireEvent.input(search , 'workspace'));
+  await act(() => userEvent.type(search , 'workspace'));
 
-  expect(workspaceRequest).toHaveBeenCalled();
+  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(2));
 });
 
 test('render Workspace and see a placeholder', async () => {
@@ -90,14 +91,13 @@ test('render Workspace and see a placeholder', async () => {
   expect(placeholder).toBeInTheDocument();
 });
 
-
 test('render Workspace modal and add new workspace', async () => {
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
   render(<Workspace selectedWorkspace={jest.fn()} />);
   const button = screen.getByTestId('button-default-workspaceModal');
   fireEvent.click(button);
 
-  await wait(() => expect(screen.queryByTestId('modal-default')).toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByTestId('modal-default')).toBeInTheDocument());
   
   const inputWorkspace = screen.getByTestId('label-text-name');
 
