@@ -19,7 +19,6 @@ package io.charlescd.circlematcher.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.infrastructure.Constants;
 import java.util.List;
-import NodeType.CLAUSE;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node {
@@ -57,7 +56,7 @@ public class Node {
     public String expression() {
         var stringBuilder = new StringBuilder();
         stringBuilder.append(Constants.START_EXPRESSION);
-        if (type.isA(CLAUSE)) {
+        if (type.isA(NodeType.CLAUSE)) {
             for (var clause : clauses) {
                 stringBuilder.append(clause.expression())
                         .append(logicalOperator.expression());
