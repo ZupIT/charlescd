@@ -55,31 +55,31 @@ public class Node {
     }
 
     public String expression() {
-
-        if (NodeType.CLAUSE == type) {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.append(Constants.START_EXPRESSION);
-
-            if (clauses.size() == 1) {
-                return stringBuilder.append(clauses.get(0).expression())
-                        .append(this.logicalOperator.expression())
-                        .append(this.logicalOperator.valueForValidSingleExpression())
-                        .append(Constants.END_EXPRESSION)
-                        .toString();
-            }
-
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(Constants.START_EXPRESSION);
+        if (type == NodeType.CLAUSE) {
             for (var clause : clauses) {
-                stringBuilder.append(clause.expression()).append(this.logicalOperator.expression());
+                stringBuilder.append(clause.expression())
+                        .append(logicalOperator.expression());
             }
-
-            stringBuilder.setLength(stringBuilder.length() - 2);
-            return stringBuilder.append(Constants.END_EXPRESSION)
-                    .toString();
+            if (hasOnlyOneClause()) {
+                stringBuilder.append(logicalOperator.valueForValidSingleExpression());
+            } else {
+                removeLastLogicalOperator(stringBuilder);
+            }
         } else {
-            return Constants.START_EXPRESSION
-                    + this.content.expression()
-                    + Constants.END_EXPRESSION;
+            stringBuilder.append(content.expression());
         }
+        return stringBuilder.append(Constants.END_EXPRESSION).toString();
+    }
+
+    private boolean hasOnlyOneClause() {
+        return clauses.size() == 1;
+    }
+
+    private void removeLastLogicalOperator(StringBuilder stringBuilder) {
+        int logicalOperatorLength = 2;
+        stringBuilder.setLength(stringBuilder.length() - logicalOperatorLength);
     }
 
 }
