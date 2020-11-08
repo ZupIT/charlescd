@@ -25,6 +25,7 @@ import io.charlescd.villager.infrastructure.persistence.ComponentRepository;
 import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
 import io.charlescd.villager.service.BuildNotificationService;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -51,66 +52,53 @@ public class BuildNotificationServiceImpl implements BuildNotificationService {
 
     @Transactional
     public void notify(BuildEntity buildEntity, List<ModuleEntity> modules) {
-
         CallbackPayload payload = new CallbackPayload(buildEntity.status.name());
 
-        modules.forEach(moduleEntity -> {
-
-            List<ComponentEntity> componentList = componentRepository.findByModule(moduleEntity.id);
-
+        modules.forEach(module -> {
+            List<ComponentEntity> components = componentRepository.findByModule(module.id);
             payload.addModule(CallbackPayload.ModulePart.newBuilder()
-                    .withModuleId(moduleEntity.externalId)
-                    .withStatus(moduleEntity.status.name())
-                    .withComponents(componentList.stream()
-                            .map(componentEntity -> new CallbackPayload.ComponentPart.Builder()
-                                    .withName(
-                                            String.format(
-                                                    "%s/%s:%s",
-                                                    moduleEntity.registry,
-                                                    componentEntity.name,
-                                                    componentEntity.tagName
-                                            )
-                                    )
-                                    .withTagName(componentEntity.tagName)
-                                    .build())
-                            .collect(Collectors.toSet()))
+                    .withModuleId(module.externalId)
+                    .withStatus(module.status.name())
+                    .withComponents(getComponentSet(module, components))
                     .build());
         });
 
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
-
         if (buildEntity.circleId != null) {
             headers.add("X-Circle-Id", buildEntity.circleId);
         }
 
-        Response response;
-
-        try {
-
-            response = this.restClient.doPost(buildEntity.callbackUrl, payload, headers);
-
-        } catch (Exception e) {
-
-            LOGGER.error("Could not send callback request.", e);
-            buildEntity.callbackStatus = CallbackStatus.FAILURE;
-            buildEntity.persist();
-
-            return;
-
-        }
-
+        Response response = tryPostingCallbackRequest(buildEntity, payload, headers);
+        if (response == null) { return; }
         if (response.getStatus() != HttpStatus.SC_NO_CONTENT) {
-
             LOGGER.error(createErrorMessage(buildEntity.callbackUrl, response));
             buildEntity.callbackStatus = CallbackStatus.FAILURE;
             buildEntity.persist();
-
             return;
-
         }
 
         buildEntity.callbackStatus = CallbackStatus.SUCCESS;
         buildEntity.persist();
+    }
+
+    private Set<CallbackPayload.ComponentPart> getComponentSet(ModuleEntity module, List<ComponentEntity> components) {
+        return components.stream()
+                .map(component -> new CallbackPayload.ComponentPart.Builder()
+                        .withName(String.format("%s/%s:%s", module.registry, component.name, component.tagName))
+                        .withTagName(component.tagName)
+                        .build())
+                .collect(Collectors.toSet());
+    }
+
+    private Response tryPostingCallbackRequest(BuildEntity buildEntity, CallbackPayload payload, MultivaluedMap<String, Object> headers) {
+        try {
+            return restClient.doPost(buildEntity.callbackUrl, payload, headers);
+        } catch (Exception e) {
+            LOGGER.error("Could not send callback request.", e);
+            buildEntity.callbackStatus = CallbackStatus.FAILURE;
+            buildEntity.persist();
+            return null;
+        }
     }
 
     private String createErrorMessage(String uri, Response response) {
