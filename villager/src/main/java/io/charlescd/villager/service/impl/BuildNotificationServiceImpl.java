@@ -69,7 +69,9 @@ public class BuildNotificationServiceImpl implements BuildNotificationService {
         }
 
         Response response = tryPostingCallbackRequest(buildEntity, payload, headers);
-        if (response == null) { return; }
+        if (response == null) {
+            return;
+        }
         if (response.getStatus() != HttpStatus.SC_NO_CONTENT) {
             LOGGER.error(createErrorMessage(buildEntity.callbackUrl, response));
             buildEntity.callbackStatus = CallbackStatus.FAILURE;
@@ -90,7 +92,8 @@ public class BuildNotificationServiceImpl implements BuildNotificationService {
                 .collect(Collectors.toSet());
     }
 
-    private Response tryPostingCallbackRequest(BuildEntity buildEntity, CallbackPayload payload, MultivaluedMap<String, Object> headers) {
+    private Response tryPostingCallbackRequest(BuildEntity buildEntity, CallbackPayload payload,
+                                               MultivaluedMap<String, Object> headers) {
         try {
             return restClient.doPost(buildEntity.callbackUrl, payload, headers);
         } catch (Exception e) {
