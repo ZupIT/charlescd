@@ -31,7 +31,7 @@ const SearchInput = ({
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleChange = debounce(onSearch, 500);
+  const handleChange = debounce(onSearch, 700);
 
   const onFocus = () => setIsFocused(true);
 

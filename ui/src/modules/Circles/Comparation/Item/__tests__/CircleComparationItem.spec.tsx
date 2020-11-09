@@ -15,7 +15,8 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
 import { FetchMock } from 'jest-fetch-mock/types';
@@ -63,14 +64,15 @@ const circle = {
 test('render CircleComparationItem default component', async () => {
   const handleChange = jest.fn();
 
-  const { getByTestId } = render(
+  render(
     <CirclesComparationItem id={props.id} onChange={handleChange} />
   );
 
-  await wait();
+  const comparationItem = await screen.findByTestId(`circle-comparation-item-${props.id}`)
+  const tabPanel = await screen.findByTestId(`tabpanel-Untitled`);
 
-  expect(getByTestId(`circle-comparation-item-${props.id}`)).toBeInTheDocument();
-  expect(getByTestId(`tabpanel-Untitled`)).toBeInTheDocument();
+  expect(comparationItem).toBeInTheDocument();
+  expect(tabPanel).toBeInTheDocument();
 });
 
 test('render CircleComparationItem with release', async () => {
@@ -90,39 +92,34 @@ test('render CircleComparationItem with release', async () => {
     .mockResponseOnce(JSON.stringify(circle));
   const handleChange = jest.fn();
 
-  const { getByText, getByTestId } = render(
+  render(
     <AllTheProviders>
       <CirclesComparationItem id={props.id} onChange={handleChange} />
     </AllTheProviders>
   );
 
-  await wait();
-
-  expect(getByTestId('layer-metrics')).toBeInTheDocument();
-  expect(getByTestId('layer-metrics-groups')).toBeInTheDocument();
-  expect(getByText('Override release')).toBeInTheDocument();
-  expect(getByText('Last release deployed')).toBeInTheDocument();
-  expect(getByText('Add datasource health')).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByTestId('layer-metrics')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText('Override release')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText('Last release deployed')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText('Add datasource health')).toBeInTheDocument());
 });
 
 test('render CircleComparationItem Default Circle', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
   const handleChange = jest.fn();
 
-  const { queryByTestId, getByTestId } = render(
+  render(
     <CirclesComparationItem id={props.id} onChange={handleChange} />
   );
 
-  await wait();
+  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(DropdownIcon).toBeInTheDocument();
 
-  const DropdownIcon = getByTestId('icon-vertical-dots');
-  await wait(() => expect(DropdownIcon).toBeInTheDocument());
+  await act(async () => userEvent.click(DropdownIcon));
 
-  fireEvent.click(DropdownIcon);
-
-  const DropdownActions = getByTestId('dropdown-actions');
-  await wait(() => expect(DropdownActions).toBeInTheDocument());
-
-  await wait(() => expect(queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument());
-  await wait(() => expect(queryByTestId('layer-metrics')).not.toBeInTheDocument());
+  const DropdownActions = screen.getByTestId('dropdown-actions');
+  expect(DropdownActions).toBeInTheDocument();
+  expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
+  expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
 });
