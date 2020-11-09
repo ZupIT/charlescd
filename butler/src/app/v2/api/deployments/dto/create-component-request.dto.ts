@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf } from 'class-validator'
+import { IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf, Validate } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ApiProperty } from '@nestjs/swagger'
+import { NamespaceValidation } from '../validations/namespace-validation'
 
 export class CreateComponentRequestDto {
 
@@ -55,10 +56,7 @@ export class CreateComponentRequestDto {
   public readonly gatewayName!: string | undefined
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty({
-    message: 'Namespace is empty! Edit the component configuration and insert the namespace.'
-  })
+  @Validate(NamespaceValidation)
   public namespace: string
 
   constructor(
