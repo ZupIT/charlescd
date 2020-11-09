@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.module.impl
 
 import io.charlescd.moove.application.ModuleService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.build.response.ComponentResponse
@@ -31,6 +32,7 @@ import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.repository.ModuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.SecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -42,11 +44,12 @@ class CreateModuleInteractorImplTest extends Specification {
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private SecurityService securityService = Mock(SecurityService)
 
     void setup() {
         createModuleInteractor = new CreateModuleInteractorImpl(
                 new ModuleService(moduleRepository),
-                new UserService(userRepository),
+                new UserService(userRepository, securityService),
                 new WorkspaceService(workspaceRepository, userRepository)
         )
     }
@@ -54,20 +57,16 @@ class CreateModuleInteractorImplTest extends Specification {
     def "should create a new module"() {
         given:
         def component = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
-
-        def workspaceId = "de891f75-6c8b-4bc3-89c7-d2d58942d404"
-        def authorId = "cf3a837e-4b19-474f-95c8-7ba6ba4b3b28"
+        def authorization = TestUtils.authorization
+        def workspaceId = TestUtils.workspaceId
         def request = new CreateModuleRequest("CharlesCD", "http://github.com.br",
-                "http://github.com.br/helm", authorId, [component])
+                "http://github.com.br/helm", [component])
 
-        def author = new User(authorId, "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+        def author = TestUtils.user
 
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br", null, null, null)
-
+        def workspace = TestUtils.workspace
         when:
-        def response = createModuleInteractor.execute(request, workspaceId)
+        def response = createModuleInteractor.execute(request, workspaceId, authorization)
 
         then:
         1 * moduleRepository.save(_) >> { arguments ->
@@ -78,11 +77,11 @@ class CreateModuleInteractorImplTest extends Specification {
             assert module.name == request.name
             assert module.workspaceId == workspaceId
             assert module.helmRepository == request.helmRepository
-            assert module.author.id == request.authorId
+            assert module.author.id == author.id
 
             return module
         }
-        1 * userRepository.findById(request.authorId) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         assert response != null
