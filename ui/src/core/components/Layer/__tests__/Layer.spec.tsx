@@ -15,12 +15,12 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Layer from '../';
 
 test('render Layer default component', () => {
-  const { getByText } = render(<Layer>children</Layer>);
+  render(<Layer>children</Layer>);
 
-  const linkElement = getByText('children');
+  const linkElement = screen.getByText('children');
   expect(linkElement).toHaveTextContent('children');
 });

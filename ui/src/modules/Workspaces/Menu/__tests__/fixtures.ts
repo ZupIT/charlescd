@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
-import Badge from '../';
-
-test('render Badge', () => {
-  render(
-    <Badge label="content" />
-  );
-
-  expect(screen.getByText('content')).toBeInTheDocument();
-});
+export const workspaceItem = {
+  id: '619e881f-3a87-4ebd-acb1-ab4923ed497e',
+  name: 'workspace',
+  status: 'COMPLETE',
+};
