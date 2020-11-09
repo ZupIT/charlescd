@@ -57,7 +57,7 @@ export class CreateComponentRequestDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty({
-    message: 'Namespace is empty! You should edit the component configuration and insert the namespace.'
+    message: 'Namespace is empty! Edit the component configuration and insert the namespace.'
   })
   public namespace: string
 
