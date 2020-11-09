@@ -24,11 +24,6 @@ import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.security.SecurityConstraints
 import io.charlescd.moove.security.config.Constants
 import io.charlescd.moove.security.utils.FileUtils
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import org.keycloak.TokenVerifier
 import org.keycloak.representations.AccessToken
 import org.springframework.context.annotation.Profile
@@ -38,6 +33,11 @@ import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.GenericFilterBean
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
+import javax.servlet.FilterChain
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 @Component
 @Profile("!local")
@@ -66,10 +66,13 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
             doAuthorization(workspaceId, authorization, path, method)
             chain.doFilter(request, response)
         } catch (feignException: FeignException) {
+            logger.error(feignException.message, feignException)
             createResponse(response, feignException.contentUTF8(), HttpStatus.UNAUTHORIZED)
         } catch (businessException: BusinessException) {
+            logger.error(businessException.message, businessException)
             createResponse(response, businessException.message, HttpStatus.FORBIDDEN)
         } catch (exception: Exception) {
+            logger.error(exception.message, exception)
             createResponse(response, exception.message, HttpStatus.UNAUTHORIZED)
         }
     }
@@ -100,13 +103,13 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
         val workspace = user.workspaces.firstOrNull { it.id == workspaceId }
 
         workspace?.let {
-            if (!isValidToken(constraints, path, workspace, method)) {
+            if (!isValidConstraintPath(constraints, path, workspace, method)) {
                 throw BusinessException.of(MooveErrorCode.FORBIDDEN)
             }
         } ?: throw BusinessException.of(MooveErrorCode.FORBIDDEN)
     }
 
-    private fun isValidToken(
+    private fun isValidConstraintPath(
         constraints: SecurityConstraints,
         path: String,
         workspace: WorkspacePermissions,
