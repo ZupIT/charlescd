@@ -217,7 +217,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         response.features[0].branchName == createComposedBuildRequest.releaseName
     }
 
-    private CreateComposedBuildRequest getDummyCreateComposedBuildRequest(User author) {
+    private static CreateComposedBuildRequest getDummyCreateComposedBuildRequest(User author) {
         def componentRequestList = new ArrayList<CreateComposedBuildRequest.ComponentRequest>()
         componentRequestList.add(new CreateComposedBuildRequest.ComponentRequest('1a58c67c-6acb-11ea-bc55-0242ac130003', 'v-0102', 'Artifact'))
 
@@ -225,10 +225,5 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         moduleRequestList.add(new CreateComposedBuildRequest.ModuleRequest('1a58c280-6acb-11ea-bc55-0242ac130003', componentRequestList))
 
         return new CreateComposedBuildRequest('release-name', author.id, moduleRequestList)
-    }
-
-    private User getDummyUser() {
-        new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
     }
 }

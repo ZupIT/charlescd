@@ -24,6 +24,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.DeployService
+import io.charlescd.moove.domain.service.SecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -38,12 +39,13 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private CircleRepository circleRepository = Mock(CircleRepository)
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private SecurityService securityService = Mock(SecurityService)
 
     def setup() {
         this.createDeploymentInteractor = new CreateDeploymentInteractorImpl(
                 new DeploymentService(deploymentRepository),
                 new BuildService(buildRepository),
-                new UserService(userRepository),
+                new UserService(userRepository, securityService),
                 new CircleService(circleRepository),
                 deployService,
                 new WorkspaceService(workspaceRepository, userRepository))
@@ -51,20 +53,15 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when build does not exist, should throw exception'() {
         given:
-        def authorId = "5d4c9244-6f83-11ea-bc55-0242ac130003"
-        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
+        def circleId = TestUtils.circle.id
         def buildId = "5d4c95b4-6f83-11ea-bc55-0242ac130003"
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def createDeploymentRequest = new CreateDeploymentRequest(authorId, circleId, buildId)
-
-        def author = getDummyUser()
-
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, buildId)
+        def workspace = TestUtils.workspace
 
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
         1 * buildRepository.find(buildId, workspaceId) >> Optional.empty()
@@ -77,23 +74,21 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when build can not be deployed, because status is BUILDING, should throw exception'() {
         given:
-        def author = getDummyUser()
-        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, circleId)
-        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+        def author = TestUtils.user
+        def circleId = TestUtils.circle.id
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def build = getDummyBuild( BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
-
+        def workspace = TestUtils.workspace
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
+        1 * securityService.getUser(authorization) >> author
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-
 
         def ex = thrown(BusinessException)
         ex.errorCode == MooveErrorCode.DEPLOY_INVALID_BUILD
@@ -101,23 +96,21 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when user does not exist, should throw exception'() {
         given:
-        def author = getDummyUser()
-        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED, circleId)
-        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+        def author = TestUtils.user
+        def circleId = TestUtils.circle.id
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
-
+        def workspace = TestUtils.workspace
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
+        1 * securityService.getUser(authorization) >> { throw new NotFoundException("user", author.id) }
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userRepository.findById(author.id) >> Optional.empty()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
@@ -126,23 +119,21 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when circle does not exist, should throw exception'() {
         given:
-        def author = getDummyUser()
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
         def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED, circleId)
-        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+        def workspaceId = TestUtils.workspaceId
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED, false)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
-
+        def workspace = TestUtils.workspace
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * circleRepository.findById(circleId) >> Optional.empty()
 
         def ex = thrown(NotFoundException)
@@ -152,32 +143,24 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when there is an active deployment in the circle and it is not default circle, should undeploy it and deploy new one'() {
         given:
-        def author = getDummyUser()
-        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circleId)
-        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
-        def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+        def activeDeployment = getDeployment(DeploymentStatusEnum.DEPLOYED, LocalDateTime.now().plusDays(1), null, false)
+        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, null, null, false)
 
-        def activeDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(1),
-                LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, null)
-
-        def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
-                LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
-
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+        def workspace = TestUtils.workspace
 
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment, activeDeployment]
         1 * deployService.undeploy(activeDeployment.id, activeDeployment.author.id)
@@ -218,32 +201,27 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when there is an active deployment in the circle and it is default circle, should not undeploy it only deploy new one'() {
         given:
-        def author = getDummyUser()
-        def circle = new Circle("44406b2a-557b-45c5-91be-1e1db909b000", 'Default', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circle.id)
-        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circle.id, build.id)
-        def activeDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(1),
-                LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, null)
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
+        def circle = getCircle(true)
+        def workspaceId = TestUtils.workspaceId
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
+        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
+        def activeDeployment = getDeployment(DeploymentStatusEnum.DEPLOYED, LocalDateTime.now().minusDays(1), null, true)
+        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, LocalDateTime.now().minusDays(2), LocalDateTime.now(), true)
 
-        def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
-                LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
-
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+        def workspace = TestUtils.workspace
 
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
         0 * deployService.undeploy(_, _)
-        1 * deploymentRepository.findByCircleIdAndWorkspaceId(circle.id, workspaceId) >> [notDeployedDeployment, activeDeployment]
+        1 * deploymentRepository.findByCircleIdAndWorkspaceId(circle.id, workspaceId) >> [activeDeployment, notDeployedDeployment]
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, true, _) >> { arguments ->
             def deploymentArgument = arguments[0]
@@ -280,26 +258,22 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when there is no active deployment in the circle and it is default circle, should not undeploy it and deploy new one'() {
         given:
-        def author = getDummyUser()
-        def circle = new Circle("44406b2a-557b-45c5-91be-1e1db909b000", 'Default', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circle.id)
-        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circle.id, build.id)
-        def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
-                LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
+        def circle = getCircle(true)
+        def workspaceId = TestUtils.workspaceId
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
+        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
+        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, null, null, true)
 
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
-
+        def workspace = TestUtils.workspace
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment]
@@ -339,29 +313,23 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     def 'when there is no active deployment in the circle and it is not default circle, should not undeploy it and deploy new one'() {
         given:
-        def author = getDummyUser()
-        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
-        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circleId)
-        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
-        def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, LocalDateTime.now().plusDays(1), LocalDateTime.now(), false)
 
-        def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
-                LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
-
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+        def workspace = TestUtils.workspace
 
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment]
@@ -399,17 +367,16 @@ class CreateDeploymentInteractorImplTest extends Specification {
         deploymentResponse.deployedAt == null
     }
 
-    private static User getDummyUser() {
-        new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
-    }
+    private static Build getDummyBuild(BuildStatusEnum buildStatusEnum,
+                                       DeploymentStatusEnum deploymentStatusEnum, Boolean isDefaultCircle) {
 
-    private static Build getDummyBuild(String workspaceId, User author, BuildStatusEnum buildStatusEnum,
-                                       DeploymentStatusEnum deploymentStatusEnum, String circleId) {
+        def author = TestUtils.user
+        def workspaceId =  TestUtils.workspaceId
+
         def componentSnapshotList = new ArrayList<ComponentSnapshot>()
         componentSnapshotList.add(new ComponentSnapshot('70189ffc-b517-4719-8e20-278a7e5f9b33', '20209ffc-b517-4719-8e20-278a7e5f9b00',
                 'Component snapshot name', LocalDateTime.now(), null,
-                workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7', 'host', 'gateway'))
+               workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7', 'host', 'gateway'))
 
         def moduleSnapshotList = new ArrayList<ModuleSnapshot>()
         moduleSnapshotList.add(new ModuleSnapshot('3e1f3969-c6ec-4a44-96a0-101d45b668e7', '000f3969-c6ec-4a44-96a0-101d45b668e7',
@@ -420,17 +387,31 @@ class CreateDeploymentInteractorImplTest extends Specification {
         featureSnapshotList.add(new FeatureSnapshot('3e25a77e-5f14-45f3-9ae7-c25c00ad9ca6', 'cc869c36-311c-4523-ba5b-7b69286e0df4',
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
-        def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
-
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
-        deploymentList.add(new Deployment('f8296aea-6ae1-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(1),
-                LocalDateTime.now(), deploymentStatusEnum, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, undeployedAt))
+        deploymentList.add(getDeployment(deploymentStatusEnum, LocalDateTime.now().minusDays(1), undeployedAt, isDefaultCircle))
 
-        def build = new Build('23f1eabd-fb57-419b-a42b-4628941e34ec', author, LocalDateTime.now(), featureSnapshotList,
+        def build = new Build(buildId, author, LocalDateTime.now(), featureSnapshotList,
                 'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', buildStatusEnum,
                 workspaceId, deploymentList)
         build
+    }
+
+    private static Circle getCircle(Boolean defaultCircle) {
+        return new Circle("5d4c9492-6f83-11ea-bc55-0242ac130003", 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, defaultCircle, TestUtils.workspaceId)
+    }
+
+    private static String getCircleId() {
+        return "5d4c9492-6f83-11ea-bc55-0242ac130003"
+    }
+
+    private static String getBuildId() {
+        return "5d4c9492-6f83-11ea-bc55-0242ac130003"
+    }
+
+    private static Deployment getDeployment(DeploymentStatusEnum status, LocalDateTime deployedAt, LocalDateTime undeployAt, Boolean isDefaultCircle) {
+        return new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', TestUtils.user,
+                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle), buildId, TestUtils.workspaceId, undeployAt)
     }
 }

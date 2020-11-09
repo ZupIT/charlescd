@@ -31,7 +31,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-    class CreateBuildInteractorImplTest extends Specification {
+class CreateBuildInteractorImplTest extends Specification {
 
     private CreateBuildInteractor buildInteractor
 
@@ -207,7 +207,6 @@ import java.time.LocalDateTime
     def 'should throw an exception when an informed feature does not exist or are not ready to go'() {
 
         def authorization = TestUtils.authorization
-        def hypothesisId = '865758f1-17ea-4f96-8518-3490977fa0ea'
         def workspaceId = TestUtils.workspaceId
         def tagName = 'charles-cd-build-testing'
         def featureList = getFeatureList();
@@ -265,34 +264,34 @@ import java.time.LocalDateTime
         assert exception.message == "some.of.informed.features.does.not.exist.or.are.not.ready.to.go"
     }
 
-    private GitConfiguration getDummyGitConfiguration(User author, String workspaceId) {
+    private static GitConfiguration getDummyGitConfiguration(User author, String workspaceId) {
         new GitConfiguration('68b04fa2-032c-4bdc-9228-6e2e8a5fb791', 'Git Config', getDummyGitCredentials(),
                 LocalDateTime.now(), author, workspaceId)
     }
 
-    private GitCredentials getDummyGitCredentials() {
+    private static GitCredentials getDummyGitCredentials() {
         new GitCredentials('Credential address', 'username',
                 'password', 'Access Token', GitServiceProvider.GITHUB)
     }
 
-    private Label getDummyLabel(User author) {
+    private static Label getDummyLabel(User author) {
         new Label('b803558d-3c70-4321-ace5-ae8317902c05', 'Label name', LocalDateTime.now(), author, '#FFFFFF')
     }
 
-    private ArrayList getFeatureList() {
+    private static ArrayList getFeatureList() {
         def featureList = new ArrayList()
         featureList.add('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2')
         featureList.add('5455be03-83be-4a7a-b725-52d51cc2430e')
         return featureList
     }
 
-    private Column getColumn(String status) {
+    private static Column getColumn(String status) {
         return new Column('2dd78ca0-6a2c-11ea-bc55-0242ac130003', status,
                 TestUtils.hypothesisId, new ArrayList<Card>(), TestUtils.workspaceId)
     }
 
-        private Hypothesis getHypothesis(ArrayList<Column> collumns) {
-            return new Hypothesis(TestUtils.hypothesisId, 'Hypothesis Name', 'Hypothesis Description',
-                    LocalDateTime.now(), collumns, new ArrayList<Build>(), TestUtils.workspaceId)
-        }
+    private static Hypothesis getHypothesis(ArrayList<Column> collumns) {
+        return new Hypothesis(TestUtils.hypothesisId, 'Hypothesis Name', 'Hypothesis Description',
+                LocalDateTime.now(), collumns, new ArrayList<Build>(), TestUtils.workspaceId)
+    }
 }
