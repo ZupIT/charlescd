@@ -17,27 +17,27 @@
 import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { useForm } from 'react-hook-form';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import FormSelect from '../index';
 
 test('render react hook select', () => {
   const { result } = renderHook(() => useForm());
   const { control } = result.current;
 
-  const { getByTestId } = render(
+  render(
     <FormSelect.Single name="fieldSelect" control={control} options={[]} />
   );
 
-  expect(getByTestId('select-fieldSelect')).toBeInTheDocument();
+  expect(screen.getByTestId('select-fieldSelect')).toBeInTheDocument();
 });
 
 test('render react hook multi select', () => {
   const { result } = renderHook(() => useForm());
   const { control } = result.current;
 
-  const { getByTestId } = render(
+  render(
     <FormSelect.MultiCheck name="fieldMultiSelect" control={control} options={[]} />
   );
 
-  expect(getByTestId('select-fieldMultiSelect')).toBeInTheDocument();
+  expect(screen.getByTestId('select-fieldMultiSelect')).toBeInTheDocument();
 });

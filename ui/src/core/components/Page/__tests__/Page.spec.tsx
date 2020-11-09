@@ -15,25 +15,26 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Page from '../';
 
 test('renders Menu Page component with default properties', () => {
-  const { getByText } = render(
+  render(
     <Page>
       <Page.Menu>page menu</Page.Menu>
       <Page.Content>page content</Page.Content>
     </Page>
   );
 
-  const menuElement = getByText('page menu');
-  const contentElement = getByText('page content');
+  const menuElement = screen.getByText('page menu');
+  const contentElement = screen.getByText('page content');
+
   expect(menuElement).toBeInTheDocument();
   expect(contentElement).toBeInTheDocument();
 });
 
 test('render circles Page placeholder', () => {
-  const { getByText, getByTestId } = render(
+  render(
     <Page.Placeholder
       icon='placeholder-circles'
       title='Tilte'
@@ -42,10 +43,11 @@ test('render circles Page placeholder', () => {
     />
   );
 
-  const placeholderIcon = getByTestId('icon-placeholder-circles');
-  const placeholderCards = getByTestId('circles');
-  const placeholderTitle = getByText('Tilte');
-  const placeholderSubtitle = getByText('Subtitle');
+  const placeholderIcon = screen.getByTestId('icon-placeholder-circles');
+  const placeholderCards = screen.getByTestId('circles');
+  const placeholderTitle = screen.getByText('Tilte');
+  const placeholderSubtitle = screen.getByText('Subtitle');
+
   expect(placeholderIcon).toBeInTheDocument();
   expect(placeholderCards).toBeInTheDocument();
   expect(placeholderTitle).toBeInTheDocument();

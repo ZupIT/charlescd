@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import InputGroup from '..';
 
 const props = {
@@ -23,39 +23,36 @@ const props = {
 };
 
 test('renders InputGroup component', () => {
-  const { queryByTestId } = render(
-    <InputGroup {...props} />
-  );
+  render(<InputGroup {...props} />);
 
-  const element = queryByTestId(`input-group-${props.defaultValue}`);
-  const appendElement = queryByTestId(`input-group-${props.defaultValue}-append`);
-  const prependElement = queryByTestId(`input-group-${props.defaultValue}-prepend`);
+  const element = screen.getByTestId(`input-group-${props.defaultValue}`);
+  const appendElement = screen.queryByTestId(`input-group-${props.defaultValue}-append`);
+  const prependElement = screen.queryByTestId(`input-group-${props.defaultValue}-prepend`);
+
   expect(element).toBeInTheDocument();
   expect(appendElement).not.toBeInTheDocument();
   expect(prependElement).not.toBeInTheDocument();
 });
 
 test('renders InputGroup component with append', () => {
-  const { queryByTestId } = render(
-    <InputGroup {...props} append="ZupIT" />
-  );
+  render(<InputGroup {...props} append="ZupIT" />);
 
-  const element = queryByTestId(`input-group-${props.defaultValue}`);
-  const appendElement = queryByTestId(`input-group-${props.defaultValue}-append`);
-  const prependElement = queryByTestId(`input-group-${props.defaultValue}-prepend`);
+  const element = screen.getByTestId(`input-group-${props.defaultValue}`);
+  const appendElement = screen.getByTestId(`input-group-${props.defaultValue}-append`);
+  const prependElement = screen.queryByTestId(`input-group-${props.defaultValue}-prepend`);
+
   expect(element).toBeInTheDocument();
   expect(appendElement).toBeInTheDocument();
   expect(prependElement).not.toBeInTheDocument();
 });
 
 test('renders InputGroup component with prepend', () => {
-  const { queryByTestId } = render(
-    <InputGroup {...props} prepend="ZupIT" />
-  );
+  render(<InputGroup {...props} prepend="ZupIT" />);
 
-  const element = queryByTestId(`input-group-${props.defaultValue}`);
-  const appendElement = queryByTestId(`input-group-${props.defaultValue}-append`);
-  const prependElement = queryByTestId(`input-group-${props.defaultValue}-prepend`);
+  const element = screen.getByTestId(`input-group-${props.defaultValue}`);
+  const appendElement = screen.queryByTestId(`input-group-${props.defaultValue}-append`);
+  const prependElement = screen.getByTestId(`input-group-${props.defaultValue}-prepend`);
+
   expect(element).toBeInTheDocument();
   expect(appendElement).not.toBeInTheDocument();
   expect(prependElement).toBeInTheDocument();

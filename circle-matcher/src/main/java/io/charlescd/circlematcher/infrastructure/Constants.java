@@ -47,7 +47,7 @@ public class Constants {
 
     public static final String EQUALS_EXPRESSION = "%s.indexOf(%s) != -1";
 
-    public static final String NOT_EQUALS_EXPRESSION = "%s.indexOf(%s) >= 0";
+    public static final String NOT_EQUALS_EXPRESSION = "%s.indexOf(%s) == -1";
 
     public static final String EVAL_EXPRESSION = "var result = (%s)";
 

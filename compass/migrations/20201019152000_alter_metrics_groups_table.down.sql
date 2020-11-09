@@ -1,0 +1,1 @@
+ALTER TABLE metrics_groups DROP COLUMN DELETED_AT;

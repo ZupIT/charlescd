@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7bb710d6-0512-4b3b-afd0-664647cc0bbe",
+		"_postman_id": "7e20079b-e69e-4cc8-b70a-7a9017a7f12c",
 		"name": "Compass",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -73,7 +73,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e2d8fcc3-1d4e-4997-85b9-d67458c75a89",
+								"id": "c401b0f6-2c6d-4ab0-a89f-8cd6affea644",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"datasourceId\", response[\"id\"]);"
@@ -98,7 +98,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginId\": \"{{pluginId}}\",\n    \"health\": true,\n    \"data\": {\n        \"url\": \"http://35.238.107.172:9090\"\n    }\n}",
+							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginSrc\": \"{{pluginSrc}}\",\n    \"healthy\": true,\n    \"data\": {\n        \"url\": \"http://35.238.107.172:9090\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -161,7 +161,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "25657d6e-c4fc-4a8f-8a94-0f01de12f36d",
+								"id": "7c9878a7-7030-49f0-a9b9-2d6f2e07573f",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"pluginId\", response[\"id\"]);"
@@ -280,7 +280,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3accd799-6aff-4a14-8873-c92796a4e507",
+										"id": "9cdf9732-aa49-4d7a-a282-033f01a2df55",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -346,7 +346,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "afcb4302-45dc-4f8c-8d31-f8b0d091725b",
+										"id": "b53fc63a-bda0-4d38-971a-a1239d82373a",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -405,7 +405,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8077c28b-771d-45f3-a378-09781c07984c",
+								"id": "19840d11-f10c-470c-8620-0333f6c15ca0",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"pm.environment.set(\"metricsGroupsId\", response[\"id\"]);"
@@ -458,7 +458,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ffd930f8-fd37-40ca-95e3-0d9268c9ad39",
+								"id": "f367d65a-63d8-4ea7-bd64-96dfa4041a66",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"metricsGroupsId\", response[\"id\"]);"
@@ -725,6 +725,480 @@
 									"key": "x-circle-id",
 									"value": "{{circleId}}"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "actions",
+			"item": [
+				{
+					"name": "metricsgroupactions",
+					"item": [
+						{
+							"name": "save",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "47ead285-daff-4e24-8f58-9bfed77c6a12",
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"postman.setGlobalVariable(\"actionExecutionId\", response[\"id\"]);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "x-circle-id",
+										"type": "text",
+										"value": "{{circleId}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nickname\": \"ExecutionName\",\n    \"metricsGroupId\": \"{{metricsGroupsId}}\",\n    \"actionsId\": \"{{actionId}}\",\n    \"executionParameters\": {\n        \"circleId\": \"123456789\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v1/actions-execution",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"actions-execution"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "61b62b78-e117-4152-a274-38fef7ffba13",
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "x-circle-id",
+										"type": "text",
+										"value": "{{circleId}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nickname\": \"ExecutionName\",\n    \"metricsGroupId\": \"{{metricsGroupsId}}\",\n    \"actionsId\": \"{{actionId}}\",\n    \"executionParameters\": {\n        \"circleId\": \"1234567891234567890\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v1/actions-execution/{{actionExecutionId}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"actions-execution",
+										"{{actionExecutionId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find all",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c4ee368a-ee00-4d7b-ba30-0fe4f4aa90b6",
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"postman.setGlobalVariable(\"actionId\", response[\"id\"]);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "x-circle-id",
+										"type": "text",
+										"value": "{{circleId}}"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v1/actions-execution",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"actions-execution"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "cf244023-e975-4da7-8c92-6dc3508e5716",
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"postman.setGlobalVariable(\"actionId\", response[\"id\"]);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "x-circle-id",
+										"type": "text",
+										"value": "{{circleId}}"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v1/actions-execution/{{actionExecutionId}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"actions-execution",
+										"{{actionExecutionId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "63667d56-f9cb-49ef-af5c-244aa9ef8588",
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "x-circle-id",
+										"type": "text",
+										"value": "{{circleId}}"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v1/actions-execution/{{actionExecutionId}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"actions-execution",
+										"{{actionExecutionId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "save",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b0bc36de-bf7c-4c46-b7c0-4563862baea7",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"actionId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"type": "text",
+								"value": "{{circleId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nickname\": \"Open-sea up\",\n    \"type\": \"CircleUpstream\",\n    \"configuration\": {\n        \"authorId\": \"123456789\",\n        \"destinyCircle\": \"open-sea\"\n    },\n    \"workspaceId\": \"5b17f1ec-41ab-472a-b307-f0495e480a1c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/actions",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"actions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b7988dd8-169e-47df-b9e7-b6fca2db4d9e",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"type": "text",
+								"value": "{{circleId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nickname\": \"Open-sea up\",\n    \"type\": \"CircleUpstream\",\n    \"configuration\": {\n        \"authorId\": \"123456789\",\n        \"destinyCircle\": \"open-ronaldo\"\n    },\n    \"workspaceId\": \"5b17f1ec-41ab-472a-b307-f0495e480a1c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/actions/{{actionId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"actions",
+								"{{actionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e9ecbdd1-ad7d-46d5-a377-12cf204aed66",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"type": "text",
+								"value": "{{circleId}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/actions",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"actions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "27c8206c-d0f0-45e1-818e-3d6ea3dbd71e",
+								"exec": [
+									"const response = JSON.parse(responseBody);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"type": "text",
+								"value": "{{circleId}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/actions/{{actionId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"actions",
+								"{{actionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d401faec-850b-4f72-8609-cfe3104e7987",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"type": "text",
+								"value": "{{circleId}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/actions/{{actionId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"actions",
+								"{{actionId}}"
 							]
 						}
 					},
