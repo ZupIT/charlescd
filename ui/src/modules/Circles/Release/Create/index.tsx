@@ -15,14 +15,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm, useFieldArray, FormContext } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { getProfileByKey } from 'core/utils/profile';
-import { validFields } from 'core/utils/validation';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
-import { validationResolver, formatDataModules } from './helpers';
+import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ModuleForm } from '../interfaces/Module';
 import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
@@ -30,7 +29,8 @@ import Module from './Module';
 import Styled from '../styled';
 
 const defaultValues = {
-  modules: [MODULE]
+  modules: [MODULE],
+  releaseName: ''
 };
 
 interface Props {
@@ -50,7 +50,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   const form = useForm<ModuleForm>({
     defaultValues,
     mode: 'onChange',
-    validationResolver
+    resolver: validationResolver
   });
   const { register, control, handleSubmit, watch, errors, getValues } = form;
   const watchFields = watch();
@@ -84,7 +84,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   }, [createDeployment, build, authorId, circleId]);
 
   const onSubmit = () => {
-    const data = getValues({ nest: true });
+    const data = getValues();
     const modules = formatDataModules(data);
 
     composeBuild({
@@ -95,7 +95,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   };
 
   return (
-    <FormContext {...form}>
+    <FormProvider {...form}>
       <Styled.Form
         onSubmit={handleSubmit(onSubmit)}
         data-testid="create-release"
@@ -120,6 +120,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         </Styled.Module.Info>
         <Styled.Module.Button
           type="button"
+          id="add-module"
           isDisabled={isEmptyFields || !isEmpty(errors)}
           onClick={() => append(MODULE)}
         >
@@ -135,7 +136,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           deploy
         </Styled.Submit>
       </Styled.Form>
-    </FormContext>
+    </FormProvider>
   );
 };
 

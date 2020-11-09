@@ -15,7 +15,18 @@
  */
 
 import { FetchMock } from 'jest-fetch-mock';
-import { findAllCircles, findCircleById } from '../circle';
+import { CreateCircleManuallyPayload, CreateCircleWithFilePayload } from 'modules/Circles/interfaces/Circle';
+import {
+  circleMatcherIdentify,
+  createCircleManually,
+  createCircleWithFile,
+  deleteCircleById,
+  findAllCircles,
+  findAllCirclesWithoutActive,
+  findCircleById,
+  updateCircleManually,
+  updateCircleWithFile
+} from '../circle';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -43,4 +54,80 @@ test('renew token provider request', async () => {
   const data = await response.json();
 
   expect(data).toEqual({ name: 'find circle by id' });
+});
+
+test('should deleteCircle by id', async () => {
+  const id = 'circle-id';
+  (fetch as FetchMock).mockResponseOnce("null");
+
+  const response = await deleteCircleById(id)({});
+  const data = await response.json();
+
+  expect(data).toEqual(null);
+});
+
+test('should identify by circle matcher', async () => {
+  const id = 'circle-id';
+  const responseData = { id: '123', name: 'find circle by id' };
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(responseData));
+
+  const response = await circleMatcherIdentify({ id })({});
+  const data = await response.json();
+
+  expect(data).toEqual(responseData);
+});
+
+test('should create circle manually', async () => {
+  const requestData = { name: 'circle' } as CreateCircleManuallyPayload;
+  const responseData = { id: '123'  };
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(responseData));
+
+  const response = await createCircleManually(requestData)({});
+  const data = await response.json();
+
+  expect(data).toEqual(responseData);
+});
+
+test('should update circle manually', async () => {
+  const requestData = { name: 'circle' } as CreateCircleManuallyPayload;
+  const responseData = { id: '123'  };
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(responseData));
+
+  const response = await updateCircleManually(requestData, '123')({});
+  const data = await response.json();
+
+  expect(data).toEqual(responseData);
+});
+
+test('should create circle with file', async () => {
+  const requestData = { name: 'circle' } as CreateCircleWithFilePayload;
+  const responseData = { id: '123'  };
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(responseData));
+
+  const response = await createCircleWithFile(requestData)({});
+  const data = await response.json();
+
+  expect(data).toEqual(responseData);
+});
+
+test('should update circle with file', async () => {
+  const requestData = { name: 'circle' } as CreateCircleWithFilePayload;
+  const responseData = { id: '123'  };
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(responseData));
+
+  const response = await updateCircleWithFile(requestData, '123')({});
+  const data = await response.json();
+
+  expect(data).toEqual(responseData);
+});
+
+test('should find all circles without active', async () => {
+  const responseData = [{ id: '123'  }];
+  const filter = { name: 'circle'};
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(responseData));
+
+  const response = await findAllCirclesWithoutActive(filter)({});
+  const data = await response.json();
+
+  expect(data).toEqual(responseData);
 });

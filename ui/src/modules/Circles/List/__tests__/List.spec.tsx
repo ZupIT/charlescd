@@ -17,6 +17,8 @@
 import React from 'react';
 import { render, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
+import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
+import { Datasources } from 'modules/Settings/Credentials/Sections/MetricProvider/__tests__/fixtures';
 import CirclesList from '..';
 
 test('render Metrics list component without metric configuration', async () => {
@@ -38,5 +40,4 @@ test('render Metrics list component with metric configuration', async () => {
   await wait();
 
   expect(getByTestId('metrics-list')).toBeInTheDocument();
-  expect(getByTestId('icon-empty-circles')).toBeInTheDocument();
 });

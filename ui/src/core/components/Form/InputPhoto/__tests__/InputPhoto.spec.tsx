@@ -15,8 +15,8 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
-import Input from '..';
+import { render, screen } from 'unit-test/testUtils';
+import Input from '../';
 
 const textProps = {
   name: 'name'
@@ -27,23 +27,17 @@ const inputPhotoProps = {
 };
 
 test('renders InputPhoto component with default properties', () => {
-  const { getByTestId } = render(
-    <Input name="keyName" />
-  );
+  render(<Input name="keyName" />);
 
-  const inputElement = getByTestId(`input-photo-${inputPhotoProps.name}`);
+  const inputElement = screen.getByTestId(`input-photo-${inputPhotoProps.name}`);
   expect(inputElement).toBeInTheDocument();
 });
 
 test('renders Input component as a resume', () => {
-  const { getByTestId } = render(
-    <Input
-      resume
-      name={textProps.name}
-    />
-  );
+  render(<Input resume name={textProps.name} />);
 
-  const inputElement = getByTestId(`input-photo-${textProps.name}`);
+  const inputElement = screen.getByTestId(`input-photo-${textProps.name}`);
+
   expect(inputElement).toBeInTheDocument();
   expect(inputElement).toHaveStyle('background: transparent;');
   expect(inputElement).toHaveStyle('border: none;');
