@@ -17,7 +17,6 @@
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
-import { inspect } from 'util'
 
 @ValidatorConstraint({ name: 'namespace', async: false })
 export class NamespaceValidation implements ValidatorConstraintInterface {
@@ -27,7 +26,6 @@ export class NamespaceValidation implements ValidatorConstraintInterface {
 
   }
   public defaultMessage(args: ValidationArguments) {
-    console.log(inspect(args.object))
     const component = plainToClass(CreateComponentRequestDto, args.object)
     return `Namespace is not defined! Edit the configuration of component '${component.componentName}' `
   }
