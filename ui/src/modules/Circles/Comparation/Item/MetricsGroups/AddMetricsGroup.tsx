@@ -22,12 +22,16 @@ import Styled from './styled';
 import { MetricsGroup } from './types';
 import { isNotBlank } from 'core/utils/validation';
 
-interface Props {
+type Props = {
   id: string;
   onCloseModal: Function;
   onSaveGroup: Function;
   metricGroup?: MetricsGroup;
-}
+};
+
+type FormData = {
+  name: string;
+};
 
 const AddMetricsGroup = ({
   id,
@@ -41,9 +45,9 @@ const AddMetricsGroup = ({
     register,
     handleSubmit,
     formState: { isValid }
-  } = useForm({ mode: 'onChange', defaultValues: metricGroup ?? {} });
+  } = useForm<FormData>({ mode: 'onChange', defaultValues: metricGroup ?? {} });
 
-  const onSubmit = ({ name }: Partial<MetricsGroup>) => {
+  const onSubmit = ({ name }: FormData) => {
     createMetricsGroup(name, id).then(response => {
       if (response) {
         onSaveGroup();

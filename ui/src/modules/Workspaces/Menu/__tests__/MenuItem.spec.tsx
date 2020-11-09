@@ -17,33 +17,39 @@
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import InputAction from '..';
+import { workspaceItem } from './fixtures';
+import WorkspaceItem from '../MenuItem';
 
-const onClick = jest.fn();
-
-const props = {
-  name: 'test',
-  icon: 'copy',
-  defaultValue: '123457'
-};
-
-test('render InputAction component', () => {
+test('render Workspace item', async () => {
   render(
-    <InputAction { ... props } onClick={onClick} />
+    <WorkspaceItem  
+      id={workspaceItem.id}
+      name={workspaceItem.name}
+      status={workspaceItem.status}
+      selectedWorkspace={null}
+    />
   );
 
-  const element = screen.getByTestId(`input-action-${props.name}`);
-  expect(element).toBeInTheDocument();
+  const workspaceName = screen.getByText('workspace');
+
+  expect(workspaceName).toBeInTheDocument();
 });
 
-test('render InputAction component and fire action', () => {
+test('render Workspace item and click', async () => {
+  const selectedWorkspace = jest.fn();
+
   render(
-    <InputAction { ... props } onClick={onClick} />
+    <WorkspaceItem  
+      id={workspaceItem.id}
+      name={workspaceItem.name}
+      status={workspaceItem.status}
+      selectedWorkspace={selectedWorkspace}
+    />
   );
-  
-  const button = screen.getByTestId(`input-action-${props.name}-button`);
-  userEvent.click(button);
 
-  expect(onClick).toHaveBeenCalledTimes(1);
+  const workspaceName = screen.getByText('workspace');
+
+  userEvent.click(workspaceName);
+
+  expect(selectedWorkspace).toHaveBeenCalled();
 });
-

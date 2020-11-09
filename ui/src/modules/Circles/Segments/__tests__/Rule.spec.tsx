@@ -15,13 +15,10 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer';
-import { FormContext, useForm } from 'react-hook-form';
-import { render, fireEvent, screen } from 'unit-test/testUtils';
+import { FormProvider, useForm } from 'react-hook-form';
+import { fireEvent, render, screen } from 'unit-test/testUtils';
 import Rule, { Props } from '../Rule';
 import { renderHook } from '@testing-library/react-hooks';
-
-(global as any).MutationObserver = MutationObserver
 
 const props: Props = {
   prefixName: 'input-rule',
@@ -40,9 +37,9 @@ test('render Rule default component', () => {
   const methods = result.current;
 
   render(
-    <FormContext { ...methods }>
+    <FormProvider { ...methods }>
       <Rule { ...props } />
-    </FormContext>
+    </FormProvider>
   );
 
   const InputType = screen.getByTestId('input-hidden-input-rule.type');
@@ -64,9 +61,9 @@ test('render Rule default component with group', async () => {
   const methods = result.current;
 
   render(
-    <FormContext { ...methods }>
+    <FormProvider { ...methods }>
       <Rule { ...props } hasGroup onRemoveRule={onRemoveRule} />
-    </FormContext>
+    </FormProvider>
   );
 
   const InputTrash = await screen.findByTestId('icon-trash');

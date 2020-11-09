@@ -15,22 +15,24 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { Notification } from '../interfaces/Notification';
-import NotificationComponent from '..';
+import NotificationComponent from '../';
 
 test('render default Notification', () => {
   const notification: Notification = {text:'Text', status:'success'};
   const onDismiss = jest.fn();
 
-  const { getByText, getByTestId } = render(
+  render(
     <NotificationComponent notification={notification} onDismiss={onDismiss}/>
   );
 
-  const notificationTextElement = getByText('Text');
-  const dismissNotification = getByTestId('icon-cancel');
-  fireEvent.click(dismissNotification);
+  const notificationTextElement = screen.getByText('Text');
+  const dismissNotification = screen.getByTestId('icon-cancel');
+
+  userEvent.click(dismissNotification);
 
   expect(notificationTextElement).toBeInTheDocument();
-  expect(onDismiss).toBeCalled();
+  expect(onDismiss).toHaveBeenCalledTimes(1);
 });
