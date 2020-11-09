@@ -48,9 +48,9 @@ export interface FetchProps {
   getAll?: () => void;
   findUserGroupByName?: () => void;
   getById?: () => void;
-  save?: () => void;
+  save?: <T>(t: T) => void;
   update?: () => void;
-  remove?: () => void;
+  remove?: <T>(t: T) => Promise<void>;
 }
 
 const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>

@@ -84,7 +84,7 @@ export const useDatasource = (): FetchProps => {
   }, [error, dispatch]);
 
   const remove = useCallback(
-    async <String>(id: String) => {
+    async (id: string) => {
       delDatasource(id);
     },
     [delDatasource]
@@ -131,21 +131,21 @@ export const usePlugins = (): FetchProps => {
 };
 
 export const useTestConnection = (): FetchProps => {
-  const [connectionResponse, setConnectionResponse] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [connectionResponse, setConnectionResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
   const testConnectionFetchData = useFetchData<number>(testConnection);
-  const connectionFailed = 500
+  const connectionFailed = 500;
 
   const save = useCallback(
     async <TestConnectionRequest>(payload: TestConnectionRequest) => {
       try {
-        setLoading(true)
+        setLoading(true);
         await testConnectionFetchData(payload);
-        setLoading(false)
-        setConnectionResponse(CONNECTION_SUCCESS)
+        setLoading(false);
+        setConnectionResponse(CONNECTION_SUCCESS);
       } catch (e) {
-        setLoading(false)
-        setConnectionResponse(connectionFailed)
+        setLoading(false);
+        setConnectionResponse(connectionFailed);
       }
     },
     [testConnectionFetchData]

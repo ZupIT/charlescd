@@ -15,16 +15,23 @@
  */
 
 import { baseRequest, postRequest, deleteRequest } from './base';
-import { Datasource, TestConnectionRequest } from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
+import {
+  Datasource,
+  TestConnectionRequest
+} from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
 
 const endpoint = '/compass/api/v1';
 
-export const getAllPlugins = () => baseRequest(`${endpoint}/plugins?category=datasource`)
+export const getAllPlugins = () =>
+  baseRequest(`${endpoint}/plugins?category=datasource`);
 
 export const getAllDatasources = () => baseRequest(`${endpoint}/datasources`);
 
-export const testConnection = (payload: TestConnectionRequest) => postRequest(`${endpoint}/datasources/test-connection`, payload);
+export const testConnection = (payload: TestConnectionRequest) =>
+  postRequest(`${endpoint}/datasources/test-connection`, payload);
 
-export const createDatasource = (datasourcePayload: Datasource) => postRequest(`${endpoint}/datasources`, datasourcePayload)
+export const createDatasource = (datasourcePayload: Datasource) =>
+  postRequest(`${endpoint}/datasources`, datasourcePayload);
 
-export const deleteDatasource = (datasourceId: string) => deleteRequest(`${endpoint}/datasources/${datasourceId}`)
+export const deleteDatasource = (datasourceId: string) =>
+  deleteRequest(`${endpoint}/datasources/${datasourceId}`);
