@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { components } from 'react-select';
+import { isEmpty } from 'lodash';
 import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
 import SingleValue from 'core/components/Form/Select/SingleValue';
 import FloatingLabel from 'core/components/Form/Select/FloatingLabel';
@@ -29,35 +30,40 @@ const Select = ({
   defaultValue,
   className,
   isDisabled = false,
+  defaultOptions,
   onChange,
   onInputChange,
   customOption,
   loadOptions,
   hasError
-}: Props) => (
-  <div data-testid="react-select">
-    <Styled.AsyncSelect
-      className={className}
-      defaultValue={defaultValue}
-      isDisabled={isDisabled}
-      placeholder={placeholder}
-      hasError={hasError}
-      components={{
-        ValueContainer: FloatingLabel,
-        Option: customOption ? customOption : components.Option,
-        SingleValue,
-        IndicatorSeparator: null,
-        DropdownIndicator: () => <DownSVG />
-      }}
-      styles={customStyles}
-      cacheOptions
-      options={options}
-      defaultOptions
-      loadOptions={loadOptions}
-      onInputChange={onInputChange}
-      onChange={(option: Option) => onChange(option)}
-    />
-  </div>
-);
+}: Props) => {
+  const selectDefaultOptions = isEmpty(defaultOptions) ? true : defaultOptions;
+
+  return (
+    <div data-testid="react-select">
+      <Styled.AsyncSelect
+        className={className}
+        defaultValue={defaultValue}
+        isDisabled={isDisabled}
+        placeholder={placeholder}
+        hasError={hasError}
+        components={{
+          ValueContainer: FloatingLabel,
+          Option: customOption ? customOption : components.Option,
+          SingleValue,
+          IndicatorSeparator: null,
+          DropdownIndicator: () => <DownSVG />
+        }}
+        styles={customStyles}
+        cacheOptions
+        options={options}
+        defaultOptions={selectDefaultOptions}
+        loadOptions={loadOptions}
+        onInputChange={onInputChange}
+        onChange={(option: Option) => onChange(option)}
+      />
+    </div>
+  );
+};
 
 export default Select;

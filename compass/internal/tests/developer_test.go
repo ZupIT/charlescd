@@ -39,7 +39,7 @@ func (s *SuiteDeveloper) SetupSuite() {
 }
 
 func TestInitSuiteDeveloper(t *testing.T) {
-	suite.Run(t, new(SuitePlugins))
+	suite.Run(t, new(SuiteDeveloper))
 }
 
 func (s *Suite) TestIsDeveloperRunning() {

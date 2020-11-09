@@ -24,7 +24,7 @@ export default () => {
 
   const fetchUrl = (circleId, headers, basePath) => {
     fetch(
-      `${basePath}/moove/metrics/circle/${circleId}/components/health`,
+      `${basePath}/compass/api/v1/application-health/${circleId}/components/health`,
       { headers }
     )
       .then(response => {
@@ -41,8 +41,8 @@ export default () => {
         );
       })
       .catch(error => {
-        if (error.message === 401 ) {
-          self.postMessage({ unauthorized: true});
+        if (error.message === 401) {
+          self.postMessage({ unauthorized: true });
         }
         console.log(error);
       });
