@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, waitForElement, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
@@ -41,17 +41,17 @@ afterEach(() => {
 });
 
 test('renders sidebar component', async () => {
-  const { getByTestId } = render(
+  render(
     <Sidebar isExpanded={true} onClickExpand={null} />
   );
 
-  const links = await waitForElement(() => getByTestId('sidebar-links'));
+  const links = await screen.findByTestId('sidebar-links');
 
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
-  await wait(() => expect(getByTestId(workspacesId)).toBeInTheDocument());
-  await wait(() => expect(getByTestId(accountId)).toBeInTheDocument());
+  expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
+  expect(screen.getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
 });
 
@@ -77,7 +77,7 @@ test('renders sidebar component with selected workspace', async () => {
 
   jest.spyOn(utilsAuth, 'isRoot').mockReturnValue(true);
 
-  const { queryByTestId } = render(
+  render(
     <Sidebar
       isExpanded={true}
       onClickExpand={jest.fn()}
@@ -85,36 +85,36 @@ test('renders sidebar component with selected workspace', async () => {
     />
   );
 
-  await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
+  expect(await screen.findByTestId('dropdown')).toBeInTheDocument();
 });
 
 test('renders help icon in the sidebar', async () => {
-  const { getByTestId } = render(
+  render(
     <Sidebar isExpanded={true} onClickExpand={null} />
   );
 
-  const helpIcon = await waitForElement(() => getByTestId('icon-help'));
+  const helpIcon = await screen.findByTestId('icon-help');
   expect(helpIcon).toBeInTheDocument();
 });
 
 test('renders tooltip with text equal to "Documentation"', async () => {
-  const { queryByTestId, getByText } = render(
+  render(
     <Sidebar isExpanded={true} onClickExpand={null} />
   );
 
-  const helpIcon = await waitForElement(() => queryByTestId('icon-help'));
+  const helpIcon = await screen.queryByTestId('icon-help');
   expect(helpIcon).toBeInTheDocument();
 
-  const tooltipText = await waitForElement(() => getByText('Documentation'));
+  const tooltipText = await screen.getByText('Documentation');
   expect(tooltipText).toBeInTheDocument();
 });
 
 test('opens documentation link once', async () => {
-  const { queryByTestId } = render(
+  render(
     <Sidebar isExpanded={true} onClickExpand={() => {}} />
   );
 
-  const helpIcon = await waitForElement(() => queryByTestId('icon-help'));
+  const helpIcon = await screen.queryByTestId('icon-help');
   expect(helpIcon).toBeInTheDocument();
 
   fireEvent.click(helpIcon);

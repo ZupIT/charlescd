@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from "react";
-import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
+import { render, fireEvent, waitFor } from "@testing-library/react";
 import Component from "../Component";
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
@@ -92,7 +92,7 @@ test("Test component for edit mode render", async () => {
       />
     </AllTheProviders>
   );
-  await wait()
+
   expect(container.innerHTML).toMatch("Edit component");
 });
 
@@ -108,7 +108,7 @@ test("Test component for create mode render", async () => {
       />
     </AllTheProviders>
   );
-  await wait()
+
   expect(container.innerHTML).toMatch("Create component");
 });
 
@@ -124,11 +124,11 @@ test("Test component for show advanced options", async () => {
       />
     </AllTheProviders>
   );
-  await wait()
+
   const componentButton: any = container.querySelector("span");
   expect(container.innerHTML).toMatch("Show");
   fireEvent.click(componentButton);
-  wait(() => expect(container.innerHTML).toMatch("Hide"))
+  waitFor(() => expect(container.innerHTML).toMatch("Hide"))
 });
 
 test("Test component to not render more options", async () => {
@@ -143,7 +143,6 @@ test("Test component to not render more options", async () => {
       />
     </AllTheProviders>
   );
-  await wait()
 
   const componentHostValue: any = container.querySelector(
     "input[name='hostValue']"
@@ -164,13 +163,10 @@ test("Test component to not render more options", async () => {
       />
     </AllTheProviders>
   );
-  await wait()
 
   const componentHostValue: any = container.querySelector(
     "input[name='hostValue']"
   );
 
-  expect(componentHostValue.value).toEqual("")
+  await waitFor(() => expect(componentHostValue.value).toEqual(""));
 });
-
-

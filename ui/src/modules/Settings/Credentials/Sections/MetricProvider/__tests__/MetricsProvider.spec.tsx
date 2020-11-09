@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen, wait } from 'unit-test/testUtils';
+import { fireEvent, render, screen } from 'unit-test/testUtils';
 import { Datasources } from './fixtures';
 import MetricProvider from '../index';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
@@ -27,8 +27,6 @@ test('render Metrics Provider default component', async () => {
     <MetricProvider form={null} setForm={setForm} data={Datasources} />
   );
 
-  await wait();
-
   expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
   expect(screen.getByText('Prometheus')).toBeInTheDocument();
 });
@@ -38,8 +36,6 @@ test('toggle form have been called', async () => {
   render(
     <MetricProvider form={null} setForm={setForm} data={Datasources} />
   );
-
-  await wait();
 
   const addDatasource = screen.getByTestId('section-datasources')
     .querySelector('[data-testid="button-iconRounded-add"]')
@@ -55,8 +51,6 @@ test('render datasource form', async () => {
     <MetricProvider form={FORM_METRIC_PROVIDER} setForm={setForm} data={Datasources} />
   );
 
-  await wait();
-
   expect(screen.getByTestId('select-url')).toBeInTheDocument();
 });
 
@@ -69,8 +63,6 @@ test('should be delete Metric Provider', async () => {
   render(
     <MetricProvider form={null} setForm={setForm} data={Datasources} />
   );
-
-  await wait();
 
   const deleteMetricIcon = screen.getByTestId('section-datasources')
     .querySelector('[data-testid="icon-cancel"]')

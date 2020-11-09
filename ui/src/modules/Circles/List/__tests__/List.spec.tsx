@@ -15,29 +15,23 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
-import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
-import { Datasources } from 'modules/Settings/Credentials/Sections/MetricProvider/__tests__/fixtures';
 import CirclesList from '..';
 
 test('render Metrics list component without metric configuration', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
-  const { getByTestId } = render(<CirclesList />);
+  render(<CirclesList />);
 
-  await wait();
-
-  expect(getByTestId('metrics-list')).toBeInTheDocument();
-  expect(getByTestId('icon-placeholder-metrics')).toBeInTheDocument();
+  expect(await screen.findByTestId('metrics-list')).toBeInTheDocument();
+  expect(await screen.findByTestId('icon-placeholder-metrics')).toBeInTheDocument();
 });
 
 test('render Metrics list component with metric configuration', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify({ metricConfiguration: 'Prometheus' })
   );
-  const { getByTestId } = render(<CirclesList />);
+  render(<CirclesList />);
 
-  await wait();
-
-  expect(getByTestId('metrics-list')).toBeInTheDocument();
+  expect(await screen.findByTestId('metrics-list')).toBeInTheDocument();
 });
