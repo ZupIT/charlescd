@@ -74,7 +74,7 @@ class TestUtils {
                 LocalDateTime.now(),
                 [],
                 WorkspaceStatusEnum.COMPLETE,
-                null,
+                "abb3448d8-4421-4aba-99a9-184bdabe3we1",
                 "http://circle-matcher.com",
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 null,
@@ -95,5 +95,9 @@ class TestUtils {
                 false,
                 workspaceId
         )
+    }
+
+    static String getHypothesisId() {
+        return "865758f1-17ea-4f96-8518-3490977fa0ea"
     }
 }

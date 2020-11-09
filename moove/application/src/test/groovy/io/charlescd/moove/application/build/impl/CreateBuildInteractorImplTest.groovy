@@ -25,12 +25,13 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.GitProviderService
+import io.charlescd.moove.domain.service.SecurityService
 import io.charlescd.moove.domain.service.VillagerService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class CreateBuildInteractorImplTest extends Specification {
+    class CreateBuildInteractorImplTest extends Specification {
 
     private CreateBuildInteractor buildInteractor
 
@@ -41,11 +42,12 @@ class CreateBuildInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
+    private SecurityService securityService = Mock(SecurityService)
 
     def setup() {
         this.buildInteractor = new CreateBuildInteractorImpl(
                 gitProviderService,
-                new UserService(userRepository),
+                new UserService(userRepository, securityService),
                 new BuildService(buildRepository),
                 new HypothesisService(hypothesisRepository),
                 villagerService,
@@ -56,28 +58,22 @@ class CreateBuildInteractorImplTest extends Specification {
 
     def 'when hypothesis does not exist should throw exception'() {
         given:
-        def authorId = '4e806b2a-557b-45c5-91be-1e1db909bef6'
-        def hypothesisId = '865758f1-17ea-4f96-8518-3490977fa0ea'
+        def hypothesisId = TestUtils.hypothesisId
         def tagName = 'charles-cd-build-testing'
+        def workspaceId = TestUtils.workspaceId
+        def author = TestUtils.user
+        def authorization = TestUtils.authorization
 
-        def featureList = new ArrayList()
-        featureList.add('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2')
-        featureList.add('5455be03-83be-4a7a-b725-52d51cc2430e')
+        def featureList = getFeatureList();
+        def createBuildRequest = new CreateBuildRequest(featureList, tagName, hypothesisId)
 
-        def createBuildRequest = new CreateBuildRequest(authorId, featureList, tagName, hypothesisId)
-        def workspaceId = '7bb24df7-ba5d-4e4e-ba7e-f80153a7774a'
-
-        def author = getDummyUser()
-
-        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
-                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
-                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+        def workspace = TestUtils.workspace
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
 
         then:
+        1 * securityService.getUser(authorization) >> author
         1 * hypothesisRepository.findById(hypothesisId) >> Optional.empty()
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
@@ -89,52 +85,46 @@ class CreateBuildInteractorImplTest extends Specification {
 
     def 'when author does not exist should throw exception'() {
         given:
-        def workspaceId = '7bb24df7-ba5d-4e4e-ba7e-f80153a7774a'
+        def workspaceId = TestUtils.workspaceId
+        def workspace = TestUtils.workspace
+        def authorId = TestUtils.authorId
+        def authorization = TestUtils.authorization
+        def hypothesisId = TestUtils.hypothesisId
         def tagName = 'charles-cd-build-testing'
-        def featureList = new ArrayList()
-        featureList.add('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2')
-        featureList.add('5455be03-83be-4a7a-b725-52d51cc2430e')
+        def featureList = getFeatureList();
 
-        def author = getDummyUser()
+        def hypothesis = getHypothesis(new ArrayList<Column>())
 
-        def hypothesis = new Hypothesis('865758f1-17ea-4f96-8518-3490977fa0ea', 'Hypothesis Name', 'Hypothesis Description', author,
-                LocalDateTime.now(), new ArrayList<Column>(), new ArrayList<Build>(), workspaceId)
-
-        def createBuildRequest = new CreateBuildRequest(author.id, featureList, tagName, hypothesis.id)
-
-        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
-                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
-                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+        def createBuildRequest = new CreateBuildRequest(featureList, tagName, hypothesisId)
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
 
         then:
-        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
-        1 * userRepository.findById(author.id) >> Optional.empty()
+        0 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        0 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * securityService.getUser(authorization) >> { throw new NotFoundException("user", authorId) }
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
-        ex.id == author.id
+        ex.id == authorId
+
     }
 
     def 'should return build response'() {
 
-        def hypothesisId = '865758f1-17ea-4f96-8518-3490977fa0ea'
-        def workspaceId = '7bb24df7-ba5d-4e4e-ba7e-f80153a7774a'
+        def authorization = TestUtils.authorization
+        def hypothesisId = TestUtils.hypothesisId
+        def workspaceId = TestUtils.workspaceId
         def tagName = 'charles-cd-build-testing'
         def featureList = new ArrayList()
         featureList.add('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2')
 
-        def author = getDummyUser()
+        def author = TestUtils.user
 
-        def todoCardColumn = new Column('2dd78ca0-6a2c-11ea-bc55-0242ac130003', ColumnConstants.TO_DO_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def todoCardColumn = getColumn(ColumnConstants.TO_DO_COLUMN_NAME)
 
-        def doingCardColumn = new Column('2dd78ffc-6a2c-11ea-bc55-0242ac130003', ColumnConstants.DOING_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def doingCardColumn = getColumn(ColumnConstants.DOING_COLUMN_NAME)
 
         def listOfLabels = new ArrayList()
         listOfLabels.add(getDummyLabel(author))
@@ -159,19 +149,16 @@ class CreateBuildInteractorImplTest extends Specification {
         def readyToGoCardColumn = new Column('2dd7910a-6a2c-11ea-bc55-0242ac130003', ColumnConstants.READY_TO_GO_COLUMN_NAME,
                 hypothesisId, listOfCards, workspaceId)
 
-        def buildsCardColumn = new Column('2dd791e6-6a2c-11ea-bc55-0242ac130003', ColumnConstants.BUILDS_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def buildsCardColumn = getColumn(ColumnConstants.BUILDS_COLUMN_NAME)
 
-        def deployedReleasesCardColumn = new Column('2dd792ae-6a2c-11ea-bc55-0242ac130003', ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def deployedReleasesCardColumn = getColumn(ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME)
 
         def columns = new ArrayList<Column>()
         columns.addAll(todoCardColumn, doingCardColumn, readyToGoCardColumn, buildsCardColumn, deployedReleasesCardColumn)
 
-        def hypothesis = new Hypothesis(hypothesisId, 'Hypothesis Name', 'Hypothesis Description', author,
-                LocalDateTime.now(), columns, new ArrayList<Build>(), workspaceId)
+        def hypothesis = getHypothesis(columns)
 
-        def createBuildRequest = new CreateBuildRequest(author.id, featureList, tagName, hypothesis.id)
+        def createBuildRequest = new CreateBuildRequest(featureList, tagName, hypothesis.id)
 
         def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
@@ -185,12 +172,12 @@ class CreateBuildInteractorImplTest extends Specification {
                 credentials, LocalDateTime.now(), author, "24d4f405-70e2-4908-8f66-f4951e46bc3b")
 
         when:
-        def buildResponse = buildInteractor.execute(createBuildRequest, workspaceId)
+        def buildResponse = buildInteractor.execute(createBuildRequest, workspaceId, authorization)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -219,21 +206,17 @@ class CreateBuildInteractorImplTest extends Specification {
 
     def 'should throw an exception when an informed feature does not exist or are not ready to go'() {
 
+        def authorization = TestUtils.authorization
         def hypothesisId = '865758f1-17ea-4f96-8518-3490977fa0ea'
-        def workspaceId = '7bb24df7-ba5d-4e4e-ba7e-f80153a7774a'
+        def workspaceId = TestUtils.workspaceId
         def tagName = 'charles-cd-build-testing'
-        def featureList = new ArrayList()
-        featureList.add('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2')
-        featureList.add('5455be03-83be-4a7a-b725-52d51cc2430e')
+        def featureList = getFeatureList();
 
-        def author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+        def author = TestUtils.user
 
-        def todoCardColumn = new Column('2dd78ca0-6a2c-11ea-bc55-0242ac130003', ColumnConstants.TO_DO_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def todoCardColumn = getColumn(ColumnConstants.TO_DO_COLUMN_NAME)
 
-        def doingCardColumn = new Column('2dd78ffc-6a2c-11ea-bc55-0242ac130003', ColumnConstants.DOING_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def doingCardColumn = getColumn(ColumnConstants.DOING_COLUMN_NAME)
 
         def listOfLabels = new ArrayList()
         listOfLabels.add(getDummyLabel(author))
@@ -255,39 +238,31 @@ class CreateBuildInteractorImplTest extends Specification {
         def listOfCards = new ArrayList();
         listOfCards.add(card)
 
-        def readyToGoCardColumn = new Column('2dd7910a-6a2c-11ea-bc55-0242ac130003', ColumnConstants.READY_TO_GO_COLUMN_NAME,
-                hypothesisId, listOfCards, workspaceId)
+        def readyToGoCardColumn = getColumn(ColumnConstants.READY_TO_GO_COLUMN_NAME)
 
-        def buildsCardColumn = new Column('2dd791e6-6a2c-11ea-bc55-0242ac130003', ColumnConstants.BUILDS_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def buildsCardColumn = getColumn(ColumnConstants.BUILDS_COLUMN_NAME)
 
-        def deployedReleasesCardColumn = new Column('2dd792ae-6a2c-11ea-bc55-0242ac130003', ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME,
-                hypothesisId, new ArrayList<Card>(), workspaceId)
+        def deployedReleasesCardColumn = getColumn(ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME)
 
         def columns = new ArrayList<Column>()
         columns.addAll(todoCardColumn, doingCardColumn, readyToGoCardColumn, buildsCardColumn, deployedReleasesCardColumn)
 
-        def hypothesis = new Hypothesis(hypothesisId, 'Hypothesis Name', 'Hypothesis Description', author,
-                LocalDateTime.now(), columns, new ArrayList<Build>(), workspaceId)
+        def hypothesis = getHypothesis(columns)
 
-        def createBuildRequest = new CreateBuildRequest(author.id, featureList, tagName, hypothesis.id)
+        def createBuildRequest = new CreateBuildRequest(featureList, tagName, hypothesis.id)
 
-        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
-                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
-                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+        def workspace = TestUtils.workspace
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * securityService.getUser(authorization) >> author
 
         def exception = thrown(BusinessException)
         assert exception.message == "some.of.informed.features.does.not.exist.or.are.not.ready.to.go"
-
     }
 
     private GitConfiguration getDummyGitConfiguration(User author, String workspaceId) {
@@ -304,8 +279,20 @@ class CreateBuildInteractorImplTest extends Specification {
         new Label('b803558d-3c70-4321-ace5-ae8317902c05', 'Label name', LocalDateTime.now(), author, '#FFFFFF')
     }
 
-    private User getDummyUser() {
-        new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+    private ArrayList getFeatureList() {
+        def featureList = new ArrayList()
+        featureList.add('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2')
+        featureList.add('5455be03-83be-4a7a-b725-52d51cc2430e')
+        return featureList
     }
+
+    private Column getColumn(String status) {
+        return new Column('2dd78ca0-6a2c-11ea-bc55-0242ac130003', status,
+                TestUtils.hypothesisId, new ArrayList<Card>(), TestUtils.workspaceId)
+    }
+
+        private Hypothesis getHypothesis(ArrayList<Column> collumns) {
+            return new Hypothesis(TestUtils.hypothesisId, 'Hypothesis Name', 'Hypothesis Description',
+                    LocalDateTime.now(), collumns, new ArrayList<Build>(), TestUtils.workspaceId)
+        }
 }

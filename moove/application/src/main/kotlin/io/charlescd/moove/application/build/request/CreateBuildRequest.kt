@@ -30,9 +30,6 @@ import javax.validation.constraints.Size
 
 data class CreateBuildRequest(
 
-    @field:NotBlank
-    val authorId: String,
-
     @field:NotNull
     @field:NotEmpty
     val features: List<String>,

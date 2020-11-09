@@ -42,11 +42,12 @@ open class CreateBuildInteractorImpl @Inject constructor(
 ) : CreateBuildInteractor {
 
     @Transactional
-    override fun execute(request: CreateBuildRequest, workspaceId: String): BuildResponse {
+    override fun execute(request: CreateBuildRequest, workspaceId: String, authorization: String): BuildResponse {
+        val user = userService.findByToken(authorization)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val hypothesis = hypothesisService.find(request.hypothesisId)
-        val build = createBuildEntity(request, hypothesis, workspaceId)
+        val build = createBuildEntity(request, hypothesis, workspaceId, user)
         buildService.save(build)
         createReleaseCandidate(build, workspace)
         sendBuildInformationToVillager(build, workspace)
@@ -78,8 +79,7 @@ open class CreateBuildInteractorImpl @Inject constructor(
         )
     }
 
-    private fun createBuildEntity(request: CreateBuildRequest, hypothesis: Hypothesis, workspaceId: String): Build {
-        val user = userService.find(request.authorId)
+    private fun createBuildEntity(request: CreateBuildRequest, hypothesis: Hypothesis, workspaceId: String, user: User): Build {
 
         val buildId = UUID.randomUUID().toString()
 
