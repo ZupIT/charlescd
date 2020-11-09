@@ -85,8 +85,14 @@ class CharlesSecurityFilterTest extends Specification {
     def "should not allow user management to post without authorization"(){
         given:
         def request = new MockHttpServletRequest()
-        request.setRequestURI("/api/user")
+        def workspaceId = "b659094f-999c-4d24-90b3-26c5e173b7ec"
         request.setMethod(HttpMethod.GET.name())
+        request.addHeader("x-workspace-id", workspaceId)
+        request.setRequestURI("/api/user")
+        def author = new User("user-id", "User", "user@zup.com.br", "", [], true, LocalDateTime.now())
+        def permission = new Permission("permission-id", "maintenance_write", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions(workspaceId, "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+        def user = new User("user-id", "User", "user@zup.com.br", "", [workspacePermission], false, LocalDateTime.now())
 
         def response = new MockHttpServletResponse()
         def filterChain = new MockFilterChain()
@@ -95,6 +101,7 @@ class CharlesSecurityFilterTest extends Specification {
         charlesSecurityFilter.doFilter(request, response, filterChain)
 
         then:
+        1 * userRepository.findByEmail("") >> Optional.empty()
         assert response.status == HttpStatus.UNAUTHORIZED.value()
     }
 
