@@ -19,21 +19,21 @@
 package main
 
 import (
-	"compass/internal/action"
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	"compass/internal/dispatcher"
-	"compass/internal/health"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/metricsgroupaction"
-	"compass/internal/moove"
-	"compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
+	"github.com/ZupIT/charlescd/compass/internal/health"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"log"
 	"time"
 
-	utils "compass/internal/util"
-	v1 "compass/web/api/v1"
+	utils "github.com/ZupIT/charlescd/compass/internal/util"
+	v1 "github.com/ZupIT/charlescd/compass/web/api/v1"
 
 	"github.com/joho/godotenv"
 )
