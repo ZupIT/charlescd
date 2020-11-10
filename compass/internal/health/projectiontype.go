@@ -18,7 +18,7 @@
 
 package health
 
-import "compass/pkg/datasource"
+import "github.com/ZupIT/charlescd/compass/pkg/datasource"
 
 var allProjectionsType = map[string][]datasource.Period{
 	"FIVE_MINUTES": {
