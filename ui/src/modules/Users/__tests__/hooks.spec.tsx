@@ -72,7 +72,7 @@ test('error create a new user', async () => {
   await wait(() => expect(response).toBeUndefined());
 });
 
-test('update an user', async () => {
+test('update a user', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(payload));
 
   const { result } = renderHook(() => useUpdateProfile());
@@ -84,7 +84,7 @@ test('update an user', async () => {
   expect(result.current.response).toMatchObject(payload);
 });
 
-test('error to update an user', async () => {
+test('error to update a user', async () => {
   const error = {
     name: 'name',
     message: 'The user charlescd@zup.com.br did not update.'
