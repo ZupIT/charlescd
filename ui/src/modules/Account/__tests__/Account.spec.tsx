@@ -24,7 +24,6 @@ import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
 import Account from '../';
 import { saveProfile } from 'core/utils/profile';
-import userEvent from '@testing-library/user-event';
 
 (global as any).MutationObserver = MutationObserver
 
