@@ -19,8 +19,8 @@
 package v1
 
 import (
-	healthPKG "compass/internal/health"
-	"compass/web/api"
+	healthPKG "github.com/ZupIT/charlescd/compass/internal/health"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
