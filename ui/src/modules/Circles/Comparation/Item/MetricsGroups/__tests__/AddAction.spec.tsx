@@ -16,10 +16,11 @@
 
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+import selectEvent from 'react-select-event';
 import { render, screen, act } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import AddAction from '../AddAction';
-import { metricsGroupData } from './fixtures';
+import { metricsGroupData, actionsType } from './fixtures';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -46,6 +47,7 @@ test('render Add Action default value', async () => {
 });
 
 test('add New action', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(actionsType));
   const handleGoBack = jest.fn();
 
   render(
@@ -57,8 +59,8 @@ test('add New action', async () => {
   );
 
   const inputNickname = await screen.findByTestId('input-text-nickname');
-  const selectActionType = await screen.findByTestId('select-actionId');
-
-  await act(() => userEvent.type(inputNickname, 'nickname'));
-  userEvent.selectOptions(selectActionType, 'CIRCLE_DEPLOY');
+  const selectActionType = screen.getByText('Select a action type');
+    
+  await act(async () => userEvent.type(inputNickname, 'nickname'));
+  await selectEvent.select(selectActionType, 'foobar');
 });

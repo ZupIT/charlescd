@@ -22,11 +22,7 @@ import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import {
-  Datasource,
-  Plugin,
-  PluginDatasource,
-} from './interfaces';
+import { Datasource, Plugin, PluginDatasource } from './interfaces';
 import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
 import { useDatasource, usePlugins, useTestConnection } from './hooks';
@@ -70,14 +66,13 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const handleTestConnection = () => {
-    const { data } = getValues({ nest: true });
+    const { data } = getValues();
 
     testConnection({
       pluginSrc: plugin.src,
       data
     });
   };
-
 
   const renderFields = () => (
     <>
@@ -122,9 +117,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       )}
 
       {!loadingConnectionResponse && testConnectionResponse && (
-        <ConnectionStatus
-          status={testConnectionResponse as number}
-        />
+        <ConnectionStatus status={testConnectionResponse as number} />
       )}
       <Styled.TestConnectionButton
         id="test-connection"

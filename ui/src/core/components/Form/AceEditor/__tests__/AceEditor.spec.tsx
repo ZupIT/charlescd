@@ -15,9 +15,9 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import AceEditorForm from '..';
-import {Control, useForm} from 'react-hook-form'
+import {Control} from 'react-hook-form'
 
 jest.mock('react-hook-form', () => {
   return {

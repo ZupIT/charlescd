@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act, wait } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Login from '..';
 import routes from 'core/constants/routes';
@@ -72,12 +72,12 @@ test('render Login page', async () => {
   const inputPassword = await screen.findByTestId('input-password-password');
   const buttonSubmit = await screen.findByTestId('button-default-submit');
   
-  await act(async () => userEvent.type(inputEmail, 'charlescd@zup.com.br'));
+  userEvent.type(inputEmail, 'charlescd@zup.com.br');
   await act(async () => userEvent.type(inputPassword, '123mudar'));
 
   expect(buttonSubmit).not.toBeDisabled();
 
   await act(async () => userEvent.click(buttonSubmit));
 
-  await wait(() => expect(window.location.href).toEqual(routes.workspaces));
+  expect(window.location.href).toEqual(routes.workspaces);
 });
