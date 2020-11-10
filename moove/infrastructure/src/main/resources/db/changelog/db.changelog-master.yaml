@@ -254,8 +254,8 @@ databaseChangeLog:
   - include:
       file: db/changelog/includes/20200715090400_add_undeployment_date.yaml
   - include:
-      file: db/changelog/includes/20200831142700_alter_table_component_add_namespace.yaml
+      file: db/changelog/includes/20201110171200_alter_table_component_add_namespace.yaml
   - include:
-      file: db/changelog/includes/20201006103400_alter_table_component_snapshot_add_namespace.yaml
+      file: db/changelog/includes/20201110171200_alter_table_component_snapshot_add_namespace.yaml
   - include:
-      file: db/changelog/includes/20201005144300_add_unique_constraint_to_components_table.yaml
+      file: db/changelog/includes/20201110171300_add_unique_constraint_to_components_table.yaml

@@ -57,6 +57,8 @@ export class CreateComponentRequestDto {
 
   @ApiProperty()
   @Validate(NamespaceValidation)
+  @IsString()
+  @IsNotEmpty()
   public namespace: string
 
   constructor(

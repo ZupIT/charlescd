@@ -22,12 +22,12 @@ import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 export class NamespaceValidation implements ValidatorConstraintInterface {
 
   public validate(namespace: string): boolean {
-    return namespace != null
+    return namespace !== 'change_namespace'
 
   }
   public defaultMessage(args: ValidationArguments) {
     const component = plainToClass(CreateComponentRequestDto, args.object)
-    return `Namespace is not defined! Edit the configuration of component '${component.componentName}' `
+    return `The namespaces are now configured in component! Edit the configuration of component '${component.componentName}',update the namespace and generate a new release `
   }
 
 }
