@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
@@ -117,6 +118,6 @@ test('opens documentation link once', async () => {
   const helpIcon = await screen.queryByTestId('icon-help');
   expect(helpIcon).toBeInTheDocument();
 
-  fireEvent.click(helpIcon);
+  await act(() => userEvent.click(helpIcon));
   expect(openDocumentation).toHaveBeenCalledTimes(1);
 });

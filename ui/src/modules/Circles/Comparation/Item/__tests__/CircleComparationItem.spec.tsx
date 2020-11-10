@@ -98,11 +98,13 @@ test('render CircleComparationItem with release', async () => {
     </AllTheProviders>
   );
 
-  await waitFor(() => expect(screen.getByTestId('layer-metrics')).toBeInTheDocument());
-  await waitFor(() => expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument());
-  await waitFor(() => expect(screen.getByText('Override release')).toBeInTheDocument());
-  await waitFor(() => expect(screen.getByText('Last release deployed')).toBeInTheDocument());
-  await waitFor(() => expect(screen.getByText('Add datasource health')).toBeInTheDocument());
+  await waitFor(() => {
+    expect(screen.getByTestId('layer-metrics')).toBeInTheDocument();
+    expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument();
+    expect(screen.getByText('Override release')).toBeInTheDocument();
+    expect(screen.getByText('Last release deployed')).toBeInTheDocument();
+    expect(screen.getByText('Add datasource health')).toBeInTheDocument();
+  });
 });
 
 test('render CircleComparationItem Default Circle', async () => {
@@ -116,10 +118,13 @@ test('render CircleComparationItem Default Circle', async () => {
   const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
   expect(DropdownIcon).toBeInTheDocument();
 
-  await act(async () => userEvent.click(DropdownIcon));
+  await act(() => userEvent.click(DropdownIcon));
 
   const DropdownActions = screen.getByTestId('dropdown-actions');
-  expect(DropdownActions).toBeInTheDocument();
-  expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
-  expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
+
+  await waitFor(() => {
+    expect(DropdownActions).toBeInTheDocument();
+    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
+  });
 });

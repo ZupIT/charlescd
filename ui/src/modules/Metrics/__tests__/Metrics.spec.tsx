@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React from 'react';
-import { render, fireEvent, screen } from 'unit-test/testUtils';
+import React, { forwardRef } from 'react';
+import { render, screen, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Metrics from '..';
 
 test('render Metrics default', async () => {
@@ -25,11 +25,11 @@ test('render Metrics default', async () => {
   expect(screen.getByTestId("page-menu")).toBeInTheDocument();
 })
 
-test('render Metrics deploy dashboard', async () => {
+test.only('render Metrics deploy dashboard', async () => {
   render(<Metrics />);
 
   const deployDashboard = screen.getByText("Deploys");
-  fireEvent.click(deployDashboard);
+  userEvent.click(deployDashboard);
 
   expect(await screen.findByTestId("metrics-deploy")).toBeInTheDocument();
 })
@@ -38,7 +38,7 @@ test('render Metrics circles dashboard', async () => {
   render(<Metrics />);
 
   const circleDashboard = screen.getByText("Circles");
-  fireEvent.click(circleDashboard);
+  userEvent.click(circleDashboard);
 
   expect(await screen.findByTestId("metrics-circles")).toBeInTheDocument();
 })
