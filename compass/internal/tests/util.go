@@ -19,13 +19,13 @@
 package tests
 
 import (
-	"compass/internal/action"
-	"compass/internal/datasource"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/metricsgroupaction"
-	datasourcePKG "compass/pkg/datasource"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"os"

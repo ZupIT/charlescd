@@ -19,8 +19,8 @@
 package main
 
 import (
-	"compass/pkg/datasource"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 )
 
 func transformFiltersToQuery(filters []datasource.MetricFilter) string {
