@@ -19,9 +19,9 @@
 package metricsgroupaction
 
 import (
-	"compass/internal/action"
-	"compass/internal/plugin"
-	"compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/jinzhu/gorm"
 	"io"
 )

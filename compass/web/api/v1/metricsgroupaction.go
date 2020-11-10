@@ -19,9 +19,9 @@
 package v1
 
 import (
-	"compass/internal/metricsgroupaction"
-	"compass/web/api"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"net/http"

@@ -19,8 +19,8 @@
 package main
 
 import (
-	"compass/pkg/datasource"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 )
 
 func TestConnection(datasourceConfiguration []byte) error {
