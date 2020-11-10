@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
@@ -82,7 +82,7 @@ test('to try update user profile', async () => {
 
   render(<Router history={history}><Account /></Router>);
 
-  await wait(() => expect(screen.queryByTestId('tabpanel-Account')).toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByTestId('tabpanel-Account')).toBeInTheDocument());
   
   const IconEditAvatar = await screen.findByTestId('icon-edit-avatar');
   await act(async () => userEvent.click(IconEditAvatar));
@@ -94,5 +94,5 @@ test('to try update user profile', async () => {
   await act(async () => userEvent.click(ButtonEditAvatar));
 
   const Avatar = await screen.findByTestId('avatar');
-  await wait(() => expect(Avatar).toHaveProperty('src', newAvatarUrl));
+  await waitFor(() => expect(Avatar).toHaveProperty('src', newAvatarUrl));
 });
