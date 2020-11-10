@@ -42,4 +42,8 @@ class KeycloackManagementUserSecurityService(
     override fun  createUser(email: String, name: String, password: String) {
         keycloakService.createUser(email, name, password)
     }
+
+    override fun  deleteUser(id: String) {
+        keycloakService.deleteUser(id)
+    }
 }

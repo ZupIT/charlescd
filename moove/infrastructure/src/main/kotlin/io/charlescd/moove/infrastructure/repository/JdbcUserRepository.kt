@@ -93,6 +93,17 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         return findById(user.id).get()
     }
 
+    override fun delete(id: String) {
+        val statement = "DELETE FROM users " +
+                "WHERE id = " +
+                "?"
+
+        this.jdbcTemplate.update(
+            statement,
+            id
+        )
+    }
+
     private fun createUser(user: User) {
         val statement = "INSERT INTO users(" +
                 "id," +

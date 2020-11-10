@@ -18,7 +18,6 @@
 
 package io.charlescd.moove.application
 
-
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
@@ -28,7 +27,6 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import javax.inject.Named
-
 
 @Named
 class UserService(private val userRepository: UserRepository, private val managementUserSecurityService: ManagementUserSecurityService) {
@@ -64,6 +62,10 @@ class UserService(private val userRepository: UserRepository, private val manage
         return this.userRepository.save(user)
     }
 
+    fun delete(id: String) {
+        this.userRepository.delete(id)
+    }
+
     fun findByToken(authorization: String): User {
         val email = getEmailFromToken(authorization)
         return userRepository
@@ -87,4 +89,10 @@ class UserService(private val userRepository: UserRepository, private val manage
     fun createUserOnKeycloak(email: String, name: String, password: String) {
         return managementUserSecurityService.createUser(email, name, password)
     }
+
+    fun deleteUserOnKeycloak(id: String) {
+        this.managementUserSecurityService.deleteUser(id)
+    }
+
+
 }

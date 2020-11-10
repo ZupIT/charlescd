@@ -36,7 +36,8 @@ class V2UserController(
     private val findAllUsersInteractor: FindAllUsersInteractor,
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
-    private val changeUserPasswordInteractor: ChangeUserPasswordInteractor
+    private val changeUserPasswordInteractor: ChangeUserPasswordInteractor,
+    private val deleteUserInteractor: DeleteUserInteractor
 ) {
 
     @ApiOperation(value = "Find user by email")
@@ -83,7 +84,7 @@ class V2UserController(
         return this.createUserInteractor.execute(createUserRequest, authorization)
     }
 
-    @ApiOperation(value = "Change users' password")
+    @ApiOperation(value = "Change users password")
     @PutMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun changePassword(
@@ -91,5 +92,14 @@ class V2UserController(
         @RequestBody @Valid request: ChangeUserPasswordRequest
     ) {
         this.changeUserPasswordInteractor.execute(authorization, request)
+    }
+
+    @ApiOperation(value = "Delete by id")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable id: String) {
+        deleteUserInteractor.execute(id, authorization)
     }
 }

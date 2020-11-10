@@ -20,7 +20,7 @@ import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
-import io.charlescd.moove.legacy.moove.service.KeycloakService
+import io.charlescd.moove.legacy.moove.service.KeycloakServiceLegacy
 import io.charlescd.moove.legacy.moove.service.UserServiceLegacy
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -40,7 +40,7 @@ class UserControllerUnitTest extends Specification {
     )
     Pageable pageable = PageRequest.of(0, 5)
     UserServiceLegacy service = Mock(UserServiceLegacy)
-    KeycloakService keycloakService = Mock(KeycloakService)
+    KeycloakServiceLegacy keycloakService = Mock(KeycloakServiceLegacy)
     UserController controller
 
     def "setup"() {
@@ -66,53 +66,5 @@ class UserControllerUnitTest extends Specification {
         then:
         1 * service.delete(representation.id)
         notThrown()
-    }
-
-    def "should add group to user"() {
-
-        given:
-        def userId = "fake-user-id"
-        def groupIds = new ArrayList()
-        groupIds.add("fake-group-id")
-        def request = new AddGroupsRequest(groupIds)
-
-        when:
-        controller.addGroups(userId, request)
-
-        then:
-        1 * service.addGroupsToUser(userId, request)
-        notThrown()
-    }
-
-    def "should reset password to an user"() {
-
-        given:
-        def email = "john.doe@zup.com.br"
-        def request = new ResetPasswordRequest("newPassword")
-
-        when:
-        controller.resetPassword(email, request)
-
-        then:
-        1 * service.resetPassword(email, request)
-        notThrown()
-
-    }
-
-    def "should remove an user from a group"() {
-
-        given:
-        def userId = "fake-user-id"
-        def groupId = "fake-group-id"
-
-        when:
-        controller.removeUserFromGroup(userId, groupId)
-
-        then:
-
-        1 * service.removeUserFromGroup(userId, groupId)
-
-        notThrown()
-
     }
 }
