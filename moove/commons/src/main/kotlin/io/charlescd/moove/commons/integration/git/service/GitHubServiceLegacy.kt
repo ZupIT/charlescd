@@ -129,7 +129,7 @@ class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFac
                 handleResponseError(
                     error = e,
                     repository = repository,
-                    baseBranch = sourceBranch,
+                    baseBranch = "$sourceBranch/$alternativeBaseBranch",
                     releaseName = releaseName
                 )
                 Optional.empty()
