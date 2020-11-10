@@ -25,7 +25,7 @@ test('render Metrics default', async () => {
   expect(screen.getByTestId("page-menu")).toBeInTheDocument();
 })
 
-test.only('render Metrics deploy dashboard', async () => {
+test('render Metrics deploy dashboard', async () => {
   render(<Metrics />);
 
   const deployDashboard = screen.getByText("Deploys");
