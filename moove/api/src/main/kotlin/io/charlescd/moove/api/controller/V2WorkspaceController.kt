@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v2/workspaces")
+
+//TODO: verify if not root has access
 class V2WorkspaceController(
     private val createWorkspaceInteractor: CreateWorkspaceInteractor,
     private val associateUserGroupInteractor: AssociateUserGroupToWorkspaceInteractor,
@@ -55,6 +57,7 @@ class V2WorkspaceController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createWorkspace(@Valid @RequestBody request: CreateWorkspaceRequest): WorkspaceResponse {
+        //TODO: authorId
         return createWorkspaceInteractor.execute(request)
     }
 

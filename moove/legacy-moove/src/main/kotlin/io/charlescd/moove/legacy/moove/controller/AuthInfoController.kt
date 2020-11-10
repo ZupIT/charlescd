@@ -27,6 +27,7 @@ import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
+//TODO: verify if not root has access
 @Api(value = "Auth Info Endpoints", tags = ["Auth Info"])
 @RestController
 @RequestMapping("/auth/info")

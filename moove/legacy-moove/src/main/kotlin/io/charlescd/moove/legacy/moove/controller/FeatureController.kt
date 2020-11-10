@@ -50,6 +50,7 @@ class FeatureController(private val service: FeatureService) {
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody createFeatureRequest: CreateFeatureRequest
     ): FeatureRepresentation =
+        //TODO: authorID
         service.create(createFeatureRequest, workspaceId)
 
     @ApiOperation(value = "Find all")

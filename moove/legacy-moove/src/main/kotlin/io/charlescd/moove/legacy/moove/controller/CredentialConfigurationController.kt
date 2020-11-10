@@ -47,6 +47,7 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody createRegistryConfigRequest: CreateRegistryConfigurationRequest
     ): CredentialConfigurationRepresentation {
+        //TODO: authorID
         return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId)
     }
 
@@ -63,6 +64,7 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody createCdConfigRequest: CreateCdConfigurationRequest
     ): CredentialConfigurationRepresentation {
+        //TODO: authorID
         return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId)
     }
 

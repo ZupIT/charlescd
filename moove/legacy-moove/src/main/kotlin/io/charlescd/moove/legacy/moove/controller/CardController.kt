@@ -54,6 +54,7 @@ class CardController(private val service: CardService) {
         @Valid @RequestBody createCardRequest: CreateCardRequest
     ): CardRepresentation =
         service.create(createCardRequest, workspaceId)
+    //TODO: authorID
 
     @ApiOperation(value = "Find all cards")
     @GetMapping
@@ -111,6 +112,7 @@ class CardController(private val service: CardService) {
         @PathVariable id: String,
         @Valid @RequestBody addCommentRequest: AddCommentRequest
     ) =
+        //TODO: authorID
         service.addComment(id, addCommentRequest, workspaceId)
 
     @ApiOperation(value = "Add member")
@@ -122,6 +124,7 @@ class CardController(private val service: CardService) {
         @PathVariable id: String,
         @Valid @RequestBody addMemberRequest: AddMemberRequest
     ) =
+        //TODO: authorID
         service.addMembers(id, addMemberRequest, workspaceId)
 
     @ApiOperation(value = "Remove member")

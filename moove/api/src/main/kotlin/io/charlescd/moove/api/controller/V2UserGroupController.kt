@@ -53,6 +53,7 @@ class V2UserGroupController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@Valid @RequestBody request: CreateUserGroupRequest): UserGroupResponse {
+        //TODO: authorId
         return this.createUserGroupInteractor.execute(request)
     }
 
@@ -111,6 +112,7 @@ class V2UserGroupController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/members/{memberId}")
     fun delete(@PathVariable("id") id: String, @PathVariable("memberId") memberId: String) {
+
         this.removeMemberFromUserGroupInteractor.execute(id, memberId)
     }
 }

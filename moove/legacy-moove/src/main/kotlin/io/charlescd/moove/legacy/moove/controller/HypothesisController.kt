@@ -69,6 +69,7 @@ class HypothesisController(private val hypothesisService: HypothesisServiceLegac
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody request: CreateHypothesisRequest
     ): HypothesisRepresentation =
+        //TODO: authorID
         this.hypothesisService.create(request, workspaceId)
 
     @ApiOperation(value = "Update Hypothesis")
