@@ -28,14 +28,13 @@ import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
-import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/v2/workspaces")
 
-//TODO: verify if not root has access
 class V2WorkspaceController(
     private val createWorkspaceInteractor: CreateWorkspaceInteractor,
     private val associateUserGroupInteractor: AssociateUserGroupToWorkspaceInteractor,
@@ -56,9 +55,11 @@ class V2WorkspaceController(
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createWorkspace(@Valid @RequestBody request: CreateWorkspaceRequest): WorkspaceResponse {
-        //TODO: authorId
-        return createWorkspaceInteractor.execute(request)
+    fun createWorkspace(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @Valid @RequestBody request: CreateWorkspaceRequest
+    ): WorkspaceResponse {
+        return createWorkspaceInteractor.execute(request, authorization)
     }
 
     @ApiOperation(value = "Patch Workspace")
