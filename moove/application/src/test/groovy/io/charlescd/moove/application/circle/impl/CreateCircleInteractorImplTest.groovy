@@ -27,7 +27,7 @@ import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
-import io.charlescd.moove.domain.service.SecurityService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 class CreateCircleInteractorImplTest extends Specification {
@@ -37,12 +37,12 @@ class CreateCircleInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
-    private SecurityService securityService = Mock(SecurityService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createCircleInteractor = new CreateCircleInteractorImpl(
                 new CircleService(circleRepository),
-                new UserService(userRepository, securityService),
+                new UserService(userRepository, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository),
                 circleMatcherService,
         )
@@ -62,7 +62,8 @@ class CreateCircleInteractorImplTest extends Specification {
         def response = this.createCircleInteractor.execute(request, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * circleRepository.save(_) >> circle
         1 * circleMatcherService.create(circle, workspace.circleMatcherUrl)
@@ -94,13 +95,13 @@ class CreateCircleInteractorImplTest extends Specification {
         this.createCircleInteractor.execute(request, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> { throw new NotFoundException("user", authorId) }
+        1 * managementUserSecurityService.getUserEmail(authorization) >> "email@email.com"
+        1 * userRepository.findByEmail("email@email.com") >> Optional.empty()
         0 * userRepository.findById(authorId) >> Optional.of(TestUtils.user)
 
         def exception = thrown(NotFoundException)
 
         assert exception.resourceName == "user"
-        assert exception.id == authorId
     }
 
     def "should throw a NotFoundException when workspace does not exists"() {
@@ -115,7 +116,8 @@ class CreateCircleInteractorImplTest extends Specification {
         this.createCircleInteractor.execute(request, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.empty()
 
         def exception = thrown(NotFoundException)
@@ -123,6 +125,4 @@ class CreateCircleInteractorImplTest extends Specification {
         assert exception.resourceName == "workspace"
         assert exception.id == workspaceId
     }
-
-
 }

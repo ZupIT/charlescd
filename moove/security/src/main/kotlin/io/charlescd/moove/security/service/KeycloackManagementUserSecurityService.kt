@@ -18,17 +18,14 @@
 
 package io.charlescd.moove.security.service
 
-import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
-import io.charlescd.moove.domain.service.SecurityService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import org.springframework.stereotype.Service
 
 @Service
-class SecurityUserService(
+class KeycloackManagementUserSecurityService(
     val keycloakService: KeycloakService
-) : SecurityService {
+) : ManagementUserSecurityService {
 
     override fun getUserEmail(authorization: String) : String {
        return keycloakService.getEmailByAccessToken(authorization)
@@ -40,5 +37,9 @@ class SecurityUserService(
 
     override fun changePassword(email: String, oldPassword: String, newPassword: String) {
         keycloakService.changeUserPassword(email, oldPassword, newPassword)
+    }
+
+    override fun  createUser(email: String, name: String, password: String) {
+        keycloakService.createUser(email, name, password)
     }
 }

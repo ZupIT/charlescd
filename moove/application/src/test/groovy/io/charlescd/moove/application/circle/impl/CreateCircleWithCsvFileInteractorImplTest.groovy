@@ -31,7 +31,7 @@ import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
-import io.charlescd.moove.domain.service.SecurityService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 class CreateCircleWithCsvFileInteractorImplTest extends Specification {
@@ -45,11 +45,11 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
     private CsvSegmentationService csvSegmentationService = new CsvSegmentationService(objectMapper)
-    private SecurityService securityService = Mock(SecurityService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createCircleWithCsvFileInteractor = new CreateCircleWithCsvFileInteractorImpl(
-                new UserService(userRepository, securityService),
+                new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository),
                 circleMatcherService,
                 new KeyValueRuleService(keyValueRuleRepository),
@@ -84,7 +84,8 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * this.circleRepository.save(_) >> { arguments ->
             def circle = arguments[0]
 
@@ -179,7 +180,8 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * this.circleRepository.save(_) >> { arguments ->
             def circle = arguments[0]
 

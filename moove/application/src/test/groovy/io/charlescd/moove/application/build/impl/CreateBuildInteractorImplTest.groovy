@@ -25,7 +25,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.GitProviderService
-import io.charlescd.moove.domain.service.SecurityService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import io.charlescd.moove.domain.service.VillagerService
 import spock.lang.Specification
 
@@ -42,12 +42,12 @@ class CreateBuildInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
-    private SecurityService securityService = Mock(SecurityService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.buildInteractor = new CreateBuildInteractorImpl(
                 gitProviderService,
-                new UserService(userRepository, securityService),
+                new UserService(userRepository, managementUserSecurityService),
                 new BuildService(buildRepository),
                 new HypothesisService(hypothesisRepository),
                 villagerService,
@@ -73,7 +73,8 @@ class CreateBuildInteractorImplTest extends Specification {
         buildInteractor.execute(createBuildRequest, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * hypothesisRepository.findById(hypothesisId) >> Optional.empty()
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
@@ -87,7 +88,6 @@ class CreateBuildInteractorImplTest extends Specification {
         given:
         def workspaceId = TestUtils.workspaceId
         def workspace = TestUtils.workspace
-        def authorId = TestUtils.authorId
         def authorization = TestUtils.authorization
         def hypothesisId = TestUtils.hypothesisId
         def tagName = 'charles-cd-build-testing'
@@ -103,11 +103,11 @@ class CreateBuildInteractorImplTest extends Specification {
         then:
         0 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         0 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
-        1 * securityService.getUser(authorization) >> { throw new NotFoundException("user", authorId) }
+        1 * managementUserSecurityService.getUserEmail(authorization) >> "email@email.com"
+        1 * userRepository.findByEmail("email@email.com") >> Optional.empty()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
-        ex.id == authorId
 
     }
 
@@ -177,7 +177,8 @@ class CreateBuildInteractorImplTest extends Specification {
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -258,7 +259,8 @@ class CreateBuildInteractorImplTest extends Specification {
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
 
         def exception = thrown(BusinessException)
         assert exception.message == "some.of.informed.features.does.not.exist.or.are.not.ready.to.go"
@@ -291,7 +293,7 @@ class CreateBuildInteractorImplTest extends Specification {
     }
 
     private static Hypothesis getHypothesis(ArrayList<Column> collumns) {
-        return new Hypothesis(TestUtils.hypothesisId, 'Hypothesis Name', 'Hypothesis Description',
+        return new Hypothesis(TestUtils.hypothesisId, 'Hypothesis Name', 'Hypothesis Description', TestUtils.user,
                 LocalDateTime.now(), collumns, new ArrayList<Build>(), TestUtils.workspaceId)
     }
 }

@@ -27,7 +27,6 @@ import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.KeyValueRule
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.service.CircleMatcherService
-import io.charlescd.moove.domain.service.SecurityService
 import java.util.*
 import javax.inject.Named
 import javax.transaction.Transactional

@@ -32,6 +32,10 @@ class TestUtils {
         return "d7abd3c1-15a3-45b6-84fb-f0e548aca230"
     }
 
+    static String getAuthorIdRoot() {
+        return "e7abd3c1-15a3-45b6-84fb-f0e548aca230"
+    }
+
     static String getAuthorization() {
         return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
     }
@@ -54,6 +58,11 @@ class TestUtils {
         return "charles@zup.com.br"
     }
 
+    static String getEmailRoot() {
+        return "charlesadmin@zup.com.br"
+    }
+
+
     static User getUser() {
         new User(
                 authorId,
@@ -62,6 +71,18 @@ class TestUtils {
                 "http://charles.com/dummy_photo.jpg",
                 [],
                 false,
+                LocalDateTime.now()
+        )
+    }
+
+    static User getUserRoot() {
+        new User(
+                authorIdRoot,
+                "charles",
+                emailRoot,
+                "http://charles.com/dummy_photo.jpg",
+                [],
+                true,
                 LocalDateTime.now()
         )
     }

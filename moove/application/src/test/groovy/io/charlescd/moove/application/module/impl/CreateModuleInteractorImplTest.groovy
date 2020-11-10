@@ -26,16 +26,11 @@ import io.charlescd.moove.application.module.request.ComponentRequest
 import io.charlescd.moove.application.module.request.CreateModuleRequest
 import io.charlescd.moove.application.module.response.ModuleResponse
 import io.charlescd.moove.domain.Module
-import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.Workspace
-import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.repository.ModuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
-import io.charlescd.moove.domain.service.SecurityService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 class CreateModuleInteractorImplTest extends Specification {
 
@@ -44,12 +39,12 @@ class CreateModuleInteractorImplTest extends Specification {
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-    private SecurityService securityService = Mock(SecurityService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         createModuleInteractor = new CreateModuleInteractorImpl(
                 new ModuleService(moduleRepository),
-                new UserService(userRepository, securityService),
+                new UserService(userRepository, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository)
         )
     }
@@ -81,7 +76,8 @@ class CreateModuleInteractorImplTest extends Specification {
 
             return module
         }
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         assert response != null

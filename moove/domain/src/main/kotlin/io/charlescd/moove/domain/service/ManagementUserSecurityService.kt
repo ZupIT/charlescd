@@ -18,15 +18,15 @@
 
 package io.charlescd.moove.domain.service
 
-import io.charlescd.moove.domain.User
-
 interface
-SecurityService {
+ManagementUserSecurityService {
 
     fun getUserEmail(authorization: String): String
 
     fun resetUserPassword(email: String, newPassword: String)
 
     fun changePassword(email: String, oldPassword: String, newPassword: String)
+
+    fun createUser(email: String, name: String, password: String)
 
 }

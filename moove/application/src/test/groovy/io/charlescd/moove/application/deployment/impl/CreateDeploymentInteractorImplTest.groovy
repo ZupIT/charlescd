@@ -24,7 +24,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.DeployService
-import io.charlescd.moove.domain.service.SecurityService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -39,13 +39,13 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private CircleRepository circleRepository = Mock(CircleRepository)
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-    private SecurityService securityService = Mock(SecurityService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.createDeploymentInteractor = new CreateDeploymentInteractorImpl(
                 new DeploymentService(deploymentRepository),
                 new BuildService(buildRepository),
-                new UserService(userRepository, securityService),
+                new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository),
                 deployService,
                 new WorkspaceService(workspaceRepository, userRepository))
@@ -86,7 +86,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
@@ -108,13 +109,13 @@ class CreateDeploymentInteractorImplTest extends Specification {
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
-        1 * securityService.getUser(authorization) >> { throw new NotFoundException("user", author.id) }
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.empty()
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
-        ex.id == author.id
     }
 
     def 'when circle does not exist, should throw exception'() {
@@ -133,7 +134,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.empty()
 
         def ex = thrown(NotFoundException)
@@ -160,7 +162,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment, activeDeployment]
         1 * deployService.undeploy(activeDeployment.id, activeDeployment.author.id)
@@ -218,7 +221,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.findByCircleIdAndWorkspaceId(circle.id, workspaceId) >> [activeDeployment, notDeployedDeployment]
@@ -273,7 +277,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment]
@@ -329,7 +334,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment]

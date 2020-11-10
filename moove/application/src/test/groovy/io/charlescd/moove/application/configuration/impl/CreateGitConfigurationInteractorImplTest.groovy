@@ -28,7 +28,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
-import io.charlescd.moove.domain.service.SecurityService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 class CreateGitConfigurationInteractorImplTest extends Specification {
@@ -38,11 +38,11 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
-    private SecurityService securityService = Mock(SecurityService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createGitConfigurationInteractor = new CreateGitConfigurationInteractorImpl(gitConfigurationRepository,
-                new UserService(userRepository, securityService), new WorkspaceService(workspaceRepository, userRepository))
+                new UserService(userRepository, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
     }
 
     def "when workspace does not exist should throw exception"() {
@@ -76,11 +76,10 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
 
         then:
         1 * this.workspaceRepository.exists(workspaceId) >> true
-        1 * securityService.getUser(authorization) >> { throw new NotFoundException("user", author.id) }
-
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.empty()
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
-        ex.id == author.id
     }
 
     def "should return git configuration response"() {
@@ -98,7 +97,8 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
 
         then:
         1 * this.workspaceRepository.exists(workspaceId) >> true
-        1 * securityService.getUser(authorization) >> author
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * this.gitConfigurationRepository.save(_) >> { argument ->
             def savedGitConfiguration = argument[0]
             assert savedGitConfiguration instanceof GitConfiguration
