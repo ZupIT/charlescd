@@ -29,8 +29,6 @@ import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
-//TODO: x-workspace-id
-
 @RestController
 @RequestMapping("/v2/users")
 class V2UserController(
@@ -67,7 +65,6 @@ class V2UserController(
     fun resetPassword(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable id: UUID
-        //TODO: userId
     ) = resetUserPasswordInteractor.execute(authorization, id)
 
     @ApiOperation(value = "Create user")
