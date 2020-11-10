@@ -37,15 +37,15 @@ type MetricsGroupApi struct {
 func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsGroupApi {
 	apiPath := "/metrics-groups"
 	metricsGroupApi := MetricsGroupApi{metricsGroupMain}
-	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupApi.list))
-	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupApi.create))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.show))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/query"), api.HttpValidator(metricsGroupApi.query))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/result"), api.HttpValidator(metricsGroupApi.result))
-	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.update))
-	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.updateName))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.delete))
-	v1.Router.GET(v1.getCompletePath("/resume"+apiPath), api.HttpValidator(metricsGroupApi.resume))
+	v1.Router.GET(v1.getCompletePath(apiPath), v1.HttpValidator(metricsGroupApi.list))
+	v1.Router.POST(v1.getCompletePath(apiPath), v1.HttpValidator(metricsGroupApi.create))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.show))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/query"), v1.HttpValidator(metricsGroupApi.query))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/result"), v1.HttpValidator(metricsGroupApi.result))
+	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.update))
+	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.updateName))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.delete))
+	v1.Router.GET(v1.getCompletePath("/resume"+apiPath), v1.HttpValidator(metricsGroupApi.resume))
 	return metricsGroupApi
 }
 

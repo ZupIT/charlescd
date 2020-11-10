@@ -33,7 +33,7 @@ type PluginApi struct {
 func (v1 V1) NewPluginApi(pluginMain plugin.UseCases) PluginApi {
 	apiPath := "/plugins"
 	pluginApi := PluginApi{pluginMain}
-	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(pluginApi.list))
+	v1.Router.GET(v1.getCompletePath(apiPath), v1.HttpValidator(pluginApi.list))
 	return pluginApi
 }
 

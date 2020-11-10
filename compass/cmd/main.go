@@ -47,6 +47,12 @@ func main() {
 	}
 	defer db.Close()
 
+	mooveDb, err := configuration.GetMooveDBConnection()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer mooveDb.Close()
+
 	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
 	}
@@ -66,7 +72,7 @@ func main() {
 	go metricDispatcher.Start(stopChan)
 	go actionDispatcher.Start(stopChan)
 
-	v1Api := v1.NewV1()
+	v1Api := v1.NewV1(mooveDb)
 	v1Api.NewPluginApi(pluginMain)
 	v1Api.NewMetricsGroupApi(metricsgroupMain)
 	v1Api.NewMetricApi(metricMain, metricsgroupMain)

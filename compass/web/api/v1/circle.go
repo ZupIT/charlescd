@@ -32,7 +32,7 @@ type CircleApi struct {
 func (v1 V1) NewCircleApi(circleMain metricsgroup.UseCases) CircleApi {
 	apiPath := "/circles"
 	circleApi := CircleApi{circleMain}
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics-groups"), api.HttpValidator(circleApi.ListMetricsGroupInCircle))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics-groups"), v1.HttpValidator(circleApi.ListMetricsGroupInCircle))
 
 	return circleApi
 }

@@ -35,9 +35,9 @@ func (v1 V1) NewActionApi(actionMain action.UseCases) ActionApi {
 	apiPath := "/actions"
 	actionApi := ActionApi{actionMain}
 
-	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.list))
-	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.create))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.delete))
+	v1.Router.GET(v1.getCompletePath(apiPath), v1.HttpValidator(actionApi.list))
+	v1.Router.POST(v1.getCompletePath(apiPath), v1.HttpValidator(actionApi.create))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(actionApi.delete))
 
 	return actionApi
 }

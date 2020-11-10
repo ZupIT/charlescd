@@ -43,11 +43,11 @@ type DataSourceApi struct {
 func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi {
 	apiPath := "/datasources"
 	dataSourceAPI := DataSourceApi{dataSourceMain}
-	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.findAllByWorkspace))
-	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.create))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(dataSourceAPI.deleteDataSource))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics"), api.HttpValidator(dataSourceAPI.getMetrics))
-	v1.Router.POST(v1.getCompletePath(apiPath+"/test-connection"), api.HttpValidator(dataSourceAPI.testConnection))
+	v1.Router.GET(v1.getCompletePath(apiPath), v1.HttpValidator(dataSourceAPI.findAllByWorkspace))
+	v1.Router.POST(v1.getCompletePath(apiPath), v1.HttpValidator(dataSourceAPI.create))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(dataSourceAPI.deleteDataSource))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics"), v1.HttpValidator(dataSourceAPI.getMetrics))
+	v1.Router.POST(v1.getCompletePath(apiPath+"/test-connection"), v1.HttpValidator(dataSourceAPI.testConnection))
 	return dataSourceAPI
 }
 

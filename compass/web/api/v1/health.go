@@ -33,8 +33,8 @@ type HealthApi struct {
 func (v1 V1) NewHealthApi(healthMain healthPKG.UseCases) HealthApi {
 	apiPath := "/application-health"
 	healthApi := HealthApi{healthMain}
-	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components", api.HttpValidator(healthApi.components))
-	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components/health", api.HttpValidator(healthApi.componentsHealth))
+	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components", v1.HttpValidator(healthApi.components))
+	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components/health", v1.HttpValidator(healthApi.componentsHealth))
 	return healthApi
 }
 

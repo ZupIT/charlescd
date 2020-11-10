@@ -36,9 +36,9 @@ type MetricApi struct {
 func (v1 V1) NewMetricApi(metricMain metric.UseCases, metricGroupMain metricsgroup.UseCases) MetricApi {
 	apiPath := "/metrics-groups"
 	metricApi := MetricApi{metricMain, metricGroupMain}
-	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", api.HttpValidator(metricApi.createMetric))
-	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricApi.updateMetric))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricApi.deleteMetric))
+	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", v1.HttpValidator(metricApi.createMetric))
+	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), v1.HttpValidator(metricApi.updateMetric))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), v1.HttpValidator(metricApi.deleteMetric))
 	return metricApi
 }
 

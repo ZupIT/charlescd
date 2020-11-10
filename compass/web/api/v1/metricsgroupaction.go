@@ -35,10 +35,10 @@ func (v1 V1) NewMetricsGroupActionApi(main metricsgroupaction.UseCases) MetricsG
 	apiPath := "/group-actions"
 	metricsGroupActionApi := MetricsGroupActionApi{main}
 
-	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupActionApi.create))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.delete))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.findById))
-	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.update))
+	v1.Router.POST(v1.getCompletePath(apiPath), v1.HttpValidator(metricsGroupActionApi.create))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupActionApi.delete))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupActionApi.findById))
+	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupActionApi.update))
 
 	return metricsGroupActionApi
 }

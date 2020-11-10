@@ -19,6 +19,7 @@
 package v1
 
 import (
+	"errors"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -28,7 +29,10 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/jinzhu/gorm"
 	"net/http"
+	"strings"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -48,20 +52,21 @@ type UseCases interface {
 }
 
 type V1 struct {
-	Router *httprouter.Router
-	Path   string
+	Router  *httprouter.Router
+	Path    string
+	MooveDB *gorm.DB
 }
 
 const (
 	v1Path = "/api/v1"
 )
 
-func NewV1() UseCases {
+func NewV1(mooveDB *gorm.DB) UseCases {
 	router := httprouter.New()
 	router.GET("/health", health)
 	router.GET("/metrics", metricHandler)
 
-	return V1{router, v1Path}
+	return V1{Router: router, Path: v1Path, MooveDB: mooveDB}
 }
 
 func metricHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -72,11 +77,36 @@ func (v1 V1) getCompletePath(path string) string {
 	return fmt.Sprintf("%s%s", v1Path, path)
 }
 
-func health(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Write([]byte(":)"))
+func health(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	_, _ = w.Write([]byte(":)"))
 }
 
 func (v1 V1) Start() {
 	logger.Info("Server Started", "Port:8080")
 	logger.Fatal("", http.ListenAndServe(":8080", v1.Router))
+}
+
+func (v1 V1) HttpValidator(
+	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string),
+) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
+		workspaceID := strings.TrimSpace(r.Header.Get("x-workspace-id"))
+		if workspaceID == "" {
+			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("workspaceId is required")})
+			return
+		}
+
+		authToken := strings.TrimSpace(r.Header.Get("Authorization"))
+		if authToken == "" {
+			api.NewRestError(w, http.StatusUnauthorized, []error{errors.New("not authorized")})
+			return
+		}
+
+		next(w, r, ps, workspaceID)
+	}
+}
+
+func (v1 V1) authorizeUser() {
+
 }
