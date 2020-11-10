@@ -19,10 +19,10 @@
 package main
 
 import (
-	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"os"
 	"strings"
 )

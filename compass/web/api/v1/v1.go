@@ -19,15 +19,15 @@
 package v1
 
 import (
-	"compass/internal/action"
-	"compass/internal/datasource"
-	healthPKG "compass/internal/health"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/metricsgroupaction"
-	"compass/internal/plugin"
-	"compass/pkg/logger"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	healthPKG "github.com/ZupIT/charlescd/compass/internal/health"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
