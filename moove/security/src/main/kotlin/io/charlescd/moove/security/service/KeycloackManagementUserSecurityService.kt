@@ -26,20 +26,19 @@ import io.charlescd.moove.domain.service.SecurityService
 import org.springframework.stereotype.Service
 
 @Service
-class SecurityServiceImpl(
-    val keycloakService: KeycloakService,
-    var userRepository: UserRepository
+class SecurityUserService(
+    val keycloakService: KeycloakService
 ) : SecurityService {
 
-    override fun getUser(authorization: String): User {
-        return getUserByToken(authorization)
+    override fun getUserEmail(authorization: String) : String {
+       return keycloakService.getEmailByAccessToken(authorization)
     }
 
-    fun getUserByToken(authorization: String): User {
-        val email = keycloakService.getEmailByAccessToken(authorization)
-        return userRepository
-            .findByEmail(email).orElseThrow {
-                NotFoundException("user", email)
-            }
+    override fun resetUserPassword(email: String, newPassword: String) {
+       keycloakService.resetPassword(email, newPassword)
+    }
+
+    override fun changePassword(email: String, oldPassword: String, newPassword: String) {
+        keycloakService.changeUserPassword(email, oldPassword, newPassword)
     }
 }

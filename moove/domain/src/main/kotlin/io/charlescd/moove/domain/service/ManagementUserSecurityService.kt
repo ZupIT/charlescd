@@ -23,6 +23,10 @@ import io.charlescd.moove.domain.User
 interface
 SecurityService {
 
-    fun getUser(authorization: String): User
+    fun getUserEmail(authorization: String): String
+
+    fun resetUserPassword(email: String, newPassword: String)
+
+    fun changePassword(email: String, oldPassword: String, newPassword: String)
 
 }
