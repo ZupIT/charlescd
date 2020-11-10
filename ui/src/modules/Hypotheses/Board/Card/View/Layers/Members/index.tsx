@@ -45,11 +45,7 @@ const Members = ({ cardId, members, onFinish }: Props) => {
 
   const renderAvatars = () =>
     map(members, member => (
-      <Styled.Avatar
-        key={member.name}
-        src={member.photoUrl}
-        name={member.name}
-      />
+      <Styled.Avatar key={member.id} name={member.name} />
     ));
 
   return (
