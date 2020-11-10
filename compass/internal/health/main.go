@@ -19,9 +19,9 @@
 package health
 
 import (
-	"compass/internal/datasource"
-	"compass/internal/moove"
-	"compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 
 	"github.com/jinzhu/gorm"
 )

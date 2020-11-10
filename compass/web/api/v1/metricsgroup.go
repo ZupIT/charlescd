@@ -19,10 +19,10 @@
 package v1
 
 import (
-	"compass/internal/metricsgroup"
-	"compass/pkg/logger"
-	"compass/web/api"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"net/http"
 
 	"github.com/google/uuid"
