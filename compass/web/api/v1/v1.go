@@ -123,7 +123,10 @@ func (v1 V1) HttpValidator(
 }
 
 func extractToken(authorization string) (*AuthToken, error) {
-	token, err := jwt.ParseWithClaims(authorization, &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
+
+	splitToken := strings.Split(authorization, "Bearer ")
+
+	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlfapihqzqSZQ8Z9jGR88"), nil
 	})
 	if ve, ok := err.(*jwt.ValidationError); ok {
