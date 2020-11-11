@@ -62,11 +62,6 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 1
-        assert response.workspaces[0].id == workspacePermission.id
-        assert response.workspaces[0].name == workspacePermission.name
-        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
     def "should return an user with an empty workspace when no workspaces where found"() {
@@ -87,6 +82,5 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 0
     }
 }

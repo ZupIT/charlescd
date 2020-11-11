@@ -16,9 +16,10 @@
 
 package io.charlescd.moove.application.user
 
-import io.charlescd.moove.application.user.response.SimpleUserResponse
+import io.charlescd.moove.application.user.response.UserResponse
+import java.util.UUID
 
-interface FindUserByEmailInteractor {
+interface FindUserByIdInteractor {
 
-    fun execute(email: String): SimpleUserResponse
+    fun execute(authorization: String, id: UUID): UserResponse
 }
