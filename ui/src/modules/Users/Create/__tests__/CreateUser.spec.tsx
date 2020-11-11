@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, wait, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
+import { render, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
 import CreateUser from '..';
 import userEvent from '@testing-library/user-event';
 
@@ -48,7 +48,7 @@ test('render CreateUser default component', async () => {
     <CreateUser {...props} onFinish={props.onFinish}/>
   );
 
-  waitFor(() => expect(screen.getByTestId('create-user')).toBeInTheDocument());
+  expect(await screen.findByTestId('create-user')).toBeInTheDocument();
 });
 
 test('close CreateUser component', async () => {

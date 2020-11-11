@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import Menu from '..';
 
 const props = {
@@ -34,5 +34,5 @@ test('render Menu default component with one item link', async () => {
     <Menu {...props} />
   );
 
-  await wait(() => expect(getByTestId('menu-item-link-menu')).toBeInTheDocument());
+  expect(getByTestId('menu-item-link-menu')).toBeInTheDocument();
 });
