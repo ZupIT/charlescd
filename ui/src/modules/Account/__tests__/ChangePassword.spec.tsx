@@ -15,52 +15,61 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent, screen, act } from 'unit-test/testUtils';
+import { render, waitFor, fireEvent, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
-import MutationObserver from 'mutation-observer';
-import * as baseHookUtils from 'core/providers/base/hooks';
 import ChangePassword from '../ChangePassword';
 
-(global as any).MutationObserver = MutationObserver
-
 test('check if button is disabled', async () => {
-  const { queryByTestId } = render(<ChangePassword />);
-  const button = queryByTestId('button-default-change-password');
+  render(<ChangePassword />);
 
-  await wait(() => expect(button).toBeInTheDocument());
-  
+  const button = await screen.findByTestId('button-default-change-password');
+
+  expect(button).toBeInTheDocument();
   expect(button).toBeDisabled();
 });
 
 test('render error in invalid field', async () => {
-  const { queryByTestId } = render(<ChangePassword />);
-  const newPassword = queryByTestId('input-password-newPassword');
-  const confirmPassword = queryByTestId('input-password-confirmPassword');
+  render(<ChangePassword />);
 
-  await wait(() => expect(newPassword).toBeInTheDocument());
+  const newPassword = screen.getByTestId('input-password-newPassword');
+  const confirmPassword = screen.getByTestId('input-password-confirmPassword');
+
+  expect(newPassword).toBeInTheDocument();
+  expect(confirmPassword).toBeInTheDocument();
+
   fireEvent.blur(newPassword);
   fireEvent.blur(confirmPassword);
-  await wait(() => expect(queryByTestId('error-newPassword')).toBeInTheDocument());
-  await wait(() => expect(queryByTestId('error-confirmPassword')).toBeInTheDocument());
+  
+  const errorNewPasswordElement =  await screen.findByTestId('error-newPassword');
+  const errorConfirmPasswordElement =  await screen.findByTestId('error-confirmPassword');
+  
+  expect(errorNewPasswordElement).toBeInTheDocument();
+  expect(errorConfirmPasswordElement).toBeInTheDocument();
 });
 
 test('submit password change form', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
   const onSubmit = jest.fn();
-  const { queryByTestId } = render(<ChangePassword onSubmit={onSubmit} />);
-  const oldPassword = queryByTestId('input-password-oldPassword');
-  const newPassword = queryByTestId('input-password-newPassword');
-  const confirmPassword = queryByTestId('input-password-confirmPassword');
+
+  render(<ChangePassword onSubmit={onSubmit} />);
+
+  const oldPassword = screen.getByTestId('input-password-oldPassword');
+  const newPassword = screen.getByTestId('input-password-newPassword');
+  const confirmPassword = screen.getByTestId('input-password-confirmPassword');
   const value = '@Asdfg1234';
 
-  await wait(() => expect(newPassword).toBeInTheDocument());
-  fireEvent.change(oldPassword, { target: { value }});
-  fireEvent.change(newPassword, { target: { value }});
-  fireEvent.change(confirmPassword, { target: { value }});
+  expect(newPassword).toBeInTheDocument();
 
-  fireEvent.blur(confirmPassword);
-  const button = queryByTestId('button-default-change-password');
-  await wait(() => expect(button).not.toBeDisabled());
-  await wait(() => fireEvent.click(button));
-  await wait (() => expect(onSubmit).toBeCalled());
+  userEvent.type(oldPassword, value);
+  await act(() => userEvent.type(newPassword, value));
+  await act(() => userEvent.type(confirmPassword, value));
+
+  userEvent.tab();
+
+  const button = await screen.findByTestId('button-default-change-password');
+  expect(button).not.toBeDisabled();
+  userEvent.click(button);
+  
+  await waitFor(() => expect(onSubmit).toBeCalled());
 });

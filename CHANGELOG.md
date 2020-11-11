@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.4.0 (06/11/2020)
+- [#643](https://github.com/ZupIT/charlescd/pull/643) fix workspace search bug
+- [#650](https://github.com/ZupIT/charlescd/pull/650) Update Testing Library
+- [#636](https://github.com/ZupIT/charlescd/pull/636) Update React Hook Form
+- [#656](https://github.com/ZupIT/charlescd/pull/656) fix responsive layout
+- [#657](https://github.com/ZupIT/charlescd/pull/657) create typeorm cli config file
+- [#655](https://github.com/ZupIT/charlescd/pull/655) Fixing horus calls
+- [#651](https://github.com/ZupIT/charlescd/pull/651) Adding services security scan CI step
+- [#609](https://github.com/ZupIT/charlescd/pull/609) Metric actions v 2
+- [#608](https://github.com/ZupIT/charlescd/pull/608) Compass actions health
+- [#649](https://github.com/ZupIT/charlescd/pull/649) Ends_with, matchers and contains conditions 
+- [#640](https://github.com/ZupIT/charlescd/pull/640) Add Log component into core
+- [#605](https://github.com/ZupIT/charlescd/pull/605) Butler v2
+- [#639](https://github.com/ZupIT/charlescd/pull/639) Add BUTLER_URL env var
+- [#638](https://github.com/ZupIT/charlescd/pull/638) Fixing matcher s3 pipeline for devrelease.
+- [#637](https://github.com/ZupIT/charlescd/pull/637) Update moove-devrelease.yml
+- [#635](https://github.com/ZupIT/charlescd/pull/635) Release darwin ecr
+- [#632](https://github.com/ZupIT/charlescd/pull/632) Create styled components declaration file
+- [#631](https://github.com/ZupIT/charlescd/pull/631) Butler v1 endpoints
+- [#629](https://github.com/ZupIT/charlescd/pull/629) Feature ui test connection with gcr
+- [#621](https://github.com/ZupIT/charlescd/pull/621) Use butler v2 api
+- [#620](https://github.com/ZupIT/charlescd/pull/620) Removing contributors session
+- [#578](https://github.com/ZupIT/charlescd/pull/578) Fixed some typos in CONTRIBUTING.md
+- [#610](https://github.com/ZupIT/charlescd/pull/610) CI Update of charts and changelog
+
+---
+
 ## 0.3.11 (19/10/2020)
 - [#606](https://github.com/ZupIT/charlescd/pull/606) Protected branches list configuration
 - [#349](https://github.com/ZupIT/charlescd/pull/349) Feature wizard
@@ -402,7 +429,3 @@
 
 ## 1.0.1-beta.3 (06/05/2020)
 - Add resource verification and unit test structure for octopipe (@maycommit in #26)
----
-
-## 1.0.1-beta.2 (04/05/2020)
-- Handle first pipeline error and stop execution (@maycommit in #12)

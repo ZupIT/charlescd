@@ -15,37 +15,40 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
-import ButtonIconRounded from '..';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import ButtonIconRounded from '../';
 
-test('render ButtonIconRounded default component', async () => {
+test('render ButtonIconRounded default component', () => {
   const click = jest.fn();
   const props = {
     name: 'add',
     icon: 'add',
     children: 'button'
   };
-  const { getByTestId } = render(
+  render(
     <ButtonIconRounded onClick={click} name={props.name} icon={props.name}>
       {props.children}
     </ButtonIconRounded>
   );
-  const Button = getByTestId(`button-iconRounded-${props.name}`);
-  const IconAdd = getByTestId(`icon-${props.name}`);
-  await wait(() => expect(Button).toBeInTheDocument());
-  await wait(() => expect(IconAdd).toBeInTheDocument());
-  fireEvent.click(Button);
-  await wait(() => expect(click).toBeCalled());
+  const button = screen.getByTestId(`button-iconRounded-${props.name}`);
+  const iconAdd = screen.getByTestId(`icon-${props.name}`);
+
+  expect(iconAdd).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
+
+  userEvent.click(button);
+  expect(click).toBeCalled();
 });
 
-test('render ButtonIconRounded default component without default props', async () => {
+test('render ButtonIconRounded default component without default props', () => {
   const click = jest.fn();
   const props = {
     name: 'add',
     icon: 'add',
     children: 'button'
   };
-  const { getByTestId } = render(
+  render(
     <ButtonIconRounded
       onClick={click}
       name={props.name}
@@ -56,22 +59,24 @@ test('render ButtonIconRounded default component without default props', async (
       {props.children}
     </ButtonIconRounded>
   );
-  const Button = getByTestId(`button-iconRounded-${props.name}`);
-  const IconAdd = getByTestId(`icon-${props.name}`);
-  await wait(() => expect(Button).toBeInTheDocument());
-  await wait(() => expect(IconAdd).toBeInTheDocument());
-  fireEvent.click(Button);
-  await wait(() => expect(click).toBeCalled());
+  const button = screen.getByTestId(`button-iconRounded-${props.name}`);
+  const iconAdd = screen.getByTestId(`icon-${props.name}`);
+
+  expect(iconAdd).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
+
+  userEvent.click(button);
+  expect(click).toBeCalled();
 });
 
-test('render ButtonIconRounded on loading mode', async () => {
+test('render ButtonIconRounded on loading mode', () => {
   const click = jest.fn();
   const props = {
     name: 'add',
     icon: 'add',
     children: 'button'
   };
-  const { getByTestId } = render(
+  render(
     <ButtonIconRounded
       onClick={click}
       name={props.name}
@@ -81,8 +86,9 @@ test('render ButtonIconRounded on loading mode', async () => {
       {props.children}
     </ButtonIconRounded>
   );
-  const Button = getByTestId(`button-iconRounded-${props.name}`);
-  const IconLoading = getByTestId('icon-loading');
-  expect(Button).toBeInTheDocument();
-  expect(IconLoading).toBeInTheDocument();
+  const button = screen.getByTestId(`button-iconRounded-${props.name}`);
+  const iconLoading = screen.getByTestId('icon-loading');
+
+  expect(button).toBeInTheDocument();
+  expect(iconLoading).toBeInTheDocument();
 });

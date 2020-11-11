@@ -17,11 +17,11 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { ConnectionStatusEnum as statusEnum } from './interfaces';
 import Styled from './styled';
+import { CONNECTION_SUCCESS } from './constants';
 
 type Props = {
-  status: string;
+  status?: number;
 };
 
 type MessageProps = {
@@ -40,21 +40,17 @@ const MessageStatus = ({ status, messagemText }: MessageProps) => (
 );
 
 const ConnectionStatus = ({ status }: Props) => {
-  if (status === statusEnum.FAILED)
+  if (status !== CONNECTION_SUCCESS) {
     return MessageStatus({
       status: 'error',
       messagemText: 'Connection to metric provider failed.'
     });
-  if (status === statusEnum.SUCCESS)
-    return MessageStatus({
-      status: 'success',
-      messagemText: 'Successful connection with the metrics provider.'
-    });
-  else
-    return MessageStatus({
-      status: 'error',
-      messagemText: 'Failed to reach the metrics provider.'
-    });
+  }
+
+  return MessageStatus({
+    status: 'success',
+    messagemText: 'Successful connection with the metrics provider.'
+  });
 };
 
 export default ConnectionStatus;

@@ -29,10 +29,11 @@ interface Props {
   items: Radio[];
   name: string;
   onChange?: (event: ChangeInputEvent) => void;
+  className?: string;
 }
 
-const RadioGroup = ({ name, items, onChange }: Props) => (
-  <Styled.RadioGroup data-testid={`radio-group-${name}`}>
+const RadioGroup = ({ name, items, onChange, className }: Props) => (
+  <Styled.RadioGroup data-testid={`radio-group-${name}`} className={className}>
     {map(items, item => {
       const id = `radio-group-${name}-item-${item.value}`;
 

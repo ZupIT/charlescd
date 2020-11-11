@@ -50,6 +50,7 @@ import { dark as darkNavTabs } from './navTabs';
 import { dark as darkSummary } from './summary';
 import { dark as darkAccordion } from './accordion';
 import { dark as darkModule } from './module';
+import { dark as darkLog } from './log';
 import { zIndex } from '../zindex';
 
 const common = {
@@ -97,7 +98,8 @@ const dark = {
   navTabs: darkNavTabs,
   summary: darkSummary,
   accordion: darkAccordion,
-  module: darkModule
+  module: darkModule,
+  log: darkLog
 };
 
 export type ThemeScheme = typeof dark;
