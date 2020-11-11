@@ -27,7 +27,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
     FeignErrorDecoderConfiguration feignErrorDecoderConfiguration
     ErrorDecoder errorDecoder
 
-    def "should return illegal argument exception"() {
+    def "should return illegal argument exception when status is 400"() {
         given:
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
@@ -41,7 +41,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         assert exception instanceof IllegalArgumentException
     }
 
-    def "should return business exception"() {
+    def "should return business exception when status is 422"() {
         given:
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
@@ -55,7 +55,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         assert exception instanceof BusinessException
     }
 
-    def "should return RunTimeException"() {
+    def "should return RunTimeException when status is 500"() {
         given:
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
@@ -63,8 +63,19 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         def response = GroovyMock(Response)
         ReflectionTestUtils.setField(response,"reason",'Error')
         ReflectionTestUtils.setField(response,"status",500)
+        ReflectionTestUtils.se
         when:
         def exception = errorDecoder.decode("methodkey",response)
+        then:
+        assert exception instanceof RuntimeException
+    }
+    def "should return RunTimeException when response is null"() {
+        given:
+        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
+        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
+
+        when:
+        def exception = errorDecoder.decode("methodkey",null)
         then:
         assert exception instanceof RuntimeException
     }
