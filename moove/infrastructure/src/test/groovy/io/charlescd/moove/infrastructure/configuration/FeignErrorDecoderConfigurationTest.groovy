@@ -33,10 +33,10 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
 
         def response = GroovyMock(Response)
-        ReflectionTestUtils.setField(response,"status",400)
-        ReflectionTestUtils.setField(response,"reason",'Error')
+        ReflectionTestUtils.setField(response, "status", 400)
+        ReflectionTestUtils.setField(response, "reason",'Error')
         when:
-        def exception = errorDecoder.decode("methodkey",response)
+        def exception = errorDecoder.decode("methodkey", response)
         then:
         assert exception instanceof IllegalArgumentException
     }
@@ -47,10 +47,10 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
 
         def response = GroovyMock(Response)
-        ReflectionTestUtils.setField(response,"reason",'Error')
-        ReflectionTestUtils.setField(response,"status",422)
+        ReflectionTestUtils.setField(response,"reason", 'Error')
+        ReflectionTestUtils.setField(response,"status", 422)
         when:
-        def exception = errorDecoder.decode("methodkey",response)
+        def exception = errorDecoder.decode("methodkey", response)
         then:
         assert exception instanceof BusinessException
     }
@@ -61,11 +61,10 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
 
         def response = GroovyMock(Response)
-        ReflectionTestUtils.setField(response,"reason",'Error')
-        ReflectionTestUtils.setField(response,"status",500)
-        ReflectionTestUtils.se
+        ReflectionTestUtils.setField(response,"reason", 'Error')
+        ReflectionTestUtils.setField(response,"status", 500)
         when:
-        def exception = errorDecoder.decode("methodkey",response)
+        def exception = errorDecoder.decode("methodkey", response)
         then:
         assert exception instanceof RuntimeException
     }
@@ -75,7 +74,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
 
         when:
-        def exception = errorDecoder.decode("methodkey",null)
+        def exception = errorDecoder.decode("methodkey", null)
         then:
         assert exception instanceof RuntimeException
     }
