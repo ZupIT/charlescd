@@ -19,9 +19,9 @@
 package api
 
 import (
-	"compass/internal/util"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/util"
 	"net/http"
 
 	"github.com/google/uuid"

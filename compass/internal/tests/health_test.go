@@ -19,12 +19,12 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	"compass/internal/health"
-	"compass/internal/moove"
-	"compass/internal/plugin"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/health"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"net/http"
 	"net/http/httptest"
 	"testing"

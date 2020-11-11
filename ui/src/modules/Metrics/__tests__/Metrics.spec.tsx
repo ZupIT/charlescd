@@ -13,39 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Metrics from '..';
 
 test('render Metrics default', async () => {
-  const { getByTestId } = render(<Metrics />);
+  render(<Metrics />);
 
-  await wait();
-
-  expect(getByTestId("page")).toBeInTheDocument();
-  expect(getByTestId("page-menu")).toBeInTheDocument();
+  expect(screen.getByTestId("page")).toBeInTheDocument();
+  expect(screen.getByTestId("page-menu")).toBeInTheDocument();
 })
 
 test('render Metrics deploy dashboard', async () => {
-  const { getByText, getByTestId } = render(<Metrics />);
+  render(<Metrics />);
 
-  await wait();
+  const deployDashboard = screen.getByText("Deploys");
+  userEvent.click(deployDashboard);
 
-  const deployDashboard = getByText("Deploys");
-  fireEvent.click(deployDashboard);
-
-  await wait(() => expect(getByTestId("metrics-deploy")).toBeInTheDocument());
+  expect(await screen.findByTestId("metrics-deploy")).toBeInTheDocument();
 })
 
 test('render Metrics circles dashboard', async () => {
-  const { getByText, getByTestId } = render(<Metrics />);
+  render(<Metrics />);
 
-  await wait();
+  const circleDashboard = screen.getByText("Circles");
+  userEvent.click(circleDashboard);
 
-  const circleDashboard = getByText("Circles");
-  fireEvent.click(circleDashboard);
-
-  await wait(() => expect(getByTestId("metrics-circles")).toBeInTheDocument());
+  expect(await screen.findByTestId("metrics-circles")).toBeInTheDocument();
 })
 
