@@ -21,30 +21,28 @@ import Text from 'core/components/Text';
 import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
-import { getWorkspaceId } from 'core/utils/workspace';
 import routes from 'core/constants/routes';
 import { CircleState } from '../interfaces/CircleState';
 import useCircles, { CIRCLE_TYPES } from '../hooks';
-import { useWorkspace } from 'modules/Settings/hooks';
 import { prepareCircles, getDefaultCircle } from './helpers';
 import CirclesListItem from './Item';
 import Loader from './Loaders';
 import Styled from './styled';
+import { useDatasource } from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
+import { some } from 'lodash';
+import { Datasource } from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
 
 const CirclesList = () => {
   const [loading, , getCircles] = useCircles(CIRCLE_TYPES.metrics);
   const { metrics: list } = useGlobalState<CircleState>(
     ({ circles }) => circles
   );
-  const { status } = useGlobalState(({ workspaces }) => workspaces);
-  const [response, loadWorkspace] = useWorkspace();
+  const { responseAll, getAll } = useDatasource()
   const profileName = getProfileByKey('name');
 
   useEffect(() => {
-    if (status === 'idle') {
-      loadWorkspace(getWorkspaceId());
-    }
-  }, [loadWorkspace, status]);
+    getAll()
+  }, [getAll]);
 
   useEffect(() => {
     getCircles();
@@ -113,7 +111,7 @@ const CirclesList = () => {
 
   return (
     <Styled.Wrapper data-testid="metrics-list">
-      {isEmpty(response?.metricConfiguration) && !loading
+      {!some((responseAll as Datasource[]), { healthy: true }) && !loading
         ? renderNoMetrics()
         : renderMetrics()}
     </Styled.Wrapper>

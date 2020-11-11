@@ -19,8 +19,8 @@
 package metric
 
 import (
-	"compass/internal/util"
-	"compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -83,4 +83,8 @@ func (main Main) removeMetricExecution(tx *gorm.DB, id string) error {
 		return db.Error
 	}
 	return nil
+}
+
+func (main Main) ValidateIfExecutionReached(metricExecution MetricExecution) bool {
+	return metricExecution.Status == MetricReached
 }

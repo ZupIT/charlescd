@@ -16,13 +16,20 @@
 
 import { prepareCircles, getDefaultCircle } from '../helpers';
 import { CirclePaginationItem } from 'modules/Circles/interfaces/CirclesPagination';
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 
 const circles = [
   {
-    name: 'Circle'
+    name: 'Circle',
+    deployment: {
+      status: DEPLOYMENT_STATUS.deployed,
+    }
   },
   {
-    name: 'Default'
+    name: 'Default',
+    deployment: {
+      status: DEPLOYMENT_STATUS.deployed,
+    }
   }
 ] as CirclePaginationItem[];
 

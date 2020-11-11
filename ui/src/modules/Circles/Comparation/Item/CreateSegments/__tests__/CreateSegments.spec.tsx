@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import CreateSegments from '..';
@@ -36,7 +36,7 @@ beforeEach(() => {
 test('render CreateSegments default component', async () => {
   const onGoBack = jest.fn();
   const onSaveCircle = jest.fn();
-  const { getByText } = render(
+  render(
     <CreateSegments
       onGoBack={onGoBack}
       onSaveCircle={onSaveCircle}
@@ -45,5 +45,5 @@ test('render CreateSegments default component', async () => {
     />
   );
 
-  await wait(() => expect(getByText('Create manually')).toBeInTheDocument());
+  expect(screen.getByText('Create manually')).toBeInTheDocument();
 });

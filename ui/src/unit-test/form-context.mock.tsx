@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.metrics.interactor
+import React from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 
-import io.charlescd.moove.metrics.api.response.CircleHealthRepresentation
-
-interface RetrieveCircleComponentsHealthInteractor {
-
-    fun execute(circleId: String, workspaceId: String): CircleHealthRepresentation
+type Props = {
+  children: React.ReactNode;
 }
+
+export const FormContextMock = ({ children }: Props) => {
+  const methods = useForm();
+
+  return (
+    <FormProvider {...methods} >
+      <form>
+        {children}
+      </form>
+    </FormProvider>
+  );
+};

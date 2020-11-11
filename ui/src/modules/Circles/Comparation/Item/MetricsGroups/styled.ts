@@ -57,7 +57,7 @@ const ButtonAdd = styled(ButtonComponent.Rounded)`
 `;
 
 const Input = styled(InputComponent)`
-  width: 230px;
+  width: 370px;
   margin: 10px 0 20px;
 `;
 
@@ -97,7 +97,12 @@ const ThresholdWrapper = styled.div`
 `;
 
 const Select = styled(SelectComponent.Single)`
-  width: 230px;
+  width: 370px;
+  margin-bottom: 20px;
+`;
+
+const SelectAsync = styled(SelectComponent.Async)`
+  width: 370px;
   margin-bottom: 20px;
 `;
 
@@ -197,5 +202,6 @@ export default {
   },
   TrashIcon,
   RuleWrapper,
-  FieldErrorWrapper
+  FieldErrorWrapper,
+  SelectAsync
 };

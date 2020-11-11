@@ -22,6 +22,7 @@ import Text from 'core/components/Text';
 import Styled from '../styled';
 
 export interface Props {
+  id?: string;
   name: string;
   icon: string;
   action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -29,7 +30,7 @@ export interface Props {
   children?: ReactNode;
 }
 
-const Section = ({ children, name, icon, action, showAction }: Props) => {
+const Section = ({ id, children, name, icon, action, showAction }: Props) => {
   const renderAction = () => (
     <Button.Rounded name="add" icon="add" color="dark" onClick={action}>
       {`Add ${name}`}
@@ -37,7 +38,7 @@ const Section = ({ children, name, icon, action, showAction }: Props) => {
   );
 
   return (
-    <Layer>
+    <Layer data-testid={id ? `section-${id}` : ''}>
       <ContentIcon icon={icon}>
         <Text.h2 color="light">{name}</Text.h2>
       </ContentIcon>

@@ -36,7 +36,7 @@ class FindAllCirclesInteractorImpl(
 ) : FindAllCirclesInteractor {
     override fun execute(
         name: String?,
-        active: Boolean,
+        active: Boolean?,
         workspaceId: String,
         pageRequest: PageRequest
     ): ResourcePageResponse<CircleResponse> {
@@ -44,7 +44,7 @@ class FindAllCirclesInteractorImpl(
         return createResponsePage(page, convertContent(page, active))
     }
 
-    private fun convertContent(page: Page<Circle>, active: Boolean): List<CircleResponse> {
+    private fun convertContent(page: Page<Circle>, active: Boolean?): List<CircleResponse> {
         return when (page.total > 0) {
             true -> createCircleResponseList(page, active)
             else -> emptyList()
@@ -62,7 +62,7 @@ class FindAllCirclesInteractorImpl(
         page.totalPages()
     )
 
-    private fun createCircleResponseList(page: Page<Circle>, active: Boolean): List<CircleResponse> {
+    private fun createCircleResponseList(page: Page<Circle>, active: Boolean?): List<CircleResponse> {
         return page.content.map { circle ->
             val deployment = findActiveDeployment(active, circle)
             val build = deployment?.let { buildService.find(deployment.buildId) }
@@ -71,11 +71,12 @@ class FindAllCirclesInteractorImpl(
     }
 
     private fun findActiveDeployment(
-        active: Boolean,
+        active: Boolean?,
         circle: Circle
     ): Deployment? {
         return when (active) {
             true -> deploymentService.findLastActive(circle.id)
+            null -> deploymentService.findLastActive(circle.id)
             else -> null
         }
     }

@@ -62,8 +62,7 @@ test('render Modules comparation', async () => {
     ]
   }));
   render(<ModulesComparation />);
-  await wait();
-  const tabpanel = screen.queryByTestId('tabpanel-workspace');
+  const tabpanel = await screen.findByTestId('tabpanel-workspace');
   const charlescdComponents = await screen.findByText('charlescd');
   userEvent.click(charlescdComponents);
   const component1 = await screen.findByText('comp1');

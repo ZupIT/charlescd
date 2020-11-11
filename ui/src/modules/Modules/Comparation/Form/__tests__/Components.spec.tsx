@@ -15,7 +15,8 @@
  */
 
 import React from "react";
-import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
+import { render, act, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Components from "../Components";
 import { Component } from "modules/Modules/interfaces/Component";
 import { ThemeProviderWrapper } from "unit-test/testUtils";
@@ -63,8 +64,8 @@ test("Test componentForm for one component render", async () => {
       />
     </ThemeProviderWrapper>
   );
-  await wait()
-  expect(container.innerHTML).toMatch("input-wrapper-components[0]");
+  
+  await waitFor(() => expect(container.innerHTML).toMatch("input-wrapper-components[0]"));
 });
 
 test("Test componentForm for two components render", async () => {
@@ -80,11 +81,12 @@ test("Test componentForm for two components render", async () => {
       />
     </ThemeProviderWrapper>
   );
-  await wait()
-  expect(container.innerHTML).toMatch("input-wrapper-components[0]");
-  expect(container.innerHTML).toMatch("input-wrapper-components[1]");
-});
 
+  await waitFor(() => {
+    expect(container.innerHTML).toMatch("input-wrapper-components[0]");
+    expect(container.innerHTML).toMatch("input-wrapper-components[1]");
+  });
+});
 
 test("Test componentForm for append another component", async () => {
   const { container, getByTestId , rerender} = render(
@@ -99,10 +101,10 @@ test("Test componentForm for append another component", async () => {
       />
     </ThemeProviderWrapper>
   );
-  await wait()
+
   const buttonAppend = getByTestId("button-default-add-component")
-  fireEvent.click(buttonAppend)
-  await wait()
+  act(() => userEvent.click(buttonAppend));
+
   rerender(
     <ThemeProviderWrapper>
       <Components
@@ -115,8 +117,10 @@ test("Test componentForm for append another component", async () => {
       />
     </ThemeProviderWrapper>
   );
-  await wait()
-  expect(container.innerHTML).toMatch("input-wrapper-components[0]");
-  expect(container.innerHTML).toMatch("input-wrapper-components[1]");
-  expect(container.innerHTML).toMatch("input-wrapper-components[2]");
+
+  await waitFor(() => {
+    expect(container.innerHTML).toMatch("input-wrapper-components[0]");
+    expect(container.innerHTML).toMatch("input-wrapper-components[1]");
+    expect(container.innerHTML).toMatch("input-wrapper-components[2]");
+  });
 });
