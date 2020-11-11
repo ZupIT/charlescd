@@ -47,13 +47,10 @@ jest.mock('containers/Can', () => {
 test('render Credentials default component', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
   
-  await waitFor(() => (
-    render(
-      <Credentials />
-    )
-  ));
+  render(<Credentials />);
 
-  expect(screen.getByTestId("credentials")).toBeInTheDocument();
+  const credentialsElement = await screen.findByTestId("credentials");
+  expect(credentialsElement).toBeInTheDocument();
 });
 
 test('render Credentials items', async () => {
