@@ -15,7 +15,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react-hooks';
-import { wait } from 'unit-test/testUtils';
+import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useCreateUser, useUpdateProfile } from '../hooks';
 import { NewUser } from '../interfaces/User';
@@ -51,7 +51,7 @@ test('create a new user', async () => {
     response = await current.create(payload);
   });
 
-  await wait(() => expect(response).toMatchObject(newUser));
+  await waitFor(() => expect(response).toMatchObject(newUser));
 });
 
 test('error create a new user', async () => {
@@ -69,7 +69,7 @@ test('error create a new user', async () => {
     response = await userResult.current.create(payload);
   });
 
-  await wait(() => expect(response).toBeUndefined());
+  await waitFor(() => expect(response).toBeUndefined());
 });
 
 test('update a user', async () => {
