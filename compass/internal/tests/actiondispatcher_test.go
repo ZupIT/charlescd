@@ -19,15 +19,15 @@
 package tests
 
 import (
-	"compass/internal/action"
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	"compass/internal/dispatcher"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/metricsgroupaction"
-	"compass/internal/plugin"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"os"
 	"testing"
 	"time"

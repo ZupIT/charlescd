@@ -1,9 +1,9 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/moove"
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
