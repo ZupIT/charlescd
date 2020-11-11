@@ -15,14 +15,12 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import InputFile from '../';
 
 test('renders default input file component', () => {
-  const { getByTestId } = render(
-    <InputFile />
-  );
+  render(<InputFile />);
 
-  const inputFileElement = getByTestId('input-file-inputFileId-file');
+  const inputFileElement = screen.getByTestId('input-file-inputFileId-file');
   expect(inputFileElement).toBeInTheDocument();
 });

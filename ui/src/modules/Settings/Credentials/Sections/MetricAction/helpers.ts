@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.metrics.interactor
+import { ActionForm } from './types';
 
-import io.charlescd.moove.metrics.api.ProjectionType
-import io.charlescd.moove.metrics.api.response.ComponentMetricRepresentation
-import io.charlescd.moove.metrics.domain.MetricType
-
-interface RetrieveCircleComponentsPeriodMetricInteractor {
-
-    fun execute(
-        circleId: String,
-        projectionType: ProjectionType,
-        metricType: MetricType,
-        workspaceId: String
-    ): ComponentMetricRepresentation
-}
+export const buildActionPayload = (
+  formData: ActionForm,
+  defaultConfig: boolean
+) => {
+  if (defaultConfig) {
+    return {
+      ...formData,
+      useDefaultConfiguration: defaultConfig
+    };
+  } else {
+    return {
+      ...formData,
+      useDefaultConfiguration: defaultConfig,
+      configuration: {
+        mooveUrl: formData.configuration
+      }
+    };
+  }
+};

@@ -20,6 +20,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useWorkspace } from 'modules/Settings/hooks';
+import { useActionData } from './Sections/MetricAction/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
 import { useGlobalState } from 'core/state/hooks';
@@ -30,6 +31,8 @@ import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
+import { useDatasource } from './Sections/MetricProvider/hooks';
+import { Datasource } from './Sections/MetricProvider/interfaces';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
@@ -39,6 +42,15 @@ const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const [, loadWorkspace, , updateWorkspace] = useWorkspace();
+  const {
+    responseAll: datasources,
+    getAll: getAllDatasources
+  } = useDatasource();
+  const {
+    getActionData,
+    actionResponse,
+    status: actionDataStatus
+  } = useActionData();
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
@@ -48,11 +60,22 @@ const Credentials = ({ onClickHelp }: Props) => {
     updateWorkspace(name);
   };
 
+  const getActions = () => getActionData();
+
+  const getDatasources = () => getAllDatasources();
+
+  useEffect(() => {
+    if (actionDataStatus.isIdle) {
+      getActionData();
+    }
+  }, [getActionData, actionDataStatus]);
+
   useEffect(() => {
     if (isNull(form)) {
       loadWorkspace(id);
     }
-  }, [id, form, loadWorkspace]);
+    getAllDatasources();
+  }, [id, form, loadWorkspace, getAllDatasources]);
 
   const renderContent = () => (
     <Layer>
@@ -123,14 +146,23 @@ const Credentials = ({ onClickHelp }: Props) => {
       <Section.MetricProvider
         form={form}
         setForm={setForm}
-        data={workspace.metricConfiguration}
+        data={datasources as Datasource[]}
+        getNewDatasources={getDatasources}
       />
+      {actionDataStatus.isResolved && (
+        <Section.MetricAction
+          form={form}
+          setForm={setForm}
+          actions={actionResponse}
+          getNewActions={getActions}
+        />
+      )}
     </TabPanel>
   );
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {status === 'pending' || isEmpty(workspace.id) ? (
+      {status === 'pending' || isEmpty(workspace.id) || !datasources ? (
         <Loader.Tab />
       ) : (
         renderPanel()

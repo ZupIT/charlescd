@@ -19,8 +19,8 @@
 package v1
 
 import (
-	"compass/internal/metricsgroup"
-	"compass/web/api"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -37,9 +37,9 @@ func (v1 V1) NewCircleApi(circleMain metricsgroup.UseCases) CircleApi {
 	return circleApi
 }
 
-func (circleApi CircleApi) ListMetricsGroupInCircle(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (circleApi CircleApi) ListMetricsGroupInCircle(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	id := ps.ByName("id")
-	metricsGroups, err := circleApi.circleMain.FindCircleMetricGroups(id)
+	metricsGroups, err := circleApi.circleMain.ListAllByCircle(id)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

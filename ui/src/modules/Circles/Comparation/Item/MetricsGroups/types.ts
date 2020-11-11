@@ -29,8 +29,34 @@ export type MetricsGroup = {
   createdAt?: string;
   name: string;
   metrics?: Metric[];
+  actions?: Action[];
   status?: string;
-  circleId: string;
+  circleId?: string;
+};
+
+export type Action = {
+  id: string;
+  createdAt?: string;
+  metricsGroupsId?: string;
+  actionId?: string;
+  nickname: string;
+  executionParameters?: ExecutionParameters;
+  status: string;
+  triggeredAt: string;
+  actionType: string;
+};
+
+export type ExecutionParameters = {
+  destinationCircleId?: string;
+  originCircleId?: string;
+  workspaceId: string;
+};
+
+export type ActionGroupPayload = {
+  metricsGroupId: string;
+  actionId?: string;
+  nickname: string;
+  executionParameters?: ExecutionParameters;
 };
 
 export type Metric = {
@@ -96,4 +122,14 @@ export type ChartData = {
 export type Data = {
   total: number;
   period: number;
+};
+
+export type ActionType = {
+  id: string;
+  createdAt: string;
+  workspaceId: string;
+  nickname: string;
+  type: string;
+  description: string;
+  configuration: string;
 };

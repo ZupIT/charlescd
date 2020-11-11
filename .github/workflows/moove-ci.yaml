@@ -40,3 +40,9 @@ jobs:
         file: ./moove/**/target/site/jacoco/jacoco.xml
         flags: moove
         fail_ci_if_error: true
+    - name: Horusec Security
+      working-directory: ./moove
+      run: |
+        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+        horusec start -p ./
+        

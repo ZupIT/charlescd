@@ -1,0 +1,23 @@
+{
+  "name": "Circle deployment",
+  "id": "circledeployment",
+  "description": "Circle deployment",
+  "inputParameters": {
+    "configurationInputs": [
+      {
+        "name": "mooveUrl",
+        "label": "Moove URL",
+        "type": "text",
+        "required": true
+      }
+    ],
+    "executionInputs": [
+      {
+        "name": "destinationCircleID",
+        "label": "Destination Circle ID",
+        "type": "text",
+        "required": true
+      }
+    ]
+  }
+}
