@@ -32,6 +32,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/web/api"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -123,16 +124,26 @@ func (v1 V1) HttpValidator(
 }
 
 func extractToken(authorization string) (*AuthToken, error) {
-
 	splitToken := strings.Split(authorization, "Bearer ")
 
+	pkey, fileErr := ioutil.ReadFile(fmt.Sprintf("./pkey.txt"))
+	if fileErr != nil {
+		return nil, fileErr
+	}
+
+	key, keyErr := jwt.ParseRSAPublicKeyFromPEM(pkey)
+	if keyErr != nil {
+		return nil, fmt.Errorf("error parsing RSA public key: %v\n", keyErr)
+	}
+
 	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlfapihqzqSZQ8Z9jGR88"), nil
-	})
-	if ve, ok := err.(*jwt.ValidationError); ok {
-		if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-			return nil, err
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
+		return key, nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error parsing token: %v", err)
 	}
 
 	return token.Claims.(*AuthToken), nil
