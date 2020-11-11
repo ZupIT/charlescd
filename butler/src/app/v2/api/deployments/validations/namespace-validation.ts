@@ -25,7 +25,7 @@ export class NamespaceValidation implements ValidatorConstraintInterface {
     return namespace !== 'change_namespace'
 
   }
-  public defaultMessage(args: ValidationArguments) {
+  public defaultMessage(args: ValidationArguments): string {
     const component = plainToClass(CreateComponentRequestDto, args.object)
     return `The namespaces are now configured in component! Edit the configuration of component '${component.componentName}',update the namespace and generate a new release `
   }
