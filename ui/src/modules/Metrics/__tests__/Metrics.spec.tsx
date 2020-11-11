@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { forwardRef } from 'react';
-import { render, screen, waitFor } from 'unit-test/testUtils';
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Metrics from '..';
 
