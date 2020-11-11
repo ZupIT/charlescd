@@ -18,7 +18,8 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import javax.inject.Named
@@ -59,6 +60,12 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
     fun findActiveList(circleId: String): List<Deployment> {
         return this.deploymentRepository.findActiveByCircleId(
             circleId
+        )
+    }
+
+    fun findActiveList(circleId: String, workspaceId: String): List<Deployment> {
+        return this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(
+            circleId, workspaceId
         )
     }
 }
