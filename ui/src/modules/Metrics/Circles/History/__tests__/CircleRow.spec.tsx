@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import CircleRow from '../CircleRow';
 import { CircleHistory } from '../../interfaces';
 import { FetchMock } from 'jest-fetch-mock';
@@ -53,8 +53,6 @@ test('render active ReleaseRow and show releases table', async () => {
 
   const tableRow = screen.getByTestId('circle-row-1');
   fireEvent.click(tableRow);
-
-  await wait();
 
   expect(screen.getByText('circle 1')).toBeInTheDocument();
 });

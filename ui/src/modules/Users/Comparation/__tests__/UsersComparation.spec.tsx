@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render,screen } from 'unit-test/testUtils';
 import UsersComparation from '..';
 
 const props = {
@@ -23,9 +23,9 @@ const props = {
 }
 
 test('render UsersComparation default component', async () => {
-  const { getByTestId } = render(
+  render(
     <UsersComparation {...props} onChange={props.onChange} />
   );
 
-  await wait(() => expect(getByTestId('users-comparation')).toBeInTheDocument());
+  expect(screen.getByTestId('users-comparation')).toBeInTheDocument();
 });
