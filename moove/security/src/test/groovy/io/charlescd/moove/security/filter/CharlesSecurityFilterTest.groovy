@@ -102,7 +102,7 @@ class CharlesSecurityFilterTest extends Specification {
         assert response.status == HttpStatus.UNAUTHORIZED.value()
     }
 
-    def "should not allow any user when other servicel called by feign is out"() {
+    def "should not allow any user when other service called by feign is out"() {
         given:
         def workspaceId = "b659094f-999c-4d24-90b3-26c5e173b7ec"
 
