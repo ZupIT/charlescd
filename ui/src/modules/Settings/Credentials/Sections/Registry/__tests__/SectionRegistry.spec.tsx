@@ -14,4 +14,70 @@
  * limitations under the License.
  */
 
-// TODO
+import React from 'react';
+import { FetchMock } from 'jest-fetch-mock/types';
+import { render, screen, wait } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import SectionRegistry from '../';
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+test('render registry with error', async () => {
+  const error = {
+    status: '404',
+    message: 'invalid registry'
+  };
+  (fetch as FetchMock).mockRejectedValueOnce(new Response(JSON.stringify(error)));
+
+  const form = '';
+  const setForm = jest.fn();
+  const data = {"id": "1234", "name": "charles-cd" };
+
+  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+
+  const errorText = await screen.findByText('invalid registry');
+  expect(errorText).toBeInTheDocument();
+});
+
+test('render registry successful', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
+
+  const form = '';
+  const setForm = jest.fn();
+  const data = {"id": "1234", "name": "charles-cd" };
+
+  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+
+  const errorText = screen.queryByTestId('log-error');
+  await wait(() => expect(errorText).not.toBeInTheDocument());
+});
+
+test('should remove/cancel registry', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
+
+  const form = '';
+  const setForm = jest.fn();
+  const data = {"id": "1234", "name": "charles-cd" };
+
+  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+  
+  let cancelIcon = await screen.findByTestId('icon-cancel');
+  expect(cancelIcon).toBeInTheDocument();
+  userEvent.click(cancelIcon);
+
+  cancelIcon = screen.queryByTestId('icon-cancel');
+  await wait(() => expect(cancelIcon).not.toBeInTheDocument());
+});
+
+test('should render form', async () => {
+  const form = 'registry';
+  const setForm = jest.fn();
+  const data = {"id": "1234", "name": "charles-cd" };
+
+  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+
+  const textElement = await screen.findByText('Add Registry');
+  expect(textElement).toBeInTheDocument();
+});

@@ -38,7 +38,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
   const { remove, responseRemove, loadingRemove } = useRegistry();
-  const { testConnection, response, error } = useRegistryConnection();
+  const { registryConnection, response, error } = useRegistryConnection();
 
   useEffect(() => {
     setIsAction(true);
@@ -62,11 +62,11 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
 
       (async () => {
         setStatus('pending');
-        await testConnection(data.id);
+        await registryConnection(data.id);
         setStatus('resolved');
       })();
     }
-  }, [testConnection, data]);
+  }, [registryConnection, data]);
 
   const renderError = () => (
     <Notification.Log type="error" content={error.message} />
@@ -84,7 +84,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
           <Card.Config
             icon="server"
             description={data.name}
-            isLoading={loadingRemove}
+            isLoading={loadingRemove || isLoading}
             isDisabled={isDisabled}
             onClose={() => remove(data?.id)}
           >

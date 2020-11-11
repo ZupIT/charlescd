@@ -33,7 +33,7 @@ import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, loadingSave, loadingAdd, responseAdd } = useRegistry();
-  const { testConnection, response, error, status } = useRegistryTest();
+  const { testRegistryConnection, response, error, status } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const [message, setMessage] = useState<ConnectionProps>(null);
@@ -80,7 +80,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       provider: registryType
     };
 
-    testConnection(registry);
+    testRegistryConnection(registry);
   };
 
   const onSubmit = (registry: Registry) => {
@@ -119,6 +119,16 @@ const FormRegistry = ({ onFinish }: Props) => {
             />
           </>
         )}
+        {message && <ConnectionStatus {...message} />}
+        <Button.Default
+          type="button"
+          id="test-connection"
+          onClick={onClick}
+          isDisabled={!isValid}
+          isLoading={status.isPending}
+        >
+          Test connection
+        </Button.Default>
       </>
     );
   };
@@ -155,16 +165,6 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
-        {message && <ConnectionStatus {...message} />}
-        <Button.Default
-          type="button"
-          id="test-connection"
-          onClick={onClick}
-          isDisabled={!isValid}
-          isLoading={status.isPending}
-        >
-          Test connection
-        </Button.Default>
       </>
     );
   };

@@ -99,7 +99,7 @@ export const useRegistry = (): FetchProps => {
 };
 
 export const useRegistryTest = (): {
-  testConnection: Function;
+  testRegistryConnection: Function;
   response: Response;
   error: ResponseError;
   status: FetchStatus;
@@ -141,7 +141,7 @@ export const useRegistryTest = (): {
 };
 
 export const useRegistryConnection = (): {
-  testConnection: Function;
+  registryConnection: Function;
   response: Response;
   error: ResponseError;
 } => {
@@ -149,7 +149,7 @@ export const useRegistryConnection = (): {
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  const testRegistryConnection = useCallback(
+  const registryConnection = useCallback(
     async (configurationId: string) => {
       try {
         if (configurationId) {
@@ -170,7 +170,7 @@ export const useRegistryConnection = (): {
   );
 
   return {
-    testRegistryConnection,
+    registryConnection,
     response,
     error
   };
