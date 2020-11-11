@@ -20,18 +20,14 @@ import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.NotFoundException
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Configuration
-class FeignErrorDecoderConfiguration(
-) {
+class FeignErrorDecoderConfiguration {
     @Bean
     fun errorDecoder(): ErrorDecoder {
         return CustomErrorDecoder()
@@ -41,11 +37,10 @@ class FeignErrorDecoderConfiguration(
 class CustomErrorDecoder : ErrorDecoder {
     @Throws(Exception::class)
     override fun decode(methodKey: String?, response: Response?): Exception {
-        return when (response?.status()){
+        return when (response?.status()) {
             400 -> IllegalArgumentException(response.reason())
             422 -> BusinessException.of(MooveErrorCode.INVALID_PAYLOAD, response.reason())
             else -> RuntimeException(response?.reason())
         }
     }
-
 }
