@@ -1,5 +1,6 @@
 package io.charlescd.moove.security.filter
 
+import feign.FeignException
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WorkspacePermissions
@@ -12,6 +13,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
 
+import javax.servlet.FilterChain
 import java.time.LocalDateTime
 
 class CharlesSecurityFilterTest extends Specification {
@@ -97,6 +99,33 @@ class CharlesSecurityFilterTest extends Specification {
 
         then:
         1 * userRepository.findByEmail("") >> Optional.empty()
+        assert response.status == HttpStatus.UNAUTHORIZED.value()
+    }
+
+    def "should not allow any user when other servicel called by feign is out"() {
+        given:
+        def workspaceId = "b659094f-999c-4d24-90b3-26c5e173b7ec"
+
+        def author = new User("user-id", "User", "user@zup.com.br", "", [], true, LocalDateTime.now())
+        def permission = new Permission("permission-id", "circles_read", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions(workspaceId, "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+        def user = new User("user-id", "User", "user@zup.com.br", "", [workspacePermission], false, LocalDateTime.now())
+
+        def request = new MockHttpServletRequest()
+        request.addHeader("Authorization", dummyToken())
+        request.addHeader("x-workspace-id", workspaceId)
+        request.setRequestURI("/api/circle/123456789")
+        request.setMethod(HttpMethod.GET.name())
+
+        def response = new MockHttpServletResponse()
+        def filterChain = Mock(FilterChain)
+
+        when:
+        charlesSecurityFilter.doFilter(request, response, filterChain)
+
+        then:
+        1 * userRepository.findByEmail(user.email) >> Optional.of(user)
+        1 * filterChain.doFilter(request, response) >>  { throw new FeignException(1, "service is out", new byte[0]) }
         assert response.status == HttpStatus.UNAUTHORIZED.value()
     }
 
