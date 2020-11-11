@@ -31,8 +31,6 @@ test('render Circle Health Card collapse', async () => {
     <VariationCard id={'test'} type={'test'} health={data} name={'test'}/>
   );
 
-  await wait();
-
   expect(getByTestId('health-variation-card-test')).toBeInTheDocument();
 });
 
@@ -40,8 +38,6 @@ test('render Circle Health Card expeand', async () => {
   const { getByTestId, getByText } = render(
     <VariationCard id={'test'} type={'test'} health={data} name={'test'}/>
   );
-
-  await wait();
 
   const CardExpand = getByTestId('icon-expand');
   fireEvent.click(CardExpand);
@@ -52,8 +48,6 @@ test('render Circle Health Card collapse event', async () => {
   const { getByTestId } = render(
     <VariationCard id={'test'} type={'test'} health={data} name={'test'}/>
   );
-
-  await wait();
 
   const CardExpand = getByTestId('icon-expand');
   fireEvent.click(CardExpand);
