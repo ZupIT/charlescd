@@ -23,9 +23,15 @@ import { validationResolver } from 'core/components/CheckPassword';
 import { useChangePassword } from './hooks/useChangePassword';
 import Styled from './styled';
 
-interface Props {
+type Props = {
   onSubmit?: () => void;
-}
+};
+
+type FormData = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 const ChangePassword = ({ onSubmit }: Props) => {
   const {
@@ -35,9 +41,9 @@ const ChangePassword = ({ onSubmit }: Props) => {
     errors,
     formState,
     getValues
-  } = useForm({
+  } = useForm<FormData>({
     mode: 'onBlur',
-    validationResolver
+    resolver: validationResolver
   });
   const newPassword = watch('newPassword') as string;
   const confirmPass = watch('confirmPassword') as string;
