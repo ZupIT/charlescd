@@ -44,11 +44,11 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/registry")
     fun createRegistryConfig(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody createRegistryConfigRequest: CreateRegistryConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        //TODO: authorID
-        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId)
+        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Create CD Config")
@@ -61,11 +61,11 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/cd")
     fun createCdConfig(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody createCdConfigRequest: CreateCdConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        //TODO: authorID
-        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId)
+        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Get configurations by Type")

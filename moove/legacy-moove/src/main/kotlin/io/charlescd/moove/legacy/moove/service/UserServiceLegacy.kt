@@ -60,6 +60,11 @@ class UserServiceLegacy(
                 users.joinToString(", ")
             )
 
+    fun findUser(id: String): User =
+        this.userRepository.findById(id)
+            .orElseThrow { NotFoundExceptionLegacy("user", id) }
+
+
     fun findByToken(authorization: String): User {
         val email = keycloakServiceLegacy.getEmailByToken(authorization)
         return userRepository.findByEmail(email).orElseThrow {

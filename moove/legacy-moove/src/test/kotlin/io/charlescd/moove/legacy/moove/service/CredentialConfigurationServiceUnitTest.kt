@@ -49,13 +49,13 @@ import org.junit.Test
 class CredentialConfigurationServiceUnitTest {
 
     private val credentialConfigurationRepository = mockkClass(CredentialConfigurationRepository::class)
-    private val userRepository = mockkClass(UserRepository::class)
+    private val userServiceLegacy = mockkClass(UserServiceLegacy::class)
     private val deployApi = mockkClass(DeployApi::class)
     private val villagerApi = mockkClass(VillagerApi::class)
 
     private val credentialConfigurationService = CredentialConfigurationService(
         credentialConfigurationRepository,
-        userRepository,
+        userServiceLegacy,
         deployApi,
         villagerApi
     )
@@ -112,10 +112,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId)
+        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
 
         assertEquals(expectedResponse, credentialConfiguration)
     }
@@ -152,10 +152,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId)
+        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
 
         assertEquals(expectedResponse, credentialConfiguration)
     }
@@ -215,8 +215,8 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findUser("authorId")
+        } returns user
 
         val credentialConfigurations: Map<String, List<CredentialConfigurationRepresentation>> =
             credentialConfigurationService.getConfigurationsByType(workspaceId)
@@ -231,8 +231,7 @@ class CredentialConfigurationServiceUnitTest {
             name = "name",
             address = "address",
             username = "username",
-            password = "password",
-            authorId = "authorId"
+            password = "password"
         )
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
@@ -265,10 +264,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId)
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -283,8 +282,7 @@ class CredentialConfigurationServiceUnitTest {
             address = "address",
             accessKey = "accessKey",
             secretKey = "secretKey",
-            region = "region",
-            authorId = "authorId"
+            region = "region"
         )
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
@@ -318,10 +316,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId)
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -335,8 +333,7 @@ class CredentialConfigurationServiceUnitTest {
             name = "name",
             address = "address",
             organization = "organization",
-            jsonKey = "jsonKey",
-            authorId = "authorId"
+            jsonKey = "jsonKey"
         )
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
@@ -370,10 +367,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId)
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -387,8 +384,7 @@ class CredentialConfigurationServiceUnitTest {
             name = "name",
             address = "address",
             username = "username",
-            password = "password",
-            authorId = "authorId"
+            password = "password"
         )
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
@@ -422,10 +418,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId)
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -440,17 +436,16 @@ class CredentialConfigurationServiceUnitTest {
             address = "address",
             accessKey = "accessKey",
             secretKey = "secretKey",
-            region = "region",
-            authorId = "authorId"
+            region = "region"
         )
 
         val workspaceId = "workspaceId"
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.empty()
+            userServiceLegacy.findUser("authorId")
+        } returns throw NotFoundExceptionLegacy("user", "authorID")
 
-        credentialConfigurationService.createRegistryConfig(request, workspaceId)
+        credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
     }
 
     @Test
@@ -507,8 +502,8 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findUser("authorId")
+        } returns user
 
         val credentialConfigurations: Map<String, List<CredentialConfigurationRepresentation>> =
             credentialConfigurationService.getConfigurationsByType(workspaceId)
@@ -524,11 +519,11 @@ class CredentialConfigurationServiceUnitTest {
         val incomingRequest = CreateCustomCdConfigurationRequest()
 
         every {
-            userRepository.findById(user.id)
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
         val workspaceId = "workspaceId"
-        credentialConfigurationService.createCdConfig(incomingRequest, workspaceId)
+        credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
     }
 
     @Test(expected = NotFoundExceptionLegacy::class)
@@ -568,5 +563,9 @@ class CredentialConfigurationServiceUnitTest {
 
         verify(exactly = 1) { deployApi.getCdConfigurations(workspaceId) }
         verify(exactly = 1) { deployApi.deleteCdConfiguration(cdConfigurationId, workspaceId) }
+    }
+
+    private fun getAuthorization(): String {
+        return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
     }
 }
