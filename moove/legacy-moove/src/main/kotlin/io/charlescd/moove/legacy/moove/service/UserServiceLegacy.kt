@@ -24,9 +24,9 @@ import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
-import javax.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class UserServiceLegacy(
@@ -52,7 +52,22 @@ class UserServiceLegacy(
         return deleteUser(user.id)
     }
 
-    private fun deleteUser(id: String): UserRepresentation  {
+    fun findUsers(users: List<String>): List<User> =
+        this.userRepository.findAllById(users)
+            .takeIf { users.size == it.size }
+            ?: throw NotFoundExceptionLegacy(
+                "users",
+                users.joinToString(", ")
+            )
+
+    fun findByToken(authorization: String): User {
+        val email = keycloakServiceLegacy.getEmailByToken(authorization)
+        return userRepository.findByEmail(email).orElseThrow {
+            NotFoundExceptionLegacy("user", email)
+        }
+    }
+
+    private fun deleteUser(id: String): UserRepresentation {
         return userRepository.findById(id)
             .map(this::deleteUser)
             .map(this::deleteOnKeycloak)
@@ -67,20 +82,13 @@ class UserServiceLegacy(
         return it
     }
 
-    private fun findByToken(authorization: String): User {
-        val email = keycloakServiceLegacy.getEmailByToken(authorization)
-        return userRepository.findByEmail(email).orElseThrow {
-            NotFoundExceptionLegacy("user", email)
-        }
-    }
-
     private fun updateUserData(updateUserRequest: UpdateUserRequest): (User) -> User = { user ->
-            user.copy(
-                name = updateUserRequest.name,
-                email = updateUserRequest.email.toLowerCase(),
-                photoUrl = updateUserRequest.photoUrl
-            )
-        }
+        user.copy(
+            name = updateUserRequest.name,
+            email = updateUserRequest.email.toLowerCase(),
+            photoUrl = updateUserRequest.photoUrl
+        )
+    }
 
     private fun saveAndFlushUser(user: User): User =
         userRepository.saveAndFlush(user)

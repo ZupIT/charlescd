@@ -47,11 +47,11 @@ class FeatureController(private val service: FeatureService) {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     fun create(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody createFeatureRequest: CreateFeatureRequest
     ): FeatureRepresentation =
-        //TODO: authorID
-        service.create(createFeatureRequest, workspaceId)
+        service.create(createFeatureRequest, workspaceId, authorization)
 
     @ApiOperation(value = "Find all")
     @GetMapping
