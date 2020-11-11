@@ -20,6 +20,7 @@ import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.user.*
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.request.CreateUserRequest
+import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
+    private val findUserByIdInteractor: FindUserByIdInteractor,
     private val findAllUsersInteractor: FindAllUsersInteractor,
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
@@ -42,9 +44,17 @@ class V2UserController(
     @ApiOperation(value = "Find user by email")
     @GetMapping("/{email:.+}")
     @ResponseStatus(HttpStatus.OK)
-    fun findByEmail(@PathVariable email: String): UserResponse {
+    fun findByEmail(@PathVariable email: String): SimpleUserResponse {
         return findUserByEmailInteractor.execute(email)
     }
+
+    @ApiOperation(value = "Find user by Id")
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun findById(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable id: UUID
+    ) = findUserByIdInteractor.execute(authorization, id)
 
     @ApiOperation(value = "Find all users")
     @GetMapping
@@ -52,7 +62,7 @@ class V2UserController(
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
         pageable: PageRequest
-    ): ResourcePageResponse<UserResponse> {
+    ): ResourcePageResponse<SimpleUserResponse> {
         return this.findAllUsersInteractor.execute(name, email, pageable)
     }
 
