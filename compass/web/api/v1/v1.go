@@ -30,6 +30,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	"net/http"
 	"strings"
@@ -55,6 +56,12 @@ type V1 struct {
 	Router  *httprouter.Router
 	Path    string
 	MooveDB *gorm.DB
+}
+
+type AuthToken struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	jwt.StandardClaims
 }
 
 const (
@@ -103,8 +110,29 @@ func (v1 V1) HttpValidator(
 			return
 		}
 
+		parsedToken, err := extractToken(authToken)
+		if err != nil {
+			api.NewRestError(w, http.StatusUnauthorized, []error{errors.New("token expired")})
+			return
+		}
+
+		fmt.Println(parsedToken)
+
 		next(w, r, ps, workspaceID)
 	}
+}
+
+func extractToken(authorization string) (*AuthToken, error) {
+	token, err := jwt.ParseWithClaims(authorization, &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlfapihqzqSZQ8Z9jGR88"), nil
+	})
+	if ve, ok := err.(*jwt.ValidationError); ok {
+		if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
+			return nil, err
+		}
+	}
+
+	return token.Claims.(*AuthToken), nil
 }
 
 func (v1 V1) authorizeUser() {
