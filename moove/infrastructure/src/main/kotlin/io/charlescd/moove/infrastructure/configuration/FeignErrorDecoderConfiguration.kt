@@ -35,7 +35,6 @@ class FeignErrorDecoderConfiguration {
 }
 
 class CustomErrorDecoder : ErrorDecoder {
-    @Throws(Exception::class)
     override fun decode(methodKey: String?, response: Response?): Exception {
         return when (response?.status()) {
             400 -> IllegalArgumentException(response.reason())
