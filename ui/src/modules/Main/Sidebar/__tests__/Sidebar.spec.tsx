@@ -118,6 +118,6 @@ test('opens documentation link once', async () => {
   const helpIcon = await screen.queryByTestId('icon-help');
   expect(helpIcon).toBeInTheDocument();
 
-  await act(() => userEvent.click(helpIcon));
+  act(() => userEvent.click(helpIcon));
   expect(openDocumentation).toHaveBeenCalledTimes(1);
 });

@@ -118,7 +118,7 @@ test('render CircleComparationItem Default Circle', async () => {
   const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
   expect(DropdownIcon).toBeInTheDocument();
 
-  await act(() => userEvent.click(DropdownIcon));
+  act(() => userEvent.click(DropdownIcon));
 
   const DropdownActions = screen.getByTestId('dropdown-actions');
 

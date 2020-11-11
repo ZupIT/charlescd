@@ -33,7 +33,7 @@ test('render add Metric Action form', async () => {
 
   const handleOnFinish = jest.fn();
 
-  render(<FormAddAction onFinish={handleOnFinish}/>);
+  await waitFor(() => render(<FormAddAction onFinish={handleOnFinish}/>));
 
   const actionForm = screen.getByTestId('add-action-form');
 
