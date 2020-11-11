@@ -27,11 +27,13 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/casbin/casbin/v2"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/jinzhu/gorm"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -54,9 +56,10 @@ type UseCases interface {
 }
 
 type V1 struct {
-	Router  *httprouter.Router
-	Path    string
-	MooveDB *gorm.DB
+	Router    *httprouter.Router
+	Path      string
+	Enforcer  *casbin.Enforcer
+	MooveMain moove.UseCases
 }
 
 type AuthToken struct {
@@ -69,12 +72,12 @@ const (
 	v1Path = "/api/v1"
 )
 
-func NewV1(mooveDB *gorm.DB) UseCases {
+func NewV1(mooveMain moove.UseCases, authEnforcer *casbin.Enforcer) UseCases {
 	router := httprouter.New()
 	router.GET("/health", health)
 	router.GET("/metrics", metricHandler)
 
-	return V1{Router: router, Path: v1Path, MooveDB: mooveDB}
+	return V1{Router: router, Path: v1Path, Enforcer: authEnforcer, MooveMain: mooveMain}
 }
 
 func metricHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -95,12 +98,17 @@ func (v1 V1) Start() {
 }
 
 func (v1 V1) HttpValidator(
-	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string),
+	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId uuid.UUID),
 ) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		var err error
+		var workspaceUUID uuid.UUID
 
 		workspaceID := strings.TrimSpace(r.Header.Get("x-workspace-id"))
 		if workspaceID == "" {
+			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("workspaceId is required")})
+			return
+		} else if workspaceUUID, err = uuid.Parse(workspaceID); err != nil {
 			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("workspaceId is required")})
 			return
 		}
@@ -117,23 +125,24 @@ func (v1 V1) HttpValidator(
 			return
 		}
 
-		fmt.Println(parsedToken)
+		v1.authorizeUser(r.Method, r.URL.Path, parsedToken.Email, workspaceUUID)
 
-		next(w, r, ps, workspaceID)
+		next(w, r, ps, workspaceUUID)
 	}
 }
 
-func extractToken(authorization string) (*AuthToken, error) {
+func extractToken(authorization string) (AuthToken, error) {
+
 	splitToken := strings.Split(authorization, "Bearer ")
 
 	pkey, fileErr := ioutil.ReadFile(fmt.Sprintf("./pkey.txt"))
 	if fileErr != nil {
-		return nil, fileErr
+		return AuthToken{}, fileErr
 	}
 
 	key, keyErr := jwt.ParseRSAPublicKeyFromPEM(pkey)
 	if keyErr != nil {
-		return nil, fmt.Errorf("error parsing RSA public key: %v\n", keyErr)
+		return AuthToken{}, fmt.Errorf("error parsing RSA public key: %v\n", keyErr)
 	}
 
 	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
@@ -143,12 +152,27 @@ func extractToken(authorization string) (*AuthToken, error) {
 		return key, nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error parsing token: %v", err)
+		return AuthToken{}, fmt.Errorf("error parsing token: %v", err)
 	}
 
-	return token.Claims.(*AuthToken), nil
+	return *token.Claims.(*AuthToken), nil
 }
 
-func (v1 V1) authorizeUser() {
+func (v1 V1) authorizeUser(method, url, username string, workspaceID uuid.UUID) {
+	user, err := v1.MooveMain.FindUserByEmail(username)
+	if err != nil {
+		return
+	}
+
+	if user.IsRoot {
+		return
+	}
+
+	permissions, err := v1.MooveMain.GetUserPermissions(user.ID, workspaceID)
+	if err != nil {
+		return
+	}
+
+	fmt.Print(permissions)
 
 }
