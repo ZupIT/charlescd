@@ -16,15 +16,13 @@
 
 import React from 'react';
 import ReleaseComponentsTable from '../ReleaseComponentsTable';
-import { render, screen, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { releaseComponentsMock} from './fixtures';
 
 test('render Components Row', async () => {
 render(
    <ReleaseComponentsTable components={releaseComponentsMock}/>
  );
-
- await wait();
 
  expect(screen.getByText('module a1')).toBeInTheDocument();
  expect(screen.getByText('component a1')).toBeInTheDocument();

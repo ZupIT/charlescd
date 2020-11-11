@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Board from '..';
 
 const props = {
@@ -24,9 +24,9 @@ const props = {
 }
 
 test('render Board default component', async () => {
-  const { getByTestId } = render(
+   render(
     <Board {...props}  />
   );
 
-  await wait(() => expect(getByTestId(`tabpanel-${props.name}`)).toBeInTheDocument());
+  expect(screen.getByTestId(`tabpanel-${props.name}`)).toBeInTheDocument();
 });
