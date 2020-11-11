@@ -89,11 +89,6 @@ class CharlesSecurityFilterTest extends Specification {
         request.setMethod(HttpMethod.GET.name())
         request.addHeader("x-workspace-id", workspaceId)
         request.setRequestURI("/api/user")
-        def author = new User("user-id", "User", "user@zup.com.br", "", [], true, LocalDateTime.now())
-        def permission = new Permission("permission-id", "maintenance_write", LocalDateTime.now())
-        def workspacePermission = new WorkspacePermissions(workspaceId, "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
-        def user = new User("user-id", "User", "user@zup.com.br", "", [workspacePermission], false, LocalDateTime.now())
-
         def response = new MockHttpServletResponse()
         def filterChain = new MockFilterChain()
 
