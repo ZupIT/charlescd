@@ -16,12 +16,23 @@
 
 import React from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, screen, wait } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import SectionRegistry from '../';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
+});
+
+test('should render form', async () => {
+  const form = 'registry';
+  const setForm = jest.fn();
+  const data = {"id": "1234", "name": "charles-cd" };
+
+  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+
+  const textElement = await screen.findByText('Add Registry');
+  expect(textElement).toBeInTheDocument();
 });
 
 test('render registry with error', async () => {
@@ -51,7 +62,7 @@ test('render registry successful', async () => {
   render(<SectionRegistry form={form} setForm={setForm} data={data} />);
 
   const errorText = screen.queryByTestId('log-error');
-  await wait(() => expect(errorText).not.toBeInTheDocument());
+  waitFor(() => expect(errorText).not.toBeInTheDocument());
 });
 
 test('should remove/cancel registry', async () => {
@@ -65,19 +76,8 @@ test('should remove/cancel registry', async () => {
   
   let cancelIcon = await screen.findByTestId('icon-cancel');
   expect(cancelIcon).toBeInTheDocument();
-  userEvent.click(cancelIcon);
+  await act(async () => userEvent.click(cancelIcon));
 
   cancelIcon = screen.queryByTestId('icon-cancel');
-  await wait(() => expect(cancelIcon).not.toBeInTheDocument());
-});
-
-test('should render form', async () => {
-  const form = 'registry';
-  const setForm = jest.fn();
-  const data = {"id": "1234", "name": "charles-cd" };
-
-  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
-
-  const textElement = await screen.findByText('Add Registry');
-  expect(textElement).toBeInTheDocument();
+  waitFor(() => expect(cancelIcon).not.toBeInTheDocument());
 });
