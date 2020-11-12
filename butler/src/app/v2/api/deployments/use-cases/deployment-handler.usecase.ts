@@ -77,7 +77,7 @@ export class DeploymentHandlerUseCase {
 
   private async runDeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
     this.consoleLoggerService.log('START:RUN_DEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
-    if (!deployment.circleId) {
+    if (deployment.defaultCircle) {
       deployment.components = deployment.components.filter(c => !c.merged)
     }
     const activeComponents = await this.componentsRepository.findActiveComponents()
