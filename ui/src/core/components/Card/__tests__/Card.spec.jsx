@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Card from '../';
 
 test('render Card', () => {
-  const { getByText } = render(
+  render(
     <Card.Base>
       <Card.Body>
         content
@@ -27,5 +27,5 @@ test('render Card', () => {
     </Card.Base>
   );
 
-  expect(getByText('content')).toBeInTheDocument();
+  expect(screen.getByText('content')).toBeInTheDocument();
 });

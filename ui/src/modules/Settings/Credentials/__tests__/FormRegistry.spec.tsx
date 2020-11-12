@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait, act, screen } from 'unit-test/testUtils';
+import { render, fireEvent, wait, waitFor, act, screen } from 'unit-test/testUtils';
 import FormRegistry from '../Sections/Registry/Form';
 import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
@@ -68,188 +68,212 @@ jest.mock('core/components/Form/AceEditor', () => {
   };
 });
 
-test('render Registry form default component', async () => {
-  const { container } = render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
-
-  await wait();
-  expect(container.innerHTML).toMatch("test");
-});
 
 test('render Registry form with azure values', async () => {
-  const { container } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const registryLabel = screen.getByText('Choose witch one you want to add:');
   selectEvent.select(registryLabel, 'Azure');
+  const input = await screen.findByText('Enter the username');
 
-  await wait(() => expect(container.innerHTML).toMatch("Enter the username"));
+  expect(input).toBeInTheDocument();
 });
 
 test('render Registry form with AWS values', async () => {
-  const { container } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const registryLabel = screen.getByText('Choose witch one you want to add:');
   selectEvent.select(registryLabel, 'AWS');
+  const input = await screen.findByText('Enter the region');
 
-  await wait(() => expect(container.innerHTML).toMatch("Enter the region"));
+  expect(input).toBeInTheDocument();
 });
 
 test('render Registry form with AWS values and secret input', async () => {
-  const { container, getByTestId } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
   
   const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'AWS'));
+  selectEvent.select(registryLabel, 'AWS');
 
-  const radioAuthButton = getByTestId("switch-aws-auth-handler")
-  userEvent.click(radioAuthButton)
-  expect(container.innerHTML).toMatch("Enter the access key");
+  const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
+  userEvent.click(radioAuthButton);
+  
+  const text = screen.getByText('Enter the access key');
+  expect(text).toBeInTheDocument();
 });
 
-
 test('render Registry form without AWS values and secret input', async () => {
-  const { container } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
   
   const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'AWS'));
-  await wait(() => expect(container.innerHTML).not.toMatch("Enter the access key"));
+  selectEvent.select(registryLabel, 'AWS');
+  const input = screen.queryByText('Enter the access key');
+  expect(input).not.toBeInTheDocument();
 });
 
 test('render Registry form with GCP form', async () => {
-  const { container } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish} />
   );
 
   const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'GCP'));
+  selectEvent.select(registryLabel, 'GCP');
+  const input = await screen.findByText('Enter the project id');
 
-  await wait(() => expect(container.innerHTML).toMatch('organization'));
+  expect(input).toBeInTheDocument();
 });
 
 test('Not trigger onSubmit on json parse error with GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'GCP'));
+  selectEvent.select(registryLabel, 'GCP')
+  
+  const inputGCPName = await screen.findByTestId('input-text-name');
+  expect(inputGCPName).toBeInTheDocument();
 
-  const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
+  expect(inputGCPAddress).toBeInTheDocument();
+
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  expect(inputGCPOrganization).toBeInTheDocument();
+
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  expect(inputGCPJsonKey).toBeInTheDocument();
+
   const submitButton = screen.getByTestId('button-default-submit-registry');
-  await act(async () => {
-    fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
-    fireEvent.change(inputGCPAddress, {
-      target: { value: 'http://fake-host' }
-    });
-    fireEvent.change(inputGCPOrganization, {
-      target: { value: 'fake-access-key' }
-    });
-    fireEvent.change(inputGCPJsonKey, { target: { value: 'te' } });
-    fireEvent.click(submitButton);
-  });
-  expect(mockSave).toBeCalledTimes(0);
+  expect(submitButton).toBeInTheDocument();
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  userEvent.type(inputGCPJsonKey, 'te');
+  userEvent.click(submitButton);
+
+  waitFor(() => expect(mockOnFinish).not.toBeCalled());
 });
 
 test('Trigger submit on json parse success with GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'GCP'));
+  selectEvent.select(registryLabel, 'GCP')
+  
+  const inputGCPName = await screen.findByTestId('input-text-name');
+  expect(inputGCPName).toBeInTheDocument();
 
-  const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
+  expect(inputGCPAddress).toBeInTheDocument();
+
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  expect(inputGCPOrganization).toBeInTheDocument();
+
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  expect(inputGCPJsonKey).toBeInTheDocument();
+
   const submitButton = screen.getByTestId('button-default-submit-registry');
-  await act(async () => {
-    fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
-    fireEvent.change(inputGCPAddress, {
-      target: { value: 'http://fake-host' }
-    });
-    fireEvent.change(inputGCPOrganization, {
-      target: { value: 'fake-access-key' }
-    });
-    fireEvent.change(inputGCPJsonKey, {
-      target: { value: '{ "testKey": "testValue"}' }
-    });
-    fireEvent.click(submitButton);
-  });
-  expect(mockSave).toBeCalledTimes(1);
+  expect(submitButton).toBeInTheDocument();
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  fireEvent.change(inputGCPJsonKey, { target: { value: '{ "testKey": "testValue"}' }});
+  userEvent.click(submitButton);
+  
+  await waitFor(() => expect(mockSave).toHaveBeenCalledTimes(1));
 });
 
 test('render Registry form with Docker Hub form', async () => {
-  const { container } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'Docker Hub'));
+  selectEvent.select(registryLabel, 'Docker Hub');
+  const input = await screen.findByText('Enter the username');
+  const address = screen.queryByText('Enter the address');
 
-  expect(container.innerHTML).toMatch('Enter the username');
-  expect(container.innerHTML).not.toMatch('Enter the address');
+  expect(input).toBeInTheDocument();
+  expect(address).not.toBeInTheDocument();
 });
 
 test('execute onSubmit', async () => {
-  render(<FormRegistry onFinish={mockOnFinish}/>);
-
-  const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'AWS'));
-
-  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
-  fireEvent.click(radioAuthButton);
-  await wait();
-  const inputAwsName = screen.getByTestId("input-text-name");
-  const inputAwsAddress = screen.getByTestId("input-text-address");
-  const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
-  const inputAwsRegion = screen.getByTestId("input-text-region");
-  const submitButton = screen.getByTestId("button-default-submit-registry")
-
-  await act(async () => {
-    fireEvent.change(inputAwsName, {target: {value: "fake-name"}})
-    fireEvent.change(inputAwsAddress, {target: {value: "http://fake-host"}})
-    fireEvent.change(inputAwsAccessKey, {target: {value: "fake-access-key"}})
-    fireEvent.change(inputAwsSecretKey, {target: {value: "fake-secret-key"}})
-    fireEvent.change(inputAwsRegion, {target: {value: "fake-region"}})
-    fireEvent.click(submitButton)
-  })
-
-  expect(mockSave).toBeCalledTimes(1);
-});
-
-test('should not execute onSubmit because validation (missing name)', async () => {
-  const { container } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const registryLabel = screen.getByText('Choose witch one you want to add:');
-  await act(() => selectEvent.select(registryLabel, 'AWS'));
+  selectEvent.select(registryLabel, 'AWS');
+  
+  const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
+  userEvent.click(radioAuthButton);
+  
+  const inputAwsName = screen.getByTestId("input-text-name");
 
-  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
-  fireEvent.click(radioAuthButton);
-  await wait();
   const inputAwsAddress = screen.getByTestId("input-text-address");
+  expect(inputAwsName).toBeInTheDocument();
+
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
+  expect(inputAwsAccessKey).toBeInTheDocument();
+
   const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  expect(inputAwsSecretKey).toBeInTheDocument();
+
   const inputAwsRegion = screen.getByTestId("input-text-region");
-  const submitButton = screen.getByTestId("button-default-submit-registry")
+  expect(inputAwsRegion).toBeInTheDocument();
 
-  await act(async () => {
-    fireEvent.change(inputAwsAddress, {target: {value: "http://fake-host"}})
-    fireEvent.change(inputAwsAccessKey, {target: {value: "fake-access-key"}})
-    fireEvent.change(inputAwsSecretKey, {target: {value: "fake-secret-key"}})
-    fireEvent.change(inputAwsRegion, {target: {value: "fake-region"}})
-    fireEvent.click(submitButton)
-  })
+  const submitButton = screen.getByTestId("button-default-submit-registry");
+  expect(submitButton).toBeInTheDocument();
 
-  expect(mockSave).toBeCalledTimes(0);
+  userEvent.type(inputAwsName, 'fake-name');
+  userEvent.type(inputAwsAddress, 'http://fake-host');
+  userEvent.type(inputAwsAccessKey, 'fake-access-key');
+  userEvent.type(inputAwsSecretKey, 'fake-secret-key');
+  userEvent.type(inputAwsRegion, 'fake-region');
+  userEvent.click(submitButton);
+
+  waitFor(() => expect(mockSave).toBeCalledTimes(1));
+});
+
+test('should not execute onSubmit because validation (missing name)', async () => {
+  render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
+
+  const registryLabel = screen.getByText('Choose witch one you want to add:');
+  selectEvent.select(registryLabel, 'AWS');
+  
+  const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
+  userEvent.click(radioAuthButton);
+  
+  const inputAwsAddress = screen.getByTestId("input-text-address");
+  expect(inputAwsAddress).toBeInTheDocument();
+
+  const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
+  expect(inputAwsAccessKey).toBeInTheDocument();
+
+  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  expect(inputAwsSecretKey).toBeInTheDocument();
+
+  const inputAwsRegion = screen.getByTestId("input-text-region");
+  expect(inputAwsRegion).toBeInTheDocument();
+
+  const submitButton = screen.getByTestId("button-default-submit-registry");
+  expect(submitButton).toBeInTheDocument();
+
+  userEvent.type(inputAwsAddress, 'http://fake-host');
+  userEvent.type(inputAwsAccessKey, 'fake-access-key');
+  userEvent.type(inputAwsSecretKey, 'fake-secret-key');
+  userEvent.type(inputAwsRegion, 'fake-region');
+  userEvent.click(submitButton);
+
+  expect(mockOnFinish).not.toBeCalled();
 });

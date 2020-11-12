@@ -15,43 +15,37 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, screen} from 'unit-test/testUtils';
 import { getTheme } from "core/utils/themes";
-import Icon from '../index';
+import Icon from '../';
 
 test('renders icon component with default properties', () => {
   const props = {
     name: 'menu'
   };
-  const { getByTestId } = render(<Icon {...props} />);
-  const icon = getByTestId(`icon-${props.name}`);
-  const svg = icon.querySelector('svg');
-  const svgStyle = window.getComputedStyle(svg);
-  const iconStyle = window.getComputedStyle(icon);
+  render(<Icon {...props} />);
 
-  expect(svgStyle.width).toBe('');
-  expect(svgStyle.height).toBe('');
-  expect(iconStyle.color).toBe('');
+  const icon = screen.getByTestId(`icon-${props.name}`);
+  const svg = icon.querySelector('svg');
+
+  expect(svg).toHaveStyle('width: "";');
+  expect(svg).toHaveStyle('height: "";');
+  expect(icon).toHaveStyle('color: "";');
 });
 
-test('renders icon component with properties', async () => {
+test('renders icon component with properties', () => {
   const theme = getTheme()
   const props = {
     name: 'menu',
     size: '200px',
     color: 'error' as 'error'
   };
-  const { getByTestId } = render(<Icon {...props} />);
+  render(<Icon {...props} />);
 
-  await wait();
-
-  const icon = getByTestId(`icon-${props.name}`);
+  const icon = screen.getByTestId(`icon-${props.name}`);
   const svg = icon.querySelector('svg');
 
-  const svgStyle = window.getComputedStyle(svg);
-  const iconStyle = window.getComputedStyle(icon);
-
-  expect(svgStyle.width).toBe(props.size);
-  expect(svgStyle.height).toBe(props.size);
-  expect(iconStyle.color).toBe(theme.icon[props.color]);
+  expect(svg).toHaveStyle(`width: ${props.size};`);
+  expect(svg).toHaveStyle(`height: ${props.size};`);
+  expect(icon).toHaveStyle(`color: ${theme.icon[props.color]};`);
 });

@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import AddMetric from '../AddMetric';
 import { metricsData } from './fixtures';
@@ -35,19 +36,19 @@ test('render Add Metric default value', async () => {
     />
   );
 
-  await wait();
-
   const goBackButton = screen.getByTestId('icon-arrow-left');
   const submitButton = screen.getByTestId('button-default-submit');
 
-  expect(screen.getByTestId('add-metric')).toBeInTheDocument();
-  expect(screen.getByTestId('label-text-nickname')).toBeInTheDocument();
+  const addMetricElement = await screen.findByTestId('add-metric');
+  expect(addMetricElement).toBeInTheDocument();
 
-  fireEvent.click(goBackButton);
+  const nicknameLabelElement = await screen.findByTestId('label-text-nickname');
+  expect(nicknameLabelElement).toBeInTheDocument();
+
+  userEvent.click(goBackButton);
   expect(handleGoBack).toBeCalledTimes(1);
 
-  fireEvent.click(submitButton);
-  await wait();
-
+  await act(async () => userEvent.click(submitButton));
   expect(handleGoBack).toBeCalledTimes(2);
 });
+

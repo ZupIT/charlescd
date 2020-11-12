@@ -19,9 +19,9 @@
 package v1
 
 import (
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/web/api"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"net/http"
 
 	"github.com/google/uuid"

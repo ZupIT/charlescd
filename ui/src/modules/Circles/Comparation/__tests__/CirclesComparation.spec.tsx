@@ -15,14 +15,14 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import CirclesComparation from '..';
 
 test('render CirclesComparation default component', () => {
   const handleChange = jest.fn();
 
-  const { getByTestId } = render(
+  render(
     <CirclesComparation onChange={handleChange} />
   );
-  expect(getByTestId('circles-comparation')).toBeInTheDocument();
+  expect(screen.getByTestId('circles-comparation')).toBeInTheDocument();
 });
