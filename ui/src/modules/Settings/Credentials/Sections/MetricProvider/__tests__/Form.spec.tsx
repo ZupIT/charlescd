@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen, wait, act } from 'unit-test/testUtils';
+import { fireEvent, render, screen, act } from 'unit-test/testUtils';
 import Form from '../Form';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
@@ -27,8 +27,6 @@ test('render Metrics Provider default component', async () => {
   render(
     <Form onFinish={finish} />
   );
-
-  await wait();
 
   expect(screen.getByTestId('react-select')).toBeInTheDocument();
 });
@@ -42,8 +40,6 @@ test('render datasource input by datasource change', async () => {
   render(
     <Form onFinish={finish} />
   );
-
-  await wait();
 
   const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
   await act(async () => selectEvent.select(datasourcePlugin1, 'Prometheus'));
