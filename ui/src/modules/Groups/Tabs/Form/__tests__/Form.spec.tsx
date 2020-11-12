@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import MutationObserver from 'mutation-observer';
 import Form from '../index';
 import { mockUserGroup1, mockUserGroup2 } from './fixtures';
@@ -53,7 +54,7 @@ test('render user group Form with more then 8 users', async () => {
   expect(userGroupForm).toBeInTheDocument();
   expect(countButton).toBeInTheDocument();
 
-  fireEvent.click(countButton);
+  userEvent.click(countButton);
 
-  await wait(() => expect(onAddUser).toHaveBeenCalled());
+  expect(onAddUser).toHaveBeenCalled();
 });

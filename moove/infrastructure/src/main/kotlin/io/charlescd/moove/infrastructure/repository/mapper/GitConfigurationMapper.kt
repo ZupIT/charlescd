@@ -28,14 +28,19 @@ import org.springframework.stereotype.Component
 @Component
 class GitConfigurationMapper(private val objectMapper: ObjectMapper) {
 
-    fun mapGitConfiguration(resultSet: ResultSet) = GitConfiguration(
-        id = resultSet.getString("git_configuration_id"),
-        name = resultSet.getString("git_configuration_name"),
-        credentials = deserializeCredentials(resultSet),
-        createdAt = resultSet.getTimestamp("git_configuration_created_at").toLocalDateTime(),
-        workspaceId = resultSet.getString("git_configuration_workspace_id"),
-        author = mapCredentialUser(resultSet)
-    )
+    fun mapGitConfiguration(resultSet: ResultSet): GitConfiguration? {
+        val id = resultSet.getString("git_configuration_id")
+        return if (!resultSet.wasNull()) {
+            GitConfiguration(
+                id = resultSet.getString("git_configuration_id"),
+                name = resultSet.getString("git_configuration_name"),
+                credentials = deserializeCredentials(resultSet),
+                createdAt = resultSet.getTimestamp("git_configuration_created_at").toLocalDateTime(),
+                workspaceId = resultSet.getString("git_configuration_workspace_id"),
+                author = mapCredentialUser(resultSet)
+            )
+        } else null
+    }
 
     private fun deserializeCredentials(resultSet: ResultSet): GitCredentials {
         return objectMapper.readValue(

@@ -22,7 +22,7 @@ import Select from './Select';
 
 interface Props {
   name: string;
-  control: Control<unknown>;
+  control: Control<any>;
   options?: OptionTypeBase[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option[];
@@ -59,7 +59,7 @@ const MultiCheck = ({
       defaultValue={defaultValue}
       label={label}
       isLoading={isLoading}
-      onChange={([selectedOptions]) => {
+      onChange={([selectedOptions]: [OptionTypeBase[]]) => {
         onChange && onChange(selectedOptions);
         return selectedOptions;
       }}

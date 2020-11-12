@@ -15,49 +15,49 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, fireEvent, screen } from 'unit-test/testUtils';
 import { users, emptyUsers } from './fixtures';
 import Modal from '..';
 
 test('render users Modal', async () => {
-  const { getByTestId } = render(
+  render(
     <Modal users={users} isOpen onSearch={jest.fn()} onSelected={jest.fn()} />
   );
 
-  const element = getByTestId('modal-user');
-  const button = getByTestId('button-default-undefined');
+  const element = screen.getByTestId('modal-user');
+  const button = screen.getByTestId('button-default-undefined');
 
-  await wait(() => expect(element).toBeInTheDocument());
-  await wait(() => expect(button).toBeInTheDocument());
+  expect(element).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
 });
 
 test('testing on selected style', async () => {
-  const { getByText, getByTestId } = render(
+  render(
     <Modal users={users} isOpen onSearch={jest.fn()} onSelected={jest.fn()} />
   );
 
-  const user = getByText('User 2');
-  const button = getByTestId('button-default-undefined');
+  const user = screen.getByText('User 2');
+  const button = screen.getByTestId('button-default-undefined');
 
-  await wait(() => expect(user).toBeInTheDocument());
-  await wait(() => expect(button).toBeInTheDocument());
+  expect(user).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
 
   fireEvent.click(user);
 
-  expect(getByTestId('icon-plus-circle')).toBeInTheDocument();
+  expect(screen.getByTestId('icon-plus-circle')).toBeInTheDocument();
 });
 
 test('testing on click update button', async () => {
   const onSelected = jest.fn();
-  const { getByText, getByTestId } = render(
+  render(
     <Modal users={users} isOpen onSearch={jest.fn()} onSelected={onSelected} />
   );
 
-  const user = getByText('User 2');
-  const button = getByTestId('button-default-undefined');
+  const user = screen.getByText('User 2');
+  const button = screen.getByTestId('button-default-undefined');
 
-  await wait(() => expect(user).toBeInTheDocument());
-  await wait(() => expect(button).toBeInTheDocument());
+  expect(user).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
 
   fireEvent.click(user);
   fireEvent.click(button);
@@ -67,26 +67,26 @@ test('testing on click update button', async () => {
 
 test('testing deleting an user', async () => {
   const onSelected = jest.fn();
-  const { getByText, getByTestId, debug } = render(
+  render(
     <Modal users={users} isOpen onSearch={jest.fn()} onSelected={onSelected} />
   );
 
-  const user = getByText('User 2');
-  const button = getByTestId('button-default-undefined');
+  const user = screen.getByText('User 2');
+  const button = screen.getByTestId('button-default-undefined');
 
-  await wait(() => expect(user).toBeInTheDocument());
-  await wait(() => expect(button).toBeInTheDocument());
+  expect(user).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
 
   fireEvent.click(user);
   fireEvent.click(button);
   
   expect(onSelected).toHaveBeenCalled();
-  expect(getByTestId('icon-plus-circle')).toBeInTheDocument();
+  expect(screen.getByTestId('icon-plus-circle')).toBeInTheDocument();
 });
 
 test('testing on outside click with isOutsideClick property passed on', async () => {
   const onClose = jest.fn();
-  const { getByTestId } = render(
+  render(
     <div data-testid="external-div">
       <Modal
         users={users}
@@ -99,11 +99,11 @@ test('testing on outside click with isOutsideClick property passed on', async ()
     </div>
   );
 
-  const element = getByTestId('modal-user');
-  const externalDiv = getByTestId('external-div');
+  const element = screen.getByTestId('modal-user');
+  const externalDiv = screen.getByTestId('external-div');
 
-  await wait(() => expect(element).toBeInTheDocument());
-  await wait(() => expect(externalDiv).toBeInTheDocument());
+  expect(element).toBeInTheDocument();
+  expect(externalDiv).toBeInTheDocument();
 
   fireEvent.click(externalDiv);
 
@@ -111,7 +111,7 @@ test('testing on outside click with isOutsideClick property passed on', async ()
 });
 
 test('testing on outside click without isOutsideClick property passed on', async () => {
-  const { getByTestId } = render(
+  render(
     <div data-testid="external-div">
       <Modal
         users={users}
@@ -123,12 +123,12 @@ test('testing on outside click without isOutsideClick property passed on', async
     </div>
   );
 
-  const element = getByTestId('modal-user');
-  const externalDiv = getByTestId('external-div');
-  const button = getByTestId('button-default-undefined');
+  const element = screen.getByTestId('modal-user');
+  const externalDiv = screen.getByTestId('external-div');
+  const button = screen.getByTestId('button-default-undefined');
 
-  await wait(() => expect(element).toBeInTheDocument());
-  await wait(() => expect(externalDiv).toBeInTheDocument());
+  expect(element).toBeInTheDocument();
+  expect(externalDiv).toBeInTheDocument();
 
   fireEvent.click(externalDiv);
 
@@ -136,7 +136,7 @@ test('testing on outside click without isOutsideClick property passed on', async
 });
 
 test('render Modal placeholder', async () => {
-  const { getByTestId } = render(
+  render(
     <Modal
       users={emptyUsers}
       isOpen
@@ -145,11 +145,11 @@ test('render Modal placeholder', async () => {
     />
   );
 
-  const element = getByTestId('modal-user');
-  const button = getByTestId('button-default-undefined');
-  const placeholder = getByTestId('icon-user-not-found');
+  const element = screen.getByTestId('modal-user');
+  const button = screen.getByTestId('button-default-undefined');
+  const placeholder = screen.getByTestId('icon-user-not-found');
 
-  await wait(() => expect(element).toBeInTheDocument());
-  await wait(() => expect(button).toBeInTheDocument());
-  await wait(() => expect(placeholder).toBeInTheDocument());
+  expect(element).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
+  expect(placeholder).toBeInTheDocument();
 });

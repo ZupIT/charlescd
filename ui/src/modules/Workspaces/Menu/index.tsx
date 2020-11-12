@@ -128,7 +128,7 @@ const WorkspaceMenu = ({
         </Styled.Button>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
+        <Styled.SearchInput resume onSearch={onSearch} disabled={!isRoot()} />
         <Styled.List>
           {isLoading ? <Loader.List /> : renderWorkspaces()}
         </Styled.List>

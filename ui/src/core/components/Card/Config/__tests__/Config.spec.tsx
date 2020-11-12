@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import CardConfig from '../';
 
 test('render CardConfig default component', async () => {
@@ -38,6 +40,6 @@ test('render CardConfig default component', async () => {
   expect(getByText(props.description)).toBeInTheDocument();
 
 	expect(btnAction).toBeInTheDocument();
-	fireEvent.click(btnAction);
-	wait(() => expect(click).toBeCalled());
+	userEvent.click(btnAction);
+	waitFor(() => expect(click).toBeCalled());
 });

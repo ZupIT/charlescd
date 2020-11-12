@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
-import Can from '..';
+import { render, screen } from 'unit-test/testUtils';
+import Can from '../';
 import Dropdown from 'core/components/Dropdown';
 
-test('renders Can component', async () => {
+test('renders Can component', () => {
   const props = {
     children: (
       <Dropdown.Item
@@ -30,16 +30,16 @@ test('renders Can component', async () => {
     ),
   };
 
-  const { getByTestId } = render(
+  render(
     <Can I="write" a="circles" passThrough allowedRoutes>
       {props.children}
     </Can>
   );
-  const buttonDropdown = getByTestId('icon-edit');
-  await wait(() => expect(buttonDropdown).toBeInTheDocument());
+  const buttonDropdown = screen.getByTestId('icon-edit');
+  expect(buttonDropdown).toBeInTheDocument();
 });
 
-test('renders Can component disabled', async () => {
+test('renders Can component disabled', () => {
   const props = {
     children: (
       <Dropdown.Item
@@ -50,16 +50,16 @@ test('renders Can component disabled', async () => {
     )
   };
 
-  const { getByTestId } = render(
+  render(
     <Can I="write" a="circles" passThrough isDisabled>
       {props.children}
     </Can>
   );
-  const buttonDropdown = getByTestId('icon-edit');
-  await wait(() => expect(buttonDropdown).toBeInTheDocument());
+  const buttonDropdown = screen.getByTestId('icon-edit');
+  expect(buttonDropdown).toBeInTheDocument();
 });
 
-test('renders Can component with default properties', async () => {
+test('renders Can component with default properties', () => {
   const props = {
     children: <p>test</p>
   };
@@ -70,5 +70,5 @@ test('renders Can component with default properties', async () => {
     </Can>
   );
 
-  await wait(() => expect(document.body.innerHTML).toBe('<div></div>'));
+  expect(document.body.innerHTML).toBe('<div></div>');
 });

@@ -15,40 +15,40 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Button from 'core/components/Button';
 
-test('render Button default component', async () => {
+test('render Button default component', () => {
   const click = jest.fn();
   const id = 'test';
-  const { getByTestId } = render(
+  render(
     <Button.Default id={id} onClick={click}>button</Button.Default>
   );
 
-  const ButtonDefault = getByTestId(`button-default-${id}`);
-
-  expect(ButtonDefault).toBeInTheDocument();
-  fireEvent.click(ButtonDefault);
+  const buttonDefault = screen.getByTestId(`button-default-${id}`);
+  expect(buttonDefault).toBeInTheDocument();
+  userEvent.click(buttonDefault);
   expect(click).toBeCalled();
 });
 
 test('render Button default in disabled mode', () => {
   const click = jest.fn();
-  const { getByTestId } = render(
+  render(
     <Button.Default id="test" onClick={click} isDisabled={true}>button</Button.Default>
   );
 
-  fireEvent.click(getByTestId('button-default-test'));
+  const buttonDefault = screen.getByTestId('button-default-test');
+  userEvent.click(buttonDefault);
   expect(click).not.toBeCalled();
 });
 
 test('render Button default in loading mode', () => {
-  const { getByTestId } = render(
+  render(
     <Button.Default id="test" isLoading={true}>button</Button.Default>
   );
 
-  const ButtonDefault = getByTestId('button-default-test');
-  const loading = ButtonDefault.querySelector('svg');
-
+  const buttonDefault = screen.getByTestId('button-default-test');
+  const loading = buttonDefault.querySelector('svg');
   expect(loading).toBeInTheDocument();
 });

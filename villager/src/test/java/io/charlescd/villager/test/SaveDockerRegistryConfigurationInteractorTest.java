@@ -171,7 +171,16 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+
+        var input = DockerRegistryConfigurationInput.builder()
+                .withName("Test")
+                .withAddress("http://test.org")
+                .withRegistryType(RegistryType.GCP)
+                .withAuth(new GCPDockerRegistryAuth("organization", "_json_key", "jsonKey"))
+                .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
+                .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
+                .build();
 
         interactor.execute(input);
 
@@ -186,11 +195,9 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.authorId, is(ID_DEFAULT_VALUE));
         assertThat(entityCaptured.workspaceId, is(ID_DEFAULT_VALUE));
         assertThat(entityCaptured.createdAt, is(createdAt));
-        assertThat(entityCaptured.connectionData.address, is("https://registry.io.com"));
-        assertThat(entityCaptured.connectionData.host, is("registry.io.com"));
-        assertThat(
-                ((DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) entityCaptured.connectionData).organization,
-                is("charles_cd"));
+        assertThat(entityCaptured.connectionData.address, is("http://test.org"));
+        assertThat(entityCaptured.connectionData.host, is("test.org/organization"));
+        assertThat(entityCaptured.connectionData.organization, is("organization"));
         assertThat(
                 ((DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) entityCaptured.connectionData).username,
                 is("charles_cd"));
@@ -220,7 +227,16 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
 
         // Call
-        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+
+        var input = DockerRegistryConfigurationInput.builder()
+                .withName("Test")
+                .withAddress("http://test.org")
+                .withRegistryType(RegistryType.DOCKER_HUB)
+                .withAuth(new DockerHubDockerRegistryAuth("organization", "usertest", "userpass"))
+                .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
+                .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
+                .build();
 
         interactor.execute(input);
 
@@ -235,9 +251,9 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.authorId, is(ID_DEFAULT_VALUE));
         assertThat(entityCaptured.workspaceId, is(ID_DEFAULT_VALUE));
         assertThat(entityCaptured.createdAt, is(createdAt));
-        assertThat(entityCaptured.connectionData.address, is("https://registry.io.com"));
-        assertThat(entityCaptured.connectionData.host, is("registry.io.com"));
-        assertThat(entityCaptured.connectionData.organization, is("charles_cd"));
+        assertThat(entityCaptured.connectionData.address, is("http://test.org"));
+        assertThat(entityCaptured.connectionData.host, is("test.org/organization"));
+        assertThat(entityCaptured.connectionData.organization, is("organization"));
         assertThat(
                 ((DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) entityCaptured.connectionData).username,
                 is("charles_cd"));
