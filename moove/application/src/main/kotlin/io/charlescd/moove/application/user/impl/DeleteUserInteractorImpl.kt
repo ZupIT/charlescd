@@ -18,12 +18,14 @@ package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.DeleteUserInteractor
-import org.springframework.beans.factory.annotation.Value
 import javax.inject.Named
+import org.springframework.beans.factory.annotation.Value
 
 @Named
-class DeleteUserInteractorImpl(private val userService: UserService,
-                               @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean) : DeleteUserInteractor {
+class DeleteUserInteractorImpl(
+    private val userService: UserService,
+    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
+) : DeleteUserInteractor {
 
     override fun execute(id: String, authorization: String) {
         val user = userService.findByToken(authorization)

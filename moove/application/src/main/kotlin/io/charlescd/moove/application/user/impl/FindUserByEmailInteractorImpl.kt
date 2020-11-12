@@ -27,13 +27,13 @@ class FindUserByEmailInteractorImpl(private val userService: UserService) : Find
 
     override fun execute(email: String, authorization: String): UserResponse {
         val user = userService.findByToken(authorization)
-        if(user.root) {
+        if (user.root) {
             return getUser(String(Base64.getDecoder().decode(email)).toLowerCase().trim())
         }
         return getUser(user.email)
     }
 
-    private fun getUser(email: String) : UserResponse {
+    private fun getUser(email: String): UserResponse {
         return UserResponse.from(
             userService.findByEmail(email)
         )

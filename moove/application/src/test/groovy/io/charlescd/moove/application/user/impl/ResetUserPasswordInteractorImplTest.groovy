@@ -26,6 +26,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -34,9 +35,9 @@ class ResetUserPasswordInteractorImplTest extends Specification {
 
     private ResetUserPasswordInteractor resetUserPasswordInteractor
 
-    private KeycloakService keycloakService = Mock(KeycloakService)
-
     private UserRepository userRepository = Mock(UserRepository)
+
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     /**
      * ^                 # start-of-string
@@ -51,7 +52,7 @@ class ResetUserPasswordInteractorImplTest extends Specification {
     private static final String PASSWORD_CHECK = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$^*()_])(?=\\S+\$).{8,}\$"
 
     void setup() {
-        resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(new UserPasswordGeneratorService(), keycloakService, new UserService(userRepository))
+        resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(new UserPasswordGeneratorService(), new UserService(userRepository, managementUserSecurityService))
     }
 
     def "should generate a valid password"() {
@@ -62,16 +63,16 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         def user = new User(userId.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
                 [], false, LocalDateTime.now())
         def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
-
+                [], true, LocalDateTime.now())
         when:
         def response = resetUserPasswordInteractor.execute(authorization, userId)
 
         then:
-        1 * userRepository.findById(userId.toString()) >> Optional.of(user)
-        1 * keycloakService.resetPassword(user.getEmail(), _)
-        1 * keycloakService.getEmailByAccessToken(authorization) >> root.getEmail()
+        1 * managementUserSecurityService.getUserEmail(authorization)  >> root.email
         1 * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
+        1 * userRepository.findById(userId.toString()) >> Optional.of(user)
+        //TODO: ver como verificar isso: 1 * managementUserSecurityService.resetUserPassword("'user@zup.com.br", newPassword)
+
         assert response != null
         assert response.newPassword.size() == 10
         assert response.newPassword.matches(matchValidation)
@@ -86,7 +87,7 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         def user = new User(userId.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
                 [], false, LocalDateTime.now())
         def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], true, LocalDateTime.now())
 
         when:
         def passwords = []
@@ -95,10 +96,11 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         }
 
         then:
-        numberOfPasswords * userRepository.findById(userId.toString()) >> Optional.of(user)
-        numberOfPasswords * keycloakService.resetPassword(user.getEmail(), _)
-        numberOfPasswords * keycloakService.getEmailByAccessToken(authorization) >> root.getEmail()
+        numberOfPasswords * managementUserSecurityService.getUserEmail(authorization)  >> root.email
         numberOfPasswords * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
+        numberOfPasswords * userRepository.findById(userId.toString()) >> Optional.of(user)
+        //TODO: ver como verificar isso: 1 * managementUserSecurityService.resetUserPassword("'user@zup.com.br", newPassword)
+
         passwords.stream().forEach({ response ->
             assert response.newPassword.size() == 10
             assert response.newPassword.matches(matchValidation)
@@ -107,7 +109,26 @@ class ResetUserPasswordInteractorImplTest extends Specification {
 
     def "should not reset your own password"() {
         given:
-        def matchValidation = PASSWORD_CHECK
+        def userId = UUID.randomUUID()
+        def authorization = "authorization"
+        def user = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
+                [], false, LocalDateTime.now())
+        def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
+                [], true, LocalDateTime.now())
+
+        when:
+        resetUserPasswordInteractor.execute(authorization, userId)
+
+        then:
+        1 * managementUserSecurityService.getUserEmail(authorization)  >> root.email
+        1 * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
+        1 * userRepository.findById(userId.toString()) >> Optional.of(user)
+        def ex = thrown(BusinessException)
+        ex.errorCode == MooveErrorCode.CANNOT_RESET_YOUR_OWN_PASSWORD
+    }
+
+    def "should not reset password when not user root"() {
+        given:
         def userId = UUID.randomUUID()
         def authorization = "authorization"
         def user = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
@@ -116,13 +137,13 @@ class ResetUserPasswordInteractorImplTest extends Specification {
                 [], false, LocalDateTime.now())
 
         when:
-        def response = resetUserPasswordInteractor.execute(authorization, userId)
+        resetUserPasswordInteractor.execute(authorization, userId)
 
         then:
-        1 * userRepository.findById(userId.toString()) >> Optional.of(user)
-        1 * keycloakService.getEmailByAccessToken(authorization) >> root.getEmail()
+        1 * managementUserSecurityService.getUserEmail(authorization)  >> root.email
         1 * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
+        1 * userRepository.findById(userId.toString()) >> Optional.of(user)
         def ex = thrown(BusinessException)
-        ex.errorCode == MooveErrorCode.CANNOT_RESET_YOUR_OWN_PASSWORD
+        ex.errorCode == MooveErrorCode.FORBIDDEN
     }
 }

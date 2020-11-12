@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.legacy.moove.service
 
-import io.charlescd.moove.legacy.repository.UserRepository
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.resource.*
 import org.keycloak.representations.idm.UserRepresentation
@@ -30,15 +29,14 @@ class KeycloakServiceLegacyGroovyUnitTest extends Specification {
     private Keycloak keycloak = Mock(Keycloak)
     private RealmResource realmResource = Mock(RealmResource)
     private UsersResource usersResource = Mock(UsersResource)
-    private UserRepository userRepository = Mock(UserRepository)
     private Response response = Mock(Response)
 
     def setup() {
-        service = new KeycloakServiceLegacy(keycloak, userRepository)
+        service = new KeycloakServiceLegacy(keycloak)
         service.realm = "Charles"
     }
 
-    def 'should delete a keycloak user by email'() {
+    def 'should delete a keycloak user by id'() {
         given:
         def user = new UserRepresentation()
         user.id = "fake-user-id"
@@ -50,20 +48,18 @@ class KeycloakServiceLegacyGroovyUnitTest extends Specification {
         users.add(user)
 
         when:
-        service.deleteUserByEmail("john.doe@zup.com.br")
+        service.deleteUserById(user.id)
 
         then:
-        2 * keycloak.realm(_ as String) >> realmResource
-        2 * realmResource.users() >> usersResource
-        1 * usersResource.search(_ as String) >> users
-        1 * usersResource.delete(_) >> response
+        1 * keycloak.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.delete(user.id) >> response
         notThrown()
     }
 
-    def 'should delete user by email'() {
+    def 'should delete user by id'() {
 
         given:
-        def email = "john.doe@zup.com.br"
 
         def user = new UserRepresentation()
         user.id = "fake-user-id"
@@ -75,12 +71,11 @@ class KeycloakServiceLegacyGroovyUnitTest extends Specification {
         users.add(user)
 
         when:
-        service.deleteUserByEmail(email)
+        service.deleteUserById(user.id)
 
         then:
-        2 * keycloak.realm(_) >> realmResource
-        2 * realmResource.users() >> usersResource
-        1 * usersResource.search(email) >> users
+        1 * keycloak.realm(_) >> realmResource
+        1 * realmResource.users() >> usersResource
         1 * usersResource.delete(user.id)
         notThrown()
     }

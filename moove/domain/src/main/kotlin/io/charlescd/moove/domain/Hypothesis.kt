@@ -22,6 +22,7 @@ data class Hypothesis(
     val id: String,
     val name: String,
     val description: String,
+    val author: User,
     val createdAt: LocalDateTime,
     val columns: List<Column>,
     val builds: List<Build> = emptyList(),

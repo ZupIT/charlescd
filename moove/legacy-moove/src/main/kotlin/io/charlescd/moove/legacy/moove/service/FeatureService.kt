@@ -25,10 +25,8 @@ import io.charlescd.moove.legacy.moove.request.feature.CreateFeatureRequest
 import io.charlescd.moove.legacy.moove.request.feature.UpdateFeatureRequest
 import io.charlescd.moove.legacy.repository.FeatureRepository
 import io.charlescd.moove.legacy.repository.ModuleRepository
-import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.Feature
 import io.charlescd.moove.legacy.repository.entity.Module
-import io.charlescd.moove.legacy.repository.entity.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
@@ -75,8 +73,6 @@ class FeatureService(
             .also { this.featureRepository.deleteModulesRelationship(id, workspaceId) }
             .let { this.featureRepository.delete(it) }
     }
-
-
 
     private fun findModules(modules: List<String>): List<Module> =
         this.moduleRepository.findAllById(modules)

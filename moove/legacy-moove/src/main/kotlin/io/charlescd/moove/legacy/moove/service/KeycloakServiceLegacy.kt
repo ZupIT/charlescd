@@ -16,36 +16,27 @@
 
 package io.charlescd.moove.legacy.moove.service
 
-import io.charlescd.moove.legacy.repository.UserRepository
 import org.keycloak.TokenVerifier
-
 import org.keycloak.admin.client.Keycloak
-
 import org.keycloak.representations.AccessToken
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class KeycloakServiceLegacy(private val keycloak: Keycloak, private val userRepository: UserRepository) {
+class KeycloakServiceLegacy(private val keycloak: Keycloak) {
 
     @Value("\${charlescd.keycloak.realm}")
     lateinit var realm: String
 
-    fun deleteUserByEmail(id: String) {
-        deleteUserById(id)
+    fun deleteUserById(id: String) {
+        this.keycloak
+            .realm(realm)
+            .users()
+            .delete(id)
     }
 
     fun getEmailByToken(authorization: String): String {
         val token = authorization.substringAfter("Bearer").trim()
         return TokenVerifier.create(token, AccessToken::class.java).token.email
     }
-
-    private fun deleteUserById(userId: String) {
-        this.keycloak
-            .realm(realm)
-            .users()
-            .delete(userId)
-    }
-
-
 }

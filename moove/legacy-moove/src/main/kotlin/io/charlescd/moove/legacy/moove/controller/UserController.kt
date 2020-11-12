@@ -32,7 +32,7 @@ class UserController(
     private val userService: UserServiceLegacy
 ) {
 
-    //TODO: Tratamento será feito na task 30351
+    // TODO: Tratamento será feito na task 30351
     @ApiOperation(value = "Update User")
     @ApiImplicitParam(
         name = "updateUserRequest",
@@ -51,7 +51,8 @@ class UserController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(
         @RequestHeader(value = "Authorization") authorization: String,
-        @PathVariable id: String) {
+        @PathVariable id: String
+    ) {
         userService.delete(id, authorization)
     }
 }

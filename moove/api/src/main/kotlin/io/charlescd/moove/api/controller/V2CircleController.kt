@@ -130,7 +130,7 @@ class V2CircleController(
                 name,
                 keyName,
                 file.inputStream
-            ), workspaceId ,
+            ), workspaceId,
             authorization
         )
     }

@@ -34,7 +34,6 @@ import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsRes
 import io.charlescd.moove.legacy.moove.api.response.GetVillagerRegistryConfigurationsResponse
 import io.charlescd.moove.legacy.moove.request.configuration.*
 import io.charlescd.moove.legacy.repository.CredentialConfigurationRepository
-import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User

@@ -92,7 +92,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
         1 * repository.findByEmail("email@email.com") >> Optional.of(user)
         1 * repository.findById(representation.id) >> Optional.of(user)
-        1 * keycloakService.deleteUserByEmail(_)
+        1 * keycloakService.deleteUserById(_)
         1 * repository.delete(user)
         response.id == representation.id
         response.name == representation.name
@@ -123,7 +123,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
         1 * repository.findByEmail("email@email.com") >> Optional.of(user)
         1 * repository.findById(representation.id) >> Optional.of(user)
-        0 * keycloakService.deleteUserByEmail(_)
+        0 * keycloakService.deleteUserById(_)
         1 * repository.delete(user)
         response.id == representation.id
         response.name == representation.name

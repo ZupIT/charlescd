@@ -24,9 +24,9 @@ import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
+import javax.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
 
 @Service
 class UserServiceLegacy(
@@ -64,7 +64,6 @@ class UserServiceLegacy(
         this.userRepository.findById(id)
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
-
     fun findByToken(authorization: String): User {
         val email = keycloakServiceLegacy.getEmailByToken(authorization)
         return userRepository.findByEmail(email).orElseThrow {
@@ -82,7 +81,7 @@ class UserServiceLegacy(
 
     private fun deleteOnKeycloak(it: User): User {
         if (internalIdmEnabled) {
-            keycloakServiceLegacy.deleteUserByEmail(it.email)
+            keycloakServiceLegacy.deleteUserById(it.id)
         }
         return it
     }

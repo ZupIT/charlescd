@@ -42,9 +42,9 @@ class ResetUserPasswordInteractorImpl(
     }
 
     private fun validateUser(authorization: String, userToResetPassword: User) {
-        val tokenUser = userService.findByEmail(authorization)
+        val tokenUser = userService.findByToken(authorization)
 
-        if(!tokenUser.root) {
+        if (!tokenUser.root) {
             throw BusinessException.of(MooveErrorCode.FORBIDDEN)
         }
 
@@ -57,7 +57,6 @@ class ResetUserPasswordInteractorImpl(
         val newPassword = generatePassword()
         userService.resetPassword(email, newPassword)
         return newPassword
-
     }
 
     private fun generatePassword(): String {

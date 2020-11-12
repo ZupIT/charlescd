@@ -30,7 +30,6 @@ import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfig
 import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
 import io.charlescd.moove.legacy.moove.request.configuration.*
 import io.charlescd.moove.legacy.repository.CredentialConfigurationRepository
-import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User
@@ -140,7 +139,10 @@ class CredentialConfigurationService(
         }
     }
 
-    private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest, authorId: String): CreateVillagerRegistryConfigurationRequest {
+    private fun buildAWSRegistryRequest(
+        createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
@@ -152,7 +154,10 @@ class CredentialConfigurationService(
         )
     }
 
-    private fun buildAzureRegistryRequest(createRegistryConfigRequest: CreateAzureRegistryConfigurationRequest, authorId: String): CreateVillagerRegistryConfigurationRequest {
+    private fun buildAzureRegistryRequest(
+        createRegistryConfigRequest: CreateAzureRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
@@ -163,7 +168,10 @@ class CredentialConfigurationService(
         )
     }
 
-    private fun buildGCPRegistryRequest(createRegistryConfigRequest: CreateGCPRegistryConfigurationRequest, authorId: String): CreateVillagerRegistryConfigurationRequest {
+    private fun buildGCPRegistryRequest(
+        createRegistryConfigRequest: CreateGCPRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,

@@ -28,9 +28,9 @@ import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/v2/workspaces")

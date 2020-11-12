@@ -38,13 +38,11 @@ class UserControllerUnitTest extends Specification {
             false,
             LocalDateTime.now()
     )
-    Pageable pageable = PageRequest.of(0, 5)
     UserServiceLegacy service = Mock(UserServiceLegacy)
-    KeycloakServiceLegacy keycloakService = Mock(KeycloakServiceLegacy)
     UserController controller
 
     def "setup"() {
-        controller = new UserController(service, keycloakService)
+        controller = new UserController(service)
     }
 
     def "should update user"() {
@@ -61,10 +59,11 @@ class UserControllerUnitTest extends Specification {
 
     def "should delete user"() {
         when:
-        controller.delete(representation.id)
+        def authorization = "Bearer dokqwodksoksd"
+        controller.delete(representation.id, authorization)
 
         then:
-        1 * service.delete(representation.id)
+        1 * service.delete('Bearer dokqwodksoksd', '81861b6f-2b6e-44a1-a745-83e298a550c9')
         notThrown()
     }
 }

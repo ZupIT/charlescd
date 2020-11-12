@@ -93,6 +93,4 @@ class UserService(private val userRepository: UserRepository, private val manage
     fun deleteUserOnKeycloak(id: String) {
         this.managementUserSecurityService.deleteUser(id)
     }
-
-
 }

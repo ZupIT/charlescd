@@ -45,7 +45,8 @@ class V2UserController(
     @ResponseStatus(HttpStatus.OK)
     fun findByEmail(
         @RequestHeader(value = "Authorization") authorization: String,
-        @PathVariable email: String): UserResponse {
+        @PathVariable email: String
+    ): UserResponse {
         return findUserByEmailInteractor.execute(email, authorization)
     }
 
@@ -99,7 +100,8 @@ class V2UserController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(
         @RequestHeader(value = "Authorization") authorization: String,
-        @PathVariable id: String) {
+        @PathVariable id: String
+    ) {
         deleteUserInteractor.execute(id, authorization)
     }
 }

@@ -27,23 +27,23 @@ class KeycloackManagementUserSecurityService(
     val keycloakService: KeycloakService
 ) : ManagementUserSecurityService {
 
-    override fun getUserEmail(authorization: String) : String {
-       return keycloakService.getEmailByAccessToken(authorization)
+    override fun getUserEmail(authorization: String): String {
+        return keycloakService.getEmailByAccessToken(authorization)
     }
 
     override fun resetUserPassword(email: String, newPassword: String) {
-       keycloakService.resetPassword(email, newPassword)
+        keycloakService.resetPassword(email, newPassword)
     }
 
     override fun changePassword(email: String, oldPassword: String, newPassword: String) {
         keycloakService.changeUserPassword(email, oldPassword, newPassword)
     }
 
-    override fun  createUser(email: String, name: String, password: String) {
+    override fun createUser(email: String, name: String, password: String) {
         keycloakService.createUser(email, name, password)
     }
 
-    override fun  deleteUser(id: String) {
+    override fun deleteUser(id: String) {
         keycloakService.deleteUser(id)
     }
 }

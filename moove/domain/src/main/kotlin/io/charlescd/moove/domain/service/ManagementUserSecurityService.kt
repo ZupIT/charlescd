@@ -29,6 +29,5 @@ ManagementUserSecurityService {
 
     fun createUser(email: String, name: String, password: String)
 
-    fun  deleteUser(id: String)
-
+    fun deleteUser(id: String)
 }
