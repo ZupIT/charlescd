@@ -74,25 +74,25 @@ test('render Registry form default component', async () => {
   expect(dockerHubButton).toBeInTheDocument();
 });
 
-test('render Registry form with azure values', () => {
+test('render Registry form with azure values', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const radioButton = screen.getByTestId("radio-group-registry-item-AZURE");
-  userEvent.click(radioButton);
+  await act(async () => userEvent.click(radioButton));
 
   const text = screen.getByText('Enter the username');
   expect(text).toBeInTheDocument();
 });
 
-test('render Registry form with AWS values', () => {
+test('render Registry form with AWS values', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  userEvent.click(radioButton);
+  await act(async () => userEvent.click(radioButton));
   
   const text = screen.getByText('Enter the region');
   expect(text).toBeInTheDocument();
@@ -111,23 +111,23 @@ test('render Registry form with AWS values and secret input', () => {
     expect(text).toBeInTheDocument();
 });
 
-test('render Registry form without AWS values and secret input', () => {
+test('render Registry form without AWS values and secret input', async () => {
     render(<FormRegistry onFinish={mockOnFinish}/>);
   
     const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-    userEvent.click(radioButton);
+    await act(async () => userEvent.click(radioButton));
     
     const text = screen.queryByText('Enter the access key');
     expect(text).not.toBeInTheDocument();
 });
 
-test('render Registry form with GCP form', () => {
+test('render Registry form with GCP form', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish} />
   );
 
   const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  act(() => userEvent.click(radioButton));
+  await act(async () => userEvent.click(radioButton));
   
   const projectIdInput = screen.getByText('Enter the project id');
   expect(projectIdInput).toBeInTheDocument();
@@ -161,7 +161,7 @@ test('should enable submit button after fill GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const gcp = screen.getByText('GCP');
-  userEvent.click(gcp);
+  await act(async () => userEvent.click(gcp));
 
   const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
@@ -169,10 +169,12 @@ test('should enable submit button after fill GCP form', async () => {
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
   const submitButton = screen.getByText('Save');
 
-  userEvent.type(inputGCPName, 'fake-name');
-  userEvent.type(inputGCPAddress, 'http://fake-host');
-  userEvent.type(inputGCPOrganization, 'fake-access-key');
-  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+  await act(async () => {
+    userEvent.type(inputGCPName, 'fake-name');
+    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPOrganization, 'fake-access-key');
+    userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+  });
 
   expect(submitButton).not.toBeDisabled();
 });
@@ -181,24 +183,17 @@ test('render Registry form with Docker Hub form', async () => {
   render(<FormRegistry onFinish={mockOnFinish}/>);
 
   const radioButton = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
-  userEvent.click(radioButton);
+  await act(async () => userEvent.click(radioButton));
   
   const registryField = screen.getByText('Type a name for Registry');
-  expect(registryField).toBeInTheDocument();
-
   const registryURLField = screen.getByText('Enter the registry url');
-  expect(registryURLField).toBeInTheDocument();
-
   const usernameField = screen.getByText('Enter the username');
-  expect(usernameField).toBeInTheDocument();
-
   const passwordField = screen.getByText('Enter the password');
-  expect(passwordField).toBeInTheDocument();
   const submitButton = screen.getByTestId('button-default-submit-registry');
   expect(submitButton).toBeInTheDocument();
 });
 
-test('should not execute onSubmit because validation (missing name)', () => {
+test('should not execute onSubmit because validation (missing name)', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
@@ -210,25 +205,18 @@ test('should not execute onSubmit because validation (missing name)', () => {
   userEvent.click(radioAuthButton);
   
   const inputAwsAddress = screen.getByTestId("input-text-address");
-  expect(inputAwsAddress).toBeInTheDocument();
-
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  expect(inputAwsAccessKey).toBeInTheDocument();
-
   const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
-  expect(inputAwsSecretKey).toBeInTheDocument();
-
   const inputAwsRegion = screen.getByTestId("input-text-region");
-  expect(inputAwsRegion).toBeInTheDocument();
-
   const submitButton = screen.getByTestId("button-default-submit-registry");
-  expect(submitButton).toBeInTheDocument();
 
-  userEvent.type(inputAwsAddress, 'http://fake-host');
-  userEvent.type(inputAwsAccessKey, 'fake-access-key');
-  userEvent.type(inputAwsSecretKey, 'fake-secret-key');
-  userEvent.type(inputAwsRegion, 'fake-region');
-  userEvent.click(submitButton);
+  await act(async () => {
+    userEvent.type(inputAwsAddress, 'http://fake-host');
+    userEvent.type(inputAwsAccessKey, 'fake-access-key');
+    userEvent.type(inputAwsSecretKey, 'fake-secret-key');
+    userEvent.type(inputAwsRegion, 'fake-region');
+    userEvent.click(submitButton);
+  });
 
   expect(mockOnFinish).not.toBeCalled();
 });
