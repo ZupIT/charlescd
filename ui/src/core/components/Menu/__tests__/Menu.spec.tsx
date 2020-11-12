@@ -33,7 +33,7 @@ const menuFilterItemsMock: MenuAction[] = [
 ];
 
 
-test('render Menu', () => {
+test('render Menu', async() => {
   render(
     <Menu
       actions={menuFilterItemsMock}
@@ -46,11 +46,11 @@ test('render Menu', () => {
   const menuContentElement = screen.getByText('content');
   expect(menuContentElement).toBeInTheDocument();
 
-  userEvent.click(menuContentElement);
+  act(() => userEvent.click(menuContentElement));
   expect(screen.getByTestId('icon-checkmark')).toBeInTheDocument();
 });
 
-test('trigger Menu actions', () => {
+test('trigger Menu actions', async() => {
   render(
     <Menu actions={menuFilterItemsMock} onSelect={jest.fn()}>
        content
@@ -58,7 +58,7 @@ test('trigger Menu actions', () => {
   );
 
   const menuContentElement = screen.getByText('content');
-  userEvent.click(menuContentElement);
+  act(() => userEvent.click(menuContentElement));
   
   const actionsElements = screen.getAllByText(/Action/);
   expect(actionsElements).toHaveLength(2);
@@ -76,10 +76,10 @@ test('trigger Menu select action', () => {
     </Menu>
   );
   const menuContentElement = screen.getByText('content');
-  userEvent.click(menuContentElement);
+  act(() => userEvent.click(menuContentElement));
   
   const actionsElements = screen.getAllByText(/Action/);
-  act(() => userEvent.click(actionsElements[0]));
+  userEvent.click(actionsElements[0]);
 
   expect(onSelect).toHaveBeenCalledWith('first_action');
   waitFor(() => expect(actionsElements).toHaveLength(0));

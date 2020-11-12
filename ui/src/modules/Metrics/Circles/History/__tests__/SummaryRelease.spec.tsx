@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import SummaryRelease from '../SummaryRelease';
 
 test('render default Summary Release', async () => {

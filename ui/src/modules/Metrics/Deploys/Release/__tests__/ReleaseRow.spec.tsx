@@ -16,7 +16,7 @@
 
 import React from 'react';
 import ReleaseRow from '../ReleaseRow';
-import { render, screen, wait, fireEvent } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import { ReleaseContentMock } from './fixtures';
 
 test('render default Release Row', async () => {
@@ -24,8 +24,6 @@ test('render default Release Row', async () => {
  render(
    <ReleaseRow release={ReleaseContentMock}/>
  );
-
- await wait();
 
  expect(screen.getByTestId('release-table-row-1')).toBeInTheDocument();
  expect(screen.getByText('release 1')).toBeInTheDocument();
@@ -39,8 +37,6 @@ test('render Components Row', async () => {
     <ReleaseRow release={ReleaseContentMock}/>
   );
  
-  await wait();
-
  const release = screen.getByTestId('release-table-row-1');
  fireEvent.click(release);
 

@@ -19,7 +19,7 @@
 package datasource
 
 import (
-	"compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/internal/util"
 
 	"github.com/google/uuid"
 )

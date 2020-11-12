@@ -27,12 +27,7 @@ public class DockerBasicAuthResponse {
     @JsonProperty("issued_at")
     private String issuedAt;
 
-    public DockerBasicAuthResponse(String token, String accessToken, Integer expiresIn, String issuedAt) {
-        this.token = token;
-        this.accessToken = accessToken;
-        this.expiresIn = expiresIn;
-        this.issuedAt = issuedAt;
-    }
+    public DockerBasicAuthResponse() { }
 
     public String getToken() {
         return token;

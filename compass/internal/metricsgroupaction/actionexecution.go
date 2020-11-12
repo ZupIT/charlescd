@@ -19,10 +19,10 @@
 package metricsgroupaction
 
 import (
-	"compass/internal/util"
-	"compass/pkg/logger"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 	"time"
 )

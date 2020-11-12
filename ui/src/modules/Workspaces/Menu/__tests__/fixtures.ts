@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
-import Board from '..';
-
-const props = {
-  id: '123-456',
-  name: 'board-001'
-}
-
-test('render Board default component', async () => {
-   render(
-    <Board {...props}  />
-  );
-
-  expect(screen.getByTestId(`tabpanel-${props.name}`)).toBeInTheDocument();
-});
+export const workspaceItem = {
+  id: '619e881f-3a87-4ebd-acb1-ab4923ed497e',
+  name: 'workspace',
+  status: 'COMPLETE',
+};
