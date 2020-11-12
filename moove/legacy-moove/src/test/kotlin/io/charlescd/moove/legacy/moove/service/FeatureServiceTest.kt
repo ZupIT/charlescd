@@ -27,15 +27,14 @@ import io.charlescd.moove.legacy.repository.entity.*
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
-import org.junit.Test
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-
+import org.junit.Test
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 
 class FeatureServiceTest {
 
@@ -81,7 +80,6 @@ class FeatureServiceTest {
 
         verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
         verify(exactly = 0) { featureRepository.save(any() as Feature) }
-
     }
 
     @Test
@@ -137,13 +135,12 @@ class FeatureServiceTest {
     @Test(expected = NotFoundExceptionLegacy::class)
     fun `when trying to update a feature not exists, should do it throw NotFoundExceptionLegacy`() {
 
-        every {  featureRepository.findByIdAndWorkspaceId("id", getWorkspaceId()) } throws  NotFoundExceptionLegacy("feature", "id")
+        every { featureRepository.findByIdAndWorkspaceId("id", getWorkspaceId()) } throws NotFoundExceptionLegacy("feature", "id")
 
         featureService.update("id", generateUpdateRequest(), getWorkspaceId())
 
         verify(exactly = 1) { featureRepository.findByIdAndWorkspaceId("id", getWorkspaceId()) }
         verify(exactly = 0) { featureRepository.save(any() as Feature) }
-
     }
 
     @Test
@@ -165,13 +162,12 @@ class FeatureServiceTest {
     @Test(expected = NotFoundExceptionLegacy::class)
     fun `when trying to delete a feature not exists, should do it throw NotFoundExceptionLegacy`() {
 
-        every {  featureRepository.findByIdAndWorkspaceId("id", getWorkspaceId()) } throws  NotFoundExceptionLegacy("feature", "id")
+        every { featureRepository.findByIdAndWorkspaceId("id", getWorkspaceId()) } throws NotFoundExceptionLegacy("feature", "id")
 
         featureService.delete("id", getWorkspaceId())
 
         verify(exactly = 1) { featureRepository.findByIdAndWorkspaceId("id", getWorkspaceId()) }
         verify(exactly = 0) { featureRepository.delete(any() as Feature) }
-
     }
 
     private fun getFeature(): Feature {
@@ -199,21 +195,14 @@ class FeatureServiceTest {
     }
 
     private fun generateCreateRequest(): CreateFeatureRequest {
-      return  CreateFeatureRequest(
-            "feature",
-            "feature-xyx",
-            emptyList(),
-            emptyList()
-        )
+        return CreateFeatureRequest("feature", "feature-xyx", emptyList(), emptyList())
     }
 
     private fun generateUpdateRequest(): UpdateFeatureRequest {
-        return  UpdateFeatureRequest(
+        return UpdateFeatureRequest(
             "feature",
             emptyList(),
             emptyList()
         )
     }
-
-
 }
