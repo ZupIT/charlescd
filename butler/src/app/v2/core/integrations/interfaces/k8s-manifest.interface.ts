@@ -74,7 +74,16 @@ interface Spec {
   subsets?: Subset[]
   hosts?: string[]
   http?: Http[]
-  gateways?: string[]
+  gateways?: string[],
+  trafficPolicy?: TrafficPolicy
+}
+
+interface TlsOptions {
+  mode: string
+}
+
+interface TrafficPolicy {
+  tls: TlsOptions
 }
 
 interface ManifestMetadata {

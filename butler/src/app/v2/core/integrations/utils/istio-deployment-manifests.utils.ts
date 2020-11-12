@@ -18,6 +18,7 @@ import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
 import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { AppConstants } from '../../../../v1/core/constants'
 
 const IstioDeploymentManifestsUtils = {
 
@@ -39,7 +40,7 @@ const IstioDeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+  getDestinationRules: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
@@ -49,6 +50,26 @@ const IstioDeploymentManifestsUtils = {
       },
       spec: {
         host: component.name,
+        subsets: deployment?.components ? IstioDeploymentManifestsUtils.getDestinationRulesSubsets(component, deployment.circleId, activeByName) : []
+      }
+    }
+  },
+  getDestinationRulesMTLS: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+    return {
+      apiVersion: 'networking.istio.io/v1alpha3',
+      kind: 'DestinationRule',
+      metadata: {
+        name: component.name,
+        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+      },
+      spec: {
+
+        host: component.name,
+        trafficPolicy: {
+          tls: {
+            mode: 'ISTIO_MUTUAL'
+          }
+        },
         subsets: deployment?.components ? IstioDeploymentManifestsUtils.getDestinationRulesSubsets(component, deployment.circleId, activeByName) : []
       }
     }
@@ -106,6 +127,11 @@ const IstioDeploymentManifestsUtils = {
     rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(newComponent.name))
 
     return rules
+  },
+  getDestinationRulesManifest(deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest {
+    return AppConstants.ISTIO_MTLS ?
+      this.getDestinationRulesMTLS(deployment, component, activeByName) :
+      this.getDestinationRules(deployment, component, activeByName)
   }
 }
 

@@ -65,6 +65,9 @@ spec:
             {{ if .Values.butler.database.ssl }}
             - name: DATABASE_SSL
               value: "{{ .Values.butler.database.ssl}}"
+            {{ if .Values.butler.istio.mtls }}
+            - name: ISTIO_MTLS
+              value: "{{ .Values.butler.istio.mtls}}"
             {{ end }}
             - name: MOOVE_URL
               value: "http://charlescd-moove:8080"

@@ -28,5 +28,7 @@ export const DeploymentsConfigurationConstants = {
 
   SPINNAKER_APPLICATION_PREFIX: 'app-',
 
-  SPINNAKER_MAX_APPLICATION_LENGTH: 63
+  SPINNAKER_MAX_APPLICATION_LENGTH: 63,
+
+  ISTIO_MTLS: process.env.ISTIO_MTLS === 'true' || false
 }
