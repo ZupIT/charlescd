@@ -89,7 +89,7 @@ class V2UserController(
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun patchUser(
-        @PathVariable id: String,
+        @PathVariable id: UUID,
         @Valid @RequestBody patchUserRequest: PatchUserRequest,
         @RequestHeader(value = "Authorization") authorization: String
     ): UserResponse {

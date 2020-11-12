@@ -9,6 +9,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.beans.factory.annotation.Value
@@ -20,10 +21,10 @@ class PatchUserInteractorImpl @Inject constructor(
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) : PatchUserInteractor {
 
-    override fun execute(id: String, patchUserRequest: PatchUserRequest, authorization: String): UserResponse {
+    override fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse {
         if (internalIdmEnabled) {
             patchUserRequest.validate()
-            val user = userRepository.findById(id).orElseThrow { NotFoundException("user", id) }
+            val user = userRepository.findById(id.toString()).orElseThrow { NotFoundException("user", id.toString()) }
             val updatedUser = updateUser(patchUserRequest, user)
             return UserResponse.from(updatedUser)
         } else {

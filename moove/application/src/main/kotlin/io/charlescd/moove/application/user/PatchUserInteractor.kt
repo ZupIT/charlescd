@@ -6,5 +6,5 @@ import java.util.*
 
 interface PatchUserInteractor {
 
-    fun execute(id: String, patchUserRequest: PatchUserRequest, authorization: String): UserResponse
+    fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse
 }
