@@ -151,6 +151,31 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         thrown(NotFoundExceptionLegacy)
     }
 
+    def "should get users "() {
+
+        given:
+        def ids = ['id']
+
+        when:
+        service.findUsers(ids)
+
+        then:
+        1 * repository.findAllById(ids) >> [user]
+        notThrown()
+    }
+
+    def "should throw NotFoundException when get invalid users"() {
+
+        given:
+        def ids = ['id']
+
+        when:
+        service.findUsers(ids)
+
+        then:
+        1 * repository.findAllById(ids) >> []
+        thrown(NotFoundExceptionLegacy)
+    }
 
         private String getAuthorization() {
         return  "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3";
