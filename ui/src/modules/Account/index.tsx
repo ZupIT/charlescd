@@ -29,7 +29,7 @@ import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
 import { isRoot } from 'core/utils/auth';
 import InputTitle from 'core/components/Form/InputTitle';
-import { useUser, useUpdateProfile } from 'modules/Users/hooks';
+import { useUser, useUpdateName } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
 import Modal from 'core/components/Modal';
 import { AccountMenu } from './constants';
@@ -44,7 +44,7 @@ const Account = () => {
   const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
-  const [loadingUpdate, updateProfile] = useUpdateProfile();
+  const [loadingUpdate, updateNameById] = useUpdateName();
   const [toggleModal, setToggleModal] = useState(false);
 
   useEffect(() => {
@@ -59,11 +59,7 @@ const Account = () => {
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(currentUser.id, {
-      ...profile,
-      email: currentUser.email,
-      photoUrl: currentUser.photoUrl
-    });
+    updateNameById(currentUser.id, profile.name);
   };
 
   useEffect(() => {

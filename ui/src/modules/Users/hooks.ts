@@ -20,12 +20,14 @@ import {
   useFetchData,
   useFetchStatus,
   FetchStatus,
-  ResponseError
+  ResponseError,
+  FetchStatuses
 } from 'core/providers/base/hooks';
 import {
   findAllUsers,
   resetPasswordById,
   updateProfileById,
+  patchProfileById,
   findUserByEmail,
   createNewUser,
   deleteUserById
@@ -153,6 +155,29 @@ export const useDeleteUser = (): [Function, string] => {
   }, [response, error, dispatch, userName]);
 
   return [delUser, userStatus];
+};
+
+export const useUpdateName = (): [
+  boolean,
+  (id: string, name: string) => void,
+  User,
+  string
+] => {
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const [dataUpdate, , patch] = useFetch<User>(patchProfileById);
+  const { response, loading: updateLoading } = dataUpdate;
+
+  const updateNameById = useCallback(
+    (id: string, name: string) => {
+      setStatus('pending');
+      patch(id, name)
+        .then(() => setStatus('resolved'))
+        .catch(() => setStatus('rejected'));
+    },
+    [patch]
+  );
+
+  return [updateLoading, updateNameById, response, status];
 };
 
 export const useUpdateProfile = (): [boolean, Function, User, string] => {

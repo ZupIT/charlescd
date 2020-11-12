@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { baseRequest, putRequest, postRequest } from './base';
+import { baseRequest, putRequest, postRequest, patchRequest } from './base';
 import { Profile, NewUser } from 'modules/Users/interfaces/User';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
 
@@ -76,6 +76,9 @@ export const resetPasswordById = (id: string) =>
 
 export const updateProfileById = (id: string, profile: Profile) =>
   putRequest(`${v1Endpoint}/${id}`, profile);
+
+export const patchProfileById = (id: string, name: string) =>
+  patchRequest(`${v1Endpoint}/${id}`, 'replace', '/name', name);
 
 export const findUserByEmail = (email: string) => {
   const decodeEmail = btoa(email);
