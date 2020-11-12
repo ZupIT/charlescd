@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.1 (12/11/2020)
+- [#659](https://github.com/ZupIT/charlescd/pull/659) CI Update of charts and changelog
+- [#614](https://github.com/ZupIT/charlescd/pull/614) Fixing Docker Hub Bearer Authentication and Deploy
+- [#664](https://github.com/ZupIT/charlescd/pull/664) Fix warning on test
+- [#648](https://github.com/ZupIT/charlescd/pull/648) Bugfix: Service adjusted to accept merging with "master" and "main"
+- [#615](https://github.com/ZupIT/charlescd/pull/615) Changing Octopipe name to CharlesCD at CD Configuration
+- [#612](https://github.com/ZupIT/charlescd/pull/612) Fix wrong failed build status
+- [#663](https://github.com/ZupIT/charlescd/pull/663) compass-pkg-url
+- [#630](https://github.com/ZupIT/charlescd/pull/630) Git not required hypothesis board
+
+---
+
 ## 0.4.0 (06/11/2020)
 - [#643](https://github.com/ZupIT/charlescd/pull/643) fix workspace search bug
 - [#650](https://github.com/ZupIT/charlescd/pull/650) Update Testing Library
@@ -425,7 +437,3 @@
 
 ## 1.0.1-beta.4 (06/05/2020)
 - Removed rollback for octopipe deployments. This will be butler's responsability (@lucasbfernandes  in #28 )
----
-
-## 1.0.1-beta.3 (06/05/2020)
-- Add resource verification and unit test structure for octopipe (@maycommit in #26)
