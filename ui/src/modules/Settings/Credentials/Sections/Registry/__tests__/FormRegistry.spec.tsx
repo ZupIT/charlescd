@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, act, screen, wait } from 'unit-test/testUtils';
+import { render, act, screen } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
@@ -316,6 +316,6 @@ test('should test connectivity with GCR error', async () => {
   userEvent.click(testConnectionButton);
 
   const errorMessage = await screen.findByText('invalid registry');
-  await wait(() => expect(errorMessage).toBeInTheDocument());
+  expect(errorMessage).toBeInTheDocument();
 });
 
