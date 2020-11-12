@@ -42,7 +42,7 @@ afterEach(() => {
 test('render Modules comparation', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
   render(<ModulesComparation />);
-  await wait();
-  const tabpanel = screen.queryByTestId('tabpanel-workspace');
+
+  const tabpanel = await screen.findByTestId('tabpanel-workspace');
   expect(tabpanel).toBeInTheDocument();
 });

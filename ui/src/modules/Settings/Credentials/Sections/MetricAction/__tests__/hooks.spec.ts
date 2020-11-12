@@ -15,12 +15,9 @@
  */
 
 import { renderHook, act } from '@testing-library/react-hooks';
-import { wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useActionData, useCreateAction, useDeleteAction, usePlugins } from '../hooks';
 import { Action, ActionPayload } from '../types';
-import * as actions from 'core/components/Notification/state/actions';
-
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -42,7 +39,7 @@ test('get action data', async () => {
     response = await current.getActionData();
   });
 
-  await wait(() => expect(response).toMatchObject({}));
+  expect(response).toMatchObject({});
 });
 
 test('error get action data', async () => {
@@ -55,7 +52,7 @@ test('error get action data', async () => {
     response = await userResult.current.getActionData();
   });
 
-  await wait(() => expect(response).toBeUndefined());
+  expect(response).toBeUndefined();
 });
 
 test('should delete action', async () => {
@@ -70,7 +67,7 @@ test('should delete action', async () => {
     response = await current.deleteAction('123');
   });
 
-  await wait(() => expect(response).toMatchObject({}));
+  expect(response).toMatchObject({});
 });
 
 test('error delete action', async () => {
@@ -83,7 +80,7 @@ test('error delete action', async () => {
     response = await userResult.current.deleteAction('123');
   });
 
-  await wait(() => expect(response).toBeUndefined());
+  expect(response).toBeUndefined();
 });
 
 test('get plugins', async () => {
@@ -98,7 +95,7 @@ test('get plugins', async () => {
     response = await current.getPlugins('foobar');
   });
 
-  await wait(() => expect(response).toMatchObject({}));
+  expect(response).toMatchObject({});
 });
 
 test('error get plugin', async () => {
@@ -111,7 +108,7 @@ test('error get plugin', async () => {
     response = await userResult.current.getPlugins('foobar');
   });
 
-  await wait(() => expect(response).toBeUndefined());
+  expect(response).toBeUndefined();
 });
 
 test('should create action', async () => {
@@ -126,7 +123,7 @@ test('should create action', async () => {
     response = await current.createAction(payload);
   });
 
-  await wait(() => expect(response).toMatchObject({}));
+  expect(response).toMatchObject({});
 });
 
 test('error create action', async () => {
@@ -139,5 +136,5 @@ test('error create action', async () => {
     response = await userResult.current.createAction(payload);
   });
 
-  await wait(() => expect(response).toBeUndefined());
+  expect(response).toBeUndefined();
 });
