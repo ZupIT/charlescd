@@ -5,6 +5,8 @@ import io.charlescd.moove.application.PatchOperation
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.PatchUserInteractor
 import io.charlescd.moove.application.user.request.PatchUserRequest
+import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.repository.UserRepository
 import spock.lang.Specification
@@ -154,6 +156,29 @@ class PatchUserInteractorImplTest extends Specification {
 
         def exception = thrown(IllegalArgumentException)
         exception.message == "Path /avatar is not allowed."
+    }
+
+    def "when trying to update user using external IDM should thrown exception"() {
+        given:
+        def userId = UUID.randomUUID()
+
+        def user = getDummyUser(userId.toString())
+
+        def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/avatar", "Patched")]
+        def request = new PatchUserRequest(patches)
+        def authorization = "Bearer token"
+
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), false)
+
+        when:
+        patchUserInteractor.execute(userId, request, authorization)
+
+        then:
+        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        0 * this.userRepository.update(_) >> any()
+
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.EXTERNAL_IDM_FORBIDDEN
     }
 
     private static User getDummyUser(String id) {
