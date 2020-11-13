@@ -52,7 +52,7 @@ test('should render registry with error', async () => {
   expect(errorText).toBeInTheDocument();
 });
 
-test.skip('should render registry successful', async () => {
+test('should render registry successful', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
 
   const form = '';
