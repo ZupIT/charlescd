@@ -154,7 +154,7 @@ test('should enable submit button after fill AWS form', async () => {
   expect(submitButton).not.toBeDisabled();
 });
 
-test('should not enable submit button after partially filled AWS form', async () => {
+test('should not enable submit button after partially filled AWS form (missing name)', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
