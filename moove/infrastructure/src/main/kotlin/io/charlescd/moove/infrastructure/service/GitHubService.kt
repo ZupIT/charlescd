@@ -155,14 +155,6 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
                 )
                 Optional.empty()
             }
-            logger.error("failed to create release: $releaseName with error: ${exception.message}")
-            handleResponseError(
-                error = exception,
-                repository = repository,
-                baseBranch = sourceBranch,
-                releaseName = releaseName
-            )
-            Optional.empty()
         }
     }
 
