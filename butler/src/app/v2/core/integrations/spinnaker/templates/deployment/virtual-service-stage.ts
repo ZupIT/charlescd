@@ -18,9 +18,10 @@ import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurat
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 import { IstioDeploymentManifestsUtils } from '../../../utils/istio-deployment-manifests.utils'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
 export const getVirtualServiceStage = (
-  component: Component,
+  component: DeploymentComponent,
   deployment: Deployment,
   activeComponents: Component[],
   stageId: number
