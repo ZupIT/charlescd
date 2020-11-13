@@ -89,7 +89,7 @@ func (v1 V1) getCompletePath(path string) string {
 }
 
 func health(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	_, _ = w.Write([]byte(":)"))
+	w.Write([]byte(":)"))
 }
 
 func (v1 V1) Start() {

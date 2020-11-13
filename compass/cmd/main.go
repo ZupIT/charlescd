@@ -56,6 +56,9 @@ func main() {
 	defer mooveDb.Close()
 
 	enforcer, err := casbin.NewEnforcer("./auth.conf", "./policy.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
