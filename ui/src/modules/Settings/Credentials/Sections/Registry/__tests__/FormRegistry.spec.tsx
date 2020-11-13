@@ -255,8 +255,8 @@ test('render Registry form with GCP form', async () => {
     <FormRegistry onFinish={mockOnFinish} />
   );
 
-  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  await act(async () => userEvent.click(radioButton));
+  const gcp = screen.getByTestId('radio-group-registry-item-GCP');
+  await act(async () => userEvent.click(gcp));
   
   const projectIdInput = screen.getByText('Enter the project id');
   expect(projectIdInput).toBeInTheDocument();
@@ -265,7 +265,7 @@ test('render Registry form with GCP form', async () => {
 test('should not enable submit button after partially filled GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByText('GCP');
+  const gcp = screen.getByTestId('radio-group-registry-item-GCP');
   userEvent.click(gcp);
 
   const inputGCPName = screen.getByTestId('input-text-name');
@@ -289,7 +289,7 @@ test('should enable submit button after fill GCP form', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByText('GCP');
+  const gcp = screen.getByTestId('radio-group-registry-item-GCP');
   await act(async () => userEvent.click(gcp));
 
   const inputGCPName = screen.getByTestId('input-text-name');
