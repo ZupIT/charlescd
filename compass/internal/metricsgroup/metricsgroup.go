@@ -19,6 +19,7 @@
 package metricsgroup
 
 import (
+	"compass/internal/error"
 	"compass/internal/metric"
 	"compass/internal/util"
 	"compass/pkg/datasource"
@@ -32,6 +33,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
 )
 
 type MetricsGroup struct {
@@ -51,22 +53,25 @@ type MetricGroupResume struct {
 	Status            string `json:"status"`
 }
 
-func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
-	ers := make([]util.ErrorUtil, 0)
+func (main Main) Validate(metricsGroup MetricsGroup) *error.Error {
+	errs := error.New("metricgroup.Validate", "", error.NotValid, nil, logrus.ErrorLevel)
 
 	if metricsGroup.Name == "" {
-		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("Name is required").Error()})
+		errs.WithField("name")
+		errs.WithError(errors.New("Name is required"))
 	}
 
 	if metricsGroup.CircleID == uuid.Nil {
-		ers = append(ers, util.ErrorUtil{Field: "circleID", Error: errors.New("CircleID is required").Error()})
+		errs.WithField("circleID")
+		errs.WithError(errors.New("CircleID is required"))
 	}
 
 	if metricsGroup.Name != "" && len(metricsGroup.Name) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("100 Maximum length in Name").Error()})
+		errs.WithField("name")
+		errs.WithError(errors.New("100 Maximum length in Name"))
 	}
 
-	return ers
+	return errs
 }
 
 type Condition int
@@ -91,23 +96,21 @@ func (c Condition) String() string {
 	return [...]string{"EQUAL", "GREATER_THAN", "LOWER_THAN"}[c]
 }
 
-func (main Main) PeriodValidate(currentPeriod string) error {
+func (main Main) PeriodValidate(currentPeriod string) *error.Error {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
-		logger.Error(util.PeriodValidateRegexError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval")
+		return error.New("metricgroup.PeriodValidate.Compile", "", error.Unexpected, errors.New("Invalid period or interval"), logrus.ErrorLevel)
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
-		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found number")
+		return error.New("metricgroup.PeriodValidate.Match", "", error.Unexpected, errors.New("Invalid period or interval: not found number"), logrus.ErrorLevel)
 	}
 
 	unit := reg.ReplaceAllString(currentPeriod, "")
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found unit")
+		return error.New("metricgroup.PeriodValidate.Match", "", error.Unexpected, errors.New("Invalid period or interval: not found unit"), logrus.ErrorLevel)
 	}
 
 	return nil

@@ -19,6 +19,7 @@
 package metric
 
 import (
+	internalerror "compass/internal/error"
 	"compass/internal/util"
 	"compass/pkg/datasource"
 	"compass/pkg/logger"
@@ -28,6 +29,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
 )
 
 type Metric struct {
@@ -51,68 +53,74 @@ type MetricGroupBy struct {
 	Field    string    `json:"field"`
 }
 
-func (main Main) Validate(metric Metric) []util.ErrorUtil {
-	ers := make([]util.ErrorUtil, 0)
+func (main Main) Validate(metric Metric) *internalerror.Error {
+	errs := internalerror.New("metric.Validate", "", internalerror.NotValid, nil, logrus.ErrorLevel)
 
 	if metric.Nickname == "" {
-		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("Metric nickname is required").Error()})
+		errs.WithField("name")
+		errs.WithError(errors.New("Metric nickname is required"))
 	}
 
 	if metric.Query == "" && metric.Metric == "" {
-		ers = append(ers, util.ErrorUtil{Field: "query/metric", Error: errors.New("Metric name/query is required").Error()})
+		errs.WithField("query/metric")
+		errs.WithError(errors.New("Metric name/query is required"))
 	}
 
 	if len(metric.Filters) > 0 {
 		for _, filter := range metric.Filters {
-			ers = append(ers, validateMetricFilter(filter)...)
+			errs.Merge(validateMetricFilter(filter))
 		}
 	}
 
 	if len(metric.GroupBy) > 0 {
 		for _, groupBy := range metric.GroupBy {
-			ers = append(ers, validateMetricGroupBy(groupBy)...)
+			errs.Merge(validateMetricGroupBy(groupBy))
 		}
 	}
 
 	_, err := main.ResultQuery(metric)
 	if err != nil {
-		ers = append(ers, util.ErrorUtil{Field: getFieldValidateByMetric(metric), Error: err.Error()})
-
+		errs.Merge(err)
 	}
 
 	if metric.Nickname != "" && len(metric.Nickname) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("100 Maximum length in Nickname").Error()})
+		errs.WithField("nickname")
+		errs.WithError(errors.New("100 Maximum length in Nickname"))
 	}
 
 	if metric.Metric != "" && len(metric.Metric) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "metric", Error: errors.New("100 Maximum length in Metric").Error()})
+		errs.WithField("metric")
+		errs.WithError(errors.New("100 Maximum length in Metric"))
 	}
 
-	return ers
+	return errs
 }
 
-func validateMetricFilter(metricFilter datasource.MetricFilter) []util.ErrorUtil {
-	ers := make([]util.ErrorUtil, 0)
+func validateMetricFilter(metricFilter datasource.MetricFilter) *internalerror.Error {
+	errs := internalerror.New("metric.validateMetricFilter", "", internalerror.NotValid, nil, logrus.ErrorLevel)
 
 	if len(metricFilter.Field) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "filter-field", Error: errors.New("100 Maximum length in Filter Field").Error()})
+		errs.WithField("filter-field")
+		errs.WithError(errors.New("100 Maximum length in Filter Field"))
 	}
 
 	if len(metricFilter.Value) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "filter-value", Error: errors.New("100 Maximum length in Filter Value").Error()})
+		errs.WithField("filter-value")
+		errs.WithError(errors.New("100 Maximum length in Filter Value"))
 	}
 
-	return ers
+	return errs
 }
 
-func validateMetricGroupBy(metricGroupBy MetricGroupBy) []util.ErrorUtil {
-	ers := make([]util.ErrorUtil, 0)
+func validateMetricGroupBy(metricGroupBy MetricGroupBy) *internalerror.Error {
+	errs := internalerror.New("metric.validateMetricGroupBy", "", internalerror.NotValid, nil, logrus.ErrorLevel)
 
 	if len(metricGroupBy.Field) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "groupBy-field", Error: errors.New("100 Maximum length in GroupBy Field").Error()})
+		errs.WithField("groupBy-field")
+		errs.WithError(errors.New("100 Maximum length in GroupBy Field"))
 	}
 
-	return ers
+	return errs
 }
 
 func getFieldValidateByMetric(metric Metric) string {
@@ -124,12 +132,11 @@ func getFieldValidateByMetric(metric Metric) string {
 	return field
 }
 
-func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {
+func (main Main) ParseMetric(metric io.ReadCloser) (Metric, *internalerror.Error) {
 	var newMetric *Metric
 	err := json.NewDecoder(metric).Decode(&newMetric)
 	if err != nil {
-		logger.Error(util.GeneralParseError, "ParseMetric", err, metric)
-		return Metric{}, err
+		return Metric{}, internalerror.New("metric.ParseMetric", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 	return *newMetric, nil
 }
@@ -153,21 +160,19 @@ func (main Main) CountMetrics(metrics []Metric) (int, int, int) {
 	return configuredMetrics, reachedMetrics, allMetrics
 }
 
-func (main Main) FindMetricById(id string) (Metric, error) {
+func (main Main) FindMetricById(id string) (Metric, *internalerror.Error) {
 	metric := Metric{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metric)
 	if db.Error != nil {
-		logger.Error(util.FindMetricById, "FindMetricById", db.Error, "Id = "+id)
-		return Metric{}, db.Error
+		return Metric{}, internalerror.New("metric.FindMetricById", "", internalerror.Unexpected, db.Error, logrus.ErrorLevel)
 	}
 	return metric, nil
 }
 
-func (main Main) SaveMetric(metric Metric) (Metric, error) {
+func (main Main) SaveMetric(metric Metric) (Metric, *internalerror.Error) {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		db := tx.Create(&metric)
 		if db.Error != nil {
-			logger.Error(util.SaveMetricError, "SaveMetric", db.Error, metric)
 			return db.Error
 		}
 
@@ -176,44 +181,42 @@ func (main Main) SaveMetric(metric Metric) (Metric, error) {
 			Status:   MetricActive,
 		})
 		if err != nil {
-			return err
+			return err.Errors[0]
 		}
 
 		return nil
 	})
 	if err != nil {
-		logger.Error(util.SaveMetricError, "SaveMetric", err, metric)
-		return Metric{}, err
+		return Metric{}, internalerror.New("metric.SaveMetric", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	return metric, nil
 }
 
-func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
+func (main Main) UpdateMetric(id string, metric Metric) (Metric, *internalerror.Error) {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		db := main.db.Where("id = ?", id).Save(&metric).Association("Filters").Replace(metric.Filters)
 		if db.Error != nil {
-			logger.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
 			return db.Error
 		}
 
 		metric.MetricExecution.Status = MetricUpdated
 		err := main.updateExecutionStatus(tx, metric.ID)
 		if err != nil {
-			return err
+			return err.Errors[0]
 		}
 
 		return nil
 	})
 
 	if err != nil {
-		return Metric{}, err
+		return Metric{}, internalerror.New("metric.UpdateMetric", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	return metric, nil
 }
 
-func (main Main) RemoveMetric(id string) error {
+func (main Main) RemoveMetric(id string) *internalerror.Error {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		db := main.db.Where("id = ?", id).Delete(Metric{})
 		if db.Error != nil {
@@ -223,14 +226,13 @@ func (main Main) RemoveMetric(id string) error {
 
 		err := main.removeMetricExecution(tx, id)
 		if err != nil {
-			return err
+			return err.Errors[0]
 		}
 
 		return nil
 	})
 	if err != nil {
-		logger.Error(util.RemoveMetricError, "RemoveMetric", err, id)
-		return err
+		return internalerror.New("metric.UpdateMetric", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 	return nil
 }
@@ -243,24 +245,20 @@ func (main Main) getQueryByMetric(metric Metric) []byte {
 	return []byte(metric.Metric)
 }
 
-func (main Main) ResultQuery(metric Metric) (float64, error) {
+func (main Main) ResultQuery(metric Metric) (float64, *internalerror.Error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
-		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
-		logger.Error(util.QueryFindDatasourceError, "ResultQuery", notFoundErr, metric.DataSourceID.String())
-		return 0, notFoundErr
+		return 0, internalerror.New("metric.ResultQuery.FindById", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "ResultQuery", err, dataSourceResult.PluginSrc)
-		return 0, err
+		return 0, internalerror.New("metric.ResultQuery.GetPluginBySrc", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	getQuery, err := plugin.Lookup("Result")
 	if err != nil {
-		logger.Error(util.PluginLookupError, "ResultQuery", err, plugin)
-		return 0, err
+		return 0, internalerror.New("metric.ResultQuery.Lookup", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
@@ -274,27 +272,28 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 		})
 	}
 
-	return getQuery.(func(datasourceConfiguration, metric []byte, filters []datasource.MetricFilter) (float64, error))(dataSourceConfigurationData, query, metric.Filters)
+	result, err := getQuery.(func(datasourceConfiguration, metric []byte, filters []datasource.MetricFilter) (float64, error))(dataSourceConfigurationData, query, metric.Filters)
+	if err != nil {
+		return 0, internalerror.New("metric.ResultQuery.getQuery", "", internalerror.Unexpected, err, logrus.ErrorLevel)
+	}
+
+	return result, nil
 }
 
-func (main Main) Query(metric Metric, period, interval string) (interface{}, error) {
+func (main Main) Query(metric Metric, period, interval string) (interface{}, *internalerror.Error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
-		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
-		logger.Error(util.QueryFindDatasourceError, "Query", notFoundErr, metric.DataSourceID.String())
-		return nil, notFoundErr
+		return nil, internalerror.New("metric.Query.FindById", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "Query", err, dataSourceResult.PluginSrc)
-		return nil, err
+		return nil, internalerror.New("metric.Query.GetPluginBySrc", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	getQuery, err := plugin.Lookup("Query")
 	if err != nil {
-		logger.Error(util.PluginLookupError, "Query", err, plugin)
-		return nil, err
+		return nil, internalerror.New("metric.Query.Lookup", "", internalerror.Unexpected, err, logrus.ErrorLevel)
 	}
 
 	query := main.getQueryByMetric(metric)
@@ -308,5 +307,11 @@ func (main Main) Query(metric Metric, period, interval string) (interface{}, err
 		})
 	}
 
-	return getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), metric.Filters)
+	values, err := getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), metric.Filters)
+
+	if err != nil {
+		return nil, internalerror.New("metric.Query.getQuery", "", internalerror.Unexpected, err, logrus.ErrorLevel)
+	}
+
+	return values, nil
 }

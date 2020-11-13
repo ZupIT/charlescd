@@ -20,25 +20,25 @@ package metric
 
 import (
 	"compass/internal/datasource"
+	"compass/internal/error"
 	"compass/internal/plugin"
-	"compass/internal/util"
 	"io"
 
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	ParseMetric(metric io.ReadCloser) (Metric, error)
+	ParseMetric(metric io.ReadCloser) (Metric, *error.Error)
 	CountMetrics(metrics []Metric) (int, int, int)
-	FindMetricById(id string) (Metric, error)
-	SaveMetric(metric Metric) (Metric, error)
-	UpdateMetric(id string, metric Metric) (Metric, error)
-	RemoveMetric(id string) error
-	Query(metric Metric, period string, interval string) (interface{}, error)
-	ResultQuery(metric Metric) (float64, error)
-	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
-	FindAllMetricExecutions() ([]MetricExecution, error)
-	Validate(metric Metric) []util.ErrorUtil
+	FindMetricById(id string) (Metric, *error.Error)
+	SaveMetric(metric Metric) (Metric, *error.Error)
+	UpdateMetric(id string, metric Metric) (Metric, *error.Error)
+	RemoveMetric(id string) *error.Error
+	Query(metric Metric, period string, interval string) (interface{}, *error.Error)
+	ResultQuery(metric Metric) (float64, *error.Error)
+	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, *error.Error)
+	FindAllMetricExecutions() ([]MetricExecution, *error.Error)
+	Validate(metric Metric) *error.Error
 }
 
 type Main struct {
