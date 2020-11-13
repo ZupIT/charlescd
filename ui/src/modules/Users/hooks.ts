@@ -160,12 +160,11 @@ export const useDeleteUser = (): [Function, string] => {
 export const useUpdateName = (): [
   boolean,
   (id: string, name: string) => void,
-  User,
   string
 ] => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const [dataUpdate, , patch] = useFetch<User>(patchProfileById);
-  const { response, loading: updateLoading } = dataUpdate;
+  const { loading: updateLoading } = dataUpdate;
 
   const updateNameById = useCallback(
     (id: string, name: string) => {
@@ -177,7 +176,7 @@ export const useUpdateName = (): [
     [patch]
   );
 
-  return [updateLoading, updateNameById, response, status];
+  return [updateLoading, updateNameById, status];
 };
 
 export const useUpdateProfile = (): [boolean, Function, User, string] => {
