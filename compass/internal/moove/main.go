@@ -19,7 +19,6 @@
 package moove
 
 import (
-	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"net/http"
@@ -46,7 +45,7 @@ type Main struct {
 
 type UseCases interface {
 	FindUserByEmail(email string) (User, error)
-	GetUserPermissions(userID, workspaceID uuid.UUID) ([]json.RawMessage, error)
+	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error)
 }
 
 func NewMain(mooveDb *gorm.DB) UseCases {

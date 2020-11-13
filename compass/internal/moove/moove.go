@@ -31,6 +31,14 @@ type User struct {
 	IsRoot bool
 }
 
+type Permission struct {
+	Name string
+}
+
+type PermissionsResult struct {
+	Permissions json.RawMessage
+}
+
 const permissionQuery = `
 						SELECT permissions 
 						FROM workspaces_user_groups 
@@ -39,8 +47,8 @@ const permissionQuery = `
 						`
 
 func (main Main) FindUserByEmail(email string) (User, error) {
-	var user User
-	db := main.Db.Find("email = ?", email).Scan(&user)
+	user := User{}
+	db := main.Db.Where("email = ?", email).First(&user)
 	if db.Error != nil {
 		return User{}, db.Error
 	}
@@ -48,13 +56,40 @@ func (main Main) FindUserByEmail(email string) (User, error) {
 	return user, nil
 }
 
-func (main Main) GetUserPermissions(userID, workspaceID uuid.UUID) ([]json.RawMessage, error) {
-	permissions := make([]json.RawMessage, 0)
-
-	db := main.Db.Select(permissionQuery, userID, workspaceID).Scan(&permissions)
+func (main Main) GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error) {
+	rawPermissions := make([]PermissionsResult, 0)
+	db := main.Db.Raw(permissionQuery, workspaceID, userID).Scan(&rawPermissions)
 	if db.Error != nil {
 		return nil, db.Error
 	}
 
-	return permissions, nil
+	permsSet, err := getPermissionSet(rawPermissions)
+	if err != nil {
+		return nil, err
+	}
+
+	resultPerms := make([]string, 0)
+	for perm := range permsSet {
+		resultPerms = append(resultPerms, perm)
+	}
+
+	return resultPerms, nil
+}
+
+func getPermissionSet(rawPermissions []PermissionsResult) (map[string]bool, error) {
+	permsMap := make(map[string]bool)
+	for _, raw := range rawPermissions {
+		perm := make([]Permission, 0)
+		err := json.Unmarshal(raw.Permissions, &perm)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, singlePerm := range perm {
+			permsMap[singlePerm.Name] = true
+		}
+
+	}
+
+	return permsMap, nil
 }

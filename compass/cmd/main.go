@@ -22,6 +22,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"github.com/ZupIT/charlescd/compass/internal/health"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
@@ -54,10 +55,11 @@ func main() {
 	}
 	defer mooveDb.Close()
 
-	enforcer, err := casbin.NewEnforcer("./auth.conf", "./rules.csv")
+	enforcer, err := casbin.NewEnforcer("./auth.conf", "./policy.csv")
 
 	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
+		mooveDb.LogMode(true)
 	}
 
 	mooveMain := moove.NewMain(mooveDb)
@@ -69,12 +71,12 @@ func main() {
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, metricsGroupActionMain)
 	mooveClient := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
 	healthMain := health.NewMain(db, datasourceMain, pluginMain, mooveClient)
-	//metricDispatcher := dispatcher.NewDispatcher(metricMain)
-	//actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
-	//
-	//stopChan := make(chan bool, 0)
-	//go metricDispatcher.Start(stopChan)
-	//go actionDispatcher.Start(stopChan)
+	metricDispatcher := dispatcher.NewDispatcher(metricMain)
+	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
+
+	stopChan := make(chan bool, 0)
+	go metricDispatcher.Start(stopChan)
+	go actionDispatcher.Start(stopChan)
 
 	v1Api := v1.NewV1(mooveMain, enforcer)
 	v1Api.NewPluginApi(pluginMain)

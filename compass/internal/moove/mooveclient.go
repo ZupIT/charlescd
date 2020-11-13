@@ -23,12 +23,13 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"net/http"
 	"os"
 )
 
-func (api APIClient) GetMooveComponents(circleIDHeader, circleId, workspaceId string) ([]byte, error) {
+func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]byte, error) {
 	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleId)
 
 	request, err := http.NewRequest(http.MethodGet, mooveUrl, nil)
@@ -36,7 +37,7 @@ func (api APIClient) GetMooveComponents(circleIDHeader, circleId, workspaceId st
 		return nil, err
 	}
 
-	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("x-workspace-id", workspaceID.String())
 	request.Header.Add("x-circle-id", circleIDHeader)
 	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 

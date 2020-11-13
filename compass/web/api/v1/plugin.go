@@ -21,6 +21,7 @@ package v1
 import (
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -37,7 +38,7 @@ func (v1 V1) NewPluginApi(pluginMain plugin.UseCases) PluginApi {
 	return pluginApi
 }
 
-func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ uuid.UUID) {
 	category := r.URL.Query().Get("category")
 
 	circles, err := pluginApi.pluginMain.FindAll(category)

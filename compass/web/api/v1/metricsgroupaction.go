@@ -43,7 +43,7 @@ func (v1 V1) NewMetricsGroupActionApi(main metricsgroupaction.UseCases) MetricsG
 	return metricsGroupActionApi
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceID string) {
+func (metricsGroupActionApi MetricsGroupActionApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceID uuid.UUID) {
 	act, err := metricsGroupActionApi.main.ParseGroupAction(r.Body)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid payload")})
@@ -69,7 +69,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) create(w http.ResponseWriter,
 	api.NewRestSuccess(w, http.StatusOK, savedGroupAct)
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupActionApi MetricsGroupActionApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	err := metricsGroupActionApi.main.DeleteGroupAction(ps.ByName("id"))
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error deleting action")})
@@ -78,7 +78,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) delete(w http.ResponseWriter,
 	api.NewRestSuccess(w, http.StatusNoContent, nil)
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) findById(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupActionApi MetricsGroupActionApi) findById(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 
 	act, err := metricsGroupActionApi.main.FindGroupActionById(id)
@@ -93,7 +93,7 @@ func (metricsGroupActionApi MetricsGroupActionApi) findById(w http.ResponseWrite
 	api.NewRestSuccess(w, http.StatusOK, act)
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceID string) {
+func (metricsGroupActionApi MetricsGroupActionApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceID uuid.UUID) {
 	id := ps.ByName("id")
 	act, err := metricsGroupActionApi.main.ParseGroupAction(r.Body)
 	if err != nil {

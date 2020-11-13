@@ -109,32 +109,33 @@ func (v1 V1) HttpValidator(
 			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("workspaceId is required")})
 			return
 		} else if workspaceUUID, err = uuid.Parse(workspaceID); err != nil {
-			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("workspaceId is required")})
+			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid workspaceId")})
 			return
 		}
 
-		authToken := strings.TrimSpace(r.Header.Get("Authorization"))
-		if authToken == "" {
-			api.NewRestError(w, http.StatusUnauthorized, []error{errors.New("not authorized")})
-			return
-		}
-
-		parsedToken, err := extractToken(authToken)
+		authToken, err := extractToken(r.Header.Get("Authorization"))
 		if err != nil {
 			api.NewRestError(w, http.StatusUnauthorized, []error{errors.New("token expired")})
 			return
 		}
 
-		v1.authorizeUser(r.Method, r.URL.Path, parsedToken.Email, workspaceUUID)
+		allowed, err := v1.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
+		if err != nil || !allowed {
+			api.NewRestError(w, http.StatusForbidden, []error{errors.New("access denied")})
+			return
+		}
 
 		next(w, r, ps, workspaceUUID)
 	}
 }
 
 func extractToken(authorization string) (AuthToken, error) {
+	rToken := strings.TrimSpace(authorization)
+	if rToken == "" {
+		return AuthToken{}, errors.New("empty token")
+	}
 
-	splitToken := strings.Split(authorization, "Bearer ")
-
+	splitToken := strings.Split(rToken, "Bearer ")
 	pkey, fileErr := ioutil.ReadFile(fmt.Sprintf("./pkey.txt"))
 	if fileErr != nil {
 		return AuthToken{}, fileErr
@@ -158,21 +159,27 @@ func extractToken(authorization string) (AuthToken, error) {
 	return *token.Claims.(*AuthToken), nil
 }
 
-func (v1 V1) authorizeUser(method, url, username string, workspaceID uuid.UUID) {
-	user, err := v1.MooveMain.FindUserByEmail(username)
-	if err != nil {
-		return
-	}
-
-	if user.IsRoot {
-		return
+func (v1 V1) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, error) {
+	user, err := v1.MooveMain.FindUserByEmail(email)
+	if err != nil || user == (moove.User{}) {
+		return false, err
+	} else if user.IsRoot {
+		return true, nil
 	}
 
 	permissions, err := v1.MooveMain.GetUserPermissions(user.ID, workspaceID)
 	if err != nil {
-		return
+		return false, err
 	}
 
-	fmt.Print(permissions)
+	for _, permission := range permissions {
+		allowed, err := v1.Enforcer.Enforce(permission, url, method)
+		if err != nil {
+			return false, err
+		} else if allowed {
+			return true, nil
+		}
+	}
 
+	return false, nil
 }

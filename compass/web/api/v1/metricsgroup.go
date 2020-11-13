@@ -49,7 +49,7 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 	return metricsGroupApi
 }
 
-func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, _ uuid.UUID) {
 	circles, err := metricsGroupApi.metricsGroupMain.FindAll()
 	if err != nil {
 		logger.Error("error listing metrics groups", "list", err, nil)
@@ -60,7 +60,7 @@ func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, _ *http.Reque
 	api.NewRestSuccess(w, http.StatusOK, circles)
 }
 
-func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ uuid.UUID) {
 	circleId := r.URL.Query().Get("circleId")
 
 	metricGroups, err := metricsGroupApi.metricsGroupMain.ResumeByCircle(circleId)
@@ -73,20 +73,14 @@ func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Req
 	api.NewRestSuccess(w, http.StatusOK, metricGroups)
 }
 
-func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceID uuid.UUID) {
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
 	if err != nil {
 		logger.Error("error parsing metrics groups", "create", err, nil)
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error creating metrics group")})
 		return
 	}
-
-	metricsGroup.WorkspaceID, err = uuid.Parse(workspaceId)
-	if err != nil {
-		logger.Error("error parsing metrics groups workspace id", "create", err, nil)
-		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error creating metrics group")})
-		return
-	}
+	metricsGroup.WorkspaceID = workspaceID
 
 	if err := metricsGroupApi.metricsGroupMain.Validate(metricsGroup); len(err) > 0 {
 		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save metrics-group")
@@ -103,7 +97,7 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 	api.NewRestSuccess(w, http.StatusOK, createdCircle)
 }
 
-func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.FindById(id)
 	if err != nil {
@@ -115,7 +109,7 @@ func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, _ *http.Reque
 	api.NewRestSuccess(w, http.StatusOK, metricsGroup)
 }
 
-func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 
 	periodParameter := r.URL.Query().Get("period")
@@ -151,7 +145,7 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 	api.NewRestSuccess(w, http.StatusOK, queryResult)
 }
 
-func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 
 	queryResult, err := metricsGroupApi.metricsGroupMain.ResultByID(id)
@@ -164,7 +158,7 @@ func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, _ *http.Req
 	api.NewRestSuccess(w, http.StatusOK, queryResult)
 }
 
-func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
 	if err != nil {
@@ -183,7 +177,7 @@ func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Req
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
 }
 
-func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 	metricsGroupAux, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
 
@@ -209,7 +203,7 @@ func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
 }
 
-func (metricsGroupApi MetricsGroupApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (metricsGroupApi MetricsGroupApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 	err := metricsGroupApi.metricsGroupMain.Remove(id)
 	if err != nil {
