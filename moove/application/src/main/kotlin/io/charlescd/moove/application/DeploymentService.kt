@@ -57,6 +57,12 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         ).maxBy { it.createdAt }
     }
 
+    fun findLastActive(circleId: String, workspaceId: String): Deployment? {
+        return this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(
+            circleId, workspaceId
+        ).maxBy { it.createdAt }
+    }
+
     fun findActiveList(circleId: String): List<Deployment> {
         return this.deploymentRepository.findActiveByCircleId(
             circleId
