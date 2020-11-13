@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, act, screen } from 'unit-test/testUtils';
+import { render, act, screen, waitFor } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
@@ -206,21 +206,21 @@ test('render Registry form with Docker Hub form', async () => {
   expect(enterAddress).not.toBeInTheDocument();
 });
 
-test('should render Registry form with GCP form', async () => {
+test('should render GCP registry form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByText('GCP');
+  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
   await act(async () => userEvent.click(gcp));
   
   const projectIdInput = screen.getByText('Enter the project id');
-  expect(projectIdInput).toBeInTheDocument();
+  waitFor(() => expect(projectIdInput).toBeInTheDocument());
 });
 
 test('should not enable submit button after partially filled GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByText('GCP');
-  userEvent.click(gcp);
+  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
+  await act(async () => userEvent.click(gcp));
 
   const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
@@ -243,7 +243,7 @@ test('should enable submit button after fill GCP form', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByText('GCP');
+  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
   userEvent.click(gcp);
 
   const inputGCPName = screen.getByTestId('input-text-name');
@@ -253,14 +253,16 @@ test('should enable submit button after fill GCP form', async () => {
   const testConnectionButton = screen.getByText('Test connection');
   const submitButton = screen.getByText('Save');
 
-  userEvent.type(inputGCPName, 'fake-name');
-  userEvent.type(inputGCPAddress, 'http://fake-host');
-  userEvent.type(inputGCPOrganization, 'fake-access-key');
-  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
-
+  await act(async () => {
+    userEvent.type(inputGCPName, 'fake-name');
+    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPOrganization, 'fake-access-key');
+    userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+  });
+  
   expect(testConnectionButton).not.toBeDisabled();
   await act(async () => userEvent.click(testConnectionButton));
-  expect(submitButton).not.toBeDisabled();
+  waitFor(() => expect(submitButton).not.toBeDisabled());
 });
 
 test('should test connectivity with GCR successful', async () => {
@@ -268,8 +270,8 @@ test('should test connectivity with GCR successful', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByText('GCP');
-  userEvent.click(gcp);
+  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
+  await act(async () => userEvent.click(gcp));
   
   const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
@@ -277,14 +279,16 @@ test('should test connectivity with GCR successful', async () => {
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
   const testConnectionButton = screen.getByText('Test connection');
 
-  userEvent.type(inputGCPName, 'fake-name');
-  userEvent.type(inputGCPAddress, 'http://fake-host');
-  userEvent.type(inputGCPOrganization, 'fake-access-key');
-  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
-
+  await act(async () => {
+    userEvent.type(inputGCPName, 'fake-name');
+    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPOrganization, 'fake-access-key');
+    userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
+  });
+  
   await act(async () => userEvent.click(testConnectionButton));
 
-  const successMessage = screen.getByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -297,7 +301,7 @@ test('should test connectivity with GCR error', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByText('GCP');
+  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
   userEvent.click(gcp);
 
   const inputGCPName = screen.getByTestId('input-text-name');
