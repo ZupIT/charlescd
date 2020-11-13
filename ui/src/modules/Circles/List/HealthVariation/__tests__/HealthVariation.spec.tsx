@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import CircleHealthComponent from '..';
 import { CircleHealth } from '../interfaces';
 
@@ -39,13 +39,11 @@ const data = {
 } as CircleHealth;
 
 test('render Circle Health Component with default data', async () => {
-  const { getByTestId } = render(
+  render(
     <CircleHealthComponent id={'1'} name={'test'} circleHealthData={data} />
   );
 
-  await wait();
-
-  expect(getByTestId('health-variation')).toBeInTheDocument();
-  expect(getByTestId('health-variation-card-Latency')).toBeInTheDocument();
-  expect(getByTestId('health-variation-card-Error')).toBeInTheDocument();
+  expect(screen.getByTestId('health-variation')).toBeInTheDocument();
+  expect(screen.getByTestId('health-variation-card-Latency')).toBeInTheDocument();
+  expect(screen.getByTestId('health-variation-card-Error')).toBeInTheDocument();
 });

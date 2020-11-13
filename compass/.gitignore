@@ -3,3 +3,4 @@
 .vscode
 cover.html
 *.out
+dist

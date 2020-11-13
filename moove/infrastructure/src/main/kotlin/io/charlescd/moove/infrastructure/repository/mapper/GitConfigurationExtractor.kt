@@ -29,7 +29,7 @@ class GitConfigurationExtractor(private val gitConfigurationMapper: GitConfigura
         val configurations = HashSet<GitConfiguration>()
 
         while (resultSet.next()) {
-            configurations.add(gitConfigurationMapper.mapGitConfiguration(resultSet))
+            gitConfigurationMapper.mapGitConfiguration(resultSet)?.let { configurations.add(it) }
         }
 
         return configurations

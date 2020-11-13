@@ -15,22 +15,22 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import InputTitle from '../';
 
 test('render inputTitle component in edit mode', () => {
   const props = {
     name: 'inputTitle'
   };
-  const { getByTestId, getByText } = render(
-    <InputTitle name={props.name} />
-);
 
-  const inputElement = getByTestId(`input-text-${props.name}`);
-  const saveButton = getByText('Save');
+  render(<InputTitle name={props.name} />);
 
-  expect(saveButton).toBeInTheDocument();
+  const inputElement = screen.getByTestId(`input-text-${props.name}`);
+  const saveButton = screen.getByText('Save');
+
   expect(inputElement).toBeInTheDocument();
+  expect(saveButton).toBeInTheDocument();
 });
 
 
@@ -39,13 +39,14 @@ test('render inputTitle component in view mode', () => {
     name: 'inputTitle',
     defaultValue: 'value'
   };
-  const { getByTestId, queryByText } = render(
+
+  render(
     <InputTitle name={props.name} defaultValue={props.defaultValue} />
   );
 
-  const saveButton = queryByText('Save');
+  const saveButton = screen.getByText('Save');
+  const inputElement = screen.getByTestId(`input-text-${props.name}`);
 
-  const inputElement = getByTestId(`input-text-${props.name}`);
   expect(saveButton).toBeInTheDocument();
   expect(inputElement).toBeInTheDocument();
 });
@@ -56,16 +57,18 @@ test('click to save input title', () => {
     defaultValue: '',
     onClickSave: jest.fn()
   };
-  const { getByTestId, queryByText } = render(
+
+  render(
     <InputTitle name={props.name} defaultValue={props.defaultValue} onClickSave={props.onClickSave} />
   );
-  const saveButton = queryByText('Save');
-  const inputElement = getByTestId(`input-text-${props.name}`);
-  fireEvent.change(inputElement, { target: { value: 'value' } });
 
-  fireEvent.click(saveButton);
+  const saveButton = screen.getByText('Save');
+  const inputElement = screen.getByTestId(`input-text-${props.name}`);
 
-  expect(props.onClickSave).toHaveBeenCalled();
+  userEvent.type(inputElement, 'value');
+  act(() => userEvent.click(saveButton));
+
+  expect(props.onClickSave).toHaveBeenCalledTimes(1);
   expect(saveButton).not.toBeInTheDocument();
 });
 
@@ -75,11 +78,14 @@ test('change input title to edit mode', () => {
     name: 'inputTitle',
     defaultValue: 'value'
   };
-  const { getByTestId, getByText } = render(
+
+  render(
     <InputTitle name={props.name} defaultValue={props.defaultValue} />
   );
-  const inputElement = getByTestId(`input-text-${props.name}`);
-  fireEvent.click(inputElement);
 
-  expect(getByText('Save')).toBeInTheDocument();
+  const inputElement = screen.getByTestId(`input-text-${props.name}`);
+  userEvent.click(inputElement);
+
+  const saveButton = screen.getByText('Save');
+  expect(saveButton).toBeInTheDocument();
 });

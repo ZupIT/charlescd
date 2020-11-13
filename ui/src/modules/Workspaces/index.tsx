@@ -19,7 +19,7 @@ import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
-import { isRoot, getAccessTokenDecoded, logout } from 'core/utils/auth';
+import { getAccessTokenDecoded, logout } from 'core/utils/auth';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
 
@@ -35,12 +35,14 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
   useEffect(() => {
-    if (isRoot()) filterWorkspace(name);
+    filterWorkspace(name);
   }, [name, filterWorkspace]);
 
   useEffect(() => {
     if (!email) logout();
   }, [email]);
+
+  const handleOnSearch = (name: string) => !loading && setName(name);
 
   return (
     <Page>
@@ -48,7 +50,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
         <Menu
           items={list?.content || workspaces}
           isLoading={loading}
-          onSearch={setName}
+          onSearch={handleOnSearch}
           selectedWorkspace={(name: string) => selectedWorkspace(name)}
         />
       </Page.Menu>

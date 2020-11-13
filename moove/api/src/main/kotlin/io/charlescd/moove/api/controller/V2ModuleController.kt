@@ -18,12 +18,14 @@ package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.build.response.ComponentResponse
+import io.charlescd.moove.application.components.FindDeployedComponentsByCircleInteractor
 import io.charlescd.moove.application.module.*
 import io.charlescd.moove.application.module.request.ComponentRequest
 import io.charlescd.moove.application.module.request.CreateModuleRequest
 import io.charlescd.moove.application.module.request.UpdateModuleRequest
 import io.charlescd.moove.application.module.response.ComponentTagResponse
 import io.charlescd.moove.application.module.response.ModuleResponse
+import io.charlescd.moove.application.module.response.SimpleComponentResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -45,7 +47,8 @@ class V2ModuleController(
     private val findModuleByIdInteractor: FindModuleByIdInteractor,
     private val findAllModulesInteractor: FindAllModulesInteractor,
     private val deleteModuleByIdInteractor: DeleteModuleByIdInteractor,
-    private val findComponentTagsInteractor: FindComponentTagsInteractor
+    private val findComponentTagsInteractor: FindComponentTagsInteractor,
+    private val findDeployedComponentsByCircleInteractor: FindDeployedComponentsByCircleInteractor
 ) {
 
     @ApiOperation(value = "Create Module")
@@ -167,5 +170,14 @@ class V2ModuleController(
         @NotBlank @RequestParam("name") name: String
     ): List<ComponentTagResponse> {
         return findComponentTagsInteractor.execute(moduleId, componentId, name, workspaceId)
+    }
+
+    @ApiOperation(value = "Find deployed Components at Circle")
+    @GetMapping("/components/by-circle/{circleId}")
+    fun findDeployedComponentsByCircle(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @NotBlank @PathVariable("circleId") circleId: String
+    ): List<SimpleComponentResponse> {
+        return findDeployedComponentsByCircleInteractor.execute(workspaceId, circleId)
     }
 }

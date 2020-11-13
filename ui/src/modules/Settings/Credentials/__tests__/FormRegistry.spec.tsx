@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait, act, cleanup } from 'unit-test/testUtils';
+import { render, screen, fireEvent, waitFor, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import FormRegistry from '../Sections/Registry/Form';
 import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
@@ -67,204 +68,230 @@ jest.mock('core/components/Form/AceEditor', () => {
 });
 
 test('render Registry form default component', async () => {
-  const { container } = render(
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  await wait();
-  expect(container.innerHTML).toMatch("test");
-});
-
-test('render Registry form with azure values', async () => {
-  const { container, getByTestId } = render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
-
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AZURE");
-  fireEvent.click(radioButton)
-  await wait();
-  expect(container.innerHTML).toMatch("Enter the username");
-});
-
-test('render Registry form with AWS values', async () => {
-  const { container, getByTestId } = render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
-
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AWS");
-  fireEvent.click(radioButton)
-  await wait();
-  expect(container.innerHTML).toMatch("Enter the region");
-});
-
-test('render Registry form with AWS values and secret input', async () => {
-    const { container, getByTestId } = render(
-      <FormRegistry onFinish={mockOnFinish}/>
-    );
+  const azureButton = screen.getByTestId("radio-group-registry-item-AZURE");
+  const GCPButton = screen.getByTestId("radio-group-registry-item-GCP");
+  const AWSButton = screen.getByTestId("radio-group-registry-item-AWS");
+  const dockerHubButton = screen.getByTestId("radio-group-registry-item-DOCKER_HUB");
   
-    await wait();
-    const radioButton = getByTestId("radio-group-registry-item-AWS");
-    fireEvent.click(radioButton)
-    await wait();
-    const radioAuthButton = getByTestId("switch-aws-auth-handler")
-    fireEvent.click(radioAuthButton)
-    expect(container.innerHTML).toMatch("Enter the access key");
+  expect(azureButton).toBeInTheDocument();
+  expect(GCPButton).toBeInTheDocument();
+  expect(AWSButton).toBeInTheDocument();
+  expect(dockerHubButton).toBeInTheDocument();
 });
 
+test('render Registry form with azure values', () => {
+  render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
 
-test('render Registry form without AWS values and secret input', async () => {
-    const { container, getByTestId } = render(
-      <FormRegistry onFinish={mockOnFinish}/>
-    );
+  const radioButton = screen.getByTestId("radio-group-registry-item-AZURE");
+  userEvent.click(radioButton);
+
+  const text = screen.getByText('Enter the username');
+  expect(text).toBeInTheDocument();
+});
+
+test('render Registry form with AWS values', () => {
+  render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
+
+  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
+  userEvent.click(radioButton);
   
-    await wait();
-    const radioButton = getByTestId("radio-group-registry-item-AWS");
-    fireEvent.click(radioButton)
-    await wait();
-    expect(container.innerHTML).not.toMatch("Enter the access key");
+  const text = screen.getByText('Enter the region');
+  expect(text).toBeInTheDocument();
 });
 
-test('render Registry form with GCP form', async () => {
-  const { container, getByTestId } = render(
+test('render Registry form with AWS values and secret input', () => {
+    render(<FormRegistry onFinish={mockOnFinish}/>);
+  
+    const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
+    userEvent.click(radioButton);
+    
+    const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
+    userEvent.click(radioAuthButton);
+
+    const text = screen.getByText('Enter the access key');
+    expect(text).toBeInTheDocument();
+});
+
+test('render Registry form without AWS values and secret input', () => {
+    render(<FormRegistry onFinish={mockOnFinish}/>);
+  
+    const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
+    userEvent.click(radioButton);
+    
+    const text = screen.queryByText('Enter the access key');
+    expect(text).not.toBeInTheDocument();
+});
+
+test('render Registry form with GCP form', () => {
+  render(
     <FormRegistry onFinish={mockOnFinish} />
   );
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-GCP');
-  fireEvent.click(radioButton);
-  await wait();
-  expect(container.innerHTML).toMatch('organization');
+  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
+  act(() => userEvent.click(radioButton));
+  
+  const projectIdInput = screen.getByText('Enter the project id');
+  expect(projectIdInput).toBeInTheDocument();
 });
 
-test('Not trigger onSubmit on json parse error with GCP form', async () => {
-  const { container, getByTestId, getByText } = render(
-    <FormRegistry onFinish={mockOnFinish} />
-  );
+test('Not trigger onSubmit on json parse error with GCP form', () => {
+  render(<FormRegistry onFinish={mockOnFinish} />);
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-GCP');
-  fireEvent.click(radioButton);
-  await wait();
-  const inputGCPName = getByTestId('input-text-name');
-  const inputGCPAddress = getByTestId('input-text-address');
-  const inputGCPOrganization = getByTestId('input-text-organization');
-  const inputGCPJsonKey = getByTestId('input-text-jsonKey');
-  const submitButton = getByTestId('button-default-submit-registry');
-  await act(async () => {
-    fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
-    fireEvent.change(inputGCPAddress, {
-      target: { value: 'http://fake-host' }
-    });
-    fireEvent.change(inputGCPOrganization, {
-      target: { value: 'fake-access-key' }
-    });
-    fireEvent.change(inputGCPJsonKey, { target: { value: 'te' } });
-    fireEvent.click(submitButton);
-  });
-  expect(mockSave).toBeCalledTimes(0);
+  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
+  userEvent.click(radioButton);
+  
+  const inputGCPName = screen.getByTestId('input-text-name');
+  expect(inputGCPName).toBeInTheDocument();
+
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  expect(inputGCPAddress).toBeInTheDocument();
+
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  expect(inputGCPOrganization).toBeInTheDocument();
+
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  expect(inputGCPJsonKey).toBeInTheDocument();
+
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+  expect(submitButton).toBeInTheDocument();
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  userEvent.type(inputGCPJsonKey, 'te');
+  userEvent.click(submitButton);
+
+  waitFor(() => expect(mockOnFinish).not.toBeCalled());
 });
 
 test('Trigger submit on json parse success with GCP form', async () => {
-  const { container, getByTestId, getByText } = render(
-    <FormRegistry onFinish={mockOnFinish} />
-  );
+  render(<FormRegistry onFinish={mockOnFinish} />);
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-GCP');
-  fireEvent.click(radioButton);
-  await wait();
-  const inputGCPName = getByTestId('input-text-name');
-  const inputGCPAddress = getByTestId('input-text-address');
-  const inputGCPOrganization = getByTestId('input-text-organization');
-  const inputGCPJsonKey = getByTestId('input-text-jsonKey');
-  const submitButton = getByTestId('button-default-submit-registry');
-  await act(async () => {
-    fireEvent.change(inputGCPName, { target: { value: 'fake-name' } });
-    fireEvent.change(inputGCPAddress, {
-      target: { value: 'http://fake-host' }
-    });
-    fireEvent.change(inputGCPOrganization, {
-      target: { value: 'fake-access-key' }
-    });
-    fireEvent.change(inputGCPJsonKey, {
-      target: { value: '{ "testKey": "testValue"}' }
-    });
-    fireEvent.click(submitButton);
-  });
-  expect(mockSave).toBeCalledTimes(1);
+  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
+  userEvent.click(radioButton);
+
+  const inputGCPName = screen.getByTestId('input-text-name');
+  expect(inputGCPName).toBeInTheDocument();
+
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  expect(inputGCPAddress).toBeInTheDocument();
+
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  expect(inputGCPOrganization).toBeInTheDocument();
+
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  expect(inputGCPJsonKey).toBeInTheDocument();
+
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+  expect(submitButton).toBeInTheDocument();
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  fireEvent.change(inputGCPJsonKey, { target: { value: '{ "testKey": "testValue"}' }});
+  userEvent.click(submitButton);
+  
+  await waitFor(() => expect(mockSave).toHaveBeenCalledTimes(1));
 });
 
 test('render Registry form with Docker Hub form', async () => {
-  const { container, getByTestId } = render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
+  render(<FormRegistry onFinish={mockOnFinish}/>);
 
-  await wait();
-  const radioButton = getByTestId('radio-group-registry-item-DOCKER_HUB');
-  fireEvent.click(radioButton)
-  await wait();
-  expect(container.innerHTML).toMatch('Enter the username');
-  expect(container.innerHTML).not.toMatch('Enter the address');
+  const radioButton = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  userEvent.click(radioButton);
+  
+  const registryField = screen.getByText('Type a name for Registry');
+  expect(registryField).toBeInTheDocument();
+
+  const registryURLField = screen.getByText('Enter the registry url');
+  expect(registryURLField).toBeInTheDocument();
+
+  const usernameField = screen.getByText('Enter the username');
+  expect(usernameField).toBeInTheDocument();
+
+  const passwordField = screen.getByText('Enter the password');
+  expect(passwordField).toBeInTheDocument();
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+  expect(submitButton).toBeInTheDocument();
 });
 
-test('execute onSubmit', async () => {
-  const { container, getByTestId } = render(
+test('execute onSubmit', () => {
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AWS");
-  fireEvent.click(radioButton)
-  await wait();
-  const radioAuthButton = getByTestId("switch-aws-auth-handler");
-  fireEvent.click(radioAuthButton);
-  await wait();
-  const inputAwsName = getByTestId("input-text-name");
-  const inputAwsAddress = getByTestId("input-text-address");
-  const inputAwsAccessKey = getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = getByTestId("input-text-secretKey");
-  const inputAwsRegion = getByTestId("input-text-region");
-  const submitButton = getByTestId("button-default-submit-registry")
+  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
+  userEvent.click(radioButton);
+  
+  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
+  userEvent.click(radioAuthButton);
+  
+  const inputAwsName = screen.getByTestId("input-text-name");
 
-  await act(async () => {
-    fireEvent.change(inputAwsName, {target: {value: "fake-name"}})
-    fireEvent.change(inputAwsAddress, {target: {value: "http://fake-host"}})
-    fireEvent.change(inputAwsAccessKey, {target: {value: "fake-access-key"}})
-    fireEvent.change(inputAwsSecretKey, {target: {value: "fake-secret-key"}})
-    fireEvent.change(inputAwsRegion, {target: {value: "fake-region"}})
-    fireEvent.click(submitButton)
-  })
+  const inputAwsAddress = screen.getByTestId("input-text-address");
+  expect(inputAwsName).toBeInTheDocument();
 
-  expect(mockSave).toBeCalledTimes(1);
+  const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
+  expect(inputAwsAccessKey).toBeInTheDocument();
+
+  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  expect(inputAwsSecretKey).toBeInTheDocument();
+
+  const inputAwsRegion = screen.getByTestId("input-text-region");
+  expect(inputAwsRegion).toBeInTheDocument();
+
+  const submitButton = screen.getByTestId("button-default-submit-registry");
+  expect(submitButton).toBeInTheDocument();
+
+  userEvent.type(inputAwsName, 'fake-name');
+  userEvent.type(inputAwsAddress, 'http://fake-host');
+  userEvent.type(inputAwsAccessKey, 'fake-access-key');
+  userEvent.type(inputAwsSecretKey, 'fake-secret-key');
+  userEvent.type(inputAwsRegion, 'fake-region');
+  userEvent.click(submitButton);
+
+  waitFor(() => expect(mockSave).toBeCalledTimes(1));
 });
 
-test('should not execute onSubmit because validation (missing name)', async () => {
-  const { container, getByTestId } = render(
+test('should not execute onSubmit because validation (missing name)', () => {
+  render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  await wait();
-  const radioButton = getByTestId("radio-group-registry-item-AWS");
-  fireEvent.click(radioButton)
-  await wait();
-  const radioAuthButton = getByTestId("switch-aws-auth-handler");
-  fireEvent.click(radioAuthButton);
-  await wait();
-  const inputAwsAddress = getByTestId("input-text-address");
-  const inputAwsAccessKey = getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = getByTestId("input-text-secretKey");
-  const inputAwsRegion = getByTestId("input-text-region");
-  const submitButton = getByTestId("button-default-submit-registry")
+  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
+  userEvent.click(radioButton);
+  
+  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
+  userEvent.click(radioAuthButton);
+  
+  const inputAwsAddress = screen.getByTestId("input-text-address");
+  expect(inputAwsAddress).toBeInTheDocument();
 
-  await act(async () => {
-    fireEvent.change(inputAwsAddress, {target: {value: "http://fake-host"}})
-    fireEvent.change(inputAwsAccessKey, {target: {value: "fake-access-key"}})
-    fireEvent.change(inputAwsSecretKey, {target: {value: "fake-secret-key"}})
-    fireEvent.change(inputAwsRegion, {target: {value: "fake-region"}})
-    fireEvent.click(submitButton)
-  })
+  const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
+  expect(inputAwsAccessKey).toBeInTheDocument();
 
-  expect(mockSave).toBeCalledTimes(0);
+  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  expect(inputAwsSecretKey).toBeInTheDocument();
+
+  const inputAwsRegion = screen.getByTestId("input-text-region");
+  expect(inputAwsRegion).toBeInTheDocument();
+
+  const submitButton = screen.getByTestId("button-default-submit-registry");
+  expect(submitButton).toBeInTheDocument();
+
+  userEvent.type(inputAwsAddress, 'http://fake-host');
+  userEvent.type(inputAwsAccessKey, 'fake-access-key');
+  userEvent.type(inputAwsSecretKey, 'fake-secret-key');
+  userEvent.type(inputAwsRegion, 'fake-region');
+  userEvent.click(submitButton);
+
+  expect(mockOnFinish).not.toBeCalled();
 });

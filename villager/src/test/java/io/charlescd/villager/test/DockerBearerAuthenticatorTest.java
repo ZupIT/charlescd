@@ -16,6 +16,8 @@
 
 package io.charlescd.villager.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.DockerBasicAuthResponse;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.DockerBearerAuthenticator;
 import org.junit.jupiter.api.Test;
@@ -33,27 +35,44 @@ public class DockerBearerAuthenticatorTest {
         var organization = "org";
         var username = "user";
         var password = "pass";
-        var tagName = "latest";
+        var imageName = "image";
         var authUrl = "https://auth.docker.io";
         var service = "registry.docker.io";
 
-        var auth = new DockerBearerAuthenticator(organization, username, password, tagName, authUrl, service);
+        var auth = new DockerBearerAuthenticator(organization, username, password, imageName, authUrl, service);
 
-        assertThat(auth.createAuthUrl(), is("https://auth.docker.io?service=registry.docker.io&scope=repository:org/latest:pull"));
+        assertThat(auth.createAuthUrl(), is("https://auth.docker.io?service=registry.docker.io&scope=repository:org/image:pull"));
     }
 
     @Test
-    public void buildDockerBasicAuthResponse() {
+    public void buildDockerBasicAuthResponse() throws JsonProcessingException {
         var token = "token";
         var accessToken = "access_token";
         var expiresIn = 300;
         var issuedAt = "2020-09-25T15:33:20.298629582Z";
 
-        var response = new DockerBasicAuthResponse(token, accessToken, expiresIn, issuedAt);
+        var response = "{\"token\": \"token\", \"access_token\": \"access_token\",\"expires_in\": 300,\"issued_at\": \"2020-09-25T15:33:20.298629582Z\"}\n";
 
-        assertThat(response.getToken(), is(token));
-        assertThat(response.getAccessToken(), is(accessToken));
-        assertThat(response.getExpiresIn(), is(expiresIn));
-        assertThat(response.getIssuedAt(), is(issuedAt));
+        var dockerBasicAuthResponse = new ObjectMapper().readValue(response, DockerBasicAuthResponse.class);
+
+        assertThat(dockerBasicAuthResponse.getToken(), is(token));
+        assertThat(dockerBasicAuthResponse.getAccessToken(), is(accessToken));
+        assertThat(dockerBasicAuthResponse.getExpiresIn(), is(expiresIn));
+        assertThat(dockerBasicAuthResponse.getIssuedAt(), is(issuedAt));
+    }
+
+    @Test
+    public void buildDockerBasicAuthResponseMissingAccessToken() throws JsonProcessingException {
+        var token = "token";
+        var expiresIn = 300;
+        var issuedAt = "2020-09-25T15:33:20.298629582Z";
+
+        var response = "{\"token\": \"token\",\"expires_in\": 300,\"issued_at\": \"2020-09-25T15:33:20.298629582Z\"}\n";
+
+        var dockerBasicAuthResponse = new ObjectMapper().readValue(response, DockerBasicAuthResponse.class);
+
+        assertThat(dockerBasicAuthResponse.getToken(), is(token));
+        assertThat(dockerBasicAuthResponse.getExpiresIn(), is(expiresIn));
+        assertThat(dockerBasicAuthResponse.getIssuedAt(), is(issuedAt));
     }
 }
