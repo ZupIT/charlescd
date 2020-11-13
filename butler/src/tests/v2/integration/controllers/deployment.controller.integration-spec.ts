@@ -172,6 +172,7 @@ describe('DeploymentController v2', () => {
       'cdConfigurationId should not be empty',
       'cdConfigurationId must be an UUID',
       'circle should not be empty',
+      'defaultCircle must be a boolean value',
       'modules should not be empty'
     ]
     await request(app.getHttpServer())
