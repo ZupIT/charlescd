@@ -15,7 +15,7 @@
  */
 
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
 import { flatten } from 'lodash'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
@@ -57,6 +57,8 @@ export class CreateDeploymentRequestDto {
 
   public status: DeploymentStatusEnum
 
+  @IsBoolean()
+  @ApiProperty()
   public defaultCircle: boolean
 
   @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
