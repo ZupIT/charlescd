@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import FormRegistry from '../Form';
 import MutationObserver from 'mutation-observer';
@@ -306,6 +306,27 @@ test('should enable submit button after fill GCP form', async () => {
   });
 
   expect(submitButton).not.toBeDisabled();
+});
+
+test('should not trigger onSubmit on json parse error in GCP form', () => {
+  render(<FormRegistry onFinish={mockOnFinish} />);
+
+  const gcp = screen.getByTestId('radio-group-registry-item-GCP');
+  userEvent.click(gcp);
+  
+  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  userEvent.type(inputGCPName, 'fake-name');
+  userEvent.type(inputGCPAddress, 'http://fake-host');
+  userEvent.type(inputGCPOrganization, 'fake-access-key');
+  userEvent.type(inputGCPJsonKey, 'te');
+  userEvent.click(submitButton);
+
+  waitFor(() => expect(mockOnFinish).not.toBeCalled());
 });
 
 test('render Registry form with Docker Hub form', async () => {
