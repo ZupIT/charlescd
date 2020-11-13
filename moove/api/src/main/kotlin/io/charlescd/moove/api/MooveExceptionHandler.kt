@@ -58,7 +58,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ExceptionHandler(IllegalArgumentException::class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ResponseBody
-    fun illegalArgumentException(ex: IllegalArgumentException): ErrorMessageResponse {
+    fun handleIllegalArgument(ex: IllegalArgumentException): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
     }
