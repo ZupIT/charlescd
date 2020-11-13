@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 type API struct {
@@ -36,7 +37,6 @@ const (
 	v1Path = "/api/v1"
 	v2Path = "/api/v2"
 	DefaultLimitRequestsBySecond = 10
-	DefaultLimitRequestsBurstBySecond = 10
 )
 
 func NewAPI() *API {
@@ -72,11 +72,9 @@ func throttle(requestLimiter *rate.Limiter) gin.HandlerFunc {
 
 func getLimiter() *rate.Limiter {
 	limitRequestsBySecond, error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BY_SECOND"), 0, 32)
-	limitRequestsBurstBySecond, error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BURST_BY_SECOND"), 0, 32)
 	if error != nil {
 		log.WithFields(log.Fields{"function": "getLimiter"}).Error("Cannot read env var. Error: " + error.Error())
 		limitRequestsBySecond = DefaultLimitRequestsBySecond
-		limitRequestsBurstBySecond = DefaultLimitRequestsBurstBySecond
 	}
-	return rate.NewLimiter(rate.Limit(limitRequestsBySecond), int(limitRequestsBurstBySecond));
+	return rate.NewLimiter(rate.Every(1 * time.Second), int(limitRequestsBySecond))
 }
