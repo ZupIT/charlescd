@@ -103,7 +103,7 @@ class V2ConfigurationController(
         @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody request: CreateMetricConfigurationRequest
     ): MetricConfigurationResponse {
-        return this.createMetricConfigurationInteractor.execute(request, workspaceId, workspaceId)
+        return this.createMetricConfigurationInteractor.execute(request, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Update git Configuration")

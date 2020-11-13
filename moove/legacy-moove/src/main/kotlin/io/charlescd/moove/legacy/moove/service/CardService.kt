@@ -32,21 +32,21 @@ import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
 import io.charlescd.moove.legacy.moove.request.git.FindBranchParam
 import io.charlescd.moove.legacy.repository.*
 import io.charlescd.moove.legacy.repository.entity.*
-import java.time.LocalDateTime
-import java.util.*
-import javax.transaction.Transactional
 import org.hibernate.Hibernate
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.util.*
+import javax.transaction.Transactional
 
 @Service
 class CardService(
     private val cardRepository: CardRepository,
     private val cardColumnRepository: CardColumnRepository,
-    private val userRepository: UserRepository,
+    private val userServiceLegacy: UserServiceLegacy,
     private val featureRepository: FeatureRepository,
     private val labelRepository: LabelRepository,
     private val commentRepository: CommentRepository,
@@ -99,21 +99,23 @@ class CardService(
     }
 
     @Transactional
-    fun addComment(id: String, addCommentRequest: AddCommentRequest, workspaceId: String): CardRepresentation {
+    fun addComment(id: String, addCommentRequest: AddCommentRequest, workspaceId: String, authorization: String): CardRepresentation {
+        val user = userServiceLegacy.findByToken(authorization)
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
-            .let { addCommentToCard(it, addCommentRequest) }
+            .let { addCommentToCard(it, addCommentRequest, user) }
             .let { cardRepository.save(it) }
             .toRepresentation()
     }
 
     @Transactional
-    fun addMembers(id: String, addMemberRequest: AddMemberRequest, workspaceId: String): CardRepresentation {
+    fun addMembers(id: String, addMemberRequest: AddMemberRequest, workspaceId: String, authorization: String): CardRepresentation {
+        val user = userServiceLegacy.findByToken(authorization)
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .let { addMemberToCard(it, addMemberRequest) }
             .let { cardRepository.save(it) }
-            .also { notificationAddMemberToCard(it, addMemberRequest) }
+            .also { notificationAddMemberToCard(it, addMemberRequest, user) }
             .toRepresentation()
     }
 
@@ -249,15 +251,15 @@ class CardService(
         }
     }
 
-    private fun AddCommentRequest.toEntity() = Comment(
+    private fun AddCommentRequest.toEntity(user: User) = Comment(
         comment = this.comment,
-        author = findUserById(this.authorId),
+        author = user,
         createdAt = LocalDateTime.now(),
         id = UUID.randomUUID().toString()
     )
 
-    private fun addCommentToCard(card: Card, addCommentRequest: AddCommentRequest): Card {
-        return addCommentRequest.toEntity()
+    private fun addCommentToCard(card: Card, addCommentRequest: AddCommentRequest, user: User): Card {
+        return addCommentRequest.toEntity(user)
             .let { commentRepository.save(it) }
             .also { notificationAddCommentMemberToCard(card, it) }
             .let { card.addComment(it) }
@@ -265,8 +267,7 @@ class CardService(
 
     private fun AddMemberRequest.toEntity(): Set<User> =
         this.memberIds.map {
-            userRepository.findById(it)
-                .orElseThrow { NotFoundExceptionLegacy("user", it) }
+            userServiceLegacy.findUser(it)
         }.toSet()
 
     private fun addMemberToCard(card: Card, addMemberRequest: AddMemberRequest): Card {
@@ -396,8 +397,7 @@ class CardService(
         )
 
     private fun findUserById(authorId: String): User {
-        return userRepository.findById(authorId)
-            .orElseThrow { NotFoundExceptionLegacy("user", authorId) }
+        return userServiceLegacy.findUser(authorId)
     }
 
     private fun findHypothesisById(hypothesisId: String): Hypothesis {
@@ -495,11 +495,9 @@ class CardService(
         }
     }
 
-    private fun notificationAddMemberToCard(card: Card, addMemberRequest: AddMemberRequest) {
+    private fun notificationAddMemberToCard(card: Card, addMemberRequest: AddMemberRequest, user: User) {
         try {
-            userRepository.findById(addMemberRequest.authorId)
-                .orElseThrow { NotFoundExceptionLegacy("user", addMemberRequest.authorId) }
-                .let { charlesNotificationService.addMembersCard(card, it, addMemberRequest.memberIds) }
+               charlesNotificationService.addMembersCard(card, user, addMemberRequest.memberIds)
         } catch (e: Exception) {
             log.error("error notification add member to card", e)
         }

@@ -108,24 +108,24 @@ class CardController(private val service: CardService) {
     @PostMapping("/{id}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     fun addComment(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @PathVariable id: String,
         @Valid @RequestBody addCommentRequest: AddCommentRequest
     ) =
-        // TODO: authorID
-        service.addComment(id, addCommentRequest, workspaceId)
+        service.addComment(id, addCommentRequest, workspaceId, authorization)
 
     @ApiOperation(value = "Add member")
     @ApiImplicitParam(name = "addMemberRequest", value = "Add member", required = true, dataType = "AddMemberRequest")
     @PostMapping("/{id}/members")
     @ResponseStatus(HttpStatus.CREATED)
     fun addMembers(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @PathVariable id: String,
         @Valid @RequestBody addMemberRequest: AddMemberRequest
     ) =
-        // TODO: authorID
-        service.addMembers(id, addMemberRequest, workspaceId)
+        service.addMembers(id, addMemberRequest, workspaceId, authorization)
 
     @ApiOperation(value = "Remove member")
     @DeleteMapping("/{id}/members/{memberId}")
