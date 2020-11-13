@@ -63,7 +63,6 @@ const CardConfig = ({
     <Card.Header icon={headerIcon} action={headerAction} />
   );
 
-  // TODO can it be Card.body?
   const renderBody = () => (
     <Styled.Body>
       <Text.h4 color="light">{description}</Text.h4>
