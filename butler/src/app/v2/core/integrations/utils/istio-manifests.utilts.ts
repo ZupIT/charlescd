@@ -15,20 +15,18 @@
  */
 
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
-import { Component } from '../../../api/deployments/interfaces'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
-import { AppConstants } from '../../../../v1/core/constants'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const IstioManifestsUtils = {
 
-  getDestinationRulesSubsetObject: (component: Component, circleId: string | null): Subset => {
+  getDestinationRulesSubsetObject: (component: DeploymentComponent, circleId: string): Subset => {
     return {
       labels: {
         component: component.name,
         tag: component.imageTag,
-        circleId: CommonTemplateUtils.getCircleId(circleId)
+        circleId: circleId
       },
-      name: CommonTemplateUtils.getCircleId(circleId)
+      name: circleId
     }
   },
 
@@ -95,23 +93,22 @@ const IstioManifestsUtils = {
       }
     ]
   }),
-
-  getVirtualServiceHTTPDefaultRule: (name: string): Http => ({
+  getVirtualServiceHTTPDefaultRule: (name: string, circleId: string): Http => ({
     route: [
       {
         destination: {
           host: name,
-          subset: AppConstants.DEFAULT_CIRCLE_ID
+          subset: circleId
         },
         headers: {
           request: {
             set: {
-              'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+              'x-circle-source': circleId
             }
           },
           response: {
             set: {
-              'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+              'x-circle-source': circleId
             }
           }
         }

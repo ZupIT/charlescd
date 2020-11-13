@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait, waitFor, act } from 'unit-test/testUtils';
+import { render, screen, fireEvent, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import FormRegistry from '../Sections/Registry/Form';
 import MutationObserver from 'mutation-observer';
