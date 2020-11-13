@@ -15,15 +15,15 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Text from '../';
 import { HEADINGS_FONT_SIZE } from '../enums';
 import { dark as textTheme } from 'core/assets/themes/text';
 
 test('renders text component with default properties', () => {
-  const { getByText } = render(<Text.h1>hello</Text.h1>);
+  render(<Text.h1>hello</Text.h1>);
 
-  const textElement = getByText('hello');
+  const textElement = screen.getByText('hello');
   expect(textElement).toHaveStyle(`color: ${textTheme.primary};`);
   expect(textElement).toHaveStyle('font-weight: normal;');
   expect(textElement).toHaveStyle(`font-size: ${HEADINGS_FONT_SIZE.h1};`);
@@ -31,13 +31,13 @@ test('renders text component with default properties', () => {
 });
 
 test('renders text component with color, weight and align props', () => {
-  const { getByText } = render(
+  render(
     <Text.h2 color="dark" align="center" weight="bold">
       hello
     </Text.h2>
   );
 
-  const textElement = getByText('hello');
+  const textElement = screen.getByText('hello');
   expect(textElement).toHaveStyle(`color: ${textTheme.dark};`);
   expect(textElement).toHaveStyle('font-weight: bold;');
   expect(textElement).toHaveStyle(`font-size: ${HEADINGS_FONT_SIZE.h2};`);
@@ -45,7 +45,7 @@ test('renders text component with color, weight and align props', () => {
 });
 
 test('renders anothers text variations', () => {
-  const { getAllByText } = render(
+  render(
     <>
       <Text.h3>hello</Text.h3>
       <Text.h4>hello</Text.h4>
@@ -54,5 +54,6 @@ test('renders anothers text variations', () => {
     </>
   );
 
-  expect(getAllByText('hello').length).toBe(4);
+  const textElements = screen.getAllByText('hello');
+  expect(textElements).toHaveLength(4);
 });

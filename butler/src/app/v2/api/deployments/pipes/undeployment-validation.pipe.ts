@@ -38,9 +38,9 @@ export class UndeploymentValidation implements PipeTransform {
     }
 
     const circleId = deployment.circleId
-    const runningComponents = circleId ?
-      await this.componentsRepository.findCircleRunningComponents(circleId) :
-      await this.componentsRepository.findDefaultRunningComponents()
+    const runningComponents = deployment.defaultCircle ?
+      await this.componentsRepository.findDefaultRunningComponents() :
+      await this.componentsRepository.findCircleRunningComponents(circleId)
 
     if (runningComponents && runningComponents.length > 0) {
       const componentIds = runningComponents.map( c => c.id)

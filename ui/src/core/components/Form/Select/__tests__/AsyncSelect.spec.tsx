@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { renderHook } from '@testing-library/react-hooks';
 import { useForm } from 'react-hook-form';
@@ -36,6 +37,7 @@ test('render async select component', () => {
       label="Select..."
       customOption={CustomOption.Icon}
       options={options}
+      defaultValue={options[0]}
       loadOptions={loadOptions}
       onChange={onChange}
     />
@@ -61,6 +63,7 @@ test('should call loadOptions', () => {
       name="select"
       label="Select..."
       customOption={CustomOption.Icon}
+      defaultValue={options[0]}
       options={options}
       loadOptions={loadOptions}
       onChange={onChange}
@@ -68,7 +71,7 @@ test('should call loadOptions', () => {
   );
 
   const select = container.getElementsByTagName('INPUT');
-  fireEvent.change(select[0], { target: { value: 'ap' }});
+  userEvent.type(select[0], "ap" );
 
   expect(loadOptions).toBeCalled();
 });

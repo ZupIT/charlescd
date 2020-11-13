@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { FormContext, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 
 type Props = {
   children: React.ReactNode;
@@ -25,10 +25,10 @@ export const FormContextMock = ({ children }: Props) => {
   const methods = useForm();
 
   return (
-    <FormContext {...methods} >
+    <FormProvider {...methods} >
       <form>
         {children}
       </form>
-    </FormContext>
+    </FormProvider>
   );
 };

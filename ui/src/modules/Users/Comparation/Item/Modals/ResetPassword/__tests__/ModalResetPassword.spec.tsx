@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, act, waitForElement } from 'unit-test/testUtils';
+import { render, fireEvent, act, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import ModalResetPassword from '..';
 
@@ -46,37 +46,37 @@ const props = {
 };
 
 test('render ModalResetPassword component', () => {
-  const { getByTestId } = render(
+  render(
     <ModalResetPassword user={props.user} onClose={onClose} />
   );
 
-  const element = getByTestId('modal-default');
+  const element = screen.getByTestId('modal-default');
   expect(element).toBeInTheDocument();
 });
 
 test('render ModalResetPassword component and trigger reset', async () => {
   (fetch as FetchMock).mockResponseOnce(mockResetPassword);
 
-  const { getByTestId } = render(
+  render(
     <ModalResetPassword user={props.user} onClose={onClose} />
   );
 
-  const button = getByTestId('button-default-reset-password');
+  const button = screen.getByTestId('button-default-reset-password');
   expect(button).toBeInTheDocument();
 
   await act(async () => fireEvent.click(button));
 
-  const inputAction = await waitForElement(() => getByTestId('input-action-new-password'));
+  const inputAction = screen.getByTestId('input-action-new-password');
   expect(inputAction).toBeInTheDocument();
 
-  const buttonCopy = getByTestId('input-action-new-password-button');
+  const buttonCopy = screen.getByTestId('input-action-new-password-button');
   expect(buttonCopy).toBeInTheDocument();
 
-  const iconCopy = getByTestId('icon-copy');
+  const iconCopy = screen.getByTestId('icon-copy');
   expect(iconCopy).toBeInTheDocument();
 
   await act(async () => fireEvent.click(buttonCopy));
 
-  const iconCheckmarkCircle = getByTestId('icon-checkmark-circle');
+  const iconCheckmarkCircle = screen.getByTestId('icon-checkmark-circle');
   expect(iconCheckmarkCircle).toBeInTheDocument();
 });

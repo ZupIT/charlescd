@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import AceEditor from '..';
 
 const props = {

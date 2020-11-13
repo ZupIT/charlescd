@@ -19,8 +19,8 @@
 package metric
 
 import (
-	"compass/internal/util"
-	"compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )

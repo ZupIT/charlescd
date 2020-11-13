@@ -15,9 +15,8 @@
  */
 
 import React from 'react';
-import { render, wait, screen, fireEvent } from 'unit-test/testUtils';
-import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupsResume } from './fixtures';
+import { render, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import MetricsGroups from '../MetricsGroups';
 
 test('render Metrics Groups Layer without data', async () => {
@@ -26,11 +25,11 @@ test('render Metrics Groups Layer without data', async () => {
   render(<MetricsGroups circleId={'1'} onClickCreate={handleClick}/>);
 
   const addMetricsGroups = screen.getByTestId('button-iconRounded-add');
+  expect(addMetricsGroups).toBeInTheDocument();
 
   expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument();
   expect(screen.getByText('Metrics Groups')).toBeInTheDocument();
-  expect(addMetricsGroups).toBeInTheDocument();
 
-  fireEvent.click(addMetricsGroups);
+  await act(async () => userEvent.click(addMetricsGroups));
   expect(handleClick).toHaveBeenCalled();
 });

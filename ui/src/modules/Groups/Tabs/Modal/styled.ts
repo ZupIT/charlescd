@@ -37,7 +37,7 @@ const Wrapper = styled('div')<WrapperProps>`
   .modal-user-content {
     padding: 0;
     width: 543px;
-    height: 639px;
+    height: calc(100vh - 262px);
   }
 `;
 

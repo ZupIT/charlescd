@@ -53,7 +53,11 @@ test('render Layer Metrics with button to add metrics', async () => {
         status: WORKSPACE_STATUS.COMPLETE
       },
       status: 'idle'
-    });
+    }); 
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [...Datasources],
+    getAll: jest.fn
+  });
   render(<LayerMetrics id="123" />);
   expect(screen.queryByTestId('button-iconRounded-add')).not.toBeInTheDocument();
 });

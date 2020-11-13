@@ -98,7 +98,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.CREATED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -140,7 +141,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: true
+        active: true,
+        defaultCircle: false
       },
       type: 'DEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -194,7 +196,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.CREATED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -237,7 +240,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: false
+        active: false,
+        defaultCircle: false
       },
       type: 'DEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -291,7 +295,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.SUCCEEDED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
@@ -334,7 +339,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: false
+        active: false,
+        defaultCircle: false
       },
       type: 'UNDEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -388,7 +394,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.SUCCEEDED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
@@ -431,7 +438,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: true
+        active: true,
+        defaultCircle: false
       },
       type: 'UNDEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',

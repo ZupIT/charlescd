@@ -31,6 +31,7 @@ import {
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 export class OctopipeRequestBuilder {
 
@@ -137,7 +138,7 @@ export class OctopipeRequestBuilder {
     return unusedDeployments
   }
 
-  private getHelmRepositoryConfig(component: Component, cdConfiguration: CdConfiguration): HelmRepositoryConfig {
+  private getHelmRepositoryConfig(component: DeploymentComponent, cdConfiguration: CdConfiguration): HelmRepositoryConfig {
     return {
       type: (cdConfiguration.configurationData as OctopipeConfigurationData).gitProvider,
       url: component.helmUrl,
@@ -145,14 +146,14 @@ export class OctopipeRequestBuilder {
     }
   }
 
-  private getHelmConfig(component: Component, circleId: string | null): HelmConfig {
+  private getHelmConfig(component: DeploymentComponent, circleId: string ): HelmConfig {
     return {
       overrideValues: {
         'image.tag': component.imageUrl,
         deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
         component: component.name,
         tag: component.imageTag,
-        circleId: CommonTemplateUtils.getCircleId(circleId)
+        circleId: circleId
       }
     }
   }
