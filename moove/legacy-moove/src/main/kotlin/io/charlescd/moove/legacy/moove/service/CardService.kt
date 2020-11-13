@@ -32,15 +32,15 @@ import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
 import io.charlescd.moove.legacy.moove.request.git.FindBranchParam
 import io.charlescd.moove.legacy.repository.*
 import io.charlescd.moove.legacy.repository.entity.*
+import java.time.LocalDateTime
+import java.util.*
+import javax.transaction.Transactional
 import org.hibernate.Hibernate
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.util.*
-import javax.transaction.Transactional
 
 @Service
 class CardService(
@@ -497,7 +497,7 @@ class CardService(
 
     private fun notificationAddMemberToCard(card: Card, addMemberRequest: AddMemberRequest, user: User) {
         try {
-               charlesNotificationService.addMembersCard(card, user, addMemberRequest.memberIds)
+            charlesNotificationService.addMembersCard(card, user, addMemberRequest.memberIds)
         } catch (e: Exception) {
             log.error("error notification add member to card", e)
         }
