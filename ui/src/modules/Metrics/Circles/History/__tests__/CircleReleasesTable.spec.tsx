@@ -17,7 +17,7 @@
 import React from 'react';
 import { FetchMock } from 'jest-fetch-mock';
 import CircleReleasesTable from '../CircleReleasesTable';
-import { render, screen, wait } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import { circlesReleasesMock } from './fixtures';
 import * as DateUtils from 'core/utils/date';
 
@@ -36,9 +36,7 @@ test('render default CircleReleasesTable', async () => {
     <CircleReleasesTable circleId="1" />
   );
 
-  await wait();
-
-  expect(screen.getAllByText(/release/)).toHaveLength(2);
+  await waitFor(() => expect(screen.getAllByText(/release/)).toHaveLength(2));
   expect(screen.getAllByText('12/07/2020 • 16:07')).toHaveLength(4);
   expect(screen.getAllByText('Jhon Doe')).toHaveLength(2);
 });

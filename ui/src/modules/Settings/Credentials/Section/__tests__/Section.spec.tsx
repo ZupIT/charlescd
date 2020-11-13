@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import Section, { Props } from '..';
 
 test('render Section default component', async () => {
@@ -34,7 +34,6 @@ test('render Section default component', async () => {
       showAction={props.showAction}
     />
   );
-  await wait();
 
   expect(queryByTestId(`button-iconRounded-add`)).toBeInTheDocument();
   expect(queryByTestId(`contentIcon-${props.name}`)).toBeInTheDocument();
@@ -59,8 +58,6 @@ test('render Section default component with children', async () => {
       {props.children}
     </Section>
   );
-  
-  await wait();
 
   expect(queryByTestId('icon-add')).not.toBeInTheDocument();
   expect(queryByTestId(`contentIcon-${props.name}`)).toBeInTheDocument();

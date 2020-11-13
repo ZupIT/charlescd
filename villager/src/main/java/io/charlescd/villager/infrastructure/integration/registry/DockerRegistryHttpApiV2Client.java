@@ -42,7 +42,6 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config,
                                         String tagName) {
         this.client = ClientBuilder.newClient();
-
         this.baseAddress = config.address;
 
         switch (type) {
