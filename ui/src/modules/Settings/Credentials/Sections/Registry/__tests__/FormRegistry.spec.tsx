@@ -188,7 +188,7 @@ test('should test AWS registry connection successful', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const aws = screen.getByText('AWS');
+  const aws = screen.getByTestId("radio-group-registry-item-AWS");
   userEvent.click(aws);
 
   const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
@@ -223,7 +223,7 @@ test('should test AWS registry connection error', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const aws = screen.getByText('AWS');
+  const aws = screen.getByTestId("radio-group-registry-item-AWS");
   userEvent.click(aws);
 
   const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
@@ -320,32 +320,4 @@ test('render Registry form with Docker Hub form', async () => {
   const passwordField = screen.getByText('Enter the password');
   const submitButton = screen.getByTestId('button-default-submit-registry');
   expect(submitButton).toBeInTheDocument();
-});
-
-test('should not execute onSubmit because validation (missing name)', async () => {
-  render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
-
-  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  userEvent.click(radioButton);
-  
-  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
-  userEvent.click(radioAuthButton);
-  
-  const inputAwsAddress = screen.getByTestId("input-text-address");
-  const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
-  const inputAwsRegion = screen.getByTestId("input-text-region");
-  const submitButton = screen.getByTestId("button-default-submit-registry");
-
-  await act(async () => {
-    userEvent.type(inputAwsAddress, 'http://fake-host');
-    userEvent.type(inputAwsAccessKey, 'fake-access-key');
-    userEvent.type(inputAwsSecretKey, 'fake-secret-key');
-    userEvent.type(inputAwsRegion, 'fake-region');
-    userEvent.click(submitButton);
-  });
-
-  expect(mockOnFinish).not.toBeCalled();
 });
