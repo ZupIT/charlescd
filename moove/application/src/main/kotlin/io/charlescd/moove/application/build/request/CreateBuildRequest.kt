@@ -31,6 +31,7 @@ import javax.validation.constraints.Size
 data class CreateBuildRequest(
 
     @field:NotBlank
+    @field:Size(max = 36)
     val authorId: String,
 
     @field:NotNull
@@ -42,6 +43,7 @@ data class CreateBuildRequest(
     val tagName: String,
 
     @field:NotBlank
+    @field:Size(max = 36)
     val hypothesisId: String
 
 ) {

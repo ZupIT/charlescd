@@ -65,6 +65,7 @@ data class PatchWorkspaceRequest(override val patches: List<PatchOperation>) : B
                 patch.path == "/circleMatcherUrl" && (patch.op == OpCodeEnum.ADD || patch.op == OpCodeEnum.REPLACE) -> {
                     Assert.notNull(patch.value, "Circle Matcher URL cannot be null.")
                     Assert.isTrue((patch.value as String).isNotBlank(), "Circle Matcher URL cannot be blank.")
+                    Assert.isTrue((patch.value.length in 1..256), "Circle Matcher URL minimum size is 1 and maximum is 256.")
                 }
             }
         }

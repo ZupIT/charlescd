@@ -18,6 +18,7 @@ package io.charlescd.moove.legacy.moove.request.configuration
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import javax.validation.constraints.Size
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "provider"
@@ -30,9 +31,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = CreateHarborRegistryConfigurationRequest::class, name = "HARBOR")
 )
 abstract class CreateRegistryConfigurationRequest(
+    @field:Size(max = 64)
     open val name: String,
+    @field:Size(max = 2048)
     open val address: String,
     open val provider: CreateRegistryConfigurationProvider,
+    @field:Size(max = 36)
     open val authorId: String
 )
 
@@ -40,7 +44,9 @@ data class CreateAzureRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
     override val authorId: String,
+    @field:Size(max = 64)
     val username: String,
+    @field:Size(max = 100)
     val password: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.Azure, authorId)
 
@@ -48,8 +54,11 @@ data class CreateAWSRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
     override val authorId: String,
+    @field:Size(max = 256)
     val accessKey: String?,
+    @field:Size(max = 256)
     val secretKey: String?,
+    @field:Size(max = 64)
     val region: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.AWS, authorId)
 
@@ -57,6 +66,7 @@ data class CreateGCPRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
     override val authorId: String,
+    @field:Size(max = 256)
     val organization: String,
     val jsonKey: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.GCP, authorId)
@@ -65,7 +75,9 @@ data class CreateDockerHubRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
     override val authorId: String,
+    @field:Size(max = 64)
     val username: String,
+    @field:Size(max = 100)
     val password: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.DOCKER_HUB, authorId)
 

@@ -22,12 +22,16 @@ import io.charlescd.moove.legacy.moove.api.request.CreateDeployOctopipeCdConfigu
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployOctopipeCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.api.request.GitProvidersEnum
 import io.charlescd.moove.legacy.moove.api.request.K8sClusterProvidersEnum
+import javax.validation.Valid
+import javax.validation.constraints.Size
 
 data class CreateOctopipeCdConfigurationRequest(
     val configurationData: CreateOctopipeCdConfigurationData,
+    @field:Size(max = 64)
     val name: String,
+    @field:Size(max = 36)
     override val authorId: String
-) : CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE, authorId) {
+) : @Valid CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE, authorId) {
 
     fun toDeployRequest(): CreateDeployOctopipeCdConfigurationRequest {
         return CreateDeployOctopipeCdConfigurationRequest(
@@ -57,16 +61,27 @@ data class CreateOctopipeCdConfigurationRequest(
 }
 
 data class CreateOctopipeCdConfigurationData(
+    @field:Size(max = 2048)
     val gitProvider: GitProvidersEnum,
     val provider: K8sClusterProvidersEnum,
+    @field:Size(max = 256)
     val gitToken: String? = null,
+    @field:Size(max = 64)
     val namespace: String? = null,
+    @field:Size(max = 100)
     val caData: String? = null,
+    @field:Size(max = 100)
     val awsSID: String? = null,
+    @field:Size(max = 256)
     val awsSecret: String? = null,
+    @field:Size(max = 64)
     val awsRegion: String? = null,
+    @field:Size(max = 64)
     val awsClusterName: String? = null,
+    @field:Size(max = 2048)
     val host: String? = null,
+    @field:Size(max = 2048)
     val clientCertificate: String? = null,
+    @field:Size(max = 256)
     val clientKey: String? = null
 )

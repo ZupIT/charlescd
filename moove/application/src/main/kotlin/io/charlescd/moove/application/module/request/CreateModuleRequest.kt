@@ -27,18 +27,23 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 data class CreateModuleRequest(
     @field:NotBlank
+    @field:Size(max = 64)
     val name: String,
 
     @field:NotBlank
+    @field:Size(max = 2048)
     val gitRepositoryAddress: String,
 
     @field:NotBlank
+    @field:Size(max = 2048)
     val helmRepository: String,
 
     @field:NotBlank
+    @field:Size(max = 36)
     val authorId: String,
 
     @field:Valid
@@ -59,6 +64,7 @@ data class CreateModuleRequest(
 
 data class ComponentRequest(
     @field:NotBlank
+    @field:Size(max = 64)
     val name: String,
 
     @field:NotNull
@@ -67,8 +73,10 @@ data class ComponentRequest(
     @field:NotNull
     val latencyThreshold: Int,
 
+    @field:Size(max = 2048)
     val hostValue: String?,
 
+    @field:Size(max = 100)
     val gatewayName: String?
 ) {
     fun toDomain(moduleId: String, workspaceId: String) = Component(

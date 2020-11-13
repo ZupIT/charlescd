@@ -18,6 +18,7 @@ package io.charlescd.moove.legacy.moove.request.configuration
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import javax.validation.constraints.Size
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type"
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 abstract class CreateCdConfigurationRequest(
     val type: CdTypeEnum,
+    @field:Size(max = 36)
     open val authorId: String
 )
 
