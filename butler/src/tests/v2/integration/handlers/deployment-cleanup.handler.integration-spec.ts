@@ -179,7 +179,8 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components
+    components,
+    false
   ))
 
   const execution: Execution = await manager.save(

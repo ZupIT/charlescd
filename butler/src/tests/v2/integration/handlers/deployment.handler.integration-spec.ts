@@ -111,7 +111,8 @@ describe('DeploymentHandler', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+      defaultCircle: false
     }
 
     const secondDeploymentId = 'a666cbe1-7da3-46a6-bad3-5a3553960f55'
@@ -192,7 +193,8 @@ describe('DeploymentHandler', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+      defaultCircle: false
     }
 
     const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
@@ -230,7 +232,8 @@ describe('DeploymentHandler', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      deploymentStatus: DeploymentStatusEnum.TIMED_OUT
+      deploymentStatus: DeploymentStatusEnum.TIMED_OUT,
+      defaultCircle: false
     }
 
     const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
@@ -263,7 +266,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components
+    components,
+    params.defaultCircle
   ))
 
   const execution : Execution = await manager.save(new Execution(
