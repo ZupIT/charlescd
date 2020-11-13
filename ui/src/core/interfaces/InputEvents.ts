@@ -15,7 +15,7 @@
  */
 
 import { FocusEvent, ChangeEvent } from 'react';
-import { FieldElement, ValidationOptions } from 'react-hook-form';
+import { FieldElement } from 'react-hook-form';
 
 export type ChangeInputEvent = ChangeEvent<HTMLInputElement>;
 
@@ -27,5 +27,5 @@ export interface InputEvents {
 
 export type RegisterField = <Element extends FieldElement = FieldElement>(
   ref: Element,
-  validationOptions?: ValidationOptions
+  validationOptions?: any
 ) => void;

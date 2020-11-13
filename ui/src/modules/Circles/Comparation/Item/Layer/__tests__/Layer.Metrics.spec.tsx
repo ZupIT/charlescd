@@ -19,7 +19,9 @@ import { render, screen } from 'unit-test/testUtils';
 import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import * as workspaceUtils from 'core/utils/workspace';
+import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
 import LayerMetrics from '../Metrics';
+import { Datasources } from 'modules/Settings/Credentials/Sections/MetricProvider/__tests__/fixtures';
 
 test('render Layer Metrics with  circles metrics', () => {
   const workspaceID = '1234-workspace';
@@ -33,6 +35,10 @@ test('render Layer Metrics with  circles metrics', () => {
       },
       status: 'resolved'
     });
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [...Datasources],
+    getAll: jest.fn
+  });
   render(<LayerMetrics id="123" />);
   expect(screen.queryByTestId('apexcharts-mock')).toBeInTheDocument();
 });
@@ -47,7 +53,11 @@ test('render Layer Metrics with button to add metrics', async () => {
         status: WORKSPACE_STATUS.COMPLETE
       },
       status: 'idle'
-    });
+    }); 
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [...Datasources],
+    getAll: jest.fn
+  });
   render(<LayerMetrics id="123" />);
   expect(screen.queryByTestId('button-iconRounded-add')).not.toBeInTheDocument();
 });

@@ -19,7 +19,7 @@
 package util
 
 import (
-	"compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
 )
 
 func IsDeveloperRunning() bool {
