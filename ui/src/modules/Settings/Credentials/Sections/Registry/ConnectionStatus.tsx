@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-import { COLOR_PURPLE_HEART, COLOR_PAYNES_GREY } from 'core/assets/colors';
+import React from 'react';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
+import Styled from './styled';
 
-export const light = {};
+export interface Props {
+  type: 'success' | 'error';
+  message: string;
+}
 
-export const dark = {
-  background: COLOR_PURPLE_HEART,
-  disabled: {
-    background: COLOR_PAYNES_GREY
-  }
-};
+const ConnectionStatus = ({ type, message }: Props) => (
+  <Styled.Message data-testid={`connection-${type}`} status={type}>
+    <Icon name={type} />
+    <Text.h5>{message}</Text.h5>
+  </Styled.Message>
+);
+
+export default ConnectionStatus;
