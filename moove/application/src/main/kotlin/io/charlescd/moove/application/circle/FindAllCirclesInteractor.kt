@@ -23,7 +23,7 @@ import io.charlescd.moove.domain.PageRequest
 interface FindAllCirclesInteractor {
     fun execute(
         name: String?,
-        active: Boolean,
+        active: Boolean?,
         workspaceId: String,
         pageRequest: PageRequest
     ): ResourcePageResponse<CircleResponse>

@@ -21,7 +21,7 @@ import { Option } from '../interfaces';
 
 interface Props {
   name: string;
-  control: Control<unknown>;
+  control: Control<any>;
   options: Option[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option;
@@ -56,28 +56,32 @@ const Single = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      as={
-        <Select
-          placeholder={label}
-          className={className}
-          isDisabled={isDisabled}
-          isLoading={isLoading}
-          customOption={customOption}
-          onInputChange={onInputChange}
-          defaultValue={defaultValue}
-          closeMenuOnSelect={closeMenuOnSelect}
-          hideSelectedOptions={hideSelectedOptions}
-          hasError={hasError}
-        />
-      }
-      onChange={([selected]) => {
-        onChange && onChange(selected);
-        return selected?.value;
+      render={({ onChange: onControllerChange }) => {
+        return (
+          <Select
+            placeholder={label}
+            className={className}
+            isDisabled={isDisabled}
+            isLoading={isLoading}
+            customOption={customOption}
+            onInputChange={onInputChange}
+            defaultValue={defaultValue}
+            closeMenuOnSelect={closeMenuOnSelect}
+            hideSelectedOptions={hideSelectedOptions}
+            options={options}
+            hasError={hasError}
+            onChange={selected => {
+              onChange?.(selected);
+              onControllerChange(selected?.value);
+
+              return selected?.value;
+            }}
+          />
+        );
       }}
-      defaultValue={defaultValue?.value}
+      defaultValue={defaultValue?.value ?? ''}
       rules={rules}
       control={control}
-      options={options}
       name={name}
     />
   </div>

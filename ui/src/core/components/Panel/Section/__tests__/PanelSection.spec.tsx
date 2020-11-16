@@ -15,14 +15,14 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import PanelSection from '../';
 
 test('render PanelSection component with default properties', () => {
-  const { getByText } = render(
+  render(
     <PanelSection>children</PanelSection>
   );
 
-  const panelElement = getByText('children');
+  const panelElement = screen.getByText('children');
   expect(panelElement).toBeInTheDocument();
 });

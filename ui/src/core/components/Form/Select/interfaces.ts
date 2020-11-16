@@ -35,7 +35,7 @@ export interface Props {
     callback: (options: OptionsType<any>) => void
   ) => Promise<any> | void;
   className?: string;
-  onChange?: (event: unknown) => void;
+  onChange?: (event: Option) => void;
   onInputChange?: (value: string) => void;
   customOption?: React.ReactNode;
   customMultiValue?: React.ReactNode;
@@ -44,4 +44,5 @@ export interface Props {
   components?: SelectComponentsConfig<OptionTypeBase>;
   label?: string;
   hasError?: boolean;
+  defaultOptions?: Option[];
 }
