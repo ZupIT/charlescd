@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import FormRegistry from '../Form';
@@ -74,28 +74,28 @@ test('render Registry form default component', async () => {
   expect(dockerHubButton).toBeInTheDocument();
 });
 
-test('render Registry form with azure values', () => {
+test('render Registry form with azure values', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const radioButton = screen.getByTestId("radio-group-registry-item-AZURE");
-  userEvent.click(radioButton);
+  await act(async () => userEvent.click(radioButton));
 
   const text = screen.getByText('Enter the username');
-  expect(text).toBeInTheDocument();
+  waitFor(() => expect(text).toBeInTheDocument());
 });
 
-test('render Registry form with AWS values', () => {
+test('render Registry form with AWS values', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
   const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  userEvent.click(radioButton);
+  await act(async () => userEvent.click(radioButton));
   
   const text = screen.getByText('Enter the region');
-  expect(text).toBeInTheDocument();
+  waitFor(() => expect(text).toBeInTheDocument());
 });
 
 test('render Registry form with AWS values and secret input', () => {
@@ -111,23 +111,23 @@ test('render Registry form with AWS values and secret input', () => {
     expect(text).toBeInTheDocument();
 });
 
-test('render Registry form without AWS values and secret input', () => {
+test('render Registry form without AWS values and secret input', async () => {
     render(<FormRegistry onFinish={mockOnFinish}/>);
   
     const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-    userEvent.click(radioButton);
+    await act(async () => userEvent.click(radioButton));
     
     const text = screen.queryByText('Enter the access key');
     expect(text).not.toBeInTheDocument();
 });
 
-test('render Registry form with GCP form', () => {
+test('render Registry form with GCP form', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish} />
   );
 
   const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  act(() => userEvent.click(radioButton));
+  await act(async () => userEvent.click(radioButton));
   
   const projectIdInput = screen.getByText('Enter the project id');
   expect(projectIdInput).toBeInTheDocument();
@@ -187,25 +187,126 @@ test('should enable submit button after fill GCP form', async () => {
   waitFor(() => expect(submitButton).not.toBeDisabled());
 });
 
-test('render Registry form with Docker Hub form', async () => {
+test('should render Registry form with Docker Hub form', async () => {
   render(<FormRegistry onFinish={mockOnFinish}/>);
 
-  const radioButton = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
-  userEvent.click(radioButton);
+  const dockerHub = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  await act(async () => userEvent.click(dockerHub));
   
   const registryField = screen.getByText('Type a name for Registry');
-  expect(registryField).toBeInTheDocument();
-
   const registryURLField = screen.getByText('Enter the registry url');
-  expect(registryURLField).toBeInTheDocument();
-
   const usernameField = screen.getByText('Enter the username');
-  expect(usernameField).toBeInTheDocument();
-
   const passwordField = screen.getByText('Enter the password');
-  expect(passwordField).toBeInTheDocument();
   const submitButton = screen.getByTestId('button-default-submit-registry');
-  expect(submitButton).toBeInTheDocument();
+});
+
+test('should submit Docker Hub form', async () => {
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const dockerHub = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  userEvent.click(dockerHub);
+  
+  const registryField = screen.getByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  expect(testConnectionButton).not.toBeDisabled();
+  await act(async () => userEvent.click(testConnectionButton));
+  waitFor(() => expect(submitButton).not.toBeDisabled());
+});
+
+test('should not submit Docker Hub form (missing registry url)', async () => {
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const dockerHub = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  await act(async () => userEvent.click(dockerHub));
+  
+  const registryField = screen.getByText('Type a name for Registry');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  waitFor(() => expect(testConnectionButton).toBeDisabled());
+  expect(submitButton).toBeDisabled();
+});
+
+test('should test connectivity with Docker Hub successful', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({ }));
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const dockerHub = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  userEvent.click(dockerHub);
+  
+  const registryField = screen.getByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  expect(submitButton).toBeDisabled();
+
+  await act(async () => userEvent.click(testConnectionButton));
+  const successMessage = await screen.findByText('Successful connection.');
+  expect(successMessage).toBeInTheDocument();
+  expect(submitButton).not.toBeDisabled();
+});
+
+test('should test connectivity with Docker Hub error', async () => {
+  const error = {
+    status: '404',
+    message: 'invalid registry'
+  };
+  (fetch as FetchMock).mockRejectedValueOnce(new Response(JSON.stringify(error)));
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const dockerHub = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
+  await act(async () => userEvent.click(dockerHub));
+  
+  const registryField = screen.getByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  let submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  expect(submitButton).toBeDisabled();
+
+  await act(async () => userEvent.click(testConnectionButton));
+  const errorMessage = await screen.findByText('invalid registry');
+  expect(errorMessage).toBeInTheDocument();
+  expect(submitButton).toBeDisabled();
 });
 
 test('execute onSubmit', () => {

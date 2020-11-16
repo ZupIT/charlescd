@@ -39,7 +39,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   const profileId = getProfileByKey('id');
   const [message, setMessage] = useState<ConnectionProps>(null);
   const [isDisabled, setIsDisabled] = useState(true);
-  const isDockerHub = registryType === 'DockerHub';
+  const isDockerHub = registryType === 'DOCKER_HUB';
   const {
     register,
     handleSubmit,
