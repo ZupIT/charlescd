@@ -39,9 +39,7 @@ class FindAllUsersInteractorImpl @Inject constructor(
             return convert(userService.findAll(name, email, pageRequest))
         }
 
-        val qName = if (name.isNullOrBlank()) name else user.name
-        val qEmail = if (email.isNullOrBlank()) name else user.email
-        return convert(userService.findAll(qName, qEmail, pageRequest))
+        return convert(userService.findAll(user.name, user.email, pageRequest))
     }
 
     private fun convert(page: Page<User>): ResourcePageResponse<UserResponse> {

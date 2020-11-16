@@ -92,7 +92,7 @@ class CredentialConfigurationServiceUnitTest {
         val createdAt = LocalDateTime.now()
         val incomingRequestConfigData =
             CreateSpinnakerCdConfigurationData("account", "git-account", "namespace", "http://my-spinnaker.com")
-        val incomingRequest = CreateSpinnakerCdConfigurationRequest(incomingRequestConfigData, "name", "authorId")
+        val incomingRequest = CreateSpinnakerCdConfigurationRequest(incomingRequestConfigData, "name")
         val deployRequest = incomingRequest.toDeployRequest()
         val deployResponse = CreateDeployCdConfigurationResponse("id", "name", "authorId", "workspaceId", createdAt)
         val workspaceId = "workspaceId"
@@ -132,7 +132,7 @@ class CredentialConfigurationServiceUnitTest {
             clientKey = "client-key-data",
             namespace = "cluster-namespace"
         )
-        val incomingRequest = CreateOctopipeCdConfigurationRequest(incomingRequestConfigData, "name", "authorId")
+        val incomingRequest = CreateOctopipeCdConfigurationRequest(incomingRequestConfigData, "name")
         val deployRequest = incomingRequest.toDeployRequest()
         val deployResponse = CreateDeployCdConfigurationResponse("id", "name", "authorId", "workspaceId", createdAt)
         val workspaceId = "workspaceId"
@@ -513,7 +513,7 @@ class CredentialConfigurationServiceUnitTest {
     @Test(expected = IllegalArgumentException::class)
     fun `when creating cd configuration, method should throw illegal argument exception for invalid type`() {
 
-        class CreateCustomCdConfigurationRequest : CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE, user.id)
+        class CreateCustomCdConfigurationRequest : CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE)
 
         val incomingRequest = CreateCustomCdConfigurationRequest()
 

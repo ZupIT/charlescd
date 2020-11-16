@@ -100,7 +100,7 @@ open class CreateBuildInteractorImpl @Inject constructor(
         val features = findReadyToGoFeatures(hypothesis, request, buildId)
 
         if (features.isEmpty() || request.features.size != features.size) {
-            throw BusinessException.of(
+                throw BusinessException.of(
                 MooveErrorCode.SOME_OF_INFORMED_FEATURES_DOES_NOT_EXIST_OR_ARE_NOT_READY_TO_GO
             )
         }
