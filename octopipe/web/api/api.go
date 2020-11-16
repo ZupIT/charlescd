@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 type API struct {
@@ -76,5 +77,6 @@ func getLimiter() *rate.Limiter {
 		log.WithFields(log.Fields{"function": "getLimiter"}).Error("Cannot read env var. Error: " + error.Error())
 		limitRequestsBySecond = DefaultLimitRequestsBySecond
 	}
-	return rate.NewLimiter(Seconds, int(limitRequestsBySecond))
+	rt := rate.Every(time.Second / time.Duration(limitRequestsBySecond))
+	return rate.NewLimiter(rt, int(limitRequestsBySecond))
 }
