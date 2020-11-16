@@ -80,7 +80,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId) >> new ArrayList<String>()
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> new ArrayList<String>()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "module"
@@ -124,7 +124,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -190,7 +190,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -231,6 +231,6 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
     }
 }
