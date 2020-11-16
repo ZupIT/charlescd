@@ -31,6 +31,7 @@ import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.repository.ModuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -42,11 +43,12 @@ class CreateModuleInteractorImplTest extends Specification {
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         createModuleInteractor = new CreateModuleInteractorImpl(
                 new ModuleService(moduleRepository),
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository)
         )
     }

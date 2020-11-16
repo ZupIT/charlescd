@@ -24,6 +24,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.DeployService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -38,12 +39,12 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private CircleRepository circleRepository = Mock(CircleRepository)
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     def setup() {
         this.createDeploymentInteractor = new CreateDeploymentInteractorImpl(
                 new DeploymentService(deploymentRepository),
                 new BuildService(buildRepository),
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository),
                 deployService,
                 new WorkspaceService(workspaceRepository, userRepository))

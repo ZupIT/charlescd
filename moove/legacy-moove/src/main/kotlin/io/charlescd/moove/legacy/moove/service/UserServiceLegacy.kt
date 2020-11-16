@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service
 class UserServiceLegacy(
     private val userRepository: UserRepository,
     private val keycloakService: KeycloakService,
+    private val keycloakServiceLegacy: KeycloakServiceLegacy,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) {
 
@@ -95,5 +96,24 @@ class UserServiceLegacy(
             email,
             request.newPassword
         )
+    }
+
+    fun findUsers(users: List<String>): List<User> =
+        this.userRepository.findAllById(users)
+            .takeIf { users.size == it.size }
+            ?: throw NotFoundExceptionLegacy(
+                "users",
+                users.joinToString(", ")
+            )
+
+    fun findUser(id: String): User =
+        this.userRepository.findById(id)
+            .orElseThrow { NotFoundExceptionLegacy("user", id) }
+
+    fun findByToken(authorization: String): User {
+        val email = keycloakServiceLegacy.getEmailByToken(authorization)
+        return userRepository.findByEmail(email).orElseThrow {
+            NotFoundExceptionLegacy("user", email)
+        }
     }
 }

@@ -25,6 +25,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.GitProviderService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import io.charlescd.moove.domain.service.VillagerService
 import spock.lang.Specification
 
@@ -41,11 +42,12 @@ class CreateBuildInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.buildInteractor = new CreateBuildInteractorImpl(
                 gitProviderService,
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new BuildService(buildRepository),
                 new HypothesisService(hypothesisRepository),
                 villagerService,

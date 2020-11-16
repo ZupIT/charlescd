@@ -25,6 +25,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.domain.repository.ModuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -36,10 +37,11 @@ class CreateComposedBuildInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.createComposedBuildInteractor = new CreateComposedBuildInteractorImpl(
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new ModuleService(moduleRepository),
                 new BuildService(buildRepository)
         )

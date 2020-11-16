@@ -27,6 +27,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import io.charlescd.moove.metrics.connector.compass.CompassApi
 import io.charlescd.moove.metrics.connector.compass.CompassCreateDatasourceRequest
 import io.charlescd.moove.metrics.connector.compass.CompassDatasourceResponse
@@ -42,6 +43,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     private CreateMetricConfigurationInteractor interactor
 
@@ -51,7 +53,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
 
     def setup() {
         this.interactor = new CreateMetricConfigurationInteractorImpl(new WorkspaceService(workspaceRepository, userRepository),
-                new UserService(userRepository), new MetricConfigurationService(metricConfigurationRepository, compassApi))
+                new UserService(userRepository, managementUserSecurityService), new MetricConfigurationService(metricConfigurationRepository, compassApi))
     }
 
     def 'when workspace does not exist should throw exception'() {

@@ -24,6 +24,7 @@ import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -33,9 +34,10 @@ class FindUserByEmailInteractorImplTest extends Specification {
     private FindUserByEmailInteractor findUserByEmailInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
-        findUserByEmailInteractor = new FindUserByEmailInteractorImpl(new UserService(userRepository))
+        findUserByEmailInteractor = new FindUserByEmailInteractorImpl(new UserService(userRepository, managementUserSecurityService))
     }
 
     def "should find an user by its email"() {

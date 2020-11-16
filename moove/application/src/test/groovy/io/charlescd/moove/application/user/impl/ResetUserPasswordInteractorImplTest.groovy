@@ -26,6 +26,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -37,6 +38,8 @@ class ResetUserPasswordInteractorImplTest extends Specification {
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     private UserRepository userRepository = Mock(UserRepository)
+
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     /**
      * ^                 # start-of-string
@@ -51,7 +54,7 @@ class ResetUserPasswordInteractorImplTest extends Specification {
     private static final String PASSWORD_CHECK = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$^*()_])(?=\\S+\$).{8,}\$"
 
     void setup() {
-        resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(new UserPasswordGeneratorService(), keycloakService, new UserService(userRepository))
+        resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(new UserPasswordGeneratorService(), keycloakService, new UserService(userRepository, managementUserSecurityService))
     }
 
     def "should generate a valid password"() {

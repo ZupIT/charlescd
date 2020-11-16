@@ -19,12 +19,7 @@ package io.charlescd.moove.security.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.Permission
-import io.charlescd.moove.domain.Role
-import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.UserGroup
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.infrastructure.service.client.KeycloakFormEncodedClient
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.resource.RealmResource
@@ -35,7 +30,6 @@ import org.keycloak.representations.idm.UserRepresentation
 import spock.lang.Specification
 
 import javax.ws.rs.core.Response
-import java.time.LocalDateTime
 
 class KeycloakClientServiceTest extends Specification {
 
@@ -170,5 +164,4 @@ class KeycloakClientServiceTest extends Specification {
         notThrown()
 
     }
-
 }

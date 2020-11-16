@@ -30,6 +30,7 @@ import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -45,10 +46,11 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
     private CsvSegmentationService csvSegmentationService = new CsvSegmentationService(objectMapper)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createCircleWithCsvFileInteractor = new CreateCircleWithCsvFileInteractorImpl(
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository),
                 circleMatcherService,
                 new KeyValueRuleService(keyValueRuleRepository),

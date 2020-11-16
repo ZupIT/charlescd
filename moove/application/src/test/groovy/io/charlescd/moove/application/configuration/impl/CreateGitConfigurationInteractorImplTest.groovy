@@ -29,6 +29,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -40,10 +41,11 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createGitConfigurationInteractor = new CreateGitConfigurationInteractorImpl(gitConfigurationRepository,
-                new UserService(userRepository), new WorkspaceService(workspaceRepository, userRepository))
+                new UserService(userRepository, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
     }
 
     def "when workspace does not exist should throw exception"() {

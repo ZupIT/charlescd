@@ -29,6 +29,7 @@ import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -41,11 +42,12 @@ class CreateCircleInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createCircleInteractor = new CreateCircleInteractorImpl(
                 new CircleService(circleRepository),
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository),
                 circleMatcherService
         )

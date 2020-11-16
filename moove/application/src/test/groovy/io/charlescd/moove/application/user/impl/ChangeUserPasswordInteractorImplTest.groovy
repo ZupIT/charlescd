@@ -11,6 +11,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakCustomService
 import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -21,10 +22,11 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
 
     private UserRepository userRepository = Mock(UserRepository)
     private KeycloakService keycloakService = Mock(KeycloakService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 keycloakService
         )
     }

@@ -25,6 +25,7 @@ import io.charlescd.moove.domain.UserGroup
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserGroupRepository
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -35,11 +36,11 @@ class CreateUserGroupInteractorImplTest extends Specification {
 
     private UserGroupRepository userGroupRepository = Mock(UserGroupRepository)
     private UserRepository userRepository = Mock(UserRepository)
-
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     void setup() {
         this.createUserGroupInteractor = new CreateUserGroupInteractorImpl(
                 new UserGroupService(userGroupRepository),
-                new UserService(userRepository)
+                new UserService(userRepository, managementUserSecurityService)
         )
     }
 

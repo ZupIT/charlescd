@@ -48,11 +48,12 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
     )
     private UserRepository repository = Mock(UserRepository)
     private KeycloakService keycloakService = Mock(KeycloakService)
+    private KeycloakServiceLegacy keycloakServiceLegacy = Mock(KeycloakServiceLegacy)
     private UserServiceLegacy service
     private Boolean idmEnabled = true
 
     def setup() {
-        service = new UserServiceLegacy(repository, keycloakService, idmEnabled)
+        service = new UserServiceLegacy(repository, keycloakService, keycloakServiceLegacy, idmEnabled)
     }
 
     def "should update user by id"() {
@@ -111,7 +112,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     def "should delete user and shouldnt delete on keycloak"() {
         given:
-        service = new UserServiceLegacy(repository, keycloakService, false)
+        service = new UserServiceLegacy(repository, keycloakService, keycloakServiceLegacy, false)
 
         when:
         def response = service.delete(representation.id)
