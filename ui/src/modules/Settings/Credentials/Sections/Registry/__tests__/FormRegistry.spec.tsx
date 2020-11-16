@@ -83,7 +83,7 @@ test('render Registry form with azure values', async () => {
   await act(async () => userEvent.click(radioButton));
 
   const text = screen.getByText('Enter the username');
-  waitFor(() => expect(text).toBeInTheDocument());
+  await waitFor(() => expect(text).toBeInTheDocument());
 });
 
 test('render Registry form with AWS values', async () => {
@@ -92,10 +92,10 @@ test('render Registry form with AWS values', async () => {
   );
 
   const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  await act(async () => userEvent.click(radioButton));
+  userEvent.click(radioButton);
   
   const text = screen.getByText('Enter the region');
-  waitFor(() => expect(text).toBeInTheDocument());
+  await waitFor(() => expect(text).toBeInTheDocument());
 });
 
 test('render Registry form with AWS values and secret input', () => {
@@ -133,7 +133,7 @@ test('render Registry form with GCP form', async () => {
   expect(projectIdInput).toBeInTheDocument();
 });
 
-test('Not trigger onSubmit on json parse error with GCP form', () => {
+test('Not trigger onSubmit on json parse error with GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
@@ -160,7 +160,7 @@ test('Not trigger onSubmit on json parse error with GCP form', () => {
   userEvent.type(inputGCPJsonKey, 'te');
   userEvent.click(submitButton);
 
-  waitFor(() => expect(mockOnFinish).not.toBeCalled());
+  await waitFor(() => expect(mockOnFinish).not.toBeCalled());
 });
 
 test('should enable submit button after fill GCP form', async () => {
@@ -184,7 +184,7 @@ test('should enable submit button after fill GCP form', async () => {
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
   
-  waitFor(() => expect(submitButton).not.toBeDisabled());
+  await waitFor(() => expect(submitButton).not.toBeDisabled());
 });
 
 test('should render Registry form with Docker Hub form', async () => {
@@ -210,19 +210,18 @@ test('should submit Docker Hub form', async () => {
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
-  const testConnectionButton = screen.getByText('Test connection');
-  const submitButton = screen.getByTestId('button-default-submit-registry');
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
     userEvent.type(registryURLField, 'http://fake-host');
     userEvent.type(usernameField, 'fake username');
-    userEvent.type(passwordField, '123mudar');
+    userEvent.type(passwordField, '123mudar!');
   });
 
-  expect(testConnectionButton).not.toBeDisabled();
-  await act(async () => userEvent.click(testConnectionButton));
-  waitFor(() => expect(submitButton).not.toBeDisabled());
+  await waitFor(() => expect(screen.getByText('Test connection')).not.toBeDisabled());
+  await waitFor(() => expect(screen.getByTestId('button-default-submit-registry')).toBeDisabled());
+  userEvent.click(screen.getByText('Test connection'));
+  await waitFor(() => expect(screen.getByTestId('button-default-submit-registry')).not.toBeDisabled());
 });
 
 test('should not submit Docker Hub form (missing registry url)', async () => {
@@ -234,7 +233,6 @@ test('should not submit Docker Hub form (missing registry url)', async () => {
   const registryField = screen.getByText('Type a name for Registry');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
-  const testConnectionButton = screen.getByText('Test connection');
   const submitButton = screen.getByTestId('button-default-submit-registry');
 
   await act(async () => {
@@ -243,7 +241,7 @@ test('should not submit Docker Hub form (missing registry url)', async () => {
     userEvent.type(passwordField, '123mudar');
   });
 
-  waitFor(() => expect(testConnectionButton).toBeDisabled());
+  await waitFor(() => expect(screen.getByText('Test connection')).toBeDisabled());
   expect(submitButton).toBeDisabled();
 });
 
@@ -252,7 +250,7 @@ test('should test connectivity with Docker Hub successful', async () => {
   render(<FormRegistry onFinish={mockOnFinish}/>);
 
   const dockerHub = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
-  userEvent.click(dockerHub);
+  await act(async () => userEvent.click(dockerHub));
   
   const registryField = screen.getByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
@@ -309,42 +307,34 @@ test('should test connectivity with Docker Hub error', async () => {
   expect(submitButton).toBeDisabled();
 });
 
-test('execute onSubmit', () => {
+test('should enable submit button after fill AWS form', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({}));
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  userEvent.click(radioButton);
-  
+  const aws = screen.getByTestId("radio-group-registry-item-AWS");
+  await act(async () => userEvent.click(aws));
+
   const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
-  userEvent.click(radioAuthButton);
-  
+  await act(async () => userEvent.click(radioAuthButton));
+
   const inputAwsName = screen.getByTestId("input-text-name");
-
   const inputAwsAddress = screen.getByTestId("input-text-address");
-  expect(inputAwsName).toBeInTheDocument();
-
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  expect(inputAwsAccessKey).toBeInTheDocument();
-
   const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
-  expect(inputAwsSecretKey).toBeInTheDocument();
-
   const inputAwsRegion = screen.getByTestId("input-text-region");
-  expect(inputAwsRegion).toBeInTheDocument();
-
   const submitButton = screen.getByTestId("button-default-submit-registry");
-  expect(submitButton).toBeInTheDocument();
 
-  userEvent.type(inputAwsName, 'fake-name');
-  userEvent.type(inputAwsAddress, 'http://fake-host');
-  userEvent.type(inputAwsAccessKey, 'fake-access-key');
-  userEvent.type(inputAwsSecretKey, 'fake-secret-key');
-  userEvent.type(inputAwsRegion, 'fake-region');
-  userEvent.click(submitButton);
+  await act(async () => {
+    userEvent.type(inputAwsName, 'fake-name');
+    userEvent.type(inputAwsAddress, 'http://fake-host');
+    userEvent.type(inputAwsAccessKey, 'fake-access-key');
+    userEvent.type(inputAwsSecretKey, 'fake-secret-key');
+    userEvent.type(inputAwsRegion, 'fake-region');
+  });
 
-  waitFor(() => expect(mockSave).toBeCalledTimes(1));
+  expect(submitButton).not.toBeDisabled();
 });
 
 test('should not enable submit button after partially filled AWS form', async () => {
