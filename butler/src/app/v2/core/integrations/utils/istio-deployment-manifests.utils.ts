@@ -41,7 +41,7 @@ const IstioDeploymentManifestsUtils = {
       }
     }
   },
-  getDestinationRules: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+  getDestinationRules: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
@@ -55,7 +55,7 @@ const IstioDeploymentManifestsUtils = {
       }
     }
   },
-  getDestinationRulesMTLS: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+  getDestinationRulesMTLS: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
@@ -125,7 +125,7 @@ const IstioDeploymentManifestsUtils = {
     rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(newComponent.name, circleId))
     return rules
   },
-  getDestinationRulesManifest(deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest {
+  getDestinationRulesManifest(deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest {
     return AppConstants.ISTIO_MTLS ?
       this.getDestinationRulesMTLS(deployment, component, activeByName) :
       this.getDestinationRules(deployment, component, activeByName)
