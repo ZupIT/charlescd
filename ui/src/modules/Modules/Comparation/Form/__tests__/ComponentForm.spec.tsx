@@ -15,7 +15,7 @@
  */
 
 import React from "react";
-import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
+import { render, fireEvent, waitFor } from "@testing-library/react";
 import ComponentForm from "../ComponentForm";
 import { Component } from "modules/Modules/interfaces/Component";
 import { ThemeProviderWrapper } from "unit-test/testUtils";
@@ -69,16 +69,15 @@ test("Test componentForm for two or more components render and trash", async () 
       />
     </ThemeProviderWrapper>
   );
-  await wait()
+
   expect(container.innerHTML).toMatch("input-wrapper-components[0].name");
   expect(container.innerHTML).toMatch("icon-trash");
   const trashComponent: any = getByTestId("icon-trash")
 
   fireEvent.click(trashComponent)
-  wait(() => {
+  waitFor(() => {
     expect(mockRemove).toBeCalledTimes(1)
-  })
-
+  });
 });
 
 test("Test componentForm for more Options render", () => {
@@ -97,10 +96,10 @@ test("Test componentForm for more Options render", () => {
   const componentButton: any = container.querySelector("span");
   expect(container.innerHTML).toMatch("Show");
   fireEvent.click(componentButton);
-  wait(() => expect(container.innerHTML).toMatch("Hide"));
+  expect(container.innerHTML).toMatch("Hide");
 });
 
-it("renders inputs with values", async () => {
+test("renders inputs with values", async () => {
   const { container } = render(
     <ThemeProviderWrapper>
       <ComponentForm
@@ -142,9 +141,7 @@ it("renders inputs with values", async () => {
     }
   });
 
-  wait(() => {
-    expect(componentName.value).toEqual("component-fake");
-    expect(componentErrorThreshold.value).toEqual("35");
-    expect(componentLatencyThreshold.value).toEqual("35");
-  });
+  expect(componentName.value).toEqual("component-fake");
+  expect(componentErrorThreshold.value).toEqual("35");
+  expect(componentLatencyThreshold.value).toEqual("35");
 });

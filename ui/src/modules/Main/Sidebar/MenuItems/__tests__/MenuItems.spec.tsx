@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, fireEvent } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import MenuItems from '../index';
@@ -56,7 +56,7 @@ test('testing outside click menu Items', async () => {
   expect(getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
   fireEvent.click(externalDiv);
-  wait(() => expect(props.isExpanded).toBeTruthy());
+  expect(props.isExpanded).toBeTruthy();
 });
 
 test('testing expand menu click', async () => {
