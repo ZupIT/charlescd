@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import TextComponent from 'core/components/Text';
+import { dark as darkTheme } from 'core/assets/themes/registry';
 
 const Title = styled(TextComponent.h2)`
   display: flex;
@@ -27,7 +28,7 @@ const Title = styled(TextComponent.h2)`
   }
 `;
 
-const Subtitle = styled(TextComponent.h5)`
+const Subtitle = styled(TextComponent.h4)`
   margin-bottom: 10px;
 `;
 
@@ -51,10 +52,27 @@ const Fields = styled.div`
   }
 `;
 
+type status = {
+  status: string;
+};
+
+const Message = styled.div<status>`
+  margin-top: 25px;
+  display: flex;
+  span {
+    margin-left: 10px;
+    color: ${({ status }) => darkTheme.message[status]};
+  }
+  svg {
+    color: ${({ status }) => darkTheme.message[status]};
+  }
+`;
+
 export default {
   Content,
   Title,
   Subtitle,
   Form,
-  Fields
+  Fields,
+  Message
 };
