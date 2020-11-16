@@ -19,11 +19,15 @@ class PatchUserInteractorImpl @Inject constructor(
 ) : PatchUserInteractor {
 
     override fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse {
-        val user = userService.find(id.toString())
-        if (internalIdmEnabled && user.root) {
-            patchUserRequest.validate()
-            val updatedUser = updateUser(patchUserRequest, user)
-            return UserResponse.from(updatedUser)
+        if (internalIdmEnabled) {
+            val user = userService.find(id.toString())
+            if (user.root) {
+                patchUserRequest.validate()
+                val updatedUser = updateUser(patchUserRequest, user)
+                return UserResponse.from(updatedUser)
+            } else {
+                throw BusinessException.of(MooveErrorCode.FORBIDDEN)
+            }
         } else {
             throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_FORBIDDEN)
         }

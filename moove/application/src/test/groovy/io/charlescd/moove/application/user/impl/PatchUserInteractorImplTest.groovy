@@ -26,7 +26,7 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString())
+        def user = getDummyUser(userId.toString(), true)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "Patched")]
         def request = new PatchUserRequest(patches)
@@ -53,11 +53,11 @@ class PatchUserInteractorImplTest extends Specification {
         notThrown()
     }
 
-    def "when trying to update user name with null value should thrown exception"() {
+    def "when trying to update user name with non root user should thrown exception"() {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString())
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", null)]
         def request = new PatchUserRequest(patches)
@@ -67,7 +67,28 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        0 * this.userRepository.update(_) >> any()
+
+        def exception = thrown(BusinessException)
+        exception.message == "forbidden"
+    }
+
+    def "when trying to update user name with null value should thrown exception"() {
+        given:
+        def userId = UUID.randomUUID()
+
+        def user = getDummyUser(userId.toString(), true)
+
+        def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", null)]
+        def request = new PatchUserRequest(patches)
+        def authorization = "Bearer token"
+
+        when:
+        patchUserInteractor.execute(userId, request, authorization)
+
+        then:
+        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -78,7 +99,7 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString())
+        def user = getDummyUser(userId.toString(), true)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "")]
         def request = new PatchUserRequest(patches)
@@ -88,7 +109,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -99,7 +120,7 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString())
+        def user = getDummyUser(userId.toString(), true)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
         def request = new PatchUserRequest(patches)
@@ -109,7 +130,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -120,7 +141,7 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString())
+        def user = getDummyUser(userId.toString(), true)
 
         def patches = [new PatchOperation(OpCodeEnum.REMOVE, "/name", "Patched")]
         def request = new PatchUserRequest(patches)
@@ -130,7 +151,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -141,7 +162,7 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString())
+        def user = getDummyUser(userId.toString(), true)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/avatar", "Patched")]
         def request = new PatchUserRequest(patches)
@@ -151,7 +172,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -162,7 +183,7 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString())
+        def user = getDummyUser(userId.toString(), true)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/avatar", "Patched")]
         def request = new PatchUserRequest(patches)
@@ -181,7 +202,7 @@ class PatchUserInteractorImplTest extends Specification {
         exception.errorCode == MooveErrorCode.EXTERNAL_IDM_FORBIDDEN
     }
 
-    private static User getDummyUser(String id) {
-        new User(id, "charles", "email@mail", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+    private static User getDummyUser(String id, Boolean root) {
+        new User(id, "charles", "email@mail", "http://charles.com/dummy_photo.jpg", [], root, LocalDateTime.now())
     }
 }
