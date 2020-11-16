@@ -16,9 +16,13 @@
 
 package io.charlescd.moove.domain
 
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
+
 data class PageRequest(
     val page: Int = 0,
-    val size: Int = 20
+    @field:[NotNull Size(min = 0, max = 50)]
+    val size: Int = 50
 ) {
     fun offset() = page * size
 }
