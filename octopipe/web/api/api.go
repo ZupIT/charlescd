@@ -37,7 +37,6 @@ const (
 	v1Path = "/api/v1"
 	v2Path = "/api/v2"
 	DefaultLimitRequestsBySecond = 10
-	Seconds = 1
 )
 
 func NewAPI() *API {
