@@ -21,6 +21,7 @@ package datasource
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
@@ -37,7 +38,7 @@ type DataSource struct {
 	Name        string          `json:"name"`
 	PluginSrc   string          `json:"pluginSrc"`
 	Health      bool            `json:"healthy"`
-	Data        json.RawMessage `json:"data" gorm:"type:jsonb"`
+	Data        json.RawMessage `json:"data" gorm:"type:bytea"`
 	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	DeletedAt   *time.Time      `json:"-"`
 }
@@ -94,6 +95,15 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSo
 		return []DataSource{}, db.Error
 	}
 
+	var err error
+	for i := range dataSources {
+		dataSources[i].Data, err = util.Decrypt(dataSources[i].Data, "passphrasewhichneedstobe32bytes!")
+		if err != nil {
+			logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, dataSources[i])
+			return []DataSource{}, err
+		}
+	}
+
 	return dataSources, nil
 }
 
@@ -101,8 +111,16 @@ func (main Main) FindById(id string) (DataSource, error) {
 	dataSource := DataSource{}
 	result := main.db.Where("id = ?", id).First(&dataSource)
 	if result.Error != nil {
-		logger.Error(util.FindDatasourceError, "FindActionById", result.Error, "Id = "+id)
+		logger.Error(util.FindDatasourceError, "FindDatasourceById", result.Error, "Id = "+id)
 		return DataSource{}, result.Error
+	}
+
+	var err error
+	dataSource.Data, err = util.Decrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
+	if err != nil {
+		logger.Error(util.FindDatasourceError, "FindDatasourceById", err, dataSource)
+		return DataSource{}, err
+
 	}
 	return dataSource, nil
 }
@@ -113,6 +131,14 @@ func (main Main) FindHealthByWorkspaceId(workspaceID string) (DataSource, error)
 	if result.Error != nil {
 		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", result.Error, "workspaceID = "+workspaceID)
 		return DataSource{}, result.Error
+	}
+
+	var err error
+	dataSource.Data, err = util.Decrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
+	if err != nil {
+		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", err, dataSource)
+		return DataSource{}, err
+
 	}
 	return dataSource, nil
 }
@@ -142,6 +168,12 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 	getList, err := plugin.Lookup("GetMetrics")
 	if err != nil {
 		logger.Error(util.PluginLookupError, "GetMetrics", err, plugin)
+		return datasource.MetricList{}, err
+	}
+
+	dataSourceResult.Data, err = util.Decrypt(dataSourceResult.Data, "passphrasewhichneedstobe32bytes!")
+	if err != nil {
+		logger.Error(util.DatasourceSaveError, "SaveAction", err, dataSourceResult)
 		return datasource.MetricList{}, err
 	}
 
@@ -197,10 +229,27 @@ func (main Main) Save(dataSource DataSource) (DataSource, error) {
 		}
 	}
 
-	db := main.db.Create(&dataSource)
+	//dataEncrypt, err := util.Encrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
+	//if err != nil {
+	//	logger.Error(util.DatasourceSaveError, "SaveDatasource", err, dataSource)
+	//}
+	//
+	//dataSource.Data = json.RawMessage(fmt.Sprintf(`{"data": "%s"}`, dataEncrypt))
+
+	//db := main.db.Create(&dataSource)
+	db := main.db.Exec(
+		fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, health, deleted_at, plugin_src)
+							VALUES (%s, %s, PGP_SYM_ENCRYPT(%s, 'MAYCON'), %s, %t, null, %s);`,
+			uuid.New().String(), dataSource.Name, dataSource.Data, dataSource.WorkspaceID, dataSource.Health, dataSource.PluginSrc))
 	if db.Error != nil {
-		logger.Error(util.DatasourceSaveError, "SaveAction", db.Error, dataSource)
+		logger.Error(util.DatasourceSaveError, "SaveDatasource", db.Error, dataSource)
 		return DataSource{}, db.Error
 	}
+
+	//dataSource.Data, err = util.Decrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
+	//if err != nil {
+	//	logger.Error(util.DatasourceSaveError, "SaveDatasource", err, dataSource)
+	//	return DataSource{}, err
+	//}
 	return dataSource, nil
 }

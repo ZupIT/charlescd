@@ -131,10 +131,16 @@ func (main Main) FindActionByIdAndWorkspace(id, workspaceID string) (Action, err
 	action := Action{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ? and workspace_id = ?", id, workspaceID).First(&action)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
+		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", db.Error, "Id = "+id)
 		return Action{}, db.Error
 	}
 
+	var err error
+	action.Configuration, err = util.Decrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
+	if err != nil {
+		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", err, action)
+		return Action{}, err
+	}
 	return action, nil
 }
 
@@ -146,6 +152,12 @@ func (main Main) FindActionById(id string) (Action, error) {
 		return Action{}, db.Error
 	}
 
+	var err error
+	action.Configuration, err = util.Decrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
+	if err != nil {
+		logger.Error(util.FindActionError, "FindActionById", err, action)
+		return Action{}, err
+	}
 	return action, nil
 }
 
@@ -157,14 +169,37 @@ func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Action, error)
 		logger.Error(util.FindActionError, "FindAllActionsByWorkspace", db.Error, actions)
 		return []Action{}, db.Error
 	}
+
+	var err error
+	for i := range actions {
+		actions[i].Configuration, err = util.Decrypt(actions[i].Configuration, "passphrasewhichneedstobe32bytes!")
+		if err != nil {
+			logger.Error(util.FindActionError, "FindAllActionsByWorkspace", err, actions[i])
+			return []Action{}, err
+		}
+	}
 	return actions, nil
 }
 
 func (main Main) SaveAction(action Action) (Action, error) {
+	dataEncrypt, err := util.Encrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
+	if err != nil {
+		logger.Error(util.SaveActionError, "SaveAction", err, action)
+		return Action{}, err
+
+	}
+	action.Configuration = json.RawMessage(fmt.Sprintf(`{"configuration": "%s"}`, dataEncrypt))
+
 	db := main.db.Create(&action)
 	if db.Error != nil {
 		logger.Error(util.SaveActionError, "SaveAction", db.Error, action)
 		return Action{}, db.Error
+	}
+
+	action.Configuration, err = util.Decrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
+	if err != nil {
+		logger.Error(util.SaveActionError, "SaveAction", err, action)
+		return Action{}, err
 	}
 	return action, nil
 }
