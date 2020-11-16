@@ -38,6 +38,8 @@ import (
 	v1 "github.com/ZupIT/charlescd/compass/web/api/v1"
 
 	"github.com/joho/godotenv"
+
+	"github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -49,8 +51,20 @@ func main() {
 	}
 	defer db.Close()
 
+	mooveDb, err := configuration.GetMooveDBConnection()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer mooveDb.Close()
+
+	enforcer, err := casbin.NewEnforcer("./auth.conf", "./policy.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
+		mooveDb.LogMode(true)
 	}
 
 	lmt := tollbooth.NewLimiter(1, &limiter.ExpirableOptions{
@@ -59,14 +73,15 @@ func main() {
 	})
 	lmt.SetIPLookups([]string{"RemoteAddr", "X-Forwarded-For", "X-Real-IP"})
 
+	mooveMain := moove.NewMain(mooveDb)
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	actionMain := action.NewMain(db, pluginMain)
 	metricsGroupActionMain := metricsgroupaction.NewMain(db, pluginMain, actionMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, metricsGroupActionMain)
-	mooveMain := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
-	healthMain := health.NewMain(db, datasourceMain, pluginMain, mooveMain)
+	mooveClient := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
+	healthMain := health.NewMain(db, datasourceMain, pluginMain, mooveClient)
 	metricDispatcher := dispatcher.NewDispatcher(metricMain)
 	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
@@ -74,7 +89,7 @@ func main() {
 	go metricDispatcher.Start(stopChan)
 	go actionDispatcher.Start(stopChan)
 
-	v1Api := v1.NewV1(lmt)
+	v1Api := v1.NewV1(mooveMain, enforcer, lmt)
 	v1Api.NewPluginApi(pluginMain)
 	v1Api.NewMetricsGroupApi(metricsgroupMain)
 	v1Api.NewMetricApi(metricMain, metricsgroupMain)

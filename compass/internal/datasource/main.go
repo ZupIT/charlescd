@@ -23,6 +23,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/google/uuid"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -30,12 +31,12 @@ import (
 
 type UseCases interface {
 	Parse(dataSource io.ReadCloser) (DataSource, error)
-	FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error)
-	FindHealthByWorkspaceId(workspaceID string) (DataSource, error)
+	FindAllByWorkspace(workspaceID uuid.UUID, health string) ([]DataSource, error)
+	FindHealthByWorkspaceId(workspaceID uuid.UUID) (DataSource, error)
 	FindById(id string) (DataSource, error)
 	Save(dataSource DataSource) (DataSource, error)
 	Delete(id string) error
-	GetMetrics(dataSourceID, name string) (datasource.MetricList, error)
+	GetMetrics(dataSourceID string) (datasource.MetricList, error)
 	Validate(dataSource DataSource) []util.ErrorUtil
 	TestConnection(pluginSrc string, datasourceData json.RawMessage) error
 }
