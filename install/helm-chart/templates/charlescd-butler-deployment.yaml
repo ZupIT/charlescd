@@ -65,6 +65,7 @@ spec:
             {{ if .Values.butler.database.ssl }}
             - name: DATABASE_SSL
               value: "{{ .Values.butler.database.ssl}}"
+            {{ end }}
             {{ if .Values.butler.istio.mtls }}
             - name: ISTIO_MTLS
               value: "{{ .Values.butler.istio.mtls}}"
