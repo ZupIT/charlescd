@@ -31,7 +31,7 @@ class FindCircleByIdInteractorImpl(
     private val deploymentService: DeploymentService
 ) : FindCircleByIdInteractor {
     override fun execute(id: String, workspaceId: String): CircleResponse {
-        return createCircleResponse(circleService.find(id, workspaceId))
+        return createCircleResponse(circleService.findByIdAndWorkspaceId(id, workspaceId))
     }
 
     private fun createCircleResponse(

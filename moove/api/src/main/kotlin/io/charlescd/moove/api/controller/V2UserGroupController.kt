@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*
 @Api(value = "User Group Endpoints", tags = ["User Group"])
 @RestController
 @RequestMapping("/v2/user-groups")
-class V2UserGroupController(
+class   V2UserGroupController(
     private val createUserGroupInteractor: CreateUserGroupInteractor,
     private val updateUserGroupInteractor: UpdateUserGroupInteractor,
     private val findUserGroupByIdInteractor: FindUserGroupByIdInteractor,
