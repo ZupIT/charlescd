@@ -64,14 +64,13 @@ const IstioDeploymentManifestsUtils = {
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
-
         host: component.name,
+        subsets: deployment?.components ? IstioDeploymentManifestsUtils.getDestinationRulesSubsets(component, deployment.circleId, activeByName) : [],
         trafficPolicy: {
           tls: {
             mode: 'ISTIO_MUTUAL'
           }
-        },
-        subsets: deployment?.components ? IstioDeploymentManifestsUtils.getDestinationRulesSubsets(component, deployment.circleId, activeByName) : []
+        }
       }
     }
   },
