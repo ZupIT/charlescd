@@ -80,7 +80,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> new ArrayList<String>()
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId) >> new ArrayList<String>()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "module"
@@ -124,7 +124,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -190,7 +190,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
