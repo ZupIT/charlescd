@@ -29,6 +29,8 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth/limiter"
 	"log"
 	"time"
 
@@ -51,6 +53,12 @@ func main() {
 		db.LogMode(true)
 	}
 
+	lmt := tollbooth.NewLimiter(1, &limiter.ExpirableOptions{
+		DefaultExpirationTTL: 60,
+		ExpireJobInterval:    60,
+	})
+	lmt.SetIPLookups([]string{"RemoteAddr", "X-Forwarded-For", "X-Real-IP"})
+
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
@@ -66,7 +74,7 @@ func main() {
 	go metricDispatcher.Start(stopChan)
 	go actionDispatcher.Start(stopChan)
 
-	v1Api := v1.NewV1()
+	v1Api := v1.NewV1(lmt)
 	v1Api.NewPluginApi(pluginMain)
 	v1Api.NewMetricsGroupApi(metricsgroupMain)
 	v1Api.NewMetricApi(metricMain, metricsgroupMain)

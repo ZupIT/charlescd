@@ -28,6 +28,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/didip/tollbooth/limiter"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -48,20 +49,21 @@ type UseCases interface {
 }
 
 type V1 struct {
-	Router *httprouter.Router
-	Path   string
+	Router  *httprouter.Router
+	Path    string
+	Limiter *limiter.Limiter
 }
 
 const (
 	v1Path = "/api/v1"
 )
 
-func NewV1() UseCases {
+func NewV1(limiter *limiter.Limiter) UseCases {
 	router := httprouter.New()
 	router.GET("/health", health)
 	router.GET("/metrics", metricHandler)
 
-	return V1{router, v1Path}
+	return V1{router, v1Path, limiter}
 }
 
 func metricHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
