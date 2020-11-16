@@ -61,7 +61,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     const toggledModuleIds = xor(moduleIds, [id]);
     setModuleIds(toggledModuleIds);
     addModules(card.id, {
-      branchName: kebabCase(card.name),
+      branchName: card.name,
       description: card.description,
       labels: [],
       modules: toggledModuleIds,

@@ -66,10 +66,10 @@ data class UpdateCardRequest(
                 "Branch name cannot have ASCII control characters (i.e. bytes whose values are lower than 32, or 127 DEL), space, tilde ~, caret ^, or colon : anywhere")
         }
 
-        Assert.isTrue(!branchName.endsWith(".", true), "Branch name cannot end with a dot '.'.")
+        Assert.isTrue(!branchName.endsWith(".", true), "Branch name cannot end with a dot.")
         Assert.doesNotContain(branchName, "@{", "Branch name cannot contain a sequence '@{'.")
-        Assert.isTrue(branchName == "@", "Branch name cannot be the single character '@'.")
-        Assert.doesNotContain(branchName, "\\", "Branch name cannot contain a '\\'.")
+        Assert.isTrue(branchName != "@", "Branch name cannot be the single character '@'.")
+        Assert.doesNotContain(branchName, "\\", "Branch name cannot contain a backslash.")
         Assert.isTrue(!branchName.startsWith("-", true), "Branch name cannot start with a dash '-'.")
     }
 }

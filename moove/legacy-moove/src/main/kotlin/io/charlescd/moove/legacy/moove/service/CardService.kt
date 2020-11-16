@@ -82,6 +82,7 @@ class CardService(
 
     @Transactional
     fun update(id: String, updateCardRequest: UpdateCardRequest, workspaceId: String): CardRepresentation {
+        updateCardRequest.validate()
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .fetchCardCommentsAndMembers()
