@@ -15,13 +15,11 @@
  */
 
 import React from 'react';
-import { render, wait, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import Deploy from '..';
 
 test('render Deploy default screen', async () => {
   render(<Deploy />);
-
-  await wait();
 
   expect(screen.getByTestId('metrics-deploy')).toBeInTheDocument();
   expect(screen.getByTestId('metrics-filter')).toBeInTheDocument();
@@ -39,8 +37,6 @@ test('reset chart button', async () => {
   window.ApexCharts = {
     exec: onReset
   };
-
-  await wait();
 
   const chartMenu = screen.getByTestId('icon-horizontal-dots');
   fireEvent.click(chartMenu);

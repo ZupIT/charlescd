@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-import { Component } from '../../../../api/deployments/interfaces'
-import { AppConstants } from '../../../../../v1/core/constants'
+import { DeploymentComponent } from '../../../../api/deployments/interfaces/deployment.interface'
 
 const CommonTemplateUtils = {
-  getDeploymentName: (component: Component, circleId: string | null): string => {
-    return `${component.name}-${component.imageTag}-${CommonTemplateUtils.getCircleId(circleId)}`
-  },
-
-  getCircleId: (circleId: string | null): string => {
-    return circleId ? circleId : AppConstants.DEFAULT_CIRCLE_ID
+  getDeploymentName: (component: DeploymentComponent, circleId: string): string => {
+    return `${component.name}-${component.imageTag}-${circleId}`
   }
 }
 
