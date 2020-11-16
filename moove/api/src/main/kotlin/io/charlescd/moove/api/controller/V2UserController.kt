@@ -98,6 +98,7 @@ class V2UserController(
     @ApiOperation(value = "Delete by id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    //TODO: needs more discovery to finish implementation
     fun delete(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable id: String

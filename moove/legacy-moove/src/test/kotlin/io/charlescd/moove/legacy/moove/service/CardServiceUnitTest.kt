@@ -153,7 +153,7 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userServiceLegacy.findUser(user.id) } returns user
+        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
         every { moduleRepository.findById(modules[0]) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[1]) } returns Optional.of(module2)
         every { featureRepository.save(any() as Feature) } returns feature
@@ -187,7 +187,7 @@ class CardServiceUnitTest {
             )
         } returns Optional.of(feature.branchName)
 
-        val createdCard = cardService.create(cardRequest, workspaceId)
+        val createdCard = cardService.create(cardRequest, workspaceId, getAuthorization())
 
         verify(exactly = 1) {
             cardColumnRepository.findByNameAndHypothesis(
@@ -197,7 +197,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        every { userServiceLegacy.findUser(user.id) } returns user
+        verify { userServiceLegacy.findByToken(getAuthorization()) }
         verify(exactly = 1) { moduleRepository.findById(modules[0]) }
         verify(exactly = 1) { moduleRepository.findById(modules[1]) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
@@ -214,7 +214,6 @@ class CardServiceUnitTest {
         assertEquals(cardRequest.description, createdCard.description)
         assertEquals(cardColumn.id, createdCard.column.id)
         assertEquals(cardColumn.name, createdCard.column.name)
-        assertEquals(cardRequest.authorId, createdCard.author.id)
         assertNotNull(createdCard.createdAt)
         assertEquals(cardRequest.labels.size, createdCard.labels.size)
         assertEquals(label.name, createdCard.labels[0].name)
@@ -238,12 +237,13 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userServiceLegacy.findUser(user.id) } returns user
+        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
         every { cardRepository.save(any() as Card) } returns card
+
 
         val cardType = "ACTION"
         val createCardRequest = this.cardRequest.copy(type = cardType)
-        val createdCard = cardService.create(createCardRequest, workspaceId)
+        val createdCard = cardService.create(createCardRequest, workspaceId, getAuthorization())
 
         verify(exactly = 1) {
             cardColumnRepository.findByNameAndHypothesis(
@@ -253,7 +253,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify(exactly = 1) { userServiceLegacy.findUser(user.id) }
+        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
 
         assertNotNull(createdCard.id)
@@ -261,7 +261,6 @@ class CardServiceUnitTest {
         assertEquals(cardRequest.description, createdCard.description)
         assertEquals(cardColumn.id, createdCard.column.id)
         assertEquals(cardColumn.name, createdCard.column.name)
-        assertEquals(cardRequest.authorId, createdCard.author.id)
         assertNotNull(createdCard.createdAt)
         assertEquals(cardRequest.labels.size, createdCard.labels.size)
         assertEquals(label.name, createdCard.labels[0].name)
@@ -287,7 +286,7 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userServiceLegacy.findUser(user.id) } returns user
+        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
         every { moduleRepository.findById(modules[0]) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[1]) } returns Optional.of(module2)
         every { featureRepository.save(any() as Feature) } returns feature
@@ -328,7 +327,7 @@ class CardServiceUnitTest {
         )
         every { gitService.deleteBranch(gitCredential, module1.name, feature.branchName) } answers {}
 
-        val e = assertFailsWith<BusinessExceptionLegacy> { cardService.create(cardRequest, workspaceId) }
+        val e = assertFailsWith<BusinessExceptionLegacy> { cardService.create(cardRequest, workspaceId, getAuthorization()) }
 
         verify(exactly = 1) {
             cardColumnRepository.findByNameAndHypothesis(
@@ -338,7 +337,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify(exactly = 2) { userServiceLegacy.findUser(user.id) }
+        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
         verify(exactly = 1) { moduleRepository.findById(modules[0]) }
         verify(exactly = 1) { moduleRepository.findById(modules[1]) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
@@ -537,7 +536,6 @@ class CardServiceUnitTest {
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(actionCard.id, workspaceId) }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
-        verify(exactly = 1) { userServiceLegacy.findUser(user.id) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
         verify(exactly = 1) { cardRepository.deleteById(actionCard.id) }
@@ -550,7 +548,6 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -612,7 +609,6 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -651,7 +647,6 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -722,7 +717,6 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -948,7 +942,7 @@ class CardServiceUnitTest {
 
     fun buildCreateCardRequest(): CreateCardRequest {
         return CreateCardRequest(
-            cardName, cardDescription, authorId, "FEATURE",
+            cardName, cardDescription, "FEATURE",
             labels, hypothesisId, branchName, modules
         )
     }
@@ -1035,4 +1029,8 @@ class CardServiceUnitTest {
             emptyList(),
             workspaceId
         )
+
+    private fun getAuthorization(): String {
+        return "Bearer dokqwodksoksd"
+    }
 }
