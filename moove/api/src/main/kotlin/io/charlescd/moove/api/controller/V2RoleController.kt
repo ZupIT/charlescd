@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import javax.validation.Valid
 
 @Api(value = "Role Endpoints", tags = ["Role"])
 @RestController
@@ -33,7 +34,7 @@ class V2RoleController(private val findAllRolesInteractor: FindAllRolesInteracto
 
     @ApiOperation(value = "Find all Roles")
     @GetMapping
-    fun findAll(pageable: PageRequest): ResourcePageResponse<RoleResponse> {
+    fun findAll(@Valid pageable: PageRequest): ResourcePageResponse<RoleResponse> {
         return this.findAllRolesInteractor.execute(pageable)
     }
 }

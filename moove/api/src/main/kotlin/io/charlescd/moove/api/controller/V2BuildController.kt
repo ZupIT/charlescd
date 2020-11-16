@@ -87,7 +87,7 @@ class V2BuildController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam(required = false, name = "tagName") tagName: String?,
         @RequestParam(required = false, name = "status") status: BuildStatusEnum?,
-        pageRequest: PageRequest
+        @Valid pageRequest: PageRequest
     ): ResourcePageResponse<BuildResponse> {
         return this.findAllBuildsInteractor.execute(tagName, status, workspaceId, pageRequest)
     }
