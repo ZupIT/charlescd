@@ -22,10 +22,10 @@ import io.charlescd.moove.application.role.response.RoleResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
 
 @Api(value = "Role Endpoints", tags = ["Role"])
 @RestController
