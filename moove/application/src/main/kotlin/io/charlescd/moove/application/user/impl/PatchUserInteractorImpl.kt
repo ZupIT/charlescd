@@ -19,9 +19,9 @@ class PatchUserInteractorImpl @Inject constructor(
 ) : PatchUserInteractor {
 
     override fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse {
-        if (internalIdmEnabled) {
+        val user = userService.find(id.toString())
+        if (internalIdmEnabled && user.root) {
             patchUserRequest.validate()
-            val user = userService.find(id.toString())
             val updatedUser = updateUser(patchUserRequest, user)
             return UserResponse.from(updatedUser)
         } else {
