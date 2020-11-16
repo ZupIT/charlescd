@@ -240,7 +240,6 @@ class CardServiceUnitTest {
         every { userServiceLegacy.findByToken(getAuthorization()) } returns user
         every { cardRepository.save(any() as Card) } returns card
 
-
         val cardType = "ACTION"
         val createCardRequest = this.cardRequest.copy(type = cardType)
         val createdCard = cardService.create(createCardRequest, workspaceId, getAuthorization())
