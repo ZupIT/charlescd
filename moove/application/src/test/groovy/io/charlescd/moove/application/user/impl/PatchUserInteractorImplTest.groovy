@@ -9,6 +9,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.KeycloakService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -17,16 +18,20 @@ class PatchUserInteractorImplTest extends Specification {
 
     private PatchUserInteractor patchUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
+    private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), true)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), keycloakService, true)
     }
 
     def "when trying to update user name should do it successfully"() {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString(), true)
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), true)
+
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "Patched")]
         def request = new PatchUserRequest(patches)
@@ -36,6 +41,8 @@ class PatchUserInteractorImplTest extends Specification {
         def userResponse = patchUserInteractor.execute(userId, request, authorization)
 
         then:
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         1 * this.userRepository.update(_) >> { arguments ->
             def patchedUser = arguments[0]
@@ -57,6 +64,9 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), false)
+
         def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", null)]
@@ -67,7 +77,9 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
+        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(BusinessException)
@@ -78,7 +90,10 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString(), true)
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), true)
+
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", null)]
         def request = new PatchUserRequest(patches)
@@ -88,7 +103,9 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
+        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -99,7 +116,10 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString(), true)
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), true)
+
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "")]
         def request = new PatchUserRequest(patches)
@@ -109,7 +129,9 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
+        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -120,7 +142,10 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString(), true)
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), true)
+
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/name", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
         def request = new PatchUserRequest(patches)
@@ -130,7 +155,9 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
+        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -141,7 +168,10 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString(), true)
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), true)
+
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REMOVE, "/name", "Patched")]
         def request = new PatchUserRequest(patches)
@@ -151,7 +181,9 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
+        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -162,7 +194,10 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString(), true)
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), true)
+
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/avatar", "Patched")]
         def request = new PatchUserRequest(patches)
@@ -172,7 +207,9 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
+        0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
         def exception = thrown(IllegalArgumentException)
@@ -183,18 +220,23 @@ class PatchUserInteractorImplTest extends Specification {
         given:
         def userId = UUID.randomUUID()
 
-        def user = getDummyUser(userId.toString(), true)
+        def authEmail = "mail@email.com"
+        def authUser = getDummyUser(userId.toString(), true)
+
+        def user = getDummyUser(userId.toString(), false)
 
         def patches = [new PatchOperation(OpCodeEnum.REPLACE, "/avatar", "Patched")]
         def request = new PatchUserRequest(patches)
         def authorization = "Bearer token"
 
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), false)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), keycloakService, false)
 
         when:
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
+        0 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        0 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
 
