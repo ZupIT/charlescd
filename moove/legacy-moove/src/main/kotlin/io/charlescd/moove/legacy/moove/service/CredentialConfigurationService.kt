@@ -198,6 +198,20 @@ class CredentialConfigurationService(
         )
     }
 
+    private fun buildHarborRegistryRequest(
+        createRegistryConfigRequest: CreateHarborRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
+        return CreateVillagerRegistryConfigurationRequest(
+            name = createRegistryConfigRequest.name,
+            address = createRegistryConfigRequest.address,
+            provider = CreateVillagerRegistryConfigurationProvider.HARBOR,
+            username = createRegistryConfigRequest.username,
+            password = createRegistryConfigRequest.password,
+            authorId = authorId
+        )
+    }
+
     private fun buildDeployCdConfigurationRequest(
         createCdConfigRequest: CreateCdConfigurationRequest
     ): CreateDeployCdConfigurationRequest {
