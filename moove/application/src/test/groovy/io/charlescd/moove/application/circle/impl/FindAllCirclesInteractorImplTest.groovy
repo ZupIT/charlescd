@@ -160,6 +160,69 @@ class FindAllCirclesInteractorImplTest extends Specification {
         assert response.content[1].deployment == null
     }
 
+    def "should find all circles without active and name parameter"() {
+        given:
+        def workspaceId = "d3828cdb-b87c-4360-a3b6-4563aff459a8"
+        def pageRequest = new PageRequest(0, 10)
+
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
+
+        def authorId = "89363883-cc6e-4711-8a2b-63c0665d5b7d"
+        def author = getDummyUser(authorId)
+
+        def womenCircleId = "4b664b17-ca05-4ced-a73c-1293f8d0f756"
+        def womenCircle = getDummyCircle(womenCircleId, author, nodePart, workspaceId, false)
+
+        def menCircleId = "6d19ab59-33c1-4145-9637-0ebdaa5703bf"
+        def menCircle = getDummyCircle(menCircleId, author, nodePart, workspaceId, false)
+
+        def circleList = [womenCircle, menCircle]
+
+        def buildId = "3e5e7abc-234b-41be-ad91-c20cfa6bf0cf"
+
+        def womenDeploymentId = "bf387447-60f4-4e02-b77c-d4b32030bb1c"
+        def womenDeployment = getDummyDeployment(womenDeploymentId, author, menCircle, buildId, workspaceId)
+
+        def menDeploymentId = "080b64d1-7204-4a2f-87fd-815a78e42455"
+        def menDeployment = getDummyDeployment(menDeploymentId, author, menCircle, buildId, workspaceId)
+
+        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
+
+        when:
+        def response = this.findAllCirclesInteractor.execute(null, null, workspaceId, pageRequest)
+
+        then:
+        1 * this.circleRepository.find(_, _, _, _) >> { arguments ->
+
+            assert arguments[0] == null
+            assert arguments[1] == null
+            assert arguments[2] == workspaceId
+            assert arguments[3] == pageRequest
+
+            return new Page<Circle>(circleList, 0, 10, 1)
+        }
+
+        1 * this.deploymentRepository.findActiveByCircleId(womenCircleId) >> [womenDeployment]
+        1 * this.deploymentRepository.findActiveByCircleId(menCircleId) >> [menDeployment]
+
+        2 * this.buildRepository.findById(buildId) >> Optional.of(build)
+
+        assert response != null
+        assert response.content != null
+        assert !response.content.isEmpty()
+        assert response.isLast
+        assert response.page == 0
+        assert response.totalPages == 1
+        assert response.content[0].id == womenCircleId
+        assert response.content[1].id == menCircleId
+        assert response.content[0].deployment.id == womenDeploymentId
+        assert response.content[1].deployment.id == menDeploymentId
+        assert response.content[0].deployment.tag == build.tag
+        assert response.content[1].deployment.tag == build.tag
+    }
+
     private static Deployment getDummyDeployment(String deploymentId, User user, Circle circle, String buildId, String workspaceId) {
         new Deployment(
                 deploymentId,

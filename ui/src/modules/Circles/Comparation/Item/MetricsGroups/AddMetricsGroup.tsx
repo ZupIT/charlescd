@@ -22,12 +22,16 @@ import Styled from './styled';
 import { MetricsGroup } from './types';
 import { isNotBlank } from 'core/utils/validation';
 
-interface Props {
+type Props = {
   id: string;
   onCloseModal: Function;
   onSaveGroup: Function;
   metricGroup?: MetricsGroup;
-}
+};
+
+type FormData = {
+  name: string;
+};
 
 const AddMetricsGroup = ({
   id,
@@ -41,9 +45,9 @@ const AddMetricsGroup = ({
     register,
     handleSubmit,
     formState: { isValid }
-  } = useForm({ mode: 'onChange', defaultValues: metricGroup ?? {} });
+  } = useForm<FormData>({ mode: 'onChange', defaultValues: metricGroup ?? {} });
 
-  const onSubmit = ({ name }: Partial<MetricsGroup>) => {
+  const onSubmit = ({ name }: FormData) => {
     createMetricsGroup(name, id).then(response => {
       if (response) {
         onSaveGroup();
@@ -54,7 +58,9 @@ const AddMetricsGroup = ({
   return (
     <Modal.Default onClose={() => onCloseModal()}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Modal.Title color="light">Add metrics group</Styled.Modal.Title>
+        <Styled.Modal.Title color="light">
+          {metricGroup?.id ? 'Edit metrics group' : 'Add metrics group'}
+        </Styled.Modal.Title>
         <Styled.Modal.Input
           name="name"
           label="Type a name for the metrics group"
@@ -68,6 +74,7 @@ const AddMetricsGroup = ({
           type="submit"
           isDisabled={!isValid}
           isLoading={status.isPending}
+          id="save"
         >
           Save group
         </Styled.Modal.Button>

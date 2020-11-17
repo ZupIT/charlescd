@@ -15,13 +15,13 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Badge from '../';
 
 test('render Badge', () => {
-  const { getByText } = render(
+  render(
     <Badge label="content" />
   );
 
-  expect(getByText('content')).toBeInTheDocument();
+  expect(screen.getByText('content')).toBeInTheDocument();
 });

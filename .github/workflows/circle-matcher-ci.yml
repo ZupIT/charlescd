@@ -40,3 +40,8 @@ jobs:
     - name: Check Code Style
       run: mvn checkstyle:checkstyle
       working-directory: ./circle-matcher
+    - name: Horusec Security
+      working-directory: ./circle-matcher
+      run: |
+        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+        horusec start -p ./

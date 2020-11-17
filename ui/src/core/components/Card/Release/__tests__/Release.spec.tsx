@@ -15,14 +15,14 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import CardRelease from '../';
 
 test('render CardRelease component with nodes', () => {
-  const { getByText } = render(
+  render(
     <CardRelease status="deployed" description="tag-rc-1" />
   );
 
-  expect(getByText('Deployed')).toBeInTheDocument();
-  expect(getByText('tag-rc-1')).toBeInTheDocument();
+  expect(screen.getByText('Deployed')).toBeInTheDocument();
+  expect(screen.getByText('tag-rc-1')).toBeInTheDocument();
 });

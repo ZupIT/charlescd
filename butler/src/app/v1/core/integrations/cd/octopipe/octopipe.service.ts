@@ -222,24 +222,24 @@ export class OctopipeService implements ICdServiceStrategy {
 
   private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IGenericClusterConfig | null {
     switch (config.provider) {
-    case ClusterProviderEnum.EKS:
-      return {
-        provider: ClusterProviderEnum.EKS,
-        awsSID: config.awsSID,
-        awsSecret: config.awsSecret,
-        awsRegion: config.awsRegion,
-        awsClusterName: config.awsClusterName
-      }
-    case ClusterProviderEnum.GENERIC:
-      return {
-        provider: ClusterProviderEnum.GENERIC,
-        clientCertificate: config.clientCertificate,
-        caData: config.caData,
-        clientKey: config.clientKey,
-        host: config.host
-      }
-    default:
-      return null
+      case ClusterProviderEnum.EKS:
+        return {
+          provider: ClusterProviderEnum.EKS,
+          awsSID: config.awsSID,
+          awsSecret: config.awsSecret,
+          awsRegion: config.awsRegion,
+          awsClusterName: config.awsClusterName
+        }
+      case ClusterProviderEnum.GENERIC:
+        return {
+          provider: ClusterProviderEnum.GENERIC,
+          clientCertificate: config.clientCertificate,
+          caData: config.caData,
+          clientKey: config.clientKey,
+          host: config.host
+        }
+      default:
+        return null
     }
   }
 

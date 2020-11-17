@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Popover, { Props } from '../';
 
 let props: Props = {
@@ -26,45 +27,46 @@ let props: Props = {
   linkLabel: 'view-documentation'
 };
 
-test('render Popover with required props', async () => {
-  const { queryByTestId } = render(
+test('render Popover with required props', () => {
+  render(
     <Popover title={props.title} icon={props.icon} description={props.description} />
   );
 
-  await wait();
+  const popoverElement = screen.queryByTestId(`popover-${props.title}`);
+  const triggerElement = screen.getByTestId(`icon-${props.icon}`);
 
-  const element = queryByTestId(`popover-${props.title}`);
-  const triggerElement = queryByTestId(`icon-${props.icon}`);
   expect(triggerElement).toBeInTheDocument();
-  expect(element).not.toBeInTheDocument();
+  expect(popoverElement).not.toBeInTheDocument();
 });
 
-test('render Popover with required props and trigger', async () => {
-  const { queryByTestId } = render(
+test('render Popover with required props and trigger', () => {
+  render(
     <Popover title={props.title} icon={props.icon} description={props.description} />
   );
 
-  const triggerElement = queryByTestId(`icon-${props.icon}`);
-  fireEvent.click(triggerElement);
-
-  await wait();
+  const triggerElement = screen.getByTestId(`icon-${props.icon}`);
+  userEvent.click(triggerElement);
   
-  const element = queryByTestId(`popover-${props.title}`);
+  const popoverElement = screen.getByTestId(`popover-${props.title}`);
 
   expect(triggerElement).toBeInTheDocument();
-  expect(element).toBeInTheDocument();
+  expect(popoverElement).toBeInTheDocument();
 });
 
-test('render Popover with link prop', async () => {
-  const { queryByText, queryByTestId } = render(
-    <Popover title={props.title} icon={props.icon} description={props.description} linkLabel={props.linkLabel} link={props.link} />
+test('render Popover with link prop', () => {
+  render(
+    <Popover 
+      title={props.title} 
+      icon={props.icon} 
+      description={props.description} 
+      linkLabel={props.linkLabel} 
+      link={props.link} 
+    />
   );
   
-  const triggerElement = queryByTestId(`icon-${props.icon}`);
-  fireEvent.click(triggerElement);
-
-  await wait();
+  const triggerElement = screen.getByTestId(`icon-${props.icon}`);
+  userEvent.click(triggerElement);
   
-  const linkLabelElement = queryByText(props.linkLabel);
+  const linkLabelElement = screen.getByText(props.linkLabel);
   expect(linkLabelElement).toBeInTheDocument();
 });

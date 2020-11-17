@@ -15,44 +15,44 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer'
 import Release from '../index';
 
 (global as any).MutationObserver = MutationObserver
 
 test('should render the CreateRelease component', () => {
-  const { getByTestId } = render(
+  render(
     <Release id="1" onGoBack={() => {}} onCreateRelease={() => {}} />
   );
 
-  const createButton = getByTestId("radio-group-type-item-create");
+  const createButton = screen.getByTestId("radio-group-type-item-create");
   fireEvent.click(createButton);
 
-  const release = getByTestId('create-release');
-  wait(() => expect(release).toBeInTheDocument());
+  const release = screen.getByTestId('create-release');
+  expect(release).toBeInTheDocument();
 });
 
 test('should render the SearchRelease component', () => {
-  const { getByTestId } = render(
+  render(
     <Release id="1" onGoBack={() => {}} onCreateRelease={() => {}} />
   );
 
-  const searchButton = getByTestId("radio-group-type-item-search");
+  const searchButton = screen.getByTestId("radio-group-type-item-search");
   fireEvent.click(searchButton);
 
-  const release = getByTestId('search-release');
-  wait(() => expect(release).toBeInTheDocument());
+  const release = screen.getByTestId('search-release');
+  expect(release).toBeInTheDocument();
 });
 
 test('should trigger goBack fn', () => {
   const goBack = jest.fn();
 
-  const { getByTestId } = render(
+  render(
     <Release id="1" onGoBack={goBack} onCreateRelease={() => {}} />
   );
 
-  const goBackBtn = getByTestId('icon-arrow-left');
+  const goBackBtn = screen.getByTestId('icon-arrow-left');
   fireEvent.click(goBackBtn);
 
   expect(goBack).toBeCalled();

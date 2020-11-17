@@ -17,5 +17,6 @@
 export enum DeploymentStatusEnum {
     CREATED = 'CREATED',
     SUCCEEDED = 'SUCCEEDED',
-    FAILED = 'FAILED'
+    FAILED = 'FAILED',
+    TIMED_OUT = 'TIMED_OUT'
 }

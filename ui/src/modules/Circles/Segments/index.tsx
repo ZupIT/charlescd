@@ -19,7 +19,7 @@ import isEmpty from 'lodash/isEmpty';
 import {
   useFieldArray,
   useForm,
-  FormContext,
+  FormProvider,
   ArrayField
 } from 'react-hook-form';
 import Icon from 'core/components/Icon';
@@ -108,7 +108,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
     fieldArray.fields?.map((group, index) => renderGroup(group, index));
 
   return (
-    <FormContext {...form}>
+    <FormProvider {...form}>
       <Styled.Form onSubmit={form.handleSubmit(onSubmit)}>
         <Styled.Group
           className="GROUP"
@@ -148,7 +148,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
           </>
         )}
       </Styled.Form>
-    </FormContext>
+    </FormProvider>
   );
 };
 

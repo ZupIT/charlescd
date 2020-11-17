@@ -1,0 +1,8 @@
+{
+  "name": "Fake Valid Datasource",
+  "id": "datasourcevalidaction",
+  "description": "Fake Valid Datasource",
+  "inputParameters": {
+    "configurationInputs": []
+  }
+}

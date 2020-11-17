@@ -15,13 +15,17 @@
  */
 
 import { 
-  OptionsValues,
-  ThresholdStatusResponse,
+  optionsValues,
+  thresholdStatusResponse,
   dataForMetricsSeriesTests,
   dataFormatted,
   allSelect, 
   someIsSelect,
-  dataFormattedAndFilter
+  dataFormattedAndFilter,
+  actionForm,
+  metricGroupItem,
+  actionsType,
+  actionType
 } from './fixtures'; 
 import { 
   normalizeMetricOptions,
@@ -30,8 +34,13 @@ import {
   getSelectDefaultValue,
   getThresholdStatus,
   getMetricSeries,
-  filterMetricsSeries
+  filterMetricsSeries,
+  createCirclePromotionPayload,
+  createActionPayload,
+  normalizeActionsOptions
 } from '../helpers';
+import { ActionForm } from '../AddAction';
+import * as workspaceUtils from 'core/utils/workspace';
 
 test('must normalized metrics options', () => {
   expect(normalizeMetricOptions(["1","2"])).toEqual([{"label": "1", "value": "1"},{"label": "2", "value": "2"}]);
@@ -50,14 +59,14 @@ test('must get Operator', () => {
 });
 
 test('must get Select Default Value', () => {
-  expect(getSelectDefaultValue('1', OptionsValues)).toEqual(OptionsValues[0]);
-  expect(getSelectDefaultValue('2', OptionsValues)).not.toEqual(OptionsValues[0]);
+  expect(getSelectDefaultValue('1', optionsValues)).toEqual(optionsValues[0]);
+  expect(getSelectDefaultValue('2', optionsValues)).not.toEqual(optionsValues[0]);
 });
 
 test('must get Threshold Status text', () => {
-  expect(getThresholdStatus('REACHED')).toEqual(ThresholdStatusResponse[0]);
-  expect(getThresholdStatus('ERROR')).toEqual(ThresholdStatusResponse[1]);
-  expect(getThresholdStatus(' ')).toEqual(ThresholdStatusResponse[2]);
+  expect(getThresholdStatus('REACHED')).toEqual(thresholdStatusResponse[0]);
+  expect(getThresholdStatus('ERROR')).toEqual(thresholdStatusResponse[1]);
+  expect(getThresholdStatus(' ')).toEqual(thresholdStatusResponse[2]);
 });
 
 test('must format Metric Series', () => {
@@ -69,4 +78,49 @@ test('must filter Metric Series', () => {
   expect(filterMetricsSeries(dataFormatted, undefined)).toEqual(dataFormatted);
   expect(filterMetricsSeries(dataFormatted, allSelect)).toEqual(dataFormatted);
   expect(filterMetricsSeries(dataFormatted, someIsSelect)).toEqual(dataFormattedAndFilter);
+});
+
+test('must create CirclePromotionPayload', () => {
+  const circleId = '2';
+  jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue('3');
+
+  const payload = createCirclePromotionPayload(actionForm, circleId);
+
+  expect(payload).toMatchObject({
+    destinationCircleId: '4',
+    originCircleId: '2',
+    workspaceId: '3'
+  })
+});
+
+test('must create Action payload', () => {
+  const payload = createActionPayload(actionForm, metricGroupItem, '2', 'circledeployment');
+
+  const expected = {
+    metricsGroupId: metricGroupItem.id,
+    actionId: actionForm.actionId,
+    nickname: actionForm.nickname,
+    executionParameters: {
+      destinationCircleId: '4',
+      originCircleId: '2',
+      workspaceId: '3'
+    }
+  }
+
+  expect(payload).toMatchObject(expected);
+});
+
+test('must normalize Actions options', () => {
+  const options = normalizeActionsOptions(actionsType);
+
+  const expected = [
+    {
+      ...actionType,
+      value: actionType.id,
+      label: actionType.nickname,
+      description: actionType.description
+    }
+  ]
+
+  expect(options).toMatchObject(expected);
 });

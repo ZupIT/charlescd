@@ -16,11 +16,10 @@
 
 import React, { Suspense } from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, wait, act, screen } from 'unit-test/testUtils';
+import { render, act, screen } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
 import routes from 'core/constants/routes';
-import { renderHook } from "@testing-library/react-hooks";
 import Main, {
   Workspaces,
   Users,
@@ -59,13 +58,11 @@ afterEach(() => {
 
 test('render menu component', () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
+  render(<Main />);
 
-  const sidebar = getByTestId('sidebar');
-  const content = getByTestId('main-content');
-  const footer = getByTestId('footer');
-
-  wait();
+  const sidebar = screen.getByTestId('sidebar');
+  const content = screen.getByTestId('main-content');
+  const footer = screen.getByTestId('footer');
 
   expect(sidebar.tagName).toBe('NAV');
   expect(content.tagName).toBe('SECTION');
@@ -74,9 +71,9 @@ test('render menu component', () => {
 
 test('render menu in expanded mode with the workspaces screen active', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
+  render(<Main />);
 
-  const icon = getByTestId('icon-workspaces');
+  const icon = screen.getByTestId('icon-workspaces');
   const iconStyle = window.getComputedStyle(icon);
   
   expect(iconStyle.color).toBe(dark.menuIconActive);
@@ -85,19 +82,19 @@ test('render menu in expanded mode with the workspaces screen active', async () 
 test('render and collapse sidebar', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const menuId = genMenuId(window.location.pathname);
-  const { getByTestId } = render(<Main />);
+  render(<Main />);
 
-  const expandButton = getByTestId('sidebar-expand-button');
+  const expandButton = screen.getByTestId('sidebar-expand-button');
 
-  expect(getByTestId(menuId)).toHaveTextContent(/\w+/gi);
+  expect(screen.getByTestId(menuId)).toHaveTextContent(/\w+/gi);
 
   act(() => expandButton.click());
 
-  expect(getByTestId(menuId).textContent).toBe('');
+  expect(screen.getByTestId(menuId).textContent).toBe('');
 });
 
 test('lazy loading', async () => {
-  const { getByText } = await render(
+  await render(
     <Suspense fallback={<div>loading...</div>}>
       <Workspaces selectedWorkspace={() => act(() => jest.fn())} />
       <Users />
@@ -111,7 +108,7 @@ test('lazy loading', async () => {
     </Suspense>
   );
 
-  const lazyLoading = getByText('loading...');
+  const lazyLoading = screen.getByText('loading...');
 
   expect(lazyLoading).toBeInTheDocument();
 });

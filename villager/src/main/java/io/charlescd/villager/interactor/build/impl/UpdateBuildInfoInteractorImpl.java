@@ -145,14 +145,14 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
         try {
-            this.registryClient.configureAuthentication(entity.type, entity.connectionData, component.tagName);
+            registryClient.configureAuthentication(entity.type, entity.connectionData, component.tagName);
 
             // TODO: Verificar necessidade de serializacao
             return registryClient.getImage(component.name, component.tagName, entity.connectionData).isPresent()
                     && registryClient.getImage(component.name, component.tagName, entity.connectionData)
                     .get().getStatus() == 200;
         } finally {
-            this.registryClient.closeQuietly();
+            registryClient.closeQuietly();
         }
 
     }

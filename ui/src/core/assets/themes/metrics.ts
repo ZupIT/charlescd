@@ -58,7 +58,7 @@ export const dark = {
   provider: {
     success: COLOR_MALACHITE,
     error: COLOR_RED_ORANGE
-  },
+  } as Record<string, string>,
   health: {
     cardBackground: COLOR_BLACK_MARLIN,
     cardModules: COLOR_PAYNES_GREY,
@@ -99,7 +99,7 @@ export const dark = {
         background: COLOR_BLACK_MARLIN
       }
     }
-  },
+  } as Record<string, any>,
   deploy: {
     deployed: COLOR_MOUNTAIN_MEADOW,
     deploying: COLOR_DODGER_BLUE,
@@ -114,5 +114,5 @@ export const dark = {
         background: COLOR_PAYNES_GREY
       }
     }
-  }
+  } as Record<string, any>
 };

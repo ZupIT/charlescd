@@ -20,7 +20,7 @@ import AceEditor, { Props as AceEditorProps } from 'core/components/AceEditor';
 
 export interface Props extends AceEditorProps {
   name: string;
-  control: Control<unknown>;
+  control: Control<any>;
   className?: string;
   mode: string;
   defaultValue?: string;

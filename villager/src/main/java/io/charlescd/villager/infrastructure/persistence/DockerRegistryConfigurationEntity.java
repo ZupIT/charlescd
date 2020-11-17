@@ -32,14 +32,20 @@ public class DockerRegistryConfigurationEntity {
 
     public abstract static class DockerRegistryConnectionData {
         public String address;
-        public String host;
         public String organization;
+        public String host;
 
         DockerRegistryConnectionData(String address, String organization) {
             this.address = address;
-            // Removing protocol :(
-            this.host = StringUtils.substringAfter(address, "//");
             this.organization = organization;
+            // Removing protocol :(
+            this.host = StringUtils.substringAfter(address, "//") + hostComplement();
+        }
+
+        private String hostComplement() {
+            return organization == null || organization.isEmpty()
+                    ? ""
+                    :  "/" + organization;
         }
     }
 
@@ -85,6 +91,17 @@ public class DockerRegistryConfigurationEntity {
         public DockerHubDockerRegistryConnectionData(String address,
                                                      String organization, String username, String password) {
             super(address, organization);
+            this.username = username;
+            this.password = password;
+        }
+    }
+
+    public static class HarborDockerRegistryConnectionData extends DockerRegistryConnectionData {
+        public String username;
+        public String password;
+
+        public HarborDockerRegistryConnectionData(String address, String username, String password) {
+            super(address, "");
             this.username = username;
             this.password = password;
         }

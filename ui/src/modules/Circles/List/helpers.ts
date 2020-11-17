@@ -1,3 +1,4 @@
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -20,7 +21,7 @@ import { DEFAULT_CIRCLE_NAME } from '../constants';
 import { CirclePaginationItem } from '../interfaces/CirclesPagination';
 
 export const prepareCircles = (circles: CirclePaginationItem[]) => [
-  ...filter(circles, item => item.name !== DEFAULT_CIRCLE_NAME)
+  ...filter(circles, item => item.name !== DEFAULT_CIRCLE_NAME && item?.deployment?.status === DEPLOYMENT_STATUS.deployed)
 ];
 
 export const getDefaultCircle = (circles: CirclePaginationItem[]) =>
