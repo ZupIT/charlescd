@@ -186,7 +186,7 @@ class JdbcCircleRepository(
 
     private fun findCircleByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Circle> {
         val statement = StringBuilder(BASE_QUERY_STATEMENT)
-            .appendln("AND circles.id = ?")
+            .appendln("AND circles.id = ? ")
             .appendln("AND circles.workspace_id = ?")
 
         return Optional.ofNullable(
@@ -319,7 +319,7 @@ class JdbcCircleRepository(
                 """
         )
 
-        name?.let { statement.appendln("AND circles.name ILIKE ?") }
+        name?.let { statement.appendln("AND circles.name ILIKE ? ") }
         statement.appendln("AND circles.workspace_id = ?")
 
         return statement

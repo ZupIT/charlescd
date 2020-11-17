@@ -31,7 +31,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class FindCircleByIdInteractorImplTest extends Specification {
+class   FindCircleByIdInteractorImplTest extends Specification {
 
     private FindCircleByIdInteractor findCircleByIdInteractor
 
