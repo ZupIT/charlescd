@@ -84,7 +84,6 @@ class UserServiceTest extends Specification {
     def "when find all users and not exists should return empty list"() {
         given:
         def pageRequest = new PageRequest()
-        def user = getDummyUser("charles@charles.com")
         def emptyPage = new Page([], 0, 20, 0)
         def name = "charles"
 
@@ -146,12 +145,13 @@ class UserServiceTest extends Specification {
     def "when check if user with email and exists should throw an BusinessException"() {
         given:
         def email = "charles@email.com"
+        def user = getDummyUser(email)
 
         when:
-        this.userService.checkIfEmailAlreadyExists(email)
+        this.userService.checkIfEmailAlreadyExists(user)
 
         then:
-        1 * this.userRepository.findByEmail(email) >> Optional.of(getDummyUser(email))
+        1 * userRepository.findByEmail('charles@email.com') >> Optional.of(user)
 
         thrown(BusinessException)
 
