@@ -109,7 +109,10 @@ data:
                       250,
                       false
                       )
-                      request_handle:respond(headers,body)
+                      request_handle:logInfo(headers[":status"])
+                      if headers[":status"] ~= "200" then
+                        request_handle:respond(headers,body)
+                      end
                     end
               - name: envoy.filters.http.router
                 typed_config: {}
