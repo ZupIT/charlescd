@@ -29,6 +29,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -40,9 +41,10 @@ class CreateWorkspaceInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        createWorkspaceInteractor = new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository),
+        createWorkspaceInteractor = new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository))
     }
 

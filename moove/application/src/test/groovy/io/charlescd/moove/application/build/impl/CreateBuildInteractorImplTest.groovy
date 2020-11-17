@@ -25,6 +25,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.GitProviderService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import io.charlescd.moove.domain.service.VillagerService
 import spock.lang.Specification
 
@@ -41,11 +42,12 @@ class CreateBuildInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.buildInteractor = new CreateBuildInteractorImpl(
                 gitProviderService,
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new BuildService(buildRepository),
                 new HypothesisService(hypothesisRepository),
                 villagerService,
@@ -78,7 +80,7 @@ class CreateBuildInteractorImplTest extends Specification {
         buildInteractor.execute(createBuildRequest, workspaceId)
 
         then:
-        1 * hypothesisRepository.findById(hypothesisId) >> Optional.empty()
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesisId, workspaceId) >> Optional.empty()
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         def ex = thrown(NotFoundException)
@@ -112,7 +114,7 @@ class CreateBuildInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * userRepository.findById(author.id) >> Optional.empty()
 
         def ex = thrown(NotFoundException)
@@ -189,7 +191,7 @@ class CreateBuildInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * userRepository.findById(author.id) >> Optional.of(author)
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
@@ -227,7 +229,7 @@ class CreateBuildInteractorImplTest extends Specification {
         featureList.add('5455be03-83be-4a7a-b725-52d51cc2430e')
 
         def author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
 
         def todoCardColumn = new Column('2dd78ca0-6a2c-11ea-bc55-0242ac130003', ColumnConstants.TO_DO_COLUMN_NAME,
                 hypothesisId, new ArrayList<Card>(), workspaceId)
@@ -282,7 +284,7 @@ class CreateBuildInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * userRepository.findById(author.id) >> Optional.of(author)
 
         def exception = thrown(BusinessException)
@@ -306,6 +308,6 @@ class CreateBuildInteractorImplTest extends Specification {
 
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
     }
 }

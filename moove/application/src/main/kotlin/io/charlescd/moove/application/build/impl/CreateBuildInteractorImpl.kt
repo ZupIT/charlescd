@@ -45,7 +45,7 @@ open class CreateBuildInteractorImpl @Inject constructor(
     override fun execute(request: CreateBuildRequest, workspaceId: String): BuildResponse {
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
-        val hypothesis = hypothesisService.find(request.hypothesisId)
+        val hypothesis = hypothesisService.find(request.hypothesisId, workspaceId)
         val build = createBuildEntity(request, hypothesis, workspaceId)
         buildService.save(build)
         createReleaseCandidate(build, workspace)

@@ -15,9 +15,10 @@
  */
 
 import { Component } from '../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const DeploymentUtils = {
-  getActiveSameCircleTagComponent: (activeComponents: Component[], component: Component, circleId: string | null): Component | undefined => {
+  getActiveSameCircleTagComponent: (activeComponents: Component[], component: DeploymentComponent, circleId: string | null): Component | undefined => {
     const activeByName = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
     return activeByName.find(
       activeComponent => activeComponent.imageTag === component.imageTag && activeComponent.deployment?.circleId === circleId
@@ -28,7 +29,7 @@ const DeploymentUtils = {
     return activeComponents.filter(component => component.name === name)
   },
 
-  getUnusedComponent: (activeComponents: Component[], component: Component, circleId: string | null): Component | undefined => {
+  getUnusedComponent: (activeComponents: Component[], component: DeploymentComponent, circleId: string | null): Component | undefined => {
     const activeByName = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
     const sameCircleComponent = activeByName.find(activeComponent => activeComponent.deployment?.circleId === circleId)
 
@@ -37,6 +38,9 @@ const DeploymentUtils = {
     }
 
     return sameCircleComponent
+  },
+  isDistinctAndNotDefault(component: Component, circleId: string) {
+    return component.deployment.circleId && component.deployment.circleId !== circleId && !component.deployment.defaultCircle
   }
 }
 

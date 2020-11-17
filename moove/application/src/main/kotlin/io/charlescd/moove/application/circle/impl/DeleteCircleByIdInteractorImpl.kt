@@ -41,7 +41,7 @@ open class DeleteCircleByIdInteractorImpl(
 
     @Transactional
     override fun execute(id: String, workspaceId: String) {
-        val circle = circleService.find(id, workspaceId)
+        val circle = circleService.findByIdAndWorkspaceId(id, workspaceId)
         deleteDeployments(id)
         keyValueRuleService.delete(id)
         circleService.delete(id)

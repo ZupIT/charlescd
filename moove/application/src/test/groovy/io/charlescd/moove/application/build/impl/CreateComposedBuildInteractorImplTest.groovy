@@ -25,6 +25,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.domain.repository.ModuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -36,10 +37,11 @@ class CreateComposedBuildInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.createComposedBuildInteractor = new CreateComposedBuildInteractorImpl(
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new ModuleService(moduleRepository),
                 new BuildService(buildRepository)
         )
@@ -78,7 +80,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> new ArrayList<String>()
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> new ArrayList<String>()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "module"
@@ -122,7 +124,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -188,7 +190,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -229,6 +231,6 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
     }
 }

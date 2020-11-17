@@ -9,6 +9,8 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
+
 import java.time.LocalDateTime
 import spock.lang.Specification
 
@@ -17,9 +19,10 @@ class CreateUserInteractorImplTest extends Specification {
     private CreateUserInteractor createUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
     private KeycloakService keycloakService = Mock(KeycloakService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock( ManagementUserSecurityService)
 
     def setup() {
-        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository), userRepository, keycloakService, true)
+        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), userRepository, keycloakService, true)
     }
 
     def "when trying to create user should do it successfully"() {

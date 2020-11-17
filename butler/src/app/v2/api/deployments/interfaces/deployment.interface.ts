@@ -27,7 +27,11 @@ export interface Deployment {
 
     cdConfiguration: CdConfiguration
 
-    circleId: string | null
+    circleId: string
 
-    components?: Component[]
+    components?: DeploymentComponent[]
+
+    defaultCircle: boolean
 }
+
+export type DeploymentComponent = Omit<Component, 'deployment'>

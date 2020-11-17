@@ -90,7 +90,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         def response = this.updateCircleWithCsvFileInteractor.execute(request, workspaceId)
 
         then:
-        1 * this.circleRepository.findById(circleId) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.circleRepository.update(_) >> { arguments ->
             def updatedCircle = arguments[0]
 
@@ -173,7 +173,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         def response = this.updateCircleWithCsvFileInteractor.execute(request, workspaceId)
 
         then:
-        1 * this.circleRepository.findById(circleId) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.circleRepository.update(_) >> { arguments ->
             def updatedCircle = arguments[0]
 

@@ -54,11 +54,13 @@ test('render default Metrics Groups and toogle Chart', async () => {
 
   const toogleChart = await screen.findByTestId('labeledIcon-no-view');
   
-  await act(async () => userEvent.click(toogleChart));
+  act(() => userEvent.click(toogleChart));
 
-  expect(screen.getByText('Metrics groups')).toBeInTheDocument();
-  expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
-  expect(screen.getByTestId('labeledIcon-view')).toBeInTheDocument();
+  await waitFor(() => {
+    expect(screen.getByText('Metrics groups')).toBeInTheDocument();
+    expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
+    expect(screen.getByTestId('labeledIcon-view')).toBeInTheDocument();
+  });
 
 });
 
@@ -153,7 +155,7 @@ test('render metrics groups and edit a metrics group', async () => {
   const metricsGroupMenu = await screen.findByTestId('icon-vertical-dots');
 
   userEvent.click(metricsGroupMenu);
-  userEvent.click(screen.getByText('Edit'));
+  act(() => userEvent.click(screen.getByText('Edit')));
 
   expect(screen.queryByText('Edit metrics group')).toBeInTheDocument();
 });

@@ -15,15 +15,13 @@
  */
 
 import React from 'react';
-import { render, screen, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import ConnectionStatus from '../ConnectionStatus';
 
 test('render Connection status default component', async () => {
   render(
     <ConnectionStatus status={204} />
   );
-
-  await wait();
 
   expect(screen.getByTestId('connection-success')).toBeInTheDocument();
   expect(screen.getByText('Successful connection with the metrics provider.')).toBeInTheDocument();
@@ -33,8 +31,6 @@ test('render Connection fail status component', async () => {
   render(
     <ConnectionStatus status={500} />
   );
-
-  await wait();
 
   expect(screen.getByTestId('connection-error')).toBeInTheDocument();
   expect(screen.getByText('Connection to metric provider failed.')).toBeInTheDocument();

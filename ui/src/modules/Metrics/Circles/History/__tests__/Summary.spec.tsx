@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, fireEvent, waitFor } from 'unit-test/testUtils';
 import Summary from '../Summary';
 
 test('render default Summary', async () => {
@@ -39,9 +39,7 @@ test('should check if onSearch is called', async () => {
 
   fireEvent.change(inputSearch, { target: { value }});
 
-  wait(() => {
-    expect(onSearch).toHaveBeenCalledWith(value);
-  })
+  await waitFor(() => expect(onSearch).toHaveBeenCalledWith(value));
 });
 
 test('render Summary when is loading', async () => {
