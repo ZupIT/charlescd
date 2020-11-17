@@ -30,7 +30,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/didip/tollbooth"
-	"github.com/didip/tollbooth/limiter"
 	"log"
 	"time"
 
@@ -67,11 +66,9 @@ func main() {
 		mooveDb.LogMode(true)
 	}
 
-	lmt := tollbooth.NewLimiter(1, &limiter.ExpirableOptions{
-		DefaultExpirationTTL: 60,
-		ExpireJobInterval:    60,
-	})
-	lmt.SetIPLookups([]string{"RemoteAddr", "X-Forwarded-For", "X-Real-IP"})
+	lmt := tollbooth.NewLimiter(1, nil)
+	lmt.SetTokenBucketExpirationTTL(5 * time.Minute)
+	lmt.SetHeaderEntryExpirationTTL(5 * time.Minute)
 
 	mooveMain := moove.NewMain(mooveDb)
 	pluginMain := plugin.NewMain()
