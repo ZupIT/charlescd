@@ -18,7 +18,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
-import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
+import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
@@ -51,7 +51,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const [loadingUpdate, updateProfile] = useUpdateProfile();
+  const [loadingUpdate, updateNameById] = useUpdateName();
   const isAbleToReset = loggedUserId !== user?.id;
 
   const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
@@ -75,11 +75,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(currentUser.id, {
-      ...profile,
-      email: currentUser.email,
-      photoUrl: currentUser.photoUrl
-    });
+    updateNameById(currentUser.id, profile.name);
   };
 
   const handleDelete = (userId: string, userName: string) => {
