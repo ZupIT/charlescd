@@ -11,7 +11,7 @@ data:
         - filters:
           - name: envoy.http_connection_manager
             typed_config:
-              "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
               codec_type: auto
               stat_prefix: ingress_http
               access_log:
@@ -79,24 +79,6 @@ data:
               - name: envoy.filters.http.cors
                 typed_config: {}
               {{- end}}
-              - name: envoy.filters.http.jwt_authn
-                config:
-                  providers:
-                    charlescd_keycloak:
-                      issuer: {{ .Values.jwt_validation.issuer }}
-                      remote_jwks:
-                        http_uri:
-                          uri: {{ .Values.jwt_validation.jwks_certs }}
-                          cluster: charlescd-keycloak-http
-                          timeout: 3s
-                        cache_duration:
-                          seconds: {{ .Values.jwt_validation.cache_duration }}
-                      forward: true
-                  rules:
-                    - match:
-                        prefix: "/moove"
-                      requires:
-                        provider_name: charlescd_keycloak
               - name: envoy.filters.http.router
                 typed_config: {}
 
