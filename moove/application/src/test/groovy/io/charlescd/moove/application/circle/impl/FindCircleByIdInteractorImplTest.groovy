@@ -70,7 +70,7 @@ class   FindCircleByIdInteractorImplTest extends Specification {
         then:
         1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
+        1 * deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> [deployment]
 
         1 * buildRepository.findById(buildId) >> Optional.of(build)
 
@@ -113,7 +113,7 @@ class   FindCircleByIdInteractorImplTest extends Specification {
         then:
         1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> []
+        1 * deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> []
 
         0 * buildRepository.findById(_)
 
