@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service
 @Service
 class MetricServiceFactoryImpl(val context: ApplicationContext) : MetricServiceFactory {
 
-    override fun    getConnector(provider: MetricConfiguration.ProviderEnum): MetricService {
+    override fun getConnector(provider: MetricConfiguration.ProviderEnum): MetricService {
         return context.getBean(getImplName(provider)) as MetricService
     }
 
