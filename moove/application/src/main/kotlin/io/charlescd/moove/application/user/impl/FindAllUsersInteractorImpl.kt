@@ -25,6 +25,7 @@ import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -38,8 +39,7 @@ class FindAllUsersInteractorImpl @Inject constructor(
         if (user.root) {
             return convert(userService.findAll(name, email, pageRequest))
         }
-
-        return convert(userService.findAll(user.name, user.email, pageRequest))
+        throw  throw ForbiddenException()
     }
 
     private fun convert(page: Page<User>): ResourcePageResponse<UserResponse> {

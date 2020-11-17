@@ -20,6 +20,7 @@ import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
@@ -66,42 +67,21 @@ class FindAllUsersInteractorImplTest extends Specification {
         assert response.isLast
     }
 
-    def "when there are users and request is made by user root should list only the user"() {
+    def "when there are users and request is not made by user root should throw ForbiddenException"() {
         given:
         def pageRequest = new PageRequest()
         def user = TestUtils.user
-        def page = new Page([user], 0, 20, 1)
         def authorization = TestUtils.authorization
         when:
-        def response = this.findAllUsersInteractor.execute(TestUtils.name, null, authorization, pageRequest)
+        this.findAllUsersInteractor.execute(TestUtils.name, null, authorization, pageRequest)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
         1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.user)
-        1 * this.userRepository.findAll(_, _, _) >> { arguments ->
-            def argPageRequest = arguments[2]
-
-            assert argPageRequest instanceof PageRequest
-
-            return page
-        }
-
-        assert response != null
-        assert response.page == 0
-        assert response.size == 1
-        assert response.content.size() == 1
-        assert response.content[0].id == user.id
-        assert response.content[0].name == user.name
-        assert response.content[0].email == user.email
-        assert response.content[0].photoUrl == user.photoUrl
-        assert response.content[0].createdAt == user.createdAt
-        assert response.content[0].workspaces.size() == user.workspaces.size()
-
-        assert response.totalPages == 1
-        assert response.isLast
+        thrown(ForbiddenException)
     }
 
-    def "when there are users and request is not made by user root should list only user"() {
+    def "when there are users and request is made by user root should list them"() {
         given:
         def pageRequest = new PageRequest()
         def author = new User("author-id", "charles-author", "author@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
@@ -115,7 +95,7 @@ class FindAllUsersInteractorImplTest extends Specification {
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
-        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.user)
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
         1 * this.userRepository.findAll(_, _, _) >> { arguments ->
             def argPageRequest = arguments[2]
 
