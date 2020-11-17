@@ -54,12 +54,20 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-circle-matcher
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
                   {{- end}}
                   {{ if .Values.keycloak.enabled}}
                   - match:
                       prefix: "/keycloak"
                     route:
                       cluster: charlescd-keycloak-http
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
                   {{- end}}
                   {{ if .Values.compass.enabled}}
                   - match:
@@ -73,12 +81,36 @@ data:
                       prefix: "/"
                     route:
                       cluster: charlescd-ui
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
                   {{- end}}
               http_filters:
               {{ if .Values.cors.enabled}}
               - name: envoy.filters.http.cors
                 typed_config: {}
               {{- end}}
+              - name: envoy.filters.http.lua
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                  inline_code: |
+                    function envoy_on_request(request_handle)
+                      local token = request_handle:headers():get("authorization")
+                      local headers, body = request_handle:httpCall(
+                      "charlescd-keycloak-http",
+                      {
+                        [":method"] = "GET",
+                        [":path"] = "/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
+                        [":authority"] = "charlescd-keycloak-http",
+                        ["authorization"] = token
+                      },
+                      "",
+                      250,
+                      false
+                      )
+                      request_handle:respond(headers,body)
+                    end
               - name: envoy.filters.http.router
                 typed_config: {}
 
