@@ -21,7 +21,6 @@ import Form from 'core/components/Form';
 import RadioGroup from 'core/components/RadioGroup';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
 import { useRegistry } from './hooks';
 import { radios } from './constants';
 import { Registry } from './interfaces';
@@ -38,7 +37,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const { register, handleSubmit, reset, control } = useForm<Registry>();
-  const profileId = getProfileByKey('id');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -53,7 +51,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const onSubmit = (registry: Registry) => {
     registry = {
       ...registry,
-      authorId: profileId,
       provider: registryType
     };
 

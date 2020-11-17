@@ -24,7 +24,6 @@ import RadioGroup from 'core/components/RadioGroup';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import { getProfileByKey } from 'core/utils/profile';
 import { radios, providers, gitProviders } from './constants';
 import { CDConfiguration } from './interfaces';
 import { Props } from '../interfaces';
@@ -36,7 +35,6 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
   const { control, register, handleSubmit } = useForm<CDConfiguration>();
   const [configType, setConfigType] = useState('');
   const [providerType, setProviderType] = useState('');
-  const profileId = getProfileByKey('id');
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -46,7 +44,6 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
     save({
       ...cdConfiguration,
       type: `${configType}`,
-      authorId: profileId,
       configurationData: {
         ...cdConfiguration.configurationData,
         provider: providerType

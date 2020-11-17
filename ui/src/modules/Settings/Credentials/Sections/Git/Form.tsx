@@ -21,7 +21,6 @@ import RadioGroup from 'core/components/RadioGroup';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
 import { useGit } from './hooks';
 import { radios } from './constants';
 import { Git } from './interfaces';
@@ -32,7 +31,6 @@ const FormGit = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
   const [gitType, setGitType] = useState('');
   const { register, handleSubmit } = useForm<Git>();
-  const profileId = getProfileByKey('id');
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -41,7 +39,6 @@ const FormGit = ({ onFinish }: Props) => {
   const onSubmit = (git: Git) => {
     save({
       ...git,
-      authorId: profileId,
       credentials: {
         ...git.credentials,
         serviceProvider: gitType.toUpperCase()

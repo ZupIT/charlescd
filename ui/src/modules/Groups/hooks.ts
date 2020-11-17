@@ -31,7 +31,6 @@ import { UserGroupPagination } from './interfaces/UserGroupsPagination';
 import { listUserGroupsAction } from './state/actions';
 import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
-import { getProfileByKey } from 'core/utils/profile';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { addParamUserGroup } from './helpers';
 import { useHistory } from 'react-router-dom';
@@ -104,7 +103,7 @@ export const useCreateUserGroup = (): {
 
   const createUserGroup = useCallback(
     (name: string) => {
-      save({ name, authorId: getProfileByKey('id') });
+      save({ name });
     },
     [save]
   );
@@ -131,7 +130,7 @@ export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
   const doUpdateUserGroup = useCallback(
     (id: string, name: string) => {
       setStatus('');
-      update(id, { name, authorId: getProfileByKey('id') });
+      update(id, { name });
     },
     [update]
   );
