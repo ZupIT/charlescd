@@ -30,7 +30,7 @@ import {
   Payload,
   archiveById
 } from 'core/providers/card';
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useFetch, FetchProps, FetchStatuses } from 'core/providers/base/hooks';
 import { Payload as CardPayload } from 'core/providers/card';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { setBoard } from 'modules/Hypotheses/state/actions';
@@ -116,35 +116,37 @@ export const useAddMember = (): AddMemberProps => {
 };
 
 interface AddModuleProps {
-  loading: boolean;
-  persistModules: Function;
+  status: FetchStatuses;
+  persistModules: (cardId: string, payload: CardPayload) => void;
 }
 
 export const useModules = (): AddModuleProps => {
   const dispatch = useDispatch();
-  const [data, updateCard] = useFetch(updateById);
-  const { loading, error } = data;
+  const [, , updateCard] = useFetch(updateById);
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const persistModules = useCallback(
-    (cardId: string, payload: CardPayload) => {
-      updateCard(cardId, payload);
+    async (cardId: string, payload: CardPayload) => {
+      try {
+        setStatus('pending');
+        await updateCard(cardId, payload);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+        const error = await e.json();
+        dispatch(
+          toogleNotification({
+            text: `[${error.status}] This module could not be tied.`,
+            status: 'error'
+          })
+        );
+      }
     },
-    [updateCard]
+    [updateCard, dispatch]
   );
 
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `[${error.status}] This module could not be tied.`,
-          status: 'error'
-        })
-      );
-    }
-  }, [error, dispatch]);
-
   return {
-    loading,
+    status,
     persistModules
   };
 };

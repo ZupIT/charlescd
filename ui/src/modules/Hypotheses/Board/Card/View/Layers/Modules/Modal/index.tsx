@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import xor from 'lodash/xor';
@@ -46,7 +46,7 @@ interface Props {
 
 const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const MAX_LENGTH_BRANCH_NAME = 40;
-  const { persistModules, loading } = useModules();
+  const { persistModules, status } = useModules();
   const [modulesFiltered, filterModules] = useState<ModuleProps[]>(allModules);
   const [moduleIds, setModuleIds] = useState<string[]>();
   const { register, errors, handleSubmit, setValue, watch } = useForm({
@@ -56,7 +56,13 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const branchName =
     card.feature?.branchName || (watch('branchName') as string);
 
-  const handleClose = () => onClose();
+  const handleClose = useCallback(() => onClose(), [onClose]);
+
+  useEffect(() => {
+    if (status === 'resolved') {
+      handleClose();
+    }
+  }, [status, handleClose]);
 
   useEffect(() => {
     if (modules) {
@@ -81,7 +87,6 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
       name: card.name,
       type: isEmpty(moduleIds) ? CARD_TYPE_ACTION : CARD_TYPE_FEATURE
     });
-    handleClose();
   };
 
   const toggleModule = (id: string) => {
@@ -96,7 +101,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
       <Checked
         checked={includes(moduleIds, id)}
         id={id}
-        isLoading={loading}
+        isLoading={status === 'pending'}
         onChange={(id: string) => toggleModule(id)}
       />
     </Styled.Module>
@@ -148,7 +153,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
         {!isEmpty(moduleIds) && renderBranchField()}
         <Button.Default
           id="save-modules"
-          isLoading={loading}
+          isLoading={status === 'pending'}
           isDisabled={!isEmpty(moduleIds) && isEmpty(branchName)}
           type="submit"
           size="EXTRA_SMALL"

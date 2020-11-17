@@ -15,7 +15,10 @@
  */
 
 import { baseRequest, putRequest, deleteRequest, postRequest } from './base';
-import { Module } from 'modules/Modules/interfaces/Module';
+import {
+  CARD_TYPE_ACTION,
+  CARD_TYPE_FEATURE
+} from 'modules/Hypotheses/Board/Card/constants';
 import { buildParams } from 'core/utils/query';
 
 const endpoint = '/moove/cards';
@@ -23,11 +26,11 @@ const endpoint = '/moove/cards';
 export interface Payload {
   id?: string;
   labels: string[];
-  modules: Module[];
-  type: 'ACTION';
+  modules: string[];
+  type: typeof CARD_TYPE_ACTION | typeof CARD_TYPE_FEATURE;
   branchName: string;
   name: string;
-  desription: string;
+  description: string;
 }
 
 export const findById = (id: string) => baseRequest(`${endpoint}/${id}`);
