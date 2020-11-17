@@ -135,6 +135,7 @@ class CredentialConfigurationService(
             is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest, authorId)
             is CreateGCPRegistryConfigurationRequest -> buildGCPRegistryRequest(createRegistryConfigRequest, authorId)
             is CreateDockerHubRegistryConfigurationRequest -> buildDockerHubRegistryRequest(createRegistryConfigRequest, authorId)
+            is CreateHarborRegistryConfigurationRequest -> buildHarborRegistryRequest(createRegistryConfigRequest, authorId)
             else -> throw IllegalArgumentException("Provider type not supported")
         }
     }

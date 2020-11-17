@@ -280,8 +280,7 @@ class CredentialConfigurationServiceUnitTest {
             name = "name",
             address = "address",
             username = "username",
-            password = "password",
-            authorId = "authorId"
+            password = "password"
         )
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
@@ -314,10 +313,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userRepository.findById("authorId")
-        } returns Optional.of(user)
+            userServiceLegacy.findByToken(getAuthorization())
+        } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId)
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
