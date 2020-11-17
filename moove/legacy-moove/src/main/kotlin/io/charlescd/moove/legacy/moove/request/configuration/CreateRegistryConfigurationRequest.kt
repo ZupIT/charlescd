@@ -69,7 +69,7 @@ data class CreateHarborRegistryConfigurationRequest(
     override val address: String,
     val username: String,
     val password: String
-) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.HARBOR, authorId)
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.HARBOR)
 
 enum class CreateRegistryConfigurationProvider {
     AWS, Azure, GCP, DOCKER_HUB, HARBOR
