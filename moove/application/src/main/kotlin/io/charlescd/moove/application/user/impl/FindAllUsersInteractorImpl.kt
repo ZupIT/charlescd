@@ -39,7 +39,7 @@ class FindAllUsersInteractorImpl @Inject constructor(
         if (user.root) {
             return convert(userService.findAll(name, email, pageRequest))
         }
-        throw  throw ForbiddenException()
+        throw throw ForbiddenException()
     }
 
     private fun convert(page: Page<User>): ResourcePageResponse<UserResponse> {
