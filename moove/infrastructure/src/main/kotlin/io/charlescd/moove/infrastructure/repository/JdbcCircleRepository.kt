@@ -71,7 +71,7 @@ class JdbcCircleRepository(
         return findCircleById(id)
     }
 
-    override fun find(id: String, workspaceId: String): Optional<Circle> {
+    override fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Circle> {
         return findCircleByIdAndWorkspaceId(id, workspaceId)
     }
 

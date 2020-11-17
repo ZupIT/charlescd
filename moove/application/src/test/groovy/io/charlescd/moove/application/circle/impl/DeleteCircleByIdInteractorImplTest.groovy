@@ -71,7 +71,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         this.deleteCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.circleRepository.find(circleId, workspaceId) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.deploymentRepository.findActiveByCircleId(circleId) >> []
         1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * this.keyValueRuleRepository.delete(circleId)
@@ -100,7 +100,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         this.deleteCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.circleRepository.find(circleId, workspaceId) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
 
         def exception = thrown(BusinessException)
@@ -116,7 +116,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         this.deleteCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.circleRepository.find(circleId, workspaceId) >> Optional.empty()
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.empty()
 
         def exception = thrown(NotFoundException)
         assert exception.resourceName == "circle"
