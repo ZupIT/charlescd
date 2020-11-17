@@ -46,7 +46,7 @@ class DeleteUserInteractorImplTest extends Specification {
         deleteUserInteractor = new DeleteUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), true)
     }
 
-    def "should delete a user"() {
+    def "should delete a user when root"() {
         given:
         def authorization = "authorization"
         def root = TestUtils.userRoot
@@ -57,7 +57,24 @@ class DeleteUserInteractorImplTest extends Specification {
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> root.email
-        1 * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
+        1 * userRepository.findByEmail(root.email) >> Optional.of(root)
+        1 * userRepository.delete(user.id)
+        1 * managementUserSecurityService.deleteUser(user.id)
+
+        notThrown()
+    }
+
+    def "should delete himself when not root"() {
+        given:
+        def authorization = "authorization"
+        def user = TestUtils.user
+
+        when:
+        deleteUserInteractor.execute("123", authorization)
+
+        then:
+        1 * managementUserSecurityService.getUserEmail(authorization) >> user.email
+        1 * userRepository.findByEmail(user.email) >> Optional.of(user)
         1 * userRepository.delete(user.id)
         1 * managementUserSecurityService.deleteUser(user.id)
 

@@ -38,6 +38,15 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             false,
             LocalDateTime.now()
     )
+
+    private User root = new User(
+            "82861b6f-2b6e-44a1-a745-83e298a550c2",
+            "John Doe Root",
+            decodedEmail,
+            "https://www.photos.com/johndoe",
+            true,
+            LocalDateTime.now()
+    )
     private UserRepresentation representation = new UserRepresentation(
             "81861b6f-2b6e-44a1-a745-83e298a550c9",
             "John Doe",
@@ -46,6 +55,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             false,
             LocalDateTime.now()
     )
+
     private UserRepository repository = Mock(UserRepository)
     private KeycloakServiceLegacy keycloakService = Mock(KeycloakServiceLegacy)
     private UserServiceLegacy service
@@ -84,14 +94,31 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         ex.id == "test"
     }
 
-    def "should delete by id"() {
+    def "should delete by id when root"() {
         when:
-        def response = service.delete(representation.id, authorization)
+        def response = service.delete("81861b6f-2b6e-44a1-a745-83e298a550c9", authorization)
+
+        then:
+        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * repository.findByEmail("email@email.com") >> Optional.of(root)
+        1 * repository.findById("81861b6f-2b6e-44a1-a745-83e298a550c9") >> Optional.of(user)
+        1 * keycloakService.deleteUserById(_)
+        1 * repository.delete(user)
+        response.id == representation.id
+        response.name == representation.name
+        response.photoUrl == representation.photoUrl
+        notThrown()
+    }
+
+    def "should delete by user token when not root"() {
+        when:
+        def response = service.delete("1123", authorization)
 
         then:
         1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
         1 * repository.findByEmail("email@email.com") >> Optional.of(user)
-        1 * repository.findById(representation.id) >> Optional.of(user)
+        1 * repository.findById(user.id) >> Optional.of(user)
+        0 * repository.findById("1123") >> Optional.of(user)
         1 * keycloakService.deleteUserById(_)
         1 * repository.delete(user)
         response.id == representation.id
