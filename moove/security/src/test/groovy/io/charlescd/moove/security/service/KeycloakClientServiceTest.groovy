@@ -171,7 +171,7 @@ class KeycloakClientServiceTest extends Specification {
 
     }
 
-    def 'should delete a keycloak user by agenda'() {
+    def 'should delete a keycloak user by userId'() {
         given:
         def userId = "qwerty"
 

@@ -67,7 +67,6 @@ data class CreateDockerHubRegistryConfigurationRequest(
 data class CreateHarborRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
-    override val authorId: String,
     val username: String,
     val password: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.HARBOR, authorId)
