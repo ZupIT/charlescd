@@ -81,6 +81,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
       name: card.name,
       type: isEmpty(moduleIds) ? CARD_TYPE_ACTION : CARD_TYPE_FEATURE
     });
+    handleClose();
   };
 
   const toggleModule = (id: string) => {
@@ -122,7 +123,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
         disabled={!isEmpty(card.feature?.branchName)}
         defaultValue={card.feature?.branchName}
         tipTitle="Why we ask for a branch name?"
-        tipDescription="When a module is add to a card, Charles creates a new git branch for the client that is directly stored in the used SCM, Git or Gitlab, for example. When the branch already exists, Charles only links the card with the branch."
+        tipDescription="When a module is associated with a card, Charles creates a new git branch in the configured SCM (GitHub or GitLab, for example). If the branch already exists, Charles only links the card with it."
         maxLength={MAX_LENGTH_BRANCH_NAME}
         ref={register({
           required: true,
