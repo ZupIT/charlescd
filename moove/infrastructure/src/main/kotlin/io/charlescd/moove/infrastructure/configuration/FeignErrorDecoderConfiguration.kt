@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.infrastructure.configuration
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
@@ -65,7 +66,7 @@ class CustomErrorDecoder : ErrorDecoder {
         }
     }
 }
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ErrorResponse(
     val statusCode: String,
     val message: Any?,
