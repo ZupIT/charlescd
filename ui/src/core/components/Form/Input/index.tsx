@@ -25,7 +25,6 @@ import React, {
 import { InputEvents, ChangeInputEvent } from 'core/interfaces/InputEvents';
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
-import { Message } from 'react-hook-form';
 
 export interface Props extends InputEvents {
   id?: string;
@@ -44,7 +43,7 @@ export interface Props extends InputEvents {
   disabled?: boolean;
   isLoading?: boolean;
   hasError?: boolean;
-  error?: string | Message;
+  error?: string;
 }
 
 const Input = React.forwardRef(
