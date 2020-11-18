@@ -15,7 +15,7 @@
  */
 
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsString, IsUUID, ValidateIf, ValidateNested } from 'class-validator'
+import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
 import { flatten } from 'lodash'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
@@ -50,12 +50,14 @@ export class CreateDeploymentRequestDto {
   public cdConfiguration!: CdConfigurationEntity
 
   @ApiProperty({ type: () => CreateCircleDeploymentDto })
-  @ValidateIf((obj, value) => { return value })
   @ValidateNested({ each: true })
+  @IsNotEmpty()
   @Type(() => CreateCircleDeploymentDto)
-  public circle: CreateCircleDeploymentDto | null
+  public circle: CreateCircleDeploymentDto
 
   public status: DeploymentStatusEnum
+
+  public defaultCircle: boolean
 
   @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
   @IsNotEmpty()
@@ -68,9 +70,10 @@ export class CreateDeploymentRequestDto {
     authorId: string,
     callbackUrl: string,
     cdConfigurationId: string,
-    circle: CreateCircleDeploymentDto | null,
+    circle: CreateCircleDeploymentDto,
     status: DeploymentStatusEnum,
-    modules: CreateModuleDeploymentDto[]
+    modules: CreateModuleDeploymentDto[],
+    defaultCircle: boolean
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -79,16 +82,18 @@ export class CreateDeploymentRequestDto {
     this.circle = circle
     this.status = status
     this.modules = modules
+    this.defaultCircle = defaultCircle
   }
 
   public toCircleEntity(): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      this.circle ? this.circle.headerValue : null,
+      this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
-      this.getDeploymentComponents()
+      this.getDeploymentComponents(),
+      this.defaultCircle
     )
   }
 
@@ -96,10 +101,11 @@ export class CreateDeploymentRequestDto {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      null,
+      this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
-      [ ...activeComponents, ...this.getDeploymentComponents()]
+      [ ...activeComponents, ...this.getDeploymentComponents()],
+      this.defaultCircle
     )
   }
 

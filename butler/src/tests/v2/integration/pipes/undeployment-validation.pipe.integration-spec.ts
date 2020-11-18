@@ -75,7 +75,8 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: false
     }
 
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, false, false)
@@ -102,7 +103,8 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: false
     }
 
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, true, false)
@@ -141,7 +143,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components
+    components,
+    params.defaultCircle
   ))
 
   deployment.active = status
