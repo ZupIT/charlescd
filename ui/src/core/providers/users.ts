@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import replace from 'lodash/replace';
 import { baseRequest, putRequest, postRequest } from './base';
 import { Profile, NewUser } from 'modules/Users/interfaces/User';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
+import { getWorkspaceId } from 'core/utils/workspace';
 
 const endpoint = '/moove/v2/users';
-const endpointWorkspaces = '/moove/v2/workspaces/users';
+const endpointWorkspaces = '/moove/v2/workspaces/{workspaceId}/users';
 const v1Endpoint = '/moove/users';
 
 export interface UserFilter {
@@ -34,6 +36,8 @@ const initialUserFilter = {
 export const findAllWorkspaceUsers = (
   filter: UserFilter = initialUserFilter
 ) => {
+  const workspaceId = getWorkspaceId();
+  const path = replace(endpointWorkspaces, '{workspaceId}', workspaceId);
   const defaultPage = 0;
   const defaultSize = 100;
   const params = new URLSearchParams({
@@ -44,7 +48,7 @@ export const findAllWorkspaceUsers = (
   if (filter?.name) params.append('name', filter?.name);
   if (filter?.email) params.append('email', filter?.email);
 
-  return baseRequest(`${endpointWorkspaces}?${params}`);
+  return baseRequest(`${path}?${params}`);
 };
 
 export const findAllUsers = (filter: UserFilter = initialUserFilter) => {
