@@ -55,7 +55,7 @@ class CardServiceUnitTest {
     private val authorId = "authorId"
     private val labels = listOf("labelId")
     private val hypothesisId = "hypeId"
-    private val branchName = "branch-name"
+    private val branchName = "branch/name"
     private val modules = listOf("module1", "module2")
     private val helmRepository = "http://github.com"
 
@@ -65,7 +65,7 @@ class CardServiceUnitTest {
     private val gitConfiguration2 = buildGitConfiguration("id2")
     private val hypothesis = buildHypothesis()
     private val cardColumn = CardColumn("ColumnId", "TO DO", hypothesis, workspaceId)
-    private val label = Label("labeId", "LABEL", LocalDateTime.now(), user, "BAADD")
+    private val label = Label("labelId", "LABEL", LocalDateTime.now(), user, "#BBAADD")
     private val module1 =
         Module(
             "module1", "repo1/owner1", "https://github.com/repo1/owner1",
@@ -926,11 +926,11 @@ class CardServiceUnitTest {
         verify(exactly = 1) { cardRepository.save(card.copy(status = CardStatus.ARCHIVED)) }
     }
 
-    fun buildAddMemberRequest(): AddMemberRequest {
+    private fun buildAddMemberRequest(): AddMemberRequest {
         return AddMemberRequest(authorId = "fake-author-id", memberIds = listOf(user.id))
     }
 
-    fun buildComment(): Comment {
+    private fun buildComment(): Comment {
         return Comment(
             id = "commentId",
             author = user,
@@ -939,27 +939,27 @@ class CardServiceUnitTest {
         )
     }
 
-    fun buildAddCommentRequest(): AddCommentRequest {
+    private fun buildAddCommentRequest(): AddCommentRequest {
         return AddCommentRequest(
             authorId = authorId,
             comment = "comment"
         )
     }
 
-    fun buildCreateCardRequest(): CreateCardRequest {
+    private fun buildCreateCardRequest(): CreateCardRequest {
         return CreateCardRequest(
             cardName, cardDescription, authorId, "FEATURE",
             labels, hypothesisId, branchName, modules
         )
     }
 
-    fun buildUpdateCardRequest(): UpdateCardRequest {
+    private fun buildUpdateCardRequest(): UpdateCardRequest {
         return UpdateCardRequest(
             cardName, cardDescription, labels, "FEATURE", branchName, modules
         )
     }
 
-    fun buildActionCard(): ActionCard =
+    private fun buildActionCard(): ActionCard =
         ActionCard(
             "id",
             cardName,
@@ -977,7 +977,7 @@ class CardServiceUnitTest {
             workspaceId
         )
 
-    fun buildSoftwareCard(branchName: String = "feature-branch"): SoftwareCard =
+    private fun buildSoftwareCard(branchName: String = "feature/branch"): SoftwareCard =
         SoftwareCard(
             "id",
             cardName,
@@ -996,10 +996,7 @@ class CardServiceUnitTest {
             workspaceId
         )
 
-    private fun buildCredentialConfig(type: CredentialConfigurationType): CredentialConfiguration =
-        CredentialConfiguration(UUID.randomUUID().toString(), "name", type, LocalDateTime.now(), user, workspaceId)
-
-    private fun createFeature(branchName: String = "feature-branch"): Feature =
+    private fun createFeature(branchName: String = "feature/branch"): Feature =
         Feature(
             "id",
             "featureName",
