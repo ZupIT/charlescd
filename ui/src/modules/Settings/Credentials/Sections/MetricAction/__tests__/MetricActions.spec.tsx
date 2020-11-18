@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen, fireEvent, act, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import { actionsData } from './fixtures';
 import MetricAction from '../index';
@@ -56,9 +57,9 @@ test('render Metric Action Section with data and delete a action', async () => {
   const actionCard = screen.getByText('Action 1');
   const actionCardRemove = screen.getAllByTestId('icon-cancel');
 
-  fireEvent.click(actionCardRemove[1]);
+  userEvent.click(actionCardRemove[1]);
 
-  expect(actionCard).toBeInTheDocument();
+  await waitFor(() => expect(actionCard).toBeInTheDocument());
 });
 
 test('render Metric Action Section and open add action form', async () => {
@@ -92,9 +93,11 @@ test('render Metric Action Form and go back', async () => {
 
   const actionForm = screen.getByTestId('add-action-form');
   
-  expect(actionForm).toBeInTheDocument();
+  await waitFor(() => expect(actionForm).toBeInTheDocument());
   
   const goBack = screen.getByTestId('icon-arrow-left');
 
-  fireEvent.click(goBack);
+  act(() => userEvent.click(goBack));
+
+  expect(actionForm).toBeInTheDocument();
 });

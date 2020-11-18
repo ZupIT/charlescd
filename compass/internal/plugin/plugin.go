@@ -19,12 +19,12 @@
 package plugin
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/util"
-	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"io/ioutil"
 	"path/filepath"
 	"plugin"

@@ -32,9 +32,7 @@ data class Workspace(
     val metricConfigurationId: String? = null
 ) {
     fun checkCurrentWorkspaceStatus(): WorkspaceStatusEnum {
-        return if (cdConfigurationId != null && gitConfigurationId != null &&
-            registryConfigurationId != null
-        ) {
+        return if (cdConfigurationId != null && registryConfigurationId != null) {
             WorkspaceStatusEnum.COMPLETE
         } else {
             WorkspaceStatusEnum.INCOMPLETE

@@ -17,7 +17,7 @@
  import React from 'react';
  import { FetchMock } from 'jest-fetch-mock';
  import ReleasesHistory from '../index';
- import { render, screen, wait, fireEvent } from 'unit-test/testUtils';
+ import { render, screen, fireEvent, waitFor } from 'unit-test/testUtils';
  import { ReleasesMock , filter} from './fixtures';
  import { ReleaseHistoryRequest } from '../../interfaces';
 
@@ -35,9 +35,7 @@ test('render default ReleaseTable', async () => {
     <ReleasesHistory filter={filter as ReleaseHistoryRequest}/>
   );
 
-  await wait();
-
-  expect(screen.getByTestId('release-history')).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByTestId('release-history')).toBeInTheDocument());
   expect(screen.getByText('release 1')).toBeInTheDocument();
   expect(screen.getByText('circle 1')).toBeInTheDocument();
   expect(screen.getByText('1:13 m')).toBeInTheDocument();
@@ -53,9 +51,7 @@ test('render Components Row', async () => {
     <ReleasesHistory filter={filter as ReleaseHistoryRequest}/>
   );
 
-  await wait();
-
-  const release = screen.getByTestId('release-table-row-1');
+  const release = await screen.findByTestId('release-table-row-1');
   fireEvent.click(release);
 
   expect(screen.getAllByText(/module a/)).toHaveLength(2);

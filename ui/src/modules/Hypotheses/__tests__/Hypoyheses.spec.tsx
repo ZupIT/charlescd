@@ -15,13 +15,13 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Hypotheses from '..';
 
 test('render Hypotheses default empty page', async () => {
-  const { getByText } = render(
+  render(
     <Hypotheses />
   );
 
-  await wait(() => expect(getByText('Select a hypothesis and keep evolving.')).toBeInTheDocument());
+  expect(screen.getByText('Select a hypothesis and keep evolving.')).toBeInTheDocument();
 });

@@ -44,13 +44,13 @@ jest.mock('containers/Can', () => {
   };
 });
 
-test('render Credentials default component', () => {
+test('render Credentials default component', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  render(
-    <Credentials />
-  );
+  
+  render(<Credentials />);
 
-  expect(screen.getByTestId("credentials")).toBeInTheDocument();
+  const credentialsElement = await screen.findByTestId("credentials");
+  expect(credentialsElement).toBeInTheDocument();
 });
 
 test('render Credentials items', async () => {
@@ -105,7 +105,7 @@ test('render User Group credentials', async () => {
   expect(backButton).not.toBeInTheDocument();
 });
 
-test('render Git Credentials', () => {
+test('render Git Credentials', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123',
@@ -115,14 +115,14 @@ test('render Git Credentials', () => {
   }));
   render(<Credentials />);
 
-  const addGitButton = screen.getByText(/Add Git/i);
+  const addGitButton = await screen.findByText(/Add Git/);
   userEvent.click(addGitButton);
 
   const backButton = screen.getByTestId('icon-arrow-left');
   expect(backButton).toBeInTheDocument();
 });
 
-test('render CD Configuration Credentials', () => {
+test('render CD Configuration Credentials', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123',
@@ -132,7 +132,7 @@ test('render CD Configuration Credentials', () => {
   }));
   render(<Credentials />);
 
-  const addCDConfigButton = screen.getByText('Add CD Configuration');
+  const addCDConfigButton = await screen.findByText('Add CD Configuration');
 
   userEvent.click(addCDConfigButton);
 
@@ -140,7 +140,7 @@ test('render CD Configuration Credentials', () => {
   expect(backButton).toBeInTheDocument();
 });
 
-test('render Circle Matcher Credentials', () => {
+test('render Circle Matcher Credentials', async() => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123',
@@ -150,7 +150,7 @@ test('render Circle Matcher Credentials', () => {
   }));
   render(<Credentials />);
 
-  const addCircleMatcherButton = screen.getByText('Add Circle Matcher');
+  const addCircleMatcherButton = await screen.findByText('Add Circle Matcher');
   userEvent.click(addCircleMatcherButton);
 
   const backButton = screen.getByTestId('icon-arrow-left');
@@ -158,7 +158,6 @@ test('render Circle Matcher Credentials', () => {
 });
 
 test('click to copy to clipboard', async () => {
-
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123-workspace',
@@ -171,7 +170,7 @@ test('click to copy to clipboard', async () => {
 
   render(<Credentials />);
 
-  const dropdownElement = screen.getByTestId('icon-vertical-dots');
+  const dropdownElement = await screen.findByTestId('icon-vertical-dots');
   userEvent.click(dropdownElement);
   const copyIDElement = screen.getByText('Copy ID');
   
