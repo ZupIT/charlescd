@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.support.MissingServletRequestPartException
+import java.lang.IllegalArgumentException
 
 @ControllerAdvice
 class MooveExceptionHandler(private val messageSource: MessageSource) {
@@ -50,6 +51,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     fun exceptions(ex: Exception): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun handleIllegalArgument(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
     }

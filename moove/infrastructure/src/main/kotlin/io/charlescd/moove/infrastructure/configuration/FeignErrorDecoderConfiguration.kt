@@ -25,6 +25,10 @@ import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.util.StreamUtils
+import org.springframework.web.bind.MethodArgumentNotValidException
+import java.io.IOException
+import java.nio.charset.StandardCharsets
 
 @Configuration
 class FeignErrorDecoderConfiguration {
@@ -36,10 +40,13 @@ class FeignErrorDecoderConfiguration {
 
 class CustomErrorDecoder : ErrorDecoder {
     override fun decode(methodKey: String?, response: Response?): Exception {
+        val responseMessage: String? = response?.body()?.let{
+            StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8);
+        }
         return when (response?.status()) {
-            400 -> IllegalArgumentException(response.reason())
-            422 -> BusinessException.of(MooveErrorCode.INVALID_PAYLOAD, response.reason())
-            else -> RuntimeException(response?.reason())
+            400 -> IllegalArgumentException(responseMessage)
+            422 -> BusinessException.of(MooveErrorCode.INVALID_PAYLOAD, responseMessage ?: response.reason())
+            else -> RuntimeException(responseMessage)
         }
     }
 }
