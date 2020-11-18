@@ -30,7 +30,9 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth/limiter"
 	"log"
+	"strconv"
 	"time"
 
 	utils "github.com/ZupIT/charlescd/compass/internal/util"
@@ -61,14 +63,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	lmt := configureRequestLimiter()
+
 	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
 		mooveDb.LogMode(true)
 	}
-
-	lmt := tollbooth.NewLimiter(1, nil)
-	lmt.SetTokenBucketExpirationTTL(5 * time.Minute)
-	lmt.SetHeaderEntryExpirationTTL(5 * time.Minute)
 
 	mooveMain := moove.NewMain(mooveDb)
 	pluginMain := plugin.NewMain()
@@ -96,4 +96,27 @@ func main() {
 	v1Api.NewHealthApi(healthMain)
 	v1Api.NewMetricsGroupActionApi(metricsGroupActionMain)
 	v1Api.Start()
+}
+
+func configureRequestLimiter() *limiter.Limiter {
+	reqLimit, err := strconv.ParseFloat(configuration.GetConfiguration("REQUESTS_PER_SECOND_LIMIT"), 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tokenTTL, err := strconv.Atoi(configuration.GetConfiguration("LIMITER_TOKEN_TTL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	headersTTL, err := strconv.Atoi(configuration.GetConfiguration("LIMITER_HEADERS_TTL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lmt := tollbooth.NewLimiter(reqLimit, nil)
+	lmt.SetTokenBucketExpirationTTL(time.Duration(tokenTTL) * time.Minute)
+	lmt.SetHeaderEntryExpirationTTL(time.Duration(headersTTL) * time.Minute)
+
+	return lmt
 }
