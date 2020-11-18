@@ -16,20 +16,21 @@
 
 package io.charlescd.moove.infrastructure.configuration
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.nio.charset.StandardCharsets
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
-import java.io.IOException
 
 @Configuration
 class FeignErrorDecoderConfiguration {
@@ -52,24 +53,27 @@ class CustomErrorDecoder : ErrorDecoder {
     }
 
     private fun extractMessageFromResponse(response: Response?): String? {
-        var message: String? = null
+        var responseAsString: String? = null
         try {
-            message = response?.body()?.let {
+            responseAsString = response?.body()?.let {
                 StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
             }
-            val objectResponse = jacksonObjectMapper().readValue(message, ErrorResponse::class.java)
-             return objectResponse.message?.toString()
+            return responseAsString?.let {
+                getResponseAsObject(it)
+            }
         } catch (ex: IOException) {
             logger.error(ex.message, ex)
-            return message ?: "Error reading response of request"
+            return responseAsString ?: "Error reading response of request"
         }
     }
+    private fun getResponseAsObject(message: String): String? {
+        val objectResponse = jacksonObjectMapper().readValue(message, ErrorResponse::class.java)
+        return objectResponse.message?.toString()
+    }
 }
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ErrorResponse(
     val statusCode: String,
     val message: Any?,
     val error: String
-) {
-
-}
+)
