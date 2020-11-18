@@ -23,12 +23,10 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
+import java.nio.charset.StandardCharsets
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
-import org.springframework.web.bind.MethodArgumentNotValidException
-import java.io.IOException
-import java.nio.charset.StandardCharsets
 
 @Configuration
 class FeignErrorDecoderConfiguration {
@@ -40,8 +38,8 @@ class FeignErrorDecoderConfiguration {
 
 class CustomErrorDecoder : ErrorDecoder {
     override fun decode(methodKey: String?, response: Response?): Exception {
-        val responseMessage: String? = response?.body()?.let{
-            StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8);
+        val responseMessage: String? = response?.body()?.let {
+            StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
         }
         return when (response?.status()) {
             400 -> IllegalArgumentException(responseMessage)
