@@ -42,7 +42,6 @@ class UserServiceLegacyUnitTest extends Specification {
         given:
         def userId = "1"
         def userEmail = "teste@teste.com"
-        def user = new User(userId, "Teste", userEmail, "http://teste.com", true, LocalDateTime.now())
         def listGroupIds = ["1"]
         def addGroupRequest = new AddGroupsRequest(listGroupIds)
 
@@ -52,6 +51,41 @@ class UserServiceLegacyUnitTest extends Specification {
         then:
         1 * this.userRepository.findById(userId) >> Optional.empty()
         0 * this.keycloakService.addGroupsToUser(userEmail, listGroupIds)
+
+        def ex = thrown(NotFoundExceptionLegacy)
+        ex.resourceName == "user"
+        ex.id == userId
+    }
+
+    void "when request to remove user from group should be successfully removed"() {
+        given:
+        def userId = "1"
+        def userEmail = "teste@teste.com"
+        def user = new User(userId, "Teste", userEmail, "http://teste.com", true, LocalDateTime.now())
+        def groupId = "1"
+
+        when:
+        this.userServiceLegacy.removeUserFromGroup(userId, groupId)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.of(user)
+        1 * this.keycloakService.removeUserFromGroup(userEmail, groupId)
+        notThrown()
+
+    }
+
+    void "when requested to remove user and not exists should throw NotFoundExceptionLegacy"() {
+        given:
+        def userId = "1"
+        def userEmail = "teste@teste.com"
+        def groupId = "1"
+
+        when:
+        this.userServiceLegacy.removeUserFromGroup(userId, groupId)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.empty()
+        0 * this.keycloakService.removeUserFromGroup(userEmail, groupId)
 
         def ex = thrown(NotFoundExceptionLegacy)
         ex.resourceName == "user"
