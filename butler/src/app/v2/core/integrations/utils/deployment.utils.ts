@@ -39,8 +39,13 @@ const DeploymentUtils = {
 
     return sameCircleComponent
   },
-  isDistinctAndNotDefault(component: Component, circleId: string) {
-    return component.deployment.circleId && component.deployment.circleId !== circleId && !component.deployment.defaultCircle
+
+  isDistinctAndNotDefault(component: Component, circleId: string): boolean {
+    return DeploymentUtils.isDistinctCircle(component, circleId) && !component.deployment.defaultCircle
+  },
+
+  isDistinctCircle(component: Component, circleId: string): boolean {
+    return component.deployment.circleId !== circleId
   }
 }
 
