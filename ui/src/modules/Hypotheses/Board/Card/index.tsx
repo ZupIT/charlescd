@@ -50,7 +50,7 @@ const CardBoard = forwardRef(
     }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
-    const { hypothesisId } = useParams();
+    const hypothesisId = useParams();
     const dispatch = useDispatch();
     const { getAll } = useBoard();
     const { removeBy, responseRemove, archiveBy, responseArchive } = useCard();
