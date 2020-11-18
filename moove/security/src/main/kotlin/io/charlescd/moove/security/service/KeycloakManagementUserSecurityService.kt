@@ -23,7 +23,7 @@ import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import org.springframework.stereotype.Service
 
 @Service
-class KeycloackManagementUserSecurityService(
+class KeycloakManagementUserSecurityService(
     val keycloakService: KeycloakService
 ) : ManagementUserSecurityService {
 

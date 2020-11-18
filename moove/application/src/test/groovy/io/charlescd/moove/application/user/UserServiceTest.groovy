@@ -232,7 +232,7 @@ class UserServiceTest extends Specification {
         notThrown()
     }
 
-    def "should create user on keycloack"() {
+    def "should create user on keycloak"() {
         given:
         def userEmail = "charles@email.com"
         def userName = "charles"
