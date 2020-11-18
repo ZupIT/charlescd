@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-import { Option } from 'core/components/Form/Select/interfaces';
+package io.charlescd.villager.interactor.registry;
 
-export const FORM_REGISTRY = 'registry';
+public class HarborDockerRegistryAuth implements DockerRegistryAuth {
+    private String username;
+    private String password;
 
-export const options: Option[] = [
-  { icon: 'aws', label: 'AWS', value: 'AWS' },
-  { icon: 'azure', label: 'Azure', value: 'AZURE' },
-  { icon: 'gcp', label: 'GCP', value: 'GCP' },
-  { icon: 'docker', label: 'Docker Hub', value: 'DOCKER_HUB' },
-  { icon: 'harbor', label: 'Harbor', value: 'HARBOR' }
-];
+    public HarborDockerRegistryAuth(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+}
