@@ -63,6 +63,7 @@ class CardService(
 
     @Transactional
     fun create(createCardRequest: CreateCardRequest, workspaceId: String): CardRepresentation {
+        createCardRequest.validate()
         return createCardRequest.toEntity(workspaceId)
             .let { this.cardRepository.save(it) }
             .apply { createNewFeatureBranches(card = this) }
