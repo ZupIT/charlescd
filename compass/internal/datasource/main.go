@@ -29,14 +29,14 @@ import (
 )
 
 type UseCases interface {
-	Parse(dataSource io.ReadCloser) (DataSource, error)
-	FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error)
-	FindHealthByWorkspaceId(workspaceID string) (DataSource, error)
-	FindById(id string) (DataSource, error)
-	Save(dataSource DataSource) (DataSource, error)
+	Parse(dataSource io.ReadCloser) (Request, error)
+	FindAllByWorkspace(workspaceID string, health string) ([]Response, error)
+	FindHealthByWorkspaceId(workspaceID string) (Response, error)
+	FindById(id string) (Response, error)
+	Save(dataSource Request) (Response, error)
 	Delete(id string) error
 	GetMetrics(dataSourceID, name string) (datasource.MetricList, error)
-	Validate(dataSource DataSource) []util.ErrorUtil
+	Validate(dataSource Request) []util.ErrorUtil
 	TestConnection(pluginSrc string, datasourceData json.RawMessage) error
 }
 

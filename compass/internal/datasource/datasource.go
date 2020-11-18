@@ -19,6 +19,7 @@
 package datasource
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -30,20 +31,39 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 type DataSource struct {
 	util.BaseModel
+	Name        string     `json:"name"`
+	PluginSrc   string     `json:"pluginSrc"`
+	Health      bool       `json:"healthy"`
+	Data        []byte     `json:"data" gorm:"type:bytea"`
+	WorkspaceID uuid.UUID  `json:"workspaceId"`
+	DeletedAt   *time.Time `json:"-"`
+}
+
+type Request struct {
+	util.BaseModel
 	Name        string          `json:"name"`
 	PluginSrc   string          `json:"pluginSrc"`
 	Health      bool            `json:"healthy"`
-	Data        json.RawMessage `json:"data" gorm:"type:bytea"`
+	Data        json.RawMessage `json:"data"`
 	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	DeletedAt   *time.Time      `json:"-"`
 }
 
-func (main Main) Validate(dataSource DataSource) []util.ErrorUtil {
+type Response struct {
+	util.BaseModel
+	Name        string          `json:"name"`
+	PluginSrc   string          `json:"pluginSrc"`
+	Health      bool            `json:"healthy"`
+	Data        json.RawMessage `json:"data"`
+	WorkspaceID uuid.UUID       `json:"workspaceId"`
+	DeletedAt   *time.Time      `json:"-"`
+}
+
+func (main Main) Validate(dataSource Request) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if dataSource.Name == "" {
@@ -69,78 +89,73 @@ func (main Main) Validate(dataSource DataSource) []util.ErrorUtil {
 	return ers
 }
 
-func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
-	var newDataSource *DataSource
+func (main Main) Parse(dataSource io.ReadCloser) (Request, error) {
+	var newDataSource *Request
 	err := json.NewDecoder(dataSource).Decode(&newDataSource)
 	if err != nil {
-		logger.Error(util.GeneralParseError, "ParseAction", err, dataSource)
-		return DataSource{}, err
+		logger.Error(util.GeneralParseError, "ParseDatasource", err, dataSource)
+		return Request{}, err
 	}
 	return *newDataSource, nil
 }
 
-func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error) {
-	var dataSources []DataSource
-	var db *gorm.DB
+func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]Response, error) {
+	var rows *sql.Rows
+	var err error
+	dataSources := make([]Response, 0)
 
 	if health == "" {
-		db = main.db.Where("workspace_id = ?", workspaceID).Find(&dataSources)
+		rows, err = main.db.Raw(workspaceDatasourceQuery, workspaceID).Rows()
 	} else {
 		healthValue, _ := strconv.ParseBool(health)
-		db = main.db.Where("workspace_id = ? AND health = ?", workspaceID, healthValue).Find(&dataSources)
+		rows, err = main.db.Raw(workspaceAndHealthDatasourceQuery, workspaceID, healthValue).Rows()
+	}
+	if err != nil {
+		logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, "WorkspaceId = "+workspaceID)
+		return []Response{}, err
 	}
 
-	if db.Error != nil {
-		logger.Error(util.FindDatasourceError, "FindAllByWorkspace", db.Error, "WorkspaceId = "+workspaceID)
-		return []DataSource{}, db.Error
-	}
+	for rows.Next() {
+		var dataSource DataSource
 
-	var err error
-	for i := range dataSources {
-		dataSources[i].Data, err = util.Decrypt(dataSources[i].Data, "passphrasewhichneedstobe32bytes!")
+		err = main.db.ScanRows(rows, &dataSource)
 		if err != nil {
-			logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, dataSources[i])
-			return []DataSource{}, err
+			logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, "WorkspaceId = "+workspaceID)
+			return []Response{}, err
 		}
+
+		dataSources = append(dataSources, dataSource.toResponse())
 	}
 
 	return dataSources, nil
 }
 
-func (main Main) FindById(id string) (DataSource, error) {
+func (main Main) FindById(id string) (Response, error) {
 	dataSource := DataSource{}
-	result := main.db.Where("id = ?", id).First(&dataSource)
-	if result.Error != nil {
-		logger.Error(util.FindDatasourceError, "FindDatasourceById", result.Error, "Id = "+id)
-		return DataSource{}, result.Error
+	row := main.db.Raw(datasourceDecryptedQuery, id).Row()
+
+	dbError := row.Scan(&dataSource.ID, &dataSource.Name, &dataSource.CreatedAt, &dataSource.Data,
+		&dataSource.WorkspaceID, &dataSource.Health, &dataSource.DeletedAt, &dataSource.PluginSrc)
+	if dbError != nil {
+		logger.Error(util.FindDatasourceError, "FindDatasourceById", dbError, id)
+		return Response{}, dbError
 	}
 
-	var err error
-	dataSource.Data, err = util.Decrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
-	if err != nil {
-		logger.Error(util.FindDatasourceError, "FindDatasourceById", err, dataSource)
-		return DataSource{}, err
-
-	}
-	return dataSource, nil
+	return dataSource.toResponse(), nil
 }
 
-func (main Main) FindHealthByWorkspaceId(workspaceID string) (DataSource, error) {
+func (main Main) FindHealthByWorkspaceId(workspaceID string) (Response, error) {
 	dataSource := DataSource{}
-	result := main.db.Where("workspace_id = ? AND health = ?", workspaceID, true).First(&dataSource)
-	if result.Error != nil {
-		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", result.Error, "workspaceID = "+workspaceID)
-		return DataSource{}, result.Error
+	row := main.db.Raw(decryptedWorkspaceAndHealthDatasourceQuery, workspaceID, true).Row()
+
+	dbError := row.Scan(&dataSource.ID, &dataSource.Name, &dataSource.CreatedAt, &dataSource.Data,
+		&dataSource.WorkspaceID, &dataSource.Health, &dataSource.DeletedAt, &dataSource.PluginSrc)
+	if dbError != nil {
+		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", dbError, "workspaceID = "+workspaceID)
+		return Response{}, dbError
 	}
 
-	var err error
-	dataSource.Data, err = util.Decrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
-	if err != nil {
-		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", err, dataSource)
-		return DataSource{}, err
-
-	}
-	return dataSource, nil
+	return dataSource.toResponse(), nil
 }
 
 func (main Main) Delete(id string) error {
@@ -168,12 +183,6 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 	getList, err := plugin.Lookup("GetMetrics")
 	if err != nil {
 		logger.Error(util.PluginLookupError, "GetMetrics", err, plugin)
-		return datasource.MetricList{}, err
-	}
-
-	dataSourceResult.Data, err = util.Decrypt(dataSourceResult.Data, "passphrasewhichneedstobe32bytes!")
-	if err != nil {
-		logger.Error(util.DatasourceSaveError, "SaveAction", err, dataSourceResult)
 		return datasource.MetricList{}, err
 	}
 
@@ -221,35 +230,44 @@ func (main Main) VerifyHealthAtWorkspace(workspaceId string) (bool, error) {
 	return count != 0, nil
 }
 
-func (main Main) Save(dataSource DataSource) (DataSource, error) {
+func (main Main) Save(dataSource Request) (Response, error) {
 	if dataSource.Health == true {
 		if hasHealth, err := main.VerifyHealthAtWorkspace(dataSource.WorkspaceID.String()); err != nil || hasHealth {
 			logger.Error(util.ExistingDatasourceHealthError, "SaveAction", err, "Health=true")
-			return DataSource{}, errors.New("Cannot set as Health")
+			return Response{}, errors.New("Cannot set as Health")
 		}
 	}
+	id := uuid.New().String()
+	entity := DataSource{}
 
-	//dataEncrypt, err := util.Encrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
-	//if err != nil {
-	//	logger.Error(util.DatasourceSaveError, "SaveDatasource", err, dataSource)
-	//}
-	//
-	//dataSource.Data = json.RawMessage(fmt.Sprintf(`{"data": "%s"}`, dataEncrypt))
+	row := main.db.Exec(datasourceInsert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data, dataSource.Health, dataSource.WorkspaceID)).
+		Raw(datasourceSaveQuery, id).
+		Row()
 
-	//db := main.db.Create(&dataSource)
-	db := main.db.Exec(
-		fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, health, deleted_at, plugin_src)
-							VALUES (%s, %s, PGP_SYM_ENCRYPT(%s, 'MAYCON'), %s, %t, null, %s);`,
-			uuid.New().String(), dataSource.Name, dataSource.Data, dataSource.WorkspaceID, dataSource.Health, dataSource.PluginSrc))
-	if db.Error != nil {
-		logger.Error(util.DatasourceSaveError, "SaveDatasource", db.Error, dataSource)
-		return DataSource{}, db.Error
+	dbError := row.Scan(&entity.ID, &entity.Name, &entity.CreatedAt,
+		&entity.WorkspaceID, &entity.Health, &entity.DeletedAt, &entity.PluginSrc)
+	if dbError != nil {
+		logger.Error(util.DatasourceSaveError, "SaveDatasource", dbError, id)
+		return Response{}, dbError
 	}
 
-	//dataSource.Data, err = util.Decrypt(dataSource.Data, "passphrasewhichneedstobe32bytes!")
-	//if err != nil {
-	//	logger.Error(util.DatasourceSaveError, "SaveDatasource", err, dataSource)
-	//	return DataSource{}, err
-	//}
-	return dataSource, nil
+	return entity.toResponse(), nil
+}
+
+func datasourceInsert(id, name, pluginSrc string, data []byte, health bool, workspaceId uuid.UUID) string {
+	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, health, deleted_at, plugin_src)
+							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', 'MAYCON', 'cipher-algo=aes256'), '%s', %t, null, '%s');`,
+		id, name, data, workspaceId, health, pluginSrc)
+}
+
+func (entity DataSource) toResponse() Response {
+	return Response{
+		BaseModel:   entity.BaseModel,
+		Name:        entity.Name,
+		PluginSrc:   entity.PluginSrc,
+		Health:      entity.Health,
+		Data:        entity.Data,
+		WorkspaceID: entity.WorkspaceID,
+		DeletedAt:   entity.DeletedAt,
+	}
 }
