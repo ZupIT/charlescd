@@ -276,6 +276,57 @@ class CredentialConfigurationServiceUnitTest {
     }
 
     @Test
+    fun `when creating Harbor configuration, method should return the correct CredentialConfigurationRepresentation`() {
+
+        val request = CreateHarborRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.HARBOR,
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerResponse = CreateVillagerRegistryConfigurationResponse(
+            id = "id"
+        )
+
+        val workspaceId = "workspaceId"
+        val user = User(
+            name = "userName",
+            id = "authorId",
+            email = "user@email.com.br",
+            photoUrl = "www.google.com.br",
+            isRoot = false,
+            createdAt = LocalDateTime.now()
+        )
+        val expectedResponse =
+            CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
+
+        every {
+            villagerApi.createRegistryConfiguration(villagerRequest, workspaceId)
+        } returns villagerResponse
+
+        every {
+            userRepository.findById("authorId")
+        } returns Optional.of(user)
+
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId)
+
+        assertEquals(expectedResponse.id, credentialConfiguration.id)
+        assertEquals(expectedResponse.name, credentialConfiguration.name)
+        assertEquals(expectedResponse.author, credentialConfiguration.author)
+    }
+
+    @Test
     fun `when creating aws configuration, method should return the correct CredentialConfigurationRepresentation`() {
 
         val request = CreateAWSRegistryConfigurationRequest(
