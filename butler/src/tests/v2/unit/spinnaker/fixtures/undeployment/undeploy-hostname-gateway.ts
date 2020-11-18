@@ -44,6 +44,14 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
                 labels: {
                   component: 'A',
                   tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
                   circleId: 'circle-id2'
                 },
                 name: 'circle-id2'
@@ -55,15 +63,7 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
                   circleId: 'circle-id3'
                 },
                 name: 'circle-id3'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
-              },
+              }
             ]
           }
         }

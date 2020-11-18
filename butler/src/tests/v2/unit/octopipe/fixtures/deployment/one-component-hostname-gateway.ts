@@ -63,18 +63,18 @@ export const oneComponentHostnameGatewayOctopipe: OctopipeDeploymentRequest = {
           {
             labels: {
               component: 'A',
-              tag: 'v1',
-              circleId: 'circle-id2'
-            },
-            name: 'circle-id2'
-          },
-          {
-            labels: {
-              component: 'A',
               tag: 'v0',
               circleId: 'default-circle-id'
             },
             name: 'default-circle-id'
+          },
+          {
+            labels: {
+              component: 'A',
+              tag: 'v1',
+              circleId: 'circle-id2'
+            },
+            name: 'circle-id2'
           }
         ]
       }
