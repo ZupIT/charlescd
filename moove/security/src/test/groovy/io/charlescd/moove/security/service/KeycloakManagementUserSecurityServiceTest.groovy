@@ -72,4 +72,17 @@ class KeycloakManagementUserSecurityServiceTest extends Specification {
 
         notThrown()
     }
+
+    def 'should get email by authorization header value'() {
+        given:
+        def authorization = "Bearer qwerty"
+
+        when:
+        keycloakManagementUserSecurityService.getUserEmail(authorization)
+
+        then:
+        1 * keycloakService.getEmailByAccessToken(authorization) >> "email@email.com"
+
+        notThrown()
+    }
 }

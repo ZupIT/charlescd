@@ -163,4 +163,33 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         1 * repository.findAllById(ids) >> []
         thrown(NotFoundExceptionLegacy)
     }
+
+    def "should get user by authorization header"() {
+
+        given:
+        def authorization = "Bearer qwerty"
+        def email = "email@email.com"
+
+        when:
+        service.findByToken(authorization)
+
+        then:
+        1 * keycloakServiceLegacy.getEmailByToken(authorization) >> email
+        1 * repository.findByEmail(email) >> Optional.of(user)
+    }
+
+    def "should throw NotFoundException when get invalid user by authorization header"() {
+
+        given:
+        def authorization = "Bearer qwerty"
+        def email = "email@email.com"
+
+        when:
+        service.findByToken(authorization)
+
+        then:
+        1 * keycloakServiceLegacy.getEmailByToken(authorization) >> email
+        1 * repository.findByEmail(email) >> Optional.empty()
+        thrown(NotFoundExceptionLegacy)
+    }
 }
