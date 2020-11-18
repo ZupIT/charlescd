@@ -18,12 +18,10 @@ package io.charlescd.moove.infrastructure.configuration
 
 import feign.Response
 import feign.codec.ErrorDecoder
-import java.io.ByteArrayInputStream
 import io.charlescd.moove.domain.exceptions.BusinessException
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 
-import java.nio.charset.StandardCharsets
 
 
 class FeignErrorDecoderConfigurationTest extends Specification {
@@ -38,6 +36,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         def body = Mock(Response.Body)
         ReflectionTestUtils.setField(response, "status", 400)
         ReflectionTestUtils.setField(response, "body",body)
+
         when:
         def exception = errorDecoder.decode("methodkey", response)
 
@@ -50,6 +49,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
 
     def "should return business exception when status is 422"() {
         given:
+
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration()
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def response = GroovyMock(Response)
@@ -57,8 +57,10 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         ReflectionTestUtils.setField(response,"reason", 'Error')
         ReflectionTestUtils.setField(response,"status", 422)
         ReflectionTestUtils.setField(response,"body", body)
+
         when:
         def exception = errorDecoder.decode("methodkey", response)
+
         then:
         body.asInputStream() >> this.getAnotherReturnAsInputStream()
         assert exception instanceof BusinessException
@@ -74,8 +76,10 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         ReflectionTestUtils.setField(response,"reason", 'Error')
         ReflectionTestUtils.setField(response,"status", 500)
         ReflectionTestUtils.setField(response,"body", body)
+
         when:
         def exception = errorDecoder.decode("methodkey", response)
+
         then:
         body.asInputStream() >> this.getAnotherReturnAsInputStream()
         assert exception instanceof RuntimeException
@@ -86,12 +90,46 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def body = Mock(Response.Body)
+
         when:
         def exception = errorDecoder.decode("methodkey", null)
+
         then:
         body.asInputStream() >> this.getAnotherReturnAsInputStream()
         assert exception instanceof RuntimeException
         assert exception.message == null
+    }
+    def "should return RunTimeException with message null when fails to  read response"() {
+        given:
+        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
+        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
+        def body = Mock(Response.Body)
+
+        when:
+        def exception = errorDecoder.decode("methodkey", null)
+
+        then:
+        body.asInputStream() >> { throw new IOException() }
+        assert exception instanceof RuntimeException
+        assert exception.message == null
+    }
+    def "should return RunTimeException with the original message when cannot parse response object"() {
+        given:
+        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
+        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
+        def body = Mock(Response.Body)
+        def response = GroovyMock(Response)
+        ReflectionTestUtils.setField(response,"reason", 'Error')
+        ReflectionTestUtils.setField(response,"status", 500)
+        ReflectionTestUtils.setField(response,"body", body)
+
+        when:
+        def exception = errorDecoder.decode("methodkey", response)
+        then:
+
+        body.asInputStream() >> getGenericReturnAsInputStream()
+        assert exception instanceof RuntimeException
+        assert exception.message == "Data not found"
     }
     private InputStream getReturnAsInputStream() {
         String response = "{\n" +
@@ -109,6 +147,11 @@ class FeignErrorDecoderConfigurationTest extends Specification {
                 "    ],\n" +
                 "    \"error\": \"Bad Request\"\n" +
                 "}"
+        return new ByteArrayInputStream(response.getBytes())
+    }
+
+    private InputStream getGenericReturnAsInputStream() {
+        String response = "Data not found"
         return new ByteArrayInputStream(response.getBytes())
     }
 
