@@ -120,7 +120,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         assert exception.message == 'Error reading response of request'
     }
 
-    def "should return run time exception when message is null "() {
+    def "should return run time exception with the original message when can not parse the object "() {
         given:
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
@@ -134,9 +134,9 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         def exception = errorDecoder.decode("methodkey", response)
         then:
 
-        body.asInputStream() >> getNullMessageReturnAsInputStream()
+        body.asInputStream() >> getGenericReturnAsInputStream()
         assert exception instanceof RuntimeException
-        assert exception.message == "null"
+        assert exception.message == "Data not found"
     }
 
     private InputStream getReturnAsInputStream() {
@@ -163,13 +163,6 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         return new ByteArrayInputStream(response.getBytes())
     }
 
-    private InputStream getNullMessageReturnAsInputStream() {
-        String response = "{\n" +
-                "    \"statusCode\": 400,\n" +
-                "    \"error\": \"Bad Request\"\n" +
-                "}"
-        return new ByteArrayInputStream(response.getBytes())
-    }
 
 }
 
