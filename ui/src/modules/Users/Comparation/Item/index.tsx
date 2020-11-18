@@ -51,7 +51,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const [loadingUpdate, updateNameById] = useUpdateName();
+  const { status, updateNameById } = useUpdateName();
   const isAbleToReset = loggedUserId !== user?.id;
 
   const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
@@ -68,10 +68,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   });
 
   useEffect(() => {
-    if (!loadingUpdate) {
+    if (['resolved', 'idle'].includes(status)) {
       findByEmail(email);
     }
-  }, [loadingUpdate, email, findByEmail]);
+  }, [status, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);

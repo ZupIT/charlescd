@@ -44,7 +44,7 @@ const Account = () => {
   const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
-  const [loadingUpdate, updateNameById] = useUpdateName();
+  const { status, updateNameById } = useUpdateName();
   const [toggleModal, setToggleModal] = useState(false);
 
   useEffect(() => {
@@ -52,10 +52,10 @@ const Account = () => {
   }, [user]);
 
   useEffect(() => {
-    if (!loadingUpdate) {
+    if (['resolved', 'idle'].includes(status)) {
       findByEmail(email);
     }
-  }, [loadingUpdate, email, findByEmail]);
+  }, [status, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);

@@ -157,26 +157,37 @@ export const useDeleteUser = (): [Function, string] => {
   return [delUser, userStatus];
 };
 
-export const useUpdateName = (): [
-  boolean,
-  (id: string, name: string) => void,
-  string
-] => {
+export const useUpdateName = (): {
+  status: string;
+  updateNameById: (id: string, name: string) => void;
+} => {
+  const dispatch = useDispatch();
   const [status, setStatus] = useState<FetchStatuses>('idle');
-  const [dataUpdate, , patch] = useFetch<User>(patchProfileById);
-  const { loading: updateLoading } = dataUpdate;
+  const patch = useFetchData<User>(patchProfileById);
 
   const updateNameById = useCallback(
-    (id: string, name: string) => {
-      setStatus('pending');
-      patch(id, name)
-        .then(() => setStatus('resolved'))
-        .catch(() => setStatus('rejected'));
+    async (id: string, name: string) => {
+      try {
+        setStatus('pending');
+        await patch(id, name);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+
+        const error = await e.json();
+
+        dispatch(
+          toogleNotification({
+            text: error.message,
+            status: 'error'
+          })
+        );
+      }
     },
-    [patch]
+    [patch, dispatch]
   );
 
-  return [updateLoading, updateNameById, status];
+  return { status, updateNameById };
 };
 
 export const useUpdateProfile = (): [boolean, Function, User, string] => {
