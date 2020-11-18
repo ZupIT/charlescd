@@ -48,7 +48,7 @@ class CustomErrorDecoder : ErrorDecoder {
         return when (response?.status()) {
             400 -> IllegalArgumentException(responseMessage)
             422 -> BusinessException.of(MooveErrorCode.INVALID_PAYLOAD, responseMessage ?: response.reason())
-            else -> RuntimeException(responseMessage ?: response?.reason())
+            else -> RuntimeException(responseMessage)
         }
     }
 
@@ -66,14 +66,14 @@ class CustomErrorDecoder : ErrorDecoder {
             return responseAsString ?: "Error reading response of request"
         }
     }
-    private fun getResponseAsObject(message: String): String? {
+    private fun getResponseAsObject(message: String): String {
         val objectResponse = jacksonObjectMapper().readValue(message, ErrorResponse::class.java)
-        return objectResponse.message?.toString()
+        return objectResponse.message.toString()
     }
 }
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ErrorResponse(
     val statusCode: String,
-    val message: Any?,
+    val message: Any,
     val error: String
 )

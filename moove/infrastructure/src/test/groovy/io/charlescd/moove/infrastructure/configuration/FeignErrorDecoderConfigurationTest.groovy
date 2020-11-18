@@ -62,7 +62,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         def exception = errorDecoder.decode("methodkey", response)
 
         then:
-        body.asInputStream() >> this.getAnotherReturnAsInputStream()
+        body.asInputStream() >> this.getArrayMessageReturnAsInputStream()
         assert exception instanceof BusinessException
         assert exception.message == '[0.Sum of lengths of componentName and buildImageTag cant be greater than 63]'
     }
@@ -81,10 +81,11 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         def exception = errorDecoder.decode("methodkey", response)
 
         then:
-        body.asInputStream() >> this.getAnotherReturnAsInputStream()
+        body.asInputStream() >> this.getArrayMessageReturnAsInputStream()
         assert exception instanceof RuntimeException
         assert exception.message == '[0.Sum of lengths of componentName and buildImageTag cant be greater than 63]'
     }
+
     def "should return RunTimeException when response is null"() {
         given:
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
@@ -95,25 +96,31 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         def exception = errorDecoder.decode("methodkey", null)
 
         then:
-        body.asInputStream() >> this.getAnotherReturnAsInputStream()
+        body.asInputStream() >> this.getArrayMessageReturnAsInputStream()
         assert exception instanceof RuntimeException
         assert exception.message == null
     }
-    def "should return RunTimeException with message null when fails to  read response"() {
+
+    def "should return RunTimeException when fails to  read response"() {
         given:
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def body = Mock(Response.Body)
+        def response = GroovyMock(Response)
+        ReflectionTestUtils.setField(response,"reason", 'Error')
+        ReflectionTestUtils.setField(response,"status", 500)
+        ReflectionTestUtils.setField(response,"body", body)
 
         when:
-        def exception = errorDecoder.decode("methodkey", null)
+        def exception = errorDecoder.decode("methodkey", response)
 
         then:
         body.asInputStream() >> { throw new IOException() }
         assert exception instanceof RuntimeException
-        assert exception.message == null
+        assert exception.message == 'Error reading response of request'
     }
-    def "should return RunTimeException with the original message when cannot parse response object"() {
+
+    def "should return run time exception when message is null "() {
         given:
         feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
         errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
@@ -127,10 +134,11 @@ class FeignErrorDecoderConfigurationTest extends Specification {
         def exception = errorDecoder.decode("methodkey", response)
         then:
 
-        body.asInputStream() >> getGenericReturnAsInputStream()
+        body.asInputStream() >> getNullMessageReturnAsInputStream()
         assert exception instanceof RuntimeException
-        assert exception.message == "Data not found"
+        assert exception.message == "null"
     }
+
     private InputStream getReturnAsInputStream() {
         String response = "{\n" +
                 "    \"statusCode\": 404,\n" +
@@ -139,7 +147,7 @@ class FeignErrorDecoderConfigurationTest extends Specification {
                 "}"
        return new ByteArrayInputStream(response.getBytes())
     }
-    private InputStream getAnotherReturnAsInputStream() {
+    private InputStream getArrayMessageReturnAsInputStream() {
         String response = "{\n" +
                 "    \"statusCode\": 400,\n" +
                 "    \"message\": [\n" +
@@ -152,6 +160,14 @@ class FeignErrorDecoderConfigurationTest extends Specification {
 
     private InputStream getGenericReturnAsInputStream() {
         String response = "Data not found"
+        return new ByteArrayInputStream(response.getBytes())
+    }
+
+    private InputStream getNullMessageReturnAsInputStream() {
+        String response = "{\n" +
+                "    \"statusCode\": 400,\n" +
+                "    \"error\": \"Bad Request\"\n" +
+                "}"
         return new ByteArrayInputStream(response.getBytes())
     }
 
