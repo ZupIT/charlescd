@@ -78,7 +78,7 @@ export const updateProfileById = (id: string, profile: Profile) =>
   putRequest(`${v1Endpoint}/${id}`, profile);
 
 export const patchProfileById = (id: string, name: string) =>
-  patchRequest(`${v1Endpoint}/${id}`, 'replace', '/name', name);
+  patchRequest(`${endpoint}/${id}`, 'replace', '/name', name);
 
 export const findUserByEmail = (email: string) => {
   const decodeEmail = btoa(email);
