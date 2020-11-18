@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
-import { create, configPath } from 'core/providers/registry';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  create,
+  configPath,
+  validateConnection,
+  testConnection
+} from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  FetchProps,
+  ResponseError,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
@@ -84,4 +96,82 @@ export const useRegistry = (): FetchProps => {
   }, [errorRemove, dispatch]);
 
   return { responseAdd, save, responseRemove, remove, loadingSave, loadingAdd };
+};
+
+export const useRegistryTest = (): {
+  testRegistryConnection: Function;
+  response: Response;
+  error: ResponseError;
+  status: FetchStatus;
+} => {
+  const status = useFetchStatus();
+  const test = useFetchData<Response>(testConnection);
+  const [response, setResponse] = useState<Response>(null);
+  const [error, setError] = useState<ResponseError>(null);
+
+  const testRegistryConnection = useCallback(
+    async (registry: Registry) => {
+      try {
+        if (registry) {
+          status.pending();
+          const res = await test(registry);
+
+          setResponse(res);
+          status.resolved();
+
+          return res;
+        }
+      } catch (e) {
+        status.rejected();
+        const err = await e.json();
+
+        setResponse(null);
+        setError(err);
+      }
+    },
+    [test, status]
+  );
+
+  return {
+    testRegistryConnection,
+    response,
+    error,
+    status
+  };
+};
+
+export const useRegistryConnection = (): {
+  registryConnection: Function;
+  response: Response;
+  error: ResponseError;
+} => {
+  const test = useFetchData<Response>(validateConnection);
+  const [response, setResponse] = useState<Response>(null);
+  const [error, setError] = useState<ResponseError>(null);
+
+  const registryConnection = useCallback(
+    async (configurationId: string) => {
+      try {
+        if (configurationId) {
+          const res = await test(configurationId);
+
+          setResponse(res);
+
+          return res;
+        }
+      } catch (e) {
+        const err = await e.json();
+
+        setResponse(null);
+        setError(err);
+      }
+    },
+    [test]
+  );
+
+  return {
+    registryConnection,
+    response,
+    error
+  };
 };

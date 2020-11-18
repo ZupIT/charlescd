@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { COLOR_PURPLE_HEART, COLOR_PAYNES_GREY } from 'core/assets/colors';
+import { COLOR_MALACHITE, COLOR_RED_ORANGE } from 'core/assets/colors';
 
 export const light = {};
 
 export const dark = {
-  background: COLOR_PURPLE_HEART,
-  disabled: {
-    background: COLOR_PAYNES_GREY
-  }
+  message: {
+    success: COLOR_MALACHITE,
+    error: COLOR_RED_ORANGE
+  } as Record<string, string>
 };

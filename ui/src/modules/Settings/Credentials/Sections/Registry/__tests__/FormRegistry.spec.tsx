@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render, fireEvent, wait, waitFor, act, screen } from 'unit-test/testUtils';
-import FormRegistry from '../Sections/Registry/Form';
+import FormRegistry from '../Form';
 import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
