@@ -191,17 +191,17 @@ const FormRegistry = ({ onFinish }: Props) => {
           label="Enter the registry url"
         />
         {handleFields()}
+        {message && <ConnectionStatus {...message} />}
+        <Button.Default
+          type="button"
+          id="test-connection"
+          onClick={onClick}
+          isDisabled={!isValid}
+          isLoading={status.isPending}
+        >
+          Test connection
+        </Button.Default>
       </Styled.Fields>
-      {message && <ConnectionStatus {...message} />}
-      <Button.Default
-        type="button"
-        id="test-connection"
-        onClick={onClick}
-        isDisabled={!isValid}
-        isLoading={status.isPending}
-      >
-        Test connection
-      </Button.Default>
       <Button.Default
         id="submit-registry"
         type="submit"
