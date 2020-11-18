@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-import { ManifestConfig } from './manifest.interface'
+export interface RepoConfig {
+  url: string,
+  token: string
+}
 
-export interface Manifest {
-  generate(config: ManifestConfig): Promise<string> // TODO alterar retorno para spec to k8s
+export interface ManifestConfig {
+  repo: RepoConfig,
+  componentName: string,
+  namespace: string, 
+  imageUrl: string,
+  circleId: string
 }

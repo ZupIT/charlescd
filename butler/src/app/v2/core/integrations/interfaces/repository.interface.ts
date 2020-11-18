@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { ManifestConfig } from './manifest.interface'
-
-export interface Manifest {
-  generate(config: ManifestConfig): Promise<string> // TODO alterar retorno para spec to k8s
+export interface Repository {
+  getTemplateAndValueFor(name: string): Promise<[string, string]>
 }
