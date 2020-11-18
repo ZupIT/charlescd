@@ -78,9 +78,9 @@ test('useUpdateName hook trigger promise success', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(newUser));
   const { result } = renderHook(() => useUpdateName());
 
-  await act(async () => result.current[1](newUser.id, newUser.name));
+  await act(async () => result.current.updateNameById(newUser.id, newUser.name));
 
-  expect(result.current[2]).toEqual('resolved');
+  expect(result.current.status).toEqual('resolved');
 });
 
 test('useUpdateName hook trigger promise error', async () => {
@@ -88,7 +88,7 @@ test('useUpdateName hook trigger promise error', async () => {
 
   const { result } = renderHook(() => useUpdateName());
 
-  await act(async () => result.current[1](newUser.id, newUser.name));
+  await act(async () => result.current.updateNameById(newUser.id, newUser.name));
 
-  expect(result.current[2]).toEqual('rejected');
+  expect(result.current.status).toEqual('rejected');
 });
