@@ -42,7 +42,9 @@ const Account = () => {
   const name = getProfileByKey('name');
   const email = getProfileByKey('email');
   const [currentUser, setCurrentUser] = useState<User>();
-  const { register, handleSubmit } = useForm<User>();
+  const { register, handleSubmit, errors } = useForm<User>({
+    mode: 'onBlur'
+  });
   const { findByEmail, user } = useUser();
   const [loadingUpdate, updateProfile] = useUpdateProfile();
   const [toggleModal, setToggleModal] = useState(false);

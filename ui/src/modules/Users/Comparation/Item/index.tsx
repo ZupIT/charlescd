@@ -18,10 +18,12 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
+import { isNotBlank, maxValue, required } from 'core/utils/validation';
 import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
+import Icon from 'core/components/Icon';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
@@ -48,7 +50,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const [isOpenModalPassword, toggleModalPassword] = useState(false);
   const [action, setAction] = useState('');
   const [currentUser, setCurrentUser] = useState<User>();
-  const { register, handleSubmit } = useForm<User>();
+  const { register, handleSubmit, errors } = useForm<User>({
+    mode: 'onChange'
+  });
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
   const [loadingUpdate, updateProfile] = useUpdateProfile();
@@ -155,14 +159,26 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       <Styled.Layer>
         <ContentIcon icon="user">
           {isRoot() ? (
-            <InputTitle
-              key={currentUser.name}
-              name="name"
-              resume
-              ref={register({ required: true })}
-              defaultValue={currentUser.name}
-              onClickSave={handleSubmit(onSubmit)}
-            />
+            <>
+              <InputTitle
+                key={currentUser.name}
+                name="name"
+                resume
+                ref={register({
+                  required: required(),
+                  maxLength: maxValue(64),
+                  validate: isNotBlank
+                })}
+                defaultValue={currentUser.name}
+                onClickSave={handleSubmit(onSubmit)}
+              />
+              {!!errors.name && (
+                <Styled.FieldErrorWrapper>
+                  <Icon name="error" color="error" />
+                  <Text.h6 color="error">{errors.name.message}</Text.h6>
+                </Styled.FieldErrorWrapper>
+              )}
+            </>
           ) : (
             <Text.h2 color="light">currentUser.name</Text.h2>
           )}

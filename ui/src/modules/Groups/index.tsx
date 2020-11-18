@@ -18,6 +18,9 @@ import React, { Suspense, useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
+import { isNotBlank, maxValue, required } from 'core/utils/validation';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
 import Page from 'core/components/Page';
 import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
@@ -42,7 +45,9 @@ const UserGroups = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [getUserGroups, loading] = useFindAllUserGroup();
   const { list } = useGlobalState(state => state.userGroups);
-  const { register, watch, handleSubmit } = useForm();
+  const { register, watch, handleSubmit, errors } = useForm({
+    mode: 'onChange'
+  });
   const watchName = watch('name');
   const {
     createUserGroup,
@@ -76,8 +81,18 @@ const UserGroups = () => {
           <Styled.Modal.Input
             name="name"
             label="Type a name"
-            ref={register({ required: true })}
+            ref={register({
+              required: required(),
+              maxLength: maxValue(64),
+              validate: isNotBlank
+            })}
           />
+          {!!errors.name && (
+            <Styled.FieldErrorWrapper>
+              <Icon name="error" color="error" />
+              <Text.h6 color="error">{errors.name.message}</Text.h6>
+            </Styled.FieldErrorWrapper>
+          )}
           <Styled.Modal.Button
             type="submit"
             isDisabled={isDisabled}

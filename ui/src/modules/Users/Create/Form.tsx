@@ -19,7 +19,14 @@ import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
+import Icon from 'core/components/Icon';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import {
+  isNotBlank,
+  maxValue,
+  required,
+  emailPattern
+} from 'core/utils/validation';
 import { NewUser } from 'modules/Users/interfaces/User';
 import Styled from './styled';
 import { useCreateUser } from '../hooks';
@@ -36,8 +43,9 @@ const FormUser = ({ onFinish }: Props) => {
   const {
     register,
     handleSubmit,
+    errors,
     formState: { isValid }
-  } = useForm<NewUser>({ mode: 'onChange' });
+  } = useForm<NewUser>({ mode: 'onBlur' });
   const { create, newUser } = useCreateUser();
   const [status, setStatus] = useState<string>('');
 
@@ -67,21 +75,50 @@ const FormUser = ({ onFinish }: Props) => {
     >
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register({
+            required: required(),
+            maxLength: maxValue(64)
+          })}
           name="name"
           label="User name"
         />
+        {errors.name && (
+          <Styled.FieldErrorWrapper>
+            <Icon name="error" color="error" />
+            <Text.h6 color="error">{errors.name.message}</Text.h6>
+          </Styled.FieldErrorWrapper>
+        )}
         <Form.Input
-          ref={register({ required: true })}
+          ref={register({
+            required: required(),
+            maxLength: maxValue(64),
+            pattern: emailPattern()
+          })}
           name="email"
           label="E-mail"
         />
+        {errors.email && (
+          <Styled.FieldErrorWrapper>
+            <Icon name="error" color="error" />
+            <Text.h6 color="error">{errors.email.message}</Text.h6>
+          </Styled.FieldErrorWrapper>
+        )}
         <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
         <Form.Password
-          ref={register({ required: true })}
+          ref={register({
+            required: required(),
+            maxLength: maxValue(100),
+            validate: isNotBlank
+          })}
           name="password"
           label="Create password"
         />
+        {errors.password && (
+          <Styled.FieldErrorWrapper>
+            <Icon name="error" color="error" />
+            <Text.h6 color="error">{errors.password.message}</Text.h6>
+          </Styled.FieldErrorWrapper>
+        )}
       </Styled.Fields>
       <Button.Default
         data-testid="button-create-user"

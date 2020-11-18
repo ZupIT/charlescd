@@ -39,19 +39,22 @@ interface Props extends ListProps {
   isLoading: boolean;
 }
 
-const UserGroupList = ({ items, selectedItems, onSelect }: ListProps) => (
-  <>
-    {map(items, item => (
-      <MenuItem
-        key={item.id}
-        id={item.id}
-        name={item.name}
-        isActive={some(selectedItems, method('includes', item.id))}
-        onSelect={onSelect}
-      />
-    ))}
-  </>
-);
+const UserGroupList = ({ items, selectedItems, onSelect }: ListProps) =>
+  isEmpty(items) ? (
+    <Text.h3 color="dark">No users Group found</Text.h3>
+  ) : (
+    <>
+      {map(items, item => (
+        <MenuItem
+          key={item.id}
+          id={item.id}
+          name={item.name}
+          isActive={some(selectedItems, method('includes', item.id))}
+          onSelect={onSelect}
+        />
+      ))}
+    </>
+  );
 
 const UserGroupMenu = ({ onSearch, onCreate, isLoading, ...rest }: Props) => {
   return (
@@ -64,7 +67,7 @@ const UserGroupMenu = ({ onSearch, onCreate, isLoading, ...rest }: Props) => {
         </Styled.Button>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
+        <Styled.SearchInput resume onSearch={onSearch} maxLength={64} />
         <Styled.List>
           {isEmpty(rest.items) && isLoading ? (
             <Loader.List />

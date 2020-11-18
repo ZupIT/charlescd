@@ -42,7 +42,18 @@ const ButtonModal = styled(ButtonComponent.Default)`
   margin-top: 20px;
 `;
 
+const FieldErrorWrapper = styled.div`
+  display: flex;
+  margin-top: 2px;
+
+  span {
+    margin-left: 5px;
+    margin-top: 2px;
+  }
+`;
+
 export default {
+  FieldErrorWrapper,
   Layer: {
     Title: LayerTitle,
     Users: LayerUsers
