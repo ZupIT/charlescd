@@ -27,6 +27,7 @@ const SearchInput = ({
   name = 'search',
   className,
   onSearch,
+  maxLength,
   ...rest
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -48,6 +49,7 @@ const SearchInput = ({
         id="inputSearch"
         onFocus={onFocus}
         onBlur={onBlur}
+        maxLength={maxLength}
         onChange={event => handleChange(event.currentTarget.value)}
       />
     </Styled.Wrapper>

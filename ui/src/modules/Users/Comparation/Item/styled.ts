@@ -43,7 +43,18 @@ const Actions = styled.div`
   }
 `;
 
+const FieldErrorWrapper = styled.div`
+  display: flex;
+  margin-top: 5px;
+
+  span {
+    margin-top: 2px;
+    margin-left: 5px;
+  }
+`;
+
 export default {
+  FieldErrorWrapper,
   Wrapper,
   ContentIcon,
   Layer,

@@ -30,30 +30,22 @@ export const validFields = (fields: object) => {
 
 export const isNotBlank = (value: string) => !!value.trim();
 
-export const maxLength = (value: number, message?: string) => (
-  {
-    value: value,
-    message: message || `The maximum value of this field is ${value}.`
-  }
-);
+export const maxLength = (value = 64, message?: string) => ({
+  value: value,
+  message: message || `The maximum value of this field is ${value}.`
+});
 
-export const minLength = (value: number, message?: string) => (
-  {
-    value: value,
-    message: message || `The minimum value of this field is ${value}.`
-  }
-);
+export const minLength = (value: number, message?: string) => ({
+  value: value,
+  message: message || `The minimum value of this field is ${value}.`
+});
 
-export const isRequired = () => (
-  {
-    value: true,
-    message: 'The field is required.'
-  }
-);
+export const isRequired = () => ({
+  value: true,
+  message: 'The field is required.'
+});
 
-export const emailPattern = () => (
-  {
-    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-    message: 'Entered value does not match email format.'
-  }
-);
+export const emailPattern = () => ({
+  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+  message: 'Entered value does not match email format.'
+});

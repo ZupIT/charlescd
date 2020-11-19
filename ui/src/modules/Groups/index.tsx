@@ -23,6 +23,7 @@ import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
 import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
+import { isRequired, maxLength } from 'core/utils/validations';
 import Menu from './Menu';
 import Tabs from './Tabs';
 import { addParamUserGroup, getSelectedUserGroups } from './helpers';
@@ -42,7 +43,7 @@ const UserGroups = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [getUserGroups, loading] = useFindAllUserGroup();
   const { list } = useGlobalState(state => state.userGroups);
-  const { register, watch, handleSubmit } = useForm();
+  const { register, watch, handleSubmit, errors } = useForm({ mode: 'onBlur' });
   const watchName = watch('name');
   const {
     createUserGroup,
@@ -76,7 +77,11 @@ const UserGroups = () => {
           <Styled.Modal.Input
             name="name"
             label="Type a name"
-            ref={register({ required: true })}
+            error={errors?.name?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength()
+            })}
           />
           <Styled.Modal.Button
             type="submit"

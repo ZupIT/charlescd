@@ -46,15 +46,19 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
       : addParam('user', routes.usersComparation, history, id);
 
   const renderUsers = () =>
-    map(items, ({ email, name }: UserPaginationItem) => (
-      <MenuItem
-        key={email}
-        id={email}
-        name={name}
-        isActive={isActive(email)}
-        onSelect={() => toggleUser(email)}
-      />
-    ));
+    isEmpty(items) ? (
+      <Text.h3 color="dark">No User was found</Text.h3>
+    ) : (
+      map(items, ({ email, name }: UserPaginationItem) => (
+        <MenuItem
+          key={email}
+          id={email}
+          name={name}
+          isActive={isActive(email)}
+          onSelect={() => toggleUser(email)}
+        />
+      ))
+    );
 
   return (
     <>
@@ -66,7 +70,7 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
         </Styled.Link>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
+        <Styled.SearchInput resume onSearch={onSearch} maxLength={64} />
         <Styled.List>
           {isEmpty(items) && isLoading ? <Loader.List /> : renderUsers()}
         </Styled.List>

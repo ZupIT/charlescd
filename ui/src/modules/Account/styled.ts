@@ -94,7 +94,18 @@ const CheckPassword = styled(CheckPass)`
   margin: 20px 0;
 `;
 
+const FieldErrorWrapper = styled.div`
+  display: flex;
+  margin-top: 5px;
+
+  span {
+    margin-top: 2px;
+    margin-left: 5px;
+  }
+`;
+
 export default {
+  FieldErrorWrapper,
   Wrapper,
   Content,
   ContentIcon,
