@@ -22,7 +22,7 @@ import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeli
 import { CallbackTypeEnum } from '../../../../../app/v1/api/notifications/enums/callback-type.enum'
 import istioPipeline, { istioPipelineHostValueAndGateway } from './fixtures/expected-istio-pipeline'
 import { AppConstants } from '../../../../../app/v1/core/constants'
-import istioPipelineFormattedSubsets from '../../../../unit/conectors/spinnaker/fixtures/expected-istio-pipeline-formatted-subsets'
+import istioPipelineFormattedSubsets from '../../../connectors/spinnaker/fixtures/expected-istio-pipeline-formatted-subsets'
 
 it('compiles the pipeline', () => {
   const contract: ISpinnakerPipelineConfiguration = {
