@@ -16,8 +16,33 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
+import io.charlescd.villager.infrastructure.integration.registry.configuraton.ConfigParameters;
+import io.charlescd.villager.infrastructure.integration.registry.configuraton.AwsConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuraton.AzureConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuraton.DockerHubConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuraton.GcpConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuraton.HarborConfig;
+
+import java.util.function.Function;
+
 public enum RegistryType {
 
-    AWS, AZURE, GCP, DOCKER_HUB, HARBOR, UNSUPPORTED
+    AWS(AwsConfig::execute),
+    AZURE(AzureConfig::execute),
+    GCP(GcpConfig::execute),
+    DOCKER_HUB(DockerHubConfig::execute),
+    HARBOR(HarborConfig::execute),
+    UNSUPPORTED(x -> {
+        throw new IllegalArgumentException("Registry type is not supported!");
+    });
 
+    private Function<ConfigParameters, Object> function;
+
+    RegistryType(Function<ConfigParameters, Object> function) {
+        this.function = function;
+    }
+
+    public Object configure(ConfigParameters config) {
+        return function.apply(config);
+    }
 }
