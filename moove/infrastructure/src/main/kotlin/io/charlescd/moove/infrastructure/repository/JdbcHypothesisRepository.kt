@@ -21,10 +21,10 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.Hypothesis
 import io.charlescd.moove.domain.repository.HypothesisRepository
 import io.charlescd.moove.infrastructure.repository.mapper.HypothesisExtractor
-import java.util.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class JdbcHypothesisRepository(
@@ -134,7 +134,16 @@ class JdbcHypothesisRepository(
     }
 
     override fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Hypothesis> {
-        return findHypothesisByIdAndWorkspace(id, workspaceId)
+        val statement = StringBuilder(BASE_QUERY_STATEMENT)
+            .appendln("AND hypotheses.id = ? AND hypotheses.workspace_id = ?")
+
+        return Optional.ofNullable(
+            this.jdbcTemplate.query(
+                statement.toString(),
+                arrayOf(encryptionKey, id, workspaceId),
+                hypothesisExtractor
+            )?.firstOrNull()
+        )
     }
 
     override fun findById(id: String): Optional<Hypothesis> {
@@ -190,19 +199,6 @@ class JdbcHypothesisRepository(
                 hypothesis.createdAt,
                 hypothesis.workspaceId
             )
-        )
-    }
-
-    private fun findHypothesisByIdAndWorkspace(id: String, workspaceId: String): Optional<Hypothesis> {
-        val statement = StringBuilder(BASE_QUERY_STATEMENT)
-            .appendln("AND hypotheses.id = ? AND hypotheses.workspace_id = ?")
-
-        return Optional.ofNullable(
-            this.jdbcTemplate.query(
-                statement.toString(),
-                arrayOf(encryptionKey, id, workspaceId),
-                hypothesisExtractor
-            )?.firstOrNull()
         )
     }
 
