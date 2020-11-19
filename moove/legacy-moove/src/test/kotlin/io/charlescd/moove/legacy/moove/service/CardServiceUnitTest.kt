@@ -125,8 +125,8 @@ class CardServiceUnitTest {
         gitConfigurationRepository,
         charlesNotificationService
     )
-    private val cardRequest = buildCreateCardRequest()
-    private val updateCardRequest = buildUpdateCardRequest()
+    private val cardRequest = buildCreateCardRequest(branchName)
+    private val updateCardRequest = buildUpdateCardRequest(branchName)
 
     @Before
     fun setup() {
@@ -915,15 +915,6 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should return error with invalid branch names`() {
-        invalidBranchNames().forEach {
-            assertFailsWith<IllegalArgumentException> {
-                BranchNameValidations().validateBranchName(it)
-            }
-        }
-    }
-
-    @Test
     fun `should archive software card`() {
         val card = buildSoftwareCard()
 
@@ -934,6 +925,24 @@ class CardServiceUnitTest {
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
         verify(exactly = 1) { cardRepository.save(card.copy(status = CardStatus.ARCHIVED)) }
+    }
+
+    @Test
+    fun `shouldn't create card with invalid branch names`() {
+        invalidBranchNames().forEach {
+            val e = assertFailsWith<IllegalArgumentException> {
+                cardService.create(buildCreateCardRequest(it), workspaceId)
+            }
+        }
+    }
+
+    @Test
+    fun `shouldn't update card with invalid branch names`() {
+        invalidBranchNames().forEach {
+            val e = assertFailsWith<IllegalArgumentException> {
+                cardService.update("id", buildUpdateCardRequest(it), workspaceId)
+            }
+        }
     }
 
     private fun buildAddMemberRequest(): AddMemberRequest {
@@ -956,14 +965,14 @@ class CardServiceUnitTest {
         )
     }
 
-    private fun buildCreateCardRequest(): CreateCardRequest {
+    private fun buildCreateCardRequest(branchName: String): CreateCardRequest {
         return CreateCardRequest(
             cardName, cardDescription, authorId, "FEATURE",
             labels, hypothesisId, branchName, modules
         )
     }
 
-    private fun buildUpdateCardRequest(): UpdateCardRequest {
+    private fun buildUpdateCardRequest(branchName: String): UpdateCardRequest {
         return UpdateCardRequest(
             cardName, cardDescription, labels, "FEATURE", branchName, modules
         )
