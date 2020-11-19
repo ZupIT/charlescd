@@ -197,6 +197,20 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
         }
     }
 
+    override fun testConnection(gitCredentials: GitCredentials): Boolean {
+        logger.info("Testing connection into GitHub")
+        val client = getClient(gitCredentials)
+        val userService = getUserService(client)
+        val repositoryService = getRepositoryService(client)
+        return try {
+            userService.user != null && repositoryService.repositories != null
+        } catch (exception: Exception) {
+            logger.error("failed to connect to GitHub with error: ${exception.message}")
+            handleResponseError(error = exception)
+            return false
+        }
+    }
+
     override fun deleteBranch(gitCredentials: GitCredentials, repository: String, branchName: String) {
         logger.info("deleting branch: $branchName from GitHub repository: $repository")
         val client = getClient(gitCredentials)

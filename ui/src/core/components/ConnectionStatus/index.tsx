@@ -17,39 +17,39 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
+import { CONNECTION_SUCCESS } from 'core/hooks/useTestConnection';
 import Styled from './styled';
-import { CONNECTION_SUCCESS } from './constants';
 
 type Props = {
-  status?: number;
+  message?: string;
 };
 
 type MessageProps = {
   status: string;
-  messagemText: string;
+  messageText: string;
 };
 
-const MessageStatus = ({ status, messagemText }: MessageProps) => (
+const MessageStatus = ({ status, messageText }: MessageProps) => (
   <Styled.StatusMessageWrapper
     data-testid={`connection-${status}`}
     status={status}
   >
     <Icon name={status} />
-    <Text.h5>{messagemText}</Text.h5>
+    <Text.h5>{messageText}</Text.h5>
   </Styled.StatusMessageWrapper>
 );
 
-const ConnectionStatus = ({ status }: Props) => {
-  if (status !== CONNECTION_SUCCESS) {
+const ConnectionStatus = ({ message }: Props) => {
+  if (message !== CONNECTION_SUCCESS) {
     return MessageStatus({
       status: 'error',
-      messagemText: 'Connection to metric provider failed.'
+      messageText: message || 'Connection to metric provider failed.'
     });
   }
 
   return MessageStatus({
     status: 'success',
-    messagemText: 'Successful connection with the metrics provider.'
+    messageText: 'Successful connection with the metrics provider.'
   });
 };
 

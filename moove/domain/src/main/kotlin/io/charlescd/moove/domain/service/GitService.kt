@@ -38,6 +38,10 @@ abstract class GitService {
         headBranch: String
     )
 
+    abstract fun testConnection(
+        gitCredentials: GitCredentials
+    ): Boolean
+
     abstract fun createBranch(
         gitCredentials: GitCredentials,
         repository: String,
