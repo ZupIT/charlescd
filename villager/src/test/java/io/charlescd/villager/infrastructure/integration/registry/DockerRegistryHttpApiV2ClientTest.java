@@ -1,18 +1,11 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.AwsConfig;
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.ConfigParameters;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 class DockerRegistryHttpApiV2ClientTest {
 
@@ -92,14 +85,15 @@ class DockerRegistryHttpApiV2ClientTest {
     }
 
     @Test
-    void getImage() {
-    }
+    void whenConfigureUndefinedAuthenticationShouldBeThrowException() {
+        //GIVEN
+        var data=
+                mock(DockerRegistryConfigurationEntity.DockerRegistryConnectionData.class);
+        RegistryType regitryType = RegistryType.UNSUPPORTED;
 
-    @Test
-    void close() {
-    }
-
-    @Test
-    void closeQuietly() {
+        //WHEN
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            dockerRegistry.configureAuthentication(regitryType, data, "");
+        });
     }
 }
