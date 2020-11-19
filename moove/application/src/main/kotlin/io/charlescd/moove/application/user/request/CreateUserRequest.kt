@@ -3,15 +3,16 @@ package io.charlescd.moove.application.user.request
 import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
+import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
 data class CreateUserRequest(
     @field:NotBlank
     val name: String,
 
-    val password: String?,
+    val password: String,
 
-    @field:NotBlank
+    @field:Email(regexp = ".+@.+\\..+", message = "Invalid email")
     val email: String,
 
     val photoUrl: String?,
