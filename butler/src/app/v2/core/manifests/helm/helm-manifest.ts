@@ -32,24 +32,29 @@ export class HelmManifest implements Manifest {
   constructor(private repository: Repository) {}
 
   public async generate(config: ManifestConfig): Promise<string> {
-    const customValues = this.toStringArray(this.extractCustomValues(config))
     const [template, values] = await this.repository.getTemplateAndValueFor(config.componentName)
     const tmpFiles: string[] = []
     try {
       tmpFiles.push(await this.saveTmpFile(template))
       tmpFiles.push(await this.saveTmpFile(values))
-      return await this.package(tmpFiles[0], tmpFiles[1], customValues)
+      return await this.package(tmpFiles[0], tmpFiles[1], config)
     } finally {
       tmpFiles.forEach(file => this.cleanUp(file))
     }
+  }
+
+  private async saveTmpFile(base64File: string): Promise<string> {
+    const fileName = `${HelmManifest.TMP_DIR}/${uuid.v4()}`
+    await fs.writeFile(fileName, base64File, { encoding: 'base64' })
+    return fileName
   }
 
   private cleanUp(file: string) {
     fs.unlink(file)
   }
 
-  private async package(templateFile: string, valuesFile: string, customValues: any): Promise<string> {
-    const args = this.formatArguments(templateFile, valuesFile, customValues)
+  private async package(templateFile: string, valuesFile: string, config: ManifestConfig): Promise<string> {
+    const args = this.formatArguments(templateFile, valuesFile, config)
     return this.executeCommand(args)
   }
 
@@ -74,26 +79,34 @@ export class HelmManifest implements Manifest {
     })
   }
 
-  private formatArguments(templateFile: string, valuesFile: string, customValues: any) {
-    return ['template', templateFile, '-f', valuesFile, '--set', customValues]
-  }
-
-  private async saveTmpFile(base64File: string): Promise<string> {
-    const fileName = `${HelmManifest.TMP_DIR}/${uuid.v4()}`
-    await fs.writeFile(fileName, base64File, { encoding: 'base64' })
-    return fileName
+  private formatArguments(templateFile: string, valuesFile: string, config: ManifestConfig) {
+    const overrideValues = this.toStringArray(this.extractCustomValues(config))
+    const command = ['template', templateFile, '-f', valuesFile]
+    if(config.namespace) {
+      command.push('--namespace')
+      command.push(config.namespace)
+    }
+    if(overrideValues) {
+      command.push('--set')
+      command.push(overrideValues)
+    }
+    return command;
   }
 
   private extractCustomValues(config: ManifestConfig): any {
     return {
       name: config.componentName,
-      namespace: config.namespace,
       'image.tag': config.imageUrl,
       circleId: config.circleId
     }
   }
 
   private toStringArray(customValues: any): string {
-    return Object.getOwnPropertyNames(customValues).reduce((acc, cur) => acc + `${cur}=${customValues[cur]},`, "")
+    return Object.getOwnPropertyNames(customValues).reduce((acc, cur) => {
+      if(customValues[cur]) {
+        return acc + `${cur}=${customValues[cur]},`
+      }
+      return acc
+    }, "")
   }
 }

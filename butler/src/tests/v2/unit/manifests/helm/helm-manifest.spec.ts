@@ -58,4 +58,13 @@ describe('Generate K8s manifest by helm', () => {
 
     expect(manifest).toEqual(expected)
   })
+
+  it('should fail manifest generation when fails fetching files from repository', async() => {
+    mockRepository.getTemplateAndValueFor.mockImplementation(() => { throw new Error('error') })
+
+    const helm = new HelmManifest(mockRepository)
+    const manifest = helm.generate(manifestConfig)
+
+    expect(manifest).rejects.toThrowError()
+  })
 })
