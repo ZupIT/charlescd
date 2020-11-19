@@ -8,7 +8,8 @@ import org.apache.commons.lang.StringUtils;
 public class AwsConfig {
 
     public static Object execute(ConfigParameters config) {
-        var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config.getConfiguration();
+        var awsConfig =
+                (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config.getConfiguration();
         AWSCustomProviderChainAuthenticator providerChain =
                 new AWSCustomProviderChainAuthenticator(awsConfig.region);
         if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {

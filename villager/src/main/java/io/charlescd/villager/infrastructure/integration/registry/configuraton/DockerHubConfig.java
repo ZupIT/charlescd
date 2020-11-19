@@ -6,7 +6,8 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 public class DockerHubConfig {
 
     public static Object execute(ConfigParameters config) {
-        var dockerHubConfig = (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config.getConfiguration();
+        var dockerHubConfig =
+                (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config.getConfiguration();
         return new DockerBearerAuthenticator(dockerHubConfig.organization,
                         dockerHubConfig.username,
                         dockerHubConfig.password,

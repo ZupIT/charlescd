@@ -6,7 +6,8 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 public class GcpConfig {
 
     public static Object execute(ConfigParameters config) {
-        var gcpConfig = (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config.getConfiguration();
+        var gcpConfig =
+                (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config.getConfiguration();
         return new CommonBasicAuthenticator(gcpConfig.username, gcpConfig.jsonKey);
     }
 }

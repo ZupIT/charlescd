@@ -6,7 +6,8 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 public class HarborConfig {
 
     public static Object execute(ConfigParameters config) {
-        var harborConfig = (DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData) config.getConfiguration();
+        var harborConfig =
+                (DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData) config.getConfiguration();
         return new CommonBasicAuthenticator(harborConfig.username, harborConfig.password);
     }
 }
