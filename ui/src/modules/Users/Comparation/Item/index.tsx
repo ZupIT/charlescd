@@ -51,7 +51,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const { updateNameById } = useUpdateName();
+  const { updateNameById, status } = useUpdateName();
   const isAbleToReset = loggedUserId !== user?.id;
 
   const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
@@ -70,6 +70,14 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       delParam('user', routes.usersComparation, history, currentUser.email);
     }
   });
+
+  useEffect(() => {
+    if (status === 'resolved') {
+      findByEmail(email);
+    } else if (status === 'rejected') {
+      setCurrentUser(user);
+    }
+  }, [status, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
