@@ -3,6 +3,8 @@ import axios from 'axios'
 import chalk from 'chalk'
 
 const charlesBaseUrl = process.env.CHARLES_BASEURL
+const charlesUser = process.env.CHARLES_USER
+const charlesPassword = process.env.CHARLES_PASSWORD
 const butlerUrl = process.env.BUTLER_URL || 'localhost:3000'
 const dbHost = process.env.DATABASE_HOST || 'localhost'
 const dbPort = process.env.DATABASE_PORT || 5432
@@ -14,16 +16,16 @@ const dbName = process.env.DATABASE_NAME || 'charles'
 const getDefaultActiveCircleDeployments = async (pgClient) => {
 
   try {
-    console.log('Fetching active circle deployments')
+    console.log('Fetching default active circle deployments')
     const deployments = await pgClient.query(
       `SELECT * from deployments 
         INNER JOIN circles circles ON deployments.circle_id = circles.id
         WHERE deployments.STATUS = 'DEPLOYED' and circles.default_circle = true
     `)
-    console.log(`Active deployments: ${JSON.stringify(deployments.rows)}`)
+    console.log(`Active default deployments: ${JSON.stringify(deployments.rows)}`)
     return deployments
   } catch (error) {
-    console.error(chalk.red(`Error fetching active deployments: ${error}`))
+    console.error(chalk.red(`Error fetching active default deployments: ${error}`))
   }
 }
 
@@ -73,7 +75,7 @@ const doDefaultCircleUndeployRequest = async (deployment) => {
 const defaultCircleDeployRequest = async (deployment, loginObject) => {
   try {
     return await axios.post(
-      `${charlesBaseUrl}/v2/deployments`,
+      `${charlesBaseUrl}/moove/v2/deployments`,
       {
         authorId: deployment.user_id,
         circleId: deployment.circle_id,
