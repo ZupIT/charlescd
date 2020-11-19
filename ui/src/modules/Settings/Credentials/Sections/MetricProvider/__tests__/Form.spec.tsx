@@ -21,6 +21,7 @@ import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
+import * as TestConnectionHook from 'core/hooks/useTestConnection';
 
 test('render Metrics Provider default component', async () => {
   const finish = jest.fn();
@@ -67,9 +68,10 @@ test('render button test connection', async () => {
     response: Plugins
   }));
 
-  jest.spyOn(MetricProviderHooks, 'useTestConnection').mockImplementation(() => ({
+  jest.spyOn(TestConnectionHook, 'useTestConnection').mockImplementation(() => ({
     save: testConnection,
-    response: {}
+    loading: false,
+    response: '401 unauthorized'
   }));
 
   render(
