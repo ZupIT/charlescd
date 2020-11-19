@@ -20,7 +20,6 @@ package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.Deployment
 import io.charlescd.moove.domain.DeploymentStatusEnum
-import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import javax.inject.Named
 
@@ -41,14 +40,6 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
 
     fun deleteByCircleId(circleId: String) {
         deploymentRepository.deleteByCircleId(circleId)
-    }
-
-    fun find(id: String): Deployment {
-        return this.deploymentRepository.findById(
-            id
-        ).orElseThrow {
-            NotFoundException("deployment", id)
-        }
     }
 
     fun findLastActive(circleId: String): Deployment? {

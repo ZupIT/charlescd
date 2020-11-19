@@ -21,10 +21,10 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.Hypothesis
 import io.charlescd.moove.domain.repository.HypothesisRepository
 import io.charlescd.moove.infrastructure.repository.mapper.HypothesisExtractor
+import java.util.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcHypothesisRepository(
