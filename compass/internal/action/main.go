@@ -26,12 +26,12 @@ import (
 )
 
 type UseCases interface {
-	ValidateAction(action Action) []util.ErrorUtil
-	ParseAction(action io.ReadCloser) (Action, error)
-	FindActionByIdAndWorkspace(id string, workspaceID string) (Action, error)
+	ValidateAction(action Request) []util.ErrorUtil
+	ParseAction(action io.ReadCloser) (Request, error)
+	FindActionByIdAndWorkspace(id string, workspaceID string) (Response, error)
 	FindActionById(id string) (Action, error)
-	FindAllActionsByWorkspace(workspaceID string) ([]Action, error)
-	SaveAction(action Action) (Action, error)
+	FindAllActionsByWorkspace(workspaceID string) ([]Response, error)
+	SaveAction(action Request) (Response, error)
 	DeleteAction(id string) error
 }
 

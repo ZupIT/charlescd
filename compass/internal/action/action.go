@@ -33,6 +33,17 @@ import (
 
 type Action struct {
 	util.BaseModel
+	WorkspaceId   uuid.UUID  `json:"workspaceId"`
+	Nickname      string     `json:"nickname"`
+	Type          string     `json:"type"`
+	Description   string     `json:"description"`
+	UseDefault    bool       `json:"useDefaultConfiguration" gorm:"-"`
+	Configuration []byte     `json:"configuration"`
+	DeletedAt     *time.Time `json:"-"`
+}
+
+type Request struct {
+	util.BaseModel
 	WorkspaceId   uuid.UUID       `json:"workspaceId"`
 	Nickname      string          `json:"nickname"`
 	Type          string          `json:"type"`
@@ -42,13 +53,24 @@ type Action struct {
 	DeletedAt     *time.Time      `json:"-"`
 }
 
-func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
-	var nAction *Action
+type Response struct {
+	util.BaseModel
+	WorkspaceId   uuid.UUID       `json:"workspaceId"`
+	Nickname      string          `json:"nickname"`
+	Type          string          `json:"type"`
+	Description   string          `json:"description"`
+	UseDefault    bool            `json:"useDefaultConfiguration" gorm:"-"`
+	Configuration json.RawMessage `json:"configuration"`
+	DeletedAt     *time.Time      `json:"-"`
+}
+
+func (main Main) ParseAction(action io.ReadCloser) (Request, error) {
+	var nAction *Request
 
 	err := json.NewDecoder(action).Decode(&nAction)
 	if err != nil {
 		logger.Error(util.GeneralParseError, "ParseAction", err, action)
-		return Action{}, err
+		return Request{}, err
 	}
 
 	nAction.Nickname = strings.TrimSpace(nAction.Nickname)
@@ -62,7 +84,7 @@ func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
 	return *nAction, nil
 }
 
-func (main Main) ValidateAction(action Action) []util.ErrorUtil {
+func (main Main) ValidateAction(action Request) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 	needConfigValidation := true
 
@@ -127,21 +149,18 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionByIdAndWorkspace(id, workspaceID string) (Action, error) {
-	action := Action{}
-	db := main.db.Set("gorm:auto_preload", true).Where("id = ? and workspace_id = ?", id, workspaceID).First(&action)
-	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", db.Error, "Id = "+id)
-		return Action{}, db.Error
+func (main Main) FindActionByIdAndWorkspace(id, workspaceID string) (Response, error) {
+	entity := Action{}
+	row := main.db.Set("gorm:auto_preload", true).Raw(decryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
+
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
+		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
+	if dbError != nil {
+		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", dbError, "Id = "+id)
+		return Response{}, dbError
 	}
 
-	var err error
-	action.Configuration, err = util.Decrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
-	if err != nil {
-		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", err, action)
-		return Action{}, err
-	}
-	return action, nil
+	return entity.toResponse(), nil
 }
 
 func (main Main) FindActionById(id string) (Action, error) {
@@ -161,47 +180,46 @@ func (main Main) FindActionById(id string) (Action, error) {
 	return action, nil
 }
 
-func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Action, error) {
-	var actions []Action
+func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Response, error) {
+	var actions []Response
 
-	db := main.db.Set("gorm:auto_preload", true).Where("workspace_id = ?", workspaceID).Find(&actions)
-	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindAllActionsByWorkspace", db.Error, actions)
-		return []Action{}, db.Error
+	rows, err := main.db.Set("gorm:auto_preload", true).Raw(workspaceActionQuery, workspaceID).Rows()
+	if err != nil {
+		logger.Error(util.FindActionError, "FindAllActionsByWorkspace", err, actions)
+		return []Response{}, err
 	}
 
-	var err error
-	for i := range actions {
-		actions[i].Configuration, err = util.Decrypt(actions[i].Configuration, "passphrasewhichneedstobe32bytes!")
+	for rows.Next() {
+		var action Action
+
+		err = main.db.ScanRows(rows, &action)
 		if err != nil {
-			logger.Error(util.FindActionError, "FindAllActionsByWorkspace", err, actions[i])
-			return []Action{}, err
+			logger.Error(util.FindDatasourceError, "FindAllActionsByWorkspace", err, "WorkspaceId = "+workspaceID)
+			return []Response{}, err
 		}
+
+		actions = append(actions, action.toResponse())
 	}
+
 	return actions, nil
 }
 
-func (main Main) SaveAction(action Action) (Action, error) {
-	dataEncrypt, err := util.Encrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
-	if err != nil {
-		logger.Error(util.SaveActionError, "SaveAction", err, action)
-		return Action{}, err
+func (main Main) SaveAction(action Request) (Response, error) {
+	id := uuid.New().String()
+	entity := Action{}
 
-	}
-	action.Configuration = json.RawMessage(fmt.Sprintf(`{"configuration": "%s"}`, dataEncrypt))
+	row := main.db.Exec(actionInsert(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceId)).
+		Raw(actionQuery, id).
+		Row()
 
-	db := main.db.Create(&action)
-	if db.Error != nil {
-		logger.Error(util.SaveActionError, "SaveAction", db.Error, action)
-		return Action{}, db.Error
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
+		&entity.Description, &entity.CreatedAt, &entity.DeletedAt)
+	if dbError != nil {
+		logger.Error(util.SaveActionError, "SaveAction", dbError, action)
+		return Response{}, dbError
 	}
 
-	action.Configuration, err = util.Decrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
-	if err != nil {
-		logger.Error(util.SaveActionError, "SaveAction", err, action)
-		return Action{}, err
-	}
-	return action, nil
+	return entity.toResponse(), nil
 }
 
 func (main Main) DeleteAction(id string) error {
@@ -211,4 +229,23 @@ func (main Main) DeleteAction(id string) error {
 		return db.Error
 	}
 	return nil
+}
+
+func actionInsert(id, nickname, actionType, description string, configuration []byte, workspaceId uuid.UUID) string {
+	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
+			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', 'MAYCON', 'cipher-algo=aes256'), null);`,
+		id, workspaceId, nickname, actionType, description, configuration)
+}
+
+func (entity Action) toResponse() Response {
+	return Response{
+		BaseModel:     entity.BaseModel,
+		WorkspaceId:   entity.WorkspaceId,
+		Nickname:      entity.Nickname,
+		Type:          entity.Type,
+		Description:   entity.Description,
+		UseDefault:    entity.UseDefault,
+		Configuration: entity.Configuration,
+		DeletedAt:     entity.DeletedAt,
+	}
 }
