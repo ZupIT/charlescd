@@ -18,6 +18,7 @@ package io.charlescd.moove.legacy.moove.service
 
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.representation.UserRepresentation
+import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
@@ -191,5 +192,19 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         1 * keycloakServiceLegacy.getEmailByToken(authorization) >> email
         1 * repository.findByEmail(email) >> Optional.empty()
         thrown(NotFoundExceptionLegacy)
+    }
+
+    def "should reset user by email"() {
+        given:
+        final email = "teste@zup.com.br"
+        final password = "teste@Teste123!"
+        final request = new ResetPasswordRequest(password)
+
+        when:
+        service.resetPassword(email, request)
+
+        then:
+        1 * keycloackService.resetPassword(email, password)
+        notThrown()
     }
 }
