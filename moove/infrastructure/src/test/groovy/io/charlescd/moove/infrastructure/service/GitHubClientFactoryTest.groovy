@@ -45,10 +45,42 @@ class GitHubClientFactoryTest extends Specification {
 
     }
 
+    def "should return GitHub client with credentials set (user and password) without address"() {
+
+        given:
+        def credentials = new GitCredentials("",
+                "username", "password", null, GitServiceProvider.GITHUB
+        )
+
+        when:
+        def client = this.gitHubClientFactory.buildGitClient(credentials)
+
+        then:
+        assert client != null
+        assert client.user == credentials.username
+
+    }
+
     def "should return GitHub client with credentials set (OAuth2Token)"() {
 
         given:
         def credentials = new GitCredentials("https://github.com",
+                null, null, "token", GitServiceProvider.GITHUB
+        )
+
+        when:
+        def client = this.gitHubClientFactory.buildGitClient(credentials)
+
+        then:
+        assert client != null
+        assert client.user == null
+
+    }
+
+    def "should return GitHub client with credentials set (OAuth2Token) without address"() {
+
+        given:
+        def credentials = new GitCredentials("",
                 null, null, "token", GitServiceProvider.GITHUB
         )
 

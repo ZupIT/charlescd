@@ -133,6 +133,7 @@ class CredentialConfigurationService(
             is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest)
             is CreateGCPRegistryConfigurationRequest -> buildGCPRegistryRequest(createRegistryConfigRequest)
             is CreateDockerHubRegistryConfigurationRequest -> buildDockerHubRegistryRequest(createRegistryConfigRequest)
+            is CreateHarborRegistryConfigurationRequest -> buildHarborRegistryRequest(createRegistryConfigRequest)
             else -> throw IllegalArgumentException("Provider type not supported")
         }
     }
@@ -180,6 +181,19 @@ class CredentialConfigurationService(
             address = createRegistryConfigRequest.address,
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
             organization = createRegistryConfigRequest.username,
+            username = createRegistryConfigRequest.username,
+            password = createRegistryConfigRequest.password,
+            authorId = createRegistryConfigRequest.authorId
+        )
+    }
+
+    private fun buildHarborRegistryRequest(
+        createRegistryConfigRequest: CreateHarborRegistryConfigurationRequest
+    ): CreateVillagerRegistryConfigurationRequest {
+        return CreateVillagerRegistryConfigurationRequest(
+            name = createRegistryConfigRequest.name,
+            address = createRegistryConfigRequest.address,
+            provider = CreateVillagerRegistryConfigurationProvider.HARBOR,
             username = createRegistryConfigRequest.username,
             password = createRegistryConfigRequest.password,
             authorId = createRegistryConfigRequest.authorId
