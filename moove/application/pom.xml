@@ -56,14 +56,6 @@
             <groupId>io.charlescd.moove</groupId>
             <artifactId>infrastructure</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.charlescd.moove</groupId>
-            <artifactId>infrastructure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.charlescd.moove</groupId>
-            <artifactId>infrastructure</artifactId>
-        </dependency>
     </dependencies>
 
 </project>
