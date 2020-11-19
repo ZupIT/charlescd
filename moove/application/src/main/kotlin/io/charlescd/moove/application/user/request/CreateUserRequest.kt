@@ -12,7 +12,7 @@ data class CreateUserRequest(
 
     val password: String?,
 
-    @field:Email(regexp = ".+@.+\\..+", message = "Invalid email")
+    @field:NotBlank
     val email: String,
 
     val photoUrl: String?,
