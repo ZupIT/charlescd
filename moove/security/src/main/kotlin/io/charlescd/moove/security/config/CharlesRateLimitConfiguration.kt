@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class CharlesRateLimitConfiguration(rateLimitService: RateLimitService) : WebMvcConfigurer {
     private val interceptor: RateLimitInterceptor = RateLimitInterceptor(rateLimitService)
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(interceptor!!)
+        registry.addInterceptor(interceptor)
             .addPathPatterns("/v2/**")
     }
 }

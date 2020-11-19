@@ -65,23 +65,6 @@ class RateLimitInterceptorTest extends Specification {
         assert !res
     }
 
-    def "should not execute the request without token"() {
-        given:
-        def request = new MockHttpServletRequest()
-        request.addHeader("Authorization", "")
-        request.addHeader("x-workspace-id", "b659094f-999c-4d24-90b3-26c5e173b7ec")
-        request.setRequestURI("/api/circle/123456789")
-        request.setMethod(HttpMethod.POST.name())
-
-        def response = new MockHttpServletResponse()
-
-        when:
-        rateLimitInterceptor.preHandle(request, response, _)
-
-        then:
-        def exception = thrown(VerificationException)
-    }
-
     def dummyToken() {
         return "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIwMzc4YmVjZS1lYzU4LTQ2MTAtODc2Ny0zYWJhZDE5NjY4" +
                 "OGQiLCJleHAiOjE1ODgxOTI0MzEsIm5iZiI6MCwiaWF0IjoxNTgxMzU1MzE1LCJpc3MiOiJodHRwczovL2Rhcndpbi1rZXljbG9" +

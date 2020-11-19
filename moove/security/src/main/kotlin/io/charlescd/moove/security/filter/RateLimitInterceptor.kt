@@ -6,8 +6,6 @@ import io.github.bucket4j.ConsumptionProbe
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import org.keycloak.TokenVerifier
-import org.keycloak.representations.AccessToken
 import org.springframework.http.HttpStatus
 import org.springframework.web.servlet.HandlerInterceptor
 
@@ -22,7 +20,6 @@ class RateLimitInterceptor(private val rateLimitService: RateLimitService) : Han
     @Throws(Exception::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val apiKey: String = request.getHeader(AUTHORIZATION)
-        verifyAccessToken(apiKey)
         val tokenBucket: Bucket = rateLimitService.resolveBucket(apiKey)
         val probe: ConsumptionProbe = tokenBucket.tryConsumeAndReturnRemaining(1)
         return if (probe.isConsumed) {
@@ -40,12 +37,5 @@ class RateLimitInterceptor(private val rateLimitService: RateLimitService) : Han
         (response as HttpServletResponse).status = httpStatus.value()
         response.writer.print(message)
         response.writer.flush()
-    }
-
-    private fun verifyAccessToken(authorization: String?) {
-        authorization?.let {
-            val token = authorization.substringAfter("Bearer").trim()
-            TokenVerifier.create(token, AccessToken::class.java).token.isActive
-        }
     }
 }
