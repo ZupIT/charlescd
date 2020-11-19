@@ -18,6 +18,6 @@ package io.charlescd.villager.infrastructure.integration.registry;
 
 public enum RegistryType {
 
-    AWS, AZURE, GCP, DOCKER_HUB, UNSUPPORTED
+    AWS, AZURE, GCP, DOCKER_HUB, HARBOR, UNSUPPORTED
 
 }
