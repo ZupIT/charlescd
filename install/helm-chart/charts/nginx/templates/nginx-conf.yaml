@@ -117,6 +117,22 @@ data:
             {{- end}}
             {{ if .Values.compass.enabled}}
             location /compass/ {
+            
+                access_by_lua '
+                    local opts = {
+                    discovery = "{{ .Values.idm.endpoint }}",
+                    token_signing_alg_values_expected = { "{{ .Values.idm.alg }}" },
+                    ssl_verify = "no"
+                }
+                -- call bearer_jwt_verify for OAuth 2.0 JWT validation
+                local res, err = require("resty.openidc").bearer_jwt_verify(opts)
+                if err or not res then
+                    ngx.status = 401
+                    ngx.say(err and err or "no access_token provided")
+                    ngx.exit(ngx.HTTP_UNAUTHORIZED)
+                end
+                ';
+            
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-compass:8080/;
                 if ($request_method = 'OPTIONS') {
