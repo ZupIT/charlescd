@@ -24,25 +24,20 @@ import { Repository } from '../../../core/integrations/interfaces/repository.int
 
 export class Helm implements Manifest {
 
-  constructor(private repository: Repository) { }
+  private static readonly TMP_DIR = '/home/leandro'
+
+  constructor(private repository: Repository) {}
 
   public async generate(config: ManifestConfig): Promise<string> {
     const customValues = this.toStringArray(this.extractCustomValues(config))
     const [template, values] = await this.repository.getTemplateAndValueFor(config.componentName)
-    let templateTmpFile = null
-    let valuesTmpFile = null
+    const tmpFiles: string[] = []
     try {
-      templateTmpFile = await this.saveTmpFile(template)
-      valuesTmpFile = await this.saveTmpFile(values)
-      return await this.package(templateTmpFile, valuesTmpFile, customValues)
+      tmpFiles.push(await this.saveTmpFile(template))
+      tmpFiles.push(await this.saveTmpFile(values))
+      return await this.package(tmpFiles[0], tmpFiles[1], customValues)
     } finally {
-      if(templateTmpFile) {
-        this.cleanUp(templateTmpFile)
-      }
-
-      if(valuesTmpFile) {
-        this.cleanUp(valuesTmpFile)
-      }
+      tmpFiles.forEach(file => this.cleanUp(file))
     }
   }
 
@@ -60,14 +55,8 @@ export class Helm implements Manifest {
       let result = '', err = ''
 
       const helmProcess = spawn('helm', args)
-
-      helmProcess.stdout.on('data', data => {
-        result += data;
-      });
-
-      helmProcess.stderr.on('data', data => {
-        err += data;
-      });
+      helmProcess.stdout.on('data', data => result += data);
+      helmProcess.stderr.on('data', data => err += data);
 
       helmProcess.on('close', (code) => {
         if (err) {
@@ -87,7 +76,7 @@ export class Helm implements Manifest {
   }
 
   private async saveTmpFile(base64File: string): Promise<string> {
-    const fileName = `/tmp/${uuid.v4()}`
+    const fileName = `${Helm.TMP_DIR}/${uuid.v4()}`
     await fs.writeFile(fileName, base64File, { encoding: 'base64' })
     return fileName
   }
