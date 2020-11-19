@@ -26,6 +26,7 @@ import io.charlescd.moove.commons.integration.git.mapper.GitServiceMapperLegacy
 import io.charlescd.moove.commons.integration.git.service.GitServiceLegacy
 import io.charlescd.moove.commons.request.comment.AddCommentRequest
 import io.charlescd.moove.commons.request.member.AddMemberRequest
+import io.charlescd.moove.legacy.moove.request.card.BranchNameValidations
 import io.charlescd.moove.legacy.moove.request.card.CreateCardRequest
 import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
 import io.charlescd.moove.legacy.moove.request.git.FindBranchParam
@@ -914,6 +915,15 @@ class CardServiceUnitTest {
     }
 
     @Test
+    fun `should return error with invalid branch names`() {
+        invalidBranchNames().forEach {
+            assertFailsWith<IllegalArgumentException> {
+                BranchNameValidations().validateBranchName(it)
+            }
+        }
+    }
+
+    @Test
     fun `should archive software card`() {
         val card = buildSoftwareCard()
 
@@ -1032,4 +1042,27 @@ class CardServiceUnitTest {
             emptyList(),
             workspaceId
         )
+
+    companion object {
+        fun invalidBranchNames() = listOf(
+            "feature/.test",
+            "feature/test.lock",
+            "feature..test",
+            "feature test",
+            "feature~test",
+            "feature^test",
+            "feature:test",
+            "feature?test",
+            "feature*test",
+            "feature[test",
+            "/feature/test",
+            "feature/test/",
+            "feature//test",
+            "feature/test.",
+            "feature@{test",
+            "@",
+            "feature\\test",
+            "-feature-test"
+        )
+    }
 }
