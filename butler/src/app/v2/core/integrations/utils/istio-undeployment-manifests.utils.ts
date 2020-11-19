@@ -88,20 +88,15 @@ const IstioUndeploymentManifestsUtils = {
       }
     }
   },
+
   getActiveComponentsSubsets: (circleId: string, activeByName: Component[]): Subset[] => {
     const subsets: Subset[] = []
-
     activeByName.forEach(component => {
-      const activeCircleId = component.deployment?.circleId
-      if (DeploymentUtils.isDistinctAndNotDefault(component, circleId)) {
+      const activeCircleId = component.deployment.circleId
+      if (DeploymentUtils.isDistinctCircle(component, circleId)) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
-
-    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && component.deployment.defaultCircle)
-    if (defaultComponent && defaultComponent.deployment ) {
-      subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(defaultComponent, defaultComponent.deployment.circleId))
-    }
     return subsets
   },
 
