@@ -30,6 +30,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
+    - name: Setup timezone
+      uses: zcong1993/setup-timezone@master
+      with:
+        timezone: America/Sao_Paulo
+
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
@@ -53,3 +58,9 @@ jobs:
       with:
         name: unit-test-coverage
         path: ./butler/coverage/lcov-report/
+    - name: Horusec Security
+      working-directory: ./butler
+      run: |
+        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+        horusec start -p ./
+        

@@ -1,6 +1,7 @@
-import { Metric, ChartData } from "../types";
+import { ActionForm } from "../AddAction";
+import { Metric, Action, ChartData, ActionType } from "../types";
 
-export const MetricsGroupChartData = {
+export const metricsGroupChartData = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   metric: "test 12",
   result: [
@@ -30,23 +31,53 @@ export const metricsData: Metric = {
   metric: 'metric xyz'
 };
 
-export const MetricsGroupData = [{
+export const actionData: Action = {
+  id: '1action',
+  nickname: 'action',
+  status: 'SUCCESS',
+  triggeredAt: '10/08/2015 12:35',
+  actionType: 'Circle promotion'
+};
+
+export const actionForm = {
+  actionId: '1',
+  nickname: 'foobar',
+  circleId: '4'
+}
+
+export const actionType = {
+  id: '1',
+  createdAt: '2020',
+  workspaceId: '123',
+  nickname: 'foobar',
+  type: 'circledeployment',
+  description: 'description x',
+  configuration: '{ "fake": "json" }'
+}
+
+export const actionsType = [actionType];
+
+export const metricGroupItem = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   name: "test 1",
   metrics: [metricsData],
+  actions: [actionData],
   status: "ACTIVE"
-}];
+}
 
-export const MetricsGroupWithoutMetricData = [{
+export const metricsGroupData = [metricGroupItem];
+
+export const metricsGroupWithoutMetricData = [{
   id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   name: "test 1",
   metrics: [],
+  actions: [],
   status: "ACTIVE"
 }];
 
-export const OptionsValues = [
+export const optionsValues = [
   {
     "label": "1",
     "value": "1"
@@ -57,7 +88,7 @@ export const OptionsValues = [
   }
 ];
 
-export const ThresholdStatusResponse = [
+export const thresholdStatusResponse = [
   {
     icon: 'bell',
     color: 'reached',

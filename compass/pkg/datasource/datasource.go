@@ -19,7 +19,7 @@
 package datasource
 
 import (
-	"compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/internal/util"
 
 	"github.com/google/uuid"
 )
@@ -60,4 +60,21 @@ type MetricValues struct {
 type Value struct {
 	Total  float64 `json:"total"`
 	Period string  `json:"period"`
+}
+
+type Period struct {
+	Value int64
+	Unit  string
+}
+
+type ResultRequest struct {
+	DatasourceConfiguration []byte
+	Query                   string
+	Filters                 []MetricFilter
+}
+
+type QueryRequest struct {
+	ResultRequest
+	RangePeriod Period
+	Interval    Period
 }

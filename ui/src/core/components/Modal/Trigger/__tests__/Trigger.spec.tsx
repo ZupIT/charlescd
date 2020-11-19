@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Modal from 'core/components/Modal';
 
-test('render Trigger', async () => {
-  const { getByTestId } = render(
+test('render Trigger', () => {
+  render(
     <Modal.Trigger
       title="Test"
       dismissLabel="dismiss"
@@ -30,26 +31,28 @@ test('render Trigger', async () => {
     </Modal.Trigger>
   );
 
-  const element = getByTestId('modal-trigger');
-  const button = getByTestId('button-default-continue');
-  await wait(() =>   expect(element && button).toBeInTheDocument());
+  const modalElement = screen.getByTestId('modal-trigger');
+  const continueButton = screen.getByTestId('button-default-continue');
+
+  expect(modalElement).toBeInTheDocument();
+  expect(continueButton).toBeInTheDocument();
 });
 
-test('onDismiss button click', async () => {
+test('onDismiss button click', () => {
   const onDismiss = jest.fn();
-  const { getByTestId } = render(
+  render(
     <Modal.Trigger title="Test" dismissLabel="dismiss" onDismiss={onDismiss}>
         Test
     </Modal.Trigger>
   );
-  const button = getByTestId('button-default-dismiss');
-  fireEvent.click(button);
+  const button = screen.getByTestId('button-default-dismiss');
+  userEvent.click(button);
   expect(onDismiss).toHaveBeenCalled();
 });
 
-test('onContinue button click', async () => {
+test('onContinue button click', () => {
   const onContinue = jest.fn();
-  const { getByTestId } = render(
+  render(
     <Modal.Trigger title="Test"
       dismissLabel="dismiss"
       onDismiss={jest.fn()}
@@ -58,26 +61,27 @@ test('onContinue button click', async () => {
         Test
     </Modal.Trigger>
   );
-  const button = getByTestId('button-default-continue');
-  fireEvent.click(button);
+  const button = screen.getByTestId('button-default-continue');
+  userEvent.click(button);
   expect(onContinue).toHaveBeenCalled();
 });
 
-test('onClose button click', async () => {
-  const { getByTestId } = render(
+test('onClose button click', () => {
+  render(
     <Modal.Trigger
       title="Test"
       dismissLabel="dismiss"
       onDismiss={jest.fn()}
       onContinue={jest.fn()}
     >
-        Test
+      Test
     </Modal.Trigger>
   );
 
-  const element = getByTestId('modal-trigger');
-  const button = getByTestId('icon-cancel');
-  await wait(() =>   expect(element).toBeInTheDocument());
-  fireEvent.click(button);
-  await wait(() =>   expect(element).not.toBeInTheDocument());
+  const modalElement = screen.getByTestId('modal-trigger');
+  const cancelButton = screen.getByTestId('icon-cancel');
+  expect(modalElement).toBeInTheDocument();
+
+  userEvent.click(cancelButton);
+  expect(modalElement).not.toBeInTheDocument();
 });

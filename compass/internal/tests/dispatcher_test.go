@@ -19,13 +19,13 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	"compass/internal/dispatcher"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/plugin"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
@@ -44,6 +44,14 @@ type SuiteDispatcher struct {
 }
 
 func (s *SuiteDispatcher) SetupSuite() {
+	os.Setenv("ENV", "TEST")
+}
+
+func (s *SuiteDispatcher) AfterTest(_, _ string) {
+	s.DB.Close()
+}
+
+func (s *SuiteDispatcher) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
@@ -55,15 +63,8 @@ func (s *SuiteDispatcher) SetupSuite() {
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
 	s.repository = dispatcher.NewDispatcher(s.metricMain)
-}
 
-func (s *SuiteDispatcher) BeforeTest(suiteName, testName string) {
-	s.DB.Exec("DELETE FROM metric_filters")
-	s.DB.Exec("DELETE FROM metric_group_bies")
-	s.DB.Exec("DELETE FROM metrics")
-	s.DB.Exec("DELETE FROM metrics_groups")
-	s.DB.Exec("DELETE FROM data_sources")
-	s.DB.Exec("DELETE FROM metric_executions")
+	clearDatabase(s.DB)
 }
 
 func TestInitDispatcher(t *testing.T) {

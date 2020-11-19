@@ -34,47 +34,21 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     }
 
     override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, cdConfigurationId: String) {
-        when (isDefaultCircle) {
-            true -> deployInDefaultCircle(build, deployment, cdConfigurationId)
-            else -> deployInSegmentedCircle(build, deployment, cdConfigurationId)
-        }
-    }
-
-    private fun deployInSegmentedCircle(
-        build: Build,
-        deployment: Deployment,
-        cdConfigurationId: String
-    ) {
-        deployClient.deployInSegmentedCircle(
+        deployClient.deploy(
             buildDeployRequest(
                 deployment,
                 build,
                 deployment.circle.id,
-                cdConfigurationId
-            )
-        )
-    }
-
-    private fun deployInDefaultCircle(
-        build: Build,
-        deployment: Deployment,
-        cdConfigurationId: String
-    ) {
-        deployClient.deployInDefaultCircle(
-            buildDeployRequest(
-                deployment = deployment,
-                build = build,
-                cdConfigurationId = cdConfigurationId
+                cdConfigurationId,
+                isDefaultCircle
             )
         )
     }
 
     override fun undeploy(deploymentId: String, authorId: String) {
         deployClient.undeploy(
-            UndeployRequest(
-                authorId,
-                deploymentId
-            )
+            deploymentId,
+            UndeployRequest(authorId)
         )
     }
 
@@ -87,8 +61,9 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,
-        circleId: String? = null,
-        cdConfigurationId: String
+        circleId: String,
+        cdConfigurationId: String,
+        isDefault: Boolean
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
@@ -98,14 +73,13 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             description = "Deployment from Charles C.D.",
             circle = createDeployCircleRequest(circleId),
             callbackUrl = createCallbackUrl(deployment),
-            cdConfigurationId = cdConfigurationId
+            cdConfigurationId = cdConfigurationId,
+            defaultCircle = isDefault
         )
     }
 
-    private fun createDeployCircleRequest(circleId: String?): DeployCircleRequest? {
-        return circleId?.let { it ->
-            DeployCircleRequest(headerValue = it)
-        }
+    private fun createDeployCircleRequest(circleId: String): DeployCircleRequest {
+        return DeployCircleRequest(headerValue = circleId)
     }
 
     private fun buildModulesDeployRequest(build: Build): List<DeployModuleRequest> =

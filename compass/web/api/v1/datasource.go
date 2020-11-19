@@ -19,11 +19,13 @@
 package v1
 
 import (
-	"compass/internal/datasource"
-	"compass/web/api"
+	"encoding/json"
 	"errors"
-	"github.com/google/uuid"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"net/http"
+
+	"github.com/google/uuid"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -45,17 +47,40 @@ func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi 
 	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.create))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(dataSourceAPI.deleteDataSource))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics"), api.HttpValidator(dataSourceAPI.getMetrics))
+	v1.Router.POST(v1.getCompletePath(apiPath+"/test-connection"), api.HttpValidator(dataSourceAPI.testConnection))
 	return dataSourceAPI
 }
 
 func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	dataSources, dbErr := dataSourceApi.dataSourceMain.FindAllByWorkspace(workspaceId, r.URL.Query().Get("healthy"))
 	if dbErr != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("Error doing the process")})
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error doing the process")})
 		return
 	}
 
 	api.NewRestSuccess(w, http.StatusOK, dataSources)
+}
+
+type TestConnection struct {
+	PluginSrc string          `json:"pluginSrc"`
+	Data      json.RawMessage `json:"data"`
+}
+
+func (dataSourceApi DataSourceApi) testConnection(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+	var newTestConnection TestConnection
+	err := json.NewDecoder(r.Body).Decode(&newTestConnection)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	err = dataSourceApi.dataSourceMain.TestConnection(newTestConnection.PluginSrc, newTestConnection.Data)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	api.NewRestSuccess(w, http.StatusNoContent, nil)
 }
 
 func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {

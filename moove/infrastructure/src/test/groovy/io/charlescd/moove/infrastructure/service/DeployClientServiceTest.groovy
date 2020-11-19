@@ -50,8 +50,7 @@ class DeployClientServiceTest extends Specification {
         deployClientService.deploy(deployment, build, circle.isDefaultCircle(), "f9927ee7-6589-4f17-9d92-e51877aad51b")
 
         then:
-        0 * deployClient.deployInSegmentedCircle(_)
-        1 * deployClient.deployInDefaultCircle(_) >> { arguments ->
+        1 * deployClient.deploy(_) >> { arguments ->
             def deployRequest = arguments[0]
             assert deployRequest instanceof DeployRequest
 
@@ -59,7 +58,9 @@ class DeployClientServiceTest extends Specification {
             assert deployRequest.applicationName == build.workspaceId
             assert deployRequest.authorId == deployment.author.id
             assert deployRequest.description != null
-            assert deployRequest.circle == null
+            assert deployRequest.circle != null
+            assert deployRequest.circle.headerValue == "w8296aea-6ae1-44ea-bc55-0242ac13000w"
+            assert deployRequest.defaultCircle
             assert deployRequest.callbackUrl.contains('http://localhost:8080/v2/deployments/1fe2b392-726d-11ea-bc55-0242ac130003/callback')
             assert deployRequest.modules.size() == 2
 
@@ -94,8 +95,7 @@ class DeployClientServiceTest extends Specification {
         deployClientService.deploy(deployment, build, circle.isDefaultCircle(), "f9927ee7-6589-4f17-9d92-e51877aad51b")
 
         then:
-        0 * deployClient.deployInDefaultCircle(_)
-        1 * deployClient.deployInSegmentedCircle(_) >> { arguments ->
+        1 * deployClient.deploy(_) >> { arguments ->
             def deployRequest = arguments[0]
             assert deployRequest instanceof DeployRequest
 
@@ -106,6 +106,7 @@ class DeployClientServiceTest extends Specification {
 
             assert deployRequest.circle != null
             assert deployRequest.circle.headerValue == circle.id
+            assert !deployRequest.defaultCircle
             assert deployRequest.circle.removeCircle == null
 
             assert deployRequest.callbackUrl.contains('http://localhost:8080/v2/deployments/1fe2b392-726d-11ea-bc55-0242ac130003/callback')
@@ -174,17 +175,19 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def undeployRequestCompare = new UndeployRequest("author-id", deployment.id)
+        def undeployRequestCompare = new UndeployRequest("author-id")
+        def deploymentIdCompare = deployment.id
 
         when:
         deployClientService.undeploy(deployment.id, "author-id")
 
         then:
-        1 * deployClient.undeploy(_) >> { arguments ->
-            def undeployRequest = arguments[0]
+        1 * deployClient.undeploy(_, _) >> { arguments ->
+            def deploymentId = arguments[0]
+            def undeployRequest = arguments[1]
+            assert deploymentId == deploymentIdCompare
             assert undeployRequest instanceof UndeployRequest
             assert undeployRequest.authorId == undeployRequestCompare.authorId
-            assert undeployRequest.deploymentId == undeployRequestCompare.deploymentId
         }
     }
 
