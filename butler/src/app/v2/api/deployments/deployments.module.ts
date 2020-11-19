@@ -39,6 +39,7 @@ import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.use
 import { CdStrategyFactory } from '../../core/integrations/cd-strategy-factory'
 import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
 import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
+import { HelmManifest } from '../../core/manifests/helm/helm-manifest'
 
 @Module({
   imports: [
@@ -71,7 +72,8 @@ import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
     SpinnakerApiService,
     CdStrategyFactory,
     OctopipeConnector,
-    OctopipeApi
+    OctopipeApi,
+    HelmManifest
   ],
   exports: [
   ]

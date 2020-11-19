@@ -18,11 +18,14 @@ import { promises as fs } from 'fs'
 import * as uuid from 'uuid'
 import { spawn } from 'child_process'
 
+import { Injectable } from '@nestjs/common'
+
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
 import { Repository } from '../../../core/integrations/interfaces/repository.interface'
 
-export class Helm implements Manifest {
+@Injectable()
+export class HelmManifest implements Manifest {
 
   private static readonly TMP_DIR = '/tmp'
 
@@ -76,7 +79,7 @@ export class Helm implements Manifest {
   }
 
   private async saveTmpFile(base64File: string): Promise<string> {
-    const fileName = `${Helm.TMP_DIR}/${uuid.v4()}`
+    const fileName = `${HelmManifest.TMP_DIR}/${uuid.v4()}`
     await fs.writeFile(fileName, base64File, { encoding: 'base64' })
     return fileName
   }

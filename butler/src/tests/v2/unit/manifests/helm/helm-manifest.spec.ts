@@ -19,7 +19,7 @@ import * as path from 'path'
 
 import 'jest'
 
-import { Helm } from '../../../../../app/v2/core/manifests/helm/helm'
+import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
 import { Repository } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
 
@@ -49,7 +49,7 @@ describe('Generate K8s manifest by helm', () => {
       return [template, values]
     })
 
-    const helm = new Helm(mockRepository)
+    const helm = new HelmManifest(mockRepository)
     const manifest = await helm.generate(manifestConfig)
 
     const expected = fs.readFileSync(`${basePath}/manifest.yaml`, 'utf-8')
