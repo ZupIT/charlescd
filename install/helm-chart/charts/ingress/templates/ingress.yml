@@ -2,14 +2,16 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: istio
-  name: ingress
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  name: charlescd-ingress
+  namespace: charles
 spec:
   rules:
   - host: charles.info.example
     http:
       paths:
-      - path: /*
+      - path: /(.*)
         backend:
           serviceName: envoy-proxy
           servicePort: 80
