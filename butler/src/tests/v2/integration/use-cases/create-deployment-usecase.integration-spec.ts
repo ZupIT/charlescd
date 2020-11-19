@@ -10,8 +10,6 @@ import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { create } from 'domain'
-import anything = jasmine.anything
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
