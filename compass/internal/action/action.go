@@ -163,21 +163,18 @@ func (main Main) FindActionByIdAndWorkspace(id, workspaceID string) (Response, e
 	return entity.toResponse(), nil
 }
 
-func (main Main) FindActionById(id string) (Action, error) {
-	action := Action{}
-	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&action)
-	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
-		return Action{}, db.Error
+func (main Main) FindActionById(id string) (Response, error) {
+	entity := Action{}
+	row := main.db.Set("gorm:auto_preload", true).Raw(idActionQuery, id).Row()
+
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
+		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
+	if dbError != nil {
+		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", dbError, "Id = "+id)
+		return Response{}, dbError
 	}
 
-	var err error
-	action.Configuration, err = util.Decrypt(action.Configuration, "passphrasewhichneedstobe32bytes!")
-	if err != nil {
-		logger.Error(util.FindActionError, "FindActionById", err, action)
-		return Action{}, err
-	}
-	return action, nil
+	return entity.toResponse(), nil
 }
 
 func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Response, error) {
@@ -197,7 +194,6 @@ func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Response, erro
 			logger.Error(util.FindDatasourceError, "FindAllActionsByWorkspace", err, "WorkspaceId = "+workspaceID)
 			return []Response{}, err
 		}
-
 		actions = append(actions, action.toResponse())
 	}
 

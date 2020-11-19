@@ -29,7 +29,7 @@ type UseCases interface {
 	ValidateAction(action Request) []util.ErrorUtil
 	ParseAction(action io.ReadCloser) (Request, error)
 	FindActionByIdAndWorkspace(id string, workspaceID string) (Response, error)
-	FindActionById(id string) (Action, error)
+	FindActionById(id string) (Response, error)
 	FindAllActionsByWorkspace(workspaceID string) ([]Response, error)
 	SaveAction(action Request) (Response, error)
 	DeleteAction(id string) error
