@@ -3,7 +3,6 @@ package io.charlescd.moove.application.user.request
 import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
-import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
 data class CreateUserRequest(
