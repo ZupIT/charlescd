@@ -20,12 +20,14 @@ import * as path from 'path'
 import 'jest'
 
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
+import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
 import { Repository } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
 
 describe('Generate K8s manifest by helm', () => {
   const manifestConfig = {
     repo: {
+      provider: GitProvidersEnum.GITHUB,
       url: 'https://myrepo.com/test',
       token: 'my-token'
     },

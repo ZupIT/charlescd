@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import { GitProvidersEnum } from '../../../v1/core/integrations/configuration/interfaces'
+
 export interface RepoConfig {
+  provider: GitProvidersEnum,
   url: string,
   token: string
 }
