@@ -24,23 +24,22 @@ import { Repository } from '../../../../../app/v2/core/integrations/interfaces/r
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
 
 describe('Generate K8s manifest by helm', () => {
+  const manifestConfig = {
+    repo: {
+      url: 'https://myrepo.com/test',
+      token: 'my-token'
+    },
+    namespace: 'default',
+    componentName: "test",
+    imageUrl: "latest",
+    circleId: "f5d23a57-5607-4306-9993-477e1598cc2a"
+  }
 
   const mockRepository = {
     getTemplateAndValueFor: jest.fn()
   }
 
-  it('bla', async() => {
-    const manifestConfig = {
-      repo: {
-        url: 'https://myrepo.com/test',
-        token: 'my-token'
-      },
-      namespace: 'default',
-      componentName: "test",
-      imageUrl: "latest",
-      circleId: "f5d23a57-5607-4306-9993-477e1598cc2a"
-    }
-    
+  it('should generate manifest with custom values', async() => {
     const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
 
     mockRepository.getTemplateAndValueFor.mockImplementation(name => {

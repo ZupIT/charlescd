@@ -24,7 +24,7 @@ import { Repository } from '../../../core/integrations/interfaces/repository.int
 
 export class Helm implements Manifest {
 
-  private static readonly TMP_DIR = '/home/leandro'
+  private static readonly TMP_DIR = '/tmp'
 
   constructor(private repository: Repository) {}
 
