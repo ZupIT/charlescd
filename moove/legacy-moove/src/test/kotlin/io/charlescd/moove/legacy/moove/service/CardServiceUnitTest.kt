@@ -26,7 +26,6 @@ import io.charlescd.moove.commons.integration.git.mapper.GitServiceMapperLegacy
 import io.charlescd.moove.commons.integration.git.service.GitServiceLegacy
 import io.charlescd.moove.commons.request.comment.AddCommentRequest
 import io.charlescd.moove.commons.request.member.AddMemberRequest
-import io.charlescd.moove.legacy.moove.request.card.BranchNameValidations
 import io.charlescd.moove.legacy.moove.request.card.CreateCardRequest
 import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
 import io.charlescd.moove.legacy.moove.request.git.FindBranchParam
