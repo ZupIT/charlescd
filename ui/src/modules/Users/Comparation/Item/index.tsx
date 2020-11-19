@@ -65,19 +65,19 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   }, [user, email, findByEmail]);
 
   useEffect(() => {
-    onChange(delUserResponse);
-    if (delUserResponse === 'Deleted') {
-      delParam('user', routes.usersComparation, history, currentUser.email);
-    }
-  });
-
-  useEffect(() => {
     if (status === 'resolved') {
       findByEmail(email);
     } else if (status === 'rejected') {
       setCurrentUser(user);
     }
-  }, [status, email, findByEmail]);
+  }, [user, status, email, findByEmail]);
+
+  useEffect(() => {
+    onChange(delUserResponse);
+    if (delUserResponse === 'Deleted') {
+      delParam('user', routes.usersComparation, history, currentUser.email);
+    }
+  });
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
