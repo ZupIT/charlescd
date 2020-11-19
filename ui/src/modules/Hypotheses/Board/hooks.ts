@@ -136,7 +136,7 @@ export const useAddModule = (): AddModuleProps => {
     if (error) {
       dispatch(
         toogleNotification({
-          text: `[${error.status}] This module could not be tied.`,
+          text: `${error.statusText}`,
           status: 'error'
         })
       );

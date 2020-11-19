@@ -929,7 +929,7 @@ class CardServiceUnitTest {
     @Test
     fun `shouldn't create card with invalid branch names`() {
         invalidBranchNames().forEach {
-            val e = assertFailsWith<IllegalArgumentException> {
+            assertFailsWith<IllegalArgumentException> {
                 cardService.create(buildCreateCardRequest(it), workspaceId)
             }
         }
@@ -938,7 +938,7 @@ class CardServiceUnitTest {
     @Test
     fun `shouldn't update card with invalid branch names`() {
         invalidBranchNames().forEach {
-            val e = assertFailsWith<IllegalArgumentException> {
+            assertFailsWith<IllegalArgumentException> {
                 cardService.update("id", buildUpdateCardRequest(it), workspaceId)
             }
         }
