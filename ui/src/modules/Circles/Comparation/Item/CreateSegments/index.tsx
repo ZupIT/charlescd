@@ -26,8 +26,9 @@ import { useSaveCircleManually } from 'modules/Circles/hooks';
 import { getProfileByKey } from 'core/utils/profile';
 import Styled from './styled';
 import { getWarningText, WarningMessage } from './helpers';
+import Percentage from './Percentage';
 
-type SegmentType = 'CREATE_MANUALLY' | 'IMPORT_CSV';
+type SegmentType = 'CREATE_MANUALLY' | 'IMPORT_CSV' | 'PERCENTAGE';
 
 interface Props {
   onGoBack: Function;
@@ -45,6 +46,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   const [rules, setRules] = useState<Rules>(circle?.rules);
   const isSegmentManually = activeSegment === 'CREATE_MANUALLY';
   const isSegmentImportCSV = activeSegment === 'IMPORT_CSV';
+  const isPercentage = activeSegment === 'PERCENTAGE';
 
   useEffect(() => {
     if (isEditing && circle?.matcherType === 'REGULAR') {
@@ -93,6 +95,13 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
       : setActiveSegment('IMPORT_CSV');
   };
 
+  const handleClickPercentage = () => {
+    // isEditing
+    //   ? setWarningMessage('IMPORT_CSV')
+    //   : setActiveSegment('IMPORT_CSV');
+    setActiveSegment('PERCENTAGE');
+  };
+
   const renderWarning = () => (
     <Modal.Trigger
       title="Attention!"
@@ -112,14 +121,17 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
         <Icon name="arrow-left" color="dark" onClick={() => onGoBack()} />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 color="light">Create Segments</Text.h2>
+        <Text.h2 weight="bold" color="light">
+          Create Segments
+        </Text.h2>
         <Styled.HelpText color="dark">
           You can create a segment manually or importing a .CSV file to link
-          multiple values to a key.
+          multiple values to a key, or segment by percentage.
         </Styled.HelpText>
         <Styled.Actions>
           <Styled.ButtonIconRounded
-            name="edit"
+            name="manually"
+            icon="manually"
             color="dark"
             onClick={handleClickCreateManually}
             isActive={isSegmentManually}
@@ -128,11 +140,21 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
           </Styled.ButtonIconRounded>
           <Styled.ButtonIconRounded
             name="upload"
+            icon="upload"
             color="dark"
             onClick={handleClickImportCSV}
             isActive={isSegmentImportCSV}
           >
             Import CSV
+          </Styled.ButtonIconRounded>
+          <Styled.ButtonIconRounded
+            name="percentage"
+            icon="percentage"
+            color="dark"
+            onClick={handleClickPercentage}
+            isActive={isPercentage}
+          >
+            Percentage
           </Styled.ButtonIconRounded>
         </Styled.Actions>
         <Styled.Content>
@@ -149,6 +171,13 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
               viewMode={false}
               onSubmit={saveCircleManually}
               isSaving={isSaving}
+            />
+          )}
+          {isPercentage && (
+            <Percentage
+              id={id}
+              name={circle?.name}
+              onSaveCircle={onSaveCircle}
             />
           )}
         </Styled.Content>

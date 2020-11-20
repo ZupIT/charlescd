@@ -21,6 +21,8 @@ import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
 import { Input as InputComponent } from 'core/components/Form';
 import TextComponent from 'core/components/Text';
 import LayerComponent from 'core/components/Layer';
+import PopoverComponent from 'core/components/Popover';
+import Text from 'core/components/Text';
 
 interface ButtonIconProps {
   isActive: boolean;
@@ -30,6 +32,10 @@ interface ButtonDefaultProps {
   isValid: boolean;
 }
 
+interface SliderValueProps {
+  valueIsValid: boolean;
+}
+
 const HelpText = styled(TextComponent.h5)`
   margin-top: 20px;
   margin-bottom: 10px;
@@ -37,18 +43,15 @@ const HelpText = styled(TextComponent.h5)`
 
 const Actions = styled.div`
   display: flex;
-
-  button:first-child {
-    margin-right: 15px;
-  }
 `;
 
 const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
   height: 40px;
   padding: 13px 25px;
+  margin-right: 15px;
 
   span {
-    font-weight: normal;
+    font-weight: bold;
     font-size: ${HEADINGS_FONT_SIZE.h6};
   }
 
@@ -90,6 +93,87 @@ const Layer = styled(LayerComponent)`
   margin-left: 40px;
 `;
 
+const FieldPopover = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const Popover = styled(PopoverComponent)`
+  margin-left: 10px;
+`;
+
+const AvailableContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  border-radius: 4px;
+  width: 90%;
+  background-color: ${({ theme }) => theme.modal.default.background};
+`;
+
+const CirclesListContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  flex-direction: column;
+`;
+
+const CirclesListButton = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+
+  > span {
+    margin-left: 10px;
+  }
+`;
+
+const SliderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  width: 80%;
+`;
+
+const Slider = styled.input`
+  height: 2px;
+  width: 70%;
+  -webkit-appearance: none;
+  background: ${({ theme }) => theme.slider.backgroundColor};
+  outline: none;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+
+  ::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    background: ${({ theme }) => theme.slider.thumbColor};
+    cursor: pointer;
+  }
+`;
+
+const SliderValue = styled(Text.h4)<SliderValueProps>`
+  border-bottom: ${({ theme }) => `1px solid ${theme.slider.valueBorderColor}`};
+  padding-bottom: 3px;
+  width: 40px;
+  text-align: center;
+  color: ${({ valueIsValid, theme }) =>
+    valueIsValid
+      ? theme.slider.valueColor.active
+      : theme.slider.valueColor.inactive};
+`;
+
 export default {
   HelpText,
   Layer,
@@ -98,5 +182,13 @@ export default {
   ButtonDefault,
   Content,
   InputWrapper,
-  ButtonIconRounded
+  ButtonIconRounded,
+  FieldPopover,
+  Popover,
+  AvailableContainer,
+  CirclesListContainer,
+  CirclesListButton,
+  Slider,
+  SliderContainer,
+  SliderValue
 };
