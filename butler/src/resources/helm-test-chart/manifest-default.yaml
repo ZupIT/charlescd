@@ -7,7 +7,7 @@ metadata:
     app: test
     service: test
   name: test
-  namespace: my-namespace
+  namespace: default
 spec:
   ports:
     - name: http
@@ -23,7 +23,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: RELEASE-NAME
-  namespace: my-namespace
+  namespace: default
   labels:
     app: test
     version: test

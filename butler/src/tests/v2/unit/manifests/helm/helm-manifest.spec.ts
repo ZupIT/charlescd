@@ -25,15 +25,16 @@ import { Repository } from '../../../../../app/v2/core/integrations/interfaces/r
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
 
 describe('Generate K8s manifest by helm', () => {
+  const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
   const manifestConfig = {
     repo: {
       provider: GitProvidersEnum.GITHUB,
       url: 'https://myrepo.com/test',
       token: 'my-token'
     },
-    namespace: 'default',
     componentName: "test",
     imageUrl: "latest",
+    namespace: 'my-namespace',
     circleId: "f5d23a57-5607-4306-9993-477e1598cc2a"
   }
 
@@ -41,16 +42,32 @@ describe('Generate K8s manifest by helm', () => {
     getTemplateAndValueFor: jest.fn()
   }
 
+  mockRepository.getTemplateAndValueFor.mockImplementation(name => {
+    const template = fs.readFileSync(`${basePath}/${name}-darwin.tgz`, { encoding: 'base64' })
+    const values = fs.readFileSync(`${basePath}/${name}.yaml`, { encoding: 'base64' })
+
+    return [template, values]
+  })
+
+  it('should generate manifest with default values', async() => {
+    const manifestConfig = {
+      repo: {
+        provider: GitProvidersEnum.GITHUB,
+        url: 'https://myrepo.com/test',
+        token: 'my-token'
+      },
+      componentName: "test",
+      imageUrl: "latest"
+    }
+    const helm = new HelmManifest(mockRepository)
+    const manifest = await helm.generate(manifestConfig)
+
+    const expected = fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8')
+
+    expect(manifest).toEqual(expected)
+  })
+
   it('should generate manifest with custom values', async() => {
-    const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
-
-    mockRepository.getTemplateAndValueFor.mockImplementation(name => {
-      const template = fs.readFileSync(`${basePath}/${name}-darwin.tgz`, { encoding: 'base64' })
-      const values = fs.readFileSync(`${basePath}/${name}.yaml`, { encoding: 'base64' })
-
-      return [template, values]
-    })
-
     const helm = new HelmManifest(mockRepository)
     const manifest = await helm.generate(manifestConfig)
 

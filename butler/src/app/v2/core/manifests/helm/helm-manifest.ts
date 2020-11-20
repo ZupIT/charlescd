@@ -17,6 +17,8 @@
 import { promises as fs } from 'fs'
 import * as uuid from 'uuid'
 import { spawn } from 'child_process'
+import * as os from 'os'
+import * as path from 'path'
 
 import { Injectable } from '@nestjs/common'
 
@@ -26,8 +28,6 @@ import { Repository } from '../../../core/integrations/interfaces/repository.int
 
 @Injectable()
 export class HelmManifest implements Manifest {
-
-  private static readonly TMP_DIR = '/tmp'
 
   constructor(private repository: Repository) {}
 
@@ -44,7 +44,7 @@ export class HelmManifest implements Manifest {
   }
 
   private async saveTmpFile(base64File: string): Promise<string> {
-    const fileName = `${HelmManifest.TMP_DIR}/${uuid.v4()}`
+    const fileName = `${os.tmpdir()}${path.sep}${uuid.v4()}`
     await fs.writeFile(fileName, base64File, { encoding: 'base64' })
     return fileName
   }
@@ -63,8 +63,8 @@ export class HelmManifest implements Manifest {
       let result = '', err = ''
 
       const helmProcess = spawn('helm', args)
-      helmProcess.stdout.on('data', data => result += data);
-      helmProcess.stderr.on('data', data => err += data);
+      helmProcess.stdout.on('data', data => result += data)
+      helmProcess.stderr.on('data', data => err += data)
 
       helmProcess.on('close', (code) => {
         if (err) {
@@ -74,8 +74,8 @@ export class HelmManifest implements Manifest {
           })
           return
         }
-        resolve(result);
-      });
+        resolve(result)
+      })
     })
   }
 
@@ -90,7 +90,7 @@ export class HelmManifest implements Manifest {
       command.push('--set')
       command.push(overrideValues)
     }
-    return command;
+    return command
   }
 
   private extractCustomValues(config: ManifestConfig): any {
