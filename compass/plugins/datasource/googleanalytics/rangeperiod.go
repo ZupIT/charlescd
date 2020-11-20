@@ -19,8 +19,8 @@
 package main
 
 import (
-	"compass/pkg/datasource"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"time"
 
 	"google.golang.org/api/analyticsreporting/v4"

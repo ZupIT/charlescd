@@ -22,17 +22,15 @@ import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import {
-  Datasource,
-  Plugin,
-  PluginDatasource,
-} from './interfaces';
+import { Datasource, Plugin, PluginDatasource } from './interfaces';
 import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
-import { useDatasource, usePlugins, useTestConnection } from './hooks';
+import { useDatasource, usePlugins } from './hooks';
 import Styled from './styled';
 import { find, map } from 'lodash';
-import ConnectionStatus from './ConnectionStatus';
+import { testDataSourceConnection } from 'core/providers/datasources';
+import { useTestConnection } from 'core/hooks/useTestConnection';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
@@ -40,7 +38,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
     save: testConnection
-  } = useTestConnection();
+  } = useTestConnection(testDataSourceConnection);
   const [datasourceHealth, setDatasourceHealth] = useState(false);
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins();
@@ -70,14 +68,13 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const handleTestConnection = () => {
-    const { data } = getValues({ nest: true });
+    const { data } = getValues();
 
     testConnection({
       pluginSrc: plugin.src,
       data
     });
   };
-
 
   const renderFields = () => (
     <>
@@ -122,9 +119,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       )}
 
       {!loadingConnectionResponse && testConnectionResponse && (
-        <ConnectionStatus
-          status={testConnectionResponse as number}
-        />
+        <ConnectionStatus message={testConnectionResponse} />
       )}
       <Styled.TestConnectionButton
         id="test-connection"

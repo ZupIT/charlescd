@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
@@ -51,7 +67,7 @@ describe('DeploymentCleanupHandler', () => {
   it('does not allow simultaneous deployment of same component on a circle when there is an execution with status CREATED', async() => {
     const circleId = '333365f8-bb29-49f7-bf2b-3ec956a71583'
     const componentName = 'component-name'
-
+    const defaultCircle = false
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: circleId,
@@ -66,11 +82,12 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: defaultCircle
     }
 
     await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
-    const createDeploymentDto = createDto(componentName, circleId)
+    const createDeploymentDto = createDto(componentName, circleId, defaultCircle)
     const execution = await manager.findOneOrFail(Execution)
 
     await expect(
@@ -81,9 +98,9 @@ describe('DeploymentCleanupHandler', () => {
 
 
   it('does not allow simultaneous deployment of same component on a default deployment when there is an execution with status CREATED', async() => {
-    const circleId = null
+    const circleId = 'ac137b62-37b6-4e76-b474-9c43bac00711'
     const componentName = 'component-name'
-
+    const defaultCircle = true
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: circleId,
@@ -98,85 +115,87 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: defaultCircle
     }
 
     await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
-    const createDeploymentDto = createDto(componentName, null)
+    const createDeploymentDto = createDto(componentName, circleId, defaultCircle)
     const execution = await manager.findOneOrFail(Execution)
     await expect(
       pipe.transform(createDeploymentDto)
     ).rejects.toThrow(new BadRequestException(`Simultaneous deployments are not allowed for a given circle. The following executions are not finished: ${execution.id}`))
-
   })
-})
 
 
-const createDto = (componentName: string, circleId: string | null) => {
-  const components = new CreateComponentRequestDto(
-    '777765f8-bb29-49f7-bf2b-3ec956a71583',
-    'image.url',
-    'imageTag',
-    componentName,
-    undefined,
-    undefined
-  )
-
-  const modules = new CreateModuleDeploymentDto(
-    'acf45587-3684-476a-8e6f-b479820a8cd5',
-    'https://some-helm.repo',
-    [components]
-  )
-
-  const circle = circleId ? new CreateCircleDeploymentDto(circleId) : null
-
-  const createDeploymentDto = new CreateDeploymentRequestDto(
-    '28a3f957-3702-4c4e-8d92-015939f39cf2',
-    'http://localhost:8883/deploy/notifications/deployment',
-    '77777777-3702-4c4e-8d92-015939f39cf2',
-    '580a7726-a274-4fc3-9ec1-44e3563d58af',
-    circle,
-    DeploymentStatusEnum.CREATED,
-    [modules]
-  )
-
-  return createDeploymentDto
-}
-
-const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manager: any, status: DeploymentStatusEnum): Promise<DeploymentEntity> => {
-  const components = params.components.map((c: any) => {
-    const component = new ComponentEntity(
-      c.helmRepository,
-      c.buildImageTag,
-      c.buildImageUrl,
-      c.componentName,
-      c.componentId,
-      c.hostValue,
-      c.gatewayName
+  const createDto = (componentName: string, circleId: string, defaultCircle: boolean) => {
+    const components = new CreateComponentRequestDto(
+      '777765f8-bb29-49f7-bf2b-3ec956a71583',
+      'image.url',
+      'imageTag',
+      componentName,
+      undefined,
+      undefined
     )
-    component.running = true
-    return component
-  })
 
-  const configEntity = new CdConfigurationEntity(
-    CdTypeEnum.SPINNAKER,
-    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
-    'config-name',
-    'authorId',
-    'workspaceId'
-  )
-  const cdConfiguration = await fixtureUtilsService.createEncryptedConfiguration(configEntity)
+    const modules = new CreateModuleDeploymentDto(
+      'acf45587-3684-476a-8e6f-b479820a8cd5',
+      'https://some-helm.repo',
+      [components]
+    )
 
-  const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(
-    params.deploymentId,
-    params.authorId,
-    params.circle,
-    cdConfiguration,
-    params.callbackUrl,
-    components
-  ))
+    const circle = new CreateCircleDeploymentDto(circleId)
 
-  await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, null, status))
+    const createDeploymentDto = new CreateDeploymentRequestDto(
+      '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      'http://localhost:8883/deploy/notifications/deployment',
+      '77777777-3702-4c4e-8d92-015939f39cf2',
+      '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      circle,
+      DeploymentStatusEnum.CREATED,
+      [modules],
+      defaultCircle
+    )
 
-  return deployment
-}
+    return createDeploymentDto
+  }
+
+  const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manager: any, status: DeploymentStatusEnum): Promise<DeploymentEntity> => {
+    const components = params.components.map((c: any) => {
+      const component = new ComponentEntity(
+        c.helmRepository,
+        c.buildImageTag,
+        c.buildImageUrl,
+        c.componentName,
+        c.componentId,
+        c.hostValue,
+        c.gatewayName
+      )
+      component.running = true
+      return component
+    })
+
+    const configEntity = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    const cdConfiguration = await fixtureUtilsService.createEncryptedConfiguration(configEntity)
+
+    const deployment: DeploymentEntity = await manager.save(new DeploymentEntity(
+      params.deploymentId,
+      params.authorId,
+      params.circle,
+      cdConfiguration,
+      params.callbackUrl,
+      components,
+      params.defaultCircle
+    ))
+
+    await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, null, status))
+
+    return deployment
+  }
+})

@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { FieldValues, useForm, FormContext } from 'react-hook-form';
+import { FieldValues, useForm, FormProvider } from 'react-hook-form';
 import TabPanel from 'core/components/TabPanel';
 import ContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
@@ -82,9 +82,9 @@ const CircleMatcher = () => {
           </ContentIcon>
           <Styled.Content>
             {renderJsonEditor()}
-            <FormContext {...formMethods}>
+            <FormProvider {...formMethods}>
               <ParametersForm onSubmit={onSubmit} />
-            </FormContext>
+            </FormProvider>
           </Styled.Content>
         </Styled.Layer>
         <ResultList circles={response} isLoading={isLoading} />

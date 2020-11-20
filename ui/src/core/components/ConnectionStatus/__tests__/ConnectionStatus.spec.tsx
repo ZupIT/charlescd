@@ -14,29 +14,37 @@
  * limitations under the License.
  */
 
+import { CONNECTION_SUCCESS } from 'core/hooks/useTestConnection';
 import React from 'react';
-import { render, screen, wait } from 'unit-test/testUtils';
-import ConnectionStatus from '../ConnectionStatus';
+import { render, screen } from 'unit-test/testUtils';
+import ConnectionStatus from '../';
 
 test('render Connection status default component', async () => {
   render(
-    <ConnectionStatus status={204} />
+    <ConnectionStatus message={CONNECTION_SUCCESS} />
   );
-
-  await wait();
 
   expect(screen.getByTestId('connection-success')).toBeInTheDocument();
   expect(screen.getByText('Successful connection with the metrics provider.')).toBeInTheDocument();
 });
 
-test('render Connection fail status component', async () => {
+test('render Connection fail status component with default error message', async () => {
   render(
-    <ConnectionStatus status={500} />
+    <ConnectionStatus message="" />
   );
-
-  await wait();
 
   expect(screen.getByTestId('connection-error')).toBeInTheDocument();
   expect(screen.getByText('Connection to metric provider failed.')).toBeInTheDocument();
+});
+
+test('render Connection fail status component with dynamic error message', async () => {
+  const errorMessage = '401 not authorized';
+
+  render(
+    <ConnectionStatus message={errorMessage} />
+  );
+
+  expect(screen.getByTestId('connection-error')).toBeInTheDocument();
+  expect(screen.getByText(errorMessage)).toBeInTheDocument();
 });
 

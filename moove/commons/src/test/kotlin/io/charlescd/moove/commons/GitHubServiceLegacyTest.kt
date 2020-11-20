@@ -48,9 +48,24 @@ class GitHubServiceLegacyTest {
     private val connection = mockkClass(HttpURLConnection::class)
 
     @Test
-    fun `should create a new branch`() {
+    fun `should create a new branch with master as base`() {
         val newBranchName = "newBranch"
         val branchesResourceResponse = createReference("master")
+        val createBranchResourceResponse = createReference(newBranchName)
+
+        every { gitHubClientFactory.buildGitClient(gitCredentials) } returns gitClient
+        every { gitClient.get(any()) } returns GitHubResponse(connection, branchesResourceResponse)
+        every { gitClient.post<Reference>(any(), any(), Reference::class.java) } returns createBranchResourceResponse
+
+        val createdBranch = gitHubService.createBranch(gitCredentials, repository, newBranchName)
+
+        Assert.assertEquals(newBranchName, createdBranch.get())
+    }
+
+    @Test
+    fun `should create a new branch with main as base`() {
+        val newBranchName = "newBranch"
+        val branchesResourceResponse = createReference("main")
         val createBranchResourceResponse = createReference(newBranchName)
 
         every { gitHubClientFactory.buildGitClient(gitCredentials) } returns gitClient
@@ -201,8 +216,62 @@ class GitHubServiceLegacyTest {
     }
 
     @Test
+    fun `should create a new release with main`() {
+        val sourceBranch = "master"
+        val releaseName = "RC-1.0.0"
+        val createReleaseResponse = JsonObject().apply {
+            addProperty("name", "RC-1.0.0")
+            addProperty("tag_name", "RC-1.0.0")
+            addProperty("body", "charles create release candidate operation")
+        }
+
+        every { gitHubClientFactory.buildGitClient(gitCredentials) } returns gitClient
+
+        every { gitClient.post<JsonObject>("/repos/zup/charles/releases",
+            mapOf(
+                "tag_name" to releaseName,
+                "name" to releaseName,
+                "target_commitish" to sourceBranch,
+                "body" to sourceBranch,
+                "draft" to false,
+                "prerelease" to false),
+            JsonObject::class.java) } throws Exception()
+
+        every { gitClient.post<JsonObject>("/repos/zup/charles/releases",
+            mapOf(
+                "tag_name" to releaseName,
+                "name" to releaseName,
+                "target_commitish" to "main",
+                "body" to "Charles create release candidate operation",
+                "draft" to false,
+                "prerelease" to false),
+            JsonObject::class.java) } returns createReleaseResponse
+        val createdRelease = gitHubService.createRelease(gitCredentials, repository, releaseName, sourceBranch)
+        Assert.assertEquals(releaseName, createdRelease.get())
+    }
+
+    @Test
     fun `should not create a new release if tag already exists`() {
         val sourceBranch = "master"
+        val releaseName = "RC-1.0.0"
+
+        val duplicatedTagError = object : RequestError() {
+            override fun getMessage() = "(Tag Already Exists)"
+        }
+
+        every { gitHubClientFactory.buildGitClient(gitCredentials) } returns gitClient
+        every { gitClient.post<JsonObject>(any(), any(), any()) } throws RequestException(duplicatedTagError, 422)
+
+        val e = assertFailsWith<BusinessExceptionLegacy> {
+            gitHubService.createRelease(gitCredentials, repository, releaseName, sourceBranch)
+        }
+
+        assertEquals(MooveErrorCodeLegacy.GIT_ERROR_DUPLICATED_TAG, e.getErrorCode())
+    }
+
+    @Test
+    fun `should not create a new release if tag already exists with main`() {
+        val sourceBranch = "main"
         val releaseName = "RC-1.0.0"
 
         val duplicatedTagError = object : RequestError() {
@@ -239,8 +308,46 @@ class GitHubServiceLegacyTest {
     }
 
     @Test
+    fun `should not create a new release if repository does not exist with main`() {
+        val sourceBranch = "main"
+        val releaseName = "RC-1.0.0"
+
+        val notFoundError = object : RequestError() {
+            override fun getMessage() = "Not found"
+        }
+
+        every { gitHubClientFactory.buildGitClient(gitCredentials) } returns gitClient
+        every { gitClient.post<JsonObject>(any(), any(), any()) } throws RequestException(notFoundError, 404)
+
+        val e = assertFailsWith<BusinessExceptionLegacy> {
+            gitHubService.createRelease(gitCredentials, repository, releaseName, sourceBranch)
+        }
+
+        assertEquals(MooveErrorCodeLegacy.GIT_ERROR_REPOSITORY_NOT_FOUND, e.getErrorCode())
+    }
+
+    @Test
     fun `should not create a new release if source does not exist`() {
         val sourceBranch = "master"
+        val releaseName = "RC-1.0.0"
+
+        val notFoundError = object : RequestError() {
+            override fun getMessage() = "Invalid value for 'target_commitish' field"
+        }
+
+        every { gitHubClientFactory.buildGitClient(gitCredentials) } returns gitClient
+        every { gitClient.post<JsonObject>(any(), any(), any()) } throws RequestException(notFoundError, 422)
+
+        val e = assertFailsWith<BusinessExceptionLegacy> {
+            gitHubService.createRelease(gitCredentials, repository, releaseName, sourceBranch)
+        }
+
+        assertEquals(MooveErrorCodeLegacy.GIT_ERROR_BASE_NOT_FOUND, e.getErrorCode())
+    }
+
+    @Test
+    fun `should not create a new release if source does not exist with main`() {
+        val sourceBranch = "main"
         val releaseName = "RC-1.0.0"
 
         val notFoundError = object : RequestError() {

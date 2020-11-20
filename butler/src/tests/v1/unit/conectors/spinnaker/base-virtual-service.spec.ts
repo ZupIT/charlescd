@@ -19,7 +19,7 @@ import {
   createEmptyVirtualService,
   createVirtualService
 } from '../../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/manifests/base-virtual-service'
-import expectedBaseVirtualServiceFormattedSubsets from '../../../../unit/conectors/spinnaker/fixtures/expected-base-virtual-service-formatted-subsets'
+import expectedBaseVirtualServiceFormattedSubsets from '../../../connectors/spinnaker/fixtures/expected-base-virtual-service-formatted-subsets'
 import expectedBaseVirtualService from './fixtures/expected-base-virtual-service'
 import expectedEmptyVirtualService from './fixtures/expected-empty-virtual-service'
 

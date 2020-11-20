@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen, wait } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { Datasources } from './fixtures';
 import MetricProvider from '../index';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
@@ -24,10 +25,8 @@ import { FORM_METRIC_PROVIDER } from '../constants';
 test('render Metrics Provider default component', async () => {
   const setForm = jest.fn();
   render(
-    <MetricProvider form={null} setForm={setForm} data={Datasources} />
+    <MetricProvider form={null} setForm={setForm} data={Datasources} getNewDatasources={jest.fn()}/>
   );
-
-  await wait();
 
   expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
   expect(screen.getByText('Prometheus')).toBeInTheDocument();
@@ -36,15 +35,13 @@ test('render Metrics Provider default component', async () => {
 test('toggle form have been called', async () => {
   const setForm = jest.fn();
   render(
-    <MetricProvider form={null} setForm={setForm} data={Datasources} />
+    <MetricProvider form={null} setForm={setForm} data={Datasources} getNewDatasources={jest.fn()}/>
   );
-
-  await wait();
 
   const addDatasource = screen.getByTestId('section-datasources')
     .querySelector('[data-testid="button-iconRounded-add"]')
 
-  fireEvent.click(addDatasource)
+  userEvent.click(addDatasource)
 
   expect(setForm).toHaveBeenCalled();
 });
@@ -52,10 +49,8 @@ test('toggle form have been called', async () => {
 test('render datasource form', async () => {
   const setForm = jest.fn();
   render(
-    <MetricProvider form={FORM_METRIC_PROVIDER} setForm={setForm} data={Datasources} />
+    <MetricProvider form={FORM_METRIC_PROVIDER} setForm={setForm} data={Datasources} getNewDatasources={jest.fn()}/>
   );
-
-  await wait();
 
   expect(screen.getByTestId('select-url')).toBeInTheDocument();
 });
@@ -67,16 +62,14 @@ test('should be delete Metric Provider', async () => {
     remove: remove,
   }));
   render(
-    <MetricProvider form={null} setForm={setForm} data={Datasources} />
+    <MetricProvider form={null} setForm={setForm} data={Datasources} getNewDatasources={jest.fn()}/>
   );
-
-  await wait();
 
   const deleteMetricIcon = screen.getByTestId('section-datasources')
     .querySelector('[data-testid="icon-cancel"]')
 
-  fireEvent.click(deleteMetricIcon)
+  act(() => userEvent.click(deleteMetricIcon));
 
-  expect(remove).toHaveBeenCalled();
+  await waitFor(() => expect(remove).toHaveBeenCalled());
 });
 

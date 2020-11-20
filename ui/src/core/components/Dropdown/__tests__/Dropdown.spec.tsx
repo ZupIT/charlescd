@@ -15,9 +15,10 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, screen} from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Dropdown from '../';
-import { Action as ActionProps } from '../Item';
+import { Props as ActionProps } from '../Item';
 
 const action: ActionProps = {
   icon: 'delete',
@@ -25,8 +26,8 @@ const action: ActionProps = {
   onClick: () => jest.fn()
 };
 
-test('render Dropdown', async () => {
-  const { queryByTestId } = render(
+test('render Dropdown', () => {
+  render(
     <Dropdown>
       <Dropdown.Item
         name={action.name}
@@ -35,15 +36,13 @@ test('render Dropdown', async () => {
     </Dropdown>
   );
 
-  await wait();
-
-  const element = queryByTestId('dropdown')
+  const element = screen.getByTestId('dropdown');
   expect(element).toBeInTheDocument();
 });
 
 
-test('render Dropdown and toggle actions container', async () => {
-  const { queryByTestId } = render(
+test('render Dropdown and toggle actions container', () => {
+  render(
     <Dropdown>
       <Dropdown.Item
         name={action.name}
@@ -52,12 +51,13 @@ test('render Dropdown and toggle actions container', async () => {
     </Dropdown>
   );
 
-  fireEvent.click(queryByTestId('icon-vertical-dots'));
+  const iconVerticalDots = screen.getByTestId('icon-vertical-dots');
+  expect(iconVerticalDots).toBeInTheDocument();
+  userEvent.click(iconVerticalDots);
 
-  await wait();
-
-  const element = queryByTestId('dropdown')
+  const element = screen.getByTestId('dropdown');
   expect(element).toBeInTheDocument();
-  const actionsContainer = queryByTestId('dropdown-actions')
+
+  const actionsContainer = screen.getByTestId('dropdown-actions');
   expect(actionsContainer).toBeInTheDocument();
 });

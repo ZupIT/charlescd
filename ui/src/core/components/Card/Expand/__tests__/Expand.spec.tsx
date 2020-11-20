@@ -15,23 +15,25 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, waitFor, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import CardExpand from '../';
 
-test('render CardExpand with children', async () => {
+test('render CardExpand with children', () => {
   const onclick = jest.fn();
-  const { getByText } = render(
+  render(
     <CardExpand onClick={onclick}>
       <span>charles/ui:v1</span>
     </CardExpand>
   );
 
-  await wait(() => expect(getByText('charles/ui:v1')).toBeInTheDocument());
+  expect(screen.getByText('charles/ui:v1')).toBeInTheDocument();
 });
 
-test('click outside CardExpand', async () => {
+test('click outside CardExpand', () => {
   const onclick = jest.fn();
-  const { getByTestId } = render(
+
+  render(
     <div data-testid="wrapper-card-expand">
       <CardExpand onClick={onclick}>
         <span>item 2</span>
@@ -39,8 +41,7 @@ test('click outside CardExpand', async () => {
     </div>
   );
 
-  const CardWrapper = getByTestId('wrapper-card-expand');
-  fireEvent.click(CardWrapper);
-
-  await wait(() => expect(onclick).toHaveBeenCalled());
+  const CardWrapper = screen.getByTestId('wrapper-card-expand');
+  userEvent.click(CardWrapper);
+  expect(onclick).toHaveBeenCalled();
 });

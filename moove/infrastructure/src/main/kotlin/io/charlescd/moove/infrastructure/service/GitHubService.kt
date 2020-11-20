@@ -23,7 +23,7 @@ import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.GitService
-import java.util.*
+import java.util.Optional
 import org.eclipse.egit.github.core.Reference
 import org.eclipse.egit.github.core.RepositoryId
 import org.eclipse.egit.github.core.client.GitHubClient
@@ -32,6 +32,7 @@ import org.eclipse.egit.github.core.client.RequestException
 import org.eclipse.egit.github.core.service.CommitService
 import org.eclipse.egit.github.core.service.DataService
 import org.eclipse.egit.github.core.service.RepositoryService
+import org.eclipse.egit.github.core.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
@@ -43,6 +44,7 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
     }
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
+    private val baseBranchMain = "main"
 
     override fun mergeBranches(
         gitCredentials: GitCredentials,
@@ -51,7 +53,8 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
         headBranch: String
     ) {
         logger.info("attempting to merge branch: $headBranch into $baseBranch on GitHub repository: $repository")
-        val repositoryService = RepositoryService(getClient(gitCredentials))
+        val client = getClient(gitCredentials)
+        val repositoryService = getRepositoryService(client)
         try {
             mergeBranches(repositoryService, repository, baseBranch, headBranch, COMMIT_MESSAGE)
             logger.info("branch: $headBranch successfully merged into branch: $baseBranch")
@@ -69,21 +72,29 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
     ): Optional<String> {
         logger.info("attempting to create new branch on GitHub repository: $repository from base: $baseBranchName and with name: $branchName")
         val repositoryId = RepositoryId.createFromId(repository)
-        val service = DataService(getClient(gitCredentials))
+        val client = getClient(gitCredentials)
+        val service = getDataService(client)
         return try {
             val baseBranch = findBranchByName(service, repositoryId, baseBranchName)
             val result = createReferenceName(baseBranch, branchName, service, repositoryId)
             logger.info("new branch: $branchName created successfully")
             Optional.of(result)
         } catch (exception: Exception) {
-            logger.error("failed to create branch: $branchName with error: ${exception.message}")
-            handleResponseError(
-                error = exception,
-                repository = repository,
-                baseBranch = baseBranchName,
-                branchName = branchName
-            )
-            Optional.empty()
+            return try {
+                val baseBranch = findBranchByName(service, repositoryId, baseBranchMain)
+                val result = createReferenceName(baseBranch, branchName, service, repositoryId)
+                logger.info("new branch: $branchName created successfully")
+                Optional.of(result)
+            } catch (exception: Exception) {
+                logger.error("failed to create branch: $branchName with error: ${exception.message}")
+                handleResponseError(
+                    error = exception,
+                    repository = repository,
+                    baseBranch = baseBranchName,
+                    branchName = branchName
+                )
+                Optional.empty()
+            }
         }
     }
 
@@ -108,7 +119,8 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
         description: String
     ): Optional<String> {
         logger.info("attempting to create new release on GitHub repository: $repository from base: $sourceBranch and with name: $releaseName")
-        val repositoryService = RepositoryService(getClient(gitCredentials))
+        val client = getClient(gitCredentials)
+        val repositoryService = getRepositoryService(client)
         return try {
 
             val result = createRelease(
@@ -123,6 +135,26 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
 
             Optional.of(result.get("name").asString)
         } catch (exception: Exception) {
+            return try {
+                val result = createRelease(
+                    repositoryService,
+                    repository,
+                    baseBranchMain,
+                    releaseName,
+                    description
+                )
+                logger.info("release: $releaseName created successfully")
+                Optional.of(result.get("name").asString)
+            } catch (exception: Exception) {
+                logger.error("failed to create release: $releaseName with error: ${exception.message}")
+                handleResponseError(
+                    error = exception,
+                    repository = repository,
+                    baseBranch = sourceBranch,
+                    releaseName = releaseName
+                )
+                Optional.empty()
+            }
             logger.error("failed to create release: $releaseName with error: ${exception.message}")
             handleResponseError(
                 error = exception,
@@ -140,7 +172,8 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
         releaseName: String
     ): Optional<String> {
         logger.info("searching for release: $releaseName into GitHub repository: $repository")
-        val repositoryService = RepositoryService(getClient(gitCredentials))
+        val client = getClient(gitCredentials)
+        val repositoryService = getRepositoryService(client)
         return try {
             Optional.of(findReleaseByTagName(repositoryService, repository, releaseName).get("name").asString).also {
                 logger.info("found release: $releaseName into GitHub repository: $repository")
@@ -156,7 +189,7 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
     override fun findBranch(gitCredentials: GitCredentials, repository: String, branchName: String): Optional<String> {
         logger.info("searching for branch: $branchName into GitHub repository: $repository")
         val client = getClient(gitCredentials)
-        val dataService = DataService(client)
+        val dataService = getDataService(client)
         return try {
             Optional.of(
                 findBranchByName(
@@ -172,9 +205,24 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
         }
     }
 
+    override fun testConnection(gitCredentials: GitCredentials): Boolean {
+        logger.info("Testing connection into GitHub")
+        val client = getClient(gitCredentials)
+        val userService = getUserService(client)
+        val repositoryService = getRepositoryService(client)
+        return try {
+            userService.user != null && repositoryService.repositories != null
+        } catch (exception: Exception) {
+            logger.error("failed to connect to GitHub with error: ${exception.message}")
+            handleResponseError(error = exception)
+            return false
+        }
+    }
+
     override fun deleteBranch(gitCredentials: GitCredentials, repository: String, branchName: String) {
         logger.info("deleting branch: $branchName from GitHub repository: $repository")
-        val repositoryService = RepositoryService(getClient(gitCredentials))
+        val client = getClient(gitCredentials)
+        val repositoryService = getRepositoryService(client)
         try {
             deleteBranch(repositoryService, repository, branchName)
             logger.info("branch: $branchName successfully deleted from GitHub repository: $repository")
@@ -192,7 +240,9 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
     ): CompareResult {
         return try {
             logger.info("comparing head: $headBranch with base: $baseBranch on GitHub repository: $repository")
-            CommitService(getClient(gitCredentials)).compare(
+            val client = getClient(gitCredentials)
+            val commitService = getCommitService(client)
+            commitService.compare(
                 RepositoryId.createFromId(repository),
                 "$BRANCH_PREFIX$baseBranch",
                 "$BRANCH_PREFIX$headBranch"
@@ -300,6 +350,18 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
 
     private fun getClient(gitConfiguration: GitCredentials): GitHubClient =
         gitHubClientFactory.buildGitClient(gitConfiguration)
+
+    protected fun getUserService(gitHubClient: GitHubClient): UserService =
+        UserService(gitHubClient)
+
+    protected fun getRepositoryService(gitHubClient: GitHubClient): RepositoryService =
+        RepositoryService(gitHubClient)
+
+    protected fun getDataService(gitHubClient: GitHubClient): DataService =
+        DataService(gitHubClient)
+
+    protected fun getCommitService(gitHubClient: GitHubClient): CommitService =
+        CommitService(gitHubClient)
 
     private fun mergeBranches(
         repositoryService: RepositoryService,

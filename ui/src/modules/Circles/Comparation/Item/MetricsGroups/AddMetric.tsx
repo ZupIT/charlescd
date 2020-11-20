@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { conditionOptions } from './constants';
@@ -73,7 +73,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   useEffect(() => {
     if (validationError?.errors?.length) {
       validationError.errors.forEach(({ field, error }) => {
-        setError(field, 'required', error);
+        setError(field, { message: error });
       });
     }
   }, [validationError, setError]);
@@ -145,7 +145,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
           {metric?.id ? 'Update metric' : 'Add metric'}
         </Text.h2>
       </Styled.Layer>
-      <FormContext {...formMethods}>
+      <FormProvider {...formMethods}>
         <Styled.Form
           onSubmit={handleSubmit(onSubmit)}
           data-testid="create-metric"
@@ -312,7 +312,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
             )}
           </Styled.Layer>
         </Styled.Form>
-      </FormContext>
+      </FormProvider>
     </div>
   );
 };

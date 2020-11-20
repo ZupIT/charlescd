@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import Menu from '..';
 
 const props = {
@@ -42,5 +42,5 @@ test('render Menu default', async () => {
     <Menu {...props} />
   );
 
-  await wait(() => expect(getByTestId('menu-users-charles@zup.com.br')).toBeInTheDocument());
+  expect(getByTestId('menu-users-charles@zup.com.br')).toBeInTheDocument();
 });
