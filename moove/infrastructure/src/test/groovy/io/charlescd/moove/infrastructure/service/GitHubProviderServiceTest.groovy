@@ -17,7 +17,6 @@
 package io.charlescd.moove.infrastructure.service
 
 import io.charlescd.moove.domain.*
-import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import io.charlescd.moove.infrastructure.mapper.GitServiceMapper
 import org.eclipse.egit.github.core.Reference
 import org.eclipse.egit.github.core.TypedResource
@@ -29,7 +28,6 @@ import java.time.LocalDateTime
 
 class GitHubProviderServiceTest extends Specification {
 
-    private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
     private GitHubClientFactory gitHubClientFactory = Mock(GitHubClientFactory)
     private GitHubService gitHubService = new GitHubService(gitHubClientFactory)
     private GitServiceMapper gitServiceMapper = new GitServiceMapper([gitHubService])
@@ -72,7 +70,7 @@ class GitHubProviderServiceTest extends Specification {
         gitHubProviderService = new GitHubProviderService(gitServiceMapper)
     }
 
-    def "should update user by id"() {
+    def "should create release successfully"() {
         given:
         def reference = new Reference()
         reference.setObject(new TypedResource())
