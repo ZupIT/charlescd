@@ -51,11 +51,11 @@ test('render Menu default', async () => {
   expect(screen.getByTestId('menu-users-charles@zup.com.br')).toBeInTheDocument();
 });
 
-test.only('render Menu default and do a empty search', async () => {
+test('render Menu default and do a empty search', async () => {
   render(
     <Menu isLoading={false} items={[]}  onSearch={jest.fn()} />
   );
-  
+
   const inputSearch = screen.getByTestId('input-text-search');
 
   userEvent.type(inputSearch, 'unknown');
