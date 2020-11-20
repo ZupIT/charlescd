@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import TextComponent from 'core/components/Text';
+import SelectSingle from 'core/components/Form/Select/Single/Select';
 
 const Title = styled(TextComponent.h2)`
   display: flex;
@@ -51,10 +52,15 @@ const Fields = styled.div`
   }
 `;
 
+const Select = styled(SelectSingle)`
+  width: 271px;
+`;
+
 export default {
   Content,
   Title,
   Subtitle,
   Form,
-  Fields
+  Fields,
+  Select
 };
