@@ -227,10 +227,10 @@ func (main Main) DeleteAction(id string) error {
 	return nil
 }
 
-func actionInsert(id, nickname, actionType, description string, configuration []byte, workspaceId uuid.UUID) string {
+func actionInsert(id, nickname, actionType, description string, config []byte, workspaceId uuid.UUID) string {
 	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
-			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', 'MAYCON', 'cipher-algo=aes256'), null);`,
-		id, workspaceId, nickname, actionType, description, configuration)
+			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), null);`,
+		id, workspaceId, nickname, actionType, description, config, configuration.GetConfiguration("PV_KEY"))
 }
 
 func (entity Action) toResponse() Response {

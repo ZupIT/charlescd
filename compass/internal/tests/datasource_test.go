@@ -87,14 +87,14 @@ func (s *Suite) TestParseError() {
 }
 
 func (s *Suite) TestValidate() {
-	datasource := datasource2.DataSource{}
+	datasource := datasource2.Request{}
 	var errList = s.repository.Validate(datasource)
 
 	require.NotEmpty(s.T(), errList)
 }
 
 func (s *Suite) TestValidateNameLength() {
-	datasource := datasource2.DataSource{
+	datasource := datasource2.Request{
 		Name:      bigString,
 		PluginSrc: bigString,
 	}
@@ -103,21 +103,13 @@ func (s *Suite) TestValidateNameLength() {
 	require.NotEmpty(s.T(), errList)
 }
 
-func (s *Suite) TestFindById() {
-	dataSourceStruct := datasource2.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
+func (s *Suite) TestFindDataSourceById() {
+	dataSourceInsert, dataSourceStruct := datasourceInsert("src.so")
 
-	s.DB.Create(&dataSourceStruct)
+	s.DB.Exec(dataSourceInsert)
 	res, err := s.repository.FindById(dataSourceStruct.ID.String())
 
 	require.NoError(s.T(), err)
-
 	dataSourceStruct.BaseModel = res.BaseModel
 	require.Equal(s.T(), dataSourceStruct, res)
 }
@@ -166,7 +158,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealth() {
 }
 
 func (s *Suite) TestSaveDatasource() {
-	dataSourceStruct := datasource2.DataSource{
+	dataSourceStruct := datasource2.Request{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
 		Health:      true,
@@ -180,11 +172,14 @@ func (s *Suite) TestSaveDatasource() {
 	require.NoError(s.T(), err)
 
 	dataSourceStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), dataSourceStruct, res)
+	require.Equal(s.T(), dataSourceStruct.BaseModel, res.BaseModel)
+	require.Equal(s.T(), dataSourceStruct.WorkspaceID, res.WorkspaceID)
+	require.Equal(s.T(), dataSourceStruct.Health, res.Health)
+	require.Equal(s.T(), dataSourceStruct.PluginSrc, res.PluginSrc)
 }
 
 func (s *Suite) TestSaveDatasourceError() {
-	dataSourceStruct := datasource2.DataSource{
+	dataSourceStruct := datasource2.Request{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
 		Health:      true,
@@ -211,7 +206,7 @@ func (s *Suite) TestSaveDatasourceWithHealthInserted() {
 
 	s.DB.Create(&dataSource)
 
-	dataSourceStruct := datasource2.DataSource{
+	dataSourceStruct := datasource2.Request{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
 		Health:      true,

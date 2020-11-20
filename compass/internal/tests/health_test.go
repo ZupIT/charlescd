@@ -20,6 +20,7 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/health"
@@ -110,19 +111,12 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
-	workspaceId := uuid.New()
 	circleId := uuid.New().String()
-	datasourceStruct := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&datasourceStruct)
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	_, err := s.repository.ComponentsHealth("", workspaceId.String(), circleId)
+	s.DB.Exec(dataSourceInsert)
+
+	_, err := s.repository.ComponentsHealth("", dataSourceStruct.WorkspaceID.String(), circleId)
 	s.NoError(err)
 }
 
@@ -171,22 +165,16 @@ func (s SuiteHealth) TestComponentsMetricTypeDefaultError() {
 
 func (s SuiteHealth) TestComponents() {
 	circleIdHeader := uuid.New().String()
-	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	projectionType := "FIVE_MINUTES"
 	metricType := "REQUESTS_BY_CIRCLE"
 
-	datasourceStruct := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&datasourceStruct)
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
+	s.DB.Exec(dataSourceInsert)
 
-	_, err := s.repository.Components(circleIdHeader, workspaceId.String(), circleId, projectionType, metricType)
+	fmt.Println(dataSourceStruct)
+
+	_, err := s.repository.Components(circleIdHeader, dataSourceStruct.WorkspaceID.String(), circleId, projectionType, metricType)
 
 	require.NoError(s.T(), err)
 }

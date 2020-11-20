@@ -133,6 +133,9 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
 	apiClient, err := getPrometheusApiClient(request.DatasourceConfiguration)
 	if err != nil {
+		var prometheusConfig map[string]string
+		_ = json.Unmarshal(request.DatasourceConfiguration, &prometheusConfig)
+		fmt.Println("apiClient:", prometheusConfig)
 		return nil, err
 	}
 
@@ -146,6 +149,9 @@ func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
 
 	result, _, err := v1Api.Query(context.Background(), buildedQuery, time.Now())
 	if err != nil {
+		var prometheusConfig map[string]string
+		_ = json.Unmarshal(request.DatasourceConfiguration, &prometheusConfig)
+		fmt.Println("result:", prometheusConfig)
 		return nil, err
 	}
 
