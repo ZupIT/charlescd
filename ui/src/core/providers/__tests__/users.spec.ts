@@ -15,7 +15,7 @@
  */
 
 import { FetchMock } from 'jest-fetch-mock';
-import { createNewUser, patchProfileById } from '../users';
+import { createNewUser, patchProfileById, changePassword } from '../users';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -50,4 +50,21 @@ test('update a user provider request', async () => {
   const data = await response.json();
 
   expect(data).toEqual({ message: 'user updated' });
+});
+
+test('update a user password provider request', async () => {
+  const passwords = {
+    oldPassword: '123',
+    newPassword: '456',
+    confirmPassword: '456'
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ message: 'password updated' })
+  );
+
+  const response = await changePassword(passwords)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ message: 'password updated' });
 });
