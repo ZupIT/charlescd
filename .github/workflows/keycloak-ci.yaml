@@ -1,4 +1,4 @@
-name: Deploy
+name: Keycloak-ci
 on:
   push:
     branches: [main]
