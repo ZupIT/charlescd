@@ -40,6 +40,7 @@ import { DeploymentTemplateUtils } from './utils/deployment-template.utils'
 import { UndeploymentTemplateUtils } from './utils/undeployment-template.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { DeploymentUtils } from '../utils/deployment.utils'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 export class SpinnakerPipelineBuilder {
 
@@ -141,7 +142,7 @@ export class SpinnakerPipelineBuilder {
     return proxyStages
   }
 
-  private getDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
+  private getDeploymentsEvaluationStage(components: DeploymentComponent[] | undefined): Stage[] {
     return components && components.length ?
       [getDeploymentsEvaluationStage(components, this.currentStageId++)] :
       []
@@ -162,13 +163,13 @@ export class SpinnakerPipelineBuilder {
     return stages
   }
 
-  private getProxyDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
+  private getProxyDeploymentsEvaluationStage(components: DeploymentComponent[] | undefined): Stage[] {
     return components && components.length ?
       [getProxyEvaluationStage(components, this.currentStageId++)] :
       []
   }
 
-  private getProxyUndeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
+  private getProxyUndeploymentsEvaluationStage(components: DeploymentComponent[] | undefined): Stage[] {
     return components && components.length ?
       [getUndeploymentProxyEvaluationStage(components, this.currentStageId++)] :
       []

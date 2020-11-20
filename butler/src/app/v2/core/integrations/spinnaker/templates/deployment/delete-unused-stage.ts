@@ -17,14 +17,13 @@
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
-import { CommonTemplateUtils } from '../../utils/common-template.utils'
 
 export const getDeleteUnusedStage = (
   component: Component,
   configuration: CdConfiguration,
   stageId: number,
   evalStageId: number,
-  circleId: string | null
+  circleId: string
 ): Stage => ({
   account: `${(configuration.configurationData as ISpinnakerConfigurationData).account}`,
   app: `app-${configuration.id}`,
@@ -55,7 +54,7 @@ export const getDeleteUnusedStage = (
         key: 'circleId',
         kind: 'EQUALS',
         values: [
-          CommonTemplateUtils.getCircleId(circleId)
+          circleId
         ]
       }
     ]

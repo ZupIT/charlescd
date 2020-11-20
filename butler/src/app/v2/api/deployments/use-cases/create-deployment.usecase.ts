@@ -46,9 +46,9 @@ export class CreateDeploymentUseCase {
   public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<ReadDeploymentDto> {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: createDeploymentDto.deploymentId, incomingCircleId })
     const { deployment, execution } = await getConnection().transaction(async transactionManager => {
-      const deployment = createDeploymentDto.circle ?
-        await this.createCircleDeployment(createDeploymentDto, transactionManager) :
-        await this.createDefaultDeployment(createDeploymentDto, transactionManager)
+      const deployment = createDeploymentDto.defaultCircle ?
+        await this.createDefaultDeployment(createDeploymentDto, transactionManager) :
+        await this.createCircleDeployment(createDeploymentDto, transactionManager)
       const execution = await this.createExecution(deployment, incomingCircleId, transactionManager)
       return { deployment, execution }
     })
@@ -67,7 +67,9 @@ export class CreateDeploymentUseCase {
 
   private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents()
+    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
+      createDeploymentDto.circle.headerValue
+    )
     const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
     const unchangedComponents: ComponentEntity[] = activeComponents
       .filter(component => !requestedComponentsNames.includes(component.name))

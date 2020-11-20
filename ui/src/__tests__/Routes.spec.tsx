@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, screen, act, waitForElement } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'core/utils/auth';
 import { getProfileByKey, profileKey } from 'core/utils/profile';
 import { FetchMock } from 'jest-fetch-mock';
@@ -60,7 +60,7 @@ beforeEach(() => {
 test('render default route', async () => {
   render(<MemoryRouter><Routes /></MemoryRouter>);
 
-  await wait(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
 });
 
 test('render with a valid session token', async () => {
@@ -76,7 +76,8 @@ test('render with a valid session token', async () => {
   }));
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
-  const sidebar = await waitForElement(() => screen.queryByTestId('sidebar'));
+
+  const sidebar = await screen.findByTestId('sidebar');
   expect(sidebar).toBeInTheDocument();
 
   const accessToken = localStorage.getItem(accessTokenKey);
@@ -104,7 +105,7 @@ test('render main in microfrontend mode', async () => {
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
 
-  const menuWorkspaces = await waitForElement(() => screen.getByTestId('menu-workspaces'));
+  const menuWorkspaces = await screen.findByTestId('menu-workspaces');
   expect(menuWorkspaces.getAttribute('href')).toContain('/charlescd');
 });
 
@@ -131,7 +132,7 @@ test('render and valid login saving the session', async () => {
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
 
-  const iconError403 = await waitForElement(() => screen.queryByTestId('icon-error-403'));
+  const iconError403 = await screen.findByTestId('icon-error-403');
   expect(iconError403).toBeInTheDocument();
   
   const accessToken = localStorage.getItem(accessTokenKey);
@@ -170,9 +171,9 @@ test('create user in charles base', async () => {
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
 
-  const iconError403 = await waitForElement(() => screen.queryByTestId('icon-error-403'));
+  const iconError403 = await screen.findByTestId('icon-error-403');
   expect(iconError403).toBeInTheDocument();
 
   const profileBase64 = btoa(JSON.stringify(profile));
-  await wait(() => expect(localStorage.getItem(profileKey)).toEqual(profileBase64));
+  await waitFor(() => expect(localStorage.getItem(profileKey)).toEqual(profileBase64));
 });

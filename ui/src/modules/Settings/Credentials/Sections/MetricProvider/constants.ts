@@ -15,5 +15,3 @@
  */
 
 export const FORM_METRIC_PROVIDER = 'metric-provider';
-
-export const CONNECTION_SUCCESS = 204;

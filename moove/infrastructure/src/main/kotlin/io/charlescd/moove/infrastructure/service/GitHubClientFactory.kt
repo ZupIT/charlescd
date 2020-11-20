@@ -24,15 +24,28 @@ import org.springframework.stereotype.Component
 class GitHubClientFactory {
 
     fun buildGitClient(gitCredentials: GitCredentials): GitHubClient {
-        return when {
-            gitCredentials.isValidCredentials() -> GitHubClient().setCredentials(
-                gitCredentials.username,
-                gitCredentials.password
-            )
-            gitCredentials.isValidOAuthToken() -> GitHubClient().setOAuth2Token(
-                gitCredentials.accessToken
-            )
-            else -> throw IllegalArgumentException("Invalid auth type")
+        if (gitCredentials.address.isNullOrBlank()) {
+            return when {
+                gitCredentials.isValidCredentials() -> GitHubClient().setCredentials(
+                    gitCredentials.username,
+                    gitCredentials.password
+                )
+                gitCredentials.isValidOAuthToken() -> GitHubClient().setOAuth2Token(
+                    gitCredentials.accessToken
+                )
+                else -> throw IllegalArgumentException("Invalid auth type")
+            }
+        } else {
+            return when {
+                gitCredentials.isValidCredentials() -> GitHubClient.createClient(gitCredentials.address).setCredentials(
+                    gitCredentials.username,
+                    gitCredentials.password
+                )
+                gitCredentials.isValidOAuthToken() -> GitHubClient.createClient(gitCredentials.address).setOAuth2Token(
+                    gitCredentials.accessToken
+                )
+                else -> throw IllegalArgumentException("Invalid auth type")
+            }
         }
     }
 }

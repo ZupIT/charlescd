@@ -15,20 +15,19 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen, wait, act } from 'unit-test/testUtils';
+import { fireEvent, render, screen, act } from 'unit-test/testUtils';
 import Form from '../Form';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
+import * as TestConnectionHook from 'core/hooks/useTestConnection';
 
 test('render Metrics Provider default component', async () => {
   const finish = jest.fn();
   render(
     <Form onFinish={finish} />
   );
-
-  await wait();
 
   expect(screen.getByTestId('react-select')).toBeInTheDocument();
 });
@@ -42,8 +41,6 @@ test('render datasource input by datasource change', async () => {
   render(
     <Form onFinish={finish} />
   );
-
-  await wait();
 
   const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
   await act(async () => selectEvent.select(datasourcePlugin1, 'Prometheus'));
@@ -71,9 +68,10 @@ test('render button test connection', async () => {
     response: Plugins
   }));
 
-  jest.spyOn(MetricProviderHooks, 'useTestConnection').mockImplementation(() => ({
+  jest.spyOn(TestConnectionHook, 'useTestConnection').mockImplementation(() => ({
     save: testConnection,
-    response: {}
+    loading: false,
+    response: '401 unauthorized'
   }));
 
   render(

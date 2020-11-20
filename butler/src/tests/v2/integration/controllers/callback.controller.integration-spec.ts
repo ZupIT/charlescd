@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { Server } from 'http'
@@ -98,7 +114,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.CREATED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -140,7 +157,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: true
+        active: true,
+        defaultCircle: false
       },
       type: 'DEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -194,7 +212,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.CREATED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -237,7 +256,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: false
+        active: false,
+        defaultCircle: false
       },
       type: 'DEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -291,7 +311,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.SUCCEEDED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
@@ -334,7 +355,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: false
+        active: false,
+        defaultCircle: false
       },
       type: 'UNDEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -388,7 +410,8 @@ describe('CallbackController v2', () => {
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.SUCCEEDED,
-      [modulesDto]
+      [modulesDto],
+      false
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
@@ -431,7 +454,8 @@ describe('CallbackController v2', () => {
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: true
+        active: true,
+        defaultCircle: false
       },
       type: 'UNDEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
