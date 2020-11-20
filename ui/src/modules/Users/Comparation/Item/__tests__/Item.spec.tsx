@@ -15,13 +15,23 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent, screen, waitFor, act } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import UsersComparationItem from '../';
 import * as PathUtils from 'core/utils/path';
 import { FetchMock } from 'jest-fetch-mock/types';
+import { saveProfile } from 'core/utils/profile';
+import UsersComparationItem from '../';
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+beforeAll(() => {
+  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br', isRoot: true });
+});
 
 const props = {
+  name: 'Charles',
   email: 'test@zup.com.br'
 };
 
@@ -34,7 +44,32 @@ test('render UsersComparationItem default component', async () => {
   expect(userComparationElement).toBeInTheDocument();
 });
 
+test('to open a user and successfully update the name', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({
+    name: 'Charles',
+    email: 'charlescd@zup.com.br'
+  }))
+
+  render(
+    <UsersComparationItem {...props} onChange={jest.fn} />
+  );
+
+  const InputNameWrapper = await screen.findByTestId('input-wrapper-name');
+  expect(InputNameWrapper).toBeInTheDocument();
+  act(() => userEvent.click(InputNameWrapper));
+
+  const InputName = await screen.findByTestId('input-text-name');
+  expect(InputName).toBeInTheDocument();
+  await act(async () => userEvent.type(InputName, 'Charles'));
+
+  const ButtonSubmit = await screen.findByTestId('button-default-submit');
+  expect(ButtonSubmit).toBeInTheDocument();
+  act(() => userEvent.click(ButtonSubmit));
+});
+
 test('render Modal.Trigger on UsersComparationItem component', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}))
+
   render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );
@@ -72,7 +107,7 @@ test('click on Cancel button in Modal.Trigger component', async () => {
   expect(modal).toBeInTheDocument();
   
   const cancelButton = screen.getByTestId('button-default-dismiss');
-  await act(async () => userEvent.click(cancelButton));
+  act(() => userEvent.click(cancelButton));
 
   const modalElement = screen.queryByTestId('modal-trigger');
   expect(modalElement).not.toBeInTheDocument();
@@ -125,7 +160,7 @@ test('render UsersComparationItem component and trigger ModalResetPassword', asy
   const email = await screen.findByTestId(`users-comparation-item-${props.email}`);
   expect(email).toBeInTheDocument();
 
-  const resetPasswordButton = screen.getByTestId('labeledIcon-shield');
+  const resetPasswordButton = await screen.findByTestId('labeledIcon-shield');
   userEvent.click(resetPasswordButton);
 
   const modal = screen.queryByTestId('modal-default');

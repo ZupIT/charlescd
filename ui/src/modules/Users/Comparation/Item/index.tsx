@@ -51,7 +51,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const { updateNameById, status } = useUpdateName();
+  const { updateNameById, user: userUpdated, status } = useUpdateName();
   const isAbleToReset = loggedUserId !== user?.id;
 
   const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
@@ -59,16 +59,16 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   useEffect(() => {
     if (user) {
       setCurrentUser(user);
-    } else {
+    } else if (email) {
       findByEmail(email);
     }
   }, [user, email, findByEmail]);
 
   useEffect(() => {
-    if (status === 'resolved') {
-      findByEmail(email);
+    if (userUpdated) {
+      setCurrentUser(userUpdated);
     } else if (status === 'rejected') {
-      setCurrentUser(user);
+      findByEmail(email);
     }
   }, [user, status, email, findByEmail]);
 
@@ -166,7 +166,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
               onClickSave={handleSubmit(onSubmit)}
             />
           ) : (
-            <Text.h2 color="light">currentUser.name</Text.h2>
+            <Text.h2 color="light">{currentUser.name}</Text.h2>
           )}
         </ContentIcon>
       </Styled.Layer>

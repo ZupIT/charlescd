@@ -159,17 +159,20 @@ export const useDeleteUser = (): [Function, string] => {
 
 export const useUpdateName = (): {
   status: string;
+  user: User;
   updateNameById: (id: string, name: string) => void;
 } => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const [user, setNewUser] = useState<User>();
   const patch = useFetchData<User>(patchProfileById);
 
   const updateNameById = useCallback(
     async (id: string, name: string) => {
       try {
         setStatus('pending');
-        await patch(id, name);
+        const res = await patch(id, name);
+        setNewUser(res);
         setStatus('resolved');
       } catch (e) {
         setStatus('rejected');
@@ -187,7 +190,7 @@ export const useUpdateName = (): {
     [patch, dispatch]
   );
 
-  return { status, updateNameById };
+  return { status, user, updateNameById };
 };
 
 export const useUpdateProfile = (): [boolean, Function, User, string] => {
