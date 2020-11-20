@@ -63,11 +63,11 @@ class CreateUserInteractorImpl @Inject constructor(
     }
 
     private fun saveUserOnKeycloak(user: User, password: String?) {
-        val validPassword = password ?: throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER)
+        if (password.isNullOrBlank()) throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER).withParameters("password")
         this.keycloakService.createUser(
             user.email,
             user.name,
-            validPassword
+            password
         )
     }
 }
