@@ -202,6 +202,13 @@ envoy:
     jwks_certs: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/protocol/openid-connect/certs
     cache_duration: 30
 
+ingress:
+  host: charles.info.example
+  class: nginx
+  controller:
+    nginx:
+      enabled: true
+
 octopipe:
   enabled: true
   envVars:

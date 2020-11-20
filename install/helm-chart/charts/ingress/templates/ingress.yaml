@@ -2,13 +2,14 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    {{ if .Values.ingress.controller.nginx.enabled }}
     nginx.ingress.kubernetes.io/rewrite-target: /$1
+    {{- end}}
   name: charlescd-ingress
-  namespace: charles
 spec:
   rules:
-  - host: charles.info.example
+  - host: {{ .Values.ingress.host }}
     http:
       paths:
       - path: /(.*)
