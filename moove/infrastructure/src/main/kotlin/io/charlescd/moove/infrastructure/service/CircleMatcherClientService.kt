@@ -113,6 +113,7 @@ class CircleMatcherClientService(
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
-            createdAt = circle.createdAt
+            createdAt = circle.createdAt,
+            percentage = circle.percentage
         )
 }
