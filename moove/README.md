@@ -1,6 +1,6 @@
 # CharlesCD Moove
 
-Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products, and the delivery pipeline until it reaches your circles, facilitating the bridge between [Butler], [Villager], and [Circle Matcher]. 
+Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products and the delivery pipeline until it reaches your circles, facilitating the bridge between [Butler], [Villager], and [Circle Matcher]. 
  
 ## How Moove Works
 
@@ -68,4 +68,3 @@ Please check our [Contributing Guide].
 [Circle Matcher]: https://github.com/ZupIT/charlescd/tree/master/circle-matcher
 [Contributing Guide]: https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md
 [Documentation]: https://docs.charlescd.io/
-
