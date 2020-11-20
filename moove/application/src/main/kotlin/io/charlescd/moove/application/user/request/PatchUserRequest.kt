@@ -48,16 +48,10 @@ data class PatchUserRequest(override val patches: List<PatchOperation>) : BasePa
 
     private fun validateValues() {
         patches.forEach { patch ->
-            when (patch.path) {
-                "/name" -> validateNameValue(patch)
+            Assert.notNull(patch.value, "Name cannot be null.")
+            jacksonObjectMapper().convertValue<String>(patch.value!!).let { name ->
+                Assert.isTrue((name.length in 1..64), "Name minimum size is 1 and maximum is 64.")
             }
-        }
-    }
-
-    private fun validateNameValue(patch: PatchOperation) {
-        Assert.notNull(patch.value, "Name cannot be null.")
-        jacksonObjectMapper().convertValue<String>(patch.value!!).let { name ->
-            Assert.isTrue((name.length in 1..64), "Name minimum size is 1 and maximum is 64.")
         }
     }
 }
