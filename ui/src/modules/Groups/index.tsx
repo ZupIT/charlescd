@@ -43,7 +43,9 @@ const UserGroups = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [getUserGroups, loading] = useFindAllUserGroup();
   const { list } = useGlobalState(state => state.userGroups);
-  const { register, watch, handleSubmit, errors } = useForm({ mode: 'onBlur' });
+  const { register, watch, handleSubmit, errors } = useForm({
+    mode: 'onChange'
+  });
   const watchName = watch('name');
   const {
     createUserGroup,

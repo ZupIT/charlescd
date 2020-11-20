@@ -48,21 +48,18 @@ const WorkspaceMenu = ({
   selectedWorkspace
 }: Props) => {
   const history = useHistory();
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { register, handleSubmit, watch, errors } = useForm({ mode: 'onBlur' });
-  const name = watch('name');
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({ mode: 'onChange' });
   const {
     save,
     response: saveWorkspaceResponse,
     loading: saveWorkspaceLoading
   } = useSaveWorkspace();
   const [toggleModal, setToggleModal] = useState(false);
-
-  useEffect(() => {
-    if (name !== null) {
-      setIsDisabled(name);
-    }
-  }, [name, setIsDisabled]);
 
   const renderWorkspaces = () =>
     isEmpty(items) ? (
@@ -112,7 +109,7 @@ const WorkspaceMenu = ({
           />
           <Styled.Modal.Button
             type="submit"
-            isDisabled={!isDisabled}
+            isDisabled={!isValid}
             isLoading={saveWorkspaceLoading}
           >
             Create workspace

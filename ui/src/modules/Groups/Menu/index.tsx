@@ -59,7 +59,7 @@ const UserGroupList = ({ items, selectedItems, onSelect }: ListProps) =>
 const UserGroupMenu = ({ onSearch, onCreate, isLoading, ...rest }: Props) => {
   return (
     <>
-      <Styled.Actions>
+      <Styled.Actions data-testid={'users-groups-menu'}>
         <Styled.Button onClick={onCreate}>
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create user group</Text.h5>
