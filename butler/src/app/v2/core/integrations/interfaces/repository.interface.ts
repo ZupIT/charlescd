@@ -17,7 +17,5 @@
 import { Resource } from './repository-response.interface'
 
 export interface Repository {
-  getTemplateAndValueFor(name: string): Promise<[string, string]>
-
   getResource(name: string): Promise<Resource>
 }

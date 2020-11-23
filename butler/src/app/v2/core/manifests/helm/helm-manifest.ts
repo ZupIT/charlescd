@@ -21,40 +21,52 @@ import * as os from 'os'
 import * as path from 'path'
 
 import { Injectable } from '@nestjs/common'
+import * as rimraf from 'rimraf'
 
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
 import { Repository } from '../../../core/integrations/interfaces/repository.interface'
+import { Resource, ResourceType } from '../../integrations/interfaces/repository-response.interface'
 
 @Injectable()
 export class HelmManifest implements Manifest {
 
+  private static readonly TMP_DIR = '/home/leandro'
+
   constructor(private repository: Repository) {}
 
   public async generate(config: ManifestConfig): Promise<string> {
-    const [template, values] = await this.repository.getTemplateAndValueFor(config.componentName)
-    const tmpFiles: string[] = []
+    const resource = await this.repository.getResource(config.componentName)
+    const chartPath = HelmManifest.TMP_DIR + '/' + uuid.v4()
     try {
-      tmpFiles.push(await this.saveTmpFile(template))
-      tmpFiles.push(await this.saveTmpFile(values))
-      return await this.package(tmpFiles[0], tmpFiles[1], config)
+      await this.saveFiles(chartPath, resource)
+      return await this.package(chartPath, config)
     } finally {
-      tmpFiles.forEach(file => this.cleanUp(file))
+      this.cleanUp(chartPath)
     }
   }
 
-  private async saveTmpFile(base64File: string): Promise<string> {
-    const fileName = `${os.tmpdir()}${path.sep}${uuid.v4()}`
-    await fs.writeFile(fileName, base64File, { encoding: 'base64' })
-    return fileName
+  private async saveFiles(path: string, resource: Resource): Promise<void> {
+    let basePath = path + '/' + resource.name
+    await fs.mkdir(basePath, { recursive: true })
+    if(resource.children) {
+      for (let i = 0; i < resource.children.length; i++) {
+        let child = resource.children[i]
+        if(child.type == ResourceType.DIR) {
+          await this.saveFiles(basePath, child)
+        } else {
+          await fs.writeFile(basePath + '/' + child.name, child.content, { encoding: 'base64' })
+        }
+      }
+    }
   }
 
   private cleanUp(file: string) {
-    fs.unlink(file)
+    rimraf(file, () => {})
   }
 
-  private async package(templateFile: string, valuesFile: string, config: ManifestConfig): Promise<string> {
-    const args = this.formatArguments(templateFile, valuesFile, config)
+  private async package(chartPath: string, config: ManifestConfig): Promise<string> {
+    const args = this.formatArguments(chartPath, config)
     return this.executeCommand(args)
   }
 
@@ -79,9 +91,9 @@ export class HelmManifest implements Manifest {
     })
   }
 
-  private formatArguments(templateFile: string, valuesFile: string, config: ManifestConfig) {
+  private formatArguments(chartPath: string, config: ManifestConfig) {
     const overrideValues = this.toStringArray(this.extractCustomValues(config))
-    const command = ['template', templateFile, '-f', valuesFile]
+    const command = ['template', config.componentName, `${chartPath}/${config.componentName}`, '-f', `${chartPath}/${config.componentName}/${config.componentName}.yaml`]
     if(config.namespace) {
       command.push('--namespace')
       command.push(config.namespace)

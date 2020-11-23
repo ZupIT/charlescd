@@ -23,7 +23,7 @@ import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-man
 import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
 import { Repository } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
-import { Resource, ResourceType } from '../../../../..//app/v2/core/integrations/interfaces/repository-response.interface'
+import { Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository-response.interface'
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
@@ -33,30 +33,21 @@ describe('Generate K8s manifest by helm', () => {
       url: 'https://myrepo.com/test',
       token: 'my-token'
     },
-    componentName: "test",
+    componentName: "helm-test-chart",
     imageUrl: "latest",
     namespace: 'my-namespace',
     circleId: "f5d23a57-5607-4306-9993-477e1598cc2a"
   }
 
   const mockRepository = {
-    getTemplateAndValueFor: jest.fn(),
-
     getResource: jest.fn()
   }
 
-  mockRepository.getTemplateAndValueFor.mockImplementation(name => {
-    const template = fs.readFileSync(`${basePath}/${name}-darwin.tgz`, { encoding: 'base64' })
-    const values = fs.readFileSync(`${basePath}/${name}.yaml`, { encoding: 'base64' })
+  mockRepository.getResource.mockImplementation(async name => await readFiles(basePath, 'helm-test-chart'))
 
-    return [template, values]
-  })
-
-  mockRepository.getResource.mockImplementation(async name => await readFiles(basePath))
-
-  async function readFiles(dir: string): Promise<Resource> {
+  async function readFiles(dir: string, name: string): Promise<Resource> {
     let resources: Resource = {
-      name: dir,
+      name: name,
       type: ResourceType.DIR,
       children: []
     }
@@ -65,7 +56,7 @@ describe('Generate K8s manifest by helm', () => {
       let dirent = files[i]
       let filePath = path.join(dir, dirent.name)
       if (dirent.isDirectory()) {
-        resources.children?.push(await readFiles(filePath))
+        resources.children?.push(await readFiles(filePath, dirent.name))
       } else {
         resources.children?.push({
           name: dirent.name,
@@ -84,7 +75,7 @@ describe('Generate K8s manifest by helm', () => {
         url: 'https://myrepo.com/test',
         token: 'my-token'
       },
-      componentName: "test",
+      componentName: "helm-test-chart",
       imageUrl: "latest"
     }
     const helm = new HelmManifest(mockRepository)
@@ -105,7 +96,7 @@ describe('Generate K8s manifest by helm', () => {
   })
 
   it('should fail manifest generation when fails fetching files from repository', async () => {
-    mockRepository.getTemplateAndValueFor.mockImplementation(() => { throw new Error('error') })
+    mockRepository.getResource.mockImplementation(() => { throw new Error('error') })
 
     const helm = new HelmManifest(mockRepository)
     const manifest = helm.generate(manifestConfig)

@@ -4,9 +4,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: test
-    service: test
-  name: test
+    app: helm-test-chart
+    service: helm-test-chart
+  name: helm-test-chart
   namespace: my-namespace
 spec:
   ports:
@@ -15,34 +15,34 @@ spec:
       targetPort: 80
     
   selector:
-    app: test
+    app: helm-test-chart
   type: ClusterIP
 ---
 # Source: test/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: RELEASE-NAME
+  name: helm-test-chart
   namespace: my-namespace
   labels:
-    app: test
-    version: test
+    app: helm-test-chart
+    version: helm-test-chart
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test
-      version: RELEASE-NAME
+      app: helm-test-chart
+      version: helm-test-chart
   template:
     metadata:
       annotations:
         sidecar.istio.io/inject: 'true' 
       labels:
-        app: test
-        version: RELEASE-NAME
+        app: helm-test-chart
+        version: helm-test-chart
     spec:
       containers:
-        - name: test
+        - name: helm-test-chart
           image: latest
           livenessProbe:
             failureThreshold: 3
