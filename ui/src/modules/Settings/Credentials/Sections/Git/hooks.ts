@@ -19,7 +19,7 @@ import { create, configPath } from 'core/providers/git';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
-import { Git, Response } from './interfaces';
+import { GitFormData, Response } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useGit = (): FetchProps => {
@@ -44,7 +44,7 @@ export const useGit = (): FetchProps => {
   } = delData;
 
   const save = useCallback(
-    (git: Git) => {
+    (git: GitFormData) => {
       createGit(git);
     },
     [createGit]
