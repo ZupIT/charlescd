@@ -44,7 +44,7 @@ test('render UsersComparationItem default component', async () => {
   expect(userComparationElement).toBeInTheDocument();
 });
 
-test('to open a user and successfully update the name', async () => {
+test('should open a user and successfully update the name', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify({
     name: 'Charles',
     email: 'charlescd@zup.com.br'
