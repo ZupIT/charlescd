@@ -46,6 +46,7 @@ export interface Props extends InputEvents {
   disabled?: boolean;
   isLoading?: boolean;
   hasError?: boolean;
+  error?: string;
 }
 
 const Input = React.forwardRef(
@@ -64,6 +65,7 @@ const Input = React.forwardRef(
       maxLength,
       isLoading,
       hasError,
+      error,
       ...rest
     }: Props,
     ref: Ref<HTMLInputElement>
@@ -115,19 +117,20 @@ const Input = React.forwardRef(
           onClick={() => setIsFocused(true)}
           onBlur={handleFocused}
           disabled={disabled}
-          hasError={hasError}
+          hasError={hasError || !isEmpty(error)}
           {...rest}
         />
         {label && (
           <Styled.Label
             data-testid={`label-${type}-${name}`}
             isFocused={isFocused}
-            hasError={hasError}
+            hasError={hasError || !isEmpty(error)}
             onClick={() => handleClick()}
           >
             {label}
           </Styled.Label>
         )}
+        {error && <Styled.Error color="error">{error}</Styled.Error>}
         {isLoading && <Styled.Loading name="ellipse-loading" color="light" />}
         {isTip && <Styled.Tip>{renderTip()}</Styled.Tip>}
       </Styled.Wrapper>
