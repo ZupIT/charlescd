@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Git } from 'modules/Settings/Credentials/Sections/Git/interfaces';
+import { GitFormData } from 'modules/Settings/Credentials/Sections/Git/interfaces';
 import { postRequest } from './base';
 
 const endpoint = '/moove/v2/configurations/git';
 export const configPath = '/gitConfigurationId';
 
-export const create = (git: Git) => postRequest(`${endpoint}`, git);
+export const create = (git: GitFormData) => postRequest(`${endpoint}`, git);
