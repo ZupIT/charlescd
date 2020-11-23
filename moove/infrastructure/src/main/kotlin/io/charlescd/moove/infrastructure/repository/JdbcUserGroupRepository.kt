@@ -128,7 +128,7 @@ class JdbcUserGroupRepository(
         return Page(
             result?.toList() ?: emptyList(),
             page.page,
-            page.size,
+            result?.size ?: 0,
             executeCountQuery(name) ?: 0
         )
     }

@@ -312,7 +312,7 @@ class JdbcModuleRepository(
         return Page(
             result?.toList() ?: emptyList(),
             pageRequest.page,
-            pageRequest.size,
+            result?.size ?: 0,
             executeCountQuery(workspaceId) ?: 0
         )
     }

@@ -161,7 +161,7 @@ class JdbcGitConfigurationRepository(
         return Page(
             result?.toList() ?: emptyList(),
             pageRequest.page,
-            pageRequest.size,
+            result?.size ?: 0,
             countConfigurationsByWorkspaceId(workspaceId) ?: 0
         )
     }

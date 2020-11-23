@@ -92,7 +92,7 @@ class JdbcRoleRepository(
         return Page(
             result?.toList() ?: emptyList(),
             page.page,
-            page.size,
+            result?.size ?: 0,
             executeCountQuery() ?: 0
         )
     }

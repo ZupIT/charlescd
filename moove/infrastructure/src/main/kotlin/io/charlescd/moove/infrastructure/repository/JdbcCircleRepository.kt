@@ -82,7 +82,7 @@ class JdbcCircleRepository(
             circleExtractor
         )
 
-        return  Page(
+        return Page(
             result?.toList() ?: emptyList(),
             pageRequest.page,
             result?.size ?: 0,

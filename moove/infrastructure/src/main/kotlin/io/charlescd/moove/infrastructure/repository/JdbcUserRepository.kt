@@ -119,7 +119,7 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         return Page(
             result?.toList() ?: emptyList(),
             page.page,
-            page.size,
+            result?.size ?: 0,
             executeCountQuery(name, email) ?: 0
         )
     }
