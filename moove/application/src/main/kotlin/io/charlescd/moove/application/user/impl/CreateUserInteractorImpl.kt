@@ -13,8 +13,10 @@ import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.transaction.annotation.Transactional
 
 @Named
+@Transactional
 class CreateUserInteractorImpl @Inject constructor(
     private val userService: UserService,
     private val userRepository: UserRepository,
