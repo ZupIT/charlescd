@@ -31,13 +31,13 @@ import { Resource, ResourceType } from '../../integrations/interfaces/repository
 @Injectable()
 export class HelmManifest implements Manifest {
 
-  private static readonly TMP_DIR = '/home/leandro'
+  private static readonly TMP_DIR = os.tmpdir()
 
   constructor(private repository: Repository) {}
 
   public async generate(config: ManifestConfig): Promise<string> {
     const resource = await this.repository.getResource(config.componentName)
-    const chartPath = HelmManifest.TMP_DIR + '/' + uuid.v4()
+    const chartPath = this.getTmpChartDir()
     try {
       await this.saveFiles(chartPath, resource)
       return await this.package(chartPath, config)
@@ -46,8 +46,12 @@ export class HelmManifest implements Manifest {
     }
   }
 
-  private async saveFiles(path: string, resource: Resource): Promise<void> {
-    let basePath = path + '/' + resource.name
+  private getTmpChartDir(): string {
+    return os.tmpdir() + path.sep + uuid.v4()
+  }
+
+  private async saveFiles(chartPath: string, resource: Resource): Promise<void> {
+    let basePath = chartPath + path.sep + resource.name
     await fs.mkdir(basePath, { recursive: true })
     if(resource.children) {
       for (let i = 0; i < resource.children.length; i++) {
@@ -55,7 +59,7 @@ export class HelmManifest implements Manifest {
         if(child.type == ResourceType.DIR) {
           await this.saveFiles(basePath, child)
         } else {
-          await fs.writeFile(basePath + '/' + child.name, child.content, { encoding: 'base64' })
+          await fs.writeFile(basePath + path.sep + child.name, child.content, { encoding: 'base64' })
         }
       }
     }
@@ -93,7 +97,7 @@ export class HelmManifest implements Manifest {
 
   private formatArguments(chartPath: string, config: ManifestConfig) {
     const overrideValues = this.toStringArray(this.extractCustomValues(config))
-    const command = ['template', config.componentName, `${chartPath}/${config.componentName}`, '-f', `${chartPath}/${config.componentName}/${config.componentName}.yaml`]
+    const command = ['template', config.componentName, `${chartPath}${path.sep}${config.componentName}`, '-f', `${chartPath}${path.sep}${config.componentName}${path.sep}${config.componentName}.yaml`]
     if(config.namespace) {
       command.push('--namespace')
       command.push(config.namespace)
