@@ -20,7 +20,7 @@ package io.charlescd.moove.application.circle.impl
 
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.circle.FindCirclesPercentageInteractor
-import io.charlescd.moove.application.circle.response.CircleResponse
+import io.charlescd.moove.application.circle.response.CirclePercentageResponse
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.repository.CircleRepository
 import javax.inject.Named
@@ -28,10 +28,11 @@ import javax.inject.Named
 @Named
 class FindCirclesPercentageInteractorImpl(private val circleRepository: CircleRepository) : FindCirclesPercentageInteractor {
 
-    override fun execute(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest): ResourcePageResponse<CircleResponse> {
+    override fun execute(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest): ResourcePageResponse<CirclePercentageResponse> {
         val circlesPercentage = circleRepository.findCirclesPercentage(workspaceId, name, active, pageRequest)
+        val circlePercentageResponse = CirclePercentageResponse.from(circlesPercentage, circlesPercentage.content.map { it.percentage })
         return ResourcePageResponse.from(
-            circlesPercentage.content.map { CircleResponse.from(it) },
+            listOf(circlePercentageResponse),
             circlesPercentage.pageNumber,
             circlesPercentage.pageSize,
             circlesPercentage.isLast(),

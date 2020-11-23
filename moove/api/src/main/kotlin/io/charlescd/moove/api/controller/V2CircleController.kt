@@ -215,7 +215,7 @@ class V2CircleController(
         @RequestParam(name = "name", required = false) name: String?,
         @RequestParam(name = "active", required = true) active: Boolean,
         pageRequest: PageRequest
-    ): ResourcePageResponse<CircleResponse> {
+    ): ResourcePageResponse<CirclePercentageResponse> {
         return this.findAllCirclesPercentageInteractor.execute(workspaceId, name, active, pageRequest)
     }
 }

@@ -17,10 +17,10 @@
 package io.charlescd.moove.application.circle
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.circle.response.CircleResponse
+import io.charlescd.moove.application.circle.response.CirclePercentageResponse
 import io.charlescd.moove.domain.PageRequest
 
 interface FindCirclesPercentageInteractor {
 
-    fun execute(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest): ResourcePageResponse<CircleResponse>
+    fun execute(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest): ResourcePageResponse<CirclePercentageResponse>
 }
