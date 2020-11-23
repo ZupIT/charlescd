@@ -32,7 +32,8 @@ import org.keycloak.representations.idm.RoleRepresentation as KeycloakRoleRepres
 import org.keycloak.representations.idm.UserRepresentation as KeycloakUserRepresentation
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-// TODO To remove after vulnerability-fixes pr(#670) accepted"
+
+@Deprecated("To remove after vulnerability-fixes pr(#670) accepted")
 @Service
 class KeycloakService(private val keycloak: Keycloak, private val userRepository: UserRepository) {
 
