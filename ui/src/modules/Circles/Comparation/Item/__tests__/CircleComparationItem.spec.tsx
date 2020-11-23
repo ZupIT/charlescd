@@ -101,7 +101,7 @@ test('render CircleComparationItem with release', async () => {
   await waitFor(() => {
     expect(screen.getByTestId('layer-metrics')).toBeInTheDocument();
     expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument();
-    expect(screen.getByText('Override release')).toBeInTheDocument();
+    expect(screen.getByText('Override release')).not.toBeInTheDocument();
     expect(screen.getByText('Last release deployed')).toBeInTheDocument();
     expect(screen.getByText('Add datasource health')).toBeInTheDocument();
   });
