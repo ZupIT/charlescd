@@ -149,7 +149,13 @@ test('render CircleComparationItem Default Circle with release', async () => {
     expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
   });
 
-  expect(screen.getByText('Override release')).toBeInTheDocument();
+  const OverrideRelease = screen.getByText('Override release');
+  expect(OverrideRelease).toBeInTheDocument();
+  act(() => userEvent.click(OverrideRelease));
+
+  const IconBack = await screen.findByTestId('icon-arrow-left');
+  expect(IconBack).toBeInTheDocument();
+  
 });
 
 test('render CircleComparationItem Default Circle', async () => {
