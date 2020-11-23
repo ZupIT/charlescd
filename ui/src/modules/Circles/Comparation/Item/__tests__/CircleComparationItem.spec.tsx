@@ -115,7 +115,7 @@ test('render CircleComparationItem with release', async () => {
   expect(screen.queryByText('Override release')).not.toBeInTheDocument();
 });
 
-test('render CircleComparationItem Default Circle', async () => {
+test('render CircleComparationItem Default Circle with release', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123-workspace',
@@ -150,4 +150,26 @@ test('render CircleComparationItem Default Circle', async () => {
   });
 
   expect(screen.getByText('Override release')).toBeInTheDocument();
+});
+
+test('render CircleComparationItem Default Circle', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
+  const handleChange = jest.fn();
+
+  render(
+    <CirclesComparationItem id={props.id} onChange={handleChange} />
+  );
+
+  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(DropdownIcon).toBeInTheDocument();
+
+  act(() => userEvent.click(DropdownIcon));
+
+  const DropdownActions = screen.getByTestId('dropdown-actions');
+
+  await waitFor(() => {
+    expect(DropdownActions).toBeInTheDocument();
+    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
+  });
 });
