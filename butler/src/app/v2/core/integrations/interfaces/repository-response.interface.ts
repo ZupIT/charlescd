@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import { Resource } from './repository-response.interface'
+export enum ResourceType {
+  FILE = 'file',
+  DIR = 'directory'
+} 
 
-export interface Repository {
-  getTemplateAndValueFor(name: string): Promise<[string, string]>
-
-  getResource(name: string): Promise<Resource>
+export interface Resource {
+  name: string,
+  type: ResourceType,
+  content?: string,
+  children?: Resource[]
 }

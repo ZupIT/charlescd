@@ -23,6 +23,7 @@ import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-man
 import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
 import { Repository } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
+import { Resource, ResourceType } from '../../../../..//app/v2/core/integrations/interfaces/repository-response.interface'
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
@@ -39,7 +40,9 @@ describe('Generate K8s manifest by helm', () => {
   }
 
   const mockRepository = {
-    getTemplateAndValueFor: jest.fn()
+    getTemplateAndValueFor: jest.fn(),
+
+    getResource: jest.fn()
   }
 
   mockRepository.getTemplateAndValueFor.mockImplementation(name => {
@@ -49,7 +52,32 @@ describe('Generate K8s manifest by helm', () => {
     return [template, values]
   })
 
-  it('should generate manifest with default values', async() => {
+  mockRepository.getResource.mockImplementation(async name => await readFiles(basePath))
+
+  async function readFiles(dir: string): Promise<Resource> {
+    let resources: Resource = {
+      name: dir,
+      type: ResourceType.DIR,
+      children: []
+    }
+    let files = fs.readdirSync(dir, { withFileTypes: true })
+    for (let i = 0; i < files.length; i++) {
+      let dirent = files[i]
+      let filePath = path.join(dir, dirent.name)
+      if (dirent.isDirectory()) {
+        resources.children?.push(await readFiles(filePath))
+      } else {
+        resources.children?.push({
+          name: dirent.name,
+          type: ResourceType.FILE,
+          content: fs.readFileSync(filePath, { encoding: 'base64' })
+        })
+      }
+    }
+    return resources
+  }
+
+  it('should generate manifest with default values', async () => {
     const manifestConfig = {
       repo: {
         provider: GitProvidersEnum.GITHUB,
@@ -67,7 +95,7 @@ describe('Generate K8s manifest by helm', () => {
     expect(manifest).toEqual(expected)
   })
 
-  it('should generate manifest with custom values', async() => {
+  it('should generate manifest with custom values', async () => {
     const helm = new HelmManifest(mockRepository)
     const manifest = await helm.generate(manifestConfig)
 
@@ -76,7 +104,7 @@ describe('Generate K8s manifest by helm', () => {
     expect(manifest).toEqual(expected)
   })
 
-  it('should fail manifest generation when fails fetching files from repository', async() => {
+  it('should fail manifest generation when fails fetching files from repository', async () => {
     mockRepository.getTemplateAndValueFor.mockImplementation(() => { throw new Error('error') })
 
     const helm = new HelmManifest(mockRepository)
