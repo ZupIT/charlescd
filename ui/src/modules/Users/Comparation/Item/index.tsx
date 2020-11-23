@@ -70,7 +70,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     } else if (status === 'rejected') {
       findByEmail(email);
     }
-  }, [user, status, email, findByEmail]);
+  }, [userUpdated, status, email, findByEmail]);
 
   useEffect(() => {
     onChange(delUserResponse);
