@@ -15,8 +15,6 @@
  */
 
 import React, { MouseEvent } from 'react';
-import Icon from 'core/components/Icon';
-import Text from 'core/components/Text';
 import Styled from './styled';
 
 export interface Props {
@@ -25,6 +23,7 @@ export interface Props {
   onClick?: (event: MouseEvent) => void;
   onSelect?: (name: string) => void;
   className?: string;
+  isInactive?: boolean;
 }
 
 const DropdownItem = ({
@@ -33,6 +32,7 @@ const DropdownItem = ({
   onClick,
   onSelect,
   className,
+  isInactive,
   ...rest
 }: Props) => {
   const handleClick = (event: MouseEvent) => {
@@ -47,10 +47,11 @@ const DropdownItem = ({
       data-testid={`dropdown-item-${icon}-${name}`}
       className={className}
       onClick={(event: MouseEvent) => handleClick(event)}
+      disabled={isInactive}
       {...rest}
     >
-      {icon && <Icon name={icon} size="15px" />}
-      <Text.h5 color="dark">{name}</Text.h5>
+      {icon && <Styled.Icon name={icon} size="15px" />}
+      <Styled.Text color="dark">{name}</Styled.Text>
     </Styled.Item>
   );
 };

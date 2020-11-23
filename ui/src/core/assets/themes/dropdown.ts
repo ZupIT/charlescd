@@ -17,6 +17,7 @@
 import {
   COLOR_BASTILLE,
   COLOR_SANTAS_GREY,
+  COLOR_GRAY,
   COLOR_LAVENDER_GREY,
   COLOR_BLACK_MARLIN,
   COLOR_BLACK_OP_20
@@ -31,5 +32,8 @@ export const dark = {
   hover: COLOR_LAVENDER_GREY,
   bgHover: COLOR_BLACK_MARLIN,
   shadow: COLOR_BLACK_OP_20,
-  zIndex: zIndex.OVER_1
+  zIndex: zIndex.OVER_1,
+  disabled: {
+    color: COLOR_GRAY
+  }
 };

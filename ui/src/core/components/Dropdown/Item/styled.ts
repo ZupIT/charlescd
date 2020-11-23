@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { Props } from './';
+import ComponentIcon from 'core/components/Icon';
+import ComponentText from 'core/components/Text';
 
-const Item = styled.button`
+const Icon = styled(ComponentIcon)``;
+
+const Text = styled(ComponentText.h5)``;
+
+const Item = styled.button<Partial<Props>>`
   color: ${({ theme }) => theme.dropdown.color};
   cursor: pointer;
   border: none;
@@ -33,8 +40,18 @@ const Item = styled.button`
   > * + * {
     margin-left: 5px;
   }
+
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      ${Icon}, ${Text} {
+        color: ${({ theme }) => theme.dropdown.disabled.color};
+      }
+    `};
 `;
 
 export default {
-  Item
+  Item,
+  Icon,
+  Text
 };

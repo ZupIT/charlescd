@@ -41,3 +41,4 @@ export const COLOR_SUMMER_SKY = '#4DB0E9';
 export const COLOR_MAYA_BLUE = '#64D2FF';
 export const COLOR_CHRISTI = '#62B605';
 export const COLOR_GETTING_DARKER = '#979797';
+export const COLOR_GRAY = '#636366';
