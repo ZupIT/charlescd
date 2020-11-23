@@ -21,10 +21,10 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.infrastructure.repository.mapper.BuildExtractor
-import java.util.*
-import kotlin.collections.LinkedHashMap
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 @Repository
 class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val buildExtractor: BuildExtractor) :
@@ -376,15 +376,17 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
     }
 
     private fun findByParameters(parameters: Map<String, String>, pageRequest: PageRequest): Page<Build> {
-        val count = executeCountQuery(createCountQuery(parameters), parameters)
-
         val result = this.jdbcTemplate.query(
             createQueryStatement(parameters, pageRequest),
             parameters.values.toTypedArray(),
             buildExtractor
         )
 
-        return Page(result?.toList() ?: emptyList(), pageRequest.page, pageRequest.size, count ?: 0)
+        return Page(
+            result?.toList() ?: emptyList(),
+            pageRequest.page,
+            result?.size ?: 0,
+            executeCountQuery(createCountQuery(parameters), parameters) ?: 0)
     }
 
     private fun createInnerQueryStatement(
