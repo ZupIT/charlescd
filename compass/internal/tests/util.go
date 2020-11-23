@@ -93,7 +93,7 @@ func datasourceInsert(pluginSrc string) (string, datasource.Response) {
 
 	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, health, deleted_at, plugin_src)
 							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', %t, null, '%s');`,
-		entity.ID, entity.Name, entity.Data, configuration.GetConfiguration("PV_KEY"), entity.WorkspaceID, entity.Health, pluginSrc), entity
+		entity.ID, entity.Name, entity.Data, configuration.GetConfiguration("ENCRYPTION_KEY"), entity.WorkspaceID, entity.Health, pluginSrc), entity
 }
 
 func newBasicMetric() metric.Metric {
@@ -136,7 +136,7 @@ func actionInsert(actionType string) (string, action.Response) {
 
 	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
 			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), null);`,
-			entity.ID, entity.WorkspaceId, entity.Nickname, actionType, entity.Description, entity.Configuration, configuration.GetConfiguration("PV_KEY")),
+			entity.ID, entity.WorkspaceId, entity.Nickname, actionType, entity.Description, entity.Configuration, configuration.GetConfiguration("ENCRYPTION_KEY")),
 		entity
 }
 

@@ -43,7 +43,7 @@ var initialValues = map[string]string{
 	"MOOVE_USER":          "admin@admin",
 	"MOOVE_PATH":          "http://charlescd-moove:8080",
 	"MOOVE_AUTH":          "Bearer 123",
-	"PV_KEY":              "MAYCON",
+	"ENCRYPTION_KEY":      "MAYCON",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {

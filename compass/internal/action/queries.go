@@ -38,7 +38,7 @@ var decryptedWorkspaceAndIdActionQuery = fmt.Sprintf(`SELECT id,
 					FROM actions
 					WHERE id = ?
 					AND workspace_id = ?
-					AND deleted_at IS NULL`, configuration.GetConfiguration("PV_KEY"))
+					AND deleted_at IS NULL`, configuration.GetConfiguration("ENCRYPTION_KEY"))
 
 var idActionQuery = fmt.Sprintf(`SELECT id,
        					workspace_id,
@@ -50,4 +50,4 @@ var idActionQuery = fmt.Sprintf(`SELECT id,
 						PGP_SYM_DECRYPT(configuration, '%s')
 					FROM actions
 					WHERE id = ?
-					AND deleted_at IS NULL`, configuration.GetConfiguration("PV_KEY"))
+					AND deleted_at IS NULL`, configuration.GetConfiguration("ENCRYPTION_KEY"))
