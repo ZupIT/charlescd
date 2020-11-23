@@ -25,6 +25,7 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -56,6 +57,13 @@ const props = {
 
 const circle = {
   name: 'Circle',
+  deployment: {
+    status: 'DEPLOYED'
+  }
+}
+
+const defaultCircle = {
+  name: 'Default',
   deployment: {
     status: 'DEPLOYED'
   }
@@ -109,7 +117,20 @@ test('render CircleComparationItem with release', async () => {
 });
 
 test('render CircleComparationItem Default Circle', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123-workspace',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [],
+    getAll: jest.fn
+  });
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(defaultCircle))
+    .mockResponseOnce(JSON.stringify(defaultCircle));
   const handleChange = jest.fn();
 
   render(
@@ -128,4 +149,6 @@ test('render CircleComparationItem Default Circle', async () => {
     expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
     expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
   });
+
+  expect(screen.getByText('Override release')).toBeInTheDocument();
 });
