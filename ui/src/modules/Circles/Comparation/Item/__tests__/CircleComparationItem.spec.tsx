@@ -104,6 +104,8 @@ test('render CircleComparationItem with release', async () => {
     expect(screen.getByText('Last release deployed')).toBeInTheDocument();
     expect(screen.getByText('Add datasource health')).toBeInTheDocument();
   });
+
+  expect(screen.queryByText('Override release')).not.toBeInTheDocument();
 });
 
 test('render CircleComparationItem Default Circle', async () => {
