@@ -385,7 +385,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
         return Page(
             result?.toList() ?: emptyList(),
             pageRequest.page,
-            result?.size ?: 0,
+            pageRequest.size,
             executeCountQuery(createCountQuery(parameters), parameters) ?: 0)
     }
 

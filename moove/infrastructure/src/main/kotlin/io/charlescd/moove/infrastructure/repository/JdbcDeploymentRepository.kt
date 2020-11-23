@@ -380,7 +380,7 @@ class JdbcDeploymentRepository(
         return Page(
             result,
             pageRequest.page,
-            result.size,
+            pageRequest.size,
             totalItems
         )
     }
