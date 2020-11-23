@@ -178,4 +178,21 @@ test('render CircleComparationItem Default Circle', async () => {
     expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
     expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
   });
+
+  const IconEdit = await screen.findByTestId('icon-edit');
+  expect(IconEdit).toBeInTheDocument();
+  act(() => userEvent.click(IconEdit));
+
+  const IconBack = await screen.findByTestId('icon-arrow-left');
+  expect(IconBack).toBeInTheDocument();
+  act(() => userEvent.click(IconBack));
+
+  act(() => userEvent.click(DropdownIcon));
+
+  const IconDelete = await screen.findByTestId('icon-delete');
+  expect(IconDelete).toBeInTheDocument();
+  act(() => userEvent.click(IconDelete));
+
+  const ModalTrigger = await screen.findByTestId('modal-trigger');
+  expect(ModalTrigger).toBeInTheDocument();
 });
