@@ -25,7 +25,6 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
-import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 
 (global as any).MutationObserver = MutationObserver
 
