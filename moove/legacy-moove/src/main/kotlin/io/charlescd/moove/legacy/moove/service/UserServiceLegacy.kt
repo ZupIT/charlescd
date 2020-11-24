@@ -110,8 +110,8 @@ class UserServiceLegacy(
         this.userRepository.findById(id)
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
-    fun findByToken(authorization: String): User {
-        val email = keycloakServiceLegacy.getEmailByToken(authorization)
+    fun findByAuthorizationToken(authorization: String): User {
+        val email = keycloakServiceLegacy.getEmailByAuthorizationToken(authorization)
         return userRepository.findByEmail(email).orElseThrow {
             NotFoundExceptionLegacy("user", email)
         }

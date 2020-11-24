@@ -172,10 +172,10 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def email = "email@email.com"
 
         when:
-        service.findByToken(authorization)
+        service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakServiceLegacy.getEmailByToken(authorization) >> email
+        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> email
         1 * repository.findByEmail(email) >> Optional.of(user)
     }
 
@@ -186,10 +186,10 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def email = "email@email.com"
 
         when:
-        service.findByToken(authorization)
+        service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakServiceLegacy.getEmailByToken(authorization) >> email
+        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> email
         1 * repository.findByEmail(email) >> Optional.empty()
         thrown(NotFoundExceptionLegacy)
     }
@@ -206,5 +206,32 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         then:
         1 * keycloackService.resetPassword(email, password)
         notThrown()
+    }
+
+
+    def "should get user by auth token"() {
+
+        when:
+        def response = service.findByAuthorizationToken(authorization)
+
+        then:
+        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> user.email
+        1 * repository.findByEmail(user.email) >> Optional.of(user)
+        response.id == representation.id
+    }
+
+    def "should throw NotFoundException when get invalid user by auth token"() {
+
+        when:
+        service.findByAuthorizationToken(authorization)
+
+        then:
+        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> user.email
+        1 * repository.findByEmail(user.email) >> Optional.empty()
+        thrown(NotFoundExceptionLegacy)
+    }
+
+    private String getAuthorization() {
+        return  "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3";
     }
 }
