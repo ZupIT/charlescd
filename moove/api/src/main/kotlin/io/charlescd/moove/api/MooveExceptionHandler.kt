@@ -52,7 +52,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseBody
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
-        return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
+        return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
@@ -60,7 +60,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseBody
     fun handleIllegalArgument(ex: IllegalArgumentException): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
-        return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
+        return ErrorMessageResponse.of(MooveErrorCode.INVALID_PAYLOAD, ex.message!!)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
