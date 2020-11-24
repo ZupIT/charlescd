@@ -26,6 +26,7 @@ import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
 import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
+import { isRequired, maxLength } from 'core/utils/validations';
 import Menu from './Menu';
 import Tabs from './Tabs';
 import { addParamUserGroup, getSelectedUserGroups } from './helpers';
@@ -81,10 +82,17 @@ const UserGroups = () => {
           <Styled.Modal.Input
             name="name"
             label="Type a name"
+<<<<<<< HEAD
             ref={register({
               required: required(),
               maxLength: maxValue(64),
               validate: isNotBlank
+=======
+            error={errors?.name?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength()
+>>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
             })}
           />
           {!!errors.name && (
