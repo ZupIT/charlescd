@@ -43,7 +43,7 @@ open class CreateBuildInteractorImpl @Inject constructor(
 
     @Transactional
     override fun execute(request: CreateBuildRequest, workspaceId: String, authorization: String): BuildResponse {
-        val user = userService.findByToken(authorization)
+        val user = userService.findByAuthorizationToken(authorization)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val hypothesis = hypothesisService.find(request.hypothesisId)

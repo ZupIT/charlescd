@@ -28,7 +28,7 @@ class ChangeUserPasswordInteractorImpl @Inject constructor(
 ) : ChangeUserPasswordInteractor {
 
     override fun execute(authorization: String, request: ChangeUserPasswordRequest) {
-        val user = userService.findByToken(authorization)
+        val user = userService.findByAuthorizationToken(authorization)
         userService.changePassword(user.email, request.oldPassword, request.newPassword)
     }
 }

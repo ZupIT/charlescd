@@ -43,7 +43,7 @@ open class CreateWorkspaceInteractorImpl @Inject constructor(
 
     @Transactional
     override fun execute(request: CreateWorkspaceRequest, authorization: String): WorkspaceResponse {
-        val author = userService.findByToken(authorization)
+        val author = userService.findByAuthorizationToken(authorization)
         val workspace = workspaceService.save(request.toWorkspace(UUID.randomUUID().toString(), author))
         createDefaultCircle(author, workspace)
 

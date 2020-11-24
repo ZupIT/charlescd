@@ -42,7 +42,7 @@ class ResetUserPasswordInteractorImpl(
     }
 
     private fun validateUser(authorization: String, userToResetPassword: User) {
-        val tokenUser = userService.findByToken(authorization)
+        val tokenUser = userService.findByAuthorizationToken(authorization)
 
         if (!tokenUser.root) {
             throw BusinessException.of(MooveErrorCode.FORBIDDEN)

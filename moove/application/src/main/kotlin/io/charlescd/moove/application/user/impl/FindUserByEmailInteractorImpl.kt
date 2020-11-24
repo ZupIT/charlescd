@@ -26,7 +26,7 @@ import javax.inject.Named
 class FindUserByEmailInteractorImpl(private val userService: UserService) : FindUserByEmailInteractor {
 
     override fun execute(email: String, authorization: String): UserResponse {
-        val user = userService.findByToken(authorization)
+        val user = userService.findByAuthorizationToken(authorization)
         if (user.root) {
             return getUser(String(Base64.getDecoder().decode(email)).toLowerCase().trim())
         }

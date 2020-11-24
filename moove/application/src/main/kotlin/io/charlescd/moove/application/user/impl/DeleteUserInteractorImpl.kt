@@ -28,7 +28,7 @@ class DeleteUserInteractorImpl(
 ) : DeleteUserInteractor {
 
     override fun execute(id: String, authorization: String) {
-        val user = userService.findByToken(authorization)
+        val user = userService.findByAuthorizationToken(authorization)
         if (user.root) {
             deleteUser(id)
             return

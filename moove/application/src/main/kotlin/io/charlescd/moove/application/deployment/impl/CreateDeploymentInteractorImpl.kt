@@ -44,7 +44,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val build: Build = buildService.find(request.buildId, workspaceId)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
-        val user = userService.findByToken(authorization)
+        val user = userService.findByAuthorizationToken(authorization)
 
         if (build.canBeDeployed()) {
             val deployment = createDeployment(request, workspaceId, user)

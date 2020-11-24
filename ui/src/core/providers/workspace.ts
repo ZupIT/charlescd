@@ -17,7 +17,8 @@
 import { baseRequest, patchRequest } from './base';
 import { getWorkspaceId } from 'core/utils/workspace';
 
-export const endpoint = '/moove/v2/workspaces';
+export const mooveEndpoint = '/moove/v2';
+export const endpoint = `${mooveEndpoint}/workspaces`;
 
 export interface Patch {
   op: string;
@@ -33,6 +34,14 @@ export interface Filter {
 export interface WorkspaceSave {
   name: string;
 }
+
+export type GitConnectionTest = {
+  credentials: {
+    address: string;
+    accessToken: string;
+    serviceProvider: string;
+  };
+};
 
 const initialFilter = {
   name: ''
@@ -62,3 +71,8 @@ export const addConfig = (path: string, value: string) =>
 
 export const delConfig = (path: string) =>
   patchRequest(`${endpoint}/${getWorkspaceId()}`, 'remove', path);
+
+export const testGitConnection = (data: GitConnectionTest) =>
+  baseRequest(`${mooveEndpoint}/configurations/git/connection-status`, data, {
+    method: 'POST'
+  });

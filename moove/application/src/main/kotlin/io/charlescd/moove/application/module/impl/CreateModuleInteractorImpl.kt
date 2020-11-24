@@ -42,7 +42,7 @@ open class CreateModuleInteractorImpl(
     @Transactional
     override fun execute(request: CreateModuleRequest, workspaceId: String, authorization: String): ModuleResponse {
 
-        val user = userService.findByToken(authorization)
+        val user = userService.findByAuthorizationToken(authorization)
 
         val workspace = workspaceService.find(workspaceId)
 

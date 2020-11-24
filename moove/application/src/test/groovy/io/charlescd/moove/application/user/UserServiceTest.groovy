@@ -178,7 +178,7 @@ class UserServiceTest extends Specification {
         def email = "charles@email.com"
 
         when:
-        this.userService.findByToken(authorization)
+        this.userService.findByAuthorizationToken(authorization)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> email
@@ -194,7 +194,7 @@ class UserServiceTest extends Specification {
         def email = "charles@email.com"
 
         when:
-        this.userService.findByToken(authorization)
+        this.userService.findByAuthorizationToken(authorization)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> email

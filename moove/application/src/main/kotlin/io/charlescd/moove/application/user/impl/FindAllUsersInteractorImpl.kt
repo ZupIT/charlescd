@@ -35,7 +35,7 @@ class FindAllUsersInteractorImpl @Inject constructor(
 ) : FindAllUsersInteractor {
 
     override fun execute(name: String?, email: String?, authorization: String, pageRequest: PageRequest): ResourcePageResponse<UserResponse> {
-        val user = userService.findByToken(authorization)
+        val user = userService.findByAuthorizationToken(authorization)
         if (user.root) {
             return convert(userService.findAll(name, email, pageRequest))
         }

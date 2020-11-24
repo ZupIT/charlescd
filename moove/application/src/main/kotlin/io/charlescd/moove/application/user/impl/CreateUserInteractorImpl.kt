@@ -34,7 +34,7 @@ class CreateUserInteractorImpl @Inject constructor(
 
     private fun getUserFromToken(authorization: String): Optional<User> {
         try {
-            val user = userService.findByToken(authorization)
+            val user = userService.findByAuthorizationToken(authorization)
             return Optional.of(user)
         } catch (ex: NotFoundException) {
             return Optional.empty()
@@ -67,11 +67,11 @@ class CreateUserInteractorImpl @Inject constructor(
     }
 
     private fun saveUserOnKeycloak(user: User, password: String?) {
-        val validPassword = password ?: throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER)
+        if (password.isNullOrBlank()) throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER).withParameters("password")
         this.userService.createUserOnKeycloak(
             user.email,
             user.name,
-            validPassword
+            password
         )
     }
 }

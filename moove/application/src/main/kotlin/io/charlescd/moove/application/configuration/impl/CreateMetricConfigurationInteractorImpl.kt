@@ -41,7 +41,7 @@ open class CreateMetricConfigurationInteractorImpl @Inject constructor(
     override fun execute(request: CreateMetricConfigurationRequest, workspaceId: String, authorization: String): MetricConfigurationResponse {
         workspaceService.checkIfWorkspaceExists(workspaceId)
 
-        val author = userService.findByToken(authorization)
+        val author = userService.findByAuthorizationToken(authorization)
 
         saveDatasourceOnCompass(request, workspaceId)
 
