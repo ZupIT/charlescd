@@ -204,7 +204,7 @@ func (main Main) SaveAction(action Request) (Response, error) {
 	id := uuid.New().String()
 	entity := Action{}
 
-	row := main.db.Exec(actionInsert(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceId)).
+	row := main.db.Exec(Insert(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceId)).
 		Raw(actionQuery, id).
 		Row()
 
@@ -225,12 +225,6 @@ func (main Main) DeleteAction(id string) error {
 		return db.Error
 	}
 	return nil
-}
-
-func actionInsert(id, nickname, actionType, description string, config []byte, workspaceId uuid.UUID) string {
-	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
-			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), null);`,
-		id, workspaceId, nickname, actionType, description, config, configuration.GetConfiguration("ENCRYPTION_KEY"))
 }
 
 func (entity Action) toResponse() Response {
