@@ -19,11 +19,9 @@ import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
-<<<<<<< HEAD
 import Icon from 'core/components/Icon';
-=======
 import { emailPattern, isRequired, maxLength } from 'core/utils/validations';
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
+import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import {
   isNotBlank,
@@ -36,7 +34,6 @@ import Styled from './styled';
 import { useCreateUser } from '../hooks';
 import { updateParam } from 'core/utils/path';
 import { useHistory } from 'react-router-dom';
-import routes from 'core/constants/routes';
 
 interface Props {
   onFinish: (createUserStatus: string) => void;
@@ -79,14 +76,10 @@ const FormUser = ({ onFinish }: Props) => {
     >
       <Styled.Fields>
         <Form.Input
-<<<<<<< HEAD
           ref={register({
             required: required(),
             maxLength: maxValue(64)
           })}
-=======
-          ref={register({ required: isRequired(), maxLength: maxLength() })}
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
           name="name"
           label="User name"
           error={errors?.name?.message}
@@ -99,13 +92,8 @@ const FormUser = ({ onFinish }: Props) => {
         )}
         <Form.Input
           ref={register({
-<<<<<<< HEAD
             required: required(),
             maxLength: maxValue(64),
-=======
-            required: isRequired(),
-            maxLength: maxLength(),
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
             pattern: emailPattern()
           })}
           name="email"
@@ -121,14 +109,9 @@ const FormUser = ({ onFinish }: Props) => {
         <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
         <Form.Password
           ref={register({
-<<<<<<< HEAD
             required: required(),
             maxLength: maxValue(100),
             validate: isNotBlank
-=======
-            required: isRequired(),
-            maxLength: maxLength(100)
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
           })}
           name="password"
           label="Create password"

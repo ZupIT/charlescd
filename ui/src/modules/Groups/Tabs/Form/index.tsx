@@ -50,11 +50,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
         {map(userGroup?.users, (user, index) => {
           if (index <= 7) {
             return (
-              <Styled.UserAvatarNoPhoto
-                key={user?.id}
-                src={user?.photoUrl}
-                name={user?.name}
-              />
+              <Styled.UserAvatarNoPhoto key={user?.id} name={user?.name} />
             );
           }
         })}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
@@ -60,8 +60,6 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const [loadingUpdate, updateProfile] = useUpdateProfile();
   const isAbleToReset = loggedUserId !== user?.id;
 
-  const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
-
   useEffect(() => {
     if (user) setCurrentUser(user);
   }, [user]);
@@ -83,8 +81,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     setCurrentUser(null);
     updateProfile(currentUser.id, {
       ...profile,
-      email: currentUser.email,
-      photoUrl: currentUser.photoUrl
+      email: currentUser.email
     });
   };
 
@@ -150,12 +147,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       {action === 'Delete' && renderWarning()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
-          <Avatar
-            key={currentUser.photoUrl}
-            size="68px"
-            profile={currentUser}
-            onFinish={refresh}
-          />
+          <Avatar key={currentUser.id} size="68px" profile={currentUser} />
         </Styled.ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
