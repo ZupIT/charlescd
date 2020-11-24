@@ -221,7 +221,11 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         <Dropdown.Item
           icon="delete"
           name="Delete"
-          isInactive={true}
+          isInactive={
+            isUndeployable(circle) || isDefaultCircle(circle?.name)
+              ? true
+              : false
+          }
           onClick={() => setAction('Delete')}
         />
       </Can>
