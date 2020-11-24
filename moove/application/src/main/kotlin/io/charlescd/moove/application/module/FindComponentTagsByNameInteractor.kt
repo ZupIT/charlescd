@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.interactor.registry;
+package io.charlescd.moove.application.module
 
-import java.io.IOException;
-import java.util.Optional;
+import io.charlescd.moove.application.module.response.ComponentTagResponse
 
-@FunctionalInterface
-public interface GetDockerRegistryTagInteractor {
+interface FindComponentTagsByNameInteractor {
 
-    Optional execute(GetDockerRegistryTagInput input) throws IOException;
-
+    fun execute(moduleId: String, componentId: String, name: String, workspaceId: String): List<ComponentTagResponse>
 }

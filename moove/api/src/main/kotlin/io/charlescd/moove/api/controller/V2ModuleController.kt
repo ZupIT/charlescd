@@ -47,7 +47,7 @@ class V2ModuleController(
     private val findModuleByIdInteractor: FindModuleByIdInteractor,
     private val findAllModulesInteractor: FindAllModulesInteractor,
     private val deleteModuleByIdInteractor: DeleteModuleByIdInteractor,
-    private val findComponentTagsInteractor: FindComponentTagsInteractor,
+    private val findComponentTagsByNameInteractor: FindComponentTagsByNameInteractor,
     private val findDeployedComponentsByCircleInteractor: FindDeployedComponentsByCircleInteractor
 ) {
 
@@ -163,13 +163,23 @@ class V2ModuleController(
 
     @ApiOperation(value = "Find Component tags")
     @GetMapping("/{moduleId}/components/{componentId}/tags")
-    fun findComponentsTags(
+    fun findComponentsTagsByName(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @NotBlank @PathVariable("moduleId") moduleId: String,
         @NotBlank @PathVariable("componentId") componentId: String,
         @NotBlank @RequestParam("name") name: String
     ): List<ComponentTagResponse> {
-        return findComponentTagsInteractor.execute(moduleId, componentId, name, workspaceId)
+        return findComponentTagsByNameInteractor.execute(moduleId, componentId, name, workspaceId)
+    }
+
+    @ApiOperation(value = "Find Component tags")
+    @GetMapping("/{moduleId}/components/{componentId}/tags")
+    fun findComponentsTags(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @NotBlank @PathVariable("moduleId") moduleId: String,
+        @NotBlank @PathVariable("componentId") componentId: String
+    ) {
+        findComponentTagsByNameInteractor.execute(moduleId, componentId,  workspaceId)
     }
 
     @ApiOperation(value = "Find deployed Components at Circle")

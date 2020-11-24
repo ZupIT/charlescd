@@ -93,7 +93,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .withName("test")
                 .build();
 
-        ComponentTagDTO component = interactor.execute(input).get();
+        ComponentTagDTO component = (ComponentTagDTO) interactor.execute(input).get();
 
         assertThat(component.getName(), is("test"));
         assertThat(component.getArtifact(), is("test.org/name:test"));
@@ -150,7 +150,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .build();
 
         Exception exception = assertThrows(IllegalAccessResourceException.class, () -> {
-            ComponentTagDTO component = interactor.execute(input).get();
+            ComponentTagDTO component = (ComponentTagDTO) interactor.execute(input).get();
         });
 
         assertThat(exception.getMessage(), is("This docker registry does not belongs to the request application id."));
@@ -180,7 +180,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .build();
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            ComponentTagDTO component = interactor.execute(input).get();
+            ComponentTagDTO component = (ComponentTagDTO) interactor.execute(input).get();
         });
 
         assertThat(exception.getMessage(), is("Resource DOCKER_REGISTRY not found"));

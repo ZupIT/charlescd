@@ -19,13 +19,13 @@ package io.charlescd.villager.api.resources.registry;
 import io.charlescd.villager.api.handlers.impl.CreateDockerRegistryRequestHandler;
 import io.charlescd.villager.api.handlers.impl.GetDockerRegistryTagHandler;
 import io.charlescd.villager.api.handlers.impl.ListDockerRegistryRequestHandler;
-import io.charlescd.villager.interactor.registry.DeleteDockerRegistryConfigurationInteractor;
-import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
-import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
+import io.charlescd.villager.interactor.registry.*;
 import io.charlescd.villager.util.Constants;
+import org.springframework.beans.factory.annotation.Required;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -101,12 +101,22 @@ public class DockerRegistryResource {
         var response = this.getDockerRegistryTagInteractor.execute(requestHandler.handle());
         var componentTagList = new ArrayList<ComponentTagRepresentation>();
 
-        response.ifPresent(componentTagDTO ->
-                componentTagList.add(ComponentTagRepresentation.toRepresentation(componentTagDTO))
-        );
+       /* if (name != null) {
+            response.ifPresent(componentTagDTO -> {
+                        componentTagList.add(ComponentTagRepresentation.toRepresentation((ComponentTagDTO)componentTagDTO));
+                    }
+            );
+        } else {
+            response.ifPresent(componentTagDTO -> {
+                        componentTagList.addAll(ComponentTagRepresentation.toListRepresentation((List<ComponentTagDTO>)componentTagDTO));
+                    }
+            );
+        }*/
 
         return new RegistryTagsListRepresentation(componentTagList);
     }
+
+
 
     @DELETE
     @Path("/{id}")

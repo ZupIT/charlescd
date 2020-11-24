@@ -80,9 +80,9 @@ interface VillagerClient {
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun findComponentTags(
-        @PathVariable registryConfigurationId: String,
-        @PathVariable componentName: String,
-        @RequestParam name: String,
-        @RequestHeader("x-workspace-id") workspaceId: String
+            @PathVariable registryConfigurationId: String,
+            @PathVariable componentName: String,
+            @RequestParam name: String?,
+            @RequestHeader("x-workspace-id") workspaceId: String
     ): FindComponentTagsResponse
 }

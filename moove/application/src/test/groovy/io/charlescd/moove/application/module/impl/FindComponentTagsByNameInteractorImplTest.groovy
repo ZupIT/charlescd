@@ -18,7 +18,7 @@ package io.charlescd.moove.application.module.impl
 
 import io.charlescd.moove.application.ModuleService
 import io.charlescd.moove.application.WorkspaceService
-import io.charlescd.moove.application.module.FindComponentTagsInteractor
+import io.charlescd.moove.application.module.FindComponentTagsByNameInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.ModuleRepository
@@ -29,9 +29,9 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class FindComponentTagsInteractorImplTest extends Specification {
+class FindComponentTagsByNameInteractorImplTest extends Specification {
 
-    private FindComponentTagsInteractor findComponentTagsInteractor
+    private FindComponentTagsByNameInteractor findComponentTagsInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
@@ -39,7 +39,7 @@ class FindComponentTagsInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
 
     void setup() {
-        findComponentTagsInteractor = new FindComponentTagsInteractorImpl(
+        findComponentTagsInteractor = new FindComponentTagsByNameInteractorImpl(
                 new ModuleService(moduleRepository),
                 new WorkspaceService(workspaceRepository, userRepository),
                 villagerService

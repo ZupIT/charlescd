@@ -16,23 +16,35 @@
 
 package io.charlescd.villager.interactor.registry.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
+import io.charlescd.villager.interactor.registry.ComponentTagListDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
-import java.util.Optional;
+import io.vertx.mutiny.redis.RedisClient;
+import org.apache.http.HttpStatus;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.apache.http.HttpStatus;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagInteractor {
 
     private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
     private RegistryClient registryClient;
+
+    @Inject
+    RedisClient redisClient;
 
     @Inject
     public GetDockerRegistryTagInteractorImpl(
@@ -43,12 +55,12 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
     }
 
     @Override
-    public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
+    public Optional execute(GetDockerRegistryTagInput input) {
 
         var entity =
                 this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
+                        .orElseThrow(
+                                () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
         if (!entity.workspaceId.equals(input.getWorkspaceId())) {
             throw new IllegalAccessResourceException(
@@ -58,20 +70,46 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
         try {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
 
-            var response =
-                    this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
+
+            Optional<Response> response;
+
+
+            var isTagSearch = input.getName() != null && !input.getName().isEmpty();
+
+            if (isTagSearch)
+                response = this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
+            else {
+                response = this.registryClient.getImagesTags(input.getArtifactName(), entity.connectionData);
+            }
 
             if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
                 return Optional.empty();
             }
 
-            return Optional.of(new ComponentTagDTO(
-                    input.getName(),
-                    entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
-            ));
+            if (isTagSearch) {
+                return Optional.of(new ComponentTagDTO(
+                        input.getName(),
+                        entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
+                ));
+            } else {
+                var jsonEntity = response.get().readEntity(String.class);
+                List<ComponentTagDTO> returnList = new ArrayList<>();
+                ObjectMapper mapper = new ObjectMapper();
+
+                var componetTagList = mapper.readValue(jsonEntity, ComponentTagListDTO.class);
+
+                componetTagList.getTags().forEach(tag ->
+                        returnList.add(new ComponentTagDTO(tag,
+                                entity.connectionData.host + "/" + input.getArtifactName() + ":" + tag))
+                );
+
+                return Optional.of(returnList);
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         } finally {
             this.registryClient.closeQuietly();
         }
-
+        return Optional.empty();
     }
 }
