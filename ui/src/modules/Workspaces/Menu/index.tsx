@@ -20,7 +20,6 @@ import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
 import { getProfileByKey } from 'core/utils/profile';
@@ -108,12 +107,6 @@ const WorkspaceMenu = ({
               maxLength: maxLength()
             })}
           />
-          {!!errors.name && (
-            <Styled.FieldErrorWrapper>
-              <Icon name="error" color="error" />
-              <Text.h6 color="error">{errors.name.message}</Text.h6>
-            </Styled.FieldErrorWrapper>
-          )}
           <Styled.Modal.Button
             type="submit"
             isDisabled={!isValid}

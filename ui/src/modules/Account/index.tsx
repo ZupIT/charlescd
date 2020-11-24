@@ -44,8 +44,13 @@ const Account = () => {
   const name = getProfileByKey('name');
   const email = getProfileByKey('email');
   const [currentUser, setCurrentUser] = useState<User>();
-  const { register, handleSubmit, errors } = useForm<User>({
-    mode: 'onBlur'
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm<User>({
+    mode: 'onChange'
   });
   const { findByEmail, user } = useUser();
   const [loadingUpdate, updateProfile] = useUpdateProfile();
@@ -102,6 +107,7 @@ const Account = () => {
                 })}
                 defaultValue={user.name}
                 onClickSave={handleSubmit(onSubmit)}
+                isDisabled={!isValid}
               />
               {errors.name && (
                 <Styled.FieldErrorWrapper>

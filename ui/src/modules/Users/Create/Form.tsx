@@ -19,10 +19,9 @@ import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
-import Icon from 'core/components/Icon';
 import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { maxValue, required, emailPattern } from 'core/utils/validation';
+import { maxLength, isRequired, emailPattern } from 'core/utils/validations';
 import { NewUser } from 'modules/Users/interfaces/User';
 import Styled from './styled';
 import { useCreateUser } from '../hooks';
@@ -71,51 +70,32 @@ const FormUser = ({ onFinish }: Props) => {
       <Styled.Fields>
         <Form.Input
           ref={register({
-            required: required(),
-            maxLength: maxValue(64)
+            required: isRequired(),
+            maxLength: maxLength(64)
           })}
           name="name"
           label="User name"
           error={errors?.name?.message}
         />
-        {errors.name && (
-          <Styled.FieldErrorWrapper>
-            <Icon name="error" color="error" />
-            <Text.h6 color="error">{errors.name.message}</Text.h6>
-          </Styled.FieldErrorWrapper>
-        )}
         <Form.Input
           ref={register({
-            required: required(),
-            maxLength: maxValue(64),
+            required: isRequired(),
+            maxLength: maxLength(64),
             pattern: emailPattern()
           })}
           name="email"
           label="E-mail"
           error={errors?.email?.message}
         />
-        {errors.email && (
-          <Styled.FieldErrorWrapper>
-            <Icon name="error" color="error" />
-            <Text.h6 color="error">{errors.email.message}</Text.h6>
-          </Styled.FieldErrorWrapper>
-        )}
-        <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
         <Form.Password
           ref={register({
-            required: required(),
-            maxLength: maxValue(100)
+            required: isRequired(),
+            maxLength: maxLength(100)
           })}
           name="password"
           label="Create password"
           error={errors?.password?.message}
         />
-        {errors.password && (
-          <Styled.FieldErrorWrapper>
-            <Icon name="error" color="error" />
-            <Text.h6 color="error">{errors.password.message}</Text.h6>
-          </Styled.FieldErrorWrapper>
-        )}
       </Styled.Fields>
       <Button.Default
         data-testid="button-create-user"
