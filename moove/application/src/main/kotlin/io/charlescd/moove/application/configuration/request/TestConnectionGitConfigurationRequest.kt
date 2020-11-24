@@ -14,4 +14,11 @@
  * limitations under the License.
  */
 
-export const FORM_METRIC_PROVIDER = 'metric-provider';
+package io.charlescd.moove.application.configuration.request
+
+import javax.validation.Valid
+
+data class TestConnectionGitConfigurationRequest(
+    @field:Valid
+    val credentials: GitCredentialsData
+)
