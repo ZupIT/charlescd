@@ -47,13 +47,9 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
 
   const renderUsers = () =>
     isEmpty(items) ? (
-<<<<<<< HEAD
-      <Text.h3 color="dark">No user found</Text.h3>
-=======
       <Text.h3 data-testid={'empty-result-user'} color="dark">
         No User was found
       </Text.h3>
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
     ) : (
       map(items, ({ email, name }: UserPaginationItem) => (
         <MenuItem

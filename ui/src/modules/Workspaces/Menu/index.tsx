@@ -21,7 +21,6 @@ import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { isNotBlank, maxValue, required } from 'core/utils/validation';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
 import { getProfileByKey } from 'core/utils/profile';
@@ -50,20 +49,12 @@ const WorkspaceMenu = ({
   selectedWorkspace
 }: Props) => {
   const history = useHistory();
-<<<<<<< HEAD
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { register, handleSubmit, watch, errors } = useForm({
-    mode: 'onChange'
-  });
-  const name = watch('name');
-=======
   const {
     register,
     handleSubmit,
     errors,
     formState: { isValid }
   } = useForm({ mode: 'onChange' });
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
   const {
     save,
     response: saveWorkspaceResponse,
@@ -73,11 +64,7 @@ const WorkspaceMenu = ({
 
   const renderWorkspaces = () =>
     isEmpty(items) ? (
-<<<<<<< HEAD
-      <Text.h3 color="dark">No workspace found</Text.h3>
-=======
       <Text.h3 color="dark">No workspace was found</Text.h3>
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
     ) : (
       map(items, ({ id, name, status }: Workspace) => (
         <MenuItem
@@ -115,17 +102,10 @@ const WorkspaceMenu = ({
           <Styled.Modal.Input
             name="name"
             label="Type a name"
-<<<<<<< HEAD
-            ref={register({
-              required: required(),
-              maxLength: maxValue(64),
-              validate: isNotBlank
-=======
             error={errors?.name?.message}
             ref={register({
               required: isRequired(),
               maxLength: maxLength()
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
             })}
           />
           {!!errors.name && (
@@ -162,15 +142,9 @@ const WorkspaceMenu = ({
       <Styled.Content>
         <Styled.SearchInput
           resume
-<<<<<<< HEAD
-          maxLength={64}
-          onSearch={onSearch}
-          disabled={!isRoot()}
-=======
           onSearch={onSearch}
           disabled={!isRoot()}
           maxLength={64}
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
         />
         <Styled.List>
           {isLoading ? <Loader.List /> : renderWorkspaces()}

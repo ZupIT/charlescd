@@ -41,11 +41,7 @@ interface Props extends ListProps {
 
 const UserGroupList = ({ items, selectedItems, onSelect }: ListProps) =>
   isEmpty(items) ? (
-<<<<<<< HEAD
-    <Text.h3 color="dark">No users Group found</Text.h3>
-=======
     <Text.h3 color="dark">No User group was found</Text.h3>
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
   ) : (
     <>
       {map(items, item => (

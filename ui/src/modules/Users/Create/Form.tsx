@@ -20,15 +20,9 @@ import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import Icon from 'core/components/Icon';
-import { emailPattern, isRequired, maxLength } from 'core/utils/validations';
 import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import {
-  isNotBlank,
-  maxValue,
-  required,
-  emailPattern
-} from 'core/utils/validation';
+import { maxValue, required, emailPattern } from 'core/utils/validation';
 import { NewUser } from 'modules/Users/interfaces/User';
 import Styled from './styled';
 import { useCreateUser } from '../hooks';
@@ -110,8 +104,7 @@ const FormUser = ({ onFinish }: Props) => {
         <Form.Password
           ref={register({
             required: required(),
-            maxLength: maxValue(100),
-            validate: isNotBlank
+            maxLength: maxValue(100)
           })}
           name="password"
           label="Create password"

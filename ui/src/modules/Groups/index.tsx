@@ -18,7 +18,6 @@ import React, { Suspense, useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
-import { isNotBlank, maxValue, required } from 'core/utils/validation';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Page from 'core/components/Page';
@@ -82,17 +81,10 @@ const UserGroups = () => {
           <Styled.Modal.Input
             name="name"
             label="Type a name"
-<<<<<<< HEAD
-            ref={register({
-              required: required(),
-              maxLength: maxValue(64),
-              validate: isNotBlank
-=======
             error={errors?.name?.message}
             ref={register({
               required: isRequired(),
               maxLength: maxLength()
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
             })}
           />
           {!!errors.name && (

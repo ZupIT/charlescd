@@ -86,6 +86,5 @@ export default {
   Title,
   Subtitle,
   Fields,
-  Form,
-  FieldErrorWrapper
+  Form
 };

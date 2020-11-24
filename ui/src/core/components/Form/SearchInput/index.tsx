@@ -50,7 +50,6 @@ const SearchInput = ({
         id="inputSearch"
         onFocus={onFocus}
         onBlur={onBlur}
-        maxLength={maxLength}
         onChange={event => handleChange(event.currentTarget.value)}
       />
     </Styled.Wrapper>

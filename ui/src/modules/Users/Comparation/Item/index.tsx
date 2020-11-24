@@ -18,12 +18,10 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
-import { isNotBlank, maxValue, required } from 'core/utils/validation';
 import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
-import Icon from 'core/components/Icon';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
@@ -159,23 +157,13 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
                 name="name"
                 resume
                 ref={register({
-<<<<<<< HEAD
-                  required: required(),
-                  maxLength: maxValue(64),
-                  validate: isNotBlank
-=======
                   required: isRequired(),
                   maxLength: maxLength()
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
                 })}
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
               />
-<<<<<<< HEAD
-              {!!errors.name && (
-=======
               {errors.name && (
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
                 <Styled.FieldErrorWrapper>
                   <Icon name="error" color="error" />
                   <Text.h6 color="error">{errors.name.message}</Text.h6>
