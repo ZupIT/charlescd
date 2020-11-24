@@ -219,8 +219,10 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       </Can>
       <Can I="write" a="circles" passThrough>
         <Dropdown.Item
+          id="dropdown-delete-circle"
           icon="delete"
           name="Delete"
+          tooltip="my tooltip!"
           isInactive={
             isUndeployable(circle) || isDefaultCircle(circle?.name)
               ? true

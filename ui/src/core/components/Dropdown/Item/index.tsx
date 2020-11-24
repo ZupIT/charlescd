@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, Fragment } from 'react';
 import Styled from './styled';
+import ReactTooltip from 'react-tooltip';
 
 export interface Props {
+  id?: string;
   icon?: string;
   name: string;
   onClick?: (event: MouseEvent) => void;
   onSelect?: (name: string) => void;
   className?: string;
   isInactive?: boolean;
+  tooltip?: string;
 }
 
 const DropdownItem = ({
+  id,
   icon,
   name,
   onClick,
   onSelect,
   className,
   isInactive,
+  tooltip,
   ...rest
 }: Props) => {
   const handleClick = (event: MouseEvent) => {
@@ -42,17 +47,22 @@ const DropdownItem = ({
   };
 
   return (
-    <Styled.Item
-      key={`dropdown-item-${icon}-${name}`}
-      data-testid={`dropdown-item-${icon}-${name}`}
-      className={className}
-      onClick={(event: MouseEvent) => handleClick(event)}
-      disabled={isInactive}
-      {...rest}
-    >
-      {icon && <Styled.Icon name={icon} size="15px" />}
-      <Styled.Text color="dark">{name}</Styled.Text>
-    </Styled.Item>
+    <div>
+      <Styled.Item
+        key={`dropdown-item-${icon}-${name}`}
+        data-testid={`dropdown-item-${icon}-${name}`}
+        className={className}
+        onClick={(event: MouseEvent) => handleClick(event)}
+        disabled={isInactive}
+        data-tip={tooltip}
+        data-for={id}
+        {...rest}
+      >
+        {icon && <Styled.Icon name={icon} size="15px" />}
+        <Styled.Text color="dark">{name}</Styled.Text>
+      </Styled.Item>
+      {tooltip && <ReactTooltip id={id} type="light" />}
+    </div>
   );
 };
 
