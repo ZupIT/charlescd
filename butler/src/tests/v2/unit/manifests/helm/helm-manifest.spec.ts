@@ -45,28 +45,6 @@ describe('Generate K8s manifest by helm', () => {
 
   mockRepository.getResource.mockImplementation(async name => await readFiles(basePath, name))
 
-  async function readFiles(dir: string, name: string): Promise<Resource> {
-    let resources: Resource = {
-      name: name,
-      type: ResourceType.DIR,
-      children: []
-    }
-    let files = fs.readdirSync(dir, { withFileTypes: true })
-    for (const dirent of files) {
-      let filePath = path.join(dir, dirent.name)
-      if (dirent.isDirectory()) {
-        resources.children?.push(await readFiles(filePath, dirent.name))
-      } else {
-        resources.children?.push({
-          name: dirent.name,
-          type: ResourceType.FILE,
-          content: fs.readFileSync(filePath, { encoding: 'base64' })
-        })
-      }
-    }
-    return resources
-  }
-
   it('should generate manifest with default values', async () => {
     const manifestConfig = {
       repo: {
@@ -103,3 +81,25 @@ describe('Generate K8s manifest by helm', () => {
     expect(manifest).rejects.toThrowError()
   })
 })
+
+async function readFiles(dir: string, name: string): Promise<Resource> {
+  let resources: Resource = {
+    name: name,
+    type: ResourceType.DIR,
+    children: []
+  }
+  let files = fs.readdirSync(dir, { withFileTypes: true })
+  for (const dirent of files) {
+    let filePath = path.join(dir, dirent.name)
+    if (dirent.isDirectory()) {
+      resources.children?.push(await readFiles(filePath, dirent.name))
+    } else {
+      resources.children?.push({
+        name: dirent.name,
+        type: ResourceType.FILE,
+        content: fs.readFileSync(filePath, { encoding: 'base64' })
+      })
+    }
+  }
+  return resources
+}

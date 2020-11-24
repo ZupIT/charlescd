@@ -43,8 +43,19 @@ describe('Download resources from github', () => {
     expect(resource.type).toBe('directory')
     expect(resource.children).toHaveLength(3)
 
-    const templates = resource.children?.[2]
-    expect(templates?.children).toHaveLength(2)
+    const template = resource.children?.[2]
+    expect(template?.children).toHaveLength(2)
+  })
+
+  it('Download a single file from gibhub', async () => {
+    const url = 'https://api.github.com/repos/charlescd-fake/helm-chart/contents/helm-chart'
+    const repository = new GitHubRepository(httpService, url, 'my-token')
+    
+    const resource = await repository.getResource('Chart.yaml')
+
+    expect(resource.name).toBe('Chart.yaml')
+    expect(resource.type).toBe('file')
+    expect(resource.content).toBeTruthy()
   })
 })
 
