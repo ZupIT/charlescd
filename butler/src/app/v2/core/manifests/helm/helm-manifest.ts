@@ -31,15 +31,13 @@ import { Resource, ResourceType } from '../../integrations/interfaces/repository
 @Injectable()
 export class HelmManifest implements Manifest {
 
-  private static readonly TMP_DIR = os.tmpdir()
-
   constructor(private repository: Repository) {}
 
   public async generate(config: ManifestConfig): Promise<string> {
-    const resource = await this.repository.getResource(config.componentName)
+    const chart = await this.repository.getResource(config.componentName)
     const chartPath = this.getTmpChartDir()
     try {
-      await this.saveFiles(chartPath, resource)
+      await this.saveChart(chartPath, chart)
       return await this.package(chartPath, config)
     } finally {
       this.cleanUp(chartPath)
@@ -50,14 +48,14 @@ export class HelmManifest implements Manifest {
     return os.tmpdir() + path.sep + uuid.v4()
   }
 
-  private async saveFiles(chartPath: string, resource: Resource): Promise<void> {
-    let basePath = chartPath + path.sep + resource.name
+  private async saveChart(chartPath: string, chart: Resource): Promise<void> {
+    let basePath = chartPath + path.sep + chart.name
     await fs.mkdir(basePath, { recursive: true })
-    if(resource.children) {
-      for (let i = 0; i < resource.children.length; i++) {
-        let child = resource.children[i]
+    if(chart.children) {
+      for (let i = 0; i < chart.children.length; i++) {
+        let child = chart.children[i]
         if(child.type == ResourceType.DIR) {
-          await this.saveFiles(basePath, child)
+          await this.saveChart(basePath, child)
         } else {
           await fs.writeFile(basePath + path.sep + child.name, child.content, { encoding: 'base64' })
         }

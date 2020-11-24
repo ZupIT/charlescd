@@ -43,7 +43,7 @@ describe('Generate K8s manifest by helm', () => {
     getResource: jest.fn()
   }
 
-  mockRepository.getResource.mockImplementation(async name => await readFiles(basePath, 'helm-test-chart'))
+  mockRepository.getResource.mockImplementation(async name => await readFiles(basePath, name))
 
   async function readFiles(dir: string, name: string): Promise<Resource> {
     let resources: Resource = {
