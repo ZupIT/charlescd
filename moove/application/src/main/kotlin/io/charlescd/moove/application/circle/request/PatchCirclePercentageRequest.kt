@@ -47,7 +47,7 @@ data class PatchCirclePercentageRequest(override val patches: List<PatchOperatio
     private fun validateValues() {
         patches.forEach { patch ->
             when (patch.path) {
-                "/name" -> Assert.notNull(patch.value, "Name cannot be null.")
+                "/name" -> validateNameValues(patch)
                 "/percentage" -> validatePercentageValues(patch)
             }
         }
@@ -57,5 +57,11 @@ data class PatchCirclePercentageRequest(override val patches: List<PatchOperatio
         Assert.notNull(patch.value, "Percentage cannot be null.")
         val percentage = patch.value as Int
         Assert.isTrue(percentage in 0..100, "Percentage must be between 0 and 100")
+    }
+
+    private fun validateNameValues(patch: PatchOperation) {
+        Assert.notNull(patch.value, "Name cannot be null.")
+        val name = patch.value as String
+        Assert.isTrue(!name.isBlank(), "Name cannot be empty.")
     }
 }
