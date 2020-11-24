@@ -15,7 +15,6 @@
  */
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
@@ -174,6 +173,14 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
                 labels: {
                   component: 'A',
                   tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
                   circleId: 'circle-id3'
                 },
                 name: 'circle-id3'
@@ -185,14 +192,6 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
                   circleId: 'circle-id5'
                 },
                 name: 'circle-id5'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: AppConstants.DEFAULT_CIRCLE_ID
-                },
-                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -432,17 +431,17 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: AppConstants.DEFAULT_CIRCLE_ID
+                      subset: 'default-circle-id'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       }
                     }
