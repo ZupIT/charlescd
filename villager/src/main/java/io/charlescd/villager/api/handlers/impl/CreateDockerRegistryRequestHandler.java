@@ -22,12 +22,14 @@ import io.charlescd.villager.api.resources.registry.AzureCreateDockerRegistryReq
 import io.charlescd.villager.api.resources.registry.CreateDockerRegistryConfigurationRequest;
 import io.charlescd.villager.api.resources.registry.DockerHubCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.GCPCreateDockerRegistryRequest;
+import io.charlescd.villager.api.resources.registry.HarborCreateDockerRegistryRequest;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.HarborDockerRegistryAuth;
 
 public class CreateDockerRegistryRequestHandler implements RequestHandler<DockerRegistryConfigurationInput> {
 
@@ -56,6 +58,8 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
             toGCP(inputBuilder);
         } else if (this.request instanceof DockerHubCreateDockerRegistryRequest) {
             toDockerHub(inputBuilder);
+        } else if (this.request instanceof HarborCreateDockerRegistryRequest) {
+            toHarbor(inputBuilder);
         } else {
             throw new IllegalArgumentException("The request has a invalid format.");
         }
@@ -102,6 +106,16 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
                         dockerHubRequest.getOrganization(),
                         dockerHubRequest.getUsername(),
                         dockerHubRequest.getPassword()
+                ));
+    }
+
+    private void toHarbor(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {
+        var harborRequest = (HarborCreateDockerRegistryRequest) request;
+        inputBuilder
+                .withRegistryType(RegistryType.HARBOR)
+                .withAuth(new HarborDockerRegistryAuth(
+                        harborRequest.getUsername(),
+                        harborRequest.getPassword()
                 ));
     }
 }
