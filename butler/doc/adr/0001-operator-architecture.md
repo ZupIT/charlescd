@@ -23,11 +23,10 @@ api: k8s.charles.io
 kind: CharlesDeployment
 metadata:
  labels:
-  circleId: <id-circle>
   namespace: <namespace>
 spec:
- circleId: abcd
- deploymentId: edcsj
+ circleId: <id-circle>
+ deploymentId: <id-deployment>
  components:
   - name: quiz-app-backend
     tag: v1
@@ -43,14 +42,12 @@ Routes example
 ```yaml
 api: k8s.charles.io
 kind: CharlesRoutes
-metadata:
- labels:
 spec:
- components:
-  - name: quiz-app-backend
-    circle: abcd
-  - name: quiz-app-frontend
-    circle: abcd
+  circles:
+    - id: <id-circle>
+      components:
+      - quiz-app-backend
+      - quiz-app-frontend
 ```
 
 Butler will only directly apply the CRDs to the cluster.
