@@ -45,11 +45,7 @@ const Account = () => {
   const email = getProfileByKey('email');
   const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit, errors } = useForm<User>({
-<<<<<<< HEAD
     mode: 'onBlur'
-=======
-    mode: 'onChange'
->>>>>>> aea819ab22120e5f192f4fae6442c88b06571467
   });
   const { findByEmail, user } = useUser();
   const [loadingUpdate, updateProfile] = useUpdateProfile();
