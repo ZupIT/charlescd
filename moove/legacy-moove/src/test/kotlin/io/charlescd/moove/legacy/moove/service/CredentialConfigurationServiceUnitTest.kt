@@ -41,7 +41,6 @@ import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
 import java.time.LocalDateTime
-import java.util.*
 import kotlin.test.assertEquals
 import org.junit.Test
 
@@ -111,7 +110,7 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
@@ -151,7 +150,7 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
@@ -263,7 +262,7 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
@@ -313,7 +312,7 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
@@ -365,7 +364,7 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
@@ -416,7 +415,7 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
@@ -467,7 +466,7 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
@@ -568,7 +567,7 @@ class CredentialConfigurationServiceUnitTest {
         val incomingRequest = CreateCustomCdConfigurationRequest()
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
         val workspaceId = "workspaceId"

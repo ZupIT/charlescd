@@ -57,7 +57,7 @@ class CredentialConfigurationService(
         authorization: String
     ): CredentialConfigurationRepresentation {
 
-        val user: User = userServiceLegacy.findByToken(authorization)
+        val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
 
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
             buildVillagerRegistryConfigurationRequest(createRegistryConfigRequest, user.id)
@@ -78,7 +78,7 @@ class CredentialConfigurationService(
         authorization: String
     ): CredentialConfigurationRepresentation {
 
-        val user: User = userServiceLegacy.findByToken(authorization)
+        val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
 
         val deployRequest: CreateDeployCdConfigurationRequest =
             buildDeployCdConfigurationRequest(createCdConfigRequest)

@@ -64,7 +64,7 @@ class HypothesisServiceLegacy(
     @Transactional
     fun create(request: CreateHypothesisRequest, workspaceId: String, authorization: String): HypothesisRepresentation =
         request
-            .toEntity(workspaceId, userServiceLegacy.findByToken(authorization))
+            .toEntity(workspaceId, userServiceLegacy.findByAuthorizationToken(authorization))
             .let(hypothesisRepository::save)
             .also { createHypothesisCardColumns(it, workspaceId) }
             .toRepresentation()

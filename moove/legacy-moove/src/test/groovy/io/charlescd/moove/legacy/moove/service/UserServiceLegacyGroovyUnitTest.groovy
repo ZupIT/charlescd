@@ -204,6 +204,28 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         thrown(NotFoundExceptionLegacy)
     }
 
+    def "should get user by auth token"() {
+
+        when:
+        def response = service.findByAuthorizationToken(authorization)
+
+        then:
+        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * repository.findByEmail(user.email) >> Optional.of(user)
+        response.id == representation.id
+    }
+
+    def "should throw NotFoundException when get invalid user by auth roken"() {
+
+        when:
+        service.findByAuthorizationToken(authorization)
+
+        then:
+        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * repository.findByEmail(user.email) >> Optional.empty()
+        thrown(NotFoundExceptionLegacy)
+    }
+
         private String getAuthorization() {
         return  "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3";
     }

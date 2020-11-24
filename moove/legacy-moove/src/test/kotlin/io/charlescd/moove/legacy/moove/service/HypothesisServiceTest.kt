@@ -458,16 +458,16 @@ class HypothesisServiceTest {
         )
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } returns user
 
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { hypothesisRepository.save(any() as Hypothesis) } returns hypothesis
         every { cardColumnRepository.saveAll(any() as List<CardColumn>) } returns emptyList()
 
         val hypothesisCreated = hypothesisService.create(testCreatedHypothesisRequest, workspaceId, getAuthorization())
 
-        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { hypothesisRepository.save(any() as Hypothesis) }
         verify(exactly = 1) { cardColumnRepository.saveAll(any() as List<CardColumn>) }
 
@@ -489,7 +489,7 @@ class HypothesisServiceTest {
         )
 
         every {
-            userServiceLegacy.findByToken(getAuthorization())
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
         } throws NotFoundExceptionLegacy("user", "email")
 
         every { hypothesisRepository.save(any() as Hypothesis) } returns hypothesis
@@ -767,7 +767,7 @@ class HypothesisServiceTest {
             labels = listOf()
         )
 
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { hypothesisRepository.save(any() as Hypothesis) } returns hypothesis
 
         every { cardColumnRepository.saveAll(any() as List<CardColumn>) } returns listOf(
@@ -780,7 +780,7 @@ class HypothesisServiceTest {
 
         val response = hypothesisService.create(createHypothesisRequest, workspaceId, getAuthorization())
 
-        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { hypothesisRepository.save(any() as Hypothesis) }
         verify(exactly = 1) { cardColumnRepository.saveAll(any() as List<CardColumn>) }
 

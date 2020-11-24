@@ -63,7 +63,7 @@ class CardService(
 
     @Transactional
     fun create(createCardRequest: CreateCardRequest, workspaceId: String, authorization: String): CardRepresentation {
-        val user = userServiceLegacy.findByToken(authorization)
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
         return createCardRequest.toEntity(workspaceId, user)
             .let { this.cardRepository.save(it) }
             .apply { createNewFeatureBranches(card = this) }
@@ -101,7 +101,7 @@ class CardService(
 
     @Transactional
     fun addComment(id: String, addCommentRequest: AddCommentRequest, workspaceId: String, authorization: String): CardRepresentation {
-        val user = userServiceLegacy.findByToken(authorization)
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .let { addCommentToCard(it, addCommentRequest, user) }
@@ -111,7 +111,7 @@ class CardService(
 
     @Transactional
     fun addMembers(id: String, addMemberRequest: AddMemberRequest, workspaceId: String, authorization: String): CardRepresentation {
-        val user = userServiceLegacy.findByToken(authorization)
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .let { addMemberToCard(it, addMemberRequest) }

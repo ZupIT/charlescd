@@ -45,7 +45,7 @@ class UserServiceLegacy(
 
     @Transactional
     fun delete(id: String, authorization: String): UserRepresentation {
-        val user = findByToken(authorization)
+        val user = findByAuthorizationToken(authorization)
         if (user.isRoot) {
             return deleteUser(id)
         }
@@ -64,7 +64,7 @@ class UserServiceLegacy(
         this.userRepository.findById(id)
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
-    fun findByToken(authorization: String): User {
+    fun findByAuthorizationToken(authorization: String): User {
         val email = keycloakServiceLegacy.getEmailByToken(authorization)
         return userRepository.findByEmail(email).orElseThrow {
             NotFoundExceptionLegacy("user", email)

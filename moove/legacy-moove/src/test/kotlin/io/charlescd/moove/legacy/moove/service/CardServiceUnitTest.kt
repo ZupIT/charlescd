@@ -153,7 +153,7 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { moduleRepository.findById(modules[0]) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[1]) } returns Optional.of(module2)
         every { featureRepository.save(any() as Feature) } returns feature
@@ -197,7 +197,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify { userServiceLegacy.findByToken(getAuthorization()) }
+        verify { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { moduleRepository.findById(modules[0]) }
         verify(exactly = 1) { moduleRepository.findById(modules[1]) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
@@ -237,7 +237,7 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { cardRepository.save(any() as Card) } returns card
 
         val cardType = "ACTION"
@@ -252,7 +252,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
 
         assertNotNull(createdCard.id)
@@ -285,7 +285,7 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { moduleRepository.findById(modules[0]) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[1]) } returns Optional.of(module2)
         every { featureRepository.save(any() as Feature) } returns feature
@@ -336,7 +336,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { moduleRepository.findById(modules[0]) }
         verify(exactly = 1) { moduleRepository.findById(modules[1]) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
@@ -571,7 +571,7 @@ class CardServiceUnitTest {
             )
         } returns Optional.of(softwareCard)
         every { labelRepository.findAllById(labels) } returns listOf(label)
-        every { userServiceLegacy.findByToken(authorization) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
         every { moduleRepository.findByIdAndWorkspaceId(modules[0], workspaceId) } returns Optional.of(module1)
         every { moduleRepository.findByIdAndWorkspaceId(modules[1], workspaceId) } returns Optional.of(module2)
         every { cardRepository.save(any() as Card) } returns actionCard
@@ -798,14 +798,14 @@ class CardServiceUnitTest {
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
 
-        every { userServiceLegacy.findByToken(authorization) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
         every { commentRepository.save(any() as Comment) } returns comment
         every { cardRepository.save(any() as Card) } returns card
 
         val commentedCard = cardService.addComment(card.id, addCommentRequest, workspaceId, authorization)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
-        verify(exactly = 1) { userServiceLegacy.findByToken(authorization) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(authorization) }
         verify(exactly = 1) { commentRepository.save(any() as Comment) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
 
@@ -833,7 +833,7 @@ class CardServiceUnitTest {
         val authorization = "Bearer qwerty"
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
-        every { userServiceLegacy.findByToken(authorization) } returns user
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
         every { userServiceLegacy.findUser(user.id) } returns user
         every { userServiceLegacy.findUser("fake-author-id") } returns
             user.copy(
@@ -846,7 +846,7 @@ class CardServiceUnitTest {
         val cardWithMember = cardService.addMembers(card.id, addMemberRequest, workspaceId, authorization)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
-        verify(exactly = 1) { userServiceLegacy.findByToken(authorization) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(authorization) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
 
         assertEquals(card.id, cardWithMember.id)

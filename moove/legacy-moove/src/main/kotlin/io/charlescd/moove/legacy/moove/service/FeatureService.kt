@@ -42,7 +42,7 @@ class FeatureService(
 ) {
 
     fun create(createFeatureRequest: CreateFeatureRequest, workspaceId: String, authorization: String): FeatureRepresentation {
-        val user = userServiceLegacy.findByToken(authorization)
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
         return createFeatureRequest.toEntity(workspaceId, user.id)
             .let { this.featureRepository.save(it) }.toRepresentation()
     }

@@ -59,13 +59,13 @@ class FeatureServiceTest {
     @Test
     fun `when trying to create a new feature, should do it successfully`() {
 
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns getUser()
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns getUser()
         every { featureRepository.save(any() as Feature) } returns getFeature()
         every { moduleRepository.findAllById(any()) } returns emptyList()
         every { userServiceLegacy.findUsers(any()) } returns listOf(getUser())
         val response = featureService.create(generateCreateRequest(), getWorkspaceId(), getAuthorization())
 
-        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
 
         assertNotNull(response)
@@ -74,11 +74,11 @@ class FeatureServiceTest {
     @Test(expected = NotFoundExceptionLegacy::class)
     fun `when trying to create a new feature, and user not exist should do it throw NotFoundExceptionLegacy`() {
 
-        every { userServiceLegacy.findByToken(getAuthorization()) } throws NotFoundExceptionLegacy("User", getUser().id)
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } throws NotFoundExceptionLegacy("User", getUser().id)
 
         featureService.create(generateCreateRequest(), getWorkspaceId(), getAuthorization())
 
-        verify(exactly = 1) { userServiceLegacy.findByToken(getAuthorization()) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 0) { featureRepository.save(any() as Feature) }
     }
 
@@ -91,7 +91,7 @@ class FeatureServiceTest {
         val pageable = mockkClass(Pageable::class)
         val features: Page<Feature> = PageImpl(listOf(feature1, feature2, feature3))
 
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns getUser()
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns getUser()
         every { featureRepository.findAllByWorkspaceId(getWorkspaceId(), pageable) } returns features
 
         val result = featureService.findAll(getWorkspaceId(), pageable)
@@ -107,7 +107,7 @@ class FeatureServiceTest {
     @Test
     fun `when trying to get feature by id, should do it return them`() {
 
-        every { userServiceLegacy.findByToken(getAuthorization()) } returns getUser()
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns getUser()
         every { featureRepository.findByIdAndWorkspaceId("id", getWorkspaceId()) } returns Optional.of(getFeature())
 
         val result = featureService.findById("id", getWorkspaceId())
