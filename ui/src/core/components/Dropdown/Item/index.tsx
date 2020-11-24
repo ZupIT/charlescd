@@ -47,22 +47,22 @@ const DropdownItem = ({
   };
 
   return (
-    <div>
+    <Fragment>
       <Styled.Item
         key={`dropdown-item-${icon}-${name}`}
         data-testid={`dropdown-item-${icon}-${name}`}
         className={className}
-        onClick={(event: MouseEvent) => handleClick(event)}
-        disabled={isInactive}
-        data-tip={tooltip}
+        onClick={(event: MouseEvent) => !isInactive && handleClick(event)}
+        isInactive={isInactive}
+        data-tip
         data-for={id}
         {...rest}
       >
         {icon && <Styled.Icon name={icon} size="15px" />}
         <Styled.Text color="dark">{name}</Styled.Text>
       </Styled.Item>
-      {tooltip && <ReactTooltip id={id} type="light" />}
-    </div>
+      {tooltip && <ReactTooltip id={id}>{tooltip}</ReactTooltip>}
+    </Fragment>
   );
 };
 

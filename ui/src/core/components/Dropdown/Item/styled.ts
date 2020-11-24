@@ -41,8 +41,8 @@ const Item = styled.button<Partial<Props>>`
     margin-left: 5px;
   }
 
-  ${({ disabled }) =>
-    disabled &&
+  ${({ isInactive }) =>
+    isInactive &&
     css`
       ${Icon}, ${Text} {
         color: ${({ theme }) => theme.dropdown.disabled.color};
