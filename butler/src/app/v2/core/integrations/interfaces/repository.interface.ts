@@ -17,5 +17,5 @@
 import { Resource } from './repository-response.interface'
 
 export interface Repository {
-  getResource(name: string): Promise<Resource>
+  getResource(dirName: string): Promise<Resource>
 }

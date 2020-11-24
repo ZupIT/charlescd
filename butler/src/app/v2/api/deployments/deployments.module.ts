@@ -40,6 +40,7 @@ import { CdStrategyFactory } from '../../core/integrations/cd-strategy-factory'
 import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
 import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
 import { HelmManifest } from '../../core/manifests/helm/helm-manifest'
+import { GitHubRepository } from '../../core/integrations/github/github-repository'
 
 @Module({
   imports: [
@@ -73,7 +74,8 @@ import { HelmManifest } from '../../core/manifests/helm/helm-manifest'
     CdStrategyFactory,
     OctopipeConnector,
     OctopipeApi,
-    HelmManifest
+    HelmManifest,
+    GitHubRepository
   ],
   exports: [
   ]

@@ -52,8 +52,7 @@ describe('Generate K8s manifest by helm', () => {
       children: []
     }
     let files = fs.readdirSync(dir, { withFileTypes: true })
-    for (let i = 0; i < files.length; i++) {
-      let dirent = files[i]
+    for (const dirent of files) {
       let filePath = path.join(dir, dirent.name)
       if (dirent.isDirectory()) {
         resources.children?.push(await readFiles(filePath, dirent.name))

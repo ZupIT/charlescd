@@ -37,7 +37,7 @@ export class HelmManifest implements Manifest {
     const chart = await this.repository.getResource(config.componentName)
     const chartPath = this.getTmpChartDir()
     try {
-      await this.saveChart(chartPath, chart)
+      await this.saveChartFiles(chartPath, chart)
       return await this.package(chartPath, config)
     } finally {
       this.cleanUp(chartPath)
@@ -48,14 +48,13 @@ export class HelmManifest implements Manifest {
     return os.tmpdir() + path.sep + uuid.v4()
   }
 
-  private async saveChart(chartPath: string, chart: Resource): Promise<void> {
+  private async saveChartFiles(chartPath: string, chart: Resource): Promise<void> {
     let basePath = chartPath + path.sep + chart.name
     await fs.mkdir(basePath, { recursive: true })
     if(chart.children) {
-      for (let i = 0; i < chart.children.length; i++) {
-        let child = chart.children[i]
+      for (const child of chart.children) {
         if(child.type == ResourceType.DIR) {
-          await this.saveChart(basePath, child)
+          await this.saveChartFiles(basePath, child)
         } else {
           await fs.writeFile(basePath + path.sep + child.name, child.content, { encoding: 'base64' })
         }
@@ -63,8 +62,8 @@ export class HelmManifest implements Manifest {
     }
   }
 
-  private cleanUp(file: string) {
-    rimraf(file, () => {})
+  private cleanUp(dir: string) {
+    rimraf(dir, () => {})
   }
 
   private async package(chartPath: string, config: ManifestConfig): Promise<string> {
@@ -94,17 +93,24 @@ export class HelmManifest implements Manifest {
   }
 
   private formatArguments(chartPath: string, config: ManifestConfig) {
-    const overrideValues = this.toStringArray(this.extractCustomValues(config))
-    const command = ['template', config.componentName, `${chartPath}${path.sep}${config.componentName}`, '-f', `${chartPath}${path.sep}${config.componentName}${path.sep}${config.componentName}.yaml`]
+    const chart = `${chartPath}${path.sep}${config.componentName}`
+    const valuesFile = this.getValuesFile(chartPath, config)
+    const command = ['template', config.componentName, chart, '-f', valuesFile]
     if(config.namespace) {
       command.push('--namespace')
       command.push(config.namespace)
     }
+    
+    const overrideValues = this.toStringArray(this.extractCustomValues(config))
     if(overrideValues) {
       command.push('--set')
       command.push(overrideValues)
     }
     return command
+  }
+
+  private getValuesFile(chartPath: string, config: ManifestConfig): string {
+    return `${chartPath}${path.sep}${config.componentName}${path.sep}${config.componentName}.yaml`
   }
 
   private extractCustomValues(config: ManifestConfig): any {
