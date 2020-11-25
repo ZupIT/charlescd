@@ -12,3 +12,7 @@ compass:
   enabled: true
 cors:
   enabled: true
+idm:
+  endpoint: charlescd-keycloak-http
+  port: 80
+  path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo

@@ -25,7 +25,7 @@ data:
                 - name: backend
                   domains:
                   - "*"
-                  {{ if .Values.cors.enabled}}
+                  {{ if .Values.cors.enabled }}
                   cors:
                     allow_origin_string_match:
                     - exact: "http://charles.info.example"
@@ -34,21 +34,21 @@ data:
                     allow_headers: "Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
                   {{- end}}
                   routes:
-                  {{ if .Values.moove.enabled}}
+                  {{ if .Values.moove.enabled }}
                   - match:
                       prefix: "/moove/"
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-moove
                   {{- end}}
-                  {{ if .Values.octopipe.enabled}}
+                  {{ if .Values.octopipe.enabled }}
                   - match:
                       prefix: "/octopipe/"
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-octopipe
                   {{- end}}
-                  {{ if .Values.circlematcher.enabled}}
+                  {{ if .Values.circlematcher.enabled }}
                   - match:
                       prefix: "/charlescd-circle-matcher/"
                     route:
@@ -59,7 +59,7 @@ data:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
                   {{- end}}
-                  {{ if .Values.keycloak.enabled}}
+                  {{ if .Values.keycloak.enabled }}
                   - match:
                       prefix: "/keycloak"
                     route:
@@ -69,14 +69,14 @@ data:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
                   {{- end}}
-                  {{ if .Values.compass.enabled}}
+                  {{ if .Values.compass.enabled }}
                   - match:
                       prefix: "/compass/"
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-compass
                   {{- end}}
-                  {{ if .Values.ui.enabled}}
+                  {{ if .Values.ui.enabled }}
                   - match:
                       prefix: "/"
                     route:
@@ -87,7 +87,7 @@ data:
                         disabled: true
                   {{- end}}
               http_filters:
-              {{ if .Values.cors.enabled}}
+              {{ if .Values.cors.enabled }}
               - name: envoy.filters.http.cors
                 typed_config: {}
               {{- end}}
@@ -101,7 +101,7 @@ data:
                       "charlescd-keycloak-http",
                       {
                         [":method"] = "GET",
-                        [":path"] = "/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
+                        [":path"] = "{{ .Values.idm.path }}",
                         [":authority"] = "charlescd-keycloak-http",
                         ["authorization"] = token
                       },
@@ -118,7 +118,7 @@ data:
                 typed_config: {}
 
       clusters:
-      {{ if .Values.ui.enabled}}
+      {{ if .Values.ui.enabled }}
       - name: charlescd-ui
         connect_timeout: 0.25s
         type: strict_dns
@@ -134,7 +134,7 @@ data:
                     address: charlescd-ui
                     port_value: 3000
       {{- end}}
-      {{ if .Values.moove.enabled}}
+      {{ if .Values.moove.enabled }}
       - name: charlescd-moove
         connect_timeout: 0.25s
         type: strict_dns
@@ -150,7 +150,7 @@ data:
                     address: charlescd-moove
                     port_value: 8080
       {{- end}}
-      {{ if .Values.octopipe.enabled}}
+      {{ if .Values.octopipe.enabled }}
       - name: charlescd-octopipe
         connect_timeout: 0.25s
         type: strict_dns
@@ -166,7 +166,7 @@ data:
                     address: charlescd-octopipe
                     port_value: 8080
       {{- end}}
-      {{ if .Values.circlematcher.enabled}}
+      {{ if .Values.circlematcher.enabled }}
       - name: charlescd-circle-matcher
         connect_timeout: 0.25s
         type: strict_dns
@@ -182,7 +182,6 @@ data:
                     address: charlescd-circle-matcher
                     port_value: 8080
       {{- end}}
-      {{ if .Values.keycloak.enabled}}
       - name: charlescd-keycloak-http
         connect_timeout: 0.25s
         type: strict_dns
@@ -195,10 +194,9 @@ data:
             - endpoint:
                 address:
                   socket_address:
-                    address: charlescd-keycloak-http
-                    port_value: 80
-      {{- end}}
-      {{ if .Values.compass.enabled}}
+                    address: {{ .Values.idm.endpoint }}
+                    port_value: {{ .Values.idm.port }}
+      {{ if .Values.compass.enabled }}
       - name: charlescd-compass
         connect_timeout: 0.25s
         type: strict_dns
