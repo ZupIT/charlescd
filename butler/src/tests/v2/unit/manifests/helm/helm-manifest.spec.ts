@@ -18,11 +18,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 import 'jest'
+import * as yaml from 'js-yaml'
 
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
 import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
 import { Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
 import { ConsoleLoggerService } from '../../../../../app/v1/core/logs/console'
+import { KubernetesManifest } from 'src/app/v2/core/integrations/interfaces/k8s-manifest.interface'
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
@@ -57,7 +59,7 @@ describe('Generate K8s manifest by helm', () => {
     const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
     const manifest = await helm.generate(manifestConfig)
 
-    const expected = fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8')
+    const expected: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'))
 
     expect(manifest).toEqual(expected)
   })
@@ -66,7 +68,7 @@ describe('Generate K8s manifest by helm', () => {
     const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
     const manifest = await helm.generate(manifestConfig)
 
-    const expected = fs.readFileSync(`${basePath}/manifest.yaml`, 'utf-8')
+    const expected: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest.yaml`, 'utf-8'))
 
     expect(manifest).toEqual(expected)
   })

@@ -22,11 +22,13 @@ import * as path from 'path'
 
 import { Injectable } from '@nestjs/common'
 import * as rimraf from 'rimraf'
+import * as yaml from 'js-yaml'
 
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
 import { Repository, Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { KubernetesManifest } from '../../integrations/interfaces/k8s-manifest.interface'
 
 @Injectable()
 export class HelmManifest implements Manifest {
@@ -35,7 +37,7 @@ export class HelmManifest implements Manifest {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly repository: Repository) {}
 
-  public async generate(config: ManifestConfig): Promise<string> {
+  public async generate(config: ManifestConfig): Promise<KubernetesManifest[]> {
     this.consoleLoggerService.log('START:FETCHING CHART FROM REPOSITORY', config.componentName)
     const requestConfig = { 
       url: config.repo.url, 
@@ -46,7 +48,7 @@ export class HelmManifest implements Manifest {
     const chartPath = this.getTmpChartDir()
     try {
       await this.saveChartFiles(chartPath, chart)
-      return await this.package(chartPath, config)
+      return await this.template(chartPath, config)
     } finally {
       this.cleanUp(chartPath)
     }
@@ -74,9 +76,10 @@ export class HelmManifest implements Manifest {
     rimraf(dir, () => {})
   }
 
-  private async package(chartPath: string, config: ManifestConfig): Promise<string> {
+  private async template(chartPath: string, config: ManifestConfig): Promise<KubernetesManifest[]> {
     const args = this.formatArguments(chartPath, config)
-    return this.executeCommand(args)
+    const manifestString = await this.executeCommand(args)
+    return yaml.safeLoadAll(manifestString)
   }
 
   private async executeCommand(args: string[]): Promise<string> {

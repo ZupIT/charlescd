@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+import { KubernetesManifest } from '../integrations/interfaces/k8s-manifest.interface';
 import { ManifestConfig } from './manifest.interface'
 
 export interface Manifest {
-  generate(config: ManifestConfig): Promise<string> // TODO alterar retorno para spec to k8s
+  generate(config: ManifestConfig): Promise<KubernetesManifest[]>
 }
