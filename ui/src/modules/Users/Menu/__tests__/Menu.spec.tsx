@@ -25,7 +25,6 @@ const props = {
       id: '123',
       name: 'name',
       email: 'charles@zup.com.br',
-      photoUrl: 'https://url.com',
       applications: [{
         id: '456',
         name: '',
