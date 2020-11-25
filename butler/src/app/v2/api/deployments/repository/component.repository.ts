@@ -21,11 +21,12 @@ import { ComponentEntityV2 } from '../entity/component.entity'
 @EntityRepository(ComponentEntityV2)
 export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
 
-  public async findActiveComponents(): Promise<ComponentEntityV2[]> {
+  public async findActiveComponents(cdConfigurationId: string): Promise<ComponentEntityV2[]> {
     // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.active = true')
+      .andWhere('deployment.cd_configuration_id = :cdConfigurationId', { cdConfigurationId })
       .getMany()
   }
 
