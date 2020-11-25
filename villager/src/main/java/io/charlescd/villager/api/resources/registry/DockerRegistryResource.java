@@ -101,21 +101,13 @@ public class DockerRegistryResource {
         var response = this.getDockerRegistryTagInteractor.execute(requestHandler.handle());
         var componentTagList = new ArrayList<ComponentTagRepresentation>();
 
-       /* if (name != null) {
-            response.ifPresent(componentTagDTO -> {
-                        componentTagList.add(ComponentTagRepresentation.toRepresentation((ComponentTagDTO)componentTagDTO));
-                    }
-            );
-        } else {
-            response.ifPresent(componentTagDTO -> {
-                        componentTagList.addAll(ComponentTagRepresentation.toListRepresentation((List<ComponentTagDTO>)componentTagDTO));
-                    }
-            );
-        }*/
+        response.ifPresent(componentTagDTO -> {
+                    componentTagList.addAll(ComponentTagRepresentation.toListRepresentation((List<ComponentTagDTO>) componentTagDTO));
+                }
+        );
 
         return new RegistryTagsListRepresentation(componentTagList);
     }
-
 
 
     @DELETE
