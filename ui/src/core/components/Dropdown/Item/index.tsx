@@ -61,7 +61,11 @@ const DropdownItem = ({
         {icon && <Styled.Icon name={icon} size="15px" />}
         <Styled.Text color="dark">{name}</Styled.Text>
       </Styled.Item>
-      {tooltip && <ReactTooltip id={id}>{tooltip}</ReactTooltip>}
+      {tooltip && (
+        <ReactTooltip id={id} place="right">
+          {tooltip}
+        </ReactTooltip>
+      )}
     </Fragment>
   );
 };
