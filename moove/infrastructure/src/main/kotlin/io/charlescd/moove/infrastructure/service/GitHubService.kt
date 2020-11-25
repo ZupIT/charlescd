@@ -80,21 +80,24 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
             logger.info("new branch: $branchName created successfully")
             Optional.of(result)
         } catch (exception: Exception) {
-            return try {
-                val baseBranch = findBranchByName(service, repositoryId, baseBranchMain)
-                val result = createReferenceName(baseBranch, branchName, service, repositoryId)
-                logger.info("new branch: $branchName created successfully")
-                Optional.of(result)
-            } catch (exception: Exception) {
-                logger.error("failed to create branch: $branchName with error: ${exception.message}")
-                handleResponseError(
-                    error = exception,
-                    repository = repository,
-                    baseBranch = baseBranchName,
-                    branchName = branchName
-                )
-                Optional.empty()
+            if (!isUnprocessableError(exception) && !containsErrorMessage(exception, "Reference already exists")) {
+                return try {
+                    val baseBranch = findBranchByName(service, repositoryId, baseBranchMain)
+                    val result = createReferenceName(baseBranch, branchName, service, repositoryId)
+                    logger.info("new branch: $branchName created successfully")
+                    Optional.of(result)
+                } catch (exception: Exception) {
+                    logger.error("failed to create branch: $branchName with error: ${exception.message}")
+                    handleResponseError(
+                        error = exception,
+                        repository = repository,
+                        baseBranch = baseBranchName,
+                        branchName = branchName
+                    )
+                    Optional.empty()
+                }
             }
+            Optional.empty()
         }
     }
 
@@ -155,14 +158,6 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
                 )
                 Optional.empty()
             }
-            logger.error("failed to create release: $releaseName with error: ${exception.message}")
-            handleResponseError(
-                error = exception,
-                repository = repository,
-                baseBranch = sourceBranch,
-                releaseName = releaseName
-            )
-            Optional.empty()
         }
     }
 
