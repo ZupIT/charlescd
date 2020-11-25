@@ -1,16 +1,16 @@
 import PG from 'pg'
 import axios from 'axios'
+import qs from 'qs'
 import chalk from 'chalk'
-
 const charlesBaseUrl = process.env.CHARLES_BASEURL
 const charlesUser = process.env.CHARLES_USER
 const charlesPassword = process.env.CHARLES_PASSWORD
-const butlerUrl = process.env.BUTLER_URL || 'localhost:3000'
-const dbHost = process.env.DATABASE_HOST || 'localhost'
-const dbPort = process.env.DATABASE_PORT || 5432
-const dbUser = process.env.DATABASE_USER || 'charles'
-const dbPassword = process.env.DATABASE_PASSWORD || 'charles'
-const dbName = process.env.DATABASE_NAME || 'charles'
+const butlerUrl = process.env.BUTLER_URL
+const dbHost = process.env.DATABASE_HOST
+const dbPort = process.env.DATABASE_PORT
+const dbUser = process.env.DATABASE_USER
+const dbPassword = process.env.DATABASE_PASSWORD
+const dbName = process.env.DATABASE_NAME
 
 
 const getDefaultActiveCircleDeployments = async (pgClient) => {
@@ -18,12 +18,12 @@ const getDefaultActiveCircleDeployments = async (pgClient) => {
   try {
     console.log('Fetching default active circle deployments')
     const deployments = await pgClient.query(
-      `SELECT * from deployments 
-        INNER JOIN circles circles ON deployments.circle_id = circles.id
-        WHERE deployments.STATUS = 'DEPLOYED' and circles.default_circle = true
+      ` select d.build_id, d.circle_id,d.id,d.user_id,d.workspace_id from deployments d 
+        INNER JOIN circles circles ON d.circle_id = circles.id
+        WHERE d.STATUS = 'DEPLOYED' and circles.default_circle = true
     `)
     console.log(`Active default deployments: ${JSON.stringify(deployments.rows)}`)
-    return deployments
+    return deployments.rows
   } catch (error) {
     console.error(chalk.red(`Error fetching active default deployments: ${error}`))
   }
@@ -69,6 +69,7 @@ const doDefaultCircleUndeployRequest = async (deployment) => {
     )
   } catch (error) {
     console.error(chalk.red(`Error doing old version undeployment: ${error}`))
+    throw error
   }
 }
 
@@ -104,6 +105,7 @@ const sleep = (milliseconds) => {
 }
 
 const deployActualVersionDefaultDeployments = async (deployments, loginObject) => {
+
   for (const deployment of deployments) {
     console.log(`Deploying ${deployment.id} with V2 api`)
     await defaultCircleDeployRequest(deployment, loginObject)
@@ -123,6 +125,7 @@ const undeployOldVersionDefaultDeployments = async (deployments, loginObject) =>
     sleep(2000)
   }
   console.log('Done old version undeployments')
+
 }
 
 const closePgConnection = (pgClient) => {
@@ -148,6 +151,22 @@ const getPgConnection = async () => {
   return client
 }
 
+async function checkIfUndeployFinished(pgClient) {
+  sleep(5000)
+  let deployments = getDefaultActiveCircleDeployments(pgClient)
+  let retry = 0
+  while(deployments && deployments.length &&  retry < 10 ){
+    console.log(`Retry ${retry+1}/10: Still active deployments:  Sleeping for 20 seconds: `)
+    console.log(`Active deployments: ${JSON.stringify(deployments)} `)
+    sleep(20000)
+    retry++;
+    deployments = getDefaultActiveCircleDeployments(pgClient)
+  }
+  if (retry === 10) {
+    console.error(chalk.red(`Error undeploying: Some deployments still active ${JSON.stringify(deployments)}`))
+  }
+}
+
 const doV2Migration = async () => {
   try {
     console.log(chalk.bold.green('Butler migration script: v0.4.1 to v0.4.2 \n'))
@@ -158,9 +177,15 @@ const doV2Migration = async () => {
 
     const pgClient = await getPgConnection()
     const activeDefaultDeployments = await getDefaultActiveCircleDeployments(pgClient)
+    if (!activeDefaultDeployments) {
+      return
+    }
     let loginObject = await doLogin()
-    await undeployOldVersionDefaultDeployments(activeDefaultDeployments, loginObject)
-    await deployActualVersionDefaultDeployments(activeDefaultDeployments, loginObject)
+    if (loginObject) {
+      await undeployOldVersionDefaultDeployments(activeDefaultDeployments, loginObject)
+      await checkIfUndeployFinished(pgClient)
+      await deployActualVersionDefaultDeployments(activeDefaultDeployments, loginObject)
+    }
 
     closePgConnection(pgClient)
     console.log(chalk.bold.green('\nMigration finished'))
