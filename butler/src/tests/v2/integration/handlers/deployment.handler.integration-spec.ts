@@ -66,7 +66,6 @@ describe('DeploymentHandler', () => {
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandlerUseCase>(DeploymentHandlerUseCase)
     notificationUseCase = app.get<ReceiveNotificationUseCase>(ReceiveNotificationUseCase)
-    deploymentHandler = app.get<DeploymentHandlerUseCase>(DeploymentHandlerUseCase)
     spinnakerConnector = app.get<SpinnakerConnector>(SpinnakerConnector)
     manager = fixtureUtilsService.connection.manager
   })
