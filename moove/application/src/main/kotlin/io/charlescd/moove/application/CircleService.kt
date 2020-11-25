@@ -88,4 +88,16 @@ class CircleService(private val circleRepository: CircleRepository) {
                 .withParameters("Percentage remaining: $percentageRemaining")
         }
     }
+
+    fun checkIfPercentageCircleCanDeploy(circle: Circle, workspaceId: String) {
+        val percentageCircles = this.circleRepository.findCirclesPercentage(workspaceId, null, active = true, pageRequest = null).content
+        val isAlreadyDeployed = percentageCircles.map {
+            circle -> circle.id
+        }.let {
+            circlesIds -> circlesIds.contains(circle.id)
+        }
+        if (!isAlreadyDeployed) {
+            checkIfLimitOfPercentageReached(circle.percentage!!, workspaceId)
+        }
+    }
 }

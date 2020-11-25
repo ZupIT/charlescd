@@ -111,7 +111,6 @@ class JdbcCircleRepository(
         if (active != null && !active) parameters.add(workspaceId)
         name?.let { parameters.add("%$name%") }
         parameters.add(workspaceId)
-
         return parameters.toTypedArray()
     }
 
@@ -576,7 +575,7 @@ class JdbcCircleRepository(
         } ?: 0
     }
 
-    override fun findCirclesPercentage(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest): Page<Circle> {
+    override fun findCirclesPercentage(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest?): Page<Circle> {
         val count = executeCountQueryPercentage(name, active, workspaceId)
         val statement = when (active) {
             true -> createActiveCircleQuery(name)
@@ -588,7 +587,9 @@ class JdbcCircleRepository(
             createParametersArray(name, active, workspaceId),
             circleExtractor
         )
-        return Page(result?.toList() ?: emptyList(), pageRequest.page, pageRequest.size, count ?: 0)
+
+        val pageUpdated = pageRequest ?: PageRequest(0, result?.size ?: 0)
+        return Page(result?.toList() ?: emptyList(), pageUpdated.page, pageUpdated.size, count ?: 0)
     }
 
     private fun executeCountQueryPercentage(name: String?, active: Boolean, workspaceId: String): Int? {
@@ -601,13 +602,18 @@ class JdbcCircleRepository(
     private fun executeActiveCirclePercentageCountQuery(name: String?, workspaceId: String): Int? {
         val statement = StringBuilder(
             """
-                    SELECT DISTINCT COUNT(*)
+                    SELECT COUNT(distinct c.id)
                     FROM circles c
                              INNER JOIN deployments d ON c.id = d.circle_id
                     WHERE 1 = 1
-                    AND d.status NOT IN ('NOT_DEPLOYED', 'DEPLOY_FAILED')
+                    AND c.id NOT IN 
+                    (
+                        SELECT DISTINCT d.circle_id
+                        FROM deployments d
+                        WHERE d.status IN ('NOT_DEPLOYED', 'UNDEPLOYED')
+                    )
                     AND c.matcher_type = 'PERCENTAGE'
-                   """
+               """
         )
 
         name?.let { statement.appendln("AND c.name ILIKE ?") }
@@ -615,7 +621,7 @@ class JdbcCircleRepository(
 
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
-            createParametersArray(name, true, workspaceId)
+            createParametersArray(name, null, workspaceId)
         ) { rs, _ ->
             rs.getInt(1)
         }
@@ -624,19 +630,20 @@ class JdbcCircleRepository(
     private fun executeInactiveCirclePercentageCountQuery(name: String?, workspaceId: String): Int? {
         val statement = StringBuilder(
             """
-                SELECT DISTINCT COUNT(*)
+                SELECT COUNT(distinct c.id)
                 FROM circles c
                          LEFT JOIN deployments d ON c.id = d.circle_id
                 WHERE 1 = 1
                     AND d.circle_id IS NULL
-                    OR  c.id NOT IN
+                    AND  c.id NOT IN
                     (
                         SELECT DISTINCT d.circle_id
                         FROM deployments d
                         WHERE d.status IN ('DEPLOYING', 'DEPLOYED', 'UNDEPLOYING')
-                        AND d.workspace_id = ?
-                        AND c.matcher_type = 'PERCENTAGE'
+                        
                     )
+                    AND c.matcher_type = 'PERCENTAGE'
+                    
                 """
         )
 
@@ -645,7 +652,7 @@ class JdbcCircleRepository(
 
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
-            createParametersArray(name, false, workspaceId)
+            createParametersArray(name, null, workspaceId)
         ) { rs, _ ->
             rs.getInt(1)
         }

@@ -59,7 +59,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
 
     private fun checkIfCircleCanBeDeployed(circle: Circle) {
         if (circle.isPercentage()) {
-            this.circleService.checkIfLimitOfPercentageReached(circle.percentage!!, workspaceId = circle.workspaceId)
+            this.circleService.checkIfPercentageCircleCanDeploy(circle, workspaceId = circle.workspaceId)
         }
     }
 
