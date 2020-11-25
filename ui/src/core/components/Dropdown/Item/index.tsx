@@ -16,7 +16,6 @@
 
 import React, { MouseEvent, Fragment } from 'react';
 import Styled from './styled';
-import ReactTooltip from 'react-tooltip';
 
 export interface Props {
   id?: string;
@@ -54,7 +53,7 @@ const DropdownItem = ({
         className={className}
         onClick={(event: MouseEvent) => !isInactive && handleClick(event)}
         isInactive={isInactive}
-        data-tip
+        data-tip={tooltip}
         data-for={id}
         {...rest}
       >
@@ -62,9 +61,13 @@ const DropdownItem = ({
         <Styled.Text color="dark">{name}</Styled.Text>
       </Styled.Item>
       {tooltip && (
-        <ReactTooltip id={id} place="right">
-          {tooltip}
-        </ReactTooltip>
+        <Styled.ReactTooltipStyled
+          id={id}
+          place="right"
+          effect="solid"
+          multiline={true}
+          delayHide={1000}
+        />
       )}
     </Fragment>
   );

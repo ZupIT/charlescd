@@ -18,6 +18,7 @@ import styled, { css } from 'styled-components';
 import { Props } from './';
 import ComponentIcon from 'core/components/Icon';
 import ComponentText from 'core/components/Text';
+import ReactTooltip from 'react-tooltip';
 
 const Icon = styled(ComponentIcon)``;
 
@@ -50,8 +51,19 @@ const Item = styled.button<Partial<Props>>`
     `};
 `;
 
+const ReactTooltipStyled = styled(ReactTooltip)`
+  span {
+    text-align: left !important;
+    padding: 0px !important;
+    font-size: 12px;
+    background-color: ${({ theme }) => theme.dropdown.background};
+    color: ${({ theme }) => theme.dropdown.color};
+  }
+`;
+
 export default {
   Item,
   Icon,
-  Text
+  Text,
+  ReactTooltipStyled
 };

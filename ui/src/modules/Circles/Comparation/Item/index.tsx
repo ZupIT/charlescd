@@ -84,6 +84,10 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [circle, setCircle] = useState<Circle>();
   const { pollingCircle, response } = useCirclePolling();
   const POLLING_DELAY = 15000;
+  const cannotDeleteActiveCircleMessage =
+    'Active circle cannot be deleted,<br />you can undeploy first and then<br /> delete this circle.';
+  const cannotDeleteDefaultCircleMessage =
+    'Default circle is deployed to all<br /> users, so it cannot be deleted.';
 
   useEffect(() => {
     if (circleResponse) {
@@ -222,7 +226,11 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           id="dropdown-item-delete-circle"
           icon="delete"
           name="Delete"
-          tooltip="my tooltip!"
+          tooltip={
+            isDefaultCircle(circle?.name)
+              ? cannotDeleteDefaultCircleMessage
+              : cannotDeleteActiveCircleMessage
+          }
           isInactive={
             isUndeployable(circle) || isDefaultCircle(circle?.name)
               ? true
