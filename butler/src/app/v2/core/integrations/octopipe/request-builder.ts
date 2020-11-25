@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
-import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
-import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
-import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
-import { UrlUtils } from '../../utils/url.utils'
-import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
-import { DeploymentUtils } from '../utils/deployment.utils'
 import {
   ClusterProviderEnum,
   IEKSClusterConfig,
   IGenericClusterConfig
 } from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { UrlUtils } from '../../utils/url.utils'
+import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
+import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
+import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
-import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
+import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
+import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 
 export class OctopipeRequestBuilder {
 
@@ -123,19 +123,15 @@ export class OctopipeRequestBuilder {
     if (!deployment?.components) {
       return []
     }
-    const unusedDeployments: OctopipeDeployment[] = []
-    deployment.components.forEach(component => {
-      const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
-      if (unusedComponent) {
-        unusedDeployments.push({ //TODO improve this object later - It shouldnt be equal to the deployment object
-          componentName: unusedComponent.name,
-          helmRepositoryConfig: this.getHelmRepositoryConfig(unusedComponent, deployment.cdConfiguration),
-          helmConfig: this.getHelmConfig(unusedComponent, deployment.circleId),
-          rollbackIfFailed: false
-        })
+    return componentsToBeRemoved(deployment, activeComponents).map(component => {
+      return {
+        componentName: component.name,
+        helmRepositoryConfig: this.getHelmRepositoryConfig(component, deployment.cdConfiguration),
+        helmConfig: this.getHelmConfig(component, deployment.circleId),
+        rollbackIfFailed: false
+
       }
     })
-    return unusedDeployments
   }
 
   private getHelmRepositoryConfig(component: DeploymentComponent, cdConfiguration: CdConfiguration): HelmRepositoryConfig {

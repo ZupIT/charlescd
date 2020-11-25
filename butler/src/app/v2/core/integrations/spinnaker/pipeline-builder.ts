@@ -39,7 +39,7 @@ import {
 import { DeploymentTemplateUtils } from './utils/deployment-template.utils'
 import { UndeploymentTemplateUtils } from './utils/undeployment-template.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
-import { DeploymentUtils } from '../utils/deployment.utils'
+import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 export class SpinnakerPipelineBuilder {
@@ -179,15 +179,10 @@ export class SpinnakerPipelineBuilder {
     if (!deployment?.components) {
       return []
     }
-    const stages: Stage[] = []
     const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
-    deployment.components.forEach(component => {
-      const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
-      if (unusedComponent) {
-        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
-      }
+    return componentsToBeRemoved(deployment, activeComponents).map(component => {
+      return getDeleteUnusedStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId)
     })
-    return stages
   }
 
   private getUndeploymentDeleteUnusedDeploymentsStage(deployment: Deployment): Stage[] {
