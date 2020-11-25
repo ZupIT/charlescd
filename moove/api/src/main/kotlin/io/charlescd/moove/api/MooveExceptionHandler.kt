@@ -140,7 +140,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    fun exceptions(request: HttpServletRequest, ex: NotFoundException): ResourceValueResponse {
+    fun handleNotFoundException(request: HttpServletRequest, ex: NotFoundException): ResourceValueResponse {
         this.logger.error(ex.message, ex)
         return ResourceValueResponse(ex.resourceName, ex.id)
     }
@@ -149,7 +149,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     @Deprecated("Only for backwards compatibility")
-    fun exceptions(request: HttpServletRequest, ex: NotFoundExceptionLegacy): ResourceValueResponse {
+    fun handleNotFoundExceptionLegacy(request: HttpServletRequest, ex: NotFoundExceptionLegacy): ResourceValueResponse {
         this.logger.error(ex.message, ex)
         return ResourceValueResponse(ex.resourceName, ex.id)
     }
