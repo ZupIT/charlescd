@@ -19,7 +19,6 @@ package io.charlescd.moove.legacy.moove.controller
 import io.charlescd.moove.commons.representation.GroupsRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
-import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.KeycloakService
 import io.charlescd.moove.legacy.moove.service.UserServiceLegacy
 import io.swagger.annotations.Api
@@ -41,19 +40,6 @@ class UserController(
     @GetMapping("/{id}/groups")
     @ResponseStatus(HttpStatus.OK)
     fun findUserGroups(@PathVariable id: String): GroupsRepresentation = keycloakService.findUserGroups(id)
-
-    @ApiOperation(value = "Update User")
-    @ApiImplicitParam(
-        name = "updateUserRequest",
-        value = "Update User",
-        required = true,
-        dataType = "UpdateUserRequest"
-    )
-    @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun update(@PathVariable id: String, @Valid @RequestBody updateUserRequest: UpdateUserRequest) {
-        userService.update(id, updateUserRequest)
-    }
 
     @ApiOperation(value = "Delete by id")
     @DeleteMapping("/{id}")
