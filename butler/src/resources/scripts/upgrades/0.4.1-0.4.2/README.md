@@ -1,9 +1,8 @@
-# v0.3.11 - v0.4.0 Butler migration script
+# v0.4.1 - v0.4.2 Butler migration script
 
 # Disclaimer
 
-This script must be run after you have manually re-deployed all components in the default circle, otherwise the script
-will invalidate the current routing strategy and your components will be unreachable.
+This script must be run if you have releases deployed in default circle on versions before 0.4.2
 
 # How to run
 
@@ -17,6 +16,7 @@ In order to run this script, first go to its root directory and follow the next 
 
     ```
     CHARLES_BASEURL=<charles-base-url>
+    BUTLER_URL=<butler-url>
     CHARLES_USER=<charles-user>
     CHARLES_PASSWORD=<charles-user-password>
     DATABASE_HOST=<charles-db-host>
@@ -27,7 +27,5 @@ In order to run this script, first go to its root directory and follow the next 
    ```
 3. Run the docker container:
 
-    ```docker run -it --env-file ./<your-env-file> <your-image-name>:<your-tag>```
+    ```docker run --env-file ./<your-env-file> <your-image-name>:<your-tag>```
    
-   It is important to notice that the -it flag must be present. Our script is interactive and
-   therefore needs to have TTY enabled.

@@ -1,7 +1,7 @@
 {
   "name": "v2-migration",
   "version": "1.0.0",
-  "description": "Migration script from  Charles v0.3.11 to v0.4.0",
+  "description": "Migration script from  Charles v0.4.1 to v0.4.2",
   "main": "migration.js",
   "type": "module",
   "scripts": {
