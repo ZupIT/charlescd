@@ -1,0 +1,38 @@
+name: Keycloak-ci
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'keycloak/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+    - name: QEMU
+      uses: docker/setup-qemu-action@v1
+
+    - name: Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    
+    - name: bump version
+      id: tagging
+      uses: mathieudutour/github-tag-action@v4.5
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
+      with:
+        path: ./keycloak
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/charlescd-keycloak
+        dockerfile: ./keycloak/Dockerfile
+        tags: latest,${{ steps.tagging.outputs.new_version }}
+        tag_with_ref: false
+        tag_with_sha: false
