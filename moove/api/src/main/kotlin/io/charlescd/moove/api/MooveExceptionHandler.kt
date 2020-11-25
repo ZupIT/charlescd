@@ -56,7 +56,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     fun handleIllegalArgument(ex: IllegalArgumentException): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
