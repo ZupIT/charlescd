@@ -25,16 +25,24 @@ import * as rimraf from 'rimraf'
 
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
-import { Repository } from '../../../core/integrations/interfaces/repository.interface'
-import { Resource, ResourceType } from '../../integrations/interfaces/repository-response.interface'
+import { Repository, Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
 @Injectable()
 export class HelmManifest implements Manifest {
 
-  constructor(private repository: Repository) {}
+  constructor(
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly repository: Repository) {}
 
   public async generate(config: ManifestConfig): Promise<string> {
-    const chart = await this.repository.getResource(config.componentName)
+    this.consoleLoggerService.log('START:FETCHING CHART FROM REPOSITORY', config.componentName)
+    const requestConfig = { 
+      url: config.repo.url, 
+      token: config.repo.token, 
+      resourceName: config.componentName 
+    }
+    const chart = await this.repository.getResource(requestConfig)
     const chartPath = this.getTmpChartDir()
     try {
       await this.saveChartFiles(chartPath, chart)

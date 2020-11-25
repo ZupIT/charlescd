@@ -26,7 +26,7 @@ import { GitHubRepository } from '../../../../app/v2/core/integrations/github/gi
 
 describe('Download resources from github', () => {
   const contents = getStubContents()
-  const httpService = new HttpService() 
+  const httpService = new HttpService()
   jest.spyOn(httpService, 'get')
     .mockImplementation(dirname => of({
       data: contents[dirname]
@@ -35,9 +35,9 @@ describe('Download resources from github', () => {
   const url = 'https://api.github.com/repos/charlescd-fake/helm-chart/contents'
 
   it('Download helm chart recursively from github', async () => {
-    const repository = new GitHubRepository(httpService, url, 'my-token')
-    
-    const resource = await repository.getResource('helm-chart')
+    const repository = new GitHubRepository(httpService)
+
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
 
     expect(resource.name).toBe('helm-chart')
     expect(resource.type).toBe('directory')
@@ -49,9 +49,9 @@ describe('Download resources from github', () => {
 
   it('Download a single file from gibhub', async () => {
     const url = 'https://api.github.com/repos/charlescd-fake/helm-chart/contents/helm-chart'
-    const repository = new GitHubRepository(httpService, url, 'my-token')
-    
-    const resource = await repository.getResource('Chart.yaml')
+    const repository = new GitHubRepository(httpService)
+
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'Chart.yaml' })
 
     expect(resource.name).toBe('Chart.yaml')
     expect(resource.type).toBe('file')

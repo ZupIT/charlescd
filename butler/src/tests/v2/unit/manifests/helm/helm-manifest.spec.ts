@@ -21,9 +21,8 @@ import 'jest'
 
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
 import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
-import { Repository } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
-import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
-import { Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository-response.interface'
+import { Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
+import { ConsoleLoggerService } from '../../../../../app/v1/core/logs/console'
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
@@ -43,7 +42,7 @@ describe('Generate K8s manifest by helm', () => {
     getResource: jest.fn()
   }
 
-  mockRepository.getResource.mockImplementation(async name => await readFiles(basePath, name))
+  mockRepository.getResource.mockImplementation(async config => await readFiles(basePath, config.resourceName))
 
   it('should generate manifest with default values', async () => {
     const manifestConfig = {
@@ -55,7 +54,7 @@ describe('Generate K8s manifest by helm', () => {
       componentName: "helm-test-chart",
       imageUrl: "latest"
     }
-    const helm = new HelmManifest(mockRepository)
+    const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
     const manifest = await helm.generate(manifestConfig)
 
     const expected = fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8')
@@ -64,7 +63,7 @@ describe('Generate K8s manifest by helm', () => {
   })
 
   it('should generate manifest with custom values', async () => {
-    const helm = new HelmManifest(mockRepository)
+    const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
     const manifest = await helm.generate(manifestConfig)
 
     const expected = fs.readFileSync(`${basePath}/manifest.yaml`, 'utf-8')
@@ -75,7 +74,7 @@ describe('Generate K8s manifest by helm', () => {
   it('should fail manifest generation when fails fetching files from repository', async () => {
     mockRepository.getResource.mockImplementation(() => { throw new Error('error') })
 
-    const helm = new HelmManifest(mockRepository)
+    const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
     const manifest = helm.generate(manifestConfig)
 
     expect(manifest).rejects.toThrowError()

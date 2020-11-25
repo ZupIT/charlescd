@@ -17,37 +17,34 @@
 import { HttpService, Injectable } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
 
-import { Resource, ResourceType } from '../interfaces/repository-response.interface'
-import { Repository } from '../interfaces/repository.interface'
+import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 
 @Injectable()
 export class GitHubRepository implements Repository {
 
-  constructor(private readonly httpService: HttpService,
-    private readonly url: string, 
-    private readonly token: string) {}
+  constructor(private readonly httpService: HttpService) {}
 
-  public async getResource(dirname: string): Promise<Resource> {
-    const urlResource = `${this.url}/${dirname}`
-    return await this.downloadResource(urlResource, dirname, {
+  public async getResource(config: RequestConfig): Promise<Resource> {
+    const urlResource = `${config.url}/${config.resourceName}`
+    return await this.downloadResource(urlResource, config.resourceName, {
       'Content-Type': 'application/json',
-      'Authorization': this.token
+      'Authorization': config.token
     })
   }
 
-  private async downloadResource(url: string, dirname: string, headers: any): Promise<Resource> {
+  private async downloadResource(url: string, resourceName: string, headers: any): Promise<Resource> {
     const response = await this.fetch(url, headers)
     
     if(!Array.isArray(response.data)) {
       return {
-        name: dirname,
+        name: resourceName,
         type: ResourceType.FILE,
         content: response.data.content
       } as Resource
     }
     
     const resource: Resource = {
-      name: dirname,
+      name: resourceName,
       type: ResourceType.DIR,
       children: []
     }

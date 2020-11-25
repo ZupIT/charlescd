@@ -14,8 +14,24 @@
  * limitations under the License.
  */
 
-import { Resource } from './repository-response.interface'
+export interface RequestConfig {
+  url: string,
+  token: string,
+  resourceName: string
+}
+
+export enum ResourceType {
+  FILE = 'file',
+  DIR = 'directory'
+} 
+
+export interface Resource {
+  name: string,
+  type: ResourceType,
+  content?: string,
+  children?: Resource[]
+}
 
 export interface Repository {
-  getResource(dirName: string): Promise<Resource>
+  getResource(config: RequestConfig): Promise<Resource>
 }
