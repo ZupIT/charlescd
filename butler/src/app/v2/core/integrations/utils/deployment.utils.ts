@@ -76,7 +76,7 @@ const updatedConditions = (deploymentComponent: DeploymentComponent, activeCompo
 }
 
 const isSameNameAndDifferenteVersion = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
-  return isSameName(deploymentComponent, activeComponent) && deploymentComponent.imageUrl !== activeComponent.imageUrl
+  return isSameName(deploymentComponent, activeComponent) && deploymentComponent.imageTag !== activeComponent.imageTag
 }
 
 const isSameName = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
