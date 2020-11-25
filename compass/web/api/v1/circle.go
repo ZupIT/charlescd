@@ -19,10 +19,12 @@
 package v1
 
 import (
+	"errors"
+	"net/http"
+
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/web/api"
 	"github.com/julienschmidt/httprouter"
-	"net/http"
 )
 
 type CircleApi struct {
@@ -41,7 +43,7 @@ func (circleApi CircleApi) ListMetricsGroupInCircle(w http.ResponseWriter, _ *ht
 	id := ps.ByName("id")
 	metricsGroups, err := circleApi.circleMain.ListAllByCircle(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New(err.Errors[0].Detail)})
 		return
 	}
 

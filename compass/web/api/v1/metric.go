@@ -19,10 +19,11 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/web/api"
-	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
@@ -56,9 +57,9 @@ func (metricApi MetricApi) createMetric(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	metricgroup, err := metricApi.metricGroupMain.FindById(id)
+	metricgroup, _ := metricApi.metricGroupMain.FindById(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -87,9 +88,9 @@ func (metricApi MetricApi) updateMetric(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	metricgroup, err := metricApi.metricGroupMain.FindById(groupID)
+	metricgroup, _ := metricApi.metricGroupMain.FindById(groupID)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, nil)
 		return
 	}
 
