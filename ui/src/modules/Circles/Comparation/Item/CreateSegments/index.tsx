@@ -55,6 +55,13 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   }, [circle, isEditing]);
 
   useEffect(() => {
+    // eslint-disable-next-line no-prototype-builtins
+    if (isEditing && circle?.matcherType === 'PERCENTAGE') {
+      setActiveSegment('PERCENTAGE');
+    }
+  }, [circle, isEditing]);
+
+  useEffect(() => {
     if (saveCircleResponse) {
       onSaveCircle(saveCircleResponse);
     }
@@ -122,7 +129,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <Text.h2 weight="bold" color="light">
-          Create Segments
+          {isEditing ? 'Edit' : 'Create'} Segments
         </Text.h2>
         <Styled.HelpText color="dark">
           You can create a segment manually or importing a .CSV file to link
@@ -176,8 +183,9 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
           {isPercentage && (
             <Percentage
               id={id}
-              name={circle?.name}
+              circle={circle}
               onSaveCircle={onSaveCircle}
+              isEditing={isEditing}
             />
           )}
         </Styled.Content>

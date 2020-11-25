@@ -23,6 +23,7 @@ import TextComponent from 'core/components/Text';
 import LayerComponent from 'core/components/Layer';
 import PopoverComponent from 'core/components/Popover';
 import Text from 'core/components/Text';
+import NumberInput from 'core/components/Form/Number';
 
 interface ButtonIconProps {
   isActive: boolean;
@@ -105,11 +106,31 @@ const Popover = styled(PopoverComponent)`
 
 const AvailableContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 95%;
+  max-height: 500px;
+
+  > div:first-child:last-child {
+    border-radius: 4px 4px 4px 4px;
+  }
+
+  > div:first-child {
+    border-radius: 4px 4px 0 0;
+  }
+
+  > div:last-child {
+    border-radius: 0 0 4px 4px;
+  }
+`;
+
+const AvailableItem = styled.div`
+  display: flex;
   justify-content: space-between;
   align-items: center;
+  width: inherit;
   padding: 18px;
-  border-radius: 4px;
-  width: 90%;
+  height: 32px;
   background-color: ${({ theme }) => theme.modal.default.background};
 `;
 
@@ -135,6 +156,12 @@ const CirclesListButton = styled.div`
 `;
 
 const SliderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+`;
+
+const SliderInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -174,6 +201,16 @@ const SliderValue = styled(Text.h4)<SliderValueProps>`
       : theme.slider.valueColor.inactive};
 `;
 
+const SliderNumberInput = styled(NumberInput)`
+  width: 50px;
+  display: flex;
+  align-items: center;
+
+  > input {
+    position: relative;
+  }
+`;
+
 export default {
   HelpText,
   Layer,
@@ -186,9 +223,12 @@ export default {
   FieldPopover,
   Popover,
   AvailableContainer,
+  AvailableItem,
   CirclesListContainer,
   CirclesListButton,
   Slider,
   SliderContainer,
-  SliderValue
+  SliderInputContainer,
+  SliderValue,
+  SliderNumberInput
 };

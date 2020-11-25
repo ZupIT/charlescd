@@ -15,38 +15,61 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
-import { useSaveCircleWithFile } from 'modules/Circles/hooks';
+import {
+  CIRCLE_STATUS,
+  useCirclePercentage,
+  useSaveCirclePercentage
+} from 'modules/Circles/hooks';
 import Loader from './Loader';
 import Styled from './styled';
 import Icon from 'core/components/Icon';
 import SliderPercentage from './Slider';
+import { getProfileByKey } from 'core/utils/profile';
+import { Circle } from 'modules/Circles/interfaces/Circle';
 
 interface Props {
   id: string;
-  name: string;
+  circle: Circle;
   onSaveCircle: Function;
+  isEditing: boolean;
 }
 
-const Percentage = ({ id, name, onSaveCircle }: Props) => {
+interface SliderForm {
+  slider: string;
+}
+
+const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
+  const { name, percentage, deployment } = circle;
+  const methods = useForm<SliderForm>({ mode: 'onChange' });
   const {
-    register,
     handleSubmit,
     getValues,
     formState: { isValid }
-  } = useForm({ mode: 'onChange' });
-  const [response, saveCircle, isSaving] = useSaveCircleWithFile(id);
+  } = methods;
+  const [response, saveCircle, isSaving] = useSaveCirclePercentage(id);
+  const [responseGetCircles, getFilteredCircles] = useCirclePercentage();
   const [showCircleList, setShowCircleList] = useState<boolean>(false);
-  const [rangeValue, setRangeValue] = useState<number>(0);
+  const [limitPercentage, setLimitPercentage] = useState<number>(null);
 
   const onSubmitValue = () => {
-    const values = getValues();
-    const { keyName } = values;
-    const file = values.file[0] as File;
-
-    saveCircle({ file, keyName, name });
+    const authorId = getProfileByKey('id');
+    const rangeValue = getValues('slider');
+    saveCircle({ authorId, percentage: Number(rangeValue), name });
   };
+
+  useEffect(() => {
+    if (responseGetCircles?.content[0]?.sumPercentage) {
+      setLimitPercentage(100 - responseGetCircles.content[0].sumPercentage);
+    } else {
+      setLimitPercentage(100);
+    }
+  }, [responseGetCircles]);
+
+  useEffect(() => {
+    getFilteredCircles('', CIRCLE_STATUS.active);
+  }, [getFilteredCircles]);
 
   useEffect(() => {
     if (response) {
@@ -54,59 +77,153 @@ const Percentage = ({ id, name, onSaveCircle }: Props) => {
     }
   }, [response, onSaveCircle]);
 
-  return (
-    <form onSubmit={handleSubmit(onSubmitValue)}>
-      <Styled.FieldPopover>
-        <Text.h5 color="dark">Quantity available for consumption.</Text.h5>
-        <Styled.Popover
-          title=""
-          icon="info"
-          size="18px"
-          description="The available quantity will be applied only after activating the circle"
-        />
-      </Styled.FieldPopover>
-      <Styled.AvailableContainer>
-        <Text.h4 color="light">Available in the open sea</Text.h4>
-        <Text.h4 color="light">10%</Text.h4>
-      </Styled.AvailableContainer>
-      <Styled.CirclesListContainer
-        onClick={() => setShowCircleList(!showCircleList)}
-      >
-        <Styled.CirclesListButton>
-          <Icon name={showCircleList ? 'up' : 'alternate-down'} size="18" />
-          <Text.h4 color="dark">See consumption by active circles.</Text.h4>
-        </Styled.CirclesListButton>
-        {showCircleList && (
+  const editingPercentageLimit = () => {
+    if (limitPercentage > 0 && deployment) {
+      return limitPercentage + percentage;
+    }
+    if (limitPercentage > 0 && !deployment) {
+      return limitPercentage;
+    }
+    return percentage;
+  };
+
+  const renderNewCircle = () => {
+    return (
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmitValue)}>
+          <Styled.FieldPopover>
+            <Text.h5 color="dark">Quantity available for consumption.</Text.h5>
+            <Styled.Popover
+              title=""
+              icon="info"
+              size="18px"
+              description="The available quantity will be applied only after activating the circle"
+            />
+          </Styled.FieldPopover>
+          <Styled.AvailableContainer>
+            <Styled.AvailableItem>
+              <Text.h4 color="light">Available in the open sea</Text.h4>
+              <Text.h4 color="light">{limitPercentage}%</Text.h4>
+            </Styled.AvailableItem>
+          </Styled.AvailableContainer>
+          <Styled.CirclesListContainer
+            onClick={() => setShowCircleList(!showCircleList)}
+          >
+            <Styled.CirclesListButton>
+              <Icon name={showCircleList ? 'up' : 'alternate-down'} size="18" />
+              <Text.h4 color="dark">See consumption by active circles.</Text.h4>
+            </Styled.CirclesListButton>
+            {showCircleList && (
+              <Styled.AvailableContainer>
+                {responseGetCircles?.content[0]?.circles.map(circle => (
+                  <Styled.AvailableItem key={circle.id}>
+                    <Text.h4 color="light">{circle.name}</Text.h4>
+                    <Text.h4 color="light">{circle.percentage}%</Text.h4>
+                  </Styled.AvailableItem>
+                ))}
+              </Styled.AvailableContainer>
+            )}
+          </Styled.CirclesListContainer>
+          {/* // alert */}
+
+          {limitPercentage === 0 ? (
+            <Text.h5 color="error">
+              The sum of active segmentations has reached 100%, there is no
+              available space for a new segmentation. Please adjust the others
+              segmentations per percentage to make it possible to segment this
+              circle
+            </Text.h5>
+          ) : (
+            <>
+              <Styled.HelpText color="dark">
+                Add the proportion of users by the percentage factor available
+                for the open sea
+              </Styled.HelpText>
+              <Styled.HelpText color="dark">Circle {name}</Styled.HelpText>
+              <SliderPercentage limitValue={limitPercentage} />
+              {isSaving && <Loader />}
+              <Styled.ButtonDefault
+                type="submit"
+                isLoading={isSaving}
+                isDisabled={isSaving}
+                isValid={isValid}
+              >
+                <Text.h6 color={isValid ? 'light' : 'dark'}>Save</Text.h6>
+              </Styled.ButtonDefault>
+            </>
+          )}
+        </form>
+      </FormProvider>
+    );
+  };
+
+  const renderEditingCircle = () => {
+    return (
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmitValue)}>
+          <Styled.FieldPopover>
+            <Text.h5 color="dark">Quantity available for consumption.</Text.h5>
+            <Styled.Popover
+              title=""
+              icon="info"
+              size="18px"
+              description="The available quantity will be applied only after activating the circle"
+            />
+          </Styled.FieldPopover>
+          <Styled.AvailableContainer>
+            <Styled.AvailableItem>
+              <Text.h4 color="light">Available in the open sea</Text.h4>
+              <Text.h4 color="light">{limitPercentage}%</Text.h4>
+            </Styled.AvailableItem>
+            <Styled.AvailableItem>
+              <Text.h4 color="light">Percent configured.</Text.h4>
+              <Text.h4 color="light">
+                {circle.percentage ? circle.percentage : 0}%
+              </Text.h4>
+            </Styled.AvailableItem>
+          </Styled.AvailableContainer>
+          <Styled.CirclesListContainer
+            onClick={() => setShowCircleList(!showCircleList)}
+          >
+            <Styled.CirclesListButton>
+              <Icon name={showCircleList ? 'up' : 'alternate-down'} size="18" />
+              <Text.h4 color="dark">See consumption by active circles.</Text.h4>
+            </Styled.CirclesListButton>
+            {showCircleList && (
+              <Styled.AvailableContainer>
+                {responseGetCircles?.content[0]?.circles.map(circle => (
+                  <Styled.AvailableItem key={circle.id}>
+                    <Text.h4 color="light">{circle.name}</Text.h4>
+                    <Text.h4 color="light">{circle.percentage}%</Text.h4>
+                  </Styled.AvailableItem>
+                ))}
+              </Styled.AvailableContainer>
+            )}
+          </Styled.CirclesListContainer>
+          {/* // alert */}
           <>
-            <Styled.AvailableContainer>
-              <Text.h4 color="light">teste</Text.h4>
-              <Text.h4 color="light">10%</Text.h4>
-            </Styled.AvailableContainer>
+            <Styled.HelpText color="dark">
+              Add the proportion of users by the percentage factor available for
+              the open sea
+            </Styled.HelpText>
+            <Styled.HelpText color="dark">Circle {name}</Styled.HelpText>
+            <SliderPercentage limitValue={editingPercentageLimit()} />
+            {isSaving && <Loader />}
+            <Styled.ButtonDefault
+              type="submit"
+              isLoading={isSaving}
+              isDisabled={isSaving}
+              isValid={isValid}
+            >
+              <Text.h6 color={isValid ? 'light' : 'dark'}>Save</Text.h6>
+            </Styled.ButtonDefault>
           </>
-        )}
-      </Styled.CirclesListContainer>
-      {/* // alert */}
-      <Styled.HelpText color="dark">
-        Add the proportion of users by the percentage factor available for the
-        open sea
-      </Styled.HelpText>
-      <Styled.HelpText color="dark">Circle {name}</Styled.HelpText>
-      <SliderPercentage
-        value={rangeValue}
-        setValue={setRangeValue}
-        limitValue={40}
-      />
-      {isSaving && <Loader />}
-      <Styled.ButtonDefault
-        type="submit"
-        isLoading={isSaving}
-        isDisabled={isSaving}
-        isValid={isValid}
-      >
-        <Text.h6 color={isValid ? 'light' : 'dark'}>Save</Text.h6>
-      </Styled.ButtonDefault>
-    </form>
-  );
+        </form>
+      </FormProvider>
+    );
+  };
+
+  return isEditing ? renderEditingCircle() : renderNewCircle();
 };
 
 export default Percentage;

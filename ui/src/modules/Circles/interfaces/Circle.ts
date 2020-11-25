@@ -56,7 +56,7 @@ export interface Author {
   createdAt: string;
 }
 
-export type MatcherType = 'SIMPLE_KV' | 'REGULAR';
+export type MatcherType = 'SIMPLE_KV' | 'REGULAR' | 'PERCENTAGE';
 
 export interface Circle {
   id: string;
@@ -66,6 +66,7 @@ export interface Circle {
   deployment: Deployment;
   rules: Rules;
   matcherType?: MatcherType;
+  percentage?: number;
 }
 
 export interface CreateCircleWithFilePayload {
@@ -78,5 +79,11 @@ export interface CreateCircleWithFilePayload {
 export interface CreateCircleManuallyPayload {
   authorId: string;
   rules: Rules;
+  name: string;
+}
+
+export interface CreateCirclePercentagePayload {
+  authorId: string;
+  percentage: number;
   name: string;
 }
