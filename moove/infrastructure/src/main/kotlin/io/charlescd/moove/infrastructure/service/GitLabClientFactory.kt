@@ -7,11 +7,17 @@ import org.springframework.stereotype.Component
 @Component
 class GitLabClientFactory {
 
+    private val defaultAdress = "https://gitlab.com"
+
     fun buildGitClient(gitCredentials: GitCredentials): GitLabApi {
+        var address = gitCredentials.address
+        if (address.isEmpty()) {
+            address = defaultAdress
+        }
         return if (!gitCredentials.accessToken.isNullOrBlank()) {
-            GitLabApi(GitLabApi.ApiVersion.V4, gitCredentials.address, gitCredentials.accessToken)
+            GitLabApi(GitLabApi.ApiVersion.V4, address, gitCredentials.accessToken)
         } else {
-            GitLabApi.oauth2Login(gitCredentials.address, gitCredentials.username, gitCredentials.password)
+            GitLabApi.oauth2Login(address, gitCredentials.username, gitCredentials.password)
         }
     }
 }

@@ -20,7 +20,6 @@ export interface Author {
   id: string;
   name: string;
   email: string;
-  photoUrl?: string;
   isRoot: boolean;
   createdAt: string;
 }
