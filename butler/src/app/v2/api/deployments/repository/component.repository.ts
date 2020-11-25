@@ -39,7 +39,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
 
-  public async findCircleRunningComponents(circleId: string): Promise<ComponentEntityV2[]> {
+  public async findCircleCreatedExecution(circleId: string): Promise<ComponentEntityV2[]> {
     return this.createQueryBuilder('c')
       .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
       .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
@@ -48,11 +48,12 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
 
-  public async findDefaultRunningComponents(): Promise<ComponentEntityV2[]> {
+  public async findDefaultCircleCreatedExecution(circleId: string): Promise<ComponentEntityV2[]> {
     return this.createQueryBuilder('c')
       .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
       .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
-      .andWhere('d.defaultCircle is true')
+      .where('d.circle_id = :circleId', { circleId })
+      .andWhere('d.default_circle is true')
       .andWhere('e.status = :status', { status: DeploymentStatusEnum.CREATED })
       .getMany()
   }
