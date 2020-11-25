@@ -46,7 +46,6 @@ open class PatchCircleWithPercentageInteractorImpl(
     @Transactional
     override fun execute(id: String, request: PatchCirclePercentageRequest): CircleResponse {
         request.validate()
-        println("validated")
         val circle = circleService.find(id)
         canBeUpdated(circle)
         val updatedCircle = updateCircle(request, circle)
