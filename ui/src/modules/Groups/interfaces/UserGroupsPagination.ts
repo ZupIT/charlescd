@@ -18,7 +18,6 @@ interface User {
   id: string;
   name: string;
   email: string;
-  photoUrl: string;
   createdAt: string;
 }
 
