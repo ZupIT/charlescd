@@ -76,7 +76,8 @@ open class PatchCircleWithPercentageInteractorImpl(
             circle.copy(
                 reference = UUID.randomUUID().toString(),
                 matcherType = MatcherTypeEnum.PERCENTAGE,
-                importedKvRecords = 0
+                importedKvRecords = 0,
+                rules = null
             )
         )
         return circleService.update(patched)
