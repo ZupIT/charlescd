@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, screen, waitFor, act, waitForElementToBeRemoved } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
@@ -116,49 +116,6 @@ test('render CircleComparationItem with release', async () => {
   expect(screen.queryByText('Override release')).not.toBeInTheDocument();
 });
 
-test('render CircleComparationItem Default Circle with release', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123-workspace',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
-  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
-    responseAll: [],
-    getAll: jest.fn
-  });
-  (fetch as FetchMock)
-    .mockResponseOnce(JSON.stringify(defaultCircle))
-    .mockResponseOnce(JSON.stringify(defaultCircle));
-  const handleChange = jest.fn();
-
-  render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
-  );
-
-  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
-  expect(DropdownIcon).toBeInTheDocument();
-
-  act(() => userEvent.click(DropdownIcon));
-
-  const DropdownActions = screen.getByTestId('dropdown-actions');
-
-  await waitFor(() => {
-    expect(DropdownActions).toBeInTheDocument();
-    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
-  });
-
-  const OverrideRelease = screen.getByText('Override release');
-  expect(OverrideRelease).toBeInTheDocument();
-  act(() => userEvent.click(OverrideRelease));
-
-  const IconBack = await screen.findByTestId('icon-arrow-left');
-  expect(IconBack).toBeInTheDocument();
-  
-});
-
 test('render CircleComparationItem Default Circle', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
   const handleChange = jest.fn();
@@ -234,6 +191,85 @@ test('should disable button delete and show tooltip when circle is default and a
   expect(screen.getByText('users, so it cannot be deleted.')).toBeInTheDocument();
 });
 
-test('should disable button delete and show tooltip when circle is not default and is active', () => {
+test('should disable button delete and show tooltip when circle is not default and is active', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123-workspace',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [],
+    getAll: jest.fn
+  });
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(circle))
+    .mockResponseOnce(JSON.stringify(circle));
+  const handleChange = jest.fn();
 
+  render(
+    <AllTheProviders>
+      <CirclesComparationItem id={props.id} onChange={handleChange} />
+    </AllTheProviders>
+  );
+
+  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(DropdownIcon).toBeInTheDocument();
+  act(() => userEvent.click(DropdownIcon));
+
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
+
+  const deleteButtonText = await screen.findByText('Delete');
+  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_GRAY}`));
+
+  userEvent.hover(deleteButton);
+  expect(screen.getByText('Active circle cannot be deleted,')).toBeInTheDocument();
+  expect(screen.getByText('you can undeploy first and then')).toBeInTheDocument();
+  expect(screen.getByText('delete this circle.')).toBeInTheDocument();
 });
+
+test('render CircleComparationItem Default Circle with release', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123-workspace',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [],
+    getAll: jest.fn
+  });
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(defaultCircle))
+    .mockResponseOnce(JSON.stringify(defaultCircle));
+  const handleChange = jest.fn();
+
+  render(
+    <CirclesComparationItem id={props.id} onChange={handleChange} />
+  );
+
+  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(DropdownIcon).toBeInTheDocument();
+
+  act(() => userEvent.click(DropdownIcon));
+
+  const DropdownActions = screen.getByTestId('dropdown-actions');
+
+  await waitFor(() => {
+    expect(DropdownActions).toBeInTheDocument();
+    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
+  });
+
+  const OverrideRelease = screen.getByText('Override release');
+  expect(OverrideRelease).toBeInTheDocument();
+  act(() => userEvent.click(OverrideRelease));
+
+  const IconBack = await screen.findByTestId('icon-arrow-left');
+  expect(IconBack).toBeInTheDocument();
+  
+});
+
