@@ -14,14 +14,37 @@
  * limitations under the License.
  */
 
-export type WarningMessage = 'IMPORT_CSV' | 'CSV_TO_MANUAL' | 'PERCENTAGE';
+export type WarningMessage =
+  | 'IMPORT_CSV'
+  | 'MANUAL_TO_CSV'
+  | 'CSV_TO_MANUAL'
+  | 'MANUAL_TO_PERCENTAGE'
+  | 'PERCENTAGE_TO_MANUAL'
+  | 'PERCENTAGE_TO_CSV'
+  | 'CSV_TO_PERCENTAGE';
 
 export function getWarningText(warningMessage: WarningMessage) {
   if (warningMessage === 'CSV_TO_MANUAL') {
     return 'Your current base was imported using a .CSV file, manually creating your entire circle segmentation will be deleted and replaced.';
   }
 
-  if (warningMessage === 'PERCENTAGE') {
+  if (warningMessage === 'MANUAL_TO_CSV') {
+    return 'Your current segmentation was created using manual rules, this rules will be replaced by the CSV content.';
+  }
+
+  if (warningMessage === 'PERCENTAGE_TO_MANUAL') {
+    return 'Your current percentage circle will be converted to segmentation circle.';
+  }
+
+  if (warningMessage === 'PERCENTAGE_TO_CSV') {
+    return 'Your current percentage circle will be converted to segmentation circle.';
+  }
+
+  if (warningMessage === 'MANUAL_TO_PERCENTAGE') {
+    return 'Your current segmentation will be deleted and replaced with percentage rules.';
+  }
+
+  if (warningMessage === 'CSV_TO_PERCENTAGE') {
     return 'Your current segmentation will be deleted and replaced with percentage rules.';
   }
 

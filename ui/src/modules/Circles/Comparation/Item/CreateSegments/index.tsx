@@ -43,21 +43,23 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   const [saveCircleResponse, saveCircle, isSaving] = useSaveCircleManually(id);
   const [warningMessage, setWarningMessage] = useState<WarningMessage>();
   const isMatcherTypeSimpleKV = circle?.matcherType === 'SIMPLE_KV';
+  const isMatcherTypePercentage = circle?.matcherType === 'PERCENTAGE';
+  const isMatcherTypeManually = circle?.matcherType === 'REGULAR';
+
   const [rules, setRules] = useState<Rules>(circle?.rules);
   const isSegmentManually = activeSegment === 'CREATE_MANUALLY';
   const isSegmentImportCSV = activeSegment === 'IMPORT_CSV';
   const isPercentage = activeSegment === 'PERCENTAGE';
 
   useEffect(() => {
-    if (isEditing && circle?.matcherType === 'REGULAR') {
+    if (!isEditing) {
+      return;
+    } else if (isEditing && isMatcherTypeManually) {
       setActiveSegment('CREATE_MANUALLY');
-    }
-  }, [circle, isEditing]);
-
-  useEffect(() => {
-    // eslint-disable-next-line no-prototype-builtins
-    if (isEditing && circle?.matcherType === 'PERCENTAGE') {
+    } else if (isEditing && isMatcherTypePercentage) {
       setActiveSegment('PERCENTAGE');
+    } else {
+      setActiveSegment('IMPORT_CSV');
     }
   }, [circle, isEditing]);
 
@@ -78,13 +80,19 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   };
 
   const onContinue = () => {
-    if (warningMessage === 'IMPORT_CSV') {
-      setWarningMessage(undefined);
-      setActiveSegment('IMPORT_CSV');
-    } else if (warningMessage === 'CSV_TO_MANUAL') {
+    if (
+      warningMessage === 'CSV_TO_MANUAL' ||
+      warningMessage === 'PERCENTAGE_TO_MANUAL'
+    ) {
       setWarningMessage(undefined);
       setActiveSegment('CREATE_MANUALLY');
       setRules(undefined);
+    } else if (
+      warningMessage === 'MANUAL_TO_CSV' ||
+      warningMessage === 'PERCENTAGE_TO_CSV'
+    ) {
+      setWarningMessage(undefined);
+      setActiveSegment('IMPORT_CSV');
     } else {
       setWarningMessage(undefined);
       setActiveSegment('PERCENTAGE');
@@ -92,23 +100,33 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   };
 
   const handleClickCreateManually = () => {
-    if (isEditing && isMatcherTypeSimpleKV && !activeSegment) {
+    if (isEditing && isMatcherTypeSimpleKV) {
       setWarningMessage('CSV_TO_MANUAL');
+    } else if (isEditing && isMatcherTypePercentage) {
+      setWarningMessage('PERCENTAGE_TO_MANUAL');
     } else {
       setActiveSegment('CREATE_MANUALLY');
     }
   };
 
   const handleClickImportCSV = () => {
-    isEditing
-      ? setWarningMessage('IMPORT_CSV')
-      : setActiveSegment('IMPORT_CSV');
+    if (isEditing && isMatcherTypeManually) {
+      setWarningMessage('MANUAL_TO_CSV');
+    } else if (isEditing && isMatcherTypePercentage) {
+      setWarningMessage('PERCENTAGE_TO_CSV');
+    } else {
+      setActiveSegment('IMPORT_CSV');
+    }
   };
 
   const handleClickPercentage = () => {
-    isEditing
-      ? setWarningMessage('PERCENTAGE')
-      : setActiveSegment('PERCENTAGE');
+    if (isEditing && isMatcherTypeManually) {
+      setWarningMessage('MANUAL_TO_PERCENTAGE');
+    } else if (isEditing && isMatcherTypeSimpleKV) {
+      setWarningMessage('CSV_TO_PERCENTAGE');
+    } else {
+      setActiveSegment('PERCENTAGE');
+    }
   };
 
   const renderWarning = () => (

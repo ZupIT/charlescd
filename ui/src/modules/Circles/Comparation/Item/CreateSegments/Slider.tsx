@@ -19,8 +19,9 @@ const SliderPercentage = ({ limitValue }: Props) => {
   }, [sliderFormValue]);
 
   const handleChange = (value: string) => {
-    setValue('slider', Number(value), { shouldValidate: true });
-    setSliderValue(Number(value));
+    const convertedValueToNumber = Number(value);
+    setValue('slider', convertedValueToNumber, { shouldValidate: true });
+    setSliderValue(convertedValueToNumber);
   };
 
   return (
@@ -39,9 +40,6 @@ const SliderPercentage = ({ limitValue }: Props) => {
           ref={register({
             required: 'Percentage is required.',
             validate: value => {
-              if (Number(value) <= 0) {
-                return 'Percentage should be bigger than 0.';
-              }
               if (Number(value) > limitValue) {
                 return `Percentage should be lower than ${limitValue}.`;
               }
