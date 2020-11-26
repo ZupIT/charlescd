@@ -57,15 +57,18 @@ describe('Download resources from gitlab', () => {
     expect(resource.content).toBeTruthy()
   })
 
+  it('Download helm chart recursively from gitlab from feature branch', async () => {
+    const repository = new GitLabRepository(httpService)
 
-  // it('bla', async () => {
-  //   const url = 'https://gitlab.com/api/v4/projects/22716069/repository'
-  //   const repository = new GitLabRepository(new HttpService())
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'feature' })
 
-  //   const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'dragonboarding' })
+    expect(resource.name).toBe('helm-chart')
+    expect(resource.type).toBe('directory')
+    expect(resource.children).toHaveLength(3)
 
-  //   console.log(resource)
-  // })
+    const template = resource.children?.[2]
+    expect(template?.children).toHaveLength(2)
+  })
 })
 
 function getStubContents() {
