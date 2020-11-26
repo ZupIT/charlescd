@@ -166,7 +166,7 @@ test('render CircleComparationItem Default Circle with release', async () => {
   
 });
 
-test('render CircleComparationItem Default Circle', async () => {
+test('render CircleComparationItem Inactive Default Circle', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment))
     .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment));
