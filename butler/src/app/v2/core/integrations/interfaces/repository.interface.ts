@@ -17,6 +17,7 @@
 export interface RequestConfig {
   url: string,
   token: string,
+  branch?: string,
   resourceName: string
 }
 

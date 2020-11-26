@@ -22,9 +22,10 @@ import { HttpService } from '@nestjs/common'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
-import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
+import { GitLabRepository } from '../../../../app/v2/core/integrations/gitlab/gitlab-repository'
+import { response } from 'express'
 
-describe('Download resources from github', () => {
+describe('Download resources from gitlab', () => {
   const contents = getStubContents()
   const httpService = new HttpService()
   jest.spyOn(httpService, 'get')
@@ -32,10 +33,10 @@ describe('Download resources from github', () => {
       data: contents[resourceName]
     } as AxiosResponse))
 
-  const url = 'https://api.github.com/repos/charlescd-fake/helm-chart'
+  const url = 'https://gitlab.com/api/v4/projects/22700476/repository'
 
-  it('Download helm chart recursively from github', async () => {
-    const repository = new GitHubRepository(httpService)
+  it('Download helm chart recursively from gitlab', async () => {
+    const repository = new GitLabRepository(httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
 
@@ -47,17 +48,27 @@ describe('Download resources from github', () => {
     expect(template?.children).toHaveLength(2)
   })
 
-  it('Download a single file from gibhub', async () => {
-    const repository = new GitHubRepository(httpService)
+  // it('Download a single file from giblab', async () => {
+  //   const repository = new GitLabRepository(httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
+  //   const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
 
-    expect(resource.name).toBe('Chart.yaml')
-    expect(resource.type).toBe('file')
-    expect(resource.content).toBeTruthy()
-  })
+  //   expect(resource.name).toBe('Chart.yaml')
+  //   expect(resource.type).toBe('file')
+  //   expect(resource.content).toBeTruthy()
+  // })
+
+
+  // it('bla', async () => {
+  //   const url = 'https://gitlab.com/api/v4/projects/22716069/repository'
+  //   const repository = new GitLabRepository(new HttpService())
+
+  //   const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'dragonboarding' })
+
+  //   console.log(resource)
+  // })
 })
 
 function getStubContents() {
-  return JSON.parse(fs.readFileSync(path.join(__dirname, '../../', 'stubs/helm-chart/github-contents.json'), 'utf8'))
+  return JSON.parse(fs.readFileSync(path.join(__dirname, '../../', 'stubs/helm-chart/gitlab-contents.json'), 'utf8'))
 }
