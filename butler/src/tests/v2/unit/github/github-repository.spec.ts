@@ -32,7 +32,7 @@ describe('Download resources from github', () => {
       data: contents[dirname]
     } as AxiosResponse))
 
-  const url = 'https://api.github.com/repos/charlescd-fake/helm-chart/contents'
+  const url = 'https://api.github.com/repos/charlescd-fake/helm-chart'
 
   it('Download helm chart recursively from github', async () => {
     const repository = new GitHubRepository(httpService)
@@ -48,10 +48,10 @@ describe('Download resources from github', () => {
   })
 
   it('Download a single file from gibhub', async () => {
-    const url = 'https://api.github.com/repos/charlescd-fake/helm-chart/contents/helm-chart'
+    const url = 'https://api.github.com/repos/charlescd-fake/helm-chart'
     const repository = new GitHubRepository(httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'Chart.yaml' })
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
 
     expect(resource.name).toBe('Chart.yaml')
     expect(resource.type).toBe('file')

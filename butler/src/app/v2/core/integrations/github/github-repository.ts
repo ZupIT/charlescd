@@ -25,7 +25,7 @@ export class GitHubRepository implements Repository {
   constructor(private readonly httpService: HttpService) {}
 
   public async getResource(config: RequestConfig): Promise<Resource> {
-    const urlResource = `${config.url}/${config.resourceName}`
+    const urlResource = `${config.url}/contents/${config.resourceName}`
     return await this.downloadResource(urlResource, config.resourceName, {
       'Content-Type': 'application/json',
       'Authorization': config.token
@@ -37,7 +37,7 @@ export class GitHubRepository implements Repository {
     
     if(!Array.isArray(response.data)) {
       return {
-        name: resourceName,
+        name: response.data.name,
         type: ResourceType.FILE,
         content: response.data.content
       } as Resource
