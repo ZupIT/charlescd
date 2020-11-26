@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, screen, waitFor, act } from 'unit-test/testUtils';
+import { render, screen, waitFor, act, waitForElementToBeRemoved } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
@@ -25,6 +25,7 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
+import {COLOR_GRAY} from 'core/assets/colors';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -195,4 +196,44 @@ test('render CircleComparationItem Default Circle', async () => {
 
   const ModalTrigger = await screen.findByTestId('modal-trigger');
   expect(ModalTrigger).toBeInTheDocument();
+});
+
+test('should disable button delete and show tooltip when circle is default and active', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123-workspace',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [],
+    getAll: jest.fn
+  });
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(defaultCircle))
+    .mockResponseOnce(JSON.stringify(defaultCircle));
+  const handleChange = jest.fn();
+
+  render(
+    <CirclesComparationItem id={props.id} onChange={handleChange} />
+  );
+
+  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(DropdownIcon).toBeInTheDocument();
+  act(() => userEvent.click(DropdownIcon));
+
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
+
+  const deleteButtonText = await screen.findByText('Delete');
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_GRAY}`);
+
+  userEvent.hover(deleteButton);
+  expect(screen.getByText('Default circle is deployed to all')).toBeInTheDocument();
+  expect(screen.getByText('users, so it cannot be deleted.')).toBeInTheDocument();
+});
+
+test('should disable button delete and show tooltip when circle is not default and is active', () => {
+
 });
