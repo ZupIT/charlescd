@@ -179,6 +179,19 @@ export class SpinnakerPipelineBuilder {
     if (!deployment?.components) {
       return []
     }
+
+    if (deployment.defaultCircle) {
+      const stages: Stage[] = []
+      const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
+      deployment.components.forEach(component => {
+        const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
+        if (unusedComponent) {
+          stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
+        }
+      })
+      return stages
+    }
+
     const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
     return componentsToBeRemoved(deployment, activeComponents).map(component => {
       return getDeleteUnusedStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId)

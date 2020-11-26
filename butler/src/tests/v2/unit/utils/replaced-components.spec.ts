@@ -6,7 +6,7 @@ import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/com
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { componentsToBeRemoved } from '../../../../app/v2/core/integrations/utils/deployment.utils'
 
-it('must replace new components version', async() => {
+it('new deployment with active components on default circle', async() => {
   const cdConfiguration = new CdConfigurationEntity(
     CdTypeEnum.OCTOPIPE,
     {
@@ -19,118 +19,143 @@ it('must replace new components version', async() => {
     'author-id',
     'workspace-id'
   )
-  let activeComponents = [
+
+  let activeOnCircle = [
     new ComponentEntityV2(
       'helm.url',
       'v1',
-      'A:v1',
+      'https://repository.com/A:v1',
       'component-a',
-      'component-a-id',
+      'component-a-id-1',
       null,
       null
     ),
     new ComponentEntityV2(
       'helm.url',
       'v1',
-      'B:v1',
+      'https://repository.com/B:v1',
       'component-b',
-      'component-b-id',
-      null,
-      null
-    ),
-    new ComponentEntityV2(
-      'helm.url',
-      'v1',
-      'C:v1',
-      'component-c',
-      'component-c-id',
-      null,
-      null
-    ),
-    new ComponentEntityV2(
-      'helm.url',
-      'v1',
-      'D:v1',
-      'component-d',
-      'component-d-id',
-      null,
-      null
-    )
-  ]
-  const components = [
-    new ComponentEntityV2(
-      'helm.url',
-      'v1',
-      'A:v1',
-      'component-a',
-      'component-a-id',
+      'component-b-id-2',
       null,
       null
     ),
     new ComponentEntityV2(
       'helm.url',
       'v2',
-      'B:v2',
-      'component-b',
-      'component-b-id',
+      'https://repository.com/C:v2',
+      'component-c',
+      'component-c-id-33',
       null,
       null
     )
   ]
-  const deployment = new DeploymentEntityV2(
+
+  let activeOnDefault = [
+    new ComponentEntityV2(
+      'helm.url',
+      'v0',
+      'https://repository.com/A:v0',
+      'component-a',
+      'component-a-id-3',
+      null,
+      null
+    ),
+    new ComponentEntityV2(
+      'helm.url',
+      'v0',
+      'https://repository.com/B:v0',
+      'component-b',
+      'component-b-id-4',
+      null,
+      null
+    ),
+    new ComponentEntityV2(
+      'helm.url',
+      'v0',
+      'https://repository.com/C:v0',
+      'component-c',
+      'component-c-id-5',
+      null,
+      null
+    )
+  ]
+
+  const activeComponents = activeOnDefault.concat(activeOnCircle)
+
+  const circleDeployments = new DeploymentEntityV2(
     'deployment-id',
     'author-id',
     'circle-id',
     cdConfiguration,
     'www.callback.com',
-    components,
+    activeOnCircle,
     false
   )
+  const defaultDeployment = new DeploymentEntityV2(
+    'deployment-id-2',
+    'author-id',
+    'default-circle-id',
+    cdConfiguration,
+    'www.callback.com',
+    activeOnDefault,
+    true
+  )
 
-  activeComponents = activeComponents.map(c => {
-    c.deployment = deployment
+  activeOnDefault = activeOnDefault.map(c => {
+    c.deployment = defaultDeployment
     return c
   })
 
-  const removedVersions = componentsToBeRemoved(deployment, activeComponents)
-  const expectedComponents = [
+  activeOnCircle = activeOnCircle.map(c => {
+    c.deployment = circleDeployments
+    return c
+  })
+
+  let newComponents = [
     new ComponentEntityV2(
       'helm.url',
-      'v1',
-      'B:v1',
+      'v2',
+      'https://repository.com/A:v2',
+      'component-a',
+      'component-a-id-11',
+      null,
+      null
+    ),
+    new ComponentEntityV2(
+      'helm.url',
+      'v2',
+      'https://repository.com/B:v2',
       'component-b',
-      'component-b-id',
+      'component-b-id-22',
       null,
       null
     ),
     new ComponentEntityV2(
       'helm.url',
-      'v1',
-      'C:v1',
+      'v2',
+      'https://repository.com/C:v2',
       'component-c',
-      'component-c-id',
-      null,
-      null
-    ),
-    new ComponentEntityV2(
-      'helm.url',
-      'v1',
-      'D:v1',
-      'component-d',
-      'component-d-id',
+      'component-c-id-33',
       null,
       null
     )
   ]
-  expect(removedVersions.map((c) => {
-    return {
-      name: c.name,
-      imageUrl: c.imageUrl
-    }
-  })).toEqual(expectedComponents.map(c => {
-    return {
-      name: c.name,
-      imageUrl: c.imageUrl
-    }
-  }))
+
+  const newDeployment = new DeploymentEntityV2(
+    'new-deployment-id',
+    'author-id',
+    'circle-id',
+    cdConfiguration,
+    'www.callback.com',
+    newComponents,
+    false
+  )
+
+  newComponents = newComponents.map(c => {
+    c.deployment = newDeployment
+    return c
+  })
+
+  const removedVersions = componentsToBeRemoved(newDeployment, activeComponents)
+  expect(removedVersions.map(c => c.imageUrl)).toEqual(['https://repository.com/A:v1', 'https://repository.com/B:v1'])
 })

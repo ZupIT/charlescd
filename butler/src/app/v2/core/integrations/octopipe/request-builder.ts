@@ -123,6 +123,23 @@ export class OctopipeRequestBuilder {
     if (!deployment?.components) {
       return []
     }
+
+    if (deployment.defaultCircle) {
+      const unusedDeployments: OctopipeDeployment[] = []
+      deployment.components.forEach(component => {
+        const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
+        if (unusedComponent) {
+          unusedDeployments.push({ //TODO improve this object later - It shouldnt be equal to the deployment object
+            componentName: unusedComponent.name,
+            helmRepositoryConfig: this.getHelmRepositoryConfig(unusedComponent, deployment.cdConfiguration),
+            helmConfig: this.getHelmConfig(unusedComponent, deployment.circleId),
+            rollbackIfFailed: false
+          })
+        }
+      })
+      return unusedDeployments
+
+    }
     return componentsToBeRemoved(deployment, activeComponents).map(component => {
       return {
         componentName: component.name,

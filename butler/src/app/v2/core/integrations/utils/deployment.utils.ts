@@ -54,25 +54,26 @@ export { DeploymentUtils }
 
 export const componentsToBeRemoved = (deployment: Deployment, activeComponents: Component[]): DeploymentComponent[] => {
   const circleId = deployment.circleId
-  return activeComponents.filter(c => {
-    return removedComponents(deployment.components, c, circleId) || updatedComponents(deployment.components, c, circleId)
+  const sameCircleComponents = activeComponents.filter(c => c.deployment.circleId === circleId)
+  return sameCircleComponents.filter(c => {
+    return removedComponents(deployment.components, c) || updatedComponents(deployment.components, c)
   })
 }
 
-const removedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component, circleId: string) => {
-  return !deploymentComponents?.some(dc => removedConditions(dc, activeComponent, circleId))
+const removedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
+  return !deploymentComponents?.some(dc => removedConditions(dc, activeComponent))
 }
 
-const updatedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component, circleId: string) => {
-  return deploymentComponents?.some(dc => updatedConditions(dc, activeComponent, circleId))
+const updatedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
+  return deploymentComponents?.some(dc => updatedConditions(dc, activeComponent))
 }
 
-const removedConditions = (deploymentComponent: DeploymentComponent, activeComponent: Component, circleId: string): boolean => {
-  return isSameName(deploymentComponent, activeComponent) && isSameCircle(circleId, activeComponent.deployment)
+const removedConditions = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return isSameName(deploymentComponent, activeComponent)
 }
 
-const updatedConditions = (deploymentComponent: DeploymentComponent, activeComponent: Component, circleId: string): boolean => {
-  return isSameNameAndDifferenteVersion(deploymentComponent, activeComponent) && isSameCircle(circleId, activeComponent.deployment)
+const updatedConditions = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return isSameNameAndDifferenteVersion(deploymentComponent, activeComponent)
 }
 
 const isSameNameAndDifferenteVersion = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
@@ -81,8 +82,4 @@ const isSameNameAndDifferenteVersion = (deploymentComponent: DeploymentComponent
 
 const isSameName = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
   return deploymentComponent.name === activeComponent.name
-}
-
-const isSameCircle = (circleId: string, deployment: Deployment): boolean => {
-  return circleId === deployment.circleId
 }
