@@ -23,14 +23,13 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitLabRepository } from '../../../../app/v2/core/integrations/gitlab/gitlab-repository'
-import { response } from 'express'
 
 describe('Download resources from gitlab', () => {
   const contents = getStubContents()
   const httpService = new HttpService()
   jest.spyOn(httpService, 'get')
     .mockImplementation(resourceName => of({
-      data: contents[resourceName]
+      data: contents[resourceName] || []
     } as AxiosResponse))
 
   const url = 'https://gitlab.com/api/v4/projects/22700476/repository'
@@ -48,15 +47,15 @@ describe('Download resources from gitlab', () => {
     expect(template?.children).toHaveLength(2)
   })
 
-  // it('Download a single file from giblab', async () => {
-  //   const repository = new GitLabRepository(httpService)
+  it('Download a single file from giblab', async () => {
+    const repository = new GitLabRepository(httpService)
 
-  //   const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
 
-  //   expect(resource.name).toBe('Chart.yaml')
-  //   expect(resource.type).toBe('file')
-  //   expect(resource.content).toBeTruthy()
-  // })
+    expect(resource.name).toBe('Chart.yaml')
+    expect(resource.type).toBe('file')
+    expect(resource.content).toBeTruthy()
+  })
 
 
   // it('bla', async () => {

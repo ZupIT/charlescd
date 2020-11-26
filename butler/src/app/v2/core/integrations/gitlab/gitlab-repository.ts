@@ -22,27 +22,26 @@ import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces
 @Injectable()
 export class GitLabRepository implements Repository {
 
+  private static readonly DEFAULT_BRANCH = 'master'
+
   constructor(private readonly httpService: HttpService) {}
 
   public async getResource(config: RequestConfig): Promise<Resource> {
     const resourcePath = `/tree?path=${config.resourceName}`
-    return await this.downloadResource(config.url, resourcePath, config.resourceName, {
+    const headers = {
       'Content-Type': 'application/json',
       'PRIVATE-TOKEN': config.token
-    })
+    }
+    return await this.downloadResource(config.url, resourcePath, config.resourceName, headers, config.branch)
   }
 
-  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: any): Promise<Resource> {
-    const urlResource = `${baseUrl}${resourcePath}`
+  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: any, branch?: string): Promise<Resource> {
+    const urlResource = `${baseUrl}${resourcePath}&ref=${branch || GitLabRepository.DEFAULT_BRANCH}`
     const response = await this.fetch(urlResource, headers)
     
-    // if(!Array.isArray(response.data)) {
-    //   return {
-    //     name: response.data.name,
-    //     type: ResourceType.FILE,
-    //     content: response.data.content
-    //   } as Resource
-    // }
+    if(this.isResourceFile(response.data)) {
+      return this.downloadFile(baseUrl, resourceName, headers, branch)
+    }
     
     const resource: Resource = {
       name: resourceName,
@@ -55,16 +54,24 @@ export class GitLabRepository implements Repository {
         const nextResourcePath = `${resourcePath}/${item.name}`
         resource.children?.push(await this.downloadResource(baseUrl, nextResourcePath, item.name, headers))
       } else {
-        const fileUrl = `${baseUrl}/files/${encodeURIComponent(item.path)}?ref=master` // TODO: tratar outros branchs
-        const fileContent = await this.fetch(fileUrl, headers)
-        resource.children?.push({
-          name: item.name,
-          type: ResourceType.FILE,
-          content: fileContent.data.content
-        })
+        resource.children?.push(await this.downloadFile(baseUrl, item.path, headers, branch))
       }
     }
     return resource
+  }
+
+  private async downloadFile(baseUrl: string, path: string, headers: any, branch?: string): Promise<Resource> {
+    const fileUrl = `${baseUrl}/files/${encodeURIComponent(path)}?ref=${branch || GitLabRepository.DEFAULT_BRANCH}`
+    const fileContent = await this.fetch(fileUrl, headers)
+    return {
+      name: fileContent.data.file_name,
+      type: ResourceType.FILE,
+      content: fileContent.data.content
+    }
+  }
+
+  private isResourceFile(data?: any): boolean {
+    return !data?.length
   }
 
   private async fetch(url: string, headers: any): Promise<AxiosResponse> {

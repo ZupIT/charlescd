@@ -35,7 +35,7 @@ export class GitHubRepository implements Repository {
   private async downloadResource(url: string, resourceName: string, headers: any): Promise<Resource> {
     const response = await this.fetch(url, headers)
     
-    if(!Array.isArray(response.data)) {
+    if(this.isFile(response.data)) {
       return {
         name: response.data.name,
         type: ResourceType.FILE,
@@ -63,6 +63,10 @@ export class GitHubRepository implements Repository {
       }
     }
     return resource
+  }
+
+  private isFile(data: any): boolean {
+    return !Array.isArray(data)
   }
 
   private async fetch(url: string, headers: any): Promise<AxiosResponse> {
