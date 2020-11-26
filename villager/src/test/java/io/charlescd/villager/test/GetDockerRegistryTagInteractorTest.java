@@ -16,6 +16,8 @@
 
 package io.charlescd.villager.test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.charlescd.villager.api.resources.registry.ComponentTagRepresentation;
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
@@ -27,20 +29,21 @@ import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.ComponentTagListDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.impl.GetDockerRegistryTagInteractorImpl;
-import io.charlescd.villager.service.DockerRegistryService;
-import org.jboss.resteasy.core.Headers;
+import io.charlescd.villager.service.DockerRegistryCacheService;
 import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.specimpl.BuiltResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -58,10 +61,10 @@ public class GetDockerRegistryTagInteractorTest {
     private RegistryClient registryClient;
 
     @Mock
-    private DockerRegistryService dockerRegistryService;
+    private DockerRegistryCacheService dockerRegistryCacheService;
 
     @Test
-    public void testContainsTag() throws IOException {
+    public void testContainsWithRedisCacheTag() throws IOException {
 
         var entity = generateDockerRegistryConfigurationEntity();
 
@@ -69,31 +72,12 @@ public class GetDockerRegistryTagInteractorTest {
 
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
-        when(dockerRegistryService.get("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(componentTagListDTO);
+        when(dockerRegistryCacheService.isExistingKey("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(true);
 
-        when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> {
-
-            var tagsResponse = new TagsResponse();
-            Annotation[] annotations = new Annotation[1];
-
-            tagsResponse.setName("name");
-            var tags = new ArrayList<String>();
-            tags.add("tag_1");
-            tags.add("tag_2");
-            tagsResponse.setTags(tags);
-
-            assertThat(tagsResponse.getName(), is("name"));
-            assertThat(tagsResponse.getTags(), is(tags));
-
-            var builtResponse = new BuiltResponse(200, new Headers<>(), tagsResponse, annotations);
-            var response = new ServerResponse(builtResponse);
-
-            return Optional.of(response);
-
-        });
+        when(dockerRegistryCacheService.get("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(componentTagListDTO);
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryCacheService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -102,33 +86,59 @@ public class GetDockerRegistryTagInteractorTest {
                 .withName("test")
                 .build();
 
-        ComponentTagDTO component = (ComponentTagDTO) interactor.execute(input).get();
+        List<ComponentTagDTO> component = (List<ComponentTagDTO>) interactor.execute(input).get();
 
-        assertThat(component.getName(), is("test"));
-        assertThat(component.getArtifact(), is("test.org/name:test"));
+        assertThat(component.get(0).getName(), is("test - 1"));
+        assertThat(component.get(0).getArtifact(), is("test.org/name:test - 1"));
+
         verify(registryClient, times(1))
                 .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
-        verify(registryClient, times(1))
-                .getImage("name", "test", entity.connectionData);
+
+        verify(dockerRegistryCacheService, times(1))
+                .isExistingKey("1a3d413d-2255-4a1b-94ba-82e7366e4342");
+
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }
 
     @Test
-    public void testArtifactFoundButContainsNoTags() throws IOException {
+    public void testContainsWithoutRedisCacheTag() throws IOException {
 
         var entity = generateDockerRegistryConfigurationEntity();
 
         var componentTagListDTO = generateReturnComponentTagListDTO();
 
+        AtomicReference<ServerResponse> response = new AtomicReference<>(new ServerResponse());
+
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
-        when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> Optional.empty());
+        when(dockerRegistryCacheService.isExistingKey("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(false);
 
-        when(dockerRegistryService.get("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(componentTagListDTO);
+        when(dockerRegistryCacheService.get("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(componentTagListDTO);
+
+        doNothing().when(dockerRegistryCacheService).set(any(), any());
+
+        doNothing().when(dockerRegistryCacheService).delete("1a3d413d-2255-4a1b-94ba-82e7366e4342");
+
+        when(registryClient.getImagesTags("name",  entity.connectionData)).then(invocationOnMock -> {
+
+            var tagsResponse = new TagsResponse();
+
+            tagsResponse.setName("test");
+            var tags = new ArrayList<String>();
+            tags.add("test - 1");
+            tags.add("test - 2");
+            tagsResponse.setTags(tags);
+
+            assertThat(tagsResponse.getName(), is("test"));
+            assertThat(tagsResponse.getTags(), is(tags));
+
+            ObjectMapper mapper = new ObjectMapper();
+            return Optional.of(buildMockResponse(mapper.writeValueAsString(tagsResponse)));
+        });
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryCacheService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -137,12 +147,50 @@ public class GetDockerRegistryTagInteractorTest {
                 .withName("test")
                 .build();
 
-        assertTrue(interactor.execute(input).isEmpty());
+        var componentTagList = new ArrayList<ComponentTagRepresentation>();
+        var finalResponse = interactor.execute(input);
+
+        finalResponse.ifPresent(componentTagDTO -> {
+            componentTagList.addAll(ComponentTagRepresentation.toListRepresentation((List<ComponentTagDTO>) componentTagDTO));
+        });
+
+        assertThat(componentTagList.get(0).getName(), is("test - 1"));
+        assertThat(componentTagList.get(0).getArtifact(), is("test.org/name:test - 1"));
         verify(registryClient, times(1))
                 .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
+
         verify(registryClient, times(1))
-                .getImage("name", "test", entity.connectionData);
+                .getImagesTags("name", entity.connectionData);
+
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
+
+    }
+
+    @Test
+    public void testArtifactFoundButContainsNoTagsWithCache() throws IOException {
+
+        var entity = generateDockerRegistryConfigurationEntity();
+
+        var componentTagListDTO = generateReturnEmptyComponentTagListDTO();
+
+        when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
+
+        when(dockerRegistryCacheService.isExistingKey("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(true);
+
+        when(dockerRegistryCacheService.get("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(componentTagListDTO);
+
+        var interactor =
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryCacheService);
+
+        GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
+                .withArtifactName("name")
+                .withWorkspaceId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
+                .withArtifactRepositoryConfigurationId("123")
+                .withName("test")
+                .build();
+
+        assertTrue(((ArrayList)interactor.execute(input).get()).isEmpty());
+
     }
 
     @Test
@@ -153,7 +201,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryCacheService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -170,7 +218,7 @@ public class GetDockerRegistryTagInteractorTest {
         verify(registryClient, times(0))
                 .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
         verify(registryClient, times(0))
-                .getImage("name", "test", entity.connectionData);
+                .getImagesTags("name", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }
@@ -183,7 +231,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.empty());
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryCacheService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -200,7 +248,7 @@ public class GetDockerRegistryTagInteractorTest {
         verify(registryClient, times(0))
                 .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
         verify(registryClient, times(0))
-                .getImage("name", "test", entity.connectionData);
+                .getImagesTags("name", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }
@@ -220,11 +268,25 @@ public class GetDockerRegistryTagInteractorTest {
 
     private ComponentTagListDTO generateReturnComponentTagListDTO() {
         var componentTagListDTO = new ComponentTagListDTO();
-        componentTagListDTO.setName("testa");
+        componentTagListDTO.setName("test");
         componentTagListDTO.setTags(new ArrayList<>());
         componentTagListDTO.getTags().add("test - 1");
         componentTagListDTO.getTags().add("test - 2");
 
         return componentTagListDTO;
+    }
+
+    private ComponentTagListDTO generateReturnEmptyComponentTagListDTO() {
+        var componentTagListDTO = new ComponentTagListDTO();
+        componentTagListDTO.setName("test");
+        componentTagListDTO.setTags(new ArrayList<>());
+
+        return componentTagListDTO;
+    }
+
+    private Response buildMockResponse(String msgEntity) {
+        Response mockResponse = mock(Response.class);
+        Mockito.when(mockResponse.readEntity(String.class)).thenReturn(msgEntity);
+        return mockResponse;
     }
 }

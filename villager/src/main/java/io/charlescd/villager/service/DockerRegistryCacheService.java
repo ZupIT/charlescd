@@ -6,9 +6,10 @@ import io.smallrye.mutiny.Uni;
 
 import java.util.List;
 
-public interface DockerRegistryService {
+public interface DockerRegistryCacheService {
 
-    Uni<Void> delete(String key);
+    void delete(String key);
     ComponentTagListDTO get(String key) throws JsonProcessingException;
     void set(String key, String value);
+    boolean isExistingKey(String key);
 }

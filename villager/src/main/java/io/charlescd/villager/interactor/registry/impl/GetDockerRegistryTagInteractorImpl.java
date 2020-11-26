@@ -25,13 +25,12 @@ import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.ComponentTagListDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
-import io.charlescd.villager.service.DockerRegistryService;
+import io.charlescd.villager.service.DockerRegistryCacheService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,13 +39,13 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
 
     private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
     private RegistryClient registryClient;
-    private DockerRegistryService registryService;
+    private DockerRegistryCacheService registryService;
 
     @Inject
     public GetDockerRegistryTagInteractorImpl(
             DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository,
             RegistryClient registryClient,
-            DockerRegistryService registryService) {
+            DockerRegistryCacheService registryService) {
         this.dockerRegistryConfigurationRepository = dockerRegistryConfigurationRepository;
         this.registryClient = registryClient;
         this.registryService = registryService;
@@ -65,14 +64,15 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
                     "This docker registry does not belongs to the request application id.");
         }
 
+        var cacheKey = entity.workspaceId;
+
         try {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
             var name = input.getName();
-            if (name == null || name.isEmpty()) {
+            if (name == null || name.isEmpty() || !registryService.isExistingKey(cacheKey)) {
                 Optional<Response> response = this.registryClient.getImagesTags(input.getArtifactName(), entity.connectionData);
                 var jsonEntity = response.get().readEntity(String.class);
                 saveCacheList(entity.workspaceId, jsonEntity);
-                name = "";
             }
 
             return cacheSearch(entity.workspaceId, name, entity.connectionData.host, input.getArtifactName());
