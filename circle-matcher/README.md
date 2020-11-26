@@ -43,6 +43,18 @@ The response could be:
 ```
 Then, simply use the circle identification information for any service call in your cluster. To do this, use the HTTP header **X-Circle-Id** with the value of **circles.id**.
 
+## Running locally
+
+First up the Redis container:
+```
+docker-compose -f docker-compose.xml up
+```
+
+Then run the application (if you want to run with another Redis flavors, use the appropriate profile):
+```
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
 ## Documentation
 
 Please check the [Charles Documentation].

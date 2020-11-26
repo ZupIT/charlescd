@@ -46,7 +46,12 @@ test('render account tab profile', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(profile));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
+    id: '123',
+    name: 'User',
+    email: 'user@zup.com.br'
+  }));
 
   render(<Router history={history}><Account /></Router>);
 
@@ -58,7 +63,12 @@ test('show change password modal', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(profile));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
+    id: '123',
+    name: 'User',
+    email: 'user@zup.com.br'
+  }));
 
   render(<Router history={history}><Account /></Router>);
 
