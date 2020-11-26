@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import Badge from '../';
+import Badge from '..';
 
 test('render Badge', () => {
   render(
@@ -24,4 +24,5 @@ test('render Badge', () => {
   );
 
   expect(screen.getByText('content')).toBeInTheDocument();
+  expect(screen.getByTestId('badge-content')).toBeInTheDocument();
 });

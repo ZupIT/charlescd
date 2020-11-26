@@ -28,9 +28,23 @@ class CirclePercentageResponse(
     companion object {
 
         fun from(circles: Page<Circle>, percentageValues: List<Int?>) = CirclePercentageResponse(
-            circles = circles.content.map { CircleResponse.from(it) },
+            circles = this.paginateResponse(circles.content, circles.pageNumber, circles.pageSize),
             sumPercentage = percentageValues.takeIf { it.isNotEmpty() }?.reduce { sum, percentage -> this.sumPercentage(sum!!, percentage) } ?: 0
         )
+
+        private fun paginateResponse(content: List<Circle>, pageNumber: Int, pageSize: Int): List<CircleResponse> {
+            val lastElementIndex = (pageNumber + 1) * pageSize
+            val firstElementIndex = (pageNumber + 1) * pageSize - pageSize
+
+            return content.slice(IntRange(firstElementIndex, getLastElementIndex(content.size, lastElementIndex))).map { it -> CircleResponse.from(it) }
+        }
+
+        private fun getLastElementIndex(contentSize: Int, lastElementIndex: Int): Int {
+            return when (lastElementIndex > contentSize) {
+                true -> contentSize - 1
+                else -> lastElementIndex - 1
+            }
+        }
 
         private fun sumPercentage(sum: Int, percentage: Int?): Int {
             return percentage?.let {
