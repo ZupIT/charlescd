@@ -24,7 +24,6 @@ export interface UserPaginationItem {
   id: string;
   name: string;
   email: string;
-  photoUrl: string;
   applications: Applications[];
   createdAt: string;
 }
