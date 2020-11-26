@@ -8,7 +8,6 @@ interface Props {
 }
 
 const SliderPercentage = ({ limitValue }: Props) => {
-  console.log(limitValue);
   const { register, setValue, watch, errors } = useFormContext();
   const [sliderValue, setSliderValue] = useState<number>(0);
   const sliderFormValue = watch('slider');

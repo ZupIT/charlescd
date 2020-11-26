@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-export type WarningMessage = 'IMPORT_CSV' | 'CSV_TO_MANUAL';
+export type WarningMessage = 'IMPORT_CSV' | 'CSV_TO_MANUAL' | 'PERCENTAGE';
 
 export function getWarningText(warningMessage: WarningMessage) {
   if (warningMessage === 'CSV_TO_MANUAL') {
     return 'Your current base was imported using a .CSV file, manually creating your entire circle segmentation will be deleted and replaced.';
+  }
+
+  if (warningMessage === 'PERCENTAGE') {
+    return 'Your current segmentation will be deleted and replaced with percentage rules.';
   }
 
   return 'When you import another .CSV your entire circle segmentation will be deleted and replaced by the new one.';

@@ -28,6 +28,7 @@ import Icon from 'core/components/Icon';
 import SliderPercentage from './Slider';
 import { getProfileByKey } from 'core/utils/profile';
 import { Circle } from 'modules/Circles/interfaces/Circle';
+import Modal from 'core/components/Modal';
 
 interface Props {
   id: string;
@@ -52,6 +53,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
   const [responseGetCircles, getFilteredCircles] = useCirclePercentage();
   const [showCircleList, setShowCircleList] = useState<boolean>(false);
   const [limitPercentage, setLimitPercentage] = useState<number>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const onSubmitValue = () => {
     const authorId = getProfileByKey('id');
@@ -72,8 +74,10 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
   }, [getFilteredCircles]);
 
   useEffect(() => {
-    if (response) {
-      onSaveCircle(response);
+    if (response && isEditing) {
+      onSaveCircle(response, false);
+    } else if (response) {
+      setShowModal(true);
     }
   }, [response, onSaveCircle]);
 
@@ -87,10 +91,34 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
     return percentage;
   };
 
+  const onContinue = () => {
+    onSaveCircle(response, true);
+  };
+
+  const onDismissWarningMessage = () => {
+    onSaveCircle(response, false);
+  };
+
+  const renderWarning = () => (
+    <Modal.Trigger
+      title="Your request has been registered!"
+      dismissLabel="No, active later"
+      continueLabel="Yes, active now"
+      onContinue={onContinue}
+      onDismiss={onDismissWarningMessage}
+    >
+      It is importante to remember that this setting will be applied after
+      activating the circle after the first deployment.
+      <br />
+      Do you want to active now?
+    </Modal.Trigger>
+  );
+
   const renderNewCircle = () => {
     return (
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmitValue)}>
+          {showModal && renderWarning()}
           <Styled.FieldPopover>
             <Text.h5 color="dark">Quantity available for consumption.</Text.h5>
             <Styled.Popover
@@ -200,7 +228,6 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
               </Styled.AvailableContainer>
             )}
           </Styled.CirclesListContainer>
-          {/* // alert */}
           <>
             <Styled.HelpText color="dark">
               Add the proportion of users by the percentage factor available for

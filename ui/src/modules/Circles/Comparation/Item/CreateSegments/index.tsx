@@ -63,7 +63,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
 
   useEffect(() => {
     if (saveCircleResponse) {
-      onSaveCircle(saveCircleResponse);
+      onSaveCircle(saveCircleResponse, false);
     }
   }, [saveCircleResponse, onSaveCircle]);
 
@@ -85,6 +85,9 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
       setWarningMessage(undefined);
       setActiveSegment('CREATE_MANUALLY');
       setRules(undefined);
+    } else {
+      setWarningMessage(undefined);
+      setActiveSegment('PERCENTAGE');
     }
   };
 
@@ -103,10 +106,9 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   };
 
   const handleClickPercentage = () => {
-    // isEditing
-    //   ? setWarningMessage('IMPORT_CSV')
-    //   : setActiveSegment('IMPORT_CSV');
-    setActiveSegment('PERCENTAGE');
+    isEditing
+      ? setWarningMessage('PERCENTAGE')
+      : setActiveSegment('PERCENTAGE');
   };
 
   const renderWarning = () => (
