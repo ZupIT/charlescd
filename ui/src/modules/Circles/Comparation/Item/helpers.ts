@@ -89,14 +89,18 @@ export const getActiveMetricDescription = (activeMetricType: METRICS_TYPE) => {
   }[activeMetricType];
 };
 
-export const getTooltipMessage = (circleName: string): string => {
+export const getTooltipMessage = (circle: Circle): string => {
   const cannotDeleteActiveCircleMessage =
     'Active circle cannot be deleted,<br />you can undeploy first and then<br /> delete this circle.';
   const cannotDeleteDefaultCircleMessage =
     'Default circle is deployed to all<br /> users, so it cannot be deleted.';
+  const cannotDeleteInactiveDefaultCircleMessage =
+    'Default circle cannot be deleted.';
   let tooltipMessage = '';
 
-  if (isDefaultCircle(circleName)) {
+  if (isDefaultCircle(circle?.name) && !hasDeploy(circle)) {
+    tooltipMessage = cannotDeleteInactiveDefaultCircleMessage;
+  } else if (isDefaultCircle(circle?.name) && hasDeploy(circle)) {
     tooltipMessage = cannotDeleteDefaultCircleMessage;
   } else {
     tooltipMessage = cannotDeleteActiveCircleMessage;

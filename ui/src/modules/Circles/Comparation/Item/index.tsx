@@ -224,7 +224,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           id="dropdown-item-delete-circle"
           icon="delete"
           name="Delete"
-          tooltip={getTooltipMessage(circle?.name)}
+          tooltip={getTooltipMessage(circle)}
           isInactive={isThisCircleCannotBeDeleted(circle)}
           onClick={() => setAction('Delete')}
         />
