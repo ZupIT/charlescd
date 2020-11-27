@@ -120,33 +120,43 @@ export class OctopipeRequestBuilder {
   }
 
   private getUnusedDeploymentsArray(deployment: Deployment, activeComponents: Component[]): OctopipeDeployment[] {
+    return deployment.defaultCircle ?
+      this.defaultUnusedVersions(deployment, activeComponents) :
+      this.circleUnusedVersions(deployment, activeComponents)
+
+  }
+  private defaultUnusedVersions(deployment: Deployment, activeComponents: Component[]): OctopipeDeployment[] {
     if (!deployment?.components) {
       return []
     }
 
-    if (deployment.defaultCircle) {
-      const unusedDeployments: OctopipeDeployment[] = []
-      deployment.components.forEach(component => {
-        const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
-        if (unusedComponent) {
-          unusedDeployments.push({ //TODO improve this object later - It shouldnt be equal to the deployment object
-            componentName: unusedComponent.name,
-            helmRepositoryConfig: this.getHelmRepositoryConfig(unusedComponent, deployment.cdConfiguration),
-            helmConfig: this.getHelmConfig(unusedComponent, deployment.circleId),
-            rollbackIfFailed: false
-          })
-        }
-      })
-      return unusedDeployments
+    const unusedDeployments: OctopipeDeployment[] = []
+    deployment.components.forEach(component => {
+      const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
+      if (unusedComponent) {
+        unusedDeployments.push({ //TODO improve this object later - It shouldnt be equal to the deployment object
+          componentName: unusedComponent.name,
+          helmRepositoryConfig: this.getHelmRepositoryConfig(unusedComponent, deployment.cdConfiguration),
+          helmConfig: this.getHelmConfig(unusedComponent, deployment.circleId),
+          rollbackIfFailed: false
+        })
+      }
+    })
+    return unusedDeployments
 
+  }
+
+  private circleUnusedVersions(deployment: Deployment, activeComponents: Component[]) {
+    if (!deployment?.components) {
+      return []
     }
+
     return componentsToBeRemoved(deployment, activeComponents).map(component => {
       return {
         componentName: component.name,
         helmRepositoryConfig: this.getHelmRepositoryConfig(component, deployment.cdConfiguration),
         helmConfig: this.getHelmConfig(component, deployment.circleId),
         rollbackIfFailed: false
-
       }
     })
   }

@@ -86,7 +86,7 @@ export class SpinnakerPipelineBuilder {
       ...this.getDeploymentsEvaluationStage(deployment.components),
       ...this.getProxyDeploymentsEvaluationStage(deployment.components),
       ...this.getRollbackDeploymentsStage(deployment, activeComponents),
-      ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents),
+      ...this.getUnusedVersions(deployment, activeComponents),
       ...this.getFailureWebhookStage(deployment, configuration),
       ...this.getSuccessWebhookStage(deployment, configuration)
     ]
@@ -175,21 +175,32 @@ export class SpinnakerPipelineBuilder {
       []
   }
 
-  private getDeleteUnusedDeploymentsStage(deployment: Deployment, activeComponents: Component[]): Stage[] {
+  private getUnusedVersions(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    return deployment.defaultCircle ?
+      this.defaultUnusedVersions(deployment, activeComponents) :
+      this.circleUnusedVersions(deployment, activeComponents)
+  }
+
+
+  private defaultUnusedVersions(deployment: Deployment, activeComponents: Component[]): Stage[] {
     if (!deployment?.components) {
       return []
     }
 
-    if (deployment.defaultCircle) {
-      const stages: Stage[] = []
-      const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
-      deployment.components.forEach(component => {
-        const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
-        if (unusedComponent) {
-          stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
-        }
-      })
-      return stages
+    const stages: Stage[] = []
+    const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
+    deployment.components.forEach(component => {
+      const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
+      if (unusedComponent) {
+        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
+      }
+    })
+    return stages
+  }
+
+  private circleUnusedVersions(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    if (!deployment?.components) {
+      return []
     }
 
     const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
