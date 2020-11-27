@@ -15,7 +15,7 @@
  */
 
 import { Component } from '../../../api/deployments/interfaces'
-import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const DeploymentUtils = {
   getActiveSameCircleTagComponent: (activeComponents: Component[], component: DeploymentComponent, circleId: string | null): Component | undefined => {
@@ -50,3 +50,36 @@ const DeploymentUtils = {
 }
 
 export { DeploymentUtils }
+
+
+export const componentsToBeRemoved = (deployment: Deployment, activeComponents: Component[]): DeploymentComponent[] => {
+  const circleId = deployment.circleId
+  const sameCircleComponents = activeComponents.filter(c => c.deployment.circleId === circleId)
+  return sameCircleComponents.filter(c => {
+    return removedComponents(deployment.components, c) || updatedComponents(deployment.components, c)
+  })
+}
+
+const removedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
+  return !deploymentComponents?.some(dc => removedConditions(dc, activeComponent))
+}
+
+const updatedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
+  return deploymentComponents?.some(dc => updatedConditions(dc, activeComponent))
+}
+
+const removedConditions = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return isSameName(deploymentComponent, activeComponent)
+}
+
+const updatedConditions = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return isSameNameAndDifferenteVersion(deploymentComponent, activeComponent)
+}
+
+const isSameNameAndDifferenteVersion = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return isSameName(deploymentComponent, activeComponent) && deploymentComponent.imageTag !== activeComponent.imageTag
+}
+
+const isSameName = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return deploymentComponent.name === activeComponent.name
+}
