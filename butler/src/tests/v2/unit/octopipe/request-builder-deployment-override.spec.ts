@@ -24,7 +24,7 @@ import { completeOctopipeDeploymentWithOverrides } from './fixtures/deployment/c
 
 describe('V2 Octopipe Deployment Request Builder', () => {
 
-  it('should create the correct complete request object with 3 new components and some unused components', async() => {
+  it('Should undeploy A:v1 and B:v1 but keep C:v2 when new deploy is A:v2, B:V2 and C:v2 and current components are A:v1, B:V1 and C:v2', async() => {
 
     const deploymentWith3Components: Deployment = {
       id: 'deployment-id',
