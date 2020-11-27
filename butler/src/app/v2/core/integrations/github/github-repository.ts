@@ -25,14 +25,14 @@ export class GitHubRepository implements Repository {
   constructor(private readonly httpService: HttpService) {}
 
   public async getResource(config: RequestConfig): Promise<Resource> {
-    const urlResource = `${config.url}/contents/${config.resourceName}`
+    const urlResource = new URL(`${config.url}/contents/${config.resourceName}?ref=${config.branch || 'master'}`)
     return await this.downloadResource(urlResource, config.resourceName, {
       'Content-Type': 'application/json',
       'Authorization': config.token
     })
   }
 
-  private async downloadResource(url: string, resourceName: string, headers: any): Promise<Resource> {
+  private async downloadResource(url: URL, resourceName: string, headers: any): Promise<Resource> {
     const response = await this.fetch(url, headers)
     
     if(this.isFile(response.data)) {
@@ -51,8 +51,8 @@ export class GitHubRepository implements Repository {
 
     for (const item of response.data) {
       if (item.type == 'dir') {
-        const urlResource = `${url}/${item.name}`
-        resource.children?.push(await this.downloadResource(urlResource, item.name, headers))
+        url.pathname = `${url.pathname}/${item.name}`
+        resource.children?.push(await this.downloadResource(url, item.name, headers))
       } else {
         const fileContent = await this.fetch(item._links.git, headers)
         resource.children?.push({
@@ -69,7 +69,7 @@ export class GitHubRepository implements Repository {
     return !Array.isArray(data)
   }
 
-  private async fetch(url: string, headers: any): Promise<AxiosResponse> {
-    return this.httpService.get(url, headers).toPromise()
+  private async fetch(url: URL, headers: any): Promise<AxiosResponse> {
+    return this.httpService.get(url.toString(), headers).toPromise()
   }
 }

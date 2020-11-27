@@ -56,6 +56,19 @@ describe('Download resources from github', () => {
     expect(resource.type).toBe('file')
     expect(resource.content).toBeTruthy()
   })
+
+  it('Download helm chart recursively from github from feature branch', async () => {
+    const repository = new GitHubRepository(httpService)
+
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'feature' })
+
+    expect(resource.name).toBe('helm-chart')
+    expect(resource.type).toBe('directory')
+    expect(resource.children).toHaveLength(3)
+
+    const template = resource.children?.[2]
+    expect(template?.children).toHaveLength(2)
+  })
 })
 
 function getStubContents() {
