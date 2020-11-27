@@ -87,6 +87,68 @@ class FindCirclesPercentageInteractorImplTest extends Specification {
         result.content.size() == 1
     }
 
+    def 'should return the list of  percentage circles with the correct sum of percentage'() {
+        given:
+        def nameForSearch = "name"
+        def workspaceId = "workspace"
+        def pageRequest = new PageRequest(0, 10)
+        def percentageCircleId = "4b664b17-ca05-4ced-a73c-1293f8d0f756"
+        def authorId = "89363883-cc6e-4711-8a2b-63c0665d5b7d"
+        def author = getDummyUser(authorId)
+        def percentageCircle = getDummyCirclePercentage(percentageCircleId, author, null, workspaceId, false, 30)
+        def percentageCircleTwo = getDummyCirclePercentage(percentageCircleId, author, null, workspaceId, false, 40)
+        def circles = new ArrayList();
+        circles.add(percentageCircle)
+        circles.add(percentageCircleTwo)
+        when:
+        def result = findCirclesPercentageInteractor.execute(workspaceId, nameForSearch, false, pageRequest)
+
+        then:
+        1 * circleRepository.findCirclesPercentage(workspaceId, nameForSearch, false, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
+
+        result.page == 0
+        result.size == 10
+        result.isLast
+        result.totalPages == 1
+        result.content.size() == 1
+        result.content[0].sumPercentage == 70
+        result.content[0].circles.size() == 2
+    }
+
+    def 'should return the list of  percentage circles respecting the page size'() {
+        given:
+        def nameForSearch = "name"
+        def workspaceId = "workspace"
+        def pageRequest = new PageRequest(0, 3)
+        def percentageCircleId = "4b664b17-ca05-4ced-a73c-1293f8d0f756"
+        def authorId = "89363883-cc6e-4711-8a2b-63c0665d5b7d"
+        def author = getDummyUser(authorId)
+        def percentageCircle = getDummyCirclePercentage(percentageCircleId, author, null, workspaceId, false, 30)
+        def percentageCircleTwo = getDummyCirclePercentage(percentageCircleId, author, null, workspaceId, false, 10)
+        def percentageCircleThree = getDummyCirclePercentage(percentageCircleId, author, null, workspaceId, false, 10)
+        def percentageCircleFour = getDummyCirclePercentage(percentageCircleId, author, null, workspaceId, false, 10)
+        def percentageCircleFive = getDummyCirclePercentage(percentageCircleId, author, null, workspaceId, false, 10)
+        def circles = new ArrayList();
+        circles.add(percentageCircle)
+        circles.add(percentageCircleTwo)
+        circles.add(percentageCircleThree)
+        circles.add(percentageCircleFour)
+        circles.add(percentageCircleFive)
+        when:
+        def result = findCirclesPercentageInteractor.execute(workspaceId, nameForSearch, false, pageRequest)
+
+        then:
+        1 * circleRepository.findCirclesPercentage(workspaceId, nameForSearch, false, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
+
+        result.page == 0
+        result.size == 3
+        !result.isLast
+        result.totalPages == 2
+        result.content.size() == 1
+        result.content[0].circles.size() == 3
+    }
+
+
     private static Circle getDummyCircle(String circleId, User author, NodePart nodePart, String workspaceId, Boolean isDefault) {
         new Circle(
                 circleId,
@@ -100,6 +162,22 @@ class FindCirclesPercentageInteractorImplTest extends Specification {
                 isDefault,
                 workspaceId,
                 null
+        )
+    }
+
+    private static Circle getDummyCirclePercentage(String circleId, User author, NodePart nodePart, String workspaceId, Boolean isDefault, int percentage) {
+        new Circle(
+                circleId,
+                "Women",
+                "9d109f66-351b-426d-ad69-a49bbc329914",
+                author, LocalDateTime.now(),
+                MatcherTypeEnum.REGULAR,
+                new ObjectMapper().valueToTree(nodePart),
+                0,
+                null,
+                isDefault,
+                workspaceId,
+                percentage
         )
     }
 
