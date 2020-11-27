@@ -412,6 +412,131 @@ describe('DeploymentHandler', () => {
       expect.anything()
     )
   })
+
+  it('should pass the correct activeComponents for the undeployment method when multiple cdConfigurationIds with active deployments coexist', async() => {
+    const cdConfiguration1 = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'namespace1' },
+      'config-name',
+      'authorId',
+      'workspaceId1'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration1)
+
+    const defaultCircleActiveDeploymentDiffCdConfig = new DeploymentEntity(
+      'baa226a2-97f1-4e1b-b05a-d758839408f9',
+      'user-1',
+      '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      cdConfiguration1,
+      'http://localhost:1234/notifications/deployment?deploymentId=1',
+      [
+        new ComponentEntity(
+          'http://localhost:2222/helm',
+          'v1',
+          'https://repository.com/A:v1',
+          'A',
+          'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
+          null,
+          null
+        ),
+        new ComponentEntity(
+          'http://localhost:2222/helm',
+          'v1',
+          'https://repository.com/B:v1',
+          'B',
+          '1c29210c-e313-4447-80e3-db89b2359138',
+          null,
+          null
+        )
+      ],
+      true
+    )
+    defaultCircleActiveDeploymentDiffCdConfig.active = true
+    await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
+
+    const cdConfiguration2 = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'namespace2' },
+      'config-name',
+      'authorId',
+      'workspaceId2'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration2)
+
+    let defaultCircleActiveDeploymentSameCdConfig = new DeploymentEntity(
+      'f3cb70be-abe6-4efd-ae3e-2081d11c6922',
+      'user-1',
+      '4d9f61b9-64d0-4425-a9f7-69983c5ce837',
+      cdConfiguration2,
+      'http://localhost:1234/notifications/deployment?deploymentId=1',
+      [
+        new ComponentEntity(
+          'http://localhost:2222/helm',
+          'v1',
+          'https://repository.com/C:v1',
+          'C',
+          '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+          null,
+          null
+        ),
+        new ComponentEntity(
+          'http://localhost:2222/helm',
+          'v1',
+          'https://repository.com/D:v1',
+          'D',
+          'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+          null,
+          null
+        )
+      ],
+      true
+    )
+    defaultCircleActiveDeploymentSameCdConfig.active = true
+    defaultCircleActiveDeploymentSameCdConfig = await manager.save(defaultCircleActiveDeploymentSameCdConfig)
+
+    const execution : Execution = await manager.save(new Execution(
+      defaultCircleActiveDeploymentSameCdConfig,
+      ExecutionTypeEnum.UNDEPLOYMENT,
+      'ccc7141b-4d55-4a60-971e-86f3a5a6fb7a',
+      DeploymentStatusEnum.CREATED,
+    ))
+
+    const executionJob1 : JobWithDoneCallback<Execution, unknown> = {
+      data: execution,
+      done: () => ({}),
+      id: 'job-id1',
+      name: 'job-name1'
+    }
+
+    const createUndeploymentSpy = jest.spyOn(spinnakerConnector, 'createUndeployment')
+    await deploymentHandler.run(executionJob1)
+    expect(createUndeploymentSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      [
+        expect.objectContaining({
+          helmUrl: 'http://localhost:2222/helm',
+          imageTag: 'v1',
+          imageUrl: 'https://repository.com/D:v1',
+          name: 'D',
+          componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+          hostValue: null,
+          gatewayName: null,
+          running: false
+        }),
+        expect.objectContaining({
+          helmUrl: 'http://localhost:2222/helm',
+          imageTag: 'v1',
+          imageUrl: 'https://repository.com/C:v1',
+          name: 'C',
+          componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+          hostValue: null,
+          gatewayName: null,
+          running: false
+        }),
+      ],
+      expect.anything()
+    )
+  })
 })
 
 const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<{deployment: DeploymentEntity, execution:Execution, job: JobWithDoneCallback<Execution, unknown>  }> => {
