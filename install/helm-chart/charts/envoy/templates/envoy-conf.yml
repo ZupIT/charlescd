@@ -100,6 +100,7 @@ data:
                       local headers, body = request_handle:httpCall(
                       "charlescd-keycloak-http",
                       {
+                        [":scheme"] = "https",
                         [":method"] = "GET",
                         [":path"] = "{{ .Values.idm.path }}",
                         [":authority"] = "{{ .Values.idm.endpoint }}",
@@ -110,6 +111,7 @@ data:
                       false
                       )
                       request_handle:logInfo(headers[":status"])
+                      request_handle:logInfo(body)
                       if headers[":status"] ~= "200" then
                         request_handle:respond(headers,body)
                       end
@@ -183,7 +185,7 @@ data:
                     port_value: 8080
       {{- end}}
       - name: charlescd-keycloak-http
-        connect_timeout: 1.00s
+        connect_timeout: 2.00s
         type: strict_dns
         lb_policy: round_robin
         http_protocol_options: {}
