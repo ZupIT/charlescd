@@ -17,7 +17,7 @@
 import {
   COLOR_BASTILLE,
   COLOR_SANTAS_GREY,
-  COLOR_GRAY,
+  COLOR_COMET,
   COLOR_LAVENDER_GREY,
   COLOR_BLACK_MARLIN,
   COLOR_BLACK_OP_20
@@ -34,6 +34,6 @@ export const dark = {
   shadow: COLOR_BLACK_OP_20,
   zIndex: zIndex.OVER_1,
   disabled: {
-    color: COLOR_GRAY
+    color: COLOR_COMET
   }
 };

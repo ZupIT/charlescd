@@ -25,7 +25,7 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
-import {COLOR_GRAY} from 'core/assets/colors';
+import {COLOR_COMET} from 'core/assets/colors';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -229,7 +229,7 @@ test('should disable delete button and show tooltip when is an Active Default Ci
   expect(deleteButton).toBeInTheDocument();
 
   const deleteButtonText = await screen.findByText('Delete');
-  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_GRAY}`);
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
 
   userEvent.hover(deleteButton);
   expect(screen.getByText('Default circle is deployed to all')).toBeInTheDocument();
@@ -255,7 +255,7 @@ test('should disable delete button and show tooltip when is an Inactive Default 
   expect(deleteButton).toBeInTheDocument();
 
   const deleteButtonText = await screen.findByText('Delete');
-  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_GRAY}`));
+  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`));
 
   userEvent.hover(deleteButton);
   expect(screen.getByText('Default circle cannot be deleted.')).toBeInTheDocument();
@@ -292,7 +292,7 @@ test('should disable delete button and show tooltip when is an Active Circle (i.
   expect(deleteButton).toBeInTheDocument();
 
   const deleteButtonText = await screen.findByText('Delete');
-  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_GRAY}`));
+  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`));
 
   userEvent.hover(deleteButton);
   expect(screen.getByText('Active circle cannot be deleted,')).toBeInTheDocument();
@@ -320,7 +320,7 @@ test('should not disable delete button and show tooltip when is an Inactive Circ
   expect(deleteButton).toBeInTheDocument();
 
   const deleteButtonText = await screen.findByText('Delete');
-  await waitFor(() => expect(deleteButtonText).not.toHaveStyle(`color: ${COLOR_GRAY}`));
+  await waitFor(() => expect(deleteButtonText).not.toHaveStyle(`color: ${COLOR_COMET}`));
 
   await act(async () => userEvent.click(deleteButton));
   const deleteCircleModal = screen.getByTestId('modal-trigger');
