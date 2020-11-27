@@ -100,12 +100,15 @@ This installation is recommended for who has already setup your infrastructure d
 | envoy.ui.enabled                             | enable envoy proxy to frontend                                              | true                                              |
 | envoy.moove.enabled                          | enable envoy proxy to moove                                                 | true                                              |
 | envoy.octopipe.enabled                       | enable envoy proxy to octopipe                                              | true                                              |
-| envoy.compass.enabled                        | enable envoy proxy to keycloak                                              | true                                              |
+| envoy.compass.enabled                        | enable envoy proxy to compass                                              | true                                              |
 | envoy.keycloak.enabled                       | enable envoy proxy to keycloak                                              | true                                              |
 | envoy.cors.enabled                           | enable cors on charles services                                             | true                                              |
-| envoy.idm.endpoint                           | host of our idm                                                             | true                                              |
-| envoy.idm.port                               | port of our idm                                                             | true                                              |
-| envoy.idm.path                               | path used to validate token                                                 | true                                              |
+| envoy.idm.endpoint                           | host of our idm                                                             | charlescd-keycloak-http                           |
+| envoy.idm.port                               | port of our idm                                                             | 80                                                |
+| envoy.idm.path                               | path used to validate token                                                 | /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo        |
+| ingress.host                                 | host that will be listened by ingress                                       | charles.info.example                                           |
+| ingress.class                                | ingress controller class                                                    | nginx                                             |
+| ingress.controller.nginx.enabled             | enable nginx ingress controller as your default controller                  | true                                              |
 | octopipe.enabled                             | enables the installation of octopipe                                        | true                                              |
 | octopipe.envVars                             | used to config mongo connection                                             | ---                                               |
 | sidecarIstio.enabled                         | if you have istio installed and want to enable sidecar                      | true                                              |
