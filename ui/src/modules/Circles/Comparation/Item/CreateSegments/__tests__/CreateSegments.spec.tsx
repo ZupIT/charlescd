@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, wait, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import { ThemeScheme } from 'core/assets/themes';
@@ -54,10 +54,10 @@ test('render CreateSegments default component', async () => {
   const ButtonGoBack = await screen.findByTestId('icon-arrow-left');
   expect(ButtonGoBack).toBeInTheDocument();
 
-  const ButtonCreateManually = screen.getByText('Create manually');
+  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
   expect(ButtonCreateManually).toBeInTheDocument();
 
-  const ButtonImportCSV = screen.getByText('Import CSV');
+  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
   expect(ButtonImportCSV).toBeInTheDocument();
 });
 
@@ -73,10 +73,10 @@ test('render CreateSegments and try Create manually', async () => {
     />
   );
 
-  const ButtonCreateManually = screen.getByText('Create manually');
+  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
   expect(ButtonCreateManually).toBeInTheDocument();
 
-  const ButtonImportCSV = screen.getByText('Import CSV');
+  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
   expect(ButtonImportCSV).toBeInTheDocument();
   
   act(() => userEvent.click(ButtonCreateManually));
@@ -97,14 +97,14 @@ test('render CreateSegments and try Import CSV', async () => {
     />
   );
 
-  const ButtonCreateManually = screen.getByText('Create manually');
-  expect(ButtonCreateManually).toBeInTheDocument();
-
-  const ButtonImportCSV = screen.getByText('Import CSV');
+  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
   expect(ButtonImportCSV).toBeInTheDocument();
 
+  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
+  expect(ButtonCreateManually).toBeInTheDocument();
+
   act(() => userEvent.click(ButtonImportCSV));
-  
-  expect(ButtonImportCSV).toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
+
+  waitFor(() => expect(ButtonImportCSV).toHaveStyle(`background-color: ${theme.radio.button.checked.background}`));
   expect(ButtonCreateManually).not.toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
 });
