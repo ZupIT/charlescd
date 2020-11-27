@@ -71,9 +71,7 @@ const defaultCircle = {
 
 const defaultCircleWithoutDeployment = {
   name: 'Default',
-  deployment: {
-    status: ''
-  }
+  deployment: {}
 }
 
 test('render CircleComparationItem default component', async () => {
