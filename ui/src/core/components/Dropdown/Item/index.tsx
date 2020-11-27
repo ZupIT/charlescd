@@ -66,7 +66,7 @@ const DropdownItem = ({
           place="right"
           effect="solid"
           multiline={true}
-          delayHide={1000}
+          delayHide={300}
         />
       )}
     </Fragment>
