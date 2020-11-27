@@ -26,8 +26,9 @@ import { useSaveCircleManually } from 'modules/Circles/hooks';
 import { getProfileByKey } from 'core/utils/profile';
 import Styled from './styled';
 import { getWarningText, WarningMessage } from './helpers';
+import Percentage from './Percentage';
 
-type SegmentType = 'CREATE_MANUALLY' | 'IMPORT_CSV';
+type SegmentType = 'CREATE_MANUALLY' | 'IMPORT_CSV' | 'PERCENTAGE';
 
 interface Props {
   onGoBack: Function;
@@ -42,19 +43,29 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   const [saveCircleResponse, saveCircle, isSaving] = useSaveCircleManually(id);
   const [warningMessage, setWarningMessage] = useState<WarningMessage>();
   const isMatcherTypeSimpleKV = circle?.matcherType === 'SIMPLE_KV';
+  const isMatcherTypePercentage = circle?.matcherType === 'PERCENTAGE';
+  const isMatcherTypeManually = circle?.matcherType === 'REGULAR';
+
   const [rules, setRules] = useState<Rules>(circle?.rules);
   const isSegmentManually = activeSegment === 'CREATE_MANUALLY';
   const isSegmentImportCSV = activeSegment === 'IMPORT_CSV';
+  const isPercentage = activeSegment === 'PERCENTAGE';
 
   useEffect(() => {
-    if (isEditing && circle?.matcherType === 'REGULAR') {
+    if (!isEditing) {
+      return;
+    } else if (isEditing && isMatcherTypeManually) {
       setActiveSegment('CREATE_MANUALLY');
+    } else if (isEditing && isMatcherTypePercentage) {
+      setActiveSegment('PERCENTAGE');
+    } else {
+      setActiveSegment('IMPORT_CSV');
     }
   }, [circle, isEditing]);
 
   useEffect(() => {
     if (saveCircleResponse) {
-      onSaveCircle(saveCircleResponse);
+      onSaveCircle(saveCircleResponse, false);
     }
   }, [saveCircleResponse, onSaveCircle]);
 
@@ -69,28 +80,53 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   };
 
   const onContinue = () => {
-    if (warningMessage === 'IMPORT_CSV') {
-      setWarningMessage(undefined);
-      setActiveSegment('IMPORT_CSV');
-    } else if (warningMessage === 'CSV_TO_MANUAL') {
+    if (
+      warningMessage === 'CSV_TO_MANUAL' ||
+      warningMessage === 'PERCENTAGE_TO_MANUAL'
+    ) {
       setWarningMessage(undefined);
       setActiveSegment('CREATE_MANUALLY');
       setRules(undefined);
+    } else if (
+      warningMessage === 'MANUAL_TO_CSV' ||
+      warningMessage === 'PERCENTAGE_TO_CSV'
+    ) {
+      setWarningMessage(undefined);
+      setActiveSegment('IMPORT_CSV');
+    } else {
+      setWarningMessage(undefined);
+      setActiveSegment('PERCENTAGE');
     }
   };
 
   const handleClickCreateManually = () => {
-    if (isEditing && isMatcherTypeSimpleKV && !activeSegment) {
+    if (isEditing && isMatcherTypeSimpleKV) {
       setWarningMessage('CSV_TO_MANUAL');
+    } else if (isEditing && isMatcherTypePercentage) {
+      setWarningMessage('PERCENTAGE_TO_MANUAL');
     } else {
       setActiveSegment('CREATE_MANUALLY');
     }
   };
 
   const handleClickImportCSV = () => {
-    isEditing
-      ? setWarningMessage('IMPORT_CSV')
-      : setActiveSegment('IMPORT_CSV');
+    if (isEditing && isMatcherTypeManually) {
+      setWarningMessage('MANUAL_TO_CSV');
+    } else if (isEditing && isMatcherTypePercentage) {
+      setWarningMessage('PERCENTAGE_TO_CSV');
+    } else {
+      setActiveSegment('IMPORT_CSV');
+    }
+  };
+
+  const handleClickPercentage = () => {
+    if (isEditing && isMatcherTypeManually) {
+      setWarningMessage('MANUAL_TO_PERCENTAGE');
+    } else if (isEditing && isMatcherTypeSimpleKV) {
+      setWarningMessage('CSV_TO_PERCENTAGE');
+    } else {
+      setActiveSegment('PERCENTAGE');
+    }
   };
 
   const renderWarning = () => (
@@ -112,14 +148,17 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
         <Icon name="arrow-left" color="dark" onClick={() => onGoBack()} />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 color="light">Create Segments</Text.h2>
+        <Text.h2 weight="bold" color="light">
+          {isEditing ? 'Edit' : 'Create'} Segments
+        </Text.h2>
         <Styled.HelpText color="dark">
           You can create a segment manually or importing a .CSV file to link
-          multiple values to a key.
+          multiple values to a key, or segment by percentage.
         </Styled.HelpText>
         <Styled.Actions>
           <Styled.ButtonIconRounded
-            name="edit"
+            name="manually"
+            icon="manually"
             color="dark"
             onClick={handleClickCreateManually}
             isActive={isSegmentManually}
@@ -128,11 +167,21 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
           </Styled.ButtonIconRounded>
           <Styled.ButtonIconRounded
             name="upload"
+            icon="upload"
             color="dark"
             onClick={handleClickImportCSV}
             isActive={isSegmentImportCSV}
           >
             Import CSV
+          </Styled.ButtonIconRounded>
+          <Styled.ButtonIconRounded
+            name="percentage"
+            icon="percentage"
+            color="dark"
+            onClick={handleClickPercentage}
+            isActive={isPercentage}
+          >
+            Percentage
           </Styled.ButtonIconRounded>
         </Styled.Actions>
         <Styled.Content>
@@ -149,6 +198,14 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
               viewMode={false}
               onSubmit={saveCircleManually}
               isSaving={isSaving}
+            />
+          )}
+          {isPercentage && (
+            <Percentage
+              id={id}
+              circle={circle}
+              onSaveCircle={onSaveCircle}
+              isEditing={isEditing}
             />
           )}
         </Styled.Content>

@@ -14,33 +14,20 @@
  * limitations under the License.
  */
 
-import { Deployment } from './Circle';
+import {
+  COLOR_BASTILLE,
+  COLOR_SANTAS_GREY,
+  COLOR_WHITE
+} from 'core/assets/colors';
 
-export interface CirclePaginationItem {
-  id: string;
-  name: string;
-  createdAt: string;
-  deployment: Deployment;
-  percentage?: number;
-}
+export const light = {};
 
-export interface CirclePercentageItem {
-  circles: CirclePaginationItem[];
-  sumPercentage: number;
-}
-
-export interface CirclePagination {
-  content: CirclePaginationItem[];
-  page: number;
-  size: number;
-  totalPages: number;
-  last: boolean;
-}
-
-export interface CirclePercentagePagination {
-  content: CirclePercentageItem[];
-  page: number;
-  size: number;
-  totalPages: number;
-  last: boolean;
-}
+export const dark = {
+  backgroundColor: COLOR_BASTILLE,
+  thumbColor: COLOR_WHITE,
+  valueBorderColor: COLOR_WHITE,
+  valueColor: {
+    active: COLOR_WHITE,
+    inactive: COLOR_SANTAS_GREY
+  }
+};
