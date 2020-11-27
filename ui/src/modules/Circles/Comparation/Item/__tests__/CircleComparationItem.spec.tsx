@@ -195,7 +195,7 @@ test('should render CircleComparationItem with an Inactive Default Circle', asyn
   expect(iconBack).toBeInTheDocument();
 });
 
-test('should disable button delete and show tooltip when circle is default and active', async () => {
+test('should disable delete button and show tooltip when is an Active Default Circle', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123-workspace',
@@ -231,11 +231,32 @@ test('should disable button delete and show tooltip when circle is default and a
   expect(screen.getByText('users, so it cannot be deleted.')).toBeInTheDocument();
 });
 
-test('should disable delete button and show tooltip when is an Inactive Default Circle', () => {
+test('should disable delete button and show tooltip when is an Inactive Default Circle', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment))
+    .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment));
+  const handleChange = jest.fn();
 
+  render(
+    <CirclesComparationItem id={props.id} onChange={handleChange} />
+  );
+
+  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(dropdownIcon).toBeInTheDocument();
+
+  act(() => userEvent.click(dropdownIcon));
+
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
+
+  const deleteButtonText = await screen.findByText('Delete');
+  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_GRAY}`));
+
+  userEvent.hover(deleteButton);
+  expect(screen.getByText('Default circle cannot be deleted.')).toBeInTheDocument();
 });
 
-test('should disable delete button and show tooltip when is an active circle (not default)', async () => {
+test('should disable delete button and show tooltip when is an Active Circle (not default)', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123-workspace',
