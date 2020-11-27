@@ -104,7 +104,7 @@ This installation is recommended for who has already setup your infrastructure d
 | envoy.keycloak.enabled                       | enable envoy proxy to keycloak                                              | true                                              |
 | envoy.cors.enabled                           | enable cors on charles services                                             | true                                              |
 | envoy.idm.endpoint                           | host of your idm                                                            | charlescd-keycloak-http                           |
-| envoy.idm.port                               | port of yur idm                                                             | 80                                                |
+| envoy.idm.port                               | port of your idm                                                             | 80                                                |
 | envoy.idm.path                               | path used to validate token                                                 | /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo        |
 | ingress.host                                 | host that will be listened by ingress                                       | charles.info.example                                           |
 | ingress.class                                | ingress controller class                                                    | nginx                                             |
