@@ -102,11 +102,11 @@ data:
                       {
                         [":method"] = "GET",
                         [":path"] = "{{ .Values.idm.path }}",
-                        [":authority"] = "charlescd-keycloak-http",
+                        [":authority"] = "{{ .Values.idm.endpoint }}",
                         ["authorization"] = token
                       },
                       "",
-                      250,
+                      1000,
                       false
                       )
                       request_handle:logInfo(headers[":status"])
@@ -183,7 +183,7 @@ data:
                     port_value: 8080
       {{- end}}
       - name: charlescd-keycloak-http
-        connect_timeout: 0.25s
+        connect_timeout: 1.00s
         type: strict_dns
         lb_policy: round_robin
         http_protocol_options: {}
