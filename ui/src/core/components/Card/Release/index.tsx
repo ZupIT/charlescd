@@ -64,7 +64,9 @@ const CardRelease = forwardRef(
 
     const renderBody = () => (
       <Styled.CardBody>
-        <Styled.Text color="light">{description}</Styled.Text>
+        <Styled.Text color="light" data-testid={`release-card-description`}>
+          {description}
+        </Styled.Text>
       </Styled.CardBody>
     );
 
