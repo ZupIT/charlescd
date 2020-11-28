@@ -30,16 +30,16 @@ interface Props {
   onRemove: () => void;
 }
 
-const CardRemove = ({ id, isProtected, onClose }: Props) => {
+const CardRemove = ({ id, isProtected, onClose, onRemove }: Props) => {
   const [isDeleteBranch, setIsDeleteBranch] = useState(false);
   const [options, setOptions] = useState<RadioCard[]>(null);
   const { removeById, responseRemove, loadingRemove } = useCard();
 
   useEffect(() => {
     if (responseRemove) {
-      onClose();
+      onRemove();
     }
-  }, [onClose, responseRemove]);
+  }, [onRemove, responseRemove]);
 
   useEffect(() => {
     if (radios) {
@@ -52,7 +52,7 @@ const CardRemove = ({ id, isProtected, onClose }: Props) => {
     setIsDeleteBranch(value === 'card-branch');
   };
 
-  const onRemove = () => {
+  const handleRemove = () => {
     removeById(id, isDeleteBranch);
   };
 
@@ -61,7 +61,7 @@ const CardRemove = ({ id, isProtected, onClose }: Props) => {
       title="Choose what you want to delete"
       dismissLabel="Cancel"
       continueLabel="Delete"
-      onContinue={onRemove}
+      onContinue={handleRemove}
       onDismiss={onClose}
       isLoading={loadingRemove}
     >
