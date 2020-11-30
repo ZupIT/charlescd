@@ -115,12 +115,14 @@ func (v1 V1) HttpValidator(
 
 		authToken, err := extractToken(r.Header.Get("Authorization"))
 		if err != nil {
+			logger.Error("invalid_token", "httpValidator", err, nil)
 			api.NewRestError(w, http.StatusUnauthorized, []error{errors.New("token expired")})
 			return
 		}
 
 		allowed, err := v1.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
 		if err != nil || !allowed {
+			logger.Error("unauthorized", "httpValidator", err, allowed)
 			api.NewRestError(w, http.StatusForbidden, []error{errors.New("access denied")})
 			return
 		}
