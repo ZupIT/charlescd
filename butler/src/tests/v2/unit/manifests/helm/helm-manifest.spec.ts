@@ -32,12 +32,13 @@ describe('Generate K8s manifest by helm', () => {
     repo: {
       provider: GitProvidersEnum.GITHUB,
       url: 'https://myrepo.com/test',
-      token: 'my-token'
+      token: 'my-token',
+      branch: 'master'
     },
-    componentName: "helm-test-chart",
-    imageUrl: "latest",
+    componentName: 'helm-test-chart',
+    imageUrl: 'latest',
     namespace: 'my-namespace',
-    circleId: "f5d23a57-5607-4306-9993-477e1598cc2a"
+    circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a'
   }
 
   const mockRepository = {
@@ -46,15 +47,16 @@ describe('Generate K8s manifest by helm', () => {
 
   mockRepository.getResource.mockImplementation(async config => await readFiles(basePath, config.resourceName))
 
-  it('should generate manifest with default values', async () => {
+  it('should generate manifest with default values', async() => {
     const manifestConfig = {
       repo: {
         provider: GitProvidersEnum.GITHUB,
         url: 'https://myrepo.com/test',
-        token: 'my-token'
+        token: 'my-token',
+        branch: 'master'
       },
-      componentName: "helm-test-chart",
-      imageUrl: "latest"
+      componentName: 'helm-test-chart',
+      imageUrl: 'latest'
     }
     const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
     const manifest = await helm.generate(manifestConfig)
@@ -64,7 +66,7 @@ describe('Generate K8s manifest by helm', () => {
     expect(manifest).toEqual(expected)
   })
 
-  it('should generate manifest with custom values', async () => {
+  it('should generate manifest with custom values', async() => {
     const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
     const manifest = await helm.generate(manifestConfig)
 
@@ -73,7 +75,7 @@ describe('Generate K8s manifest by helm', () => {
     expect(manifest).toEqual(expected)
   })
 
-  it('should fail manifest generation when fails fetching files from repository', async () => {
+  it('should fail manifest generation when fails fetching files from repository', async() => {
     mockRepository.getResource.mockImplementation(() => { throw new Error('error') })
 
     const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
@@ -84,14 +86,14 @@ describe('Generate K8s manifest by helm', () => {
 })
 
 async function readFiles(dir: string, name: string): Promise<Resource> {
-  let resources: Resource = {
+  const resources: Resource = {
     name: name,
     type: ResourceType.DIR,
     children: []
   }
-  let files = fs.readdirSync(dir, { withFileTypes: true })
+  const files = fs.readdirSync(dir, { withFileTypes: true })
   for (const dirent of files) {
-    let filePath = path.join(dir, dirent.name)
+    const filePath = path.join(dir, dirent.name)
     if (dirent.isDirectory()) {
       resources.children?.push(await readFiles(filePath, dirent.name))
     } else {

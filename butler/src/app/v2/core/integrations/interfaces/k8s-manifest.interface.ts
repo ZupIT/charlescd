@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { KubernetesObject, V1ObjectMeta } from "@kubernetes/client-node";
+import { KubernetesObject } from '@kubernetes/client-node'
 
 interface Cookie {
   regex: string

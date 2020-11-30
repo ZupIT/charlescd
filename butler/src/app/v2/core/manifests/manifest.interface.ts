@@ -19,7 +19,8 @@ import { GitProvidersEnum } from '../../../v1/core/integrations/configuration/in
 export interface RepoConfig {
   provider: GitProvidersEnum,
   url: string,
-  token: string
+  token: string,
+  branch: string
 }
 
 export interface ManifestConfig {

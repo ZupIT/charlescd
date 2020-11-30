@@ -42,7 +42,8 @@ export class HelmManifest implements Manifest {
     const requestConfig = { 
       url: config.repo.url, 
       token: config.repo.token, 
-      resourceName: config.componentName 
+      resourceName: config.componentName,
+      branch: config.repo.branch
     }
     const chart = await this.repository.getResource(requestConfig)
     const chartPath = this.getTmpChartDir()
@@ -59,7 +60,7 @@ export class HelmManifest implements Manifest {
   }
 
   private async saveChartFiles(chartPath: string, chart: Resource): Promise<void> {
-    let basePath = chartPath + path.sep + chart.name
+    const basePath = chartPath + path.sep + chart.name
     await fs.mkdir(basePath, { recursive: true })
     if(chart.children) {
       for (const child of chart.children) {
@@ -73,7 +74,7 @@ export class HelmManifest implements Manifest {
   }
 
   private cleanUp(dir: string) {
-    rimraf(dir, () => {})
+    rimraf(dir, (error) => this.consoleLoggerService.error('ERROR WHILE CLEANING FILES UP', error))
   }
 
   private async template(chartPath: string, config: ManifestConfig): Promise<KubernetesManifest[]> {
@@ -124,7 +125,7 @@ export class HelmManifest implements Manifest {
     return `${chartPath}${path.sep}${config.componentName}${path.sep}${config.componentName}.yaml`
   }
 
-  private extractCustomValues(config: ManifestConfig): any {
+  private extractCustomValues(config: ManifestConfig): Record<string, unknown> {
     return {
       name: config.componentName,
       'image.tag': config.imageUrl,
@@ -132,12 +133,12 @@ export class HelmManifest implements Manifest {
     }
   }
 
-  private toStringArray(customValues: any): string {
+  private toStringArray(customValues: Record<string, unknown>): string {
     return Object.getOwnPropertyNames(customValues).reduce((acc, cur) => {
       if(customValues[cur]) {
         return acc + `${cur}=${customValues[cur]},`
       }
       return acc
-    }, "")
+    }, '')
   }
 }
