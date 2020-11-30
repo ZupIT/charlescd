@@ -85,7 +85,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
     if (responseSaveCircle) {
       onSaveCircle(responseSaveCircle);
     }
-  }, [responseSaveCircle]);
+  }, [responseSaveCircle, onSaveCircle]);
 
   const renderWarningNoPercentageAvailable = () =>
     !isEditing &&
