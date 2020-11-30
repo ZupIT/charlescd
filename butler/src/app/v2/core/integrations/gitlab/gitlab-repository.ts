@@ -22,8 +22,6 @@ import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces
 @Injectable()
 export class GitLabRepository implements Repository {
 
-  private static readonly DEFAULT_BRANCH = 'master'
-
   constructor(private readonly httpService: HttpService) {}
 
   public async getResource(config: RequestConfig): Promise<Resource> {
@@ -35,8 +33,8 @@ export class GitLabRepository implements Repository {
     return this.downloadResource(config.url, resourcePath, config.resourceName, headers, config.branch)
   }
 
-  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: Record<string, string>, branch?: string): Promise<Resource> {
-    const urlResource = `${baseUrl}${resourcePath}&ref=${branch || GitLabRepository.DEFAULT_BRANCH}`
+  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: Record<string, string>, branch: string): Promise<Resource> {
+    const urlResource = `${baseUrl}${resourcePath}&ref=${branch}`
     const response = await this.fetch(urlResource, headers)
     
     if(this.isResourceFile(response.data)) {
@@ -52,7 +50,7 @@ export class GitLabRepository implements Repository {
     for (const item of response.data) {
       if (item.type === 'tree') {
         const nextResourcePath = `${resourcePath}/${item.name}`
-        resource.children?.push(await this.downloadResource(baseUrl, nextResourcePath, item.name, headers))
+        resource.children?.push(await this.downloadResource(baseUrl, nextResourcePath, item.name, headers, branch))
       } else {
         resource.children?.push(await this.downloadFile(baseUrl, item.path, headers, branch))
       }
@@ -60,8 +58,8 @@ export class GitLabRepository implements Repository {
     return resource
   }
 
-  private async downloadFile(baseUrl: string, path: string, headers: Record<string, string>, branch?: string): Promise<Resource> {
-    const fileUrl = `${baseUrl}/files/${encodeURIComponent(path)}?ref=${branch || GitLabRepository.DEFAULT_BRANCH}`
+  private async downloadFile(baseUrl: string, path: string, headers: Record<string, string>, branch: string): Promise<Resource> {
+    const fileUrl = `${baseUrl}/files/${encodeURIComponent(path)}?ref=${branch}`
     const fileContent = await this.fetch(fileUrl, headers)
     return {
       name: fileContent.data.file_name,

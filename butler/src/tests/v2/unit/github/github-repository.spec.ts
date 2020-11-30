@@ -37,7 +37,7 @@ describe('Download resources from github', () => {
   it('Download helm chart recursively from github', async() => {
     const repository = new GitHubRepository(httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'master' })
 
     expect(resource.name).toBe('helm-chart')
     expect(resource.type).toBe('directory')
@@ -50,7 +50,7 @@ describe('Download resources from github', () => {
   it('Download a single file from gibhub', async() => {
     const repository = new GitHubRepository(httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml', branch: 'master' })
 
     expect(resource.name).toBe('Chart.yaml')
     expect(resource.type).toBe('file')
