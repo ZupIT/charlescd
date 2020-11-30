@@ -15,9 +15,8 @@
  */
 
 import React from 'react';
-import { render, fireEvent, waitFor, act, screen } from 'unit-test/testUtils';
+import { render, act, screen } from 'unit-test/testUtils';
 import FormCDConfiguration from '../Sections/CDConfiguration/Form';
-import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
 
 const mockOnFinish = jest.fn();
