@@ -287,14 +287,14 @@ class JdbcCircleRepository(
                 FROM circles c
                          LEFT JOIN deployments d ON c.id = d.circle_id
                 WHERE 1 = 1
-                    AND d.circle_id IS NULL
+                    AND (d.circle_id IS NULL
                     OR  c.id NOT IN
                     (
                         SELECT DISTINCT d.circle_id
                         FROM deployments d
                         WHERE d.status IN ('DEPLOYING', 'DEPLOYED', 'UNDEPLOYING')
                         AND d.workspace_id = ?
-                    )
+                    ))
                 """
         )
 
