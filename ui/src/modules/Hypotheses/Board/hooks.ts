@@ -30,7 +30,12 @@ import {
   Payload,
   archiveById
 } from 'core/providers/card';
-import { useFetch, FetchProps, FetchStatuses } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  FetchProps,
+  FetchStatuses,
+  useFetchData
+} from 'core/providers/base/hooks';
 import { Payload as CardPayload } from 'core/providers/card';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { setBoard } from 'modules/Hypotheses/state/actions';
@@ -44,25 +49,32 @@ interface BoardFetchProps extends FetchProps {
 
 export const useBoard = (): BoardFetchProps => {
   const dispatch = useDispatch();
-  const [responseBoard, getBoard] = useFetch<{ board: Column[] }>(
-    findBoardByHypothesisId
-  );
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const getBoard = useFetchData<{ board: Column[] }>(findBoardByHypothesisId);
   const [, moveCard] = useFetch(moveCardBetweenBoard);
   const [, orderCard] = useFetch(orderCardInBoard);
-  const { response, loading } = responseBoard;
+  const [fetchedBoard, setFetchedBoard] = useState(null);
 
   const getAll = useCallback(
-    (id: string) => {
-      getBoard(id);
-    },
-    [getBoard]
-  );
+    async (id: string) => {
+      try {
+        if (id) {
+          setStatus('pending');
+          const res = await getBoard(id);
 
-  useEffect(() => {
-    if (response) {
-      dispatch(setBoard(response?.board));
-    }
-  }, [response, dispatch]);
+          setFetchedBoard(res?.board);
+          dispatch(setBoard(res?.board));
+
+          setStatus('resolved');
+
+          return res;
+        }
+      } catch (e) {
+        setStatus('rejected');
+      }
+    },
+    [getBoard, dispatch]
+  );
 
   const movingCard = useCallback(
     (hypothesisId: string, cardId: string, payload: CardMovement) => {
@@ -82,8 +94,8 @@ export const useBoard = (): BoardFetchProps => {
     getAll,
     movingCard,
     reorderColumn,
-    loadingAll: loading,
-    responseAll: response?.board
+    loadingAll: status === 'pending',
+    responseAll: fetchedBoard
   };
 };
 
