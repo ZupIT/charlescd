@@ -67,7 +67,9 @@ export class CreateDeploymentUseCase {
 
   private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents()
+    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
+      createDeploymentDto.circle.headerValue
+    )
     const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
     const unchangedComponents: ComponentEntity[] = activeComponents
       .filter(component => !requestedComponentsNames.includes(component.name))
