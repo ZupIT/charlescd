@@ -20,7 +20,7 @@ import {
   DraggableProvidedDragHandleProps
 } from 'react-beautiful-dnd';
 import { useParams } from 'core/utils/routes';
-import { setCard } from 'modules/Hypotheses/state/actions';
+import { setCard, removeCard } from 'modules/Hypotheses/state/actions';
 import { CARD_TYPE_ACTION } from 'modules/Hypotheses/Board/Card/constants';
 import { useDispatch } from 'core/state/hooks';
 import { Card as CardProps } from '../interfaces';
@@ -80,6 +80,7 @@ const CardBoard = forwardRef(
     };
 
     const onRemove = () => {
+      dispatch(removeCard(columnId, card.id));
       setToggleModalRemove(false);
       getAll(hypothesisId);
     };
