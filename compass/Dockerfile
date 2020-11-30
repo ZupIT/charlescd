@@ -22,6 +22,8 @@ FROM alpine:3.12.0
 COPY --from=builder /app/compass/dist /plugins
 COPY --from=builder /app/compass/out/compass .
 COPY --from=builder /app/compass/migrations /migrations
+COPY --from=builder /app/compass/auth.conf .
+COPY --from=builder /app/compass/policy.csv .
 
 EXPOSE 8080
 
