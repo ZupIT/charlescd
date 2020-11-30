@@ -51,11 +51,11 @@ class V2UserController(
     }
 
     @ApiOperation(value = "Find user by Id")
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun findById(
         @RequestHeader(value = "Authorization") authorization: String,
-        @PathVariable id: UUID
+        @PathVariable("id") id: UUID
     ) = findUserByIdInteractor.execute(authorization, id)
 
     @ApiOperation(value = "Find all users")
