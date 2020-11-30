@@ -56,7 +56,11 @@ const Menu = ({
 
   const renderActions = () =>
     map(actions, ({ icon, label, name }: Action) => (
-      <Styled.Action key={name} onClick={() => handleSelect(name)}>
+      <Styled.Action
+        key={name}
+        onClick={() => handleSelect(name)}
+        data-testid={`menu-options-${label}`}
+      >
         <Styled.WrapperIcon>
           {name === active && (
             <Styled.Icon size="15px" color="light" name="checkmark" />
