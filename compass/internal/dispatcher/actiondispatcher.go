@@ -50,7 +50,7 @@ func NewActionDispatcher(metricGroupRepo metricsgroup.UseCases, actionRepo actio
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
-	logger.Info("Starting action dispatcher ", time.Now())
+
 	metricGroups, err := dispatcher.metricGroupRepo.FindAll()
 	if err != nil {
 		logger.Error("Error consulting metrics groups", "Dispatch", nil, nil)
@@ -61,8 +61,6 @@ func (dispatcher *ActionDispatcher) dispatch() {
 			go dispatcher.doAction(group)
 		}
 	}
-
-	logger.Info("Finishing action dispatcher ", time.Now())
 }
 
 func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
@@ -146,6 +144,7 @@ func (dispatcher *ActionDispatcher) Start(stopChan chan bool) error {
 		return err
 	}
 
+	logger.Info("Starting action dispatcher", nil)
 	ticker := time.NewTicker(interval)
 	for {
 		select {

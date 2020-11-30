@@ -1,16 +1,17 @@
 package tests
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 type SuiteMoove struct {
@@ -18,7 +19,7 @@ type SuiteMoove struct {
 	DB   *gorm.DB
 	mock sqlmock.Sqlmock
 
-	repository moove.APIClient
+	repository moove.UseCases
 	server     *httptest.Server
 }
 

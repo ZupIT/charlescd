@@ -19,6 +19,9 @@
 package main
 
 import (
+	"log"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -29,11 +32,8 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"log"
-	"time"
-
-	utils "github.com/ZupIT/charlescd/compass/internal/util"
-	v1 "github.com/ZupIT/charlescd/compass/web/api/v1"
+	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/sirupsen/logrus"
 
 	"github.com/joho/godotenv"
 )
@@ -41,15 +41,17 @@ import (
 func main() {
 	godotenv.Load()
 
+	logrus.SetFormatter(&logrus.TextFormatter{})
+
 	db, err := configuration.GetDBConnection("migrations")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	if utils.IsDeveloperRunning() {
-		db.LogMode(true)
-	}
+	// if utils.IsDeveloperRunning() {
+	// 	db.LogMode(true)
+	// }
 
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
@@ -66,14 +68,25 @@ func main() {
 	go metricDispatcher.Start(stopChan)
 	go actionDispatcher.Start(stopChan)
 
-	v1Api := v1.NewV1()
-	v1Api.NewPluginApi(pluginMain)
-	v1Api.NewMetricsGroupApi(metricsgroupMain)
-	v1Api.NewMetricApi(metricMain, metricsgroupMain)
-	v1Api.NewDataSourceApi(datasourceMain)
-	v1Api.NewCircleApi(metricsgroupMain)
-	v1Api.NewActionApi(actionMain)
-	v1Api.NewHealthApi(healthMain)
-	v1Api.NewMetricsGroupActionApi(metricsGroupActionMain)
-	v1Api.Start()
+	//v1Api := v1.NewV1()
+	//v1Api.NewPluginApi(pluginMain)
+	//v1Api.NewMetricsGroupApi(metricsgroupMain)
+	//v1Api.NewMetricApi(metricMain, metricsgroupMain)
+	//v1Api.NewDataSourceApi(datasourceMain)
+	//v1Api.NewCircleApi(metricsgroupMain)
+	//v1Api.NewActionApi(actionMain)
+	//v1Api.NewHealthApi(healthMain)
+	//v1Api.NewMetricsGroupActionApi(metricsGroupActionMain)
+	//v1Api.Start()
+
+	api.NewApi(
+		pluginMain,
+		datasourceMain,
+		metricMain,
+		actionMain,
+		metricsGroupActionMain,
+		metricsgroupMain,
+		mooveMain,
+		healthMain,
+	).Start()
 }

@@ -1,86 +1,82 @@
-/*
- *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- */
-
 package api
 
 import (
-	"encoding/json"
-	"errors"
-	"github.com/ZupIT/charlescd/compass/internal/util"
+	"log"
 	"net/http"
+	"time"
 
-	"github.com/google/uuid"
-	"github.com/julienschmidt/httprouter"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/health"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/gorilla/mux"
 )
 
-type BaseEntityRepresentation struct {
-	ID uuid.UUID `json:"id"`
+type Api struct {
+	// Dependencies
+	pluginMain            plugin.UseCases
+	datasourceMain        datasource.UseCases
+	metricMain            metric.UseCases
+	actionMain            action.UseCases
+	metricGroupActionMain metricsgroupaction.UseCases
+	metricsGroupMain      metricsgroup.UseCases
+	mooveMain             moove.UseCases
+	healthMain            health.UseCases
+
+	//Server
+	router *mux.Router
+	server *http.Server
 }
 
-type RestError struct {
-	Message string `json:"message"`
-}
+func NewApi(
+	pluginMain plugin.UseCases,
+	datasourceMain datasource.UseCases,
+	metricMain metric.UseCases,
+	actionMain action.UseCases,
+	metricGroupActionMain metricsgroupaction.UseCases,
+	metricsGroupMain metricsgroup.UseCases,
+	mooveMain moove.UseCases,
+	healthMain health.UseCases,
+) Api {
 
-type RestValidateError struct {
-	Message string           `json:"message"`
-	Errors  []util.ErrorUtil `json:"errors"`
-}
-
-func NewRestError(w http.ResponseWriter, status int, errs []error) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-
-	var restErrors []RestError
-	for _, err := range errs {
-		restErrors = append(restErrors, RestError{Message: err.Error()})
+	api := Api{
+		pluginMain:            pluginMain,
+		datasourceMain:        datasourceMain,
+		metricMain:            metricMain,
+		actionMain:            actionMain,
+		metricGroupActionMain: metricGroupActionMain,
+		metricsGroupMain:      metricsGroupMain,
+		mooveMain:             mooveMain,
+		healthMain:            healthMain,
+		router:                mux.NewRouter(),
 	}
-	json.NewEncoder(w).Encode(restErrors)
-}
-
-func NewRestValidateError(w http.ResponseWriter, status int, errs []util.ErrorUtil, msg string) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-
-	var restErrors = RestValidateError{
-		Message: msg,
-		Errors:  errs,
+	api.server = &http.Server{
+		Handler: api.router,
+		Addr:    ":8080",
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
+	api.router.PathPrefix("/api")
+	api.router.Use(LoggingMiddleware)
+	api.router.Use(ValidatorMiddleware)
+	api.health()
+	api.newV1Api()
 
-	json.NewEncoder(w).Encode(restErrors)
+	return api
 }
 
-func NewRestSuccess(w http.ResponseWriter, status int, response interface{}) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(response)
+func (api *Api) health() {
+	api.router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(":)"))
+		return
+	})
 }
 
-func HttpValidator(
-	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string),
-) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
-		workspaceID := r.Header.Get("x-workspace-id")
-
-		if workspaceID == "" {
-			NewRestError(w, http.StatusInternalServerError, []error{errors.New("WorkspaceId is required")})
-			return
-		}
-		next(w, r, ps, workspaceID)
-	}
+func (api Api) Start() {
+	log.Fatal(api.server.ListenAndServe())
 }

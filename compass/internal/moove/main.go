@@ -23,12 +23,16 @@ import (
 	"time"
 )
 
+type UseCases interface {
+	GetMooveComponents(circleIDHeader, circleId, workspaceId string) ([]byte, error)
+}
+
 type APIClient struct {
 	URL        string
 	httpClient *http.Client
 }
 
-func NewAPIClient(url string, timeout time.Duration) APIClient {
+func NewAPIClient(url string, timeout time.Duration) UseCases {
 	return APIClient{
 		URL: url,
 		httpClient: &http.Client{
