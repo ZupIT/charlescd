@@ -26,7 +26,7 @@ export class GitHubRepository implements Repository {
 
   public async getResource(config: RequestConfig): Promise<Resource> {
     const urlResource = new URL(`${config.url}/contents/${config.resourceName}?ref=${config.branch || 'master'}`)
-    return await this.downloadResource(urlResource, config.resourceName, {
+    return this.downloadResource(urlResource, config.resourceName, {
       'Content-Type': 'application/json',
       'Authorization': config.token
     })

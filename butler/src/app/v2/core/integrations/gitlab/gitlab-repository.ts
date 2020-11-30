@@ -32,7 +32,7 @@ export class GitLabRepository implements Repository {
       'Content-Type': 'application/json',
       'PRIVATE-TOKEN': config.token
     }
-    return await this.downloadResource(config.url, resourcePath, config.resourceName, headers, config.branch)
+    return this.downloadResource(config.url, resourcePath, config.resourceName, headers, config.branch)
   }
 
   private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: any, branch?: string): Promise<Resource> {
