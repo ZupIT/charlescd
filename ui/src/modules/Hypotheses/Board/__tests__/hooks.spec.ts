@@ -16,8 +16,6 @@
 
 import { renderHook, act } from '@testing-library/react-hooks';
 import { FetchMock } from 'jest-fetch-mock';
-import { useGlobalState } from 'core/state/hooks';
-import { AllTheProviders as wrapper } from 'unit-test/testUtils';
 import { Column } from '../interfaces';
 import { useBoard } from '../hooks';
 
