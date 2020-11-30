@@ -28,9 +28,9 @@ import Styled from './styled';
 import SliderPercentage from './Slider';
 import { getProfileByKey } from 'core/utils/profile';
 import { Circle } from 'modules/Circles/interfaces/Circle';
-import Modal from 'core/components/Modal';
 import CirclePercentageList from '../Percentage/CirclePercentageList';
 import AvailablePercentage from '../Percentage/AvailablePercentage';
+import { editingPercentageLimit } from './helpers';
 
 interface Props {
   id: string;
@@ -56,7 +56,6 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
   );
   const [responseGetCircles, getFilteredCircles] = useCirclePercentage();
   const [limitPercentage, setLimitPercentage] = useState<number>(null);
-  const [showModal, setShowModal] = useState<boolean>(false);
 
   const onSubmitValue = () => {
     const authorId = getProfileByKey('id');
@@ -83,49 +82,10 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
   }, [getFilteredCircles]);
 
   useEffect(() => {
-    if (responseSaveCircle && isEditing) {
-      // if is editing, the post actions modal of create percentage circle is not necessary.
-      onSaveCircle(responseSaveCircle, false);
-    } else if (responseSaveCircle) {
-      // if is new circle, the post actions modal is necessary.
-      setShowModal(true);
+    if (responseSaveCircle) {
+      onSaveCircle(responseSaveCircle);
     }
-  }, [responseSaveCircle, onSaveCircle, isEditing]);
-
-  const editingPercentageLimit = () => {
-    if (limitPercentage > 0 && deployment) {
-      // if circle is already active, the percentage limit needs to take into account the current percentage of the circle.
-      return limitPercentage + percentage;
-    } else if (limitPercentage > 0 && !deployment) {
-      return limitPercentage;
-    }
-    // only use this condition on editing, if circle is active but we have no open sea percentage available,
-    // we use only circle percentage.
-    return percentage;
-  };
-
-  const onContinue = () => {
-    onSaveCircle(responseSaveCircle, true);
-  };
-
-  const onDismissWarningMessage = () => {
-    onSaveCircle(responseSaveCircle, false);
-  };
-
-  const renderWarning = () => (
-    <Modal.Trigger
-      title="Your request has been registered!"
-      dismissLabel="No, active later"
-      continueLabel="Yes, active now"
-      onContinue={onContinue}
-      onDismiss={onDismissWarningMessage}
-    >
-      It is importante to remember that this setting will be applied after
-      activating the circle after the first deployment.
-      <br />
-      Do you want to active now?
-    </Modal.Trigger>
-  );
+  }, [responseSaveCircle, onSaveCircle]);
 
   const renderWarningNoPercentageAvailable = () =>
     !isEditing &&
@@ -141,7 +101,9 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
     if (!isEditing && limitPercentage === 0) {
       return null;
     }
-    const limit = isEditing ? editingPercentageLimit() : limitPercentage;
+    const limit = isEditing
+      ? editingPercentageLimit(limitPercentage, deployment, percentage)
+      : limitPercentage;
     return (
       <>
         <Styled.HelpText color="dark">
@@ -152,6 +114,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
         <SliderPercentage limitValue={limit} />
         {isSaving && <Loader />}
         <Styled.ButtonDefault
+          id="percentage"
           type="submit"
           isLoading={isSaving}
           isDisabled={isSaving}
@@ -163,33 +126,28 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
     );
   };
 
-  const renderPercentageCircle = () => {
-    return (
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmitValue)}>
-          {showModal && renderWarning()}
-          <Styled.FieldPopover>
-            <Text.h5 color="dark">Quantity available for consumption.</Text.h5>
-            <Styled.Popover
-              title=""
-              icon="info"
-              size="18px"
-              description="The available quantity will be applied only after activating the circle"
-            />
-          </Styled.FieldPopover>
-          <AvailablePercentage
-            responseGetCircles={responseGetCircles}
-            circle={circle}
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmitValue)}>
+        <Styled.FieldPopover>
+          <Text.h5 color="dark">Quantity available for consumption.</Text.h5>
+          <Styled.Popover
+            title=""
+            icon="info"
+            size="18px"
+            description="The available quantity will be applied only after activating the circle"
           />
-          <CirclePercentageList responseGetCircles={responseGetCircles} />
-          {renderWarningNoPercentageAvailable()}
-          {renderSlider()}
-        </form>
-      </FormProvider>
-    );
-  };
-
-  return renderPercentageCircle();
+        </Styled.FieldPopover>
+        <AvailablePercentage
+          responseGetCircles={responseGetCircles}
+          circle={circle}
+        />
+        <CirclePercentageList responseGetCircles={responseGetCircles} />
+        {renderWarningNoPercentageAvailable()}
+        {renderSlider()}
+      </form>
+    </FormProvider>
+  );
 };
 
 export default Percentage;

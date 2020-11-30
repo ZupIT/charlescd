@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Deployment } from 'modules/Circles/interfaces/Circle';
+
 export type WarningMessage =
   | 'IMPORT_CSV'
   | 'MANUAL_TO_CSV'
@@ -50,3 +52,19 @@ export function getWarningText(warningMessage: WarningMessage) {
 
   return 'When you import another .CSV your entire circle segmentation will be deleted and replaced by the new one.';
 }
+
+export const editingPercentageLimit = (
+  limitPercentage: number,
+  deployment: Deployment,
+  percentage: number
+) => {
+  if (limitPercentage > 0 && deployment) {
+    // if circle is already active, the percentage limit needs to take into account the current percentage of the circle.
+    return limitPercentage + percentage;
+  } else if (limitPercentage > 0 && !deployment) {
+    return limitPercentage;
+  }
+  // only use this condition on editing, if circle is active but we have no open sea percentage available,
+  // we use only circle percentage.
+  return percentage;
+};

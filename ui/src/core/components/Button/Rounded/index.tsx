@@ -30,7 +30,7 @@ export interface Props {
   color?: PrimaryColors;
   isDisabled?: boolean;
   backgroundColor?: 'default' | 'primary';
-  size?: 'default' | 'small';
+  size?: 'default' | 'medium' | 'small';
 }
 
 const ButtonRounded = ({

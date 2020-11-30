@@ -30,11 +30,14 @@ const SliderPercentage = ({ limitValue }: Props) => {
         <Text.h4 color="light">0%</Text.h4>
         <Styled.Slider
           type="range"
+          data-testid="slider-input"
           value={sliderValue}
           onChange={e => handleChange(e.target.value)}
           max={limitValue}
         ></Styled.Slider>
-        <Text.h4 color="light">{limitValue}%</Text.h4>
+        <Text.h4 data-testid="slider-limit-value" color="light">
+          {limitValue}%
+        </Text.h4>
         <Styled.SliderNumberInput
           placeholder="Value"
           ref={register({
