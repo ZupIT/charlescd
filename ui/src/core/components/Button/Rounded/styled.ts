@@ -16,22 +16,54 @@
 
 import styled, { css } from 'styled-components';
 
+type Size = 'small' | 'medium' | 'default';
+
 interface ButtonProps {
   backgroundColor: 'default' | 'primary';
-  size: 'small' | 'default';
+  size: Size;
 }
+
+const getButtonHeight = (size: Size) => {
+  if (size === 'small') {
+    return '30px';
+  } else if (size === 'medium') {
+    return '40px';
+  } else {
+    return '50px';
+  }
+};
+
+const getButtonPadding = (size: Size) => {
+  if (size === 'small') {
+    return '9px 18px';
+  } else if (size === 'medium') {
+    return '12px 25px';
+  } else {
+    return '15px 33px';
+  }
+};
+
+const getButtonRadius = (size: Size) => {
+  if (size === 'small') {
+    return '15px';
+  } else if (size === 'medium') {
+    return '20px';
+  } else {
+    return '30px';
+  }
+};
 
 const Button = styled.button<ButtonProps>`
   border: none;
   background: ${({ backgroundColor, theme }) =>
     theme.button.rounded.background[backgroundColor]};
   height: 50px;
-  border-radius: ${({ size }) => (size === 'default' ? '30px' : '15px')};
-  height: ${({ size }) => (size === 'default' ? '50px' : '30px')};
+  border-radius: ${({ size }) => getButtonRadius(size)};
+  height: ${({ size }) => getButtonHeight(size)};
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: ${({ size }) => (size === 'default' ? '15px 33px' : '9px 18px')};
+  padding: ${({ size }) => getButtonPadding(size)};
   cursor: pointer;
   transition: 0.2s;
   width: fit-content;

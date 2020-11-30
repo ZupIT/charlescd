@@ -74,6 +74,7 @@ const Input = styled(InputComponent)`
 `;
 
 const ButtonDefault = styled(Button.Default)<ButtonDefaultProps>`
+  height: 30px;
   background-color: ${({ theme, isValid }) => {
     const { saveButton } = theme.circleSegmentation.importCSV;
     return isValid

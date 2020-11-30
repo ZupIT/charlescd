@@ -13,21 +13,29 @@ const AvailablePercentage = ({ responseGetCircles, circle }: Props) => {
   const getAvailablePercentageInOpenSea = (
     responseGetCircles: CirclePercentagePagination
   ) => {
-    return 100 - responseGetCircles?.content[0].sumPercentage;
+    return `${100 - responseGetCircles?.content[0].sumPercentage}%`;
   };
 
   return (
     <Styled.AvailableContainer>
-      <Styled.AvailableItem>
+      <Styled.AvailableItem data-testid="available-percentage-open-sea">
         <Text.h4 color="light">Open sea</Text.h4>
-        <Text.h4 color="light">
-          {getAvailablePercentageInOpenSea(responseGetCircles)}%
+        <Text.h4
+          data-testid="available-percentage-open-sea-value"
+          color="light"
+        >
+          {getAvailablePercentageInOpenSea(responseGetCircles)}
         </Text.h4>
       </Styled.AvailableItem>
       {circle && (
-        <Styled.AvailableItem>
+        <Styled.AvailableItem data-testid="configured-circle-percentage">
           <Text.h4 color="light">Percent Configured</Text.h4>
-          <Text.h4 color="light">{circle.percentage}%</Text.h4>
+          <Text.h4
+            data-testid="configured-circle-percentage-value"
+            color="light"
+          >
+            {circle.percentage}%
+          </Text.h4>
         </Styled.AvailableItem>
       )}
     </Styled.AvailableContainer>

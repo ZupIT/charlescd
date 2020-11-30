@@ -61,7 +61,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
     } else {
       setActiveSegment('IMPORT_CSV');
     }
-  }, [circle, isEditing]);
+  }, [circle, isEditing, isMatcherTypeManually, isMatcherTypePercentage]);
 
   useEffect(() => {
     if (saveCircleResponse) {
@@ -140,7 +140,6 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
       {getWarningText(warningMessage)}
     </Modal.Trigger>
   );
-
   return (
     <>
       {warningMessage && renderWarning()}

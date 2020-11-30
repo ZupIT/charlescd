@@ -3,10 +3,16 @@ import styled from 'styled-components';
 const CirclesListContainer = styled.div`
   display: flex;
   flex-direction: row;
-  cursor: pointer;
   margin-top: 20px;
   margin-bottom: 10px;
   flex-direction: column;
+`;
+
+const CirclesListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  overflow: auto;
 `;
 
 const CirclesListButton = styled.div`
@@ -55,5 +61,6 @@ export default {
   AvailableContainer,
   AvailableItem,
   CirclesListContainer,
-  CirclesListButton
+  CirclesListButton,
+  CirclesListWrapper
 };

@@ -53,6 +53,8 @@ const renderPercentage = (
         color="dark"
         onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
         isDisabled={!circle?.name}
+        icon="edit"
+        size="medium"
       >
         Edit segments
       </ButtonIconRounded>

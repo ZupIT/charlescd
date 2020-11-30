@@ -14,24 +14,32 @@ const CirclePercentageList = ({ responseGetCircles }: Props) => {
   const circles: Circle[] = get(responseGetCircles, 'content[0].circles', []);
   const [showCircleList, setShowCircleList] = useState<boolean>(false);
   return (
-    <Styled.CirclesListContainer
-      onClick={() => setShowCircleList(!showCircleList)}
-    >
-      <Styled.CirclesListButton>
-        <Icon name={showCircleList ? 'up' : 'alternate-down'} size="18" />
-        <Text.h4 color="dark">See consumption by active circles.</Text.h4>
-      </Styled.CirclesListButton>
-      {showCircleList && (
-        <Styled.AvailableContainer>
-          {circles.map(circle => (
-            <Styled.AvailableItem key={circle.id}>
-              <Text.h4 color="light">{circle.name}</Text.h4>
-              <Text.h4 color="light">{circle.percentage}%</Text.h4>
-            </Styled.AvailableItem>
-          ))}
-        </Styled.AvailableContainer>
-      )}
-    </Styled.CirclesListContainer>
+    !!circles.length && (
+      <Styled.CirclesListContainer data-testid="circle-list-container">
+        <Styled.CirclesListButton
+          data-testid="circle-list-container-button"
+          onClick={() => setShowCircleList(!showCircleList)}
+        >
+          <Icon name={showCircleList ? 'up' : 'alternate-down'} size="18" />
+          <Text.h4 color="dark">See consumption by active circles.</Text.h4>
+        </Styled.CirclesListButton>
+        <Styled.CirclesListWrapper>
+          {showCircleList && (
+            <Styled.AvailableContainer>
+              {circles.map(circle => (
+                <Styled.AvailableItem
+                  data-testid={`circle-percentage-list-item-${circle.id}`}
+                  key={circle.id}
+                >
+                  <Text.h4 color="light">{circle.name}</Text.h4>
+                  <Text.h4 color="light">{circle.percentage}%</Text.h4>
+                </Styled.AvailableItem>
+              ))}
+            </Styled.AvailableContainer>
+          )}
+        </Styled.CirclesListWrapper>
+      </Styled.CirclesListContainer>
+    )
   );
 };
 

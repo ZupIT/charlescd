@@ -175,7 +175,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
     }
   };
 
-  const onSaveCircle = (circleData: Circle, goToReleases: boolean) => {
+  const onSaveCircle = (circleData: Circle) => {
     if (isEditing) {
       loadCircle(id);
     } else {
@@ -187,12 +187,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         circleData.id
       );
     }
-
-    if (goToReleases) {
-      setActiveSection(SECTIONS.RELEASE);
-    } else {
-      setActiveSection(undefined);
-    }
+    setActiveSection(undefined);
   };
 
   const onCreateRelease = (deployment: Deployment) => {
