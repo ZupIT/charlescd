@@ -125,7 +125,7 @@ export class HelmManifest implements Manifest {
     return `${chartPath}${path.sep}${config.componentName}${path.sep}${config.componentName}.yaml`
   }
 
-  private extractCustomValues(config: ManifestConfig): Record<string, unknown> {
+  private extractCustomValues(config: ManifestConfig): Record<string, string | undefined> {
     return {
       name: config.componentName,
       'image.tag': config.imageUrl,
