@@ -32,7 +32,7 @@ export class GitHubRepository implements Repository {
     })
   }
 
-  private async downloadResource(url: URL, resourceName: string, headers: any): Promise<Resource> {
+  private async downloadResource(url: URL, resourceName: string, headers: Record<string, string>): Promise<Resource> {
     const response = await this.fetch(url, headers)
     
     if(this.isFile(response.data)) {
@@ -50,7 +50,7 @@ export class GitHubRepository implements Repository {
     }
 
     for (const item of response.data) {
-      if (item.type == 'dir') {
+      if (item.type === 'dir') {
         url.pathname = `${url.pathname}/${item.name}`
         resource.children?.push(await this.downloadResource(url, item.name, headers))
       } else {
@@ -65,11 +65,11 @@ export class GitHubRepository implements Repository {
     return resource
   }
 
-  private isFile(data: any): boolean {
+  private isFile(data: unknown): boolean {
     return !Array.isArray(data)
   }
 
-  private async fetch(url: URL, headers: any): Promise<AxiosResponse> {
+  private async fetch(url: URL, headers: Record<string, string>): Promise<AxiosResponse> {
     return this.httpService.get(url.toString(), headers).toPromise()
   }
 }

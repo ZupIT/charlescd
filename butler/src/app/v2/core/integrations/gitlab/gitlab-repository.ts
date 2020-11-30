@@ -35,7 +35,7 @@ export class GitLabRepository implements Repository {
     return this.downloadResource(config.url, resourcePath, config.resourceName, headers, config.branch)
   }
 
-  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: any, branch?: string): Promise<Resource> {
+  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: Record<string, string>, branch?: string): Promise<Resource> {
     const urlResource = `${baseUrl}${resourcePath}&ref=${branch || GitLabRepository.DEFAULT_BRANCH}`
     const response = await this.fetch(urlResource, headers)
     
@@ -50,7 +50,7 @@ export class GitLabRepository implements Repository {
     }
 
     for (const item of response.data) {
-      if (item.type == 'tree') {
+      if (item.type === 'tree') {
         const nextResourcePath = `${resourcePath}/${item.name}`
         resource.children?.push(await this.downloadResource(baseUrl, nextResourcePath, item.name, headers))
       } else {
@@ -60,7 +60,7 @@ export class GitLabRepository implements Repository {
     return resource
   }
 
-  private async downloadFile(baseUrl: string, path: string, headers: any, branch?: string): Promise<Resource> {
+  private async downloadFile(baseUrl: string, path: string, headers: Record<string, string>, branch?: string): Promise<Resource> {
     const fileUrl = `${baseUrl}/files/${encodeURIComponent(path)}?ref=${branch || GitLabRepository.DEFAULT_BRANCH}`
     const fileContent = await this.fetch(fileUrl, headers)
     return {
@@ -70,11 +70,11 @@ export class GitLabRepository implements Repository {
     }
   }
 
-  private isResourceFile(data?: any): boolean {
+  private isResourceFile(data?: unknown[]): boolean {
     return !data?.length
   }
 
-  private async fetch(url: string, headers: any): Promise<AxiosResponse> {
+  private async fetch(url: string, headers: Record<string, string>): Promise<AxiosResponse> {
     return this.httpService.get(url, headers).toPromise()
   }
 }

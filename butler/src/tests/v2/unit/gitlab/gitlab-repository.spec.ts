@@ -34,7 +34,7 @@ describe('Download resources from gitlab', () => {
 
   const url = 'https://gitlab.com/api/v4/projects/22700476/repository'
 
-  it('Download helm chart recursively from gitlab', async () => {
+  it('Download helm chart recursively from gitlab', async() => {
     const repository = new GitLabRepository(httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
@@ -47,7 +47,7 @@ describe('Download resources from gitlab', () => {
     expect(template?.children).toHaveLength(2)
   })
 
-  it('Download a single file from giblab', async () => {
+  it('Download a single file from giblab', async() => {
     const repository = new GitLabRepository(httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
@@ -57,7 +57,7 @@ describe('Download resources from gitlab', () => {
     expect(resource.content).toBeTruthy()
   })
 
-  it('Download helm chart recursively from gitlab from feature branch', async () => {
+  it('Download helm chart recursively from gitlab from feature branch', async() => {
     const repository = new GitLabRepository(httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'feature' })
