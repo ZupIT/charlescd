@@ -36,15 +36,17 @@ export class K8sClient {
   public async createDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
-
+    this.consoleLoggerService.log('GET:CHARLES_DEPLOYMENT_MANIFEST', { deploymentManifest })
     try {
       this.consoleLoggerService.log('DO:READING_CRD_RESOURCE')
       await this.client.read(deploymentManifest)
       this.consoleLoggerService.log('DO:PATCHING_CRD_RESOURCE')
-      await this.client.patch(deploymentManifest)
+      const res = await this.client.patch(deploymentManifest)
+      console.log('GET:PATCH_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
     } catch(error) {
       this.consoleLoggerService.log('DO:CREATING_CRD_RESOURCE')
-      await this.client.create(deploymentManifest)
+      const res = await this.client.create(deploymentManifest)
+      console.log('GET:CREATE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
     }
   }
 

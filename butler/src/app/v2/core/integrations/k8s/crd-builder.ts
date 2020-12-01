@@ -25,7 +25,7 @@ export class CrdBuilder {
       apiVersion: 'zupit.com/v1',
       kind: 'CharlesDeployment',
       metadata: {
-        name: deployment.id
+        name: deployment.circleId
       },
       spec: {
         deploymentId: deployment.id,
