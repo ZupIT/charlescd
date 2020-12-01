@@ -26,7 +26,6 @@ import {
 import {
   findAllUsers,
   resetPasswordById,
-  updateProfileById,
   patchProfileById,
   findUserByEmail,
   createNewUser,
@@ -36,7 +35,7 @@ import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, Profile, NewUser, NewPassword } from './interfaces/User';
+import { User, NewUser, NewPassword } from './interfaces/User';
 import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
