@@ -71,7 +71,7 @@ const Modal = ({ cardId, users, members, onClose }: Props) => {
 
   const renderUser = (user: User) => (
     <Styled.User key={user.email}>
-      <AvatarName name={user.name} src={user.photoUrl} />
+      <AvatarName name={user.name} />
       <Styled.Description>
         <Text.h4 color="light">{user.name}</Text.h4>
         <Text.h5 color="dark">{user.email}</Text.h5>
