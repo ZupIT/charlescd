@@ -50,8 +50,12 @@ const InfiniteScroll = ({
   return (
     <Styled.List ref={scrollerRef}>
       {children}
-      {isLoading && loader}
-      <Styled.Loader ref={loaderRef} isVisible={showSentinelLoader} />
+      {isLoading && <div data-testid="user-loader">{loader}</div>}
+      <Styled.Loader
+        data-testid="sentinel-loader"
+        ref={loaderRef}
+        isVisible={showSentinelLoader}
+      />
     </Styled.List>
   );
 };
