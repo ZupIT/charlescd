@@ -19,10 +19,6 @@ import SearchInputComponent from 'core/components/Form/SearchInput';
 import Page from 'core/components/Page';
 import IconComponent from 'core/components/Icon';
 
-type ListProps = {
-  ref: React.RefObject<HTMLElement>;
-};
-
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -61,15 +57,6 @@ const Icon = styled(IconComponent)`
   cursor: pointer;
 `;
 
-const List = styled.div`
-  height: 100%;
-`;
-
-const ListItem = styled.li`
-  padding: 15px 0;
-  cursor: pointer;
-`;
-
 const Link = styled.a`
   text-decoration: none;
 `;
@@ -81,8 +68,6 @@ export default {
   Header,
   Icon,
   SearchInput,
-  List,
-  ListItem,
   Link,
   Wrapper
 };

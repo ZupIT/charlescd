@@ -175,25 +175,6 @@ export const useCirclesActive = () => {
   };
 };
 
-export const useCirclesData = () => {
-  const getCircles = useFetchData<Pagination<Circle>>(findAllCircles);
-
-  const filterCircles = useCallback(
-    ({ name, status, page }) => {
-      if (status === CIRCLE_STATUS.active) {
-        return getCircles({ name, page, active: true });
-      } else if (status === CIRCLE_STATUS.inactives) {
-        return getCircles({ name, page, active: false });
-      }
-    },
-    [getCircles]
-  );
-
-  return {
-    filterCircles
-  };
-};
-
 export const useCircles = (
   type: CIRCLE_TYPES
 ): [boolean, Function, Function, CirclePagination] => {
@@ -204,9 +185,9 @@ export const useCircles = (
   const filterCircles = useCallback(
     ({ name, status, page }) => {
       if (status === CIRCLE_STATUS.active) {
-        return getCircles({ name, page, active: true });
+        getCircles({ name, page, active: true });
       } else if (status === CIRCLE_STATUS.inactives) {
-        return getCircles({ name, page, active: false });
+        getCircles({ name, page, active: false });
       }
     },
     [getCircles]

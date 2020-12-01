@@ -58,13 +58,6 @@ export default function useInfiniteScroll<
       entries.forEach(
         ({ isIntersecting, intersectionRatio, boundingClientRect }) => {
           const { y } = boundingClientRect;
-          console.log({
-            isIntersecting,
-            intersectionRatio,
-            y,
-            previousY: previousY.current,
-            previousRatio: previousRatio.current
-          });
           if (
             isIntersecting &&
             intersectionRatio >= previousRatio.current &&

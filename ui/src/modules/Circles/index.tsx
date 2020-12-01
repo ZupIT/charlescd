@@ -29,7 +29,7 @@ import getQueryStrings from 'core/utils/query';
 import MenuItem from './Menu/MenuItem';
 import LoaderMenu from './Menu/Loaders';
 import InfiniteScroll from 'core/components/InfiniteScroll';
-import { resetListAction } from './state/actions';
+import { resetContentAction } from './state/actions';
 
 const CirclesList = lazy(() => import('modules/Circles/List'));
 const CirclesComparation = lazy(() => import('modules/Circles/Comparation'));
@@ -46,11 +46,13 @@ const Circles = () => {
   const circles = query.getAll('circle');
 
   useEffect(() => {
-    dispatch(resetListAction());
-
     const page = 0;
+    dispatch(resetContentAction());
     filterCircles({ name, status, page });
-    if (message === 'Deleted') filterCircles({ name, status, page });
+
+    if (message === 'Deleted') {
+      filterCircles({ name, status, page });
+    }
   }, [status, name, filterCircles, message, dispatch]);
 
   const loadMore = (page: number) => {

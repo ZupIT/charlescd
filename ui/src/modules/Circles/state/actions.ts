@@ -75,7 +75,7 @@ export const updateCirclesAction = (
   payload
 });
 
-export const resetListAction = (): ResetContentActionType => ({
+export const resetContentAction = (): ResetContentActionType => ({
   type: ACTION_TYPES.resetContent
 });
 
