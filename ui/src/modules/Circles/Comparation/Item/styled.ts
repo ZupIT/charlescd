@@ -180,6 +180,16 @@ const MetricsGroupsCard = styled.div`
   height: 40px;
 `;
 
+const WarningPercentageContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-top: 15px;
+
+  > span {
+    margin-left: 10px;
+  }
+`;
+
 export default {
   Link,
   Actions,
@@ -200,5 +210,6 @@ export default {
   MetricsGroupsCard,
   MetricsGroupsNameContent,
   MetricsGroupsCountContent,
-  MetricsGroupsThresholdsContent
+  MetricsGroupsThresholdsContent,
+  WarningPercentageContainer
 };

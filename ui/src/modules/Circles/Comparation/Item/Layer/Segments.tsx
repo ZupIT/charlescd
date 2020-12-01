@@ -25,6 +25,7 @@ import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPa
 import { SECTIONS } from '../enums';
 import CirclePercentageList from '../Percentage/CirclePercentageList';
 import AvailablePercentage from '../Percentage/AvailablePercentage';
+import Icon from 'core/components/Icon';
 
 interface Props {
   isEditing: boolean;
@@ -47,6 +48,14 @@ const renderPercentage = (
         responseGetCircles={percentageCircles}
         circle={circle}
       />
+      {!circle.deployment && (
+        <Styled.WarningPercentageContainer>
+          <Icon name="alert" />
+          <Text.h4 color="warning">
+            the percentage will be activated only when the circle is active.
+          </Text.h4>
+        </Styled.WarningPercentageContainer>
+      )}
       <CirclePercentageList responseGetCircles={percentageCircles} />
       <ButtonIconRounded
         name="add"
