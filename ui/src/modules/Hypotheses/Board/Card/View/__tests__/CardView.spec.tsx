@@ -16,7 +16,7 @@
 
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { act, render, screen } from 'unit-test/testUtils';
+import { act, render, screen, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import CardView from '..'
 import { Card } from 'modules/Hypotheses/Board/interfaces';
@@ -139,6 +139,11 @@ test('render CardView type.FEATURE and try to add a module', async () => {
 
   const InputBranchName = await screen.findByTestId('input-text-branchName');
   expect(InputBranchName).toBeInTheDocument();
+
+  userEvent.type(InputBranchName, 'branch-charlescd');
+  act(() => userEvent.click(SaveModulesButton));
+
+  waitFor(() => expect(props.onClose).toBeCalled());
 });
 
 test('render CardView type.ACTION and try to add a module', async () => {
