@@ -43,8 +43,7 @@ test('render account tab profile', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     id: '123',
     name: 'User',
-    email: 'user@zup.com.br',
-    photoUrl: ''
+    email: 'user@zup.com.br'
   }));
 
   render(<Router history={history}><Account /></Router>);
@@ -61,8 +60,7 @@ test('show change password modal', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     id: '123',
     name: 'User',
-    email: 'user@zup.com.br',
-    photoUrl: ''
+    email: 'user@zup.com.br'
   }));
 
   render(<Router history={history}><Account /></Router>);
