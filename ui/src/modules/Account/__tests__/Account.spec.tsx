@@ -22,8 +22,8 @@ import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
-import Account from '../';
 import { saveProfile } from 'core/utils/profile';
+import Account from '../';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -46,7 +46,7 @@ test('render account tab profile', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(profile));
+  (fetch as FetchMock).mockResponse(JSON.stringify(profile));
 
   render(<Router history={history}><Account /></Router>);
 
@@ -58,7 +58,7 @@ test('show change password modal', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(profile));
+  (fetch as FetchMock).mockResponse(JSON.stringify(profile));
 
   render(<Router history={history}><Account /></Router>);
 
