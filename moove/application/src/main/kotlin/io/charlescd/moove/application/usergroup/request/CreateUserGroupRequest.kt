@@ -35,7 +35,7 @@ data class CreateUserGroupRequest(
     fun toUserGroup(user: User): UserGroup {
         return UserGroup(
             id = UUID.randomUUID().toString(),
-            name = name,
+            name = name.trim(),
             author = user,
             users = emptyList(),
             createdAt = LocalDateTime.now()

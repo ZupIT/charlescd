@@ -44,7 +44,7 @@ class CreateCircleRequest(
 ) {
     fun toDomain(user: User, workspaceId: String) = Circle(
         id = UUID.randomUUID().toString(),
-        name = name,
+        name = name.trim(),
         createdAt = LocalDateTime.now(),
         reference = UUID.randomUUID().toString(),
         author = user,

@@ -34,7 +34,7 @@ data class CreateWorkspaceRequest(
 ) {
     fun toWorkspace(id: String, author: User) = Workspace(
         id = id,
-        name = name,
+        name = name.trim(),
         author = author,
         createdAt = LocalDateTime.now()
     )

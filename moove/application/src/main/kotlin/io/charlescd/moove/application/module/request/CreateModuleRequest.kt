@@ -24,10 +24,7 @@ import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Size
+import javax.validation.constraints.*
 
 data class CreateModuleRequest(
     @field:NotBlank
@@ -36,6 +33,7 @@ data class CreateModuleRequest(
 
     @field:NotBlank
     @field:Size(max = 2048)
+    @field:Pattern(regexp = "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:\\/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$")
     val gitRepositoryAddress: String,
 
     @field:NotBlank
@@ -52,10 +50,10 @@ data class CreateModuleRequest(
 ) {
     fun toDomain(moduleId: String, workspaceId: String, author: User) = Module(
         id = moduleId,
-        name = this.name,
+        name = this.name.trim(),
         gitRepositoryAddress = this.gitRepositoryAddress,
         createdAt = LocalDateTime.now(),
-        helmRepository = this.helmRepository,
+        helmRepository = this.helmRepository.trim(),
         author = author,
         components = this.components.map { it.toDomain(moduleId, workspaceId) },
         workspaceId = workspaceId
@@ -71,6 +69,7 @@ data class ComponentRequest(
     val errorThreshold: Int,
 
     @field:NotNull
+    @field:Min(value = 0)
     val latencyThreshold: Int,
 
     @field:Size(max = 2048)
@@ -81,13 +80,13 @@ data class ComponentRequest(
 ) {
     fun toDomain(moduleId: String, workspaceId: String) = Component(
         id = UUID.randomUUID().toString(),
-        name = this.name,
+        name = this.name.trim(),
         moduleId = moduleId,
         createdAt = LocalDateTime.now(),
         workspaceId = workspaceId,
         errorThreshold = this.errorThreshold,
         latencyThreshold = this.latencyThreshold,
-        hostValue = this.hostValue,
-        gatewayName = this.gatewayName
+        hostValue = this.hostValue?.trim(),
+        gatewayName = this.gatewayName?.trim()
     )
 }
