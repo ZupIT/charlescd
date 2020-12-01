@@ -35,6 +35,10 @@ test('render Card Board type ACTION', async () => {
   act(() => userEvent.click(Card));
   expect(props.onClick).toBeCalled();
 
+  const DropdownTrigger = await screen.findByTestId('icon-vertical-dots');
+  expect(DropdownTrigger).toBeInTheDocument();
+  act(() => userEvent.click(DropdownTrigger));
+
   const DropdownActions = await screen.findByTestId('dropdown-actions');
   expect(DropdownActions).toBeInTheDocument();
 });
@@ -47,6 +51,10 @@ test('render Card Board type FEATURE', async () => {
 
   act(() => userEvent.click(Card));
   expect(props.onClick).toBeCalled();
+
+  const DropdownTrigger = await screen.findByTestId('icon-vertical-dots');
+  expect(DropdownTrigger).toBeInTheDocument();
+  act(() => userEvent.click(DropdownTrigger));
 
   const DropdownActions = await screen.findByTestId('dropdown-actions');
   expect(DropdownActions).toBeInTheDocument();
