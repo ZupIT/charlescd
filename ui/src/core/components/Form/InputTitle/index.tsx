@@ -70,7 +70,7 @@ const InputTitle = React.forwardRef(
         />
         {!isResumed && !readOnly && (
           <Button.Default
-            id="save"
+            id="submit"
             type="submit"
             size="EXTRA_SMALL"
             onClick={onButtonClick}

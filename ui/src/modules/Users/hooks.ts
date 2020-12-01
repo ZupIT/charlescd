@@ -20,12 +20,14 @@ import {
   useFetchData,
   useFetchStatus,
   FetchStatus,
-  ResponseError
+  ResponseError,
+  FetchStatuses
 } from 'core/providers/base/hooks';
 import {
   findAllUsers,
   resetPasswordById,
   updateProfileById,
+  patchProfileById,
   findUserByEmail,
   createNewUser,
   deleteUserById
@@ -155,39 +157,40 @@ export const useDeleteUser = (): [Function, string] => {
   return [delUser, userStatus];
 };
 
-export const useUpdateProfile = (): {
-  updateProfile: (id: string, profile: Profile) => void;
-  response: User;
-  status: FetchStatus;
+export const useUpdateName = (): {
+  status: string;
+  user: User;
+  updateNameById: (id: string, name: string) => void;
 } => {
   const dispatch = useDispatch();
-  const status = useFetchStatus();
-  const [response, setResponse] = useState<User>();
-  const update = useFetchData<User>(updateProfileById);
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const [user, setNewUser] = useState<User>();
+  const patch = useFetchData<User>(patchProfileById);
 
-  const updateProfile = async (id: string, profile: Profile) => {
-    try {
-      status.pending();
-      const data = await update(id, profile);
-      setResponse(data);
-      status.resolved();
+  const updateNameById = useCallback(
+    async (id: string, name: string) => {
+      try {
+        setStatus('pending');
+        const res = await patch(id, name);
+        setNewUser(res);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
 
-      return data;
-    } catch (e) {
-      const error = await e.json();
+        const error = await e?.json();
 
-      dispatch(
-        toogleNotification({
-          text: error?.message,
-          status: 'error'
-        })
-      );
+        dispatch(
+          toogleNotification({
+            text: error?.message,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [patch, dispatch]
+  );
 
-      status.rejected();
-    }
-  };
-
-  return { updateProfile, response, status };
+  return { status, user, updateNameById };
 };
 
 export const useResetPassword = (): {

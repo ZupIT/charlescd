@@ -20,6 +20,7 @@ import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.user.*
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.request.CreateUserRequest
+import io.charlescd.moove.application.user.request.PatchUserRequest
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
@@ -36,7 +37,8 @@ class V2UserController(
     private val findAllUsersInteractor: FindAllUsersInteractor,
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
-    private val changeUserPasswordInteractor: ChangeUserPasswordInteractor
+    private val changeUserPasswordInteractor: ChangeUserPasswordInteractor,
+    private val patchUserInteractor: PatchUserInteractor
 ) {
 
     @ApiOperation(value = "Find user by email")
@@ -75,6 +77,23 @@ class V2UserController(
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@Valid @RequestBody createUserRequest: CreateUserRequest, @RequestHeader(value = "Authorization") authorization: String): UserResponse {
         return this.createUserInteractor.execute(createUserRequest, authorization)
+    }
+
+    @ApiOperation(value = "Update user")
+    @ApiImplicitParam(
+        name = "patchUserRequest",
+        value = "Patch User",
+        required = true,
+        dataType = "PatchUserRequest"
+    )
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun patchUser(
+        @PathVariable id: UUID,
+        @Valid @RequestBody patchUserRequest: PatchUserRequest,
+        @RequestHeader(value = "Authorization") authorization: String
+    ): UserResponse {
+        return this.patchUserInteractor.execute(id, patchUserRequest, authorization)
     }
 
     @ApiOperation(value = "Change users' password")

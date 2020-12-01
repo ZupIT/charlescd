@@ -17,8 +17,8 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useCreateUser, useUpdateProfile } from '../hooks';
-import { NewUser } from '../interfaces/User';
+import { useCreateUser, useUpdateName } from '../hooks';
+import { NewUser, User } from '../interfaces/User';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -34,12 +34,13 @@ const payload = {
   email: 'charlescd@zup.com.br'
 };
 
-test('create a new user', async () => {
-  const newUser = {
-    ...payload,
-    id: '123',
-  };
+const newUser = {
+  ...payload,
+  id: '123',
+};
 
+
+test('create a new user', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(newUser));
 
   const { result } = renderHook(() => useCreateUser());
@@ -72,31 +73,22 @@ test('error create a new user', async () => {
   await waitFor(() => expect(response).toBeUndefined());
 });
 
-test('update a user', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(payload));
 
-  const { result } = renderHook(() => useUpdateProfile());
+test('useUpdateName hook trigger promise success', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(newUser));
+  const { result } = renderHook(() => useUpdateName());
 
-  await act(async () => {
-    result.current.updateProfile(payload.id, payload);
-  });
+  await act(async () => result.current.updateNameById(newUser.id, newUser.name));
 
-  expect(result.current.response).toMatchObject(payload);
+  expect(result.current.status).toEqual('resolved');
 });
 
-test('error to update a user', async () => {
-  const error = {
-    name: 'name',
-    message: 'The user charlescd@zup.com.br did not update.'
-  };
+test('useUpdateName hook trigger promise error', async () => {
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
 
-  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify(error)));
+  const { result } = renderHook(() => useUpdateName());
 
-  const { result } = renderHook(() => useUpdateProfile());
+  await act(async () => result.current.updateNameById(newUser.id, newUser.name));
 
-  await act(async () => {
-    result.current.updateProfile(payload.id, payload);
-  });
-
-  expect(result.current.response).toBeUndefined();
+  expect(result.current.status).toEqual('rejected');
 });
