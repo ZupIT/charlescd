@@ -23,7 +23,7 @@ import * as yaml from 'js-yaml'
 
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
 import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
-import { Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
+import { RequestConfig, Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
 import { ConsoleLoggerService } from '../../../../../app/v1/core/logs/console'
 import { KubernetesManifest } from '../../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 import { RepositoryStrategyFactory } from '../../../../../app/v2/core/integrations/repository-strategy-factory'
@@ -45,13 +45,7 @@ describe('Generate K8s manifest by helm', () => {
     circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a'
   }
 
-  const gitHubRepository = new GitHubRepository(new ConsoleLoggerService(), new HttpService())
-  jest.spyOn(gitHubRepository, 'getResource').mockImplementation(async config => await readFiles(basePath, config.resourceName))
-
-  const gitLabRepository = new GitLabRepository(new ConsoleLoggerService(), new HttpService())
-  jest.spyOn(gitLabRepository, 'getResource').mockImplementation(async config => await readFiles(basePath, config.resourceName))
-
-  const repositoryStrategyFactory = new RepositoryStrategyFactory(gitHubRepository, gitLabRepository, new ConsoleLoggerService())
+  const repositoryStrategyFactory = mockStratetyFactory(async config => await readFiles(basePath, config.resourceName))
 
   it('should generate manifest with default values', async() => {
     const manifestConfig = {
@@ -82,13 +76,7 @@ describe('Generate K8s manifest by helm', () => {
   })
 
   it('should fail manifest generation when fails fetching files from repository', async() => {
-    const gitHubRepository = new GitHubRepository(new ConsoleLoggerService(), new HttpService())
-    jest.spyOn(gitHubRepository, 'getResource').mockImplementation(() => { throw new Error('error') })
-
-    const gitLabRepository = new GitLabRepository(new ConsoleLoggerService(), new HttpService())
-    jest.spyOn(gitLabRepository, 'getResource').mockImplementation(() => { throw new Error('error') })
-
-    const repositoryStrategyFactory = new RepositoryStrategyFactory(gitHubRepository, gitLabRepository, new ConsoleLoggerService())
+    const repositoryStrategyFactory = mockStratetyFactory(() => { throw new Error('error') })
 
     const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
     const manifest = helm.generate(manifestConfig)
@@ -96,6 +84,16 @@ describe('Generate K8s manifest by helm', () => {
     expect(manifest).rejects.toThrowError()
   })
 })
+
+function mockStratetyFactory(fn: (config: RequestConfig) => Promise<Resource>): RepositoryStrategyFactory {
+  const gitHubRepository = new GitHubRepository(new ConsoleLoggerService(), new HttpService())
+  jest.spyOn(gitHubRepository, 'getResource').mockImplementation(fn)
+
+  const gitLabRepository = new GitLabRepository(new ConsoleLoggerService(), new HttpService())
+  jest.spyOn(gitLabRepository, 'getResource').mockImplementation(fn)
+
+  return new RepositoryStrategyFactory(gitHubRepository, gitLabRepository, new ConsoleLoggerService())
+}
 
 async function readFiles(dir: string, name: string): Promise<Resource> {
   const resources: Resource = {
