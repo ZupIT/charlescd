@@ -23,6 +23,7 @@ import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.HarborDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -90,6 +91,14 @@ public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDocker
                                 dockerHubRegistryAuth.getOrganization(),
                                 dockerHubRegistryAuth.getUsername(),
                                 dockerHubRegistryAuth.getPassword());
+                break;
+            case HARBOR:
+                var harborRegistryAuth = ((HarborDockerRegistryAuth) input.getAuth());
+                connectionData =
+                        new DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData(
+                                input.getAddress(),
+                                harborRegistryAuth.getUsername(),
+                                harborRegistryAuth.getPassword());
                 break;
             default:
                 throw new IllegalStateException("Registry type not supported!");
