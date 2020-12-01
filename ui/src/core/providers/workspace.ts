@@ -40,7 +40,7 @@ const initialFilter = {
 };
 
 export const findAll = (filter: Filter = initialFilter) => {
-  const sizeFixed = 200;
+  const sizeFixed = 50;
   const params = new URLSearchParams({
     size: `${sizeFixed}`,
     name: filter?.name

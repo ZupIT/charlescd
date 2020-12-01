@@ -34,7 +34,7 @@ export interface ModuleSave {
 const endpoint = '/moove/v2/modules';
 
 export const findAll = (name: string) => {
-  const page = 'page=0&size=200';
+  const page = 'page=0&size=50';
   const qs = name ? `${page}&name=${name}` : page;
   return baseRequest(`${endpoint}?${qs}`);
 };

@@ -21,7 +21,8 @@ export enum ACTION_TYPES {
   loadedCircles = 'CIRCLES/LOADED_CIRCLES',
   loadedCircle = 'CIRLCES/LOADED_CIRCLE',
   loadedCirclesMetrics = 'CIRCLE/LOADED_CIRCLES_METRICS',
-  updateCircles = 'CIRCLES/UPDATE'
+  updateCircles = 'CIRCLES/UPDATE',
+  resetContent = 'CIRCLES/RESET_CONTENT'
 }
 
 interface LoadedCirclesActionType {
@@ -42,6 +43,10 @@ interface LoadedCirclesMetricsActionType {
 interface UpdateCirclesActionType {
   type: typeof ACTION_TYPES.updateCircles;
   payload: Circle[];
+}
+
+interface ResetContentActionType {
+  type: typeof ACTION_TYPES.resetContent;
 }
 
 export const loadedCirclesAction = (
@@ -70,8 +75,13 @@ export const updateCirclesAction = (
   payload
 });
 
+export const resetListAction = (): ResetContentActionType => ({
+  type: ACTION_TYPES.resetContent
+});
+
 export type CirclesActionTypes =
   | LoadedCirclesActionType
   | LoadedCircleActionType
   | LoadedCirclesMetricsActionType
-  | UpdateCirclesActionType;
+  | UpdateCirclesActionType
+  | ResetContentActionType;

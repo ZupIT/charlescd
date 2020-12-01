@@ -27,19 +27,22 @@ export interface CircleFilter {
   id?: string;
   name?: string;
   active?: boolean;
+  page?: number;
 }
 
 const initialCircleFilter = {
   name: '',
-  active: true
+  active: true,
+  page: 0
 };
 
 export const findAllCircles = (filter: CircleFilter = initialCircleFilter) => {
-  const sizeFixed = 200;
+  const defaultPageSize = 50;
   const params = new URLSearchParams({
     active: `${filter?.active}`,
-    size: `${sizeFixed}`,
-    name: filter?.name
+    size: `${defaultPageSize}`,
+    name: filter?.name,
+    page: `${filter.page ?? 0}`
   });
 
   return baseRequest(`${endpoint}?${params}`);
@@ -93,7 +96,7 @@ export const updateCircleWithFile = (
 export const findAllCirclesWithoutActive = (
   filter: CircleFilter = initialCircleFilter
 ) => {
-  const sizeFixed = 200;
+  const sizeFixed = 50;
   const params = new URLSearchParams({
     size: `${sizeFixed}`,
     name: filter?.name

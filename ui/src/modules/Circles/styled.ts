@@ -19,6 +19,10 @@ import SearchInputComponent from 'core/components/Form/SearchInput';
 import Page from 'core/components/Page';
 import IconComponent from 'core/components/Icon';
 
+type ListProps = {
+  ref: React.RefObject<HTMLElement>;
+};
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -57,10 +61,8 @@ const Icon = styled(IconComponent)`
   cursor: pointer;
 `;
 
-const List = styled.ul`
-  padding: 0;
-  margin: 0;
-  list-style-type: none;
+const List = styled.div`
+  height: 100%;
 `;
 
 const ListItem = styled.li`

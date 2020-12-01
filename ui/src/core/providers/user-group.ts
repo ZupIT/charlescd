@@ -38,7 +38,7 @@ const initialGroupUserFilter = {
 export const findAllUserGroup = (
   filter: UserGroupFilter = initialGroupUserFilter
 ) => {
-  const sizeFixed = 200;
+  const sizeFixed = 50;
   const params = new URLSearchParams({
     size: `${sizeFixed}`,
     name: filter?.name

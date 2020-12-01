@@ -165,13 +165,32 @@ export const useDeleteCircle = (): [Function, string] => {
   return [delCircle, circleStatus];
 };
 
-export const useCirclesData = () => {
+export const useCirclesActive = () => {
   const getCirclesData = useFetchData<Pagination<Circle>>(
     findAllCirclesWithoutActive
   );
 
   return {
     getCirclesData
+  };
+};
+
+export const useCirclesData = () => {
+  const getCircles = useFetchData<Pagination<Circle>>(findAllCircles);
+
+  const filterCircles = useCallback(
+    ({ name, status, page }) => {
+      if (status === CIRCLE_STATUS.active) {
+        return getCircles({ name, page, active: true });
+      } else if (status === CIRCLE_STATUS.inactives) {
+        return getCircles({ name, page, active: false });
+      }
+    },
+    [getCircles]
+  );
+
+  return {
+    filterCircles
   };
 };
 
@@ -183,17 +202,19 @@ export const useCircles = (
   const { response, error, loading } = circlesData;
 
   const filterCircles = useCallback(
-    (name: string, status: string) => {
+    ({ name, status, page }) => {
       if (status === CIRCLE_STATUS.active) {
-        getCircles({ name, active: true });
+        return getCircles({ name, page, active: true });
       } else if (status === CIRCLE_STATUS.inactives) {
-        getCircles({ name, active: false });
+        return getCircles({ name, page, active: false });
       }
     },
     [getCircles]
   );
 
   useEffect(() => {
+    if (!response) return;
+
     if (!error && type === CIRCLE_TYPES.list) {
       dispatch(loadedCirclesAction(response));
     } else if (!error && type === CIRCLE_TYPES.metrics) {
