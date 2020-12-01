@@ -39,17 +39,15 @@ const MenuItem = ({ id, name }: Props) => {
       : addParam('circle', routes.circlesComparation, history, id);
 
   return (
-    <div>
-      <Styled.Link
-        onClick={toggleCircle}
-        isActive={isActive()}
-        data-testid={`menu-item-circle-${id}`}
-      >
-        <Styled.ListItem icon="circle-menu" isActive={isActive()}>
-          <Text.h4 color="light">{name}</Text.h4>
-        </Styled.ListItem>
-      </Styled.Link>
-    </div>
+    <Styled.Link
+      onClick={toggleCircle}
+      isActive={isActive()}
+      data-testid={`menu-item-circle-${id}`}
+    >
+      <Styled.ListItem icon="circle-menu" isActive={isActive()}>
+        <Text.h4 color="light">{name}</Text.h4>
+      </Styled.ListItem>
+    </Styled.Link>
   );
 };
 

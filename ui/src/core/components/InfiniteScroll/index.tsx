@@ -15,12 +15,12 @@
  */
 
 import useInfiniteScroll from 'core/hooks/useInfiniteScroll';
-import React, { useEffect } from 'react';
+import React, { useEffect, ReactNode, Children } from 'react';
 import Styled from './styled';
 
 type Props = {
-  children: React.ReactNode;
-  loader: React.ReactNode;
+  children: ReactNode;
+  loader: ReactNode;
   hasMore: boolean;
   isLoading: boolean;
   loadMore: (page: number) => void;
@@ -33,7 +33,7 @@ const InfiniteScroll = ({
   hasMore,
   loadMore
 }: Props) => {
-  const childrenLength = React.Children.count(children);
+  const childrenLength = Children.count(children);
   const showSentinelLoader = !isLoading && childrenLength && hasMore;
 
   const [loaderRef, scrollerRef, resetPage] = useInfiniteScroll<

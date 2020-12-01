@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+import { RefObject } from 'react';
 import styled from 'styled-components';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import Page from 'core/components/Page';
 import IconComponent from 'core/components/Icon';
 
 type ListProps = {
-  ref: React.RefObject<HTMLElement>;
+  ref: RefObject<HTMLElement>;
 };
 
 const Wrapper = styled.div`

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -32,7 +32,7 @@ interface Props {
   status: string;
   onSearch: (name: string) => void;
   onSelect: (selected: string) => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const CirclesFilter = ({ status, onSearch, onSelect, children }: Props) => {

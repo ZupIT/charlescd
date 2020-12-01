@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useRef, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect, RefObject } from 'react';
 
 type InfiniteScrollArgs = {
   hasMore: boolean;
@@ -29,8 +29,8 @@ export default function useInfiniteScroll<
   hasMore,
   loadMore
 }: InfiniteScrollArgs): [
-  React.RefObject<LoaderElementType>,
-  React.RefObject<ScrollElementType>,
+  RefObject<LoaderElementType>,
+  RefObject<ScrollElementType>,
   () => void
 ] {
   const page = useRef(0);

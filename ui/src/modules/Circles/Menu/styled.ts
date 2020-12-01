@@ -55,6 +55,7 @@ interface LinkProps {
 }
 
 const Link = styled('button')<LinkProps>`
+  display: block;
   padding: 0 16px;
   background: none;
   border: none;
