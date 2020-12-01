@@ -33,19 +33,32 @@ export class K8sClient {
     this.client = k8s.KubernetesObjectApi.makeApiClient(kc)
   }
 
-  public async createDeploymentCustomResource(deployment: Deployment) { // TODO return type?
+  public async createDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
 
     try {
+      this.consoleLoggerService.log('DO:READING_CRD_RESOURCE')
       await this.client.read(deploymentManifest)
+      this.consoleLoggerService.log('DO:PATCHING_CRD_RESOURCE')
       await this.client.patch(deploymentManifest)
     } catch(error) {
+      this.consoleLoggerService.log('DO:CREATING_CRD_RESOURCE')
       await this.client.create(deploymentManifest)
     }
   }
 
-  public async createUndeploymentCustomResource(deployment: Deployment) { // TODO what should we do here? Delete the CRD?
+  public async createUndeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO delete CRD?
+    this.consoleLoggerService.log('START:UNDEPLOY_CUSTOM_RESOURCE', { deploymentId: deployment.id })
+    const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
 
+    try {
+      this.consoleLoggerService.log('DO:READING_CRD_RESOURCE')
+      await this.client.read(deploymentManifest)
+      this.consoleLoggerService.log('DO:DELETING_CRD_RESOURCE')
+      await this.client.delete(deploymentManifest)
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { deploymentManifest })
+    }
   }
 }

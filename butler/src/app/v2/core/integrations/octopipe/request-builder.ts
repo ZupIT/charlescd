@@ -21,7 +21,6 @@ import { ConnectorConfiguration } from '../interfaces/connector-configuration.in
 import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { UrlUtils } from '../../utils/url.utils'
 import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
 import { DeploymentUtils } from '../utils/deployment.utils'
 import {
   ClusterProviderEnum,
@@ -150,7 +149,7 @@ export class OctopipeRequestBuilder {
     return {
       overrideValues: {
         'image.tag': component.imageUrl,
-        deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
+        deploymentName: DeploymentUtils.getDeploymentName(component, circleId),
         component: component.name,
         tag: component.imageTag,
         circleId: circleId

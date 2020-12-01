@@ -28,6 +28,7 @@ import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
+import { K8sClient } from '../../../core/integrations/k8s/client'
 
 @Injectable()
 export class CreateDeploymentUseCase {
@@ -40,7 +41,8 @@ export class CreateDeploymentUseCase {
     @InjectRepository(ComponentsRepositoryV2)
     private componentsRepository: ComponentsRepositoryV2,
     private pgBoss: PgBossWorker,
-    private readonly consoleLoggerService: ConsoleLoggerService
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly k8sClient: K8sClient
   ) {}
 
   public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<ReadDeploymentDto> {
@@ -52,8 +54,8 @@ export class CreateDeploymentUseCase {
       const execution = await this.createExecution(deployment, incomingCircleId, transactionManager)
       return { deployment, execution }
     })
-    const jobId = await this.publishExecutionJob(execution)
-    this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: deployment.id, execution: execution.id, jobId: jobId })
+    await this.k8sClient.createDeploymentCustomResource(deployment)
+    this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: deployment.id, execution: execution.id })
     const reloadedDeployment = await this.deploymentsRepository.findOneOrFail(deployment.id, { relations: ['components', 'executions', 'cdConfiguration'] })
     return reloadedDeployment.toReadDto() // BUG typeorm https://github.com/typeorm/typeorm/issues/4090
   }

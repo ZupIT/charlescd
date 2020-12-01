@@ -15,18 +15,39 @@
  */
 
 import { Component, Deployment } from '../../../api/deployments/interfaces'
+import { CharlesDeployment, CharlesDeploymentComponent } from './interfaces/charles-deployment.interface'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 export class CrdBuilder {
 
-  public static buildDeploymentCrdManifest(deployment: Deployment): Object { // TODO use K8sObject
+  public static buildDeploymentCrdManifest(deployment: Deployment): CharlesDeployment {
     return {
-
+      apiVersion: 'zupit.com/v1',
+      kind: 'CharlesDeployment',
+      metadata: {
+        name: deployment.id
+      },
+      spec: {
+        deploymentId: deployment.id,
+        circleId: deployment.circleId,
+        components: deployment.components ?
+          CrdBuilder.getDeploymentCrdComponents(deployment.components) :
+          []
+      }
     }
   }
 
-  public static buildRoutingCrdManifest(deployment: Deployment, activeComponents: Component[]): Object { // TODO use K8sObject
+  public static buildRoutingCrdManifest(deployment: Deployment, activeComponents: Component[]): CharlesDeployment { // TODO finish this
     return {
 
-    }
+    } as CharlesDeployment
+  }
+
+  private static getDeploymentCrdComponents(components: DeploymentComponent[]): CharlesDeploymentComponent[] {
+    return components.map(component => ({
+      name: component.name,
+      chart: component.helmUrl,
+      tag: component.imageTag
+    }))
   }
 }

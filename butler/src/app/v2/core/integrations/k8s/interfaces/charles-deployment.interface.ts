@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-import { DeploymentComponent } from '../../../../api/deployments/interfaces/deployment.interface'
+import * as k8s from '@kubernetes/client-node'
 
-const CommonTemplateUtils = {
-  getDeploymentName: (component: DeploymentComponent, circleId: string): string => {
-    return `${component.name}-${component.imageTag}-${circleId}`
-  }
+export interface CharlesDeployment extends k8s.KubernetesObject { // TODO extend KubernetesObject interface
+
+  spec: CharlesDeploymentSpec
 }
 
-export { CommonTemplateUtils }
+export interface CharlesDeploymentSpec {
+
+  deploymentId: string | undefined
+
+  circleId: string
+
+  components: CharlesDeploymentComponent[]
+}
+
+export interface CharlesDeploymentComponent {
+
+  name: string
+
+  chart: string
+
+  tag: string
+}
