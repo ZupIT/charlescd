@@ -18,6 +18,8 @@ package io.charlescd.villager.interactor.registry.impl;
 
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
+import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.HarborDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import io.charlescd.villager.service.RegistryService;
 import javax.enterprise.context.ApplicationScoped;
@@ -42,6 +44,4 @@ public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDocker
         repository.save(entity);
         return entity.id;
     }
-
-
 }

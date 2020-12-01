@@ -23,6 +23,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import java.lang.IllegalArgumentException
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.LinkedHashMap
@@ -51,6 +52,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun handleIllegalArgument(ex: Exception): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)

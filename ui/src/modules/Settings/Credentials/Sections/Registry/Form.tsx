@@ -18,18 +18,19 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
-import RadioGroup from 'core/components/RadioGroup';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
 import { useRegistry, useRegistryTest } from './hooks';
-import { radios } from './constants';
+import { options } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
+import CustomOption from 'core/components/Form/Select/CustomOption';
+import { Option } from 'core/components/Form/Select/interfaces';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
@@ -67,10 +68,10 @@ const FormRegistry = ({ onFinish }: Props) => {
     }
   }, [error]);
 
-  const onChange = (value: string) => {
+  const onChange = (option: Option) => {
     reset();
     setMessage(null);
-    setRegistryType(value);
+    setRegistryType(option.value);
   };
 
   const onClick = () => {
@@ -123,19 +124,6 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
-  const renderAzureFields = () => {
-    return (
-      <>
-        <Form.Input ref={register} name="username" label="Enter the username" />
-        <Form.Password
-          ref={register({ required: true })}
-          name="password"
-          label="Enter the password"
-        />
-      </>
-    );
-  };
-
   const renderGCPFields = () => {
     return (
       <>
@@ -169,7 +157,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
-  const renderDockerHubFields = () => {
+  const renderLoginFields = () => {
     return (
       <>
         <Form.Input
@@ -194,12 +182,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     if (registryType === 'GCP') {
       return renderGCPFields();
     }
-
-    if (registryType === 'DOCKER_HUB') {
-      return renderDockerHubFields();
-    }
-
-    return renderAzureFields();
+    return renderLoginFields();
   };
 
   const renderForm = () => (
@@ -243,13 +226,11 @@ const FormRegistry = ({ onFinish }: Props) => {
           description="Adding your Docker Registry allows Charles to watch for new images being generated and list all the images saved in your registry in order to deploy them. Consult our documentation for further details. "
         />
       </Styled.Title>
-      <Styled.Subtitle color="dark">
-        Choose which one you want to add:
-      </Styled.Subtitle>
-      <RadioGroup
-        name="registry"
-        items={radios}
-        onChange={({ currentTarget }) => onChange(currentTarget.value)}
+      <Styled.Select
+        placeholder="Choose witch one you want to add:"
+        customOption={CustomOption.Icon}
+        options={options}
+        onChange={option => onChange(option as Option)}
       />
       {registryType && renderForm()}
     </Styled.Content>

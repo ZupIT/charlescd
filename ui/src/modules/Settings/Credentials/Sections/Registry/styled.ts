@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import TextComponent from 'core/components/Text';
 import { dark as darkTheme } from 'core/assets/themes/registry';
+import SelectSingle from 'core/components/Form/Select/Single/Select';
 
 const Title = styled(TextComponent.h2)`
   display: flex;
@@ -68,6 +69,11 @@ const Message = styled.div<status>`
   svg {
     color: ${({ status }) => darkTheme.message[status]};
   }
+}
+`;
+
+const Select = styled(SelectSingle)`
+  width: 271px;
 `;
 
 export default {
@@ -76,5 +82,6 @@ export default {
   Subtitle,
   Form,
   Fields,
-  Message
+  Message,
+  Select
 };

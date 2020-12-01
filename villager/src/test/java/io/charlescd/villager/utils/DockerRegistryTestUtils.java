@@ -95,6 +95,12 @@ public class DockerRegistryTestUtils {
                                 STRING_DEFAULT_VALUE,
                                 STRING_DEFAULT_VALUE);
                 break;
+            case HARBOR:
+                registryAuth =
+                        new HarborDockerRegistryAuth(
+                                STRING_DEFAULT_VALUE,
+                                STRING_DEFAULT_VALUE);
+                break;
             case UNSUPPORTED:
                 registryAuth = null;
                 break;
@@ -140,6 +146,13 @@ public class DockerRegistryTestUtils {
                         new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(
                                 ADDRESS,
                                 STRING_DEFAULT_VALUE,
+                                STRING_DEFAULT_VALUE,
+                                STRING_DEFAULT_VALUE);
+                break;
+            case HARBOR:
+                connectionData =
+                        new DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData(
+                                ADDRESS,
                                 STRING_DEFAULT_VALUE,
                                 STRING_DEFAULT_VALUE);
                 break;

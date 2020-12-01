@@ -1029,7 +1029,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.4.1
+          image: zupcharles/charlescd-butler:0.4.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1111,7 +1111,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.4.1
+          image: zupcharles/charlescd-circle-matcher:0.4.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1185,7 +1185,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.4.1
+          image: zupcharles/charlescd-compass:0.4.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1272,7 +1272,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.4.1
+          image: zupcharles/charlescd-moove:0.4.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1355,7 +1355,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.4.1
+          image: zupcharles/charlescd-ui:0.4.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1433,7 +1433,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.4.1
+          image: zupcharles/charlescd-villager:0.4.3
           livenessProbe:
             failureThreshold: 3
             httpGet:

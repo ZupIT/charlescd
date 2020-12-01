@@ -22,6 +22,7 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.*;
 import io.charlescd.villager.interactor.registry.impl.SaveDockerRegistryConfigurationInteractorImpl;
 import io.charlescd.villager.service.RegistryService;
 import io.charlescd.villager.utils.DockerRegistryTestUtils;
@@ -99,6 +100,51 @@ public class SaveDockerRegistryConfigurationInteractorTest {
                 is("charles_cd"));
         assertThat(
                 ((DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) entityCaptured.connectionData).password,
+                is("charles_cd"));
+    }
+
+    @Test
+    public void testSaveHarborWithSuccess() {
+
+        // Mock
+        var id = UUID.randomUUID().toString();
+        var createdAt = LocalDateTime.now();
+
+        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(RegistryType.HARBOR);
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.HARBOR);
+
+        Mockito.when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+
+        doAnswer(invocation -> {
+            var arg0 = (DockerRegistryConfigurationEntity) invocation.getArgument(0);
+            arg0.id = id;
+            arg0.createdAt = createdAt;
+            return null;
+        }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
+
+        // Call
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository, registryService);
+
+        interactor.execute(input);
+
+        // Check
+        verify(dockerRegistryConfigurationRepository).save(captor.capture());
+
+        var entityCaptured = captor.getValue();
+
+        assertThat(entityCaptured.id, is(id));
+        assertThat(entityCaptured.name, is("Testing"));
+        assertThat(entityCaptured.type, is(RegistryType.HARBOR));
+        assertThat(entityCaptured.authorId, is("1a3d413d-2255-4a1b-94ba-82e7366e4342"));
+        assertThat(entityCaptured.workspaceId, is("1a3d413d-2255-4a1b-94ba-82e7366e4342"));
+        assertThat(entityCaptured.createdAt, is(createdAt));
+        assertThat(entityCaptured.connectionData.address, is("https://registry.io.com"));
+        assertThat(entityCaptured.connectionData.host, is("registry.io.com"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData) entityCaptured.connectionData).username,
+                is("charles_cd"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData) entityCaptured.connectionData).password,
                 is("charles_cd"));
 
     }

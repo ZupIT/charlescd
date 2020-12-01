@@ -28,6 +28,7 @@ import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.HarborDockerRegistryAuth;
 import io.charlescd.villager.service.RegistryService;
 import java.util.Objects;
 import java.util.Optional;
@@ -142,6 +143,14 @@ public class RegistryServiceImpl implements RegistryService {
                                 dockerHubRegistryAuth.getUsername(),
                                 dockerHubRegistryAuth.getPassword());
                 break;
+            case HARBOR:
+                var harborRegistryAuth = ((HarborDockerRegistryAuth) input.getAuth());
+                connectionData =
+                        new DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData(
+                                input.getAddress(),
+                                harborRegistryAuth.getUsername(),
+                                harborRegistryAuth.getPassword());
+                break;
             default:
                 throw new IllegalStateException("Registry type not supported!");
         }
@@ -166,6 +175,10 @@ public class RegistryServiceImpl implements RegistryService {
                 throw new IllegalStateException("Registry type not implemented yet!");
                 //break;
             case DOCKER_HUB:
+                //TODO: Implement
+                throw new IllegalStateException("Registry type not implemented yet!");
+                //break;
+            case HARBOR:
                 //TODO: Implement
                 throw new IllegalStateException("Registry type not implemented yet!");
                 //break;
