@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.4.3 (26/11/2020)
+*No changelog for this release.*
+
+---
+
+## 0.4.2 (26/11/2020)
+
+---
+
+## 0.4.2rc.3 (19/11/2020)
+- [#697](https://github.com/ZupIT/charlescd/pull/697) Fix default deployment merge strategy
+- [#624](https://github.com/ZupIT/charlescd/pull/624) Created test of connections with git providers
+- [#652](https://github.com/ZupIT/charlescd/pull/652) Improve error messages moove
+- [#694](https://github.com/ZupIT/charlescd/pull/694) add input error
+- [#685](https://github.com/ZupIT/charlescd/pull/685) Circle matcher spring update and swagger add
+
+---
+
+## 0.4.2rc.2 (18/11/2020)
+- [#689](https://github.com/ZupIT/charlescd/pull/689) Fixing UI workflow.
+
+---
+
+## 0.4.2rc.1 (18/11/2020)
+
+---
+
+## 0.4.2rc (18/11/2020)
+
+---
+
 ## 0.4.1 (12/11/2020)
 - [#659](https://github.com/ZupIT/charlescd/pull/659) CI Update of charts and changelog
 - [#614](https://github.com/ZupIT/charlescd/pull/614) Fixing Docker Hub Bearer Authentication and Deploy
@@ -412,28 +443,3 @@
 ---
 
 ## v0.2.8 (03/06/2020)
-
----
-
-## 0.2.7 (03/06/2020)
-
----
-
-## 0.2.6 (03/06/2020)
-
----
-
-## 0.2.5 (03/06/2020)
-
----
-
-## 0.2.4 (02/06/2020)
-
----
-
-## 0.2.3 (02/06/2020)
-
----
-
-## 1.0.1-beta.4 (06/05/2020)
-- Removed rollback for octopipe deployments. This will be butler's responsability (@lucasbfernandes  in #28 )

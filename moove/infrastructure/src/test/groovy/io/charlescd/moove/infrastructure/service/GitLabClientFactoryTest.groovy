@@ -45,6 +45,21 @@ class GitLabClientFactoryTest extends Specification {
 
     }
 
+    def "when using OAuth2Token credential with default address return GitHub client"() {
+
+        given:
+        def credentials = new GitCredentials("",
+                null, null, "token", GitServiceProvider.GITLAB
+        )
+
+        when:
+        def client = this.gitLabClientFactory.buildGitClient(credentials)
+
+        then:
+        assert client != null
+
+    }
+
     def "when using user and password credentials invalid should throw exception"() {
 
         given:

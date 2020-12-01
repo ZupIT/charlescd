@@ -153,7 +153,7 @@ const FormAddAction = ({ onFinish }: Props) => {
         <Popover
           title="What is a action?"
           icon="info"
-          link={`${CHARLES_DOC}/reference/metrics`}
+          link={`${CHARLES_DOC}/reference/metrics/metrics-actions`}
           linkLabel="View documentation"
           description="You can create an action and add a trigger to perform an automatic task."
         />

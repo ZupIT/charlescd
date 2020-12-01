@@ -24,6 +24,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import org.eclipse.egit.github.core.Reference
 import org.eclipse.egit.github.core.RepositoryCommitCompare
+import org.eclipse.egit.github.core.User
 import org.eclipse.egit.github.core.client.GitHubClient
 import org.eclipse.egit.github.core.client.GitHubResponse
 import org.eclipse.egit.github.core.service.CommitService
@@ -46,6 +47,69 @@ class GitHubServiceTest extends Specification {
     void setup() {
         this.gitHubService = new GitHubService(gitHubClientFactory)
         this.gitCredentials = new GitCredentials("https://github.com", "user", "password", "", GitServiceProvider.GITHUB)
+    }
+
+    def "when trying to test connection  if does not work by userService problems return 'false'"() {
+        given:
+        GitHubService spy = Spy(GitHubService, constructorArgs: [gitHubClientFactory])
+
+        when:
+        def testConnection = spy.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitHubClientFactory.buildGitClient(gitCredentials) >> gitHubClient
+        1 * spy.getUserService(gitHubClient) >> userService
+        1 * spy.getRepositoryService(gitHubClient) >> repositoryService
+        1 * userService.user >> null
+        assert !testConnection
+    }
+
+    def "when trying to test connection if does not work by repository problems return 'false'"() {
+        given:
+        GitHubService spy = Spy(GitHubService, constructorArgs: [gitHubClientFactory])
+
+        when:
+        def testConnection = spy.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitHubClientFactory.buildGitClient(gitCredentials) >> gitHubClient
+        1 * spy.getUserService(gitHubClient) >> userService
+        1 * spy.getRepositoryService(gitHubClient) >> repositoryService
+        1 * userService.user >> new User()
+        1 * repositoryService.repositories >> null
+        assert !testConnection
+    }
+
+    def "when trying to test connection if fails should throw an Exception"() {
+        given:
+        GitHubService spy = Spy(GitHubService, constructorArgs: [gitHubClientFactory])
+
+        when:
+        def testConnection = spy.testConnection(gitCredentials)
+
+        then:
+        1 * gitHubClientFactory.buildGitClient(gitCredentials) >> null
+
+        def exception = thrown(RuntimeException.class)
+    }
+
+    def "when trying to test connection  if works return 'true'"() {
+        given:
+        GitHubService spy = Spy(GitHubService, constructorArgs: [gitHubClientFactory])
+
+        when:
+        def testConnection = spy.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitHubClientFactory.buildGitClient(gitCredentials) >> gitHubClient
+        1 * spy.getUserService(gitHubClient) >> userService
+        1 * spy.getRepositoryService(gitHubClient) >> repositoryService
+        1 * userService.user >> new User()
+        1 * repositoryService.repositories >> new ArrayList<>()
+        assert testConnection
     }
 
     def "when trying to merge branches should do it successfully"() {
@@ -91,34 +155,6 @@ class GitHubServiceTest extends Specification {
         def repositoryName = "tester/repository-name-tests"
         def newBranchName = "new-branch"
         def baseBranchName = "master"
-
-        def reference = new Reference()
-        reference.setRef("refs/heads/"+baseBranchName)
-        reference.setUrl("refs/heads/branch")
-
-        def retReference = new Reference()
-        retReference.setRef("refs/heads/"+newBranchName)
-        retReference.setUrl("refs/heads/branch")
-
-        GitHubService spy = Spy(GitHubService, constructorArgs: [gitHubClientFactory])
-        GitHubClient gitClientSpy = Spy(GitHubClient)
-
-        when:
-        def createdBranch = spy.createBranch(gitCredentials, repositoryName, newBranchName, baseBranchName)
-
-        then:
-        assert createdBranch.get().equals(newBranchName)
-        1 * gitHubClientFactory.buildGitClient(gitCredentials) >> gitClientSpy
-        1 * spy.getDataService(gitClientSpy) >> dataService
-        1 * dataService.getReference(_, _) >> reference
-        1 * dataService.createReference(_, _) >> retReference
-    }
-
-    def "when trying to create branch if it does not exist should create it with main as base"() {
-        given:
-        def repositoryName = "tester/repository-name-tests"
-        def newBranchName = "new-branch"
-        def baseBranchName = "main"
 
         def reference = new Reference()
         reference.setRef("refs/heads/"+baseBranchName)
@@ -421,5 +457,33 @@ class GitHubServiceTest extends Specification {
 
         then:
         assert service != null
+    }
+
+ 	def "when trying to create branch if it does not exist should create it with main as base"() {
+        given:
+        def repositoryName = "tester/repository-name-tests"
+        def newBranchName = "new-branch"
+        def baseBranchName = "main"
+
+        def reference = new Reference()
+        reference.setRef("refs/heads/"+baseBranchName)
+        reference.setUrl("refs/heads/branch")
+
+        def retReference = new Reference()
+        retReference.setRef("refs/heads/"+newBranchName)
+        retReference.setUrl("refs/heads/branch")
+
+        GitHubService spy = Spy(GitHubService, constructorArgs: [gitHubClientFactory])
+        GitHubClient gitClientSpy = Spy(GitHubClient)
+
+        when:
+        def createdBranch = spy.createBranch(gitCredentials, repositoryName, newBranchName, baseBranchName)
+
+        then:
+        assert createdBranch.get().equals(newBranchName)
+        1 * gitHubClientFactory.buildGitClient(gitCredentials) >> gitClientSpy
+        1 * spy.getDataService(gitClientSpy) >> dataService
+        1 * dataService.getReference(_, _) >> reference
+        1 * dataService.createReference(_, _) >> retReference
     }
 }
