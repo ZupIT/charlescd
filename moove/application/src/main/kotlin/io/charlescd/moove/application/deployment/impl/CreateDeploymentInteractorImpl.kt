@@ -48,11 +48,18 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         if (build.canBeDeployed()) {
             val deployment = createDeployment(request, workspaceId)
             undeployActiveDeploymentFromCircleIfExists(deployment, workspaceId)
+            checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
             deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
             return DeploymentResponse.from(deployment, build)
         } else {
             throw BusinessException.of(MooveErrorCode.DEPLOY_INVALID_BUILD).withParameters(build.id)
+        }
+    }
+
+    private fun checkIfCircleCanBeDeployed(circle: Circle) {
+        if (circle.isPercentage()) {
+            this.circleService.checkIfPercentageCircleCanDeploy(circle, workspaceId = circle.workspaceId)
         }
     }
 

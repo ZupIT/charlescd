@@ -31,7 +31,8 @@ data class Circle(
     val importedKvRecords: Int? = null,
     val importedAt: LocalDateTime? = null,
     val defaultCircle: Boolean,
-    val workspaceId: String
+    val workspaceId: String,
+    val percentage: Int? = null
 ) {
     companion object {
         const val DEFAULT_CIRCLE_NAME = "Default"
@@ -40,6 +41,8 @@ data class Circle(
     fun isDefaultCircle(): Boolean = this.defaultCircle
 
     fun canBeUpdated(): Boolean = !this.isDefaultCircle()
+
+    fun isPercentage(): Boolean = this.matcherType == MatcherTypeEnum.PERCENTAGE
 }
 
 data class SimpleCircle(

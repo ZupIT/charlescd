@@ -36,6 +36,8 @@ public class Segmentation {
 
     private Boolean isDefault;
 
+    private Integer percentage;
+
     private LocalDateTime createdAt;
 
     public Segmentation() {
@@ -48,6 +50,7 @@ public class Segmentation {
                         SegmentationType type,
                         String workspaceId,
                         Boolean isDefault,
+                        Integer percentage,
                         LocalDateTime createdAt) {
         this.name = name;
         this.node = node;
@@ -56,6 +59,7 @@ public class Segmentation {
         this.type = type;
         this.workspaceId = workspaceId;
         this.isDefault = isDefault;
+        this.percentage = percentage;
         this.createdAt = createdAt;
     }
 
@@ -68,6 +72,7 @@ public class Segmentation {
                 metadata.getType(),
                 metadata.getWorkspaceId(),
                 metadata.getIsDefault(),
+                metadata.getPercentage(),
                 metadata.getCreatedAt());
     }
 
@@ -105,5 +110,13 @@ public class Segmentation {
 
     public Boolean getIsDefault() {
         return isDefault;
+    }
+
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
     }
 }

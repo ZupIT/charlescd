@@ -36,6 +36,13 @@ public class Circle {
         return name;
     }
 
+    public static Circle from(KeyMetadata keyMetadata) {
+        return new Circle(
+                keyMetadata.getCircleId(),
+                keyMetadata.getName()
+        );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -61,7 +61,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
 
         def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
                 "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)
@@ -103,7 +103,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
 
         def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
                 "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)
@@ -145,7 +145,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
 
         def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
                 "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)
@@ -186,7 +186,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
 
         def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)
@@ -225,7 +225,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
 
         def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)

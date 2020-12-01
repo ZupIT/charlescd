@@ -159,7 +159,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def activeDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(1),
                 LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, null)
@@ -220,7 +220,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         given:
         def author = getDummyUser()
         def circle = new Circle("44406b2a-557b-45c5-91be-1e1db909b000", 'Default', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circle.id)
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circle.id, build.id)
@@ -282,7 +282,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         given:
         def author = getDummyUser()
         def circle = new Circle("44406b2a-557b-45c5-91be-1e1db909b000", 'Default', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circle.id)
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circle.id, build.id)
@@ -346,7 +346,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
                 LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
@@ -399,6 +399,86 @@ class CreateDeploymentInteractorImplTest extends Specification {
         deploymentResponse.deployedAt == null
     }
 
+    def 'when the deploy is in a percentage circle and the limit of active percentage circles should not allow the deploy'() {
+        given:
+        def author = getDummyUser()
+        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
+        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
+        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circleId)
+        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+
+        def percentageCircle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 20)
+        def deployedPercentageCircle = new Circle('5d058a02-6406-4aea-be8c-3315ee202a56', 'Circle percentage', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                    author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 90)
+        def deployedPercentagesCirclePage = new Page([deployedPercentageCircle], 0, 5, 1)
+
+        def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
+                LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, percentageCircle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
+
+        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
+                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+
+        when:
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+
+        then:
+        1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
+        1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
+        0 * deployService.undeploy(_, _)
+        1 * deploymentRepository.findByCircleIdAndWorkspaceId(percentageCircle.id, workspaceId) >> [notDeployedDeployment]
+        0 * deploymentRepository.save(_) >> _
+        0 * deployService.deploy(_, _, false, _) >> {}
+
+        def ex = thrown(BusinessException)
+        println(ex)
+        ex.message == 'limit.of.percentage.circles.exceeded'
+    }
+
+    def 'when the deploy is in a percentage circle that was already deployed before and the limit of percentage reached, should allow the deploy'() {
+        given:
+        def author = getDummyUser()
+        def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
+        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
+        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, circleId)
+        def createDeploymentRequest = new CreateDeploymentRequest(author.id, circleId, build.id)
+
+        def percentageCircle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 20)
+        def deployedPercentageCircle = new Circle('5d058a02-6406-4aea-be8c-3315ee202a56', 'Circle percentage', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 10)
+        def deployedPercentageCircle2 = new Circle(circleId, 'Circle percentage', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 90)
+        def deployedPercentagesCirclePage = new Page([deployedPercentageCircle, deployedPercentageCircle2], 0, 5, 1)
+
+        def notDeployedDeployment = new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(2),
+                LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, percentageCircle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, LocalDateTime.now())
+
+        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
+                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+
+        when:
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+
+        then:
+        1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
+        1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
+        0 * deployService.undeploy(_, _)
+        1 * deploymentRepository.findByCircleIdAndWorkspaceId(percentageCircle.id, workspaceId) >> [notDeployedDeployment]
+        1 * deploymentRepository.save(_) >> _
+        1 * deployService.deploy(_, _, false, _) >> {}
+
+        notThrown()
+    }
+
     private static User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
@@ -421,7 +501,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, workspaceId, 20)
 
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null

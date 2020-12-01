@@ -39,6 +39,7 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 false,
+                null,
                 LocalDateTime.now())
     }
 
@@ -50,6 +51,19 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 true,
+                null,
+                LocalDateTime.now())
+    }
+
+    static Segmentation createPercentageSegmentation(Node node, SegmentationType type, Integer percentage) {
+        new Segmentation("Percentage",
+                node,
+                "0f5f699a-df28-4517-9cd6-e98f2f775fe3",
+                "868fc345-7836-4bde-bdff-86adde6cafc9 ",
+                type,
+                "bde0c670-96c9-41f7-afac-f284a785c287",
+                false,
+                percentage,
                 LocalDateTime.now())
     }
 
@@ -62,6 +76,7 @@ class TestUtils {
         createSegmentationRequest.type = type
         createSegmentationRequest.isDefault = false
         createSegmentationRequest.createdAt = LocalDateTime.now()
+        createSegmentationRequest.percentage = 20
         return createSegmentationRequest
     }
 
@@ -75,6 +90,7 @@ class TestUtils {
         request.type = type
         request.isDefault = false
         request.createdAt = LocalDateTime.now()
+        request.percentage = 20
         return request
     }
 }

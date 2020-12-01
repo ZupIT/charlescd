@@ -21,10 +21,24 @@ export interface CirclePaginationItem {
   name: string;
   createdAt: string;
   deployment: Deployment;
+  percentage?: number;
+}
+
+export interface CirclePercentageItem {
+  circles: CirclePaginationItem[];
+  sumPercentage: number;
 }
 
 export interface CirclePagination {
   content: CirclePaginationItem[];
+  page: number;
+  size: number;
+  totalPages: number;
+  last: boolean;
+}
+
+export interface CirclePercentagePagination {
+  content: CirclePercentageItem[];
   page: number;
   size: number;
   totalPages: number;

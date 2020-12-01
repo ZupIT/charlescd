@@ -22,7 +22,9 @@ import {
   useDeleteCircle,
   useSaveCircleManually,
   useSaveCircleWithFile,
-  useCircleUndeploy
+  useCircleUndeploy,
+  useCirclePercentage,
+  CIRCLE_STATUS
 } from 'modules/Circles/hooks';
 import { delParam, updateParam } from 'core/utils/path';
 import { useDispatch } from 'core/state/hooks';
@@ -68,6 +70,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [activeSection, setActiveSection] = useState<SECTIONS>();
   const [isEditing, setIsEditing] = useState(false);
   const [data, circleActions] = useCircle();
+  const [responseGetCircles, getFilteredCircles] = useCirclePercentage();
   const { circleResponse, components, loading } = data;
   const { loadCircle, loadComponents } = circleActions;
   const [delCircle, delCircleResponse] = useDeleteCircle();
@@ -84,6 +87,13 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [circle, setCircle] = useState<Circle>();
   const { pollingCircle, response } = useCirclePolling();
   const POLLING_DELAY = 15000;
+
+  useEffect(() => {
+    // eslint-disable-next-line no-prototype-builtins
+    if (circleResponse?.matcherType === 'PERCENTAGE') {
+      getFilteredCircles('', CIRCLE_STATUS.active);
+    }
+  }, [getFilteredCircles, circleResponse]);
 
   useEffect(() => {
     if (circleResponse) {
@@ -272,6 +282,8 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         circle={circle}
         isEditing={isEditing}
         onClickCreate={() => setActiveSection(SECTIONS.SEGMENTS)}
+        percentageCircles={responseGetCircles}
+        setActiveSection={setActiveSection}
       />
       <LayerRelease
         circle={circle}

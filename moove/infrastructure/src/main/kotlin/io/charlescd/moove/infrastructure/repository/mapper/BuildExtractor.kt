@@ -218,7 +218,8 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         importedKvRecords = resultSet.getInt("circle_imported_kv_records"),
         importedAt = resultSet.getTimestamp("circle_imported_at")?.toLocalDateTime(),
         defaultCircle = resultSet.getBoolean("circle_default_circle"),
-        workspaceId = resultSet.getString("circle_workspace_id")
+        workspaceId = resultSet.getString("circle_workspace_id"),
+        percentage = resultSet.getInt("circle_percentage")
     )
 
     private fun mapCircleUser(resultSet: ResultSet) = User(

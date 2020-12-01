@@ -62,6 +62,7 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.reference == circle.reference
             assert request.type == circle.matcherType.name()
             assert request.createdAt == circle.createdAt
+            assert request.percentage == circle.percentage
         }
     }
 
@@ -95,6 +96,7 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.type == circle.matcherType.name()
             assert request.previousReference == reference
             assert request.createdAt == circle.createdAt
+            assert request.percentage == circle.percentage
         }
     }
 
@@ -194,7 +196,8 @@ class CircleMatcherClientServiceTest extends Specification {
                 null,
                 null,
                 false,
-                "44446b2a-557b-45c5-91be-1e1db9095556"
+                "44446b2a-557b-45c5-91be-1e1db9095556",
+                null
         )
     }
 }

@@ -90,7 +90,8 @@ open class UpdateCircleWithCsvFileInteractorImpl(
                 importedAt = LocalDateTime.now(),
                 importedKvRecords = jsonNodes.size,
                 rules = csvSegmentationService.createPreview(jsonNodes),
-                reference = UUID.randomUUID().toString()
+                reference = UUID.randomUUID().toString(),
+                percentage = null
             )
         )
     }

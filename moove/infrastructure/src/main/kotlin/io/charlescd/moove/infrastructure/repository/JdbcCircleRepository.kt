@@ -51,6 +51,7 @@ class JdbcCircleRepository(
                        circles.imported_at         AS circle_imported_at,
                        circles.default_circle      AS circle_default,
                        circles.workspace_id        AS circle_workspace_id,
+                       circles.percentage          AS circle_percentage,
                        circle_user.id              AS circle_user_id,
                        circle_user.name            AS circle_user_name,
                        circle_user.email           AS circle_user_email,
@@ -110,7 +111,6 @@ class JdbcCircleRepository(
         if (active != null && !active) parameters.add(workspaceId)
         name?.let { parameters.add("%$name%") }
         parameters.add(workspaceId)
-
         return parameters.toTypedArray()
     }
 
@@ -155,8 +155,9 @@ class JdbcCircleRepository(
                         imported_kv_records,
                         user_id,
                         default_circle,
-                        workspace_id)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        workspace_id,
+                        percentage)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
         )
 
@@ -172,6 +173,7 @@ class JdbcCircleRepository(
             ps.setString(9, circle.author?.id)
             ps.setBoolean(10, circle.defaultCircle)
             ps.setString(11, circle.workspaceId)
+            ps.setObject(12, circle.percentage)
         }
     }
 
@@ -203,7 +205,8 @@ class JdbcCircleRepository(
                         matcher_type        = ?,
                         rules               = ?,
                         imported_at         = ?,
-                        imported_kv_records = ?
+                        imported_kv_records = ?,
+                        percentage          = ?
                     WHERE id = ?
                 """
         )
@@ -215,7 +218,8 @@ class JdbcCircleRepository(
             ps.setObject(4, circle.rules, Types.OTHER)
             ps.setObject(5, circle.importedAt)
             ps.setObject(6, circle.importedKvRecords)
-            ps.setObject(7, circle.id)
+            ps.setObject(7, circle.percentage)
+            ps.setObject(8, circle.id)
         }
 
         return findById(circle.id).get()
@@ -306,6 +310,7 @@ class JdbcCircleRepository(
                            circles.imported_at         AS circle_imported_at,
                            circles.default_circle      AS circle_default,
                            circles.workspace_id        AS circle_workspace_id,
+                           circles.percentage          AS circle_percentage,
                            circle_user.id              AS circle_user_id,
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,
@@ -338,6 +343,7 @@ class JdbcCircleRepository(
                            circles.imported_at         AS circle_imported_at,
                            circles.default_circle      AS circle_default,
                            circles.workspace_id        AS circle_workspace_id,
+                           circles.percentage          AS circle_percentage,
                            circle_user.id              AS circle_user_id,
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,
@@ -541,5 +547,114 @@ class JdbcCircleRepository(
         ) { rs, _ ->
             rs.getInt(1)
         } ?: 0
+    }
+
+    override fun countPercentageByWorkspaceId(workspaceId: String): Int {
+        val parameters = mutableListOf(workspaceId, workspaceId)
+        val query = StringBuilder(
+            """
+                    SELECT  SUM(circles.percentage)   AS total
+                    FROM circles circles
+                     
+                    WHERE circles.workspace_id = ?
+                    AND
+                      circles.id IN
+                      (
+                               SELECT DISTINCT d.circle_id
+                               FROM deployments d
+                               WHERE d.status IN ('DEPLOYING', 'DEPLOYED', 'UNDEPLOYING')
+                               AND d.workspace_id = ?
+                           )
+            """
+        )
+        return this.jdbcTemplate.queryForObject(
+            query.toString(),
+            parameters.toTypedArray()
+        ) { rs, _ ->
+            rs.getInt(1)
+        } ?: 0
+    }
+
+    override fun findCirclesPercentage(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest?): Page<Circle> {
+        val count = executeCountQueryPercentage(name, active, workspaceId)
+        val statement = when (active) {
+            true -> createActiveCircleQuery(name)
+            else -> createInactiveCircleQuery(name)
+        }
+        statement.append("AND MATCHER_TYPE= 'PERCENTAGE'")
+        val result = this.jdbcTemplate.query(
+            statement.toString(),
+            createParametersArray(name, active, workspaceId),
+            circleExtractor
+        )
+
+        val pageUpdated = pageRequest ?: PageRequest(0, result?.size ?: 0)
+        return Page(result?.toList() ?: emptyList(), pageUpdated.page, pageUpdated.size, count ?: 0)
+    }
+
+    private fun executeCountQueryPercentage(name: String?, active: Boolean, workspaceId: String): Int? {
+        return when (active) {
+            true -> executeActiveCirclePercentageCountQuery(name, workspaceId)
+            else -> executeInactiveCirclePercentageCountQuery(name, workspaceId)
+        }
+    }
+
+    private fun executeActiveCirclePercentageCountQuery(name: String?, workspaceId: String): Int? {
+        val statement = StringBuilder(
+            """
+                    SELECT COUNT(distinct c.id)
+                    FROM circles c
+                             INNER JOIN deployments d ON c.id = d.circle_id
+                    WHERE 1 = 1
+                    AND c.id NOT IN 
+                    (
+                        SELECT DISTINCT d.circle_id
+                        FROM deployments d
+                        WHERE d.status IN ('NOT_DEPLOYED', 'UNDEPLOYED')
+                    )
+                    AND c.matcher_type = 'PERCENTAGE'
+               """
+        )
+
+        name?.let { statement.appendln("AND c.name ILIKE ?") }
+        statement.appendln("AND c.workspace_id = ?")
+
+        return this.jdbcTemplate.queryForObject(
+            statement.toString(),
+            createParametersArray(name, null, workspaceId)
+        ) { rs, _ ->
+            rs.getInt(1)
+        }
+    }
+
+    private fun executeInactiveCirclePercentageCountQuery(name: String?, workspaceId: String): Int? {
+        val statement = StringBuilder(
+            """
+                SELECT COUNT(distinct c.id)
+                FROM circles c
+                         LEFT JOIN deployments d ON c.id = d.circle_id
+                WHERE 1 = 1
+                    AND d.circle_id IS NULL
+                    AND  c.id NOT IN
+                    (
+                        SELECT DISTINCT d.circle_id
+                        FROM deployments d
+                        WHERE d.status IN ('DEPLOYING', 'DEPLOYED', 'UNDEPLOYING')
+                        
+                    )
+                    AND c.matcher_type = 'PERCENTAGE'
+                    
+                """
+        )
+
+        name?.let { statement.appendln("AND c.name ILIKE ?") }
+        statement.appendln("AND c.workspace_id = ?")
+
+        return this.jdbcTemplate.queryForObject(
+            statement.toString(),
+            createParametersArray(name, null, workspaceId)
+        ) { rs, _ ->
+            rs.getInt(1)
+        }
     }
 }

@@ -239,7 +239,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
 
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, null)
 
         when:
         interactor.execute(workspace.id, request)
@@ -273,7 +273,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
                 WorkspaceStatusEnum.INCOMPLETE, null, "https://old-circle-matcher-url.com.br", null, null, null)
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", circleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, null)
 
         when:
         interactor.execute(workspace.id, request)
@@ -397,7 +397,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
 
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, null)
 
         when:
         interactor.execute(workspace.id, request)
@@ -421,7 +421,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
                 WorkspaceStatusEnum.INCOMPLETE, null, "https://old-circle-matcher-url.com.br", null, null, null)
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", circleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, null)
 
         when:
         interactor.execute(workspace.id, request)

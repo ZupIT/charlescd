@@ -18,10 +18,7 @@ package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.circle.*
-import io.charlescd.moove.application.circle.request.CreateCircleRequest
-import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
-import io.charlescd.moove.application.circle.request.PatchCircleRequest
-import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
+import io.charlescd.moove.application.circle.request.*
 import io.charlescd.moove.application.circle.response.*
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
@@ -39,14 +36,17 @@ import org.springframework.web.multipart.MultipartFile
 class V2CircleController(
     private val createCircleInteractor: CreateCircleInteractor,
     private val patchCircleInteractor: PatchCircleInteractor,
+    private val patchCirclePercentageInteractor: PatchCircleWithPercentageInteractor,
     private val findCircleByIdInteractor: FindCircleByIdInteractor,
     private val deleteCircleByIdInteractor: DeleteCircleByIdInteractor,
     private val findAllCirclesInteractor: FindAllCirclesInteractor,
+    private val findAllCirclesPercentageInteractor: FindCirclesPercentageInteractor,
     private val findCircleComponentsInteractor: FindCircleComponentsInteractor,
     private val createCircleWithCsvFileInteractor: CreateCircleWithCsvFileInteractor,
     private val updateCircleWithCsvFileInteractor: UpdateCircleWithCsvFileInteractor,
     private val identifyCircleInteractor: IdentifyCircleInteractor,
-    private val circlesHistoryInteractor: FindCirclesHistoryInteractor
+    private val circlesHistoryInteractor: FindCirclesHistoryInteractor,
+    private val createCircleWIthPercentageInteractor: CreateCircleWithPercentageInteractor
 ) {
 
     @ApiOperation(value = "Find all")
@@ -179,5 +179,43 @@ class V2CircleController(
         pageRequest: PageRequest
     ): ResourcePageResponse<CircleHistoryResponse> {
         return circlesHistoryInteractor.execute(workspaceId, name, pageRequest)
+    }
+
+    @ApiOperation(value = "Create circle with Percentage")
+    @PostMapping("/percentage")
+    @ApiImplicitParam(name = "request", value = "Circle Details", required = true, dataType = "CreateCirclePercentageRequest")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createWithPercentage(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @Valid @RequestBody request: CreateCircleWithPercentageRequest
+    ): CircleResponse {
+        return this.createCircleWIthPercentageInteractor.execute(
+            request,
+            workspaceId
+        )
+    }
+
+    @ApiOperation(value = "Patch percentage circle")
+    @ApiImplicitParam(name = "request", value = "Circle Details", required = true, dataType = "PatchCirclePercentageRequest")
+    @PatchMapping(path = ["/{id}/percentage"])
+    @ResponseStatus(HttpStatus.OK)
+    fun patchCirclePercentage(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable(name = "id") id: String,
+        @RequestBody @Valid request: PatchCirclePercentageRequest
+    ): CircleResponse {
+        return this.patchCirclePercentageInteractor.execute(id, request)
+    }
+
+    @ApiOperation(value = "Find all Percentage")
+    @GetMapping("/percentage")
+    @ResponseStatus(HttpStatus.OK)
+    fun findPercentage(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestParam(name = "name", required = false) name: String?,
+        @RequestParam(name = "active", required = true) active: Boolean,
+        pageRequest: PageRequest
+    ): ResourcePageResponse<CirclePercentageResponse> {
+        return this.findAllCirclesPercentageInteractor.execute(workspaceId, name, active, pageRequest)
     }
 }

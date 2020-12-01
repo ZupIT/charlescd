@@ -47,6 +47,9 @@ public abstract class SegmentationRequest {
     @NotNull
     private Boolean isDefault;
 
+    @Valid
+    private Integer percentage;
+
     @NotNull
     private LocalDateTime createdAt;
 
@@ -106,9 +109,18 @@ public abstract class SegmentationRequest {
         this.isDefault = isDefault;
     }
 
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+
     public Segmentation toSegmentation() {
         return new Segmentation(
-            this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, this.createdAt
+                this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, percentage,
+                createdAt
         );
     }
 

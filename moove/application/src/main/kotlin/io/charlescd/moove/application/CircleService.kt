@@ -19,8 +19,10 @@
 package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
 import java.util.*
@@ -69,5 +71,32 @@ class CircleService(private val circleRepository: CircleRepository) {
 
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle> {
         return this.circleRepository.findDefaultByWorkspaceId(workspaceId)
+    }
+
+    private fun findSumPercentageCirclesValuesInWorkspace(workspaceId: String): Int {
+        return this.circleRepository.countPercentageByWorkspaceId(workspaceId)
+    }
+
+    fun checkIfLimitOfPercentageReached(percentageRequest: Int, workspaceId: String) {
+        verifyLimitReached(this.findSumPercentageCirclesValuesInWorkspace(workspaceId), percentageRequest)
+    }
+
+    private fun verifyLimitReached(actualPercentage: Int, percentageRequest: Int) {
+        if (actualPercentage + percentageRequest > 100) {
+            val percentageRemaining = 100 - actualPercentage
+            throw BusinessException.of(MooveErrorCode.LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED)
+                .withParameters("Percentage remaining: $percentageRemaining")
+        }
+    }
+
+    fun checkIfPercentageCircleCanDeploy(circle: Circle, workspaceId: String) {
+        val percentageCircles = this.circleRepository.findCirclesPercentage(workspaceId, null, active = true, pageRequest = null).content
+        val isAlreadyDeployed = percentageCircles.map {
+            circle -> circle.id
+        }.contains(circle.id)
+        val sumPercentage = percentageCircles.takeIf { it.isNotEmpty() }?.map { it -> it.percentage }?.reduce { acc, value -> acc?.plus(value ?: 0) } ?: 0
+        if (!isAlreadyDeployed) {
+            verifyLimitReached(sumPercentage, circle.percentage!!)
+        }
     }
 }

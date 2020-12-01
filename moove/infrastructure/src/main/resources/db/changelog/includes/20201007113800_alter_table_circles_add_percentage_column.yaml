@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20201007113800-1
+      author: thalles.freitas
+      comment: "Adding percentage column to ci"
+      changes:
+        - addColumn:
+            tableName: circles
+            column:
+              name: percentage
+              type: integer
+              constraints:
+                nullable: true
+

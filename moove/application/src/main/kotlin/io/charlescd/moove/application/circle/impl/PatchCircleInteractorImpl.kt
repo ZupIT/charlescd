@@ -76,7 +76,8 @@ open class PatchCircleInteractorImpl(
             circle.copy(
                 reference = UUID.randomUUID().toString(),
                 matcherType = MatcherTypeEnum.REGULAR,
-                importedKvRecords = 0
+                importedKvRecords = 0,
+                percentage = null
             )
         )
         return circleService.update(patched)
