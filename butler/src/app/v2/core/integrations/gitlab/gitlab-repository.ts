@@ -18,14 +18,18 @@ import { HttpService, Injectable } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
 @Injectable()
 export class GitLabRepository implements Repository {
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly httpService: HttpService) {}
 
   public async getResource(config: RequestConfig): Promise<Resource> {
     const resourcePath = `/tree?path=${config.resourceName}`
+    this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITLAB', `${config.url}${resourcePath}&ref=${config.branch}`)
     const headers = {
       'Content-Type': 'application/json',
       'PRIVATE-TOKEN': config.token
@@ -73,6 +77,7 @@ export class GitLabRepository implements Repository {
   }
 
   private async fetch(url: string, headers: Record<string, string>): Promise<AxiosResponse> {
+    this.consoleLoggerService.log('START:FETCHING RESOURCE', url)
     return this.httpService.get(url, headers).toPromise()
   }
 }

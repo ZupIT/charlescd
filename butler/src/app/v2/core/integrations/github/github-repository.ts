@@ -18,14 +18,18 @@ import { HttpService, Injectable } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
 @Injectable()
 export class GitHubRepository implements Repository {
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly httpService: HttpService) {}
 
   public async getResource(config: RequestConfig): Promise<Resource> {
     const urlResource = new URL(`${config.url}/contents/${config.resourceName}?ref=${config.branch}`)
+    this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITHUB', urlResource)
     return this.downloadResource(urlResource, config.resourceName, {
       'Content-Type': 'application/json',
       'Authorization': config.token
@@ -70,6 +74,7 @@ export class GitHubRepository implements Repository {
   }
 
   private async fetch(url: URL, headers: Record<string, string>): Promise<AxiosResponse> {
+    this.consoleLoggerService.log('START:FETCHING RESOURCE', url.toString())
     return this.httpService.get(url.toString(), headers).toPromise()
   }
 }

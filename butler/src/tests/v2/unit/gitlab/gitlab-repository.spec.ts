@@ -23,6 +23,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitLabRepository } from '../../../../app/v2/core/integrations/gitlab/gitlab-repository'
+import { ConsoleLoggerService } from '../../../../app/v1/core/logs/console'
 
 describe('Download resources from gitlab', () => {
   const contents = getStubContents()
@@ -35,7 +36,7 @@ describe('Download resources from gitlab', () => {
   const url = 'https://gitlab.com/api/v4/projects/22700476/repository'
 
   it('Download helm chart recursively from gitlab', async() => {
-    const repository = new GitLabRepository(httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'master' })
 
@@ -48,7 +49,7 @@ describe('Download resources from gitlab', () => {
   })
 
   it('Download a single file from giblab', async() => {
-    const repository = new GitLabRepository(httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml', branch: 'master' })
 
@@ -58,7 +59,7 @@ describe('Download resources from gitlab', () => {
   })
 
   it('Download helm chart recursively from gitlab from feature branch', async() => {
-    const repository = new GitLabRepository(httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'feature' })
 

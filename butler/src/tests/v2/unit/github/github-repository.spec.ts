@@ -23,6 +23,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
+import { ConsoleLoggerService } from '../../../../app/v1/core/logs/console'
 
 describe('Download resources from github', () => {
   const contents = getStubContents()
@@ -35,7 +36,7 @@ describe('Download resources from github', () => {
   const url = 'https://api.github.com/repos/charlescd-fake/helm-chart'
 
   it('Download helm chart recursively from github', async() => {
-    const repository = new GitHubRepository(httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'master' })
 
@@ -48,7 +49,7 @@ describe('Download resources from github', () => {
   })
 
   it('Download a single file from gibhub', async() => {
-    const repository = new GitHubRepository(httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml', branch: 'master' })
 
@@ -58,7 +59,7 @@ describe('Download resources from github', () => {
   })
 
   it('Download helm chart recursively from github from feature branch', async() => {
-    const repository = new GitHubRepository(httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'feature' })
 
