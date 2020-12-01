@@ -18,13 +18,17 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 import 'jest'
+import { HttpService } from '@nestjs/common'
 import * as yaml from 'js-yaml'
 
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
 import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
 import { Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
 import { ConsoleLoggerService } from '../../../../../app/v1/core/logs/console'
-import { KubernetesManifest } from 'src/app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { KubernetesManifest } from '../../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { RepositoryStrategyFactory } from '../../../../../app/v2/core/integrations/repository-strategy-factory'
+import { GitHubRepository } from '../../../../../app/v2/core/integrations/github/github-repository'
+import { GitLabRepository } from '../../../../../app/v2/core/integrations/gitlab/gitlab-repository'
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
@@ -41,11 +45,13 @@ describe('Generate K8s manifest by helm', () => {
     circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a'
   }
 
-  const mockRepository = {
-    getResource: jest.fn()
-  }
+  const gitHubRepository = new GitHubRepository(new ConsoleLoggerService(), new HttpService())
+  jest.spyOn(gitHubRepository, 'getResource').mockImplementation(async config => await readFiles(basePath, config.resourceName))
 
-  mockRepository.getResource.mockImplementation(async config => await readFiles(basePath, config.resourceName))
+  const gitLabRepository = new GitLabRepository(new ConsoleLoggerService(), new HttpService())
+  jest.spyOn(gitLabRepository, 'getResource').mockImplementation(async config => await readFiles(basePath, config.resourceName))
+
+  const repositoryStrategyFactory = new RepositoryStrategyFactory(gitHubRepository, gitLabRepository, new ConsoleLoggerService())
 
   it('should generate manifest with default values', async() => {
     const manifestConfig = {
@@ -58,7 +64,7 @@ describe('Generate K8s manifest by helm', () => {
       componentName: 'helm-test-chart',
       imageUrl: 'latest'
     }
-    const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
+    const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
     const manifest = await helm.generate(manifestConfig)
 
     const expected: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'))
@@ -67,7 +73,7 @@ describe('Generate K8s manifest by helm', () => {
   })
 
   it('should generate manifest with custom values', async() => {
-    const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
+    const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
     const manifest = await helm.generate(manifestConfig)
 
     const expected: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest.yaml`, 'utf-8'))
@@ -76,9 +82,15 @@ describe('Generate K8s manifest by helm', () => {
   })
 
   it('should fail manifest generation when fails fetching files from repository', async() => {
-    mockRepository.getResource.mockImplementation(() => { throw new Error('error') })
+    const gitHubRepository = new GitHubRepository(new ConsoleLoggerService(), new HttpService())
+    jest.spyOn(gitHubRepository, 'getResource').mockImplementation(() => { throw new Error('error') })
 
-    const helm = new HelmManifest(new ConsoleLoggerService(), mockRepository)
+    const gitLabRepository = new GitLabRepository(new ConsoleLoggerService(), new HttpService())
+    jest.spyOn(gitLabRepository, 'getResource').mockImplementation(() => { throw new Error('error') })
+
+    const repositoryStrategyFactory = new RepositoryStrategyFactory(gitHubRepository, gitLabRepository, new ConsoleLoggerService())
+
+    const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
     const manifest = helm.generate(manifestConfig)
 
     expect(manifest).rejects.toThrowError()

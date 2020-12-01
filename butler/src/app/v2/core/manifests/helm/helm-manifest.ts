@@ -26,16 +26,17 @@ import * as yaml from 'js-yaml'
 
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
-import { Repository, Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
+import { Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { KubernetesManifest } from '../../integrations/interfaces/k8s-manifest.interface'
+import { RepositoryStrategyFactory } from '../../integrations/repository-strategy-factory'
 
 @Injectable()
 export class HelmManifest implements Manifest {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly repository: Repository) {}
+    private readonly repositoryFactory: RepositoryStrategyFactory) {}
 
   public async generate(config: ManifestConfig): Promise<KubernetesManifest[]> {
     this.consoleLoggerService.log('START:GENERATING MANIFEST USING HELM')
@@ -46,7 +47,8 @@ export class HelmManifest implements Manifest {
       branch: config.repo.branch
     }
     this.consoleLoggerService.log('GET:CHART FROM REPOSITORY', config.componentName)
-    const chart = await this.repository.getResource(requestConfig)
+    const repository = this.repositoryFactory.create(config.repo.provider)
+    const chart = await repository.getResource(requestConfig)
     const chartPath = this.getTmpChartDir()
     try {
       this.consoleLoggerService.log('START:SAVING CHART LOCALLY', chartPath)
