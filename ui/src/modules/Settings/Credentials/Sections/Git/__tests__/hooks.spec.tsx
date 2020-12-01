@@ -15,7 +15,8 @@
  */
 
 import { renderHook, act } from '@testing-library/react-hooks';
-import { wait } from 'unit-test/testUtils';
+import * as ActionNotification from 'core/components/Notification/state/actions';
+import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useGit } from '../hooks';
  
@@ -26,6 +27,16 @@ beforeEach(() => {
 jest.mock('core/state/hooks', () => ({
   useDispatch: () => jest.fn()
 }));
+
+jest.mock('core/components/Notification/state/actions', () => ({
+  toogleNotification: () => jest.fn()
+}));
+
+
+const error404 = {
+  status: 404,
+  json: () => ({ message: 'Error' })
+};
 
 test('to save new git', async () => {
   const git = {
@@ -46,7 +57,57 @@ test('to save new git', async () => {
     await result.current.save(git);
   });
 
-  await wait(() => expect(result.current.responseAdd).toMatchObject({}));
+  await waitFor(() => expect(result.current.responseAdd).toMatchObject({}));
+});
+
+test('to save new git and trigger error', async () => {
+  const toogleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
+
+  const git = {
+    name: 'git',
+    authorId: '123',
+    credentials: {
+      address: 'https://github.com',
+      accessToken: '1a2b3c4d5e6f7g',
+      serviceProvider: 'GitHub'
+    } 
+  };
+
+  (fetch as FetchMock).mockRejectedValue(error404);
+
+  const { result } = renderHook(() => useGit());
+
+  await act(async () => {
+    await result.current.save(git);
+  });
+
+  waitFor(() => expect(toogleNotificationSpy).toBeCalled());
+});
+
+test('to save new git and trigger error on add', async () => {
+  const toogleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
+
+  const git = {
+    name: 'git',
+    authorId: '123',
+    credentials: {
+      address: 'https://github.com',
+      accessToken: '1a2b3c4d5e6f7g',
+      serviceProvider: 'GitHub'
+    } 
+  };
+
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({}))
+    .mockRejectedValue(error404);
+
+  const { result } = renderHook(() => useGit());
+
+  await act(async () => {
+    await result.current.save(git);
+  });
+
+  waitFor(() => expect(toogleNotificationSpy).toBeCalled());
 });
 
 test('to remove a git', async () => {
@@ -58,5 +119,5 @@ test('to remove a git', async () => {
     await result.current.remove('/git');
   });
 
-  await wait(() => expect(result.current.responseRemove).toMatchObject({}));
+  await waitFor(() => expect(result.current.responseRemove).toMatchObject({}));
 });
