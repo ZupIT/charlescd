@@ -38,19 +38,25 @@ export class HelmManifest implements Manifest {
     private readonly repository: Repository) {}
 
   public async generate(config: ManifestConfig): Promise<KubernetesManifest[]> {
-    this.consoleLoggerService.log('START:FETCHING CHART FROM REPOSITORY', config.componentName)
+    this.consoleLoggerService.log('START:GENERATING MANIFEST USING HELM')
     const requestConfig = { 
       url: config.repo.url, 
       token: config.repo.token, 
       resourceName: config.componentName,
       branch: config.repo.branch
     }
+    this.consoleLoggerService.log('GET:CHART FROM REPOSITORY', config.componentName)
     const chart = await this.repository.getResource(requestConfig)
     const chartPath = this.getTmpChartDir()
     try {
+      this.consoleLoggerService.log('START:SAVING CHART LOCALLY', chartPath)
       await this.saveChartFiles(chartPath, chart)
-      return await this.template(chartPath, config)
+      this.consoleLoggerService.log('START:GENERATE MANIFEST')
+      const manifest =  await this.template(chartPath, config)
+      this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
+      return manifest
     } finally {
+      this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
       this.cleanUp(chartPath)
     }
   }
@@ -74,12 +80,14 @@ export class HelmManifest implements Manifest {
   }
 
   private cleanUp(dir: string) {
-    rimraf(dir, (error) => this.consoleLoggerService.error('ERROR WHILE CLEANING FILES UP', error))
+    rimraf(dir, (error) => this.consoleLoggerService.error('ERROR:CLEANING FILES UP FAILED', error))
   }
 
   private async template(chartPath: string, config: ManifestConfig): Promise<KubernetesManifest[]> {
     const args = this.formatArguments(chartPath, config)
+    this.consoleLoggerService.log('HELM COMMAND ARGS', args)
     const manifestString = await this.executeCommand(args)
+    this.consoleLoggerService.log('MANIFEST GENERATED', manifestString)
     return yaml.safeLoadAll(manifestString)
   }
 
