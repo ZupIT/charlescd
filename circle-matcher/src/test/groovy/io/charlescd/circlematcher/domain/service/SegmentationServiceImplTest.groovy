@@ -222,4 +222,32 @@ class SegmentationServiceImplTest extends Specification {
 
         thrown(IllegalStateException)
     }
+
+    def "should allow to create a segmentation rule in default circle when none have been registered yet"() {
+
+        given:
+
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+        def request = TestUtils.createDefaultSegmentationRequest(node, SegmentationType.REGULAR)
+
+        when:
+
+        segmentationService.create(request)
+
+        then:
+        1 * keyMetadataRepository.findByWorkspaceId(_) >> [keyMetadata]
+        1 * keyMetadataRepository.create(_) >> 0
+        1 * segmentationRepository.create(composedKey, _)
+
+        notThrown()
+    }
 }
