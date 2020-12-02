@@ -38,19 +38,15 @@ export class K8sClient {
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
     this.consoleLoggerService.log('GET:CHARLES_DEPLOYMENT_MANIFEST', { deploymentManifest })
     try {
-      this.consoleLoggerService.log('DO:READING_CRD_RESOURCE')
-      await this.client.read(deploymentManifest)
-      this.consoleLoggerService.log('DO:PATCHING_CRD_RESOURCE')
-      const res = await this.client.patch(deploymentManifest)
-      console.log('GET:PATCH_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      await this.readResource(deploymentManifest)
+      await this.patchResource(deploymentManifest)
     } catch(error) {
-      this.consoleLoggerService.log('DO:CREATING_CRD_RESOURCE')
-      const res = await this.client.create(deploymentManifest)
-      console.log('GET:CREATE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      await this.createResource(deploymentManifest) // TODO create condition? If 404 create?
     }
+    this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT_CUSTOM_RESOURCE')
   }
 
-  public async createUndeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO delete CRD?
+  public async createUndeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
     this.consoleLoggerService.log('START:UNDEPLOY_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
 
@@ -61,6 +57,43 @@ export class K8sClient {
       await this.client.delete(deploymentManifest)
     } catch(error) {
       this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { deploymentManifest })
+    }
+  }
+
+  private async patchResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+    try {
+      this.consoleLoggerService.log('START:PATCH_RESOURCE_MANIFEST')
+      const res = await this.client.patch(
+        manifest,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        { headers: { 'Content-type': 'application/json-patch+json' } }
+      )
+      console.log('GET:PATCH_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:PATCH_RESOURCE_MANIFEST', { error })
+    }
+  }
+
+  private async createResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+    try {
+      this.consoleLoggerService.log('START:CREATE_RESOURCE_MANIFEST')
+      const res = await this.client.create(manifest)
+      console.log('GET:CREATE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:CREATE_RESOURCE_MANIFEST', { error })
+    }
+  }
+
+  private async readResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+    try {
+      this.consoleLoggerService.log('START:READ_RESOURCE_MANIFEST')
+      await this.client.read(manifest)
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:READ_RESOURCE_MANIFEST', { error })
+      throw error
     }
   }
 }
