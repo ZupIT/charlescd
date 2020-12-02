@@ -65,7 +65,7 @@ test('testing on click update button', async () => {
   expect(onSelected).toHaveBeenCalled();
 });
 
-test('testing deleting an user', async () => {
+test('testing deleting a user', async () => {
   const onSelected = jest.fn();
 
   render(
