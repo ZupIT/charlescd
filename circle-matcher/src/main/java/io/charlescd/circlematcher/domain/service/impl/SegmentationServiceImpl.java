@@ -32,6 +32,7 @@ import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepositor
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,6 +48,7 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     public void create(CreateSegmentationRequest request) {
+        validateSegmentation(request);
         var segmentation = decomposeSegmentation(request);
 
         segmentation.forEach(this::createSegmentationData);
@@ -148,6 +150,17 @@ public class SegmentationServiceImpl implements SegmentationService {
 
     private boolean shouldDecompose(SegmentationRequest segmentationRequest) {
         return SegmentationType.REGULAR.equals(segmentationRequest.getType()) && !segmentationRequest.getIsDefault();
+    }
+
+    private void validateSegmentation(CreateSegmentationRequest request) {
+        if (request.getIsDefault()) {
+            var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
+            var metadataDefaultList = metadataList.stream().parallel().filter(metadata -> metadata.getIsDefault())
+                    .collect(Collectors.toList());
+            if (!metadataDefaultList.isEmpty()) {
+                throw new IllegalStateException("Default circle already registered in workspace");
+            }
+        }
     }
 }
 

@@ -30,6 +30,13 @@ public class ErrorHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(IllegalStateException.class)
+    public DefaultErrorResponse handleIllegalStateException(IllegalStateException exception) {
+        logger.error("CONFLICT ERROR - ", exception);
+        return new DefaultErrorResponse(exception.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public DefaultErrorResponse handleNotFoundError(NoSuchElementException exception) {
