@@ -31,8 +31,8 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { SimultaneousDeploymentValidationPipe } from '../../../../app/v2/api/deployments/pipes'
-import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication

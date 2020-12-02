@@ -16,19 +16,19 @@
 
 import { Inject, Injectable } from '@nestjs/common'
 import { Connection, EntityManager } from 'typeorm'
-import { ComponentEntity } from '../../../../app/v1/api/components/entity'
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdConfigurationsRepository } from '../../../../app/v1/api/configurations/repository'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
+import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
+import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
 import {
   ComponentDeploymentEntity, ComponentUndeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity, ModuleUndeploymentEntity,
   QueuedDeploymentEntity, QueuedIstioDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
-} from '../../../../app/v1/api/deployments/entity'
-import { ModuleEntity } from '../../../../app/v1/api/modules/entity'
-import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
-import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+} from '../../../app/v1/api/deployments/entity'
+import { ModuleEntity } from '../../../app/v1/api/modules/entity'
+import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
+import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
+import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
 
 interface DatabaseEntity {
   name: string,
