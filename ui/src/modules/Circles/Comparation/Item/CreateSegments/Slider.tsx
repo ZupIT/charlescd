@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Styled from './styled';
 import Text from 'core/components/Text';
 import { useFormContext } from 'react-hook-form';
+import { validatePercentage } from './helpers';
 
 interface Props {
   limitValue: number;
@@ -42,11 +43,7 @@ const SliderPercentage = ({ limitValue }: Props) => {
           placeholder="Value"
           ref={register({
             required: 'Percentage is required.',
-            validate: value => {
-              if (Number(value) > limitValue) {
-                return `Percentage should be lower than ${limitValue}.`;
-              }
-            }
+            validate: value => validatePercentage(Number(value), limitValue)
           })}
           name="slider"
         />

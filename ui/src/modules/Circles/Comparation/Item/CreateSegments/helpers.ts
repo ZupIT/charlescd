@@ -68,3 +68,9 @@ export const editingPercentageLimit = (
   // we use only circle percentage.
   return percentage;
 };
+
+export const validatePercentage = (value: number, limitValue: number) => {
+  if (value > limitValue) {
+    return `Percentage should be lower than ${limitValue}.`;
+  }
+};

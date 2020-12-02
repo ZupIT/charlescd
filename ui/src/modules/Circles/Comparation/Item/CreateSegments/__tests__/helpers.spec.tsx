@@ -1,7 +1,7 @@
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import React from 'react'
-import { editingPercentageLimit, getWarningText } from '../helpers';
+import { editingPercentageLimit, getWarningText, validatePercentage } from '../helpers';
 import { deployment } from './fixtures';
 
 
@@ -54,4 +54,17 @@ test('test getWarning text when CSV_TO_PERCENTAGE', async () => {
 
 test('test getWarning text when IMPORT_CSV', async () => {
     expect(getWarningText('IMPORT_CSV')).toBe('When you import another .CSV your entire circle segmentation will be deleted and replaced by the new one.')
+})
+
+test('test validatePercentage should return message', async () => {
+    const errorMessage = validatePercentage(5, 3)
+    expect(errorMessage).toBe('Percentage should be lower than 3.')
+})
+
+test('test validatePercentage should not return message if value is Equal or lower then limitValue', async () => {
+    const errorMessageEqual = validatePercentage(3, 3)
+    expect(errorMessageEqual).toBeFalsy()
+
+    const errorMessageLower = validatePercentage(1, 3)
+    expect(errorMessageLower).toBeFalsy()
 })

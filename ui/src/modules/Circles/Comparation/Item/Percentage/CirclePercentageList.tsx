@@ -20,7 +20,11 @@ const CirclePercentageList = ({ responseGetCircles }: Props) => {
           data-testid="circle-list-container-button"
           onClick={() => setShowCircleList(!showCircleList)}
         >
-          <Icon name={showCircleList ? 'up' : 'alternate-down'} size="18" />
+          <Icon
+            color="light"
+            name={showCircleList ? 'up' : 'alternate-down'}
+            size="18"
+          />
           <Text.h4 color="dark">See consumption by active circles.</Text.h4>
         </Styled.CirclesListButton>
         <Styled.CirclesListWrapper>

@@ -10,7 +10,7 @@
                 <mask id="mask-2-alternate-down" fill="white">
                     <use xlink:href="#path-1-alternate-down"></use>
                 </mask>
-                <use id="Icon-Chevron-Down" fill="#B9B9BE" xlink:href="#path-1-alternate-down"></use>
+                <use id="Icon-Chevron-Down" fill="currentColor" xlink:href="#path-1-alternate-down"></use>
             </g>
         </g>
     </g>

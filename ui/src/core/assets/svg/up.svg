@@ -10,7 +10,7 @@
                 <mask id="mask-2-up" fill="white">
                     <use xlink:href="#path-1-up"></use>
                 </mask>
-                <use id="Icon-Chevron-Up" fill="#B9B9BE" transform="translate(4.666833, 2.666750) scale(1, -1) translate(-4.666833, -2.666750) " xlink:href="#path-1-up"></use>
+                <use id="Icon-Chevron-Up" fill="currentColor" transform="translate(4.666833, 2.666750) scale(1, -1) translate(-4.666833, -2.666750) " xlink:href="#path-1-up"></use>
             </g>
         </g>
     </g>

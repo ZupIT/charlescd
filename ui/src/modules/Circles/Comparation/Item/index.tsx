@@ -91,7 +91,6 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [releaseEnabled, setReleaseEnabled] = useState<boolean>(true);
 
   useEffect(() => {
-    // eslint-disable-next-line no-prototype-builtins
     if (circleResponse?.matcherType === 'PERCENTAGE') {
       getFilteredCircles('', CIRCLE_STATUS.active);
     }

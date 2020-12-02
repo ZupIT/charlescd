@@ -11,7 +11,7 @@
                     <mask id="mask-2-percentage" fill="white">
                         <use xlink:href="#path-1-percentage"></use>
                     </mask>
-                    <use id="Icon-Percent" fill="#B9B9BE" xlink:href="#path-1-percentage"></use>
+                    <use id="Icon-Percent" fill="currentColor" xlink:href="#path-1-percentage"></use>
                 </g>
             </g>
         </g>

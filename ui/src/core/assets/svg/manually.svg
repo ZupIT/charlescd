@@ -9,7 +9,7 @@
             <mask id="mask-2-manually" fill="white">
                 <use xlink:href="#path-1-manually"></use>
             </mask>
-            <use id="Icon-Edit" fill="#B9B9BE" xlink:href="#path-1-manually"></use>
+            <use id="Icon-Edit" fill="currentColor" xlink:href="#path-1-manually"></use>
         </g>
     </g>
 </svg>
