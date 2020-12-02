@@ -34,7 +34,7 @@ const SliderPercentage = ({ limitValue }: Props) => {
           value={sliderValue}
           onChange={e => handleChange(e.target.value)}
           max={limitValue}
-        ></Styled.Slider>
+        />
         <Text.h4 data-testid="slider-limit-value" color="light">
           {limitValue}%
         </Text.h4>

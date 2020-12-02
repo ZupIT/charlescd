@@ -87,9 +87,10 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
     }
   }, [responseSaveCircle, onSaveCircle]);
 
+  const isUnable = !isEditing && limitPercentage === 0;
+
   const renderWarningNoPercentageAvailable = () =>
-    !isEditing &&
-    limitPercentage === 0 && (
+    isUnable && (
       <Text.h5 color="error">
         The sum of active segmentations has reached 100%, there is no available
         space for a new segmentation. Please adjust the others segmentations per
@@ -98,7 +99,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
     );
 
   const renderSlider = () => {
-    if (!isEditing && limitPercentage === 0) {
+    if (isUnable) {
       return null;
     }
     const limit = isEditing

@@ -23,47 +23,35 @@ interface ButtonProps {
   size: Size;
 }
 
-const getButtonHeight = (size: Size) => {
-  if (size === 'small') {
-    return '30px';
-  } else if (size === 'medium') {
-    return '40px';
-  } else {
-    return '50px';
-  }
-};
+export enum HEIGHT {
+  small = '30px',
+  medium = '40px',
+  default = '50px'
+}
 
-const getButtonPadding = (size: Size) => {
-  if (size === 'small') {
-    return '9px 18px';
-  } else if (size === 'medium') {
-    return '12px 25px';
-  } else {
-    return '15px 33px';
-  }
-};
+export enum PADDING {
+  small = '9px 18px',
+  medium = '12px 25px',
+  default = '15px 33px'
+}
 
-const getButtonRadius = (size: Size) => {
-  if (size === 'small') {
-    return '15px';
-  } else if (size === 'medium') {
-    return '20px';
-  } else {
-    return '30px';
-  }
-};
+export enum RADIUS {
+  small = '15px',
+  medium = '20px',
+  default = '30px'
+}
 
 const Button = styled.button<ButtonProps>`
   border: none;
   background: ${({ backgroundColor, theme }) =>
     theme.button.rounded.background[backgroundColor]};
   height: 50px;
-  border-radius: ${({ size }) => getButtonRadius(size)};
-  height: ${({ size }) => getButtonHeight(size)};
+  border-radius: ${({ size }) => RADIUS[size]};
+  height: ${({ size }) => HEIGHT[size]};
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: ${({ size }) => getButtonPadding(size)};
+  padding: ${({ size }) => PADDING[size]};
   cursor: pointer;
   transition: 0.2s;
   width: fit-content;

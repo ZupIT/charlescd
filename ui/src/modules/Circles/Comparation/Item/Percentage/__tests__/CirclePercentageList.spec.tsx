@@ -1,9 +1,8 @@
-import React, { ReactElement } from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
 import CirclePercentageList from '../CirclePercentageList';
-import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPagination';
-import { Author, Circle } from 'modules/Circles/interfaces/Circle';
 import { circle, mockPercentageCircles } from '../../CreateSegments/__tests__/fixtures';
+import userEvent from '@testing-library/user-event';
 
 
 test('render CirclePercentageList default component', async () => {
@@ -26,7 +25,7 @@ test('CirclePercentageList show list button', async () => {
   
     const CirclePercentageListContainerButton = await screen.findByTestId('circle-list-container-button')
   
-    fireEvent.click(CirclePercentageListContainerButton)
+    userEvent.click(CirclePercentageListContainerButton)
     
     const CirclePercentageListItem = await screen.findByTestId(`circle-percentage-list-item-${circle.id}`)
 

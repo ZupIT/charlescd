@@ -16,13 +16,12 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { fireEvent, render, screen, act, waitFor } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { Author, Circle } from 'modules/Circles/interfaces/Circle';
+import { Circle } from 'modules/Circles/interfaces/Circle';
 import Percentage from '../Percentage';
-import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPagination';
-import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { circle, mockEmptyPercentageCircles, mockFullPercentageCircles, mockPercentageCircles } from './fixtures';
+import userEvent from '@testing-library/user-event';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -62,7 +61,7 @@ test('render Percentage with list', async () => {
 
   const listContainerButton = await screen.findByTestId("circle-list-container-button")
 
-  fireEvent.click(listContainerButton)
+  userEvent.click(listContainerButton)
 
 
   await waitFor(() => {
@@ -170,15 +169,11 @@ test('onSaveCircle Should be called', async () => {
   );
   const SliderInput = await screen.findByTestId("input-number-slider")
 
-  fireEvent.change(SliderInput, {
-    target: {
-      value: 35
-    }
-  })
+  userEvent.type(SliderInput, "35")
 
   const submitButton = await screen.findByTestId("button-default-percentage")
 
-  fireEvent.click(submitButton)
+  userEvent.click(submitButton)
     
 
   await waitFor(() => {
@@ -204,15 +199,11 @@ test('onSaveCircle Should not be called', async () => {
   );
   const SliderInput = await screen.findByTestId("input-number-slider")
 
-  fireEvent.change(SliderInput, {
-    target: {
-      value: 95
-    }
-  })
+  userEvent.type(SliderInput, "95")
 
   const submitButton = await screen.findByTestId("button-default-percentage")
 
-  fireEvent.click(submitButton)
+  userEvent.click(submitButton)
     
 
   await waitFor(() => {
