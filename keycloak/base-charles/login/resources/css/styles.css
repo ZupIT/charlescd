@@ -1,0 +1,154 @@
+body {
+    background-color: #111;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    color: #fff;
+    font-family: sans-serif;
+    text-shadow: 0px 0px 10px #000;
+    margin: 0px;
+}
+
+.logo-charlescd {
+    background-image: url(../img/logo-charles.svg);
+    background-repeat: no-repeat;
+    height: 50px;
+}
+
+.love {
+    background-image: url(../img/heart.svg);
+    background-repeat: no-repeat;
+    margin-left: 8px;
+    margin-right: 8px;
+    height: 12px;
+    width: 10px;
+}
+
+.logo-zup {
+    background-image: url(../img/logo-zup.svg);
+    background-repeat: no-repeat;
+    margin-left: 10px;
+    margin-top: 5px;
+    height: 25px;
+    width: 45px;
+}
+
+div#kc-form-wrapper {
+    position: relative;
+    width: 1080px;
+    height: 100vh;
+    margin: 200px auto;
+}
+
+.form {
+  width: 400px;
+  height: 500px;
+  background-color: #111;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px;
+  border-radius: 4px;
+}
+  
+.form > .logo {
+  align-self: flex-start;
+  margin-bottom: 30px;
+}
+  
+.footer > .logo {
+  margin: 0 5px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #fff;
+}
+
+.field {
+  position: relative;
+  border: none;
+  height: 40px;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+.field > .input:valid + .label {
+  top: 0px;
+  font-size: 12px;
+}
+
+.field:focus-within > .label {
+  top: 0px;
+  font-size: 12px;
+}
+
+.submit,
+input[type="submit"] {
+  position: absolute;
+  right: 0;
+  background-color: #5c37cc;
+  border: none;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 10px;
+  height: 30px;
+  line-height: 30px;
+  font-weight: bold;
+  padding: 0 33px;
+  cursor: pointer;
+  transition: 0.2s;
+  width: fit-content;
+}
+
+.submit:hover {
+  transform: scale(1.1);
+}
+
+.label {
+  color: #98989e;
+  cursor: text;
+  font-size: 14px;
+  top: 20px;
+  position: absolute;
+  transition: top 0.1s, font-size 0.1s;
+}
+
+.input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #fff;
+  bottom: 0px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 14px;
+  padding-bottom: 5px;
+  position: absolute;
+  width: 100%;
+  outline: none;
+}
+
+/* .input:-webkit-autofill {
+  background: none;
+} */
+
+.error-login {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #ff453a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+  margin-bottom: 50px;
+  color: #fff;
+  margin: 0;
+}
+  
