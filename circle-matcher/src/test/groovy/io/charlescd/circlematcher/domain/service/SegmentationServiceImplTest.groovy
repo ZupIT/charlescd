@@ -245,8 +245,8 @@ class SegmentationServiceImplTest extends Specification {
 
         then:
         1 * keyMetadataRepository.findByWorkspaceId(_) >> [keyMetadata]
-        1 * keyMetadataRepository.create(_) >> 0
-        1 * segmentationRepository.create(composedKey, _)
+        1 * keyMetadataRepository.create(_) >> keyMetadata
+        0 * segmentationRepository.create(composedKey, _)
 
         notThrown()
     }
