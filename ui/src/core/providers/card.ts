@@ -47,7 +47,7 @@ export const archiveById = (cardId: string) =>
 export const updateById = (id: string, payload: Payload) =>
   putRequest(`${endpoint}/${id}`, payload);
 
-export const deleteById = (id: string, branchDeletion: boolean) =>
+export const deleteById = (id: string, branchDeletion = false) =>
   deleteRequest(`${endpoint}/${id}?${buildParams({ branchDeletion })}`);
 
 export const createCard = (payload: Payload) =>
