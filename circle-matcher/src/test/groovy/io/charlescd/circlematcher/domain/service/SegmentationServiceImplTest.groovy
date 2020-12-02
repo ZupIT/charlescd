@@ -194,4 +194,32 @@ class SegmentationServiceImplTest extends Specification {
         1 * segmentationRepository.removeByKey(composedKey)
         1 * keyMetadataRepository.remove(keyMetadata)
     }
+
+    def "should not create a segmentation rule in default circle if another is already registered"() {
+
+        given:
+
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def segmentation = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+        def request = TestUtils.createDefaultSegmentationRequest(node, SegmentationType.REGULAR)
+
+        when:
+
+        segmentationService.create(request)
+
+        then:
+        1 * keyMetadataRepository.findByWorkspaceId(_) >> [keyMetadata]
+        0 * keyMetadataRepository.create(_) >> 0
+        0 * segmentationRepository.create(composedKey, _)
+
+        thrown(IllegalStateException)
+    }
 }

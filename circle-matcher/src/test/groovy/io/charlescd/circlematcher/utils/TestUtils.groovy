@@ -77,4 +77,16 @@ class TestUtils {
         request.createdAt = LocalDateTime.now()
         return request
     }
+
+    static createDefaultSegmentationRequest(Node node, SegmentationType type) {
+        def createSegmentationRequest = new CreateSegmentationRequest()
+        createSegmentationRequest.name = "Men"
+        createSegmentationRequest.node = node
+        createSegmentationRequest.reference = "74b21efa-d52f-4266-9e6f-a28f26f7fffd"
+        createSegmentationRequest.circleId = "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85"
+        createSegmentationRequest.type = type
+        createSegmentationRequest.isDefault = true
+        createSegmentationRequest.createdAt = LocalDateTime.now()
+        return createSegmentationRequest
+    }
 }
