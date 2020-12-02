@@ -18,7 +18,7 @@
 
 package io.charlescd.moove.legacy.moove.api
 
-import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyEncoderConfiguration
+import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyErrorDecoderConfiguration
 import io.charlescd.moove.legacy.moove.api.request.NodeRequest
 import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*
     value = "charlesMatcherApi",
     url = "\${charlescd.matcher.url}",
     path = "\${charlescd.matcher.path}",
-    configuration = [DefaultLegacyEncoderConfiguration::class]
+    configuration = [DefaultLegacyErrorDecoderConfiguration::class]
 )
 interface CharlesMatcherApi {
 

@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
 
 @Configuration
-class DefaultLegacyEncoderConfiguration(
+class DefaultLegacyErrorDecoderConfiguration(
     val messageConverters: ObjectFactory<HttpMessageConverters>
 ) {
 
