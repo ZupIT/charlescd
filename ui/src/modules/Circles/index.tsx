@@ -27,7 +27,6 @@ import Menu from './Menu';
 import Styled from './styled';
 import getQueryStrings from 'core/utils/query';
 import MenuItem from './Menu/MenuItem';
-import LoaderMenu from './Menu/Loaders';
 import InfiniteScroll from 'core/components/InfiniteScroll';
 import { resetContentAction } from './state/actions';
 
@@ -80,7 +79,7 @@ const Circles = () => {
             hasMore={!list.last}
             loadMore={loadMore}
             isLoading={loading}
-            loader={<LoaderMenu.List />}
+            loader={<Styled.LoaderMenu />}
           >
             {renderItems()}
           </InfiniteScroll>

@@ -19,6 +19,7 @@ import styled from 'styled-components';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import Page from 'core/components/Page';
 import IconComponent from 'core/components/Icon';
+import LoaderMenuComponent from './Menu/Loaders';
 
 type ListProps = {
   ref: RefObject<HTMLElement>;
@@ -83,6 +84,10 @@ const Link = styled.a`
   text-decoration: none;
 `;
 
+const LoaderMenu = styled(LoaderMenuComponent.List)`
+  margin-left: 16px;
+`;
+
 export default {
   Actions,
   Scrollable,
@@ -93,5 +98,6 @@ export default {
   List,
   ListItem,
   Link,
-  Wrapper
+  Wrapper,
+  LoaderMenu
 };
