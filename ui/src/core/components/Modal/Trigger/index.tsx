@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, ReactNode, useRef } from 'react';
-import useOutsideClick from 'core/hooks/useClickOutside';
+import React, { useState, ReactNode } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
@@ -44,25 +43,15 @@ const Trigger = ({
   children
 }: Props) => {
   const [toggle, switchToggle] = useState(true);
-  const menuRef = useRef<HTMLDivElement>();
 
   const handleDismiss = () => {
     switchToggle(!toggle);
     onDismiss();
   };
 
-  useOutsideClick(menuRef, () => {
-    switchToggle(!toggle);
-    onDismiss();
-  });
-
   return (
     toggle && (
-      <Styled.Wrapper
-        ref={menuRef}
-        data-testid="modal-trigger"
-        className={className}
-      >
+      <Styled.Wrapper data-testid="modal-trigger" className={className}>
         <Styled.Background className="modal-background" />
         <Styled.Content className="modal-content">
           <Styled.Button.Container>
