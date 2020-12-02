@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.metrics.connector.prometheus
 
+import io.charlescd.moove.metrics.config.MetricsFeignConfig
 import java.net.URI
 import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 
-@FeignClient(name = "prometheusApi", url = "\${prometheus.url}")
+@FeignClient(name = "prometheusApi", url = "\${prometheus.url}", configuration =  [MetricsFeignConfig::class])
 interface PrometheusApi {
 
     companion object {

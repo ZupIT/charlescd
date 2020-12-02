@@ -22,6 +22,7 @@ import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
+import selectEvent from 'react-select-event';
 
 (global as any).MutationObserver = MutationObserver;
 
@@ -76,10 +77,10 @@ test('render Registry form with azure values', async () => {
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  const radioButton = screen.getByTestId("radio-group-registry-item-AZURE");
-  await act(async () => userEvent.click(radioButton));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Azure');
 
-  const text = screen.getByText('Enter the username');
+  const text = await screen.findByText('Enter the username');
   expect(text).toBeInTheDocument();
 });
 
@@ -88,20 +89,20 @@ test('render Registry form with AWS values', async () => {
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  await act(async () => userEvent.click(radioButton));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'AWS');
   
-  const text = screen.getByText('Enter the region');
+  const text = await screen.findByText('Enter the region');
   expect(text).toBeInTheDocument();
 });
 
-test('render Registry form with AWS values and secret input', () => {
+test('render Registry form with AWS values and secret input', async () => {
   render(<FormRegistry onFinish={mockOnFinish}/>);
   
-  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  userEvent.click(radioButton);
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'AWS');
   
-  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
+  const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
   userEvent.click(radioAuthButton);
 
   const text = screen.getByText('Enter the access key');
@@ -111,8 +112,8 @@ test('render Registry form with AWS values and secret input', () => {
 test('render Registry form without AWS values and secret input', async () => {
   render(<FormRegistry onFinish={mockOnFinish}/>);
   
-  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  await act(async () => userEvent.click(radioButton));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  await act(async () => selectEvent.select(registryLabel, 'AWS'));
   
   const text = screen.queryByText('Enter the access key');
   expect(text).not.toBeInTheDocument();
@@ -123,10 +124,10 @@ test('Should enabled submit button after fill AWS form', async () => {
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  await act(async () => userEvent.click(radioButton));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'AWS');
   
-  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
+  const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
   await act(async () => userEvent.click(radioAuthButton));
   
   const inputAwsName = screen.getByTestId("input-text-name");
@@ -162,10 +163,10 @@ test('Should not enabled submit button after partial fill AWS form', async () =>
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  const radioButton = screen.getByTestId("radio-group-registry-item-AWS");
-  await act(async () => userEvent.click(radioButton));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'AWS');
   
-  const radioAuthButton = screen.getByTestId("switch-aws-auth-handler");
+  const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
   await act(async () => userEvent.click(radioAuthButton));
   
   const inputAwsAddress = screen.getByTestId("input-text-address");
@@ -196,10 +197,10 @@ test('Should not enabled submit button after partial fill AWS form', async () =>
 test('render Registry form with Docker Hub form', async () => {
   render(<FormRegistry onFinish={mockOnFinish}/>);
 
-  const radioButton = screen.getByTestId('radio-group-registry-item-DOCKER_HUB');
-  await act(async () => userEvent.click(radioButton));
-
-  const enterUsername = screen.getByText('Enter the username');
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Docker Hub');
+  
+  const enterUsername = await screen.findByText('Enter the username');
   expect(enterUsername).toBeInTheDocument();
   
   const enterAddress = screen.queryByText('Enter the address');
@@ -209,18 +210,18 @@ test('render Registry form with Docker Hub form', async () => {
 test('should render GCP registry form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
-  await act(async () => userEvent.click(gcp));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'GCP');
   
-  const projectIdInput = screen.getByText('Enter the project id');
+  const projectIdInput = await screen.findByText('Enter the project id');
   waitFor(() => expect(projectIdInput).toBeInTheDocument());
 });
 
 test('should not enable submit button after partially filled GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
-  await act(async () => userEvent.click(gcp));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  await act(async () => selectEvent.select(registryLabel, 'GCP'));
 
   const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
@@ -243,8 +244,8 @@ test('should enable submit button after fill GCP form', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
-  userEvent.click(gcp);
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  await act(async () => selectEvent.select(registryLabel, 'GCP'));
 
   const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
@@ -270,8 +271,8 @@ test('should test connectivity with GCR successful', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
-  await act(async () => userEvent.click(gcp));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  await act(async () => selectEvent.select(registryLabel, 'GCP'));
   
   const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
@@ -301,8 +302,8 @@ test('should test connectivity with GCR error', async () => {
 
   render(<FormRegistry onFinish={mockOnFinish} />);
 
-  const gcp = screen.getByTestId("radio-group-registry-item-GCP");
-  userEvent.click(gcp);
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  await act(async () => selectEvent.select(registryLabel, 'GCP'));
 
   const inputGCPName = screen.getByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');

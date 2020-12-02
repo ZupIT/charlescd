@@ -227,7 +227,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         />
       </Styled.Title>
       <Styled.Select
-        placeholder="Choose witch one you want to add:"
+        placeholder="Choose which one you want to add:"
         customOption={CustomOption.Icon}
         options={options}
         onChange={option => onChange(option as Option)}
