@@ -79,7 +79,7 @@ class V2UserController(
         return this.createUserInteractor.execute(createUserRequest, authorization)
     }
 
-    @ApiOperation(value = "Update user")
+    @ApiOperation(value = "Patch user")
     @ApiImplicitParam(
         name = "patchUserRequest",
         value = "Patch User",
