@@ -398,7 +398,7 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should delete a card and branch`() {
+    fun `should delete a software card and branch`() {
         val card = buildSoftwareCard()
 
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
@@ -422,7 +422,24 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should delete only the card | blacklist rule`() {
+    fun `should delete a action card and branch`() {
+        val card = buildActionCard()
+
+        val gitConfigurationId = module1.workspace.gitConfigurationId!!
+
+        every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
+        every { cardRepository.deleteLabelsRelationship(any()) } answers {}
+        every { cardRepository.deleteMembersRelationship(any()) } answers {}
+        every { cardRepository.delete(card) } answers {}
+
+        cardService.delete(card.id, workspaceId, true)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
+        verify(exactly = 1) { cardRepository.delete(card) }
+    }
+
+    @Test
+    fun `should delete only the software card | blacklist rule`() {
         val card = buildSoftwareCard("master")
 
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
@@ -446,7 +463,7 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should delete only the card | service option rule`() {
+    fun `should delete only the software card | service option rule`() {
         val card = buildSoftwareCard()
 
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
@@ -470,7 +487,7 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should not delete not found card`() {
+    fun `should not delete not found software card`() {
         val card = buildSoftwareCard()
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.empty()
