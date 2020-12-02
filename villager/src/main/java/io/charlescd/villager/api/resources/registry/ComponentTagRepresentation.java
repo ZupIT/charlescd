@@ -17,7 +17,6 @@
 package io.charlescd.villager.api.resources.registry;
 
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +34,13 @@ public class ComponentTagRepresentation {
         return new ComponentTagRepresentation(componentTagDTO.getName(), componentTagDTO.getArtifact());
     }
 
-    public static ArrayList<ComponentTagRepresentation> toListRepresentation(List<ComponentTagDTO> componentTagListDTO) {
+    public static ArrayList<ComponentTagRepresentation> toListRepresentation(
+            List<ComponentTagDTO> componentTagListDTO
+    ) {
         ArrayList<ComponentTagRepresentation> result = new ArrayList<>();
         componentTagListDTO.forEach(componentTagDTO -> {
-            result.add( new ComponentTagRepresentation(componentTagDTO.getName(), componentTagDTO.getArtifact()));
+            result.add(new ComponentTagRepresentation(componentTagDTO.getName(),
+                    componentTagDTO.getArtifact()));
         });
         return result;
     }

@@ -19,10 +19,12 @@ package io.charlescd.villager.api.resources.registry;
 import io.charlescd.villager.api.handlers.impl.CreateDockerRegistryRequestHandler;
 import io.charlescd.villager.api.handlers.impl.GetDockerRegistryTagHandler;
 import io.charlescd.villager.api.handlers.impl.ListDockerRegistryRequestHandler;
-import io.charlescd.villager.interactor.registry.*;
+import io.charlescd.villager.interactor.registry.ComponentTagDTO;
+import io.charlescd.villager.interactor.registry.DeleteDockerRegistryConfigurationInteractor;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+import io.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
+import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import io.charlescd.villager.util.Constants;
-import org.springframework.beans.factory.annotation.Required;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +104,10 @@ public class DockerRegistryResource {
         var componentTagList = new ArrayList<ComponentTagRepresentation>();
 
         response.ifPresent(componentTagDTO -> {
-                    componentTagList.addAll(ComponentTagRepresentation.toListRepresentation((List<ComponentTagDTO>) componentTagDTO));
+                    componentTagList.addAll(
+                            ComponentTagRepresentation.toListRepresentation(
+                                    (List<ComponentTagDTO>) componentTagDTO)
+                    );
                 }
         );
 

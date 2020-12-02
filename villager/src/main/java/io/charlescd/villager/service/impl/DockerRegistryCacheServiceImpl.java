@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.charlescd.villager.interactor.registry.ComponentTagListDTO;
 import io.charlescd.villager.service.DockerRegistryCacheService;
 import io.quarkus.redis.client.RedisClient;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
+import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Arrays;
-
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Singleton
 public class DockerRegistryCacheServiceImpl implements DockerRegistryCacheService {
@@ -48,9 +46,9 @@ public class DockerRegistryCacheServiceImpl implements DockerRegistryCacheServic
 
     @Override
     public boolean isExistingKey(String key) {
-            return redisClient
-                    .keys(key)
-                    .stream()
-                    .count() > 0;
+        return redisClient
+                .keys(key)
+                .stream()
+                .count() > 0;
     }
 }

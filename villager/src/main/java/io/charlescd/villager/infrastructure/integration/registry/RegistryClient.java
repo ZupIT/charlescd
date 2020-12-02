@@ -17,10 +17,9 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-
-import javax.ws.rs.core.Response;
 import java.io.Closeable;
 import java.util.Optional;
+import javax.ws.rs.core.Response;
 
 public interface RegistryClient extends Closeable {
 
@@ -32,7 +31,9 @@ public interface RegistryClient extends Closeable {
                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
 
 
-    Optional<Response> getImagesTags(String name, DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
+    Optional<Response> getImagesTags(String name,
+                                     DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
+
     void closeQuietly();
 
 }

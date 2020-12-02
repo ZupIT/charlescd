@@ -26,13 +26,12 @@ import io.charlescd.villager.interactor.registry.ComponentTagListDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import io.charlescd.villager.service.DockerRegistryCacheService;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 @ApplicationScoped
 public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagInteractor {
@@ -55,9 +54,13 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
     public Optional execute(GetDockerRegistryTagInput input) {
 
         var entity =
-                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId())
+                this.dockerRegistryConfigurationRepository.findById(
+                        input.getArtifactRepositoryConfigurationId()
+                )
                         .orElseThrow(
-                                () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
+                                () -> new ResourceNotFoundException(
+                                        ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY)
+                        );
 
         if (!entity.workspaceId.equals(input.getWorkspaceId())) {
             throw new IllegalAccessResourceException(
@@ -70,12 +73,20 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
             var name = input.getName();
             if (name == null || name.isEmpty() || !registryService.isExistingKey(cacheKey)) {
-                Optional<Response> response = this.registryClient.getImagesTags(input.getArtifactName(), entity.connectionData);
+                Optional<Response> response = this.registryClient.getImagesTags(
+                        input.getArtifactName(),
+                        entity.connectionData
+                );
                 var jsonEntity = response.get().readEntity(String.class);
                 saveCacheList(entity.workspaceId, jsonEntity);
             }
 
-            return cacheSearch(entity.workspaceId, name, entity.connectionData.host, input.getArtifactName());
+            return cacheSearch(
+                    entity.workspaceId,
+                    name,
+                    entity.connectionData.host,
+                    input.getArtifactName()
+            );
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -85,7 +96,10 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
         return Optional.empty();
     }
 
-    private Optional cacheSearch(String key, String name, String host, String artifactName) throws JsonProcessingException {
+    private Optional cacheSearch(String key,
+                                 String name,
+                                 String host,
+                                 String artifactName) throws JsonProcessingException {
         ComponentTagListDTO componetTagList = registryService.get(key);
 
         return Optional.of(componetTagList.getTags()

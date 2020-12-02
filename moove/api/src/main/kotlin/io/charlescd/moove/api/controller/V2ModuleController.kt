@@ -163,23 +163,13 @@ class V2ModuleController(
 
     @ApiOperation(value = "Find Component tags")
     @GetMapping("/{moduleId}/components/{componentId}/tags")
-    fun findComponentsTagsByName(
+    fun findComponentsTags(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @NotBlank @PathVariable("moduleId") moduleId: String,
         @NotBlank @PathVariable("componentId") componentId: String,
         @NotBlank @RequestParam("name") name: String
     ): List<ComponentTagResponse> {
         return findComponentTagsByNameInteractor.execute(moduleId, componentId, name, workspaceId)
-    }
-
-    @ApiOperation(value = "Find Component tags")
-    @GetMapping("/{moduleId}/components/{componentId}/tags")
-    fun findComponentsTags(
-        @RequestHeader("x-workspace-id") workspaceId: String,
-        @NotBlank @PathVariable("moduleId") moduleId: String,
-        @NotBlank @PathVariable("componentId") componentId: String
-    ) {
-        findComponentTagsByNameInteractor.execute(moduleId, componentId,  workspaceId)
     }
 
     @ApiOperation(value = "Find deployed Components at Circle")
