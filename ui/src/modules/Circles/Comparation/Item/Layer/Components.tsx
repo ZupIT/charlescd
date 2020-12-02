@@ -32,7 +32,10 @@ const LayerComponents = ({ components }: Props) => {
     name,
     version
   }: Pick<Component, 'module' | 'name' | 'version'>) => (
-    <Panel.Section key={`${module}-${name}-${version}`}>
+    <Panel.Section
+      key={`${module}-${name}-${version}`}
+      data-testid={`deployed-module-${module}-${name}-${version}`}
+    >
       <Text.h5 color="light">{`${module}/${name}:${version}`}</Text.h5>
     </Panel.Section>
   );

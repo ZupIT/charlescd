@@ -29,12 +29,13 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
 
-  public async findDefaultActiveComponents(): Promise<ComponentEntityV2[]> {
+  public async findDefaultActiveComponents(defaultCircleId: string): Promise<ComponentEntityV2[]> {
     // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.active = true')
-      .andWhere('deployment.defaultCircle is true')
+      .andWhere('deployment.default_circle is true')
+      .andWhere('deployment.circle_id = :defaultCircleId', { defaultCircleId })
       .getMany()
   }
 
