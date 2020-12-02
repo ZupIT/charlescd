@@ -2,20 +2,19 @@ package io.charlescd.moove.metrics.config
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import feign.Logger
 import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.util.StreamUtils
 import java.io.IOException
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.nio.charset.StandardCharsets
+import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.util.StreamUtils
 
 @Configuration
 class MetricsFeignConfig {
@@ -61,6 +60,4 @@ class MetricsFeignConfig {
         val message: Any,
         val error: String
     )
-
-
 }

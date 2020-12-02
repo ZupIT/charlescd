@@ -18,32 +18,26 @@ package io.charlescd.moove.legacy.moove.api.config
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import feign.Logger
 import feign.Response
-import feign.codec.Encoder
 import feign.codec.ErrorDecoder
-import feign.form.FormEncoder
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.cloud.openfeign.support.SpringEncoder
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
-import org.springframework.util.StreamUtils
 import java.io.IOException
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.nio.charset.StandardCharsets
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.ObjectFactory
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.util.StreamUtils
 
 @Configuration
 class DefaultLegacyEncoderConfiguration(
     val messageConverters: ObjectFactory<HttpMessageConverters>
 ) {
-
 
     @Bean
     fun defaultLegacyErrorDecoder(): ErrorDecoder {

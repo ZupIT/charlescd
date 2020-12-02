@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 
-@FeignClient(name = "prometheusApi", url = "\${prometheus.url}", configuration =  [MetricsFeignConfig::class])
+@FeignClient(name = "prometheusApi", url = "\${prometheus.url}", configuration = [MetricsFeignConfig::class])
 interface PrometheusApi {
 
     companion object {

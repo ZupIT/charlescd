@@ -28,7 +28,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "villagerClient", url = "\${charlescd.villager.url}", configuration =  [  SimpleFeignEncoderConfiguration::class])
+@FeignClient(name = "villagerClient", url = "\${charlescd.villager.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface VillagerClient {
 
     @ResponseStatus(HttpStatus.CREATED)

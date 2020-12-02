@@ -25,7 +25,6 @@ import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLega
 import java.io.Serializable
 import java.lang.IllegalArgumentException
 
-
 class VillagerErrorDecoder : ErrorDecoder {
     override fun decode(methodKey: String?, response: Response?): Exception {
         response?.let {

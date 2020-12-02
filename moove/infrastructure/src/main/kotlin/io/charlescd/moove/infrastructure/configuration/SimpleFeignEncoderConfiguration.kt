@@ -25,20 +25,19 @@ import feign.codec.ErrorDecoder
 import feign.form.FormEncoder
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
+import java.io.IOException
+import java.lang.Exception
+import java.lang.IllegalArgumentException
+import java.lang.RuntimeException
+import java.nio.charset.StandardCharsets
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.SpringEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Scope
 import org.springframework.util.StreamUtils
-import java.io.IOException
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
-import java.nio.charset.StandardCharsets
 
 @Configuration
 class SimpleFeignEncoderConfiguration(

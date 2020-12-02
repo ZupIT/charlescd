@@ -27,7 +27,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration =  [  SimpleFeignEncoderConfiguration::class])
+@FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface DeployClient {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(

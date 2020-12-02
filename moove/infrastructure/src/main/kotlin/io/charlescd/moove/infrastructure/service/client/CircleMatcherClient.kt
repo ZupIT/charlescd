@@ -26,7 +26,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "circleMatcherClient", url = "\${charlescd.matcher.url}", configuration =  [  SimpleFeignEncoderConfiguration::class])
+@FeignClient(name = "circleMatcherClient", url = "\${charlescd.matcher.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface CircleMatcherClient {
 
     @ResponseBody

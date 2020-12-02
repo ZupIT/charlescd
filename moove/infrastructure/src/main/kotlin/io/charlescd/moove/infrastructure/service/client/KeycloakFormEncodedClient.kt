@@ -18,16 +18,14 @@ package io.charlescd.moove.infrastructure.service.client
 
 import feign.Headers
 import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
-@FeignClient(name = "keycloakFormEncodedClient", url = "\${charlescd.keycloak.serverUrl}", configuration =  [  SimpleFeignEncoderConfiguration::class])
+@FeignClient(name = "keycloakFormEncodedClient", url = "\${charlescd.keycloak.serverUrl}", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface KeycloakFormEncodedClient {
-
 
     @PostMapping(
         value = ["/realms/{realm}/protocol/openid-connect/token"],
