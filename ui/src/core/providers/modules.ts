@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 import { buildParams, URLParams } from 'core/utils/query';
 import { baseRequest, postRequest } from './base';
 
@@ -34,7 +35,7 @@ export interface ModuleSave {
 const endpoint = '/moove/v2/modules';
 
 export const findAll = (name: string) => {
-  const page = 'page=0&size=50';
+  const page = `page=0&size=${DEFAULT_PAGE_SIZE}`;
   const qs = name ? `${page}&name=${name}` : page;
   return baseRequest(`${endpoint}?${qs}`);
 };

@@ -37,7 +37,6 @@ const CirclesComparation = lazy(() => import('modules/Circles/Comparation'));
 const Circles = () => {
   const [loading, filterCircles] = useCircles(CIRCLE_TYPES.list);
   const { list } = useGlobalState(({ circles }) => circles);
-
   const dispatch = useDispatch();
   const [status, setStatus] = useState<string>(CIRCLE_STATUS.active);
   const [name, setName] = useState('');

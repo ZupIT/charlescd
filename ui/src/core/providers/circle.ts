@@ -20,6 +20,7 @@ import {
   CreateCircleWithFilePayload,
   CreateCircleManuallyPayload
 } from 'modules/Circles/interfaces/Circle';
+import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 
 export const endpoint = '/moove/v2/circles';
 
@@ -37,10 +38,9 @@ const initialCircleFilter = {
 };
 
 export const findAllCircles = (filter: CircleFilter = initialCircleFilter) => {
-  const defaultPageSize = 50;
   const params = new URLSearchParams({
     active: `${filter?.active}`,
-    size: `${defaultPageSize}`,
+    size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name,
     page: `${filter.page ?? 0}`
   });
@@ -96,9 +96,8 @@ export const updateCircleWithFile = (
 export const findAllCirclesWithoutActive = (
   filter: CircleFilter = initialCircleFilter
 ) => {
-  const sizeFixed = 50;
   const params = new URLSearchParams({
-    size: `${sizeFixed}`,
+    size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name
   });
 

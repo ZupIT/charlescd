@@ -16,6 +16,7 @@
 
 import { baseRequest, patchRequest } from './base';
 import { getWorkspaceId } from 'core/utils/workspace';
+import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 
 export const mooveEndpoint = '/moove/v2';
 export const endpoint = `${mooveEndpoint}/workspaces`;
@@ -49,9 +50,8 @@ const initialFilter = {
 };
 
 export const findAll = (filter: Filter = initialFilter) => {
-  const sizeFixed = 50;
   const params = new URLSearchParams({
-    size: `${sizeFixed}`,
+    size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name
   });
 
