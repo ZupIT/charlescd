@@ -18,6 +18,8 @@
 
 package io.charlescd.moove.legacy.moove.api
 
+import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyEncoderConfiguration
+import io.charlescd.moove.legacy.moove.api.config.VillagerFeignConfig
 import io.charlescd.moove.legacy.moove.api.request.NodeRequest
 import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
@@ -25,7 +27,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(value = "charlesMatcherApi", url = "\${charlescd.matcher.url}", path = "\${charlescd.matcher.path}")
+@FeignClient(value = "charlesMatcherApi", url = "\${charlescd.matcher.url}", path = "\${charlescd.matcher.path}", configuration = [DefaultLegacyEncoderConfiguration::class])
 interface CharlesMatcherApi {
 
     @ResponseStatus(HttpStatus.CREATED)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.configuration
+package io.charlescd.moove.legacy.moove.api.config
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -23,11 +23,10 @@ import feign.Response
 import feign.codec.Encoder
 import feign.codec.ErrorDecoder
 import feign.form.FormEncoder
-import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.SpringEncoder
 import org.springframework.context.annotation.Bean
@@ -41,23 +40,13 @@ import java.lang.RuntimeException
 import java.nio.charset.StandardCharsets
 
 @Configuration
-class SimpleFeignEncoderConfiguration(
+class DefaultLegacyEncoderConfiguration(
     val messageConverters: ObjectFactory<HttpMessageConverters>
 ) {
 
-    @Bean
-    fun feignLogger(): Logger.Level {
-        return Logger.Level.FULL
-    }
 
     @Bean
-    @Scope("prototype")
-    fun feignFormEncoder(): Encoder {
-        return FormEncoder(SpringEncoder(messageConverters))
-    }
-
-    @Bean
-    fun errorDecoder(): ErrorDecoder {
+    fun defaultLegacyErrorDecoder(): ErrorDecoder {
         return CustomErrorDecoder()
     }
 
@@ -67,7 +56,7 @@ class SimpleFeignEncoderConfiguration(
             val responseMessage: String? = this.extractMessageFromResponse(response)
             return when (response?.status()) {
                 400 -> IllegalArgumentException(responseMessage)
-                422 -> BusinessException.of(MooveErrorCode.INVALID_PAYLOAD, responseMessage ?: response.reason())
+                422 -> BusinessExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_PAYLOAD, responseMessage ?: response.reason())
                 else -> RuntimeException(responseMessage)
             }
         }

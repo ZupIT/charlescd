@@ -1,12 +1,13 @@
 package io.charlescd.moove.infrastructure.service.client
 
+import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestHeader
 
-@FeignClient(name = "keycloakCustomClient", url = "\${charlescd.keycloak.serverUrl}")
+@FeignClient(name = "keycloakCustomClient", url = "\${charlescd.keycloak.serverUrl}", configuration =  [  SimpleFeignEncoderConfiguration::class])
 interface KeycloakCustomClient {
 
     @GetMapping(

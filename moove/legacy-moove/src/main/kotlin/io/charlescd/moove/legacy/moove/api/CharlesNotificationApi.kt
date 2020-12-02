@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.legacy.moove.api
 
+import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyEncoderConfiguration
 import io.charlescd.moove.legacy.moove.api.request.CreateNotificationRequest
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
@@ -26,7 +27,8 @@ import org.springframework.web.bind.annotation.ResponseBody
 @FeignClient(
     value = "charlesNotificationApi",
     url = "\${charlescd.notification.url}",
-    path = "\${charlescd.notification.path}"
+    path = "\${charlescd.notification.path}",
+    configuration = [DefaultLegacyEncoderConfiguration::class]
 )
 interface CharlesNotificationApi {
 

@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration
 class VillagerFeignConfig {
 
     @Bean
-    fun feignErrorDecoder(): ErrorDecoder? {
+    fun villagerFeignErrorDecoder(): ErrorDecoder? {
         return VillagerErrorDecoder()
     }
 }
