@@ -13,12 +13,23 @@ public class NodeValidator implements ConstraintValidator<NodeConstraint, Node> 
 
     @Override
     public boolean isValid(Node node, ConstraintValidatorContext constraintValidatorContext) {
-        if(node.getType() == NodeType.RULE) {
-            return validateRuleType(node);
-        } else if(node.getType() == NodeType.CLAUSE) {
-            return validateClauseType(node);
-        } else {
+        return validate(node);
+    }
+
+    private boolean validate(Node node) {
+        if(node.getType() == NodeType.CLAUSE) {
+            if(validateClauseType(node)) {
+                boolean valid = false;
+                for(var clause : node.getClauses()) {
+                    valid = validate(clause);
+                    if(!valid)
+                        break;
+                }
+                return valid;
+            }
             return false;
+        } else {
+            return validateRuleType(node);
         }
     }
 
@@ -27,9 +38,10 @@ public class NodeValidator implements ConstraintValidator<NodeConstraint, Node> 
     }
 
     private boolean validateClauseType(Node node) {
-        return node.getContent() == null
+        return node.getType() == NodeType.CLAUSE
+                && node.getContent() == null
+                && node.getLogicalOperator() != null
                 && node.getClauses() != null
-                && node.getClauses().size() > 0
-                && validateRuleType(node.getClauses().get(0));
+                && node.getClauses().size() > 0;
     }
 }

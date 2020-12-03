@@ -40,4 +40,19 @@ class NodeValidationTest extends Specification {
         then:
         assert valid
     }
+
+    def "Invalid CLAUSE node without simple RULE type"() {
+
+        given:
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def node = new Node(NodeType.CLAUSE, LogicalOperatorType.OR, null, null)
+        when:
+        def validator = new NodeValidator()
+        def valid = validator.isValid(node, null)
+        then:
+        assert !valid
+    }
 }
