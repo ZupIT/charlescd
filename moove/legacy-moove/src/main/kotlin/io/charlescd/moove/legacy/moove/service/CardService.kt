@@ -75,9 +75,13 @@ class CardService(
     }
 
     fun findById(id: String, workspaceId: String): CardRepresentation {
-        return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
+        val cardRepresentation = cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .map { it.toRepresentation() }
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
+            cardRepresentation.isProtected = isProtectedBranch(cardRepresentation.feature!!.branchName)
+            return cardRepresentation;
+
+
     }
 
     @Transactional
@@ -207,6 +211,10 @@ class CardService(
 
     private fun isExcludableBranch(branchName: String): Boolean {
         return !protectedBranches.contains(branchName)
+    }
+
+    private fun isProtectedBranch(branchName: String): Boolean {
+        return protectedBranches.contains(branchName)
     }
 
     private fun createNewBranch(

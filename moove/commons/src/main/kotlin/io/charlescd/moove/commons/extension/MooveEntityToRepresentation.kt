@@ -105,7 +105,7 @@ fun Card.toSimpleRepresentation(isProtected: Boolean = false): SimpleCardReprese
     }
 }
 
-fun Card.toRepresentation(): CardRepresentation {
+fun Card.toRepresentation(isProtected: Boolean = false): CardRepresentation {
     return when (this) {
         is SoftwareCard -> CardRepresentation(
             id = this.id,
@@ -120,7 +120,8 @@ fun Card.toRepresentation(): CardRepresentation {
             members = this.members.map { it.toRepresentation() },
             comments = this.comments.map { it.toRepresentation() },
             hypothesisId = this.hypothesis.id,
-            index = this.index
+            index = this.index,
+            isProtected = isProtected
         )
         is ActionCard -> CardRepresentation(
             id = this.id,
