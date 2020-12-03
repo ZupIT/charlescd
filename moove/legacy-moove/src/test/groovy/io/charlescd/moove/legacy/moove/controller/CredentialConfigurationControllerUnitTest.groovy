@@ -16,29 +16,15 @@
 
 package io.charlescd.moove.legacy.moove.controller
 
-import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
-import io.charlescd.moove.commons.representation.SimpleUserRepresentation
-import io.charlescd.moove.commons.representation.UserRepresentation
+
 import io.charlescd.moove.legacy.moove.api.request.GitProvidersEnum
 import io.charlescd.moove.legacy.moove.api.request.K8sClusterProvidersEnum
 import io.charlescd.moove.legacy.moove.request.configuration.CreateGCPRegistryConfigurationRequest
 import io.charlescd.moove.legacy.moove.request.configuration.CreateOctopipeCdConfigurationData
 import io.charlescd.moove.legacy.moove.request.configuration.CreateOctopipeCdConfigurationRequest
-import io.charlescd.moove.legacy.moove.request.configuration.CreateRegistryConfigurationRequest
 import io.charlescd.moove.legacy.moove.request.configuration.TestRegistryConnectionRequest
-import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
-import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.CredentialConfigurationService
-import io.charlescd.moove.legacy.moove.service.KeycloakService
-import io.charlescd.moove.legacy.moove.service.UserServiceLegacy
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import spock.lang.Specification
-
-import java.time.LocalDateTime
-
 
 class CredentialConfigurationControllerUnitTest extends Specification {
 
