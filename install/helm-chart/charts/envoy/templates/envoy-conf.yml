@@ -97,23 +97,21 @@ data:
                   inline_code: |
                     function envoy_on_request(request_handle)
                       local token = request_handle:headers():get("authorization")
-                      local headers, body = request_handle:httpCall(
-                      "charlescd-keycloak-http",
-                      {
-                        [":scheme"] = "https",
-                        [":method"] = "GET",
-                        [":path"] = "{{ .Values.idm.path }}",
-                        [":authority"] = "{{ .Values.idm.endpoint }}",
-                        ["authorization"] = token
-                      },
-                      "",
-                      1000,
-                      false
+                      local request = require("luajit-init")
+                      request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
+                      local response = request.send(
+                        "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
+                        {
+                          headers = {
+                            authorization = token
+                          }
+                        }
                       )
-                      request_handle:logInfo(headers[":status"])
-                      request_handle:logInfo(body)
-                      if headers[":status"] ~= "200" then
-                        request_handle:respond(headers,body)
+                      request_handle:logInfo(response.code)
+                      if response.code ~= 200 then
+                        request_handle:respond({
+                          [":status"] = response.code
+                        }, response.body)
                       end
                     end
               - name: envoy.filters.http.router

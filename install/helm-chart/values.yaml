@@ -31,8 +31,8 @@ moove:
   enabled: true
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
-  keycloakHost: "https://idm-dev.continuousplatform.com/auth"
-  internalIdmEnabled: false
+  keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
+  internalIdmEnabled: true
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -92,9 +92,9 @@ ui:
   enabled: true
   name: charlescd-ui
   apiHost: http://charles.info.example
-  authUri: https://idm-dev.continuousplatform.com
-  authRealm: ZupDev
-  isIdmEnabled: "1"
+  authUri: http://charles.info.example/keycloak
+  authRealm: charlescd
+  isIdmEnabled: "0"
   idmLoginUri: /protocol/openid-connect/auth
   idmLogoutUri: /protocol/openid-connect/logout
   idmRedirectHost: http://charles.info.example
@@ -144,7 +144,7 @@ circlematcher:
       memory: 128Mi
 
 keycloak:
-  enabled: false
+  enabled: true
   keycloak:
     extraEnv: |
       - name: PROXY_ADDRESS_FORWARDING
@@ -198,9 +198,10 @@ envoy:
   cors:
     enabled: true
   idm:
-    endpoint: idm-dev.continuousplatform.com
-    port: 443
-    path: /auth/realms/ZupDev/protocol/openid-connect/userinfo
+    endpoint: charlescd-keycloak-http
+    port: 80
+    path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo
+    protocol: https
 
 ingress:
   host: charles.info.example
