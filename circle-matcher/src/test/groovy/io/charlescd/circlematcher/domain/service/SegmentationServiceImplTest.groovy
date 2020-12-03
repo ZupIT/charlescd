@@ -250,4 +250,31 @@ class SegmentationServiceImplTest extends Specification {
 
         notThrown()
     }
+
+    def "should not update a segmentation rule in default circle"() {
+
+        given:
+
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def segmentation = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
+        def request = TestUtils.createUpdateDefaultSegmentationRequest(node, SegmentationType.REGULAR)
+
+        when:
+
+        segmentationService.update(request)
+
+        then:
+        0 * keyMetadataRepository.create(_) >> 0
+        0 * segmentationRepository.create(composedKey, _)
+
+        def exception = thrown(IllegalArgumentException)
+        assert exception.message == 'Cannot update default segmentation'
+    }
 }
