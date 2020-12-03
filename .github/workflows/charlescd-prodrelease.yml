@@ -356,6 +356,7 @@ jobs:
         
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v2
+      continue-on-error: true
       with:
         title: CI Update of charts and changelog
         commit-message: |
