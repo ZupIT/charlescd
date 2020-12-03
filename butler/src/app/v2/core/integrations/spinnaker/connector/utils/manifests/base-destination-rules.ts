@@ -31,13 +31,6 @@ interface IDestinationRule {
   }
 }
 
-export interface IDestinationRuleParams {
-  circles: IPipelineCircle[]
-  appName: string
-  appNamespace: string
-  versions: IDeploymentVersion[]
-}
-
 const baseDestinationRules = (appName: string, appNamespace: string): IDestinationRule => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'DestinationRule',
@@ -61,19 +54,3 @@ const createSubsets = (versions: IDeploymentVersion[], appName: string): ISubset
     }
   })
 }
-
-const createDestinationRules = (appName: string, appNamespace: string, circles: IPipelineCircle[], versions: IDeploymentVersion[], hostValue: string | undefined) : IDestinationRule => {
-  const newDestinationRule = baseDestinationRules(appName, appNamespace)
-  if (circles) {
-    const subsetsToAdd = createSubsets(versions, appName)
-    newDestinationRule.spec.subsets = subsetsToAdd
-  }
-
-  if (hostValue) {
-    newDestinationRule.spec.host = hostValue
-  }
-
-  return newDestinationRule
-}
-
-export default createDestinationRules

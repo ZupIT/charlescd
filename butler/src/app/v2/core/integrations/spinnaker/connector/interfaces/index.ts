@@ -20,21 +20,9 @@ import { IBaseHelmStage } from '../utils/base-stage-helm'
 import { IBaseDeployment } from '../utils/manifests/base-deployment'
 import { IBaseDelete } from '../utils/manifests/base-delete-deployment'
 import { IBaseWebhook } from '../utils/base-webhook'
-import { IPipelineCircle } from '../../../components/interfaces'
 import { DefaultCircleId } from '../../../../constants/application/configuration.constants'
 
 export type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IDefaultCircleMatcher
-
-export interface HttpMatchersParams {
-  circles: IPipelineCircle[]
-  appName: string
-  uri: { uriName: string }
-}
-
-export interface VirtualServiceParams {
-  appName: string
-  appNamespace: string
-}
 
 export interface IBaseVirtualService {
   apiVersion: string
@@ -202,30 +190,4 @@ export interface IBaseSpinnakerPipeline {
 
 export interface IUpdateSpinnakerPipeline extends IBaseSpinnakerPipeline {
   id: string
-}
-
-export interface IBuildService {
-  stages: BaseStagesUnion
-  refId: number
-  previousStages: string[]
-}
-
-export interface IBuildReturn {
-  stages: BaseStagesUnion
-  refId: number
-  previousStage: string
-}
-
-export interface IDeploymentReturn {
-  stages: BaseStagesUnion
-  deploymentsIds: string[]
-  refId: number
-  previousStage: string
-  previousStages: string[]
-}
-
-export interface ICleanIds {
-  refId: number
-  previousStage: string
-  deploymentsIds: string[]
 }
