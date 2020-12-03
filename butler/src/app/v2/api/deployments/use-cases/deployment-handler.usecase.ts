@@ -80,7 +80,7 @@ export class DeploymentHandlerUseCase {
     if (deployment.defaultCircle) {
       deployment.components = deployment.components.filter(c => !c.merged)
     }
-    const activeComponents = await this.componentsRepository.findActiveComponents()
+    const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
 
     try {
@@ -102,7 +102,7 @@ export class DeploymentHandlerUseCase {
 
   private async runUndeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
     this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
-    const activeComponents = await this.componentsRepository.findActiveComponents()
+    const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
 
     try {
