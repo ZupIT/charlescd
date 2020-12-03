@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProvidersEnum } from '../../../../v1/core/integrations/configuration/interfaces/git-providers.type'
+import { GitProvidersEnum } from '../../../core/configuration/interfaces/git-providers.type'
 import { ClusterProviderEnum } from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 export interface IEKSConfig {

@@ -17,7 +17,7 @@
 import 'jest'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
-import { GitProvidersEnum } from '../../../../app/v1/core/integrations/configuration/interfaces'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 import { ClusterProviderEnum } from '../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { OctopipeRequestBuilder } from '../../../../app/v2/core/integrations/octopipe/request-builder'
 import { completeOctopipeDeploymentRequest } from './fixtures/deployment/complete-request'

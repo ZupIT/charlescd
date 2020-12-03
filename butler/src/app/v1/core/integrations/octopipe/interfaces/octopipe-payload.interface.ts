@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { GitProvidersEnum } from '../../configuration/interfaces/git-providers.type'
-import { CallbackTypeEnum } from '../../../../api/notifications/enums/callback-type.enum'
+import { CallbackTypeEnum } from '../../../../../v2/api/deployments/enums/callback-type.enum'
+import { GitProvidersEnum } from '../../../../../v2/core/configuration/interfaces/git-providers.type'
 
 export interface IOctopipeVersion {
   version?: string

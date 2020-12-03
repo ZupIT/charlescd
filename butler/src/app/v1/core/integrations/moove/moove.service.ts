@@ -20,7 +20,7 @@ import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { AppConstants } from '../../../../v2/core/constants'
 import { IoCTokensConstants } from '../../../../v2/core/constants/ioc'
 import { ConsoleLoggerService } from '../../../../v2/core/logs/console'
-import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import IEnvConfiguration from '../../../../v2/core/configuration/interfaces/env-configuration.interface'
 import { AxiosResponse } from 'axios'
 
 @Injectable()
