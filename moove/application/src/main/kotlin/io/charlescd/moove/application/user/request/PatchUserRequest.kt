@@ -43,6 +43,7 @@ data class PatchUserRequest(override val patches: List<PatchOperation>) : BasePa
     }
 
     private fun validateOperations() {
+        Assert.isTrue(patches.none { it.op == OpCodeEnum.ADD }, "Add operation not allowed.")
         Assert.isTrue(patches.none { it.op == OpCodeEnum.REMOVE }, "Remove operation not allowed.")
     }
 
