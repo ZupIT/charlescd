@@ -23,7 +23,7 @@ import {
 } from './use-cases'
 import { CdConfigurationsRepository } from './repository'
 
-import { LogsModule } from '../../core/logs/logs.module'
+import { LogsModule } from '../../../v2/core/logs/logs.module'
 
 @Module({
   imports: [

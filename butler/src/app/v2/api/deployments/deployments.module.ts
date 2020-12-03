@@ -20,7 +20,6 @@ import { CdConfigurationEntity } from '../../../v1/api/configurations/entity'
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository'
 import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
 import { MooveService } from '../../../v1/core/integrations/moove'
-import { ConsoleLoggerService } from '../../../v1/core/logs/console'
 import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
 import { Execution } from './entity/execution.entity'
@@ -39,6 +38,7 @@ import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.use
 import { CdStrategyFactory } from '../../core/integrations/cd-strategy-factory'
 import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
 import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
+import { ConsoleLoggerService } from '../../core/logs/console/console-logger.service'
 
 @Module({
   imports: [

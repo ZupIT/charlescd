@@ -22,7 +22,6 @@ import { CdConfigurationsRepository } from '../../../../v1/api/configurations/re
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
@@ -30,6 +29,7 @@ import { ExecutionTypeEnum } from '../enums'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { CdStrategyFactory } from '../../../core/integrations/cd-strategy-factory'
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 

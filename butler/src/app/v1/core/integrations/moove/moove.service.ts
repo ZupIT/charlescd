@@ -19,7 +19,7 @@ import { Observable, of, throwError } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { AppConstants } from '../../constants'
 import { IoCTokensConstants } from '../../constants/ioc'
-import { ConsoleLoggerService } from '../../logs/console'
+import { ConsoleLoggerService } from '../../../../v2/core/logs/console'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 import { AxiosResponse } from 'axios'
 

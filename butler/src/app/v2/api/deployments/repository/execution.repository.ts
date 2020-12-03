@@ -17,10 +17,10 @@
 import { EntityRepository, getConnection, Repository, UpdateResult } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { NotificationStatusEnum } from '../../../core/enums/notification-status.enum'
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
 export type UpdatedExecution = { id: string }
 

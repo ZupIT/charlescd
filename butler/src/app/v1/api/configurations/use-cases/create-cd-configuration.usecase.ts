@@ -25,7 +25,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { CdConfigurationsRepository } from '../repository'
 import { CdConfigurationEntity } from '../entity'
-import { ConsoleLoggerService } from '../../../core/logs/console'
+import { ConsoleLoggerService } from '../../../../v2/core/logs/console'
 
 @Injectable()
 export class CreateCdConfigurationUsecase {

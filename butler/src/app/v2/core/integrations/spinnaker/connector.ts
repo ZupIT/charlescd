@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { ConnectorResult, SpinnakerPipeline } from './interfaces'
 import { ICreateSpinnakerApplication } from '../../../../v1/core/integrations/cd/spinnaker/interfaces'
 import { SpinnakerApiService } from '../../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { AppConstants } from '../../../../v1/core/constants'
 import { SpinnakerPipelineBuilder } from './pipeline-builder'
@@ -10,6 +9,7 @@ import { ConnectorResultError } from './interfaces'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
+import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 
 @Injectable()
 export class SpinnakerConnector implements CdConnector {
