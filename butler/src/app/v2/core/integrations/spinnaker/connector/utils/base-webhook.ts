@@ -33,25 +33,3 @@ export interface IBaseWebhook {
   type: 'webhook'
   url: string
 }
-
-const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: string[], previousStage: string, xCircleId: string, callbackType: string): IBaseWebhook => ({
-  completeOtherBranchesThenFail: false,
-  continuePipeline: true,
-  customHeaders: {
-    'x-circle-id': xCircleId || 'Default'
-  },
-  failPipeline: false,
-  method: 'POST',
-  name: 'Trigger webhook',
-  payload: {
-    status: '${#stage( \'' + previousStage + '\' ).status.toString()}',
-    callbackType: callbackType
-  },
-  refId,
-  requisiteStageRefIds: requisiteRefId,
-  statusUrlResolution: 'getMethod',
-  type: 'webhook',
-  url: uriWebhook
-})
-
-export default webhookBaseStage

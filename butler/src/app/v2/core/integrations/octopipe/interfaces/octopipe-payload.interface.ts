@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-import { CallbackTypeEnum } from '../../../../api/deployments/enums/callback-type.enum'
-import { GitProvidersEnum } from '../../../configuration/interfaces/git-providers.type'
-
-export interface IOctopipeVersion {
-  version?: string
-  versionUrl?: string
-  versionCircle?: string
-}
-
 export enum ClusterProviderEnum {
   EKS = 'EKS',
   GENERIC = 'GENERIC',
@@ -43,24 +34,4 @@ export interface IGenericClusterConfig {
   clientKey: string
   caData: string
   host: string
-}
-
-export interface IOctopipePayload {
-  versions: IOctopipeVersion[],
-  unusedVersions: IOctopipeVersion[],
-  istio: {
-    virtualService: Record<string, unknown>,
-    destinationRules: Record<string, unknown>
-  },
-  appName: string,
-  appNamespace: string
-  webHookUrl: string,
-  git: {
-    provider: GitProvidersEnum,
-    token: string
-  },
-  helmUrl: string,
-  k8s?: IEKSClusterConfig | IGenericClusterConfig | null // TODO Remove null from this union
-  circleId: string,
-  callbackType: CallbackTypeEnum
 }
