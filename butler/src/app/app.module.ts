@@ -17,7 +17,7 @@
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import IEnvConfiguration from './v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { DatabasesService } from './v1/core/integrations/databases'
+import { DatabasesService } from './v2/core/integrations/databases'
 import { ApiModule as ApiModuleV2 } from './v2/api/api.module'
 import { Configuration } from './v2/core/config/configurations'
 import { AppConstants } from './v2/core/constants'

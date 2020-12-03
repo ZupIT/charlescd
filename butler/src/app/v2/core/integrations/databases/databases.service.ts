@@ -16,7 +16,7 @@
 
 import { ConnectionOptions } from 'typeorm'
 import { IPostgresCredentials } from './interfaces'
-import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 
 const rootPath = __dirname.split('/app')[0]
 
