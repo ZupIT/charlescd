@@ -82,4 +82,16 @@ public class Node {
         }
     }
 
+    public boolean isValidRuleType() {
+        return this.getType() == NodeType.RULE
+                && this.getContent() != null;
+    }
+
+    public boolean isValidClauseType() {
+        return this.getType() == NodeType.CLAUSE
+                && this.getContent() == null
+                && this.getLogicalOperator() != null
+                && this.getClauses() != null
+                && this.getClauses().size() > 0;
+    }
 }
