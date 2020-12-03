@@ -60,4 +60,8 @@ class UserService(private val userRepository: UserRepository) {
     fun save(user: User): User {
         return this.userRepository.save(user)
     }
+
+    fun update(user: User): User {
+        return userRepository.update(user)
+    }
 }
