@@ -19,15 +19,15 @@ import IEnvConfiguration from '../integrations/configuration/interfaces/env-conf
 
 export const Configuration: IEnvConfiguration = {
 
-  postgresHost: 'k8s-client-postgresql', //process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
+  postgresHost: process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
 
-  postgresPort: 5432, // Number(process.env.DATABASE_PORT) || ConfigurationConstants.DATABASE_PORT,
+  postgresPort: Number(process.env.DATABASE_PORT) || ConfigurationConstants.DATABASE_PORT,
 
-  postgresUser: 'charlescd_butler', // process.env.DATABASE_USER || ConfigurationConstants.DATABASE_USER,
+  postgresUser: process.env.DATABASE_USER || ConfigurationConstants.DATABASE_USER,
 
-  postgresPass: '3f2Yq8R4HhDCnefR', // process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
+  postgresPass: process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
 
-  postgresDbName: 'charlescd_butler', // process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
+  postgresDbName: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
 
   postgresSSL: (process.env.DATABASE_SSL === 'true') || ConfigurationConstants.DATABASE_SSL,
 
@@ -56,10 +56,10 @@ export const Configuration: IEnvConfiguration = {
   deploymentExpireTime: Number(process.env.DEPLOYMENT_EXPIRE_TIME) || ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME,
 
   pgBossConfig: {
-    host: 'k8s-client-postgresql', // process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
-    database: 'charlescd_butler', // process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
-    user: 'charlescd_butler', // process.env.DATABASE_USER || ConfigurationConstants.DATABASE_USER,
-    password: '3f2Yq8R4HhDCnefR', // process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
+    host: process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
+    database: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
+    user: process.env.DATABASE_USER || ConfigurationConstants.DATABASE_USER,
+    password: process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
     max: 5,
     retentionDays: 7
   },

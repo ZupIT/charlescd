@@ -51,12 +51,11 @@ export class K8sClient {
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
 
     try {
-      this.consoleLoggerService.log('DO:READING_CRD_RESOURCE')
-      await this.client.read(deploymentManifest)
-      this.consoleLoggerService.log('DO:DELETING_CRD_RESOURCE')
-      await this.client.delete(deploymentManifest)
+      await this.readResource(deploymentManifest)
+      await this.deleteResource(deploymentManifest)
     } catch(error) {
       this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { deploymentManifest })
+      throw error
     }
   }
 
@@ -69,7 +68,7 @@ export class K8sClient {
         undefined,
         undefined,
         undefined,
-        { headers: { 'Content-type': 'application/json-patch+json' } }
+        { headers: { 'Content-type': 'application/merge-patch+json' } }
       )
       console.log('GET:PATCH_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
     } catch(error) {
@@ -94,6 +93,16 @@ export class K8sClient {
     } catch(error) {
       this.consoleLoggerService.log('ERROR:READ_RESOURCE_MANIFEST', { error })
       throw error
+    }
+  }
+
+  private async deleteResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+    try {
+      this.consoleLoggerService.log('START:DELETE_RESOURCE_MANIFEST')
+      const res = await this.client.delete(manifest)
+      console.log('GET:DELETE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:DELETE_RESOURCE_MANIFEST', { error })
     }
   }
 }

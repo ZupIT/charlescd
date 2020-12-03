@@ -20,10 +20,10 @@ import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
-import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { ExecutionTypeEnum } from '../enums'
 import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
+import { K8sClient } from '../../../core/integrations/k8s/client'
 
 @Injectable()
 export class CreateUndeploymentUseCase {
@@ -34,8 +34,8 @@ export class CreateUndeploymentUseCase {
     private executionRepository: Repository<Execution>,
     @InjectRepository(ComponentsRepositoryV2)
     private componentsRepository: ComponentsRepositoryV2,
-    private pgBoss: PgBossWorker,
-    private readonly consoleLoggerService: ConsoleLoggerService
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly k8sClient: K8sClient
   ) {}
 
   public async execute(
@@ -44,24 +44,17 @@ export class CreateUndeploymentUseCase {
   ): Promise<ReadUndeploymentDto> {
 
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { deploymentId, incomingCircleId })
-    const execution = await this.createExecution(deploymentId, incomingCircleId)
-    const jobId = await this.publishExecutionJob(execution)
-    this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { execution, jobId })
+    const deployment = await this.deploymentsRepository.findOneOrFail({ id: deploymentId })
+    const execution = await this.createExecution(deployment, incomingCircleId)
+    await this.k8sClient.createUndeploymentCustomResource(deployment)
+    this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { execution })
     return { id: deploymentId }
   }
 
-  private async createExecution(deploymentId: string, incomingCircleId: string | null): Promise<Execution> {
-    this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT_EXECUTION', { deployment: deploymentId })
-    const deployment = await this.deploymentsRepository.findOneOrFail({ id: deploymentId })
+  private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null): Promise<Execution> {
+    this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id })
     const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.UNDEPLOYMENT, incomingCircleId })
     this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT_EXECUTION', { execution: execution.id })
     return execution
-  }
-
-  private async publishExecutionJob(execution: Execution): Promise<string | null> {
-    this.consoleLoggerService.log('START:PUBLISHING_UNDEPLOYMENT_EXECUTION', { execution: execution.id })
-    const jobId = await this.pgBoss.publish(execution)
-    this.consoleLoggerService.log('FINISH:PUBLISHING_UNDEPLOYMENT_EXECUTION', { jobId: jobId, execution: execution.id })
-    return jobId
   }
 }

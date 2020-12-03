@@ -26,7 +26,6 @@ import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
-import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { K8sClient } from '../../../core/integrations/k8s/client'
 
@@ -40,7 +39,6 @@ export class CreateDeploymentUseCase {
     private executionRepository: Repository<Execution>,
     @InjectRepository(ComponentsRepositoryV2)
     private componentsRepository: ComponentsRepositoryV2,
-    private pgBoss: PgBossWorker,
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly k8sClient: K8sClient
   ) {}
@@ -83,13 +81,6 @@ export class CreateDeploymentUseCase {
     )
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
-  }
-
-  private async publishExecutionJob(execution: Execution): Promise<string | null> {
-    this.consoleLoggerService.log('START:PUBLISHING_DEPLOYMENT_EXECUTION', { execution: execution.id })
-    const jobId = await this.pgBoss.publish(execution)
-    this.consoleLoggerService.log('FINISH:PUBLISHING_DEPLOYMENT_EXECUTION', { jobId: jobId, executions: execution.id })
-    return jobId
   }
 
   private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null, manager: EntityManager): Promise<Execution> {
