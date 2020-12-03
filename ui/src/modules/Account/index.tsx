@@ -44,27 +44,29 @@ const Account = () => {
   const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
-  const { status, updateNameById } = useUpdateName();
+  const { updateNameById, user: userUpdated, status } = useUpdateName();
   const [toggleModal, setToggleModal] = useState(false);
 
   useEffect(() => {
-    if (user) setCurrentUser(user);
-  }, [user]);
-
-  useEffect(() => {
-    if (['resolved', 'idle'].includes(status)) {
+    if (user) {
+      setCurrentUser(user);
+    } else if (email) {
       findByEmail(email);
     }
-  }, [status, email, findByEmail]);
+  }, [user, email, findByEmail]);
+
+  useEffect(() => {
+    if (userUpdated) {
+      setCurrentUser(userUpdated);
+    } else if (status === 'rejected') {
+      findByEmail(email);
+    }
+  }, [userUpdated, status, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
     updateNameById(currentUser.id, profile.name);
   };
-
-  useEffect(() => {
-    findByEmail(email);
-  }, [email, findByEmail]);
 
   const renderModal = () =>
     toggleModal && (
