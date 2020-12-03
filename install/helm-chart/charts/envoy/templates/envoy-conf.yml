@@ -98,7 +98,6 @@ data:
                     function envoy_on_request(request_handle)
                       local token = request_handle:headers():get("authorization")
                       local request = require("luajit-init")
-                      request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
                       local response = request.send(
                         "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
                         {
@@ -107,6 +106,7 @@ data:
                           }
                         }
                       )
+                      request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
                       request_handle:logInfo(response.code)
                       if response.code ~= 200 then
                         request_handle:respond({

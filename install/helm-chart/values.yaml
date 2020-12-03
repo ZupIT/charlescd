@@ -201,7 +201,7 @@ envoy:
     endpoint: charlescd-keycloak-http
     port: 80
     path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo
-    protocol: https
+    protocol: http
 
 ingress:
   host: charles.info.example
