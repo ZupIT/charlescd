@@ -263,7 +263,6 @@ class SegmentationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
         def request = TestUtils.createUpdateDefaultSegmentationRequest(node, SegmentationType.REGULAR)
 
         when:
