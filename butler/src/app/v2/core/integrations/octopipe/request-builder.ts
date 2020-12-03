@@ -18,7 +18,7 @@ import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octo
 import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
-import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
+import { OctopipeConfigurationData } from '../../../api/configurations/interfaces'
 import { UrlUtils } from '../../utils/url.utils'
 import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
 import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'

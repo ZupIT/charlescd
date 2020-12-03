@@ -15,7 +15,7 @@
  */
 
 import { Module } from '@nestjs/common'
-import { ConfigurationsModule } from './configurations/configurations.module'
+import { ConfigurationsModule } from '../../v2/api/configurations/configurations.module'
 
 @Module({
   imports: [

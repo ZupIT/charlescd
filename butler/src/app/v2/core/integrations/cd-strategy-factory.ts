@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { CdTypeEnum } from '../../../v1/api/configurations/enums'
+import { CdTypeEnum } from '../../api/configurations/enums'
 import { ConsoleLoggerService } from '../logs/console'
 import { SpinnakerConnector } from './spinnaker/connector'
 import { CdConnector } from './interfaces/cd-connector.interface'

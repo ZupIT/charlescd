@@ -16,8 +16,8 @@
 
 import { HttpModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { CdConfigurationEntity } from '../../../v1/api/configurations/entity'
-import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository'
+import { CdConfigurationEntity } from '../configurations/entity'
+import { CdConfigurationsRepository } from '../configurations/repository'
 import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
 import { MooveService } from '../../../v1/core/integrations/moove'
 import { DeploymentsController } from './controller/deployments.controller'

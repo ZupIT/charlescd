@@ -15,7 +15,7 @@
  */
 
 import 'jest'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import { OctopipeRequestBuilder } from '../../../../app/v2/core/integrations/octopipe/request-builder'
 import { completeOctopipeUndeploymentRequest } from './fixtures/undeployment/undeploy-complete-pipeline'
@@ -615,7 +615,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
       new OctopipeRequestBuilder().buildUndeploymentRequest(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(undeploySameTagDiffCirclesUnusedOctopipe)
   })
-  
+
   it('should create the correct request object with 2 components being undeployed, even with one same tag in diff circle', async() => {
 
     const activeComponents: Component[] = [

@@ -21,7 +21,7 @@ import {
 } from 'typeorm'
 import { CdConfigurationEntity, } from '../entity'
 import { plainToClass } from 'class-transformer'
-import { AppConstants } from '../../../core/constants'
+import { AppConstants } from '../../../../v1/core/constants'
 import { ICdConfigurationData } from '../interfaces'
 import { mapValues } from 'lodash'
 import { NotFoundException } from '@nestjs/common'

@@ -16,8 +16,8 @@
 
 import { Inject, Injectable } from '@nestjs/common'
 import { Connection, EntityManager } from 'typeorm'
-import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
-import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
+import { CdConfigurationEntity } from '../../../app/v2/api/configurations/entity'
+import { CdConfigurationsRepository } from '../../../app/v2/api/configurations/repository'
 import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
