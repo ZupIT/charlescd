@@ -55,6 +55,7 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     public void update(UpdateSegmentationRequest updateSegmentationRequest) {
+        validateSegmentation(updateSegmentationRequest);
         var previousMetadata = this.keyMetadataRepository.findByReference(
                 updateSegmentationRequest.getPreviousReference()
         );
@@ -152,16 +153,25 @@ public class SegmentationServiceImpl implements SegmentationService {
         return SegmentationType.REGULAR.equals(segmentationRequest.getType()) && !segmentationRequest.getIsDefault();
     }
 
-    private void validateSegmentation(CreateSegmentationRequest request) {
-        if (request.getIsDefault()) {
-            var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
-            var metadataDefaultList = metadataList.stream().parallel().filter(metadata -> metadata.getIsDefault())
-                    .collect(Collectors.toList());
-            if (!metadataDefaultList.isEmpty()) {
-                throw new IllegalStateException("Default circle already registered in workspace");
-            }
+    private void validateSegmentation(SegmentationRequest request) {
+        var isUpdate = request instanceof UpdateSegmentationRequest;
+
+        if (!request.getIsDefault()) {
+            return;
+        }
+        if (isUpdate) {
+            throw new IllegalArgumentException("Cannot update default segmentation");
+        }
+
+        var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
+        var metadataDefaultList = metadataList.stream().parallel()
+                .filter(metadata -> metadata.getIsDefault())
+                .collect(Collectors.toList());
+        if (!metadataDefaultList.isEmpty()) {
+            throw new IllegalStateException("Default segmentation already registered in workspace");
         }
     }
+
 }
 
 
