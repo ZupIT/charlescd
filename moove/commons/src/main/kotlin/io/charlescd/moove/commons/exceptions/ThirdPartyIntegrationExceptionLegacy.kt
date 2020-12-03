@@ -20,7 +20,7 @@ package io.charlescd.moove.commons.exceptions
 
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 
-class ThirdyPartyIntegrationExceptionLegacy : CustomExceptionLegacy {
+class ThirdPartyIntegrationExceptionLegacy : CustomExceptionLegacy {
 
     private var details: String? = null
 
@@ -37,8 +37,8 @@ class ThirdyPartyIntegrationExceptionLegacy : CustomExceptionLegacy {
     }
 
     companion object {
-        fun of(errorCode: MooveErrorCodeLegacy, details: String?): ThirdyPartyIntegrationExceptionLegacy {
-            return ThirdyPartyIntegrationExceptionLegacy(errorCode, errorCode.key, details)
+        fun of(errorCode: MooveErrorCodeLegacy, details: String?): ThirdPartyIntegrationExceptionLegacy {
+            return ThirdPartyIntegrationExceptionLegacy(errorCode, errorCode.key, details)
         }
     }
 

@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 import feign.Request
 import feign.Response
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
-import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdPartyIntegrationExceptionLegacy
 import io.charlescd.moove.legacy.moove.api.config.VillagerErrorDecoder
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -30,16 +30,16 @@ class VillagerErrorDecodeTest {
     }
 
     @Test
-    fun `when httpStatus 500 and code contains Thirdy, method should throw ThirdyPartyIntegrationExceptionLegacy`() {
-        assertFailsWith<ThirdyPartyIntegrationExceptionLegacy> {
+    fun `when httpStatus 500 and code contains Third, method should throw ThirdPartyIntegrationExceptionLegacy`() {
+        assertFailsWith<ThirdPartyIntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
-                "villagerTest", generateResponse(500, "Thirdy")
+                "villagerTest", generateResponse(500, "Third")
             )
         }
     }
 
     @Test
-    fun `when httpStatus 500 and code not contains Thirdy, method should throw IntegrationExceptionLegacy`() {
+    fun `when httpStatus 500 and code not contains Third, method should throw IntegrationExceptionLegacy`() {
         assertFailsWith<IntegrationExceptionLegacy> {
             villagerErrorDecode.decode(
                 "villagerTest", generateResponse(500, DEFAULT_CODE)

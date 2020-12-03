@@ -18,7 +18,7 @@ package io.charlescd.villager.api.misc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.charlescd.villager.exceptions.ThirdyPartyIntegrationException;
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import io.charlescd.villager.infrastructure.filter.RequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -51,8 +51,8 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
     }
 
     private ErrorRepresentation getErrorRepresentation(Exception ex) {
-        if (ex instanceof ThirdyPartyIntegrationException) {
-            return new ErrorRepresentation("ThirdyPartyIntegrationException", ex.getMessage());
+        if (ex instanceof ThirdPartyIntegrationException) {
+            return new ErrorRepresentation("ThirdPartyIntegrationException", ex.getMessage());
         } else {
             return new ErrorRepresentation(ex.getMessage());
         }

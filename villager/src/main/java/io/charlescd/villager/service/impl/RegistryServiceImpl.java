@@ -18,7 +18,7 @@ package io.charlescd.villager.service.impl;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
-import io.charlescd.villager.exceptions.ThirdyPartyIntegrationException;
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
@@ -79,7 +79,7 @@ public class RegistryServiceImpl implements RegistryService {
         } catch (IllegalArgumentException exception) {
             throw exception;
         } catch (Exception ex) {
-            throw new ThirdyPartyIntegrationException(ex.getMessage());
+            throw new ThirdPartyIntegrationException(ex.getMessage());
         } finally {
             this.registryClient.closeQuietly();
         }
@@ -159,7 +159,7 @@ public class RegistryServiceImpl implements RegistryService {
 
     private void validateResponse(RegistryType type, Optional<Response> response) {
         if (Objects.isNull(response)) {
-            throw new ThirdyPartyIntegrationException("Registry service not respond.");
+            throw new ThirdPartyIntegrationException("Registry service not respond.");
         }
 
         switch (type) {
@@ -196,7 +196,7 @@ public class RegistryServiceImpl implements RegistryService {
         }
 
         if (!isSuccessfullyHttpStatus(status) && status != HttpStatus.SC_NOT_FOUND) {
-            throw new ThirdyPartyIntegrationException(
+            throw new ThirdPartyIntegrationException(
                     "GCP integration error: " + response.get().getStatusInfo().getReasonPhrase());
         }
     }

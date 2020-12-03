@@ -1,7 +1,7 @@
 package io.charlescd.villager.interactor.service.impl;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
-import io.charlescd.villager.exceptions.ThirdyPartyIntegrationException;
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
@@ -116,7 +116,7 @@ public class RegistryServiceImplTest {
 
         var serviceImpl = new RegistryServiceImpl(dockerRegistryConfigurationRepository, registryClient);
 
-        assertThrows(ThirdyPartyIntegrationException.class,
+        assertThrows(ThirdPartyIntegrationException.class,
                 () ->  serviceImpl.getDockerRegistryTag(entity, ID_DEFAULT_VALUE, ID_DEFAULT_VALUE));
 
 
@@ -210,7 +210,7 @@ public class RegistryServiceImplTest {
 
         when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(Optional.of(Response.status(504).build()));
 
-        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+        assertThrows(ThirdPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
         verify(registryClient, times(1))
                 .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
 
@@ -228,7 +228,7 @@ public class RegistryServiceImplTest {
 
         doThrow(IllegalArgumentException.class).when(registryClient).configureAuthentication(registryType, entity.connectionData, ID_DEFAULT_VALUE);
 
-        assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+        assertThrows(ThirdPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
         verify(registryClient, times(1))
                 .configureAuthentication(registryType, entity.connectionData, ARTIFACT_NAME);
@@ -319,7 +319,7 @@ public class RegistryServiceImplTest {
         when(registryClient.getImage(ARTIFACT_NAME, TAG_NAME, entity.connectionData)).thenReturn(null);
 
         Exception exception =
-                assertThrows(ThirdyPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
+                assertThrows(ThirdPartyIntegrationException.class, () -> serviceImpl.testRegistryConnectivityConfig(entity));
 
         assertThat(exception.getMessage(), is("Registry service not respond."));
 

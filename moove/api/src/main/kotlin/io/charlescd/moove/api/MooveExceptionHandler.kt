@@ -162,10 +162,10 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
         return ErrorMessageResponse.of(ex.getErrorCode().name, message, ex.getDetails())
     }
 
-    @ExceptionHandler(ThirdyPartyIntegrationExceptionLegacy::class)
+    @ExceptionHandler(ThirdPartyIntegrationExceptionLegacy::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    fun integrationException(ex: ThirdyPartyIntegrationExceptionLegacy): ErrorMessageResponse {
+    fun integrationException(ex: ThirdPartyIntegrationExceptionLegacy): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
         return ErrorMessageResponse.of(ex.getErrorCode().name, message, ex.getDetails())

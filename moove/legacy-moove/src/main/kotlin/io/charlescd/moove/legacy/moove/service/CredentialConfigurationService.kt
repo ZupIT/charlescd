@@ -20,7 +20,7 @@ import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
 import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
-import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdPartyIntegrationExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
@@ -129,8 +129,8 @@ class CredentialConfigurationService(
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
         } catch (illegalArgumentException: IllegalArgumentException) {
             throw InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
-        } catch (ex: ThirdyPartyIntegrationExceptionLegacy) {
-            throw ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        } catch (ex: ThirdPartyIntegrationExceptionLegacy) {
+            throw ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
         } catch (ex: IntegrationExceptionLegacy) {
             checkIntegrationExceptionLegacy(ex)
         } catch (exception: Exception) {
@@ -150,8 +150,8 @@ class CredentialConfigurationService(
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
         } catch (ex: IllegalArgumentException) {
             throw InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION)
-        } catch (ex: ThirdyPartyIntegrationExceptionLegacy) {
-            throw ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        } catch (ex: ThirdPartyIntegrationExceptionLegacy) {
+            throw ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
         } catch (ex: IntegrationExceptionLegacy) {
             checkIntegrationExceptionLegacy(ex)
         } catch (exception: Exception) {

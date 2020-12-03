@@ -21,7 +21,7 @@ import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
-import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdPartyIntegrationExceptionLegacy
 import java.io.Serializable
 import java.lang.IllegalArgumentException
 
@@ -32,7 +32,7 @@ class VillagerErrorDecoder : ErrorDecoder {
 
             checkBadRequest(it.status(), fromJson)
 
-            checkThirdyPartyIntegrationError(it.status(), fromJson)
+            checkThirdPartyIntegrationError(it.status(), fromJson)
 
             checkCommunicationServerError(it.status(), fromJson)
         }
@@ -46,9 +46,9 @@ class VillagerErrorDecoder : ErrorDecoder {
         }
     }
 
-    private fun checkThirdyPartyIntegrationError(httpStatus: Int, response: ResponseError) {
-        if (httpStatus == 500 && response.code.isNotBlank() && response.code.contains("Thirdy", true)) {
-            throw ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTERNAL_INTEGRATION_ERROR, response.message)
+    private fun checkThirdPartyIntegrationError(httpStatus: Int, response: ResponseError) {
+        if (httpStatus == 500 && response.code.isNotBlank() && response.code.contains("Third", true)) {
+            throw ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTERNAL_INTEGRATION_ERROR, response.message)
         }
     }
 

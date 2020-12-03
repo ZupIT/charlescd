@@ -16,9 +16,9 @@
 
 package io.charlescd.villager.exceptions;
 
-public class ThirdyPartyIntegrationException extends RuntimeException {
+public class ThirdPartyIntegrationException extends RuntimeException {
 
-    public ThirdyPartyIntegrationException(String message) {
+    public ThirdPartyIntegrationException(String message) {
         super(message);
     }
 }

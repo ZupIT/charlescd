@@ -22,7 +22,7 @@ import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
 import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
-import io.charlescd.moove.commons.exceptions.ThirdyPartyIntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdPartyIntegrationExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
@@ -417,7 +417,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    @Test(expected = ThirdPartyIntegrationExceptionLegacy::class)
     fun `when test new azure configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
 
         val request = CreateAzureRegistryConfigurationRequest(
@@ -441,7 +441,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+        } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -626,7 +626,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    @Test(expected = ThirdPartyIntegrationExceptionLegacy::class)
     fun `when test new aws configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
 
         val request = CreateAWSRegistryConfigurationRequest(
@@ -652,7 +652,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+        } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -824,8 +824,8 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
-    fun `when test actual gcp configuration and registry api not respond, method should throw ThirdyPartyIntegrationExceptionLegacy`() {
+    @Test(expected = ThirdPartyIntegrationExceptionLegacy::class)
+    fun `when test actual gcp configuration and registry api not respond, method should throw ThirdPartyIntegrationExceptionLegacy`() {
         val request = TestRegistryConnectionRequest(
             configurationId = "configurationId"
         )
@@ -838,7 +838,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConnection(villagerRequest, workspaceId)
-        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+        } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         credentialConfigurationService.testRegistryConnection(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConnection(villagerRequest, workspaceId) }
@@ -988,7 +988,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    @Test(expected = ThirdPartyIntegrationExceptionLegacy::class)
     fun `when test new gcp configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
 
         val request = CreateGCPRegistryConfigurationRequest(
@@ -1013,7 +1013,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+        } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -1195,7 +1195,7 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-    @Test(expected = ThirdyPartyIntegrationExceptionLegacy::class)
+    @Test(expected = ThirdPartyIntegrationExceptionLegacy::class)
     fun `when test new docker hub configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
@@ -1220,7 +1220,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } throws ThirdyPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
+        } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }

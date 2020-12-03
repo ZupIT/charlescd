@@ -1,7 +1,7 @@
 package io.charlescd.villager.test;
 
 import io.charlescd.villager.api.misc.ExceptionHandler;
-import io.charlescd.villager.exceptions.ThirdyPartyIntegrationException;
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
@@ -20,9 +20,9 @@ public class ExceptionHandlerTest {
     }
 
     @Test
-    public void testThirdyPartyIntegrationException() {
+    public void testThirdPartyIntegrationException() {
         ExceptionHandler handler = new ExceptionHandler();
-        Response response = handler.toResponse(new ThirdyPartyIntegrationException("Connection error"));
+        Response response = handler.toResponse(new ThirdPartyIntegrationException("Connection error"));
         assertThat(response.getStatus(), is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getEntity().toString(), anything("Connection error"));
 
