@@ -15,7 +15,7 @@
  */
 
 import { GitProvidersEnum } from '../../../core/configuration/interfaces/git-providers.type'
-import { ClusterProviderEnum } from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { ClusterProviderEnum } from '../../../core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 export interface IEKSConfig {
     provider: ClusterProviderEnum.EKS

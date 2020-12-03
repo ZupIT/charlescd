@@ -16,7 +16,7 @@
 
 import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
-import { ClusterProviderEnum } from '../../../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { ClusterProviderEnum } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 export const completeOctopipeUndeploymentGenericRequest: OctopipeUndeploymentRequest = {
   namespace: 'sandbox',

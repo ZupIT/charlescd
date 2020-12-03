@@ -20,7 +20,7 @@ import { Component, Deployment } from '../../../../app/v2/api/deployments/interf
 import { OctopipeRequestBuilder } from '../../../../app/v2/core/integrations/octopipe/request-builder'
 import { completeOctopipeUndeploymentRequest } from './fixtures/undeployment/undeploy-complete-pipeline'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
-import { ClusterProviderEnum } from '../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { dummyVirtualServicePipelineOctopipe } from './fixtures/undeployment/dummy-virtualservice-pipeline'
 import { undeploySameTagDiffCirclesUnusedOctopipe } from './fixtures/undeployment/undeploy-same-tag-diff-circles-unused'
 import { undeployOneSameTagDiffCirclesUnusedOctopipe } from './fixtures/undeployment/undeploy-one-same-tag-diff-circles-unused'

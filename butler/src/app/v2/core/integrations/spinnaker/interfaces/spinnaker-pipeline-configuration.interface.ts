@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  IDeploymentVersion,
-  IPipelineCircle
-} from '../../../../../../v2/core/integrations/components/interfaces'
+import { IPipelineCircle } from '../../components/interfaces/pipeline-circle.interface'
+import { IDeploymentVersion } from '../../components/interfaces/pipeline-version.interface'
+
 
 export interface ISpinnakerPipelineConfiguration {
 

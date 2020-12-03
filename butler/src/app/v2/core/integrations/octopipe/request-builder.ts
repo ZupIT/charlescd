@@ -27,7 +27,7 @@ import {
   ClusterProviderEnum,
   IEKSClusterConfig,
   IGenericClusterConfig
-} from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+} from './interfaces/octopipe-payload.interface'
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'

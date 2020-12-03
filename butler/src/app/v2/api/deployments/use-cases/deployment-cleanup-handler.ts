@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
 import { In } from 'typeorm'
 import IEnvConfiguration from '../../../core/configuration/interfaces/env-configuration.interface'
-import { MooveService } from '../../../../v1/core/integrations/moove'
+import { MooveService } from '../../../core/integrations/moove'
 import { IoCTokensConstants } from '../../../core/constants/ioc'
 import { ExecutionRepository, UpdatedExecution } from '../repository/execution.repository'
 
