@@ -24,10 +24,10 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.KeycloakService
+import org.springframework.beans.factory.annotation.Value
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
-import org.springframework.beans.factory.annotation.Value
 
 @Named
 class PatchUserInteractorImpl @Inject constructor(
@@ -38,12 +38,10 @@ class PatchUserInteractorImpl @Inject constructor(
 
     override fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse {
         if (internalIdmEnabled) {
-            val authUser = userService.findByEmail(keycloakService.getEmailByAccessToken(authorization))
-            if (authUser.root) {
+            val authenticatedUser = userService.findByEmail(keycloakService.getEmailByAccessToken(authorization))
+            if (authenticatedUser.root) {
                 patchUserRequest.validate()
-                val user = userService.find(id.toString())
-                val updatedUser = updateUser(patchUserRequest, user)
-                return UserResponse.from(updatedUser)
+                return UserResponse.from(updateUser(patchUserRequest, userService.find(id.toString())))
             } else {
                 throw BusinessException.of(MooveErrorCode.FORBIDDEN)
             }
