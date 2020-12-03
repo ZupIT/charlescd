@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest
 import kotlin.collections.LinkedHashMap
 import org.slf4j.LoggerFactory
 import org.springframework.context.MessageSource
+import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError
@@ -57,9 +58,9 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ExceptionHandler(IllegalArgumentException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    fun handleIllegalArgument(ex: Exception): ErrorMessageResponse {
+    fun handleIllegalArgument(ex: IllegalArgumentException): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
-        return ErrorMessageResponse.of("INVALID_PAYLOAD", ex.message!!)
+        return ErrorMessageResponse.of(MooveErrorCode.INVALID_PAYLOAD, ex.message!!)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -72,6 +73,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
             (fields.computeIfAbsent(field.field) { LinkedList() } as LinkedList<String>).add(field.defaultMessage!!)
         }
         return ErrorMessageResponse.of(MooveErrorCode.INVALID_PAYLOAD, fields)
+    }
+
+    @ExceptionHandler(DataAccessException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    fun handleDataAccessException(ex: DataAccessException): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.rootCause?.message)
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
@@ -139,7 +148,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    fun exceptions(request: HttpServletRequest, ex: NotFoundException): ResourceValueResponse {
+    fun handleNotFoundException(request: HttpServletRequest, ex: NotFoundException): ResourceValueResponse {
         this.logger.error(ex.message, ex)
         return ResourceValueResponse(ex.resourceName, ex.id)
     }
@@ -148,7 +157,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     @Deprecated("Only for backwards compatibility")
-    fun exceptions(request: HttpServletRequest, ex: NotFoundExceptionLegacy): ResourceValueResponse {
+    fun handleNotFoundExceptionLegacy(request: HttpServletRequest, ex: NotFoundExceptionLegacy): ResourceValueResponse {
         this.logger.error(ex.message, ex)
         return ResourceValueResponse(ex.resourceName, ex.id)
     }

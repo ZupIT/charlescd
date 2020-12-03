@@ -17,7 +17,6 @@
 package io.charlescd.moove.commons.constants
 
 enum class MooveErrorCodeLegacy(val key: String) {
-    CIRCLE_DEPLOYMENT_ACTIVE("circle.deployment.active"),
     GIT_ERROR_BASE_NOT_FOUND("base.branch.not.found"),
     GIT_ERROR_HEAD_NOT_FOUND("head.branch.not.found"),
     GIT_ERROR_REPOSITORY_NOT_FOUND("repository.not.found"),
