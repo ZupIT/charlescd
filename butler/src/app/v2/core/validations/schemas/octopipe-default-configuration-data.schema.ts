@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-import { Module } from '@nestjs/common'
-import { ConfigurationsModule } from '../../v2/api/configurations/configurations.module'
+import { ValidationSchema } from 'class-validator'
 
-@Module({
-  imports: [
-    ConfigurationsModule
-  ]
-})
-export class ApiModule {}
+export const OctopipeDefaultConfigurationDataSchema: ValidationSchema = {
+
+  name: 'octopipeDefaultConfigurationDataSchema',
+
+  properties: {
+    gitProvider: [
+      {
+        type: 'isIn',
+        constraints: [['GITHUB', 'GITLAB']],
+        message: '$value is not valid. Supported providers are GITHUB and GITLAB'
+      },
+      {
+        type: 'isNotEmpty'
+      }
+    ],
+    gitToken: [{ type: 'isNotEmpty' }]
+  }
+}

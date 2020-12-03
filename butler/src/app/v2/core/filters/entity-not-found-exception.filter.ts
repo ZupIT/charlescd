@@ -17,7 +17,7 @@
 import { Catch, ExceptionFilter, ArgumentsHost } from '@nestjs/common'
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError'
 import { Response } from 'express'
-import { ConsoleLoggerService } from '../../../v2/core/logs/console'
+import { ConsoleLoggerService } from '../logs/console'
 
 /**
  * Custom exception filter to convert EntityNotFoundError from TypeOrm to NestJs responses
