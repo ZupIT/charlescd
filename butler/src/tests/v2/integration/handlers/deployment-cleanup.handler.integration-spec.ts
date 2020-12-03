@@ -29,7 +29,7 @@ import { DeploymentCleanupHandler } from '../../../../app/v2/api/deployments/use
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import express = require('express')
-import { ConfigurationConstants } from '../../../../app/v1/core/constants/application/configuration.constants'
+import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'

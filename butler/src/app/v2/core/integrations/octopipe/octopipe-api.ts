@@ -18,7 +18,7 @@ import { OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.inte
 import { OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import { IoCTokensConstants } from '../../constants/ioc'
 import { Observable } from 'rxjs'
 import { AxiosResponse } from 'axios'
 

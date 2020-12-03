@@ -18,7 +18,7 @@ import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@
 import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
 import { Repository } from 'typeorm'
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import { IoCTokensConstants } from '../../../core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'

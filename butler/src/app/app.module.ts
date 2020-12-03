@@ -16,14 +16,13 @@
 
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ApiModule } from './v1/api/api.module'
-import { ApiModule as ApiModuleV2 } from './v2/api/api.module'
-import { Configuration } from './v1/core/config/configurations'
-import { AppConstants } from './v1/core/constants'
-import { CoreModule } from './v2/core/core.module'
 import IEnvConfiguration from './v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { DatabasesService } from './v1/core/integrations/databases'
-import { IoCTokensConstants } from './v1/core/constants/ioc'
+import { ApiModule as ApiModuleV2 } from './v2/api/api.module'
+import { Configuration } from './v2/core/config/configurations'
+import { AppConstants } from './v2/core/constants'
+import { IoCTokensConstants } from './v2/core/constants/ioc'
+import { CoreModule } from './v2/core/core.module'
 
 @Global()
 @Module({})

@@ -2,9 +2,9 @@ import { Inject } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
 import { In } from 'typeorm'
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { MooveService } from '../../../../v1/core/integrations/moove'
+import { IoCTokensConstants } from '../../../core/constants/ioc'
 import { ExecutionRepository, UpdatedExecution } from '../repository/execution.repository'
 
 export class DeploymentCleanupHandler {

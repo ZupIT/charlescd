@@ -17,7 +17,7 @@
 import { INestApplication } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { TestingModuleBuilder } from '@nestjs/testing'
-import { AppConstants } from '../../../app/v1/core/constants'
+import { AppConstants } from '../../../app/v2/core/constants'
 import { EntityNotFoundExceptionFilter } from '../../../app/v1/core/filters/entity-not-found-exception.filter'
 import { ConsoleLoggerService } from '../../../app/v2/core/logs/console'
 
