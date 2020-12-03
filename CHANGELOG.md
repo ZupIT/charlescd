@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.4 (03/12/2020)
+- [#728](https://github.com/ZupIT/charlescd/pull/728) Patch user and database error handler
+- [#733](https://github.com/ZupIT/charlescd/pull/733) Implementing gitlab ignore certificate errors.
+- [#731](https://github.com/ZupIT/charlescd/pull/731) Adding workflow configs for new environments
+- [#715](https://github.com/ZupIT/charlescd/pull/715) Fix multicluster/opensea bugs
+- [#693](https://github.com/ZupIT/charlescd/pull/693) accepted adr
+- [#691](https://github.com/ZupIT/charlescd/pull/691) CI Update of charts and changelog
+- [#718](https://github.com/ZupIT/charlescd/pull/718) Adding running options to README
+- [#716](https://github.com/ZupIT/charlescd/pull/716) Readme on compass
+
+---
+
+## 0.4.3 (26/11/2020)
+*No changelog for this release.*
+
+---
+
+## 0.4.2 (26/11/2020)
+
+---
+
 ## 0.4.1 (12/11/2020)
 - [#659](https://github.com/ZupIT/charlescd/pull/659) CI Update of charts and changelog
 - [#614](https://github.com/ZupIT/charlescd/pull/614) Fixing Docker Hub Bearer Authentication and Deploy
@@ -424,16 +445,3 @@
 ---
 
 ## 0.2.5 (03/06/2020)
-
----
-
-## 0.2.4 (02/06/2020)
-
----
-
-## 0.2.3 (02/06/2020)
-
----
-
-## 1.0.1-beta.4 (06/05/2020)
-- Removed rollback for octopipe deployments. This will be butler's responsability (@lucasbfernandes  in #28 )
