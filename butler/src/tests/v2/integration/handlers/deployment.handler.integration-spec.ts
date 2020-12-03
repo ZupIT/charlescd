@@ -23,7 +23,6 @@ import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import {
   ComponentEntityV2 as ComponentEntity
 } from '../../../../app/v2/api/deployments/entity/component.entity'
@@ -37,6 +36,7 @@ import express = require('express')
 import { SpinnakerConnector } from '../../../../app/v2/core/integrations/spinnaker/connector'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 let mock = express()
 

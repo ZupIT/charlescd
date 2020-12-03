@@ -23,7 +23,6 @@ import { EntityManager, UpdateResult } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { DeploymentCleanupHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-cleanup-handler'
@@ -33,6 +32,7 @@ import express = require('express')
 import { ConfigurationConstants } from '../../../../app/v1/core/constants/application/configuration.constants'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 let mock = express()
 

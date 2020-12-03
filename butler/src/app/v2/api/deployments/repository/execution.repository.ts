@@ -15,7 +15,7 @@
  */
 
 import { EntityRepository, getConnection, Repository, UpdateResult } from 'typeorm'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { NotificationStatusEnum } from '../../../core/enums/notification-status.enum'
 import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'

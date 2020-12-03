@@ -17,7 +17,7 @@
 import { InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { getConnection, UpdateResult } from 'typeorm'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { NotificationStatusEnum } from '../../../../v1/api/notifications/enums'
 import { QueuedDeploymentsConstraints } from '../../../../v1/core/integrations/databases/constraints'
 import { MooveService } from '../../../../v1/core/integrations/moove'

@@ -22,7 +22,6 @@ import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { CreateComponentRequestDto } from '../../../../app/v2/api/deployments/dto/create-component-request.dto'
 import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { CreateModuleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-module-request.dto'
@@ -35,6 +34,7 @@ import { Execution } from '../../../../app/v2/api/deployments/entity/execution.e
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 let mock = express()
 
