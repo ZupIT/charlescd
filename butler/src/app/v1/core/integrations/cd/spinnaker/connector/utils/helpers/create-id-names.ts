@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../configurations/enums/cd-type.enum'
-import { ICdConfigurationData } from '../../configurations/interfaces/cd-configuration-data.interface'
-import { Deployment } from './'
+import { HelmTypes } from './constants'
 
-export interface CdConfiguration {
-    id: string
+const createPrimaryId = (helmType: HelmTypes, version: string): string => `${helmType} - ${version}`
 
-    type: CdTypeEnum,
+const createBakeStage = (version: string): string => `Bake ${version}`
 
-    configurationData: ICdConfigurationData,
-
-    name: string
-
-    authorId: string
-
-    workspaceId: string
-
-    createdAt: Date
-
-    deployments: Deployment[] | null
+export {
+  createPrimaryId,
+  createBakeStage
 }

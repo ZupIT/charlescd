@@ -14,24 +14,6 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../configurations/enums/cd-type.enum'
-import { ICdConfigurationData } from '../../configurations/interfaces/cd-configuration-data.interface'
-import { Deployment } from './'
-
-export interface CdConfiguration {
-    id: string
-
-    type: CdTypeEnum,
-
-    configurationData: ICdConfigurationData,
-
-    name: string
-
-    authorId: string
-
-    workspaceId: string
-
-    createdAt: Date
-
-    deployments: Deployment[] | null
-}
+const helmValues = ['template', 'value']
+export type HelmTypes  = 'template' | 'value' | 'deployment'
+export default helmValues

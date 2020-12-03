@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../configurations/enums/cd-type.enum'
-import { ICdConfigurationData } from '../../configurations/interfaces/cd-configuration-data.interface'
-import { Deployment } from './'
+import { IPipelineCircle } from './pipeline-circle.interface'
+import { IDeploymentVersion } from './pipeline-version.interface'
 
-export interface CdConfiguration {
-    id: string
+export interface IPipelineOptions {
 
-    type: CdTypeEnum,
+  pipelineCircles: IPipelineCircle[]
 
-    configurationData: ICdConfigurationData,
+  pipelineVersions: IDeploymentVersion[]
 
-    name: string
+  pipelineUnusedVersions: IDeploymentVersion[]
 
-    authorId: string
-
-    workspaceId: string
-
-    createdAt: Date
-
-    deployments: Deployment[] | null
 }
