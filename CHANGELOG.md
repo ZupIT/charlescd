@@ -1,33 +1,23 @@
 # Changelog
 
+## 0.4.4 (03/12/2020)
+- [#728](https://github.com/ZupIT/charlescd/pull/728) Patch user and database error handler
+- [#733](https://github.com/ZupIT/charlescd/pull/733) Implementing gitlab ignore certificate errors.
+- [#731](https://github.com/ZupIT/charlescd/pull/731) Adding workflow configs for new environments
+- [#715](https://github.com/ZupIT/charlescd/pull/715) Fix multicluster/opensea bugs
+- [#693](https://github.com/ZupIT/charlescd/pull/693) accepted adr
+- [#691](https://github.com/ZupIT/charlescd/pull/691) CI Update of charts and changelog
+- [#718](https://github.com/ZupIT/charlescd/pull/718) Adding running options to README
+- [#716](https://github.com/ZupIT/charlescd/pull/716) Readme on compass
+
+---
+
 ## 0.4.3 (26/11/2020)
 *No changelog for this release.*
 
 ---
 
 ## 0.4.2 (26/11/2020)
-
----
-
-## 0.4.2rc.3 (19/11/2020)
-- [#697](https://github.com/ZupIT/charlescd/pull/697) Fix default deployment merge strategy
-- [#624](https://github.com/ZupIT/charlescd/pull/624) Created test of connections with git providers
-- [#652](https://github.com/ZupIT/charlescd/pull/652) Improve error messages moove
-- [#694](https://github.com/ZupIT/charlescd/pull/694) add input error
-- [#685](https://github.com/ZupIT/charlescd/pull/685) Circle matcher spring update and swagger add
-
----
-
-## 0.4.2rc.2 (18/11/2020)
-- [#689](https://github.com/ZupIT/charlescd/pull/689) Fixing UI workflow.
-
----
-
-## 0.4.2rc.1 (18/11/2020)
-
----
-
-## 0.4.2rc (18/11/2020)
 
 ---
 
@@ -443,3 +433,15 @@
 ---
 
 ## v0.2.8 (03/06/2020)
+
+---
+
+## 0.2.7 (03/06/2020)
+
+---
+
+## 0.2.6 (03/06/2020)
+
+---
+
+## 0.2.5 (03/06/2020)
