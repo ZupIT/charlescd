@@ -1,6 +1,6 @@
 package io.charlescd.circlematcher.domain.validation
 
-import io.charlescd.circlematcher.domain.Content
+
 import io.charlescd.circlematcher.domain.LogicalOperatorType
 import io.charlescd.circlematcher.domain.Node
 import io.charlescd.circlematcher.domain.NodeType
@@ -56,14 +56,14 @@ class NodeValidationTest extends Specification {
 
     def "Validate CLAUSE node with deep RULE type"() {
         given:
-        def ruleName1 = new Node(NodeType.RULE, null, null, new Content("name", "EQUAL", ["tester1"]))
-        def ruleAge = new Node(NodeType.RULE, null, null, new Content("age", "EQUAL", ["12"]))
-        def ruleName2 = new Node(NodeType.RULE, null, null, new Content("name", "EQUAL", ["tester"]))
+        def ruleName1 = TestUtils.createNode(TestUtils.createContent(["tester1"]))
+        def ruleAge = TestUtils.createNode(TestUtils.createContent(["12"]))
+        def ruleName2 = TestUtils.createNode(TestUtils.createContent(["tester"]))
 
-        def nameAndAge = new Node(NodeType.CLAUSE, LogicalOperatorType.AND, [ruleName1, ruleAge], null)
-        def name = new Node(NodeType.CLAUSE, LogicalOperatorType.OR, [ruleName2], null)
+        def nameAndAge = TestUtils.createClauseNode([ruleName1, ruleAge])
+        def name = TestUtils.createClauseNode([ruleName2])
 
-        def node = new Node(NodeType.CLAUSE, LogicalOperatorType.OR, [nameAndAge, name], null)
+        def node = TestUtils.createClauseNode([nameAndAge, name])
         when:
         def validator = new NodeValidator()
         def valid = validator.isValid(node, null)
