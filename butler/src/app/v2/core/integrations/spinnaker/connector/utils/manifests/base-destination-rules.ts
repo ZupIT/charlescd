@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { IDeploymentVersion, IPipelineCircle } from '../../../../../../../api/components/interfaces'
+import { IDeploymentVersion, IPipelineCircle } from '../../../../components/interfaces'
 import { formatDnsLabel } from '../helpers/format-dns-label'
 import { ISubset } from './base-service'
 

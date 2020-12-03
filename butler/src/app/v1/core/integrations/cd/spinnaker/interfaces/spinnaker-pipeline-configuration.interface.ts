@@ -17,7 +17,7 @@
 import {
   IDeploymentVersion,
   IPipelineCircle
-} from '../../../../../api/components/interfaces'
+} from '../../../../../../v2/core/integrations/components/interfaces'
 
 export interface ISpinnakerPipelineConfiguration {
 

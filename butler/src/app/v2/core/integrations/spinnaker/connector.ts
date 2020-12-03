@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { ConnectorResult, SpinnakerPipeline } from './interfaces'
 import { ICreateSpinnakerApplication } from '../../../../v1/core/integrations/cd/spinnaker/interfaces'
-import { SpinnakerApiService } from '../../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
+import { SpinnakerApiService } from './spinnaker-api.service'
 import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
 import { AppConstants } from '../../constants'
 import { SpinnakerPipelineBuilder } from './pipeline-builder'

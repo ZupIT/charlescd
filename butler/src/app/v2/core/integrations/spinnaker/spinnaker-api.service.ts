@@ -21,8 +21,8 @@ import {
 import { Observable } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { IBaseSpinnakerPipeline, IUpdateSpinnakerPipeline } from './connector/interfaces'
-import { ICreateSpinnakerApplication } from './interfaces'
-import { SpinnakerPipeline } from '../../../../../v2/core/integrations/spinnaker/interfaces'
+import { ICreateSpinnakerApplication } from '../../../../v1/core/integrations/cd/spinnaker/interfaces'
+import { SpinnakerPipeline } from './interfaces'
 
 @Injectable()
 export class SpinnakerApiService {

@@ -20,8 +20,8 @@ import { IBaseHelmStage } from '../utils/base-stage-helm'
 import { IBaseDeployment } from '../utils/manifests/base-deployment'
 import { IBaseDelete } from '../utils/manifests/base-delete-deployment'
 import { IBaseWebhook } from '../utils/base-webhook'
-import { IPipelineCircle } from '../../../../../../api/components/interfaces'
-import { DefaultCircleId } from '../../../../../../../v2/core/constants/application/configuration.constants'
+import { IPipelineCircle } from '../../../components/interfaces'
+import { DefaultCircleId } from '../../../../constants/application/configuration.constants'
 
 export type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IDefaultCircleMatcher
 

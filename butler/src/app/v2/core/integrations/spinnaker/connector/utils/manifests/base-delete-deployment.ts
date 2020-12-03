@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
+import { ISpinnakerPipelineConfiguration } from '../../../../../../../v1/core/integrations/cd/spinnaker/interfaces'
 
 interface IDeleteSelector {
   key: string
