@@ -80,7 +80,7 @@ class CardService(
             .map { it.toRepresentation() }
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             cardRepresentation.isProtected = isProtectedBranch(cardRepresentation)
-            return cardRepresentation;
+            return cardRepresentation
     }
 
     @Transactional
@@ -157,7 +157,7 @@ class CardService(
 
     private fun isProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
         val branchName = cardRepresentation.feature?.branchName
-        if(StringUtils.isEmpty(branchName)) {
+        if (StringUtils.isEmpty(branchName)) {
             return isProtectedBranch(branchName.toString())
         }
 
