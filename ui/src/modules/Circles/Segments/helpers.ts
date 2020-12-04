@@ -37,13 +37,6 @@ export const getClauseHorizontalLine = (size: number) =>
 const getGroupClauseHeight = (size: number) =>
   (size * RULE_SIZE - RULE_SIZE) / HALF;
 
-export const hasGroupOperator = (
-  fields: Partial<ArrayField<Record<string, string>, 'id'>>[]
-) => {
-  console.log('fields', fields);
-  return true;
-};
-
 export const getGroupVerticalLine = (
   fields: Partial<ArrayField<Record<string, string>, 'id'>>[]
 ) => {

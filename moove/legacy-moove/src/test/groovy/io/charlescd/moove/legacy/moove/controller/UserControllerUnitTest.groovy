@@ -19,7 +19,6 @@ package io.charlescd.moove.legacy.moove.controller
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
-import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.KeycloakService
 import io.charlescd.moove.legacy.moove.service.UserServiceLegacy
 import org.springframework.data.domain.PageRequest
@@ -45,18 +44,6 @@ class UserControllerUnitTest extends Specification {
 
     def "setup"() {
         controller = new UserController(service, keycloakService)
-    }
-
-    def "should update user"() {
-        given:
-        def request = new UpdateUserRequest("John Doe", "email", "https://www.photos.com/johndoe")
-
-        when:
-        controller.update(representation.id, request)
-
-        then:
-        1 * service.update(representation.id, request)
-        notThrown()
     }
 
     def "should delete user"() {
