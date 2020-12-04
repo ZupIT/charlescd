@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
-import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
+import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
@@ -51,12 +51,24 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const [loadingUpdate, updateProfile] = useUpdateProfile();
+  const { updateNameById, user: userUpdated, status } = useUpdateName();
   const isAbleToReset = loggedUserId !== user?.id;
 
   useEffect(() => {
-    if (user) setCurrentUser(user);
-  }, [user]);
+    if (user) {
+      setCurrentUser(user);
+    } else if (email) {
+      findByEmail(email);
+    }
+  }, [user, email, findByEmail]);
+
+  useEffect(() => {
+    if (userUpdated) {
+      setCurrentUser(userUpdated);
+    } else if (status === 'rejected') {
+      findByEmail(email);
+    }
+  }, [userUpdated, status, email, findByEmail]);
 
   useEffect(() => {
     onChange(delUserResponse);
@@ -65,18 +77,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     }
   });
 
-  useEffect(() => {
-    if (!loadingUpdate) {
-      findByEmail(email);
-    }
-  }, [loadingUpdate, email, findByEmail]);
-
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(currentUser.id, {
-      ...profile,
-      email: currentUser.email
-    });
+    updateNameById(currentUser.id, profile.name);
   };
 
   const handleDelete = (userId: string, userName: string) => {
@@ -158,7 +161,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
               onClickSave={handleSubmit(onSubmit)}
             />
           ) : (
-            <Text.h2 color="light">currentUser.name</Text.h2>
+            <Text.h2 color="light">{currentUser.name}</Text.h2>
           )}
         </ContentIcon>
       </Styled.Layer>

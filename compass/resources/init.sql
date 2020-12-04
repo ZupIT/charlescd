@@ -1,0 +1,19 @@
+CREATE USER charles WITH PASSWORD 'charles';
+ALTER USER charles WITH SUPERUSER;
+CREATE DATABASE charles;
+GRANT ALL PRIVILEGES ON DATABASE charles TO charles;
+
+CREATE USER charlescd_compass WITH PASSWORD 'compass';
+ALTER USER charlescd_compass WITH SUPERUSER;
+CREATE DATABASE charlescd_compass;
+GRANT ALL PRIVILEGES ON DATABASE charlescd_compass TO charlescd_compass;
+
+CREATE USER keycloak WITH PASSWORD 'keycloak';
+ALTER USER keycloak WITH SUPERUSER;
+CREATE DATABASE keycloak;
+GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;
+
+CREATE USER apicurio WITH PASSWORD 'apicurio';
+ALTER USER apicurio WITH SUPERUSER;
+CREATE DATABASE apicurio;
+GRANT ALL PRIVILEGES ON DATABASE apicurio TO apicurio;
