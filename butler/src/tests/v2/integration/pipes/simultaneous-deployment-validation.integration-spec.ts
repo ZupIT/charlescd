@@ -64,7 +64,7 @@ describe('DeploymentCleanupHandler', () => {
     await fixtureUtilsService.clearDatabase()
   })
 
-  it('does not allow simultaneous deployment of same component on a circle when there is an execution with status CREATED', async() => {
+  it('does not allow simultaneous deployment on a circle when there is already an execution with status CREATED for it', async() => {
     const circleId = '333365f8-bb29-49f7-bf2b-3ec956a71583'
     const componentName = 'component-name'
     const defaultCircle = false
@@ -96,8 +96,7 @@ describe('DeploymentCleanupHandler', () => {
 
   })
 
-
-  it('does not allow simultaneous deployment of same component on a default deployment when there is an execution with status CREATED', async() => {
+  it('does not allow simultaneous deployment on a default circle when there is already an execution with status CREATED for it', async() => {
     const circleId = 'ac137b62-37b6-4e76-b474-9c43bac00711'
     const componentName = 'component-name'
     const defaultCircle = true
@@ -127,6 +126,32 @@ describe('DeploymentCleanupHandler', () => {
     ).rejects.toThrow(new BadRequestException(`Simultaneous deployments are not allowed for a given circle. The following executions are not finished: ${execution.id}`))
   })
 
+  it('should allow a simultaneous deployment on a default circle when there is an execution with status CREATED for another default circle', async() => {
+    const componentName = 'component-name'
+    const params = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: '3eb609b0-829c-4861-8fc3-856197e1b85b',
+      components: [
+        {
+          helmRepository: 'https://some-helm.repo',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: componentName
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: true
+    }
+
+    await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
+    const createDeploymentDto = createDto(componentName, '5d1fc2bd-1275-458b-bf54-71727f8cb33b', true)
+    await expect(
+      pipe.transform(createDeploymentDto)
+    ).resolves.toEqual(createDeploymentDto)
+  })
 
   const createDto = (componentName: string, circleId: string, defaultCircle: boolean) => {
     const components = new CreateComponentRequestDto(
