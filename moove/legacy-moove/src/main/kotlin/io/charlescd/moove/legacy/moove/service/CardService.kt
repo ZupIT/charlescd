@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
 
 @Service
 class CardService(
@@ -78,10 +79,8 @@ class CardService(
         val cardRepresentation = cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .map { it.toRepresentation() }
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
-            cardRepresentation.isProtected = isProtectedBranch(cardRepresentation.feature!!.branchName)
+            cardRepresentation.isProtected = isProtectedBranch(cardRepresentation)
             return cardRepresentation;
-
-
     }
 
     @Transactional
@@ -154,6 +153,15 @@ class CardService(
             .orElseThrow { NotFoundExceptionLegacy("card", cardId) }
             .let { it.copyToArchive() }
             .let { this.cardRepository.save(it) }
+    }
+
+    private fun isProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
+        val branchName = cardRepresentation.feature?.branchName
+        if(StringUtils.isEmpty(branchName)) {
+            return isProtectedBranch(branchName.toString())
+        }
+
+        return false
     }
 
     private fun deleteFeatureBranches(card: Card, branchDeletion: Boolean = false) {
