@@ -19,7 +19,7 @@ import { create, configPath } from 'core/providers/git';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
-import { Git, Response } from './interfaces';
+import { GitFormData, Response } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useGit = (): FetchProps => {
@@ -44,7 +44,7 @@ export const useGit = (): FetchProps => {
   } = delData;
 
   const save = useCallback(
-    (git: Git) => {
+    (git: GitFormData) => {
       createGit(git);
     },
     [createGit]
@@ -56,19 +56,25 @@ export const useGit = (): FetchProps => {
 
   useEffect(() => {
     if (errorSave) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorSave.status}] Git could not be saved.`,
-          status: 'error'
-        })
-      );
+      (async () => {
+        const e = await errorSave.json();
+        dispatch(
+          toogleNotification({
+            text: e?.message,
+            status: 'error'
+          })
+        );
+      })();
     } else if (errorAdd) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorAdd.status}] Git could not be patched.`,
-          status: 'error'
-        })
-      );
+      (async () => {
+        const e = await errorAdd.json();
+        dispatch(
+          toogleNotification({
+            text: e?.message,
+            status: 'error'
+          })
+        );
+      })();
     }
   }, [errorSave, errorAdd, dispatch]);
 

@@ -22,22 +22,23 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/google/uuid"
 
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	Components(circleIDHeader, workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error)
-	ComponentsHealth(circleIDHeader, workspaceId, circleId string) (CircleHealthRepresentation, error)
+	Components(circleIDHeader, circleId, projectionType, metricType string, workspaceID uuid.UUID) (ComponentMetricRepresentation, error)
+	ComponentsHealth(circleIDHeader, circleId string, workspaceID uuid.UUID) (CircleHealthRepresentation, error)
 }
 
 type Main struct {
 	db         *gorm.DB
 	datasource datasource.UseCases
 	pluginMain plugin.UseCases
-	mooveMain  moove.UseCases
+	mooveMain  moove.ApiUseCases
 }
 
-func NewMain(db *gorm.DB, datasource datasource.UseCases, pluginMain plugin.UseCases, mooveMain moove.UseCases) UseCases {
+func NewMain(db *gorm.DB, datasource datasource.UseCases, pluginMain plugin.UseCases, mooveMain moove.ApiUseCases) UseCases {
 	return Main{db, datasource, pluginMain, mooveMain}
 }

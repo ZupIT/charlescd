@@ -21,10 +21,13 @@ package moove
 import (
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
-type UseCases interface {
-	GetMooveComponents(circleIDHeader, circleId, workspaceId string) ([]byte, error)
+type ApiUseCases interface {
+	GetMooveComponents(circleIDHeader, circleId string, workspaceId uuid.UUID) ([]byte, error)
 }
 
 type APIClient struct {
@@ -32,11 +35,24 @@ type APIClient struct {
 	httpClient *http.Client
 }
 
-func NewAPIClient(url string, timeout time.Duration) UseCases {
+func NewAPIClient(url string, timeout time.Duration) ApiUseCases {
 	return APIClient{
 		URL: url,
 		httpClient: &http.Client{
 			Timeout: timeout,
 		},
 	}
+}
+
+type Main struct {
+	Db *gorm.DB
+}
+
+type UseCases interface {
+	FindUserByEmail(email string) (User, error)
+	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error)
+}
+
+func NewMain(mooveDb *gorm.DB) UseCases {
+	return Main{Db: mooveDb}
 }

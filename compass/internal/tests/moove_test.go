@@ -9,6 +9,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -47,7 +48,7 @@ func (s *SuiteMoove) BeforeTest(suiteName, testName string) {
 
 }
 
-func (s *SuiteMoove) AfterTest(suiteName, testName string) {
+func (s *SuiteMoove) AfterTest(_, _ string) {
 	s.DB.Close()
 	s.server.Close()
 }
@@ -58,11 +59,11 @@ func TestInitMoove(t *testing.T) {
 
 func (s *SuiteMoove) TestGetMooveComponentsError() {
 	s.server.Close()
-	_, err := s.repository.GetMooveComponents("", "", "")
+	_, err := s.repository.GetMooveComponents("", "", uuid.New())
 	require.Error(s.T(), err)
 }
 
 func (s *SuiteMoove) TestGetMooveComponentsStatusError() {
-	_, err := s.repository.GetMooveComponents("", "", "")
+	_, err := s.repository.GetMooveComponents("", "", uuid.New())
 	require.Error(s.T(), err)
 }
