@@ -8,5 +8,7 @@ spec:
       circles:
         - id: <id-circle>
           tag: v1
+          default: false
         - id: <id-circle2>
           tag: v2
+          default: true

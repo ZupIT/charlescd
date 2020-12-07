@@ -17,13 +17,16 @@
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CharlesDeployment, CharlesDeploymentComponent } from './interfaces/charles-deployment.interface'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
-import { CharlesRoute, CharlesRouteCircle } from './interfaces/charles-route.interface'
+import {
+  CharlesRouteComponent,
+  CharlesRoutes
+} from './interfaces/charles-routes.interface'
 
 export class CrdBuilder {
 
   public static buildDeploymentCrdManifest(deployment: Deployment): CharlesDeployment {
     return {
-      apiVersion: 'zupit.com/v1',
+      apiVersion: 'charlescd.io/v1',
       kind: 'CharlesDeployment',
       metadata: {
         name: deployment.circleId
@@ -38,15 +41,15 @@ export class CrdBuilder {
     }
   }
 
-  public static buildRoutingCrdManifest(deployment: Deployment, activeComponents: Component[]): CharlesRoute { // TODO finish this
+  public static buildRoutingCrdManifest(cdConfigurationId: string, activeComponents: Component[]): CharlesRoutes {
     return {
-      apiVersion: 'zupit.com/v1',
-      kind: 'CharlesDeployment',
+      apiVersion: 'charlescd.io/v1',
+      kind: 'CharlesRoutes',
       metadata: {
-        name: deployment.cdConfiguration.id
+        name: cdConfigurationId
       },
       spec: {
-        circles: CrdBuilder.getRoutingCrdCircles(deployment, activeComponents)
+        components: CrdBuilder.getRoutingCrdComponents(activeComponents)
       }
     }
   }
@@ -59,8 +62,18 @@ export class CrdBuilder {
     }))
   }
 
-  private static getRoutingCrdCircles(deployment: Deployment, activeComponents: Component[]): CharlesRouteCircle[] {
-    const circles: CharlesRouteCircle[] = []
-
+  private static getRoutingCrdComponents(activeComponents: Component[]): CharlesRouteComponent[] { // TODO create query with this logic
+    const charlesRouteComponents: CharlesRouteComponent[] = []
+    activeComponents.forEach(component => {
+      if (charlesRouteComponents.find(c => c.name === component.name)) {
+        return
+      }
+      const activeByName = activeComponents.filter(c => c.name === component.name)
+      charlesRouteComponents.push({
+        name: component.name,
+        circles: activeByName.map(c => ({ id: c.deployment.circleId, tag: c.imageTag, default: c.deployment.defaultCircle }))
+      })
+    })
+    return charlesRouteComponents
   }
 }

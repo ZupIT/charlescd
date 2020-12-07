@@ -12,4 +12,3 @@ spec:
     - name: quizapp-front
       chart: http://github.com/cpgo/quizapp-front/minhabranch
       tag: v1
-

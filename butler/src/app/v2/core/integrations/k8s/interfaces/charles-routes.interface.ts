@@ -16,19 +16,28 @@
 
 import * as k8s from '@kubernetes/client-node'
 
-export interface CharlesRoute extends k8s.KubernetesObject { // TODO extend KubernetesObject interface
+export interface CharlesRoutes extends k8s.KubernetesObject { // TODO extend KubernetesObject interface
 
   spec: CharlesRouteSpec
 }
 
 export interface CharlesRouteSpec {
 
-  circles: CharlesRouteCircle[]
+  components: CharlesRouteComponent[]
 }
 
-export interface CharlesRouteCircle {
+export interface CharlesRouteComponent {
+
+  name: string
+
+  circles: CharlesComponentCircle[]
+}
+
+export interface CharlesComponentCircle {
 
   id: string
 
-  components: string[]
+  tag: string
+
+  default: boolean
 }

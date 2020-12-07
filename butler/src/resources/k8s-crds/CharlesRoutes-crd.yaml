@@ -31,9 +31,12 @@ spec:
                               type: string
                             tag:
                               type: string
+                            default:
+                              type: boolean
                           required:
                             - id
                             - tag
+                            - default
                     required:
                       - name
                       - circles
