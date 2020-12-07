@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
-import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
-import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
-import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
-import { UrlUtils } from '../../utils/url.utils'
-import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
-import { DeploymentUtils } from '../utils/deployment.utils'
 import {
   ClusterProviderEnum,
   IEKSClusterConfig,
   IGenericClusterConfig
 } from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { UrlUtils } from '../../utils/url.utils'
+import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
+import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
+import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
+import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
+import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
+import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 
 export class OctopipeRequestBuilder {
 
@@ -119,9 +120,16 @@ export class OctopipeRequestBuilder {
   }
 
   private getUnusedDeploymentsArray(deployment: Deployment, activeComponents: Component[]): OctopipeDeployment[] {
+    return deployment.defaultCircle ?
+      this.defaultUnusedVersions(deployment, activeComponents) :
+      this.circleUnusedVersions(deployment, activeComponents)
+
+  }
+  private defaultUnusedVersions(deployment: Deployment, activeComponents: Component[]): OctopipeDeployment[] {
     if (!deployment?.components) {
       return []
     }
+
     const unusedDeployments: OctopipeDeployment[] = []
     deployment.components.forEach(component => {
       const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
@@ -136,9 +144,25 @@ export class OctopipeRequestBuilder {
       }
     })
     return unusedDeployments
+
   }
 
-  private getHelmRepositoryConfig(component: Component, cdConfiguration: CdConfiguration): HelmRepositoryConfig {
+  private circleUnusedVersions(deployment: Deployment, activeComponents: Component[]) {
+    if (!deployment?.components) {
+      return []
+    }
+
+    return componentsToBeRemoved(deployment, activeComponents).map(component => {
+      return {
+        componentName: component.name,
+        helmRepositoryConfig: this.getHelmRepositoryConfig(component, deployment.cdConfiguration),
+        helmConfig: this.getHelmConfig(component, deployment.circleId),
+        rollbackIfFailed: false
+      }
+    })
+  }
+
+  private getHelmRepositoryConfig(component: DeploymentComponent, cdConfiguration: CdConfiguration): HelmRepositoryConfig {
     return {
       type: (cdConfiguration.configurationData as OctopipeConfigurationData).gitProvider,
       url: component.helmUrl,
@@ -146,14 +170,14 @@ export class OctopipeRequestBuilder {
     }
   }
 
-  private getHelmConfig(component: Component, circleId: string | null): HelmConfig {
+  private getHelmConfig(component: DeploymentComponent, circleId: string ): HelmConfig {
     return {
       overrideValues: {
         'image.tag': component.imageUrl,
         deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
         component: component.name,
         tag: component.imageTag,
-        circleId: CommonTemplateUtils.getCircleId(circleId)
+        circleId: circleId
       }
     }
   }

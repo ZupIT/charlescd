@@ -35,5 +35,5 @@ export interface Component {
 
     running: boolean
 
-    deployment?: Deployment
+    deployment: Deployment
 }

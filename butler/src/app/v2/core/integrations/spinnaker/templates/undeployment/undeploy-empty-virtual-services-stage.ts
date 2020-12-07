@@ -16,10 +16,11 @@
 
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { Component, Deployment } from '../../../../../api/deployments/interfaces'
+import { Deployment } from '../../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
 export const getUndeploymentEmptyVirtualServiceStage = (
-  component: Component,
+  component: DeploymentComponent,
   deployment: Deployment,
   stageId: number
 ): Stage => ({

@@ -17,10 +17,12 @@
 import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { DeploymentUtils } from './deployment.utils'
+import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const IstioUndeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'VirtualService',
@@ -36,7 +38,7 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getEmptyVirtualServiceManifest: (deployment: Deployment, component: Component): K8sManifest => {
+  getEmptyVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'VirtualService',
@@ -71,7 +73,7 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: Deployment, component: Component, activeByName: Component[]): K8sManifest => {
+  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
@@ -86,38 +88,31 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getActiveComponentsSubsets: (circleId: string | null, activeByName: Component[]): Subset[] => {
+  getActiveComponentsSubsets: (circleId: string, activeByName: Component[]): Subset[] => {
     const subsets: Subset[] = []
-
     activeByName.forEach(component => {
-      const activeCircleId = component.deployment?.circleId
-
-      if (activeCircleId && activeCircleId !== circleId && !subsets.find(subset => subset.name === component.imageTag)) {
+      const activeCircleId = component.deployment.circleId
+      if (DeploymentUtils.isDistinctCircle(component, circleId)) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
-
-    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && !component.deployment.circleId)
-    if (defaultComponent && !subsets.find(subset => subset.name === defaultComponent.imageTag)) {
-      subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(defaultComponent, null))
-    }
     return subsets
   },
 
-  getActiveComponentsCircleHTTPRules: (circleId: string | null, activeByName: Component[]): Http[] => {
+  getActiveComponentsCircleHTTPRules: (circleId: string, activeByName: Component[]): Http[] => {
     const rules: Http[] = []
 
     activeByName.forEach(component => {
-      const activeCircleId = component.deployment?.circleId
-      if (activeCircleId && activeCircleId !== circleId) {
+      const activeCircleId = component.deployment.circleId
+      if (DeploymentUtils.isDistinctAndNotDefault(component, circleId)) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
       }
     })
 
-    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && !component.deployment.circleId)
-    if (defaultComponent) {
-      rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(defaultComponent.name))
+    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && component.deployment.defaultCircle)
+    if (defaultComponent && defaultComponent.deployment) {
+      rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(defaultComponent.name, defaultComponent.deployment.circleId))
     }
     return rules
   }

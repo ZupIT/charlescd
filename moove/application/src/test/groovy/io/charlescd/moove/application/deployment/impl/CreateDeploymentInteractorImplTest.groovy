@@ -179,10 +179,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findById(author.id) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
-        1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment, activeDeployment]
-        1 * deployService.undeploy(activeDeployment.id, activeDeployment.author.id)
         1 * deploymentRepository.save(_) >> _
-        1 * deploymentRepository.updateStatus(activeDeployment.id, DeploymentStatusEnum.UNDEPLOYING) >> _
         1 * deployService.deploy(_, _, false, _) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
@@ -242,8 +239,6 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findById(author.id) >> Optional.of(author)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
-        0 * deployService.undeploy(_, _)
-        1 * deploymentRepository.findByCircleIdAndWorkspaceId(circle.id, workspaceId) >> [notDeployedDeployment, activeDeployment]
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, true, _) >> { arguments ->
             def deploymentArgument = arguments[0]
@@ -301,8 +296,6 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findById(author.id) >> Optional.of(author)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
-        0 * deployService.undeploy(_, _)
-        1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment]
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, true, _) >> { arguments ->
             def deploymentArgument = arguments[0]
@@ -363,8 +356,6 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findById(author.id) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
-        0 * deployService.undeploy(_, _)
-        1 * deploymentRepository.findByCircleIdAndWorkspaceId(build.deployments[0].circle.id, workspaceId) >> [notDeployedDeployment]
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, false, _) >> { arguments ->
             def deploymentArgument = arguments[0]

@@ -27,13 +27,28 @@ class GitLabClientFactoryTest extends Specification {
     private GitLabClientFactory gitLabClientFactory
 
     void setup() {
-        this.gitLabClientFactory = new GitLabClientFactory()
+        this.gitLabClientFactory = new GitLabClientFactory(false)
     }
 
     def "when using OAuth2Token credential should return GitHub client"() {
 
         given:
         def credentials = new GitCredentials("https://gitlab.com",
+                null, null, "token", GitServiceProvider.GITLAB
+        )
+
+        when:
+        def client = this.gitLabClientFactory.buildGitClient(credentials)
+
+        then:
+        assert client != null
+
+    }
+
+    def "when using OAuth2Token credential with default address return GitHub client"() {
+
+        given:
+        def credentials = new GitCredentials("",
                 null, null, "token", GitServiceProvider.GITLAB
         )
 

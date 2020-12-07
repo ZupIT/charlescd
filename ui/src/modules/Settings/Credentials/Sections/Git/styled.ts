@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import ComponentText from 'core/components/Text';
+import Button from 'core/components/Button';
 
 const Title = styled(ComponentText.h2)`
   display: flex;
@@ -51,10 +52,15 @@ const Fields = styled.div`
   }
 `;
 
+const TestConnectionButton = styled(Button.Default)`
+  margin-bottom: 30px;
+`;
+
 export default {
   Content,
   Title,
   Subtitle,
   Form,
-  Fields
+  Fields,
+  TestConnectionButton
 };

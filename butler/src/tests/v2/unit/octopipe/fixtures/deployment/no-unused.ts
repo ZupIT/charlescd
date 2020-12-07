@@ -16,7 +16,6 @@
 
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
 import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
 
 export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
   deployments: [
@@ -102,9 +101,9 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
             labels: {
               component: 'A',
               tag: 'v0',
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
+              circleId: 'default-circle-id'
             },
-            name: AppConstants.DEFAULT_CIRCLE_ID
+            name: 'default-circle-id'
           }
         ]
       }
@@ -189,17 +188,17 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
               {
                 destination: {
                   host: 'A',
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
+                  subset: 'default-circle-id'
                 },
                 headers: {
                   request: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   },
                   response: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   }
                 }
@@ -231,9 +230,9 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
             labels: {
               component: 'B',
               tag: 'v0',
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
+              circleId: 'default-circle-id'
             },
-            name: AppConstants.DEFAULT_CIRCLE_ID
+            name: 'default-circle-id'
           }
         ]
       }
@@ -318,17 +317,17 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
               {
                 destination: {
                   host: 'B',
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
+                  subset: 'default-circle-id'
                 },
                 headers: {
                   request: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   },
                   response: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   }
                 }
@@ -360,9 +359,9 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
             labels: {
               component: 'C',
               tag: 'v0',
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
+              circleId: 'default-circle-id'
             },
-            name: AppConstants.DEFAULT_CIRCLE_ID
+            name: 'default-circle-id'
           }
         ]
       }
@@ -447,17 +446,17 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
               {
                 destination: {
                   host: 'C',
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
+                  subset: 'default-circle-id'
                 },
                 headers: {
                   request: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   },
                   response: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   }
                 }

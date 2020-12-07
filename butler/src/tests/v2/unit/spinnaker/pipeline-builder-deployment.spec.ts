@@ -50,6 +50,7 @@ const deploymentWith3Components: Deployment = {
     createdAt: new Date(),
     deployments: null
   },
+  defaultCircle: false,
   circleId: 'circle-id',
   createdAt: new Date(),
   components: [
@@ -108,6 +109,7 @@ const deploymentWith1ComponentCircle1: Deployment = {
     deployments: null
   },
   circleId: 'circle-id',
+  defaultCircle: false,
   createdAt: new Date(),
   components: [
     {
@@ -143,6 +145,7 @@ const deploymentWith1ComponentCircle2: Deployment = {
     deployments: null
   },
   circleId: 'circle-id2',
+  defaultCircle: false,
   createdAt: new Date(),
   components: [
     {
@@ -177,7 +180,8 @@ const deploymentWith1ComponentOpenSea: Deployment = {
     createdAt: new Date(),
     deployments: null
   },
-  circleId: null,
+  circleId: 'default-circle-id',
+  defaultCircle: true,
   createdAt: new Date(),
   components: [
     {
@@ -213,6 +217,7 @@ const deploymentWith1ComponentCircle1HostGateway: Deployment = {
     deployments: null
   },
   circleId: 'circle-id',
+  defaultCircle: false,
   createdAt: new Date(),
   components: [
     {
@@ -248,6 +253,7 @@ const deploymentWith1ComponentCircle1CustomNamespace: Deployment = {
     deployments: null
   },
   circleId: 'circle-id',
+  defaultCircle: false,
   createdAt: new Date(),
   components: [
     {
@@ -297,7 +303,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
+          defaultCircle: false
         },
         namespace: 'sandbox'
       },
@@ -315,6 +322,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
+          defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -346,7 +354,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -361,7 +369,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
+          defaultCircle: true,
         },
         namespace: 'sandbox'
       },
@@ -378,7 +387,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -394,7 +403,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        },
+            defaultCircle: true
+    },
         namespace: 'sandbox'
       },
       {
@@ -410,7 +420,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -426,8 +436,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        },
-        namespace: 'sandbox'
+            defaultCircle: true
+  },
+      namespace: 'sandbox'
       }
     ]
 
@@ -452,7 +463,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -468,9 +479,11 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        },
+            defaultCircle: true
+    },
+
         namespace: 'sandbox'
-      },
+        },
       {
         id: 'component-id-7',
         helmUrl: 'http://localhost:2222/helm',
@@ -484,7 +497,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -500,6 +513,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -516,7 +530,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -532,6 +546,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -558,7 +573,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -574,6 +589,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null,
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -590,7 +606,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -606,9 +622,11 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
-      },
+
+        },
       {
         id: 'component-id-8',
         helmUrl: 'http://localhost:2222/helm',
@@ -622,7 +640,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -638,9 +656,10 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
-      }
+        }
     ]
 
     expect(
@@ -664,7 +683,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -680,6 +699,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -712,8 +732,10 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+        defaultCircle: false
         },
         namespace: 'sandbox'
+
       },
       {
         id: 'component-id-7',
@@ -728,7 +750,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -744,6 +766,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -760,7 +783,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -776,6 +799,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       }
@@ -802,7 +826,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -818,6 +842,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -834,7 +859,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -850,6 +875,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -866,7 +892,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -882,6 +908,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -914,9 +941,10 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: false
         },
         namespace: 'sandbox'
-      },
+      }
     ]
 
     expect(
@@ -940,7 +968,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -956,6 +984,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+          defaultCircle: true
         },
         namespace: 'sandbox'
       },
@@ -972,7 +1001,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -988,8 +1017,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: true
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-3',
@@ -1004,7 +1038,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1020,8 +1054,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: true
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-4',
@@ -1052,9 +1091,15 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
       }
+=======
+          defaultCircle: false
+        }
+      },
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
     ]
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
@@ -1077,7 +1122,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1093,8 +1138,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: true
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-6',
@@ -1124,9 +1174,15 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
+<<<<<<< HEAD
           }
         },
         namespace: 'sandbox'
+=======
+          },
+          defaultCircle: false
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-7',
@@ -1157,8 +1213,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: false
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-2',
@@ -1173,7 +1234,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1189,8 +1250,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: true
+        },
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-3',
@@ -1205,7 +1271,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1221,8 +1287,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: true
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-4',
@@ -1253,8 +1324,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: false
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       }
     ]
 
@@ -1295,8 +1371,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: false
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-7',
@@ -1327,8 +1408,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: false
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-2',
@@ -1343,7 +1429,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1357,10 +1443,15 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
-            deployments: null
+            deployments: null,
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: true
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-3',
@@ -1375,7 +1466,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1423,8 +1515,13 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
+<<<<<<< HEAD
         },
         namespace: 'sandbox'
+=======
+          defaultCircle: false
+        }
+>>>>>>> 71352d53896805840618aa73186f25f50c7db647
       }
     ]
 
@@ -1449,7 +1546,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1482,6 +1580,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
+          defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1513,7 +1612,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1545,7 +1645,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1591,6 +1692,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id',
+          defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1632,7 +1734,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1664,7 +1767,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1696,7 +1800,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',

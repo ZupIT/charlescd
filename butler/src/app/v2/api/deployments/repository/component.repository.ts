@@ -21,22 +21,26 @@ import { ComponentEntityV2 } from '../entity/component.entity'
 @EntityRepository(ComponentEntityV2)
 export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
 
-  public async findActiveComponents(): Promise<ComponentEntityV2[]> {
+  public async findActiveComponents(cdConfigurationId: string): Promise<ComponentEntityV2[]> {
+    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.active = true')
+      .andWhere('deployment.cd_configuration_id = :cdConfigurationId', { cdConfigurationId })
       .getMany()
   }
 
-  public async findDefaultActiveComponents(): Promise<ComponentEntityV2[]> {
+  public async findDefaultActiveComponents(defaultCircleId: string): Promise<ComponentEntityV2[]> {
+    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.active = true')
-      .andWhere('deployment.circle_id is null')
+      .andWhere('deployment.default_circle is true')
+      .andWhere('deployment.circle_id = :defaultCircleId', { defaultCircleId })
       .getMany()
   }
 
-  public async findCircleRunningComponents(circleId: string): Promise<ComponentEntityV2[]> {
+  public async findCircleCreatedExecution(circleId: string): Promise<ComponentEntityV2[]> {
     return this.createQueryBuilder('c')
       .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
       .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
@@ -45,11 +49,12 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
 
-  public async findDefaultRunningComponents(): Promise<ComponentEntityV2[]> {
+  public async findDefaultCircleCreatedExecution(circleId: string): Promise<ComponentEntityV2[]> {
     return this.createQueryBuilder('c')
       .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
       .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
-      .where('d.circle_id is null')
+      .where('d.circle_id = :circleId', { circleId })
+      .andWhere('d.default_circle is true')
       .andWhere('e.status = :status', { status: DeploymentStatusEnum.CREATED })
       .getMany()
   }

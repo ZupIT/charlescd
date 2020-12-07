@@ -16,7 +16,6 @@
 
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
 import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
 
 export const oneComponentDiffSubsetsSameTagOctopipe: OctopipeDeploymentRequest = {
   deployments: [
@@ -84,6 +83,14 @@ export const oneComponentDiffSubsetsSameTagOctopipe: OctopipeDeploymentRequest =
             labels: {
               component: 'A',
               tag: 'v0',
+              circleId: 'default-circle-id'
+            },
+            name: 'default-circle-id'
+          },
+          {
+            labels: {
+              component: 'A',
+              tag: 'v0',
               circleId: 'circle-id3'
             },
             name: 'circle-id3'
@@ -95,14 +102,6 @@ export const oneComponentDiffSubsetsSameTagOctopipe: OctopipeDeploymentRequest =
               circleId: 'circle-id5'
             },
             name: 'circle-id5'
-          },
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
-            },
-            name: AppConstants.DEFAULT_CIRCLE_ID
           }
         ]
       }
@@ -311,17 +310,17 @@ export const oneComponentDiffSubsetsSameTagOctopipe: OctopipeDeploymentRequest =
               {
                 destination: {
                   host: 'A',
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
+                  subset: 'default-circle-id'
                 },
                 headers: {
                   request: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   },
                   response: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   }
                 }
