@@ -20,6 +20,10 @@ package tests
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"strings"
+	"testing"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
@@ -27,9 +31,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"strings"
-	"testing"
 )
 
 type ActionSuite struct {
@@ -130,9 +131,9 @@ func (s *ActionSuite) TestParseActionError() {
 }
 
 func (s *ActionSuite) TestFindActionById() {
-	actionToFind := newBasicAction()
+	insertAction, actionToFind := actionInsert("validaction")
 
-	s.DB.Create(&actionToFind)
+	s.DB.Exec(insertAction)
 	res, err := s.repository.FindActionById(actionToFind.ID.String())
 
 	require.NoError(s.T(), err)
@@ -147,17 +148,14 @@ func (s *ActionSuite) TestFindActionByIdError() {
 }
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
-	workspaceID := uuid.New()
-	actionToFind := newBasicAction()
-	actionToFind.WorkspaceId = workspaceID
+	insertAction, actionToFind := actionInsert("validaction")
 
-	s.DB.Create(&actionToFind)
-	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID, workspaceID)
+	s.DB.Exec(insertAction)
+	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID, actionToFind.WorkspaceId)
 
 	require.NoError(s.T(), err)
 	actionToFind.BaseModel = res.BaseModel
 	require.Equal(s.T(), actionToFind, res)
-	require.Equal(s.T(), workspaceID, res.WorkspaceId)
 }
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspaceError() {
@@ -192,18 +190,20 @@ func (s *ActionSuite) TestFindByAllActionError() {
 }
 
 func (s *ActionSuite) TestSaveAction() {
-	actionStruct := newBasicAction()
+	actionStruct := newBasicActionRequest()
 
 	res, err := s.repository.SaveAction(actionStruct)
 	require.NoError(s.T(), err)
 
 	actionStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), actionStruct, res)
+	require.Equal(s.T(), actionStruct.BaseModel, res.BaseModel)
+	require.Equal(s.T(), actionStruct.Nickname, res.Nickname)
+	require.Equal(s.T(), actionStruct.Type, res.Type)
 }
 
 func (s *ActionSuite) TestSaveActionError() {
 	s.DB.Close()
-	actionStruct := action.Action{}
+	actionStruct := action.Request{}
 	_, err := s.repository.SaveAction(actionStruct)
 
 	require.Error(s.T(), err)
@@ -224,7 +224,7 @@ func (s *ActionSuite) TestDeleteActionError() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyNickname() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Nickname = ""
 
 	res := s.repository.ValidateAction(act)
@@ -235,7 +235,7 @@ func (s *ActionSuite) TestValidateActionEmptyNickname() {
 }
 
 func (s *ActionSuite) TestValidateActionBlankNickname() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Nickname = "  "
 
 	res := s.repository.ValidateAction(act)
@@ -246,7 +246,7 @@ func (s *ActionSuite) TestValidateActionBlankNickname() {
 }
 
 func (s *ActionSuite) TestValidateActionTooLongNickname() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Nickname = bigString
 
 	res := s.repository.ValidateAction(act)
@@ -257,7 +257,7 @@ func (s *ActionSuite) TestValidateActionTooLongNickname() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyDescription() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Description = ""
 
 	res := s.repository.ValidateAction(act)
@@ -268,7 +268,7 @@ func (s *ActionSuite) TestValidateActionEmptyDescription() {
 }
 
 func (s *ActionSuite) TestValidateActionBlankDescription() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Description = "  "
 
 	res := s.repository.ValidateAction(act)
@@ -279,7 +279,7 @@ func (s *ActionSuite) TestValidateActionBlankDescription() {
 }
 
 func (s *ActionSuite) TestValidateActionTooLongDescription() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Description = bigString
 
 	res := s.repository.ValidateAction(act)
@@ -290,7 +290,7 @@ func (s *ActionSuite) TestValidateActionTooLongDescription() {
 }
 
 func (s *ActionSuite) TestValidateActionNilConfiguration() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Configuration = nil
 
 	res := s.repository.ValidateAction(act)
@@ -301,7 +301,7 @@ func (s *ActionSuite) TestValidateActionNilConfiguration() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyConfiguration() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Configuration = json.RawMessage("")
 
 	res := s.repository.ValidateAction(act)
@@ -312,7 +312,7 @@ func (s *ActionSuite) TestValidateActionEmptyConfiguration() {
 }
 
 func (s *ActionSuite) TestValidateActionNilWorkspace() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.WorkspaceId = uuid.Nil
 
 	res := s.repository.ValidateAction(act)
@@ -323,7 +323,7 @@ func (s *ActionSuite) TestValidateActionNilWorkspace() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyType() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = ""
 
 	res := s.repository.ValidateAction(act)
@@ -334,7 +334,7 @@ func (s *ActionSuite) TestValidateActionEmptyType() {
 }
 
 func (s *ActionSuite) TestValidateActionBlankType() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "  "
 
 	res := s.repository.ValidateAction(act)
@@ -345,7 +345,7 @@ func (s *ActionSuite) TestValidateActionBlankType() {
 }
 
 func (s *ActionSuite) TestValidateActionTypeToo() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = bigString
 
 	res := s.repository.ValidateAction(act)
@@ -356,7 +356,7 @@ func (s *ActionSuite) TestValidateActionTypeToo() {
 }
 
 func (s *ActionSuite) TestValidateActionPluginNotFound() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "no_plugin_found"
 
 	res := s.repository.ValidateAction(act)
@@ -367,7 +367,7 @@ func (s *ActionSuite) TestValidateActionPluginNotFound() {
 }
 
 func (s *ActionSuite) TestValidateActionPluginLookupError() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "nofuncaction"
 
 	res := s.repository.ValidateAction(act)
@@ -378,7 +378,7 @@ func (s *ActionSuite) TestValidateActionPluginLookupError() {
 }
 
 func (s *ActionSuite) TestValidateActionInvalidConfig() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "invalidaction"
 
 	res := s.repository.ValidateAction(act)
@@ -389,7 +389,7 @@ func (s *ActionSuite) TestValidateActionInvalidConfig() {
 }
 
 func (s *ActionSuite) TestValidateActionOk() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 
 	res := s.repository.ValidateAction(act)
 

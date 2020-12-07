@@ -20,15 +20,17 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/health"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
@@ -107,19 +109,12 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
-	workspaceId := uuid.New()
 	circleId := uuid.New().String()
-	datasourceStruct := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&datasourceStruct)
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	_, err := s.repository.ComponentsHealth("", circleId, workspaceId)
+	s.DB.Exec(dataSourceInsert)
+
+	_, err := s.repository.ComponentsHealth("", circleId, dataSourceStruct.WorkspaceID)
 	s.NoError(err)
 }
 
@@ -168,22 +163,16 @@ func (s SuiteHealth) TestComponentsMetricTypeDefaultError() {
 
 func (s SuiteHealth) TestComponents() {
 	circleIdHeader := uuid.New().String()
-	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	projectionType := "FIVE_MINUTES"
 	metricType := "REQUESTS_BY_CIRCLE"
 
-	datasourceStruct := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&datasourceStruct)
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
+	s.DB.Exec(dataSourceInsert)
 
-	_, err := s.repository.Components(circleIdHeader, circleId, projectionType, metricType, workspaceId)
+	fmt.Println(dataSourceStruct)
+
+	_, err := s.repository.Components(circleIdHeader, circleId, projectionType, metricType, dataSourceStruct.WorkspaceID)
 
 	require.NoError(s.T(), err)
 }

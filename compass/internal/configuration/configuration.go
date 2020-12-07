@@ -49,6 +49,7 @@ var initialValues = map[string]string{
 	"MOOVE_DB_NAME":       "charles",
 	"MOOVE_DB_SSL":        "disable",
 	"MOOVE_DB_PORT":       "5432",
+	"ENCRYPTION_KEY":      "caf5a807-5edd-4580-9149-7a4882755716",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
