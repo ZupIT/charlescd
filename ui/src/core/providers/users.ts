@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import replace from 'lodash/replace';
-import { baseRequest, putRequest, postRequest } from './base';
+import { baseRequest, putRequest, postRequest, patchRequest } from './base';
 import { Profile, NewUser } from 'modules/Users/interfaces/User';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
 import { getWorkspaceId } from 'core/utils/workspace';
 
 const endpoint = '/moove/v2/users';
-const endpointWorkspaces = '/moove/v2/workspaces/{workspaceId}/users';
+const endpointWorkspaces = '/moove/v2/workspaces';
 const v1Endpoint = '/moove/users';
 
 export interface UserFilter {
@@ -37,7 +36,6 @@ export const findAllWorkspaceUsers = (
   filter: UserFilter = initialUserFilter
 ) => {
   const workspaceId = getWorkspaceId();
-  const path = replace(endpointWorkspaces, '{workspaceId}', workspaceId);
   const defaultPage = 0;
   const defaultSize = 100;
   const params = new URLSearchParams({
@@ -48,7 +46,7 @@ export const findAllWorkspaceUsers = (
   if (filter?.name) params.append('name', filter?.name);
   if (filter?.email) params.append('email', filter?.email);
 
-  return baseRequest(`${path}?${params}`);
+  return baseRequest(`${endpointWorkspaces}/${workspaceId}/users?${params}`);
 };
 
 export const findAllUsers = (filter: UserFilter = initialUserFilter) => {
@@ -80,6 +78,9 @@ export const resetPasswordById = (id: string) =>
 
 export const updateProfileById = (id: string, profile: Profile) =>
   putRequest(`${v1Endpoint}/${id}`, profile);
+
+export const patchProfileById = (id: string, name: string) =>
+  patchRequest(`${endpoint}/${id}`, 'replace', '/name', name);
 
 export const findUserByEmail = (email: string) => {
   const decodeEmail = btoa(email);

@@ -85,4 +85,8 @@ class UserService(private val userRepository: UserRepository, private val manage
     fun createUserOnKeycloak(email: String, name: String, password: String) {
         return managementUserSecurityService.createUser(email, name, password)
     }
+
+    fun update(user: User): User {
+        return userRepository.update(user)
+    }
 }

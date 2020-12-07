@@ -33,6 +33,7 @@ export interface User extends Base {
   id: string;
   workspaces?: Workspace;
   createdAt?: string;
+  isRoot?: boolean;
 }
 
 export interface NewUser extends Base {
