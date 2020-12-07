@@ -16,6 +16,8 @@
 
 package io.charlescd.moove.legacy.moove.controller
 
+import io.charlescd.moove.commons.request.comment.AddCommentRequest
+import io.charlescd.moove.commons.request.member.AddMemberRequest
 import io.charlescd.moove.legacy.moove.request.card.CreateCardRequest
 import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
 import io.charlescd.moove.legacy.moove.service.CardService
@@ -78,6 +80,15 @@ class CardControllerUnitTest extends Specification {
         notThrown()
     }
 
+    def "should not delete card"() {
+        when:
+        controller.delete(workspaceId, false, id)
+
+        then:
+        1 * service.delete(id, workspaceId, false)
+        notThrown()
+    }
+
     def "should delete card"() {
         when:
         controller.delete(workspaceId, true, id)
@@ -104,5 +115,49 @@ class CardControllerUnitTest extends Specification {
         1 * service.findById(id, workspaceId)
         notThrown()
     }
+
+    def "should add a member"() {
+        given:
+        def request = new AddMemberRequest(
+                "authorId",
+                ["member1", "member2"]
+        )
+
+        when:
+        controller.addMembers(workspaceId, id, request)
+
+        then:
+        1 * service.addMembers(id, request, workspaceId)
+        notThrown()
+    }
+
+    def "should remove a member"() {
+        given:
+
+        def memberId = "memberId"
+
+        when:
+        controller.removeMember(workspaceId, id, memberId)
+
+        then:
+        1 * service.removeMember(id, memberId, workspaceId)
+        notThrown()
+    }
+
+    def "should add a commnet"() {
+        given:
+        def request = new AddCommentRequest(
+                "authorId",
+                "comment"
+        )
+
+        when:
+        controller.addComment(workspaceId, id, request)
+
+        then:
+        1 * service.addComment(id, request, workspaceId)
+        notThrown()
+    }
+
 
 }
