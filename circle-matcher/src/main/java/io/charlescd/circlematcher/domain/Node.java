@@ -18,11 +18,14 @@ package io.charlescd.circlematcher.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.infrastructure.Constants;
+
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node {
 
+    @NotNull
     private NodeType type;
     private LogicalOperatorType logicalOperator;
     private List<Node> clauses;
@@ -84,7 +87,8 @@ public class Node {
 
     public boolean isValidRuleType() {
         return this.getType() == NodeType.RULE
-                && this.getContent() != null;
+                && this.getContent() != null
+                && (this.getClauses() == null || this.getClauses().isEmpty());
     }
 
     public boolean isValidClauseType() {
