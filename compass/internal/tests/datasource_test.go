@@ -125,7 +125,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 	}
 	s.DB.Create(&dataSourceStruct)
 
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID.String(), "true")
+	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID, "true")
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
@@ -134,7 +134,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 
 func (s *Suite) TestFindAllByWorkspaceError() {
 	s.DB.Close()
-	_, err := s.repository.FindAllByWorkspace(uuid.New().String(), "true")
+	_, err := s.repository.FindAllByWorkspace(uuid.New(), "true")
 
 	require.Error(s.T(), err)
 }
@@ -150,7 +150,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealth() {
 	}
 	s.DB.Create(&dataSourceStruct)
 
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID.String(), "")
+	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID, "")
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
@@ -249,7 +249,7 @@ func (s *Suite) TestDeleteError() {
 
 func (s *Suite) TestGetMetricsNotFoundError() {
 	datasourceId := uuid.New().String()
-	_, err := s.repository.GetMetrics(datasourceId, "")
+	_, err := s.repository.GetMetrics(datasourceId)
 
 	require.Error(s.T(), err)
 }
@@ -267,7 +267,7 @@ func (s *Suite) TestGetMetricsError() {
 
 	s.DB.Create(&dataSource)
 
-	_, err := s.repository.GetMetrics(dataSource.ID.String(), "")
+	_, err := s.repository.GetMetrics(dataSource.ID.String())
 
 	require.Error(s.T(), err)
 }

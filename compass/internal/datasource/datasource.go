@@ -98,7 +98,7 @@ func (main Main) Parse(dataSource io.ReadCloser) (Request, error) {
 	return *newDataSource, nil
 }
 
-func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]Response, error) {
+func (main Main) FindAllByWorkspace(workspaceID uuid.UUID, health string) ([]Response, error) {
 	var rows *sql.Rows
 	var err error
 	dataSources := make([]Response, 0)
@@ -110,7 +110,7 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]Respon
 		rows, err = main.db.Raw(workspaceAndHealthDatasourceQuery, workspaceID, healthValue).Rows()
 	}
 	if err != nil {
-		logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, "WorkspaceId = "+workspaceID)
+		logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, "WorkspaceId = "+workspaceID.String())
 		return []Response{}, err
 	}
 
@@ -119,7 +119,7 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]Respon
 
 		err = main.db.ScanRows(rows, &dataSource)
 		if err != nil {
-			logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, "WorkspaceId = "+workspaceID)
+			logger.Error(util.FindDatasourceError, "FindAllByWorkspace", err, "WorkspaceId = "+workspaceID.String())
 			return []Response{}, err
 		}
 
@@ -143,14 +143,14 @@ func (main Main) FindById(id string) (Response, error) {
 	return dataSource.toResponse(), nil
 }
 
-func (main Main) FindHealthByWorkspaceId(workspaceID string) (Response, error) {
+func (main Main) FindHealthByWorkspaceId(workspaceID uuid.UUID) (Response, error) {
 	dataSource := DataSource{}
 	row := main.db.Raw(decryptedWorkspaceAndHealthDatasourceQuery, workspaceID, true).Row()
 
 	dbError := row.Scan(&dataSource.ID, &dataSource.Name, &dataSource.CreatedAt, &dataSource.Data,
 		&dataSource.WorkspaceID, &dataSource.Health, &dataSource.DeletedAt, &dataSource.PluginSrc)
 	if dbError != nil {
-		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", dbError, "workspaceID = "+workspaceID)
+		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", dbError, "workspaceID = "+workspaceID.String())
 		return Response{}, dbError
 	}
 
@@ -167,7 +167,7 @@ func (main Main) Delete(id string) error {
 	return nil
 }
 
-func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, error) {
+func (main Main) GetMetrics(dataSourceID string) (datasource.MetricList, error) {
 	dataSourceResult, err := main.FindById(dataSourceID)
 	if err != nil {
 		return datasource.MetricList{}, errors.New("Not found data source: " + dataSourceID)

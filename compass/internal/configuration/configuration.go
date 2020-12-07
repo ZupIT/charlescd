@@ -43,6 +43,12 @@ var initialValues = map[string]string{
 	"MOOVE_USER":          "admin@admin",
 	"MOOVE_PATH":          "http://charlescd-moove:8080",
 	"MOOVE_AUTH":          "Bearer 123",
+	"MOOVE_DB_USER":       "charles",
+	"MOOVE_DB_PASSWORD":   "charles",
+	"MOOVE_DB_HOST":       "localhost",
+	"MOOVE_DB_NAME":       "charles",
+	"MOOVE_DB_SSL":        "disable",
+	"MOOVE_DB_PORT":       "5432",
 	"ENCRYPTION_KEY":      "caf5a807-5edd-4580-9149-7a4882755716",
 }
 
@@ -77,6 +83,22 @@ func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
 	}
 
 	return db, err
+}
+
+func GetMooveDBConnection() (*gorm.DB, error) {
+	db, err := gorm.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+		GetConfiguration("MOOVE_DB_HOST"),
+		GetConfiguration("MOOVE_DB_PORT"),
+		GetConfiguration("MOOVE_DB_USER"),
+		GetConfiguration("MOOVE_DB_NAME"),
+		GetConfiguration("MOOVE_DB_PASSWORD"),
+		GetConfiguration("MOOVE_DB_SSL"),
+	))
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
 
 func GetConfiguration(configuration string) string {

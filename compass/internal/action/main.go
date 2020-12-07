@@ -21,6 +21,7 @@ package action
 import (
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"io"
 )
@@ -28,9 +29,9 @@ import (
 type UseCases interface {
 	ValidateAction(action Request) []util.ErrorUtil
 	ParseAction(action io.ReadCloser) (Request, error)
-	FindActionByIdAndWorkspace(id string, workspaceID string) (Response, error)
+	FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, error)
 	FindActionById(id string) (Response, error)
-	FindAllActionsByWorkspace(workspaceID string) ([]Response, error)
+	FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, error)
 	SaveAction(action Request) (Response, error)
 	DeleteAction(id string) error
 }

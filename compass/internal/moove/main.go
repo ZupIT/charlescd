@@ -19,6 +19,8 @@
 package moove
 
 import (
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 	"net/http"
 	"time"
 )
@@ -35,4 +37,17 @@ func NewAPIClient(url string, timeout time.Duration) APIClient {
 			Timeout: timeout,
 		},
 	}
+}
+
+type Main struct {
+	Db *gorm.DB
+}
+
+type UseCases interface {
+	FindUserByEmail(email string) (User, error)
+	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error)
+}
+
+func NewMain(mooveDb *gorm.DB) UseCases {
+	return Main{Db: mooveDb}
 }

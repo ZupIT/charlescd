@@ -149,14 +149,14 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionByIdAndWorkspace(id, workspaceID string) (Response, error) {
+func (main Main) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, error) {
 	entity := Action{}
 	row := main.db.Set("gorm:auto_preload", true).Raw(decryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
-		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", dbError, "Id = "+id)
+		logger.Error(util.FindActionError, "FindActionByIdAndWorkspace", dbError, "Id = "+id.String())
 		return Response{}, dbError
 	}
 
@@ -177,7 +177,7 @@ func (main Main) FindActionById(id string) (Response, error) {
 	return entity.toResponse(), nil
 }
 
-func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Response, error) {
+func (main Main) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, error) {
 	var actions []Response
 
 	rows, err := main.db.Set("gorm:auto_preload", true).Raw(workspaceActionQuery, workspaceID).Rows()
@@ -191,7 +191,7 @@ func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Response, erro
 
 		err = main.db.ScanRows(rows, &action)
 		if err != nil {
-			logger.Error(util.FindDatasourceError, "FindAllActionsByWorkspace", err, "WorkspaceId = "+workspaceID)
+			logger.Error(util.FindDatasourceError, "FindAllActionsByWorkspace", err, "WorkspaceId = "+workspaceID.String())
 			return []Response{}, err
 		}
 		actions = append(actions, action.toResponse())
@@ -224,6 +224,7 @@ func (main Main) DeleteAction(id string) error {
 		logger.Error(util.DeleteActionError, "DeleteAction", db.Error, "Id = "+id)
 		return db.Error
 	}
+
 	return nil
 }
 
