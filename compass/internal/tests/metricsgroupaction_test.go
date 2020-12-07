@@ -545,7 +545,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyNickname() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "nickname", res[0].Field)
 	require.Equal(s.T(), "action nickname is required", res[0].Error)
@@ -563,7 +563,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionBlankNickname() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "nickname", res[0].Field)
 	require.Equal(s.T(), "action nickname is required", res[0].Error)
@@ -581,7 +581,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNicknameTooLong() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "nickname", res[0].Field)
 	require.Equal(s.T(), "nickname is limited to 100 characters maximum", res[0].Error)
@@ -597,7 +597,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNilMetricGroupID() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "metricGroup", res[0].Field)
 	require.Equal(s.T(), "metric group id is required", res[0].Error)
@@ -615,7 +615,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNilExecutionParameters(
 	groupAction.ExecutionParameters = nil
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "executionParameters", res[0].Field)
 	require.Equal(s.T(), "execution parameters is required", res[0].Error)
@@ -633,7 +633,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyExecutionParameter
 	groupAction.ExecutionParameters = json.RawMessage("")
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "executionParameters", res[0].Field)
 	require.Equal(s.T(), "execution parameters is required", res[0].Error)
@@ -644,7 +644,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNilActionID() {
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
+	res := s.repository.ValidateGroupAction(groupAction, uuid.New())
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "action", res[0].Field)
 	require.Equal(s.T(), "action id is required", res[0].Error)
@@ -656,7 +656,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionActionNotFound() {
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
+	res := s.repository.ValidateGroupAction(groupAction, uuid.New())
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "action", res[0].Field)
 	require.Equal(s.T(), "action is invalid", res[0].Error)
@@ -669,7 +669,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionActionSearchError() {
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, uuid.New().String())
+	res := s.repository.ValidateGroupAction(groupAction, uuid.New())
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "action", res[0].Field)
 	require.Equal(s.T(), "action is invalid", res[0].Error)
@@ -686,7 +686,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNegativeCycles() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.NumberOfCycles = -5
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "configuration.NumberOfCycles", res[0].Field)
 	require.Equal(s.T(), "the number of cycle needs an positive integer", res[0].Error)
@@ -704,7 +704,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNotRepeatableZeroCycles
 	groupAction.ActionsConfiguration.NumberOfCycles = 0
 	groupAction.ActionsConfiguration.Repeatable = false
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "configuration.Repeatable", res[0].Field)
 	require.Equal(s.T(), "a not repeatable action needs a defined number of cycles", res[0].Error)
@@ -722,7 +722,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionPluginNotFound() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "action", res[0].Field)
 	require.Equal(s.T(), "action is invalid", res[0].Error)
@@ -740,7 +740,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionLookupError() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "action", res[0].Field)
 	require.Equal(s.T(), "action is invalid", res[0].Error)
@@ -758,7 +758,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionInvalid() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "executionParameters", res[0].Field)
 	require.Equal(s.T(), "invalid config", res[0].Error)
@@ -775,6 +775,6 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionOk() {
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
-	res := s.repository.ValidateGroupAction(groupAction, workspaceID.String())
+	res := s.repository.ValidateGroupAction(groupAction, workspaceID)
 	require.Len(s.T(), res, 0)
 }

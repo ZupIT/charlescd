@@ -78,7 +78,7 @@ func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 	return *newDataSource, nil
 }
 
-func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error) {
+func (main Main) FindAllByWorkspace(workspaceID uuid.UUID, health string) ([]DataSource, error) {
 	var dataSources []DataSource
 	var db *gorm.DB
 
@@ -90,7 +90,7 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSo
 	}
 
 	if db.Error != nil {
-		logger.Error(util.FindDatasourceError, "FindAllByWorkspace", db.Error, "WorkspaceId = "+workspaceID)
+		logger.Error(util.FindDatasourceError, "FindAllByWorkspace", db.Error, "WorkspaceId = "+workspaceID.String())
 		return []DataSource{}, db.Error
 	}
 
@@ -107,11 +107,11 @@ func (main Main) FindById(id string) (DataSource, error) {
 	return dataSource, nil
 }
 
-func (main Main) FindHealthByWorkspaceId(workspaceID string) (DataSource, error) {
+func (main Main) FindHealthByWorkspaceId(workspaceID uuid.UUID) (DataSource, error) {
 	dataSource := DataSource{}
 	result := main.db.Where("workspace_id = ? AND health = ?", workspaceID, true).First(&dataSource)
 	if result.Error != nil {
-		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", result.Error, "workspaceID = "+workspaceID)
+		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", result.Error, "workspaceID = "+workspaceID.String())
 		return DataSource{}, result.Error
 	}
 	return dataSource, nil
@@ -127,7 +127,7 @@ func (main Main) Delete(id string) error {
 	return nil
 }
 
-func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, error) {
+func (main Main) GetMetrics(dataSourceID string) (datasource.MetricList, error) {
 	dataSourceResult, err := main.FindById(dataSourceID)
 	if err != nil {
 		return datasource.MetricList{}, errors.New("Not found data source: " + dataSourceID)

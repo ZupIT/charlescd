@@ -29,7 +29,7 @@ import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
 import { isRoot } from 'core/utils/auth';
 import InputTitle from 'core/components/Form/InputTitle';
-import { useUser, useUpdateProfile } from 'modules/Users/hooks';
+import { useUser, useUpdateName } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
 import Modal from 'core/components/Modal';
 import { AccountMenu } from './constants';
@@ -44,31 +44,29 @@ const Account = () => {
   const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
-  const [loadingUpdate, updateProfile] = useUpdateProfile();
+  const { updateNameById, user: userUpdated, status } = useUpdateName();
   const [toggleModal, setToggleModal] = useState(false);
 
   useEffect(() => {
-    if (user) setCurrentUser(user);
-  }, [user]);
-
-  useEffect(() => {
-    if (!loadingUpdate) {
+    if (user) {
+      setCurrentUser(user);
+    } else if (email) {
       findByEmail(email);
     }
-  }, [loadingUpdate, email, findByEmail]);
+  }, [user, email, findByEmail]);
+
+  useEffect(() => {
+    if (userUpdated) {
+      setCurrentUser(userUpdated);
+    } else if (status === 'rejected') {
+      findByEmail(email);
+    }
+  }, [userUpdated, status, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(currentUser.id, {
-      ...profile,
-      email: currentUser.email,
-      photoUrl: currentUser.photoUrl
-    });
+    updateNameById(currentUser.id, profile.name);
   };
-
-  useEffect(() => {
-    findByEmail(email);
-  }, [email, findByEmail]);
 
   const renderModal = () =>
     toggleModal && (
@@ -82,12 +80,7 @@ const Account = () => {
       {renderModal()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
-          <Avatar
-            key={currentUser.photoUrl}
-            size="68px"
-            profile={currentUser}
-            onFinish={() => findByEmail(email)}
-          />
+          <Avatar key={currentUser.id} size="68px" profile={currentUser} />
         </Styled.ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
