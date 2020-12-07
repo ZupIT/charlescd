@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.moove.request.user
+package io.charlescd.moove.application.user
 
-import javax.validation.constraints.NotBlank
+import io.charlescd.moove.application.user.request.PatchUserRequest
+import io.charlescd.moove.application.user.response.UserResponse
+import java.util.*
 
-data class UpdateUserRequest(
+interface PatchUserInteractor {
 
-    @field:NotBlank
-    val name: String,
-
-    @field:NotBlank
-    val email: String,
-
-    val photoUrl: String?
-)
+    fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse
+}
