@@ -26,6 +26,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -34,10 +35,11 @@ class PatchUserInteractorImplTest extends Specification {
 
     private PatchUserInteractor patchUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), keycloakService, true)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), keycloakService, true)
     }
 
     def "when trying to update user name should do it successfully"() {
@@ -245,7 +247,7 @@ class PatchUserInteractorImplTest extends Specification {
         def request = new PatchUserRequest(patches)
         def authorization = "Bearer token"
 
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), keycloakService, false)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), keycloakService, false)
 
         when:
         patchUserInteractor.execute(userId, request, authorization)
