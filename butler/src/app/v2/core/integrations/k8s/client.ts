@@ -33,7 +33,7 @@ export class K8sClient {
     this.client = k8s.KubernetesObjectApi.makeApiClient(kc)
   }
 
-  public async createDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
+  public async applyDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
     this.consoleLoggerService.log('GET:CHARLES_DEPLOYMENT_MANIFEST', { deploymentManifest })
@@ -46,7 +46,7 @@ export class K8sClient {
     this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT_CUSTOM_RESOURCE')
   }
 
-  public async createUndeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
+  public async applyUndeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
     this.consoleLoggerService.log('START:UNDEPLOY_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
 

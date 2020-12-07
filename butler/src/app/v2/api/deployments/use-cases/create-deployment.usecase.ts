@@ -52,7 +52,7 @@ export class CreateDeploymentUseCase {
       const execution = await this.createExecution(deployment, incomingCircleId, transactionManager)
       return { deployment, execution }
     })
-    await this.k8sClient.createDeploymentCustomResource(deployment)
+    await this.k8sClient.applyDeploymentCustomResource(deployment)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: deployment.id, execution: execution.id })
     const reloadedDeployment = await this.deploymentsRepository.findOneOrFail(deployment.id, { relations: ['components', 'executions', 'cdConfiguration'] })
     return reloadedDeployment.toReadDto() // BUG typeorm https://github.com/typeorm/typeorm/issues/4090

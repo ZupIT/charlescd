@@ -17,6 +17,7 @@
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CharlesDeployment, CharlesDeploymentComponent } from './interfaces/charles-deployment.interface'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { CharlesRoute, CharlesRouteCircle } from './interfaces/charles-route.interface'
 
 export class CrdBuilder {
 
@@ -37,10 +38,17 @@ export class CrdBuilder {
     }
   }
 
-  public static buildRoutingCrdManifest(deployment: Deployment, activeComponents: Component[]): CharlesDeployment { // TODO finish this
+  public static buildRoutingCrdManifest(deployment: Deployment, activeComponents: Component[]): CharlesRoute { // TODO finish this
     return {
-
-    } as CharlesDeployment
+      apiVersion: 'zupit.com/v1',
+      kind: 'CharlesDeployment',
+      metadata: {
+        name: deployment.cdConfiguration.id
+      },
+      spec: {
+        circles: CrdBuilder.getRoutingCrdCircles(deployment, activeComponents)
+      }
+    }
   }
 
   private static getDeploymentCrdComponents(components: DeploymentComponent[]): CharlesDeploymentComponent[] {
@@ -49,5 +57,10 @@ export class CrdBuilder {
       chart: component.helmUrl,
       tag: component.imageTag
     }))
+  }
+
+  private static getRoutingCrdCircles(deployment: Deployment, activeComponents: Component[]): CharlesRouteCircle[] {
+    const circles: CharlesRouteCircle[] = []
+
   }
 }

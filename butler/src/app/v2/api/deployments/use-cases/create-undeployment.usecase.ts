@@ -46,7 +46,7 @@ export class CreateUndeploymentUseCase {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { deploymentId, incomingCircleId })
     const deployment = await this.deploymentsRepository.findOneOrFail({ id: deploymentId })
     const execution = await this.createExecution(deployment, incomingCircleId)
-    await this.k8sClient.createUndeploymentCustomResource(deployment)
+    await this.k8sClient.applyUndeploymentCustomResource(deployment)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { execution })
     return { id: deploymentId }
   }
