@@ -19,6 +19,7 @@ import ComponentInput from 'core/components/Form/Input';
 import SelectComponent from 'core/components/Form/Select';
 import Button from 'core/components/Button';
 import { fadeIn } from 'core/assets/style/animate';
+import Switch from 'core/components/Switch';
 
 const Content = styled.div`
   display: flex;
@@ -74,37 +75,17 @@ const TestConnectionButton = styled(Button.Default)`
   margin-bottom: 30px;
 `;
 
-type status = {
-  status: string;
-};
-
-const StatusMessageWrapper = styled.div<status>`
-  margin-bottom: 20px;
-  display: flex;
-
-  span {
-    margin-left: 10px;
-    color: ${({ theme, status }) => theme.metrics.provider[status]};
-  }
-
-  svg {
-    color: ${({ theme, status }) => theme.metrics.provider[status]};
-  }
-`;
-
-const StatusWrapper = styled.div<status>`
-  margin-bottom: 20px;
-  display: flex;
+const HealthSwitch = styled(Switch)`
+  justify-content: start;
 
   span {
     margin-left: 5px;
-    color: ${({ theme, status }) => theme.metrics.provider[status]};
   }
+`;
 
-  svg {
-    margin-top: 2px;
-    color: ${({ theme, status }) => theme.metrics.provider[status]};
-  }
+const HealthWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 export default {
@@ -114,6 +95,6 @@ export default {
   Field,
   Select,
   TestConnectionButton,
-  StatusMessageWrapper,
-  StatusWrapper
+  HealthWrapper,
+  HealthSwitch
 };

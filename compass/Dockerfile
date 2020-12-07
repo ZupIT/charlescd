@@ -19,9 +19,12 @@ RUN go build -o ./out/compass cmd/*.go
 
 FROM alpine:3.12.0
 
-COPY --from=builder /app/compass/plugins/*.so ./plugins/
+COPY --from=builder /app/compass/dist /plugins
 COPY --from=builder /app/compass/out/compass .
 COPY --from=builder /app/compass/migrations /migrations
+COPY --from=builder /app/compass/auth.conf .
+COPY --from=builder /app/compass/policy.csv .
+COPY --from=builder /app/compass/pkey.txt .
 
 EXPOSE 8080
 

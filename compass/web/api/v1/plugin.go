@@ -19,8 +19,9 @@
 package v1
 
 import (
-	"compass/internal/plugin"
-	"compass/web/api"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -33,12 +34,14 @@ type PluginApi struct {
 func (v1 V1) NewPluginApi(pluginMain plugin.UseCases) PluginApi {
 	apiPath := "/plugins"
 	pluginApi := PluginApi{pluginMain}
-	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(pluginApi.list))
+	v1.Router.GET(v1.getCompletePath(apiPath), v1.HttpValidator(pluginApi.list))
 	return pluginApi
 }
 
-func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
-	circles, err := pluginApi.pluginMain.FindAll()
+func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ uuid.UUID) {
+	category := r.URL.Query().Get("category")
+
+	circles, err := pluginApi.pluginMain.FindAll(category)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

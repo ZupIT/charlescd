@@ -19,18 +19,19 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	datasource2 "compass/internal/datasource"
-	"compass/internal/plugin"
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	datasource2 "github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 type Suite struct {
@@ -42,7 +43,7 @@ type Suite struct {
 }
 
 func (s *Suite) SetupSuite() {
-	os.Setenv("ENV", "TEST")
+	setupEnv()
 }
 
 func (s *Suite) BeforeTest(suiteName, testName string) {
@@ -55,7 +56,7 @@ func (s *Suite) BeforeTest(suiteName, testName string) {
 
 	var pluginMain = plugin.NewMain()
 	s.repository = datasource2.NewMain(s.DB, pluginMain)
-	s.DB.Exec("DELETE FROM data_sources")
+	clearDatabase(s.DB)
 }
 
 func (s *Suite) AfterTest(suiteName, testName string) {
@@ -94,8 +95,8 @@ func (s *Suite) TestValidate() {
 
 func (s *Suite) TestValidateNameLength() {
 	datasource := datasource2.DataSource{
-		Name:      BigString,
-		PluginSrc: BigString,
+		Name:      bigString,
+		PluginSrc: bigString,
 	}
 	var errList = s.repository.Validate(datasource)
 
@@ -132,7 +133,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 	}
 	s.DB.Create(&dataSourceStruct)
 
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID.String(), "true")
+	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID, "true")
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
@@ -141,7 +142,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 
 func (s *Suite) TestFindAllByWorkspaceError() {
 	s.DB.Close()
-	_, err := s.repository.FindAllByWorkspace(uuid.New().String(), "true")
+	_, err := s.repository.FindAllByWorkspace(uuid.New(), "true")
 
 	require.Error(s.T(), err)
 }
@@ -157,7 +158,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealth() {
 	}
 	s.DB.Create(&dataSourceStruct)
 
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID.String(), "")
+	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID, "")
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
@@ -253,7 +254,7 @@ func (s *Suite) TestDeleteError() {
 
 func (s *Suite) TestGetMetricsNotFoundError() {
 	datasourceId := uuid.New().String()
-	_, err := s.repository.GetMetrics(datasourceId, "")
+	_, err := s.repository.GetMetrics(datasourceId)
 
 	require.Error(s.T(), err)
 }
@@ -271,7 +272,31 @@ func (s *Suite) TestGetMetricsError() {
 
 	s.DB.Create(&dataSource)
 
-	_, err := s.repository.GetMetrics(dataSource.ID.String(), "")
+	_, err := s.repository.GetMetrics(dataSource.ID.String())
+
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestConnectionJsonError() {
+	jsonData := json.RawMessage(`{"data": "prometheus"}`)
+	err := s.repository.TestConnection("datasource/errorconnection/errorconnection", jsonData)
+
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestConnection() {
+	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
+	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
+
+	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
+}
+
+func (s *Suite) TestConnectionPluginDirError() {
+	os.Setenv("PLUGINS_DIR", "/dist")
+
+	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
+	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
 	require.Error(s.T(), err)
 }

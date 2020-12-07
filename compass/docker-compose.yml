@@ -1,12 +1,30 @@
-version: '3'
+version: "3"
 
 services:
+
+    prometheus:
+        image: prom/prometheus:latest
+        container_name: prom
+        ports:
+            - 9090:9090
+        command:
+            - --config.file=/etc/prometheus/prometheus.yml
+        volumes:
+            - ./test/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+
     postgres:
         image: postgres:11.8-alpine
         ports:
-        - 5432:5432
+            - 5432:5432
         environment:
-        - POSTGRES_DB=charlescd_compass
-        - POSTGRES_USER=charlescd_compass
-        - POSTGRES_PASSWORD=compass
-        - MAX_CONNECTIONS=300
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=admin
+            - MAX_CONNECTIONS=300
+        networks:
+            - development
+        volumes:
+            - ./resources/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+networks:
+    development:
+        driver: bridge

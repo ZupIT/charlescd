@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from "react";
-import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
+import { render, act, fireEvent, cleanup, wait, screen, waitFor } from "@testing-library/react";
 import FormModule from "../";
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
@@ -38,8 +38,7 @@ const fakeAuthor: Author = {
   createdAt: "fake-data",
   email: "pseudonym@gmail.com",
   id: "1",
-  name: "pseudonym",
-  photoUrl: "url-photo"
+  name: "pseudonym"
 }
 const fakeComponent: ComponentInterface = {
   id: "fake-id",
@@ -81,8 +80,8 @@ test("Test component for edit mode render", async () => {
       />
     </AllTheProviders>
   );
-  await wait()
-  expect(container.innerHTML).toMatch("Edit module");
+
+  await waitFor(() => expect(container.innerHTML).toMatch("Edit module"));
 });
 
 
@@ -96,6 +95,6 @@ test("Test component for edit mode render", async () => {
       />
     </AllTheProviders>
   );
-  await wait()
-  expect(container.innerHTML).toMatch("Create module");
+
+  await waitFor(() => expect(container.innerHTML).toMatch("Create module"));
 });

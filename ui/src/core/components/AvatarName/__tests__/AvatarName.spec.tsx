@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import AvatarName from '../';
 
 const props = {
@@ -23,25 +23,20 @@ const props = {
   profile: {
     name: 'Charles',
     email: 'charles@zup.com.br',
-    photoUrl: 'https://photo.png'
   }
 };
 
-test('render AvatarName', () => {
-  const { getByTestId } = render(
+test('render AvatarName with default props', () => {
+  render(
     <AvatarName
-      src={props.profile.photoUrl}
       name={props.profile.name}
       size={props.size}
     />
   );
-  expect(getByTestId(props.profile.name)).toBeInTheDocument();
-});
+  
+  const avatarName = screen.getByTestId(props.profile.name);
+  const nameInitial = screen.getByText('C');
 
-test('render AvatarName without src and default props', () => {
-  const { getByText } = render(
-    <AvatarName src={''} name={props.profile.name} />
-  );
-  const nameInitial = getByText('C');
+  expect(avatarName).toBeInTheDocument();
   expect(nameInitial).toBeInTheDocument();
 });

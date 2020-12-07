@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Password from '..';
 
 const textProps = {
@@ -31,16 +32,16 @@ const passwordProps = {
 };
 
 test('render Password component with default properties', () => {
-  const { getByTestId } = render(
+  render(
     <Password type={textProps.type} name={textProps.name} autoComplete="off" />
   );
 
-  const PasswordElement = getByTestId('input-text-name');
+  const PasswordElement = screen.getByTestId('input-text-name');
   expect(PasswordElement).toBeInTheDocument();
 });
 
 test('render Password component as a resume', () => {
-  const { getByTestId } = render(
+  render(
       <Password
         resume
         type="text"
@@ -48,25 +49,27 @@ test('render Password component as a resume', () => {
         autoComplete="off"
     />);
 
-  const PasswordElement = getByTestId('input-text-keyName');
-  expect(PasswordElement).toBeInTheDocument();
-  expect(PasswordElement).toHaveStyle('background: transparent;');
-  expect(PasswordElement).toHaveStyle('border: none;');
+    const passwordElement = screen.getByTestId('input-text-keyName');
+
+    expect(passwordElement).toBeInTheDocument();
+    expect(passwordElement).toHaveStyle('background: transparent;');
+    expect(passwordElement).toHaveStyle('border: none;');
 });
 
 test('render Password component with label', () => {
-  const { container } = render(
+  render(
     <Password
       type={textProps.type}
       name={textProps.name}
       label={textProps.label}
     />
   );
-  expect(container).toHaveTextContent('label');
+  const labelText = screen.getByText('label');
+  expect(labelText).toBeInTheDocument();
 });
 
 test('render Password component with value floating the label', () => {
-  const { container } = render(
+  render(
     <Password
       type={textProps.type}
       name={textProps.name}
@@ -75,13 +78,12 @@ test('render Password component with value floating the label', () => {
     />
   );
 
-  const labelElement = container.getElementsByTagName('label').item(0);
-  const labelStyle = window.getComputedStyle(labelElement);
-  expect(labelStyle.top).toBe('0px');
+  const labelElement = screen.getByText('label');
+  expect(labelElement).toHaveStyle('top: 0px;');
 });
 
 test('render Password with type password', () => {
-  const { getByTestId } = render(
+  render(
     <Password
       type={passwordProps.type}
       name={passwordProps.name}
@@ -89,14 +91,14 @@ test('render Password with type password', () => {
     />
   );
 
-  const PasswordElement = getByTestId(
-    `input-${passwordProps.type}-${passwordProps.name}`
-  );
-  expect(PasswordElement).toBeInTheDocument();
+  const testId = `input-${passwordProps.type}-${passwordProps.name}`;
+  const passwordElement = screen.getByTestId(testId);
+
+  expect(passwordElement).toBeInTheDocument();
 });
 
 test('render Password with type password toggle hidden value', () => {
-  const { queryByTestId } = render(
+  render(
     <Password
       type={passwordProps.type}
       name={passwordProps.name}
@@ -104,17 +106,17 @@ test('render Password with type password toggle hidden value', () => {
     />
   );
 
-  const PasswordElement = queryByTestId(
-    `input-${passwordProps.type}-${passwordProps.name}`
-  );
-  const showButtonElement = queryByTestId('icon-no-view');
+  const testId = `input-${passwordProps.type}-${passwordProps.name}`;
+  const passwordElement = screen.getByTestId(testId);
+  const showButtonElement = screen.getByTestId('icon-no-view');
+
+  expect(passwordElement).toBeInTheDocument();
+  expect(passwordElement).toHaveAttribute('type', passwordProps.type);
   expect(showButtonElement).toBeInTheDocument();
-  expect(PasswordElement).toHaveAttribute('type', passwordProps.type);
-  expect(PasswordElement).toBeInTheDocument();
 
-  fireEvent.click(showButtonElement);
+  userEvent.click(showButtonElement);
 
-  const hiddenButtonElement = queryByTestId('icon-view');
+  const hiddenButtonElement = screen.getByTestId('icon-view');
   expect(hiddenButtonElement).toBeInTheDocument();
-  expect(PasswordElement).toHaveAttribute('type', textProps.type);
+  expect(passwordElement).toHaveAttribute('type', textProps.type);
 });

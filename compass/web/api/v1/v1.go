@@ -19,14 +19,26 @@
 package v1
 
 import (
-	"compass/internal/datasource"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/plugin"
-	"compass/pkg/logger"
+	"errors"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	healthPKG "github.com/ZupIT/charlescd/compass/internal/health"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/casbin/casbin/v2"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
+	"io/ioutil"
 	"net/http"
+	"strings"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -38,23 +50,34 @@ type UseCases interface {
 	NewMetricApi(metricMain metric.UseCases, metricGroupMain metricsgroup.UseCases) MetricApi
 	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
 	NewCircleApi(circleMain metricsgroup.UseCases) CircleApi
+	NewHealthApi(healthMain healthPKG.UseCases) HealthApi
+	NewActionApi(actionMain action.UseCases) ActionApi
+	NewMetricsGroupActionApi(actionMain metricsgroupaction.UseCases) MetricsGroupActionApi
 }
 
 type V1 struct {
-	Router *httprouter.Router
-	Path   string
+	Router    *httprouter.Router
+	Path      string
+	Enforcer  *casbin.Enforcer
+	MooveMain moove.UseCases
+}
+
+type AuthToken struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	jwt.StandardClaims
 }
 
 const (
 	v1Path = "/api/v1"
 )
 
-func NewV1() UseCases {
+func NewV1(mooveMain moove.UseCases, authEnforcer *casbin.Enforcer) UseCases {
 	router := httprouter.New()
 	router.GET("/health", health)
 	router.GET("/metrics", metricHandler)
 
-	return V1{router, v1Path}
+	return V1{Router: router, Path: v1Path, Enforcer: authEnforcer, MooveMain: mooveMain}
 }
 
 func metricHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -65,11 +88,100 @@ func (v1 V1) getCompletePath(path string) string {
 	return fmt.Sprintf("%s%s", v1Path, path)
 }
 
-func health(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func health(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	w.Write([]byte(":)"))
 }
 
 func (v1 V1) Start() {
 	logger.Info("Server Started", "Port:8080")
 	logger.Fatal("", http.ListenAndServe(":8080", v1.Router))
+}
+
+func (v1 V1) HttpValidator(
+	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId uuid.UUID),
+) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		var err error
+		var workspaceUUID uuid.UUID
+
+		workspaceID := strings.TrimSpace(r.Header.Get("x-workspace-id"))
+		if workspaceID == "" {
+			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("workspaceId is required")})
+			return
+		} else if workspaceUUID, err = uuid.Parse(workspaceID); err != nil {
+			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid workspaceId")})
+			return
+		}
+
+		authToken, err := extractToken(r.Header.Get("Authorization"))
+		if err != nil {
+			logger.Error("invalid_token", "httpValidator", err, nil)
+			api.NewRestError(w, http.StatusUnauthorized, []error{errors.New("token expired")})
+			return
+		}
+
+		allowed, err := v1.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
+		if err != nil || !allowed {
+			logger.Error("unauthorized", "httpValidator", err, allowed)
+			api.NewRestError(w, http.StatusForbidden, []error{errors.New("access denied")})
+			return
+		}
+
+		next(w, r, ps, workspaceUUID)
+	}
+}
+
+func extractToken(authorization string) (AuthToken, error) {
+	rToken := strings.TrimSpace(authorization)
+	if rToken == "" {
+		return AuthToken{}, errors.New("empty token")
+	}
+
+	splitToken := strings.Split(rToken, "Bearer ")
+	pkey, fileErr := ioutil.ReadFile(fmt.Sprintf("./pkey.txt"))
+	if fileErr != nil {
+		return AuthToken{}, fileErr
+	}
+
+	key, keyErr := jwt.ParseRSAPublicKeyFromPEM(pkey)
+	if keyErr != nil {
+		return AuthToken{}, fmt.Errorf("error parsing RSA public key: %v\n", keyErr)
+	}
+
+	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return key, nil
+	})
+	if err != nil {
+		return AuthToken{}, fmt.Errorf("error parsing token: %v", err)
+	}
+
+	return *token.Claims.(*AuthToken), nil
+}
+
+func (v1 V1) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, error) {
+	user, err := v1.MooveMain.FindUserByEmail(email)
+	if err != nil || user == (moove.User{}) {
+		return false, err
+	} else if user.IsRoot {
+		return true, nil
+	}
+
+	permissions, err := v1.MooveMain.GetUserPermissions(user.ID, workspaceID)
+	if err != nil {
+		return false, err
+	}
+
+	for _, permission := range permissions {
+		allowed, err := v1.Enforcer.Enforce(permission, url, method)
+		if err != nil {
+			return false, err
+		} else if allowed {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

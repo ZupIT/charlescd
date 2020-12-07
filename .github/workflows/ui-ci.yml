@@ -30,7 +30,7 @@ jobs:
         node-version: 12.x
     - run: yarn install
       working-directory: ./ui
-    - run: yarn build
+    - run: yarn build:all
       working-directory: ./ui
     - run: yarn test:coverage
       working-directory: ./ui
@@ -42,3 +42,9 @@ jobs:
         file: ./ui/coverage/lcov.info
         flags: ui
         fail_ci_if_error: true
+    - name: Horusec Security
+      working-directory: ./ui
+      run: |
+        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+        horusec start -p ./ 
+        

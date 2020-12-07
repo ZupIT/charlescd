@@ -19,11 +19,11 @@
 package dispatcher
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/util"
-	"compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"log"
@@ -52,6 +52,7 @@ func NewDispatcher(metric metric.UseCases) UseCases {
 }
 
 func (dispatcher *Dispatcher) dispatch() {
+	logger.Info("Starting metrics dispatcher", time.Now())
 	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
 		logger.Panic("Cannot find active metric executions", "Dispatch", err, nil)
@@ -61,7 +62,7 @@ func (dispatcher *Dispatcher) dispatch() {
 		go dispatcher.getMetricResult(execution)
 	}
 
-	logger.Info("After 5 seconds... ", time.Now())
+	logger.Info("Finishing metrics dispatcher", time.Now())
 }
 
 func compareResultWithMetricThreshold(result float64, threshold float64, condition string) bool {

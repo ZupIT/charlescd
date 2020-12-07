@@ -15,90 +15,137 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent, screen } from 'unit-test/testUtils';
-import UsersComparationItem from '..';
+import { render, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import * as PathUtils from 'core/utils/path';
 import { FetchMock } from 'jest-fetch-mock/types';
+import { saveProfile } from 'core/utils/profile';
+import UsersComparationItem from '../';
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+beforeAll(() => {
+  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br', isRoot: true });
+});
 
 const props = {
+  name: 'Charles',
   email: 'test@zup.com.br'
 };
 
 test('render UsersComparationItem default component', async () => {
-  const { getByTestId } = render(
+  render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );
 
-  await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+  const userComparationElement = await screen.findByTestId(`users-comparation-item-${props.email}`);
+  expect(userComparationElement).toBeInTheDocument();
+});
+
+test('should open a user and successfully update the name', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({
+    name: 'Charles',
+    email: 'charlescd@zup.com.br'
+  }))
+
+  render(
+    <UsersComparationItem {...props} onChange={jest.fn} />
+  );
+
+  const InputNameWrapper = await screen.findByTestId('input-wrapper-name');
+  expect(InputNameWrapper).toBeInTheDocument();
+  act(() => userEvent.click(InputNameWrapper));
+
+  const InputName = await screen.findByTestId('input-text-name');
+  expect(InputName).toBeInTheDocument();
+  await act(async () => userEvent.type(InputName, 'Charles'));
+
+  const ButtonSubmit = await screen.findByTestId('button-default-submit');
+  expect(ButtonSubmit).toBeInTheDocument();
+  act(() => userEvent.click(ButtonSubmit));
 });
 
 test('render Modal.Trigger on UsersComparationItem component', async () => {
-  const { queryByTestId, getByTestId } = render(
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}))
+
+  render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );
 
-  await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+  const email = await screen.findByTestId(`users-comparation-item-${props.email}`);
+  expect(email).toBeInTheDocument();
 
-  const buttonDropdown = queryByTestId('icon-vertical-dots');
-  fireEvent.click(buttonDropdown);
-  await wait(() => expect(queryByTestId('icon-delete')).toBeInTheDocument())
+  const dropdownButton = await screen.findByTestId('icon-vertical-dots');
+  userEvent.click(dropdownButton);
 
-  fireEvent.click(queryByTestId('icon-delete'));
-  await wait(() => expect(queryByTestId('modal-trigger')).toBeInTheDocument())
+  const deleteIcon = screen.getByTestId('icon-delete');
+  expect(deleteIcon).toBeInTheDocument();
+  userEvent.click(deleteIcon);
+
+  const modal = screen.getByTestId('modal-trigger');
+  expect(modal).toBeInTheDocument();
 });
 
 test('click on Cancel button in Modal.Trigger component', async () => {
-  const { getByTestId, queryByTestId } = render(
+  render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );
 
-  await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+  const email = await screen.findByTestId(`users-comparation-item-${props.email}`);
+  expect(email).toBeInTheDocument();
 
-  const buttonDropdown = queryByTestId('icon-vertical-dots');
-  fireEvent.click(buttonDropdown);
-  await wait(() => expect(queryByTestId('icon-delete')).toBeInTheDocument())
+  const dropdownButton = await screen.findByTestId('icon-vertical-dots');
+  userEvent.click(dropdownButton);
 
-  const buttonDelete = queryByTestId('icon-delete')
-  fireEvent.click(buttonDelete);
-  await wait(() => expect(queryByTestId('modal-trigger')).toBeInTheDocument())
+  const deleteIconButton = screen.getByTestId('icon-delete');
+  expect(deleteIconButton).toBeInTheDocument();
+  userEvent.click(deleteIconButton);
+
+  const modal = await screen.findByTestId('modal-trigger');
+  expect(modal).toBeInTheDocument();
   
-  const buttonCancel = getByTestId('button-default-dismiss')
-  fireEvent.click(buttonCancel);
-  await wait(() => expect(queryByTestId('modal-trigger')).not.toBeInTheDocument())
+  const cancelButton = screen.getByTestId('button-default-dismiss');
+  act(() => userEvent.click(cancelButton));
+
+  const modalElement = screen.queryByTestId('modal-trigger');
+  expect(modalElement).not.toBeInTheDocument();
 });
 
 test('click on Delete button in Modal.Trigger component', async () => {
-  const { getByTestId, queryByTestId } = render(
+  render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );
 
-  await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+  const email = screen.getByTestId(`users-comparation-item-${props.email}`);
+  expect(email).toBeInTheDocument();
 
-  const buttonDropdown = queryByTestId('icon-vertical-dots');
-  fireEvent.click(buttonDropdown);
-  await wait(() => expect(queryByTestId('icon-delete')).toBeInTheDocument())
-  
-  const buttonDelete = queryByTestId('icon-delete')
-  fireEvent.click(buttonDelete);
-  await wait(() => expect(queryByTestId('modal-trigger')).toBeInTheDocument())
-  
-//   TODO
-//   const buttonDeleteFinal = getByTestId('button-default-continue')
-//   fireEvent.click(buttonDeleteFinal);
-//   await wait(() => expect(queryByTestId('modal-trigger')).not.toBeInTheDocument())
+  const dropdownButton = await screen.findByTestId('icon-vertical-dots');
+  userEvent.click(dropdownButton);
+
+  const deleteButton = screen.getByTestId('icon-delete');
+  expect(deleteButton).toBeInTheDocument();
+  userEvent.click(deleteButton);
+
+  const modal = screen.getByTestId('modal-trigger');
+  expect(modal).toBeInTheDocument();
 });
 
 test('close UsersComparationItem component', async () => {
-    const { queryByTestId, getByTestId } = render(
-      <UsersComparationItem {...props} onChange={jest.fn} />
-    );
-  
-    await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+  const delParamSpy = spyOn(PathUtils, 'delParam');
+  render(
+    <UsersComparationItem {...props} onChange={jest.fn} />
+  );
 
-    const tabPanelCloseButton = queryByTestId('icon-cancel');
-    expect(tabPanelCloseButton).toBeInTheDocument();
+  const email = screen.getByTestId(`users-comparation-item-${props.email}`);
+  expect(email).toBeInTheDocument();
 
-    fireEvent.click(tabPanelCloseButton);
-    wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).not.toBeInTheDocument())
+  const tabPanelCloseButton = await screen.findByTestId('icon-cancel');
+  expect(tabPanelCloseButton).toBeInTheDocument();
+
+  userEvent.click(tabPanelCloseButton);
+  expect(delParamSpy).toHaveBeenCalledWith('user', '/users/compare', expect.anything(), props.email);
 });
 
 test('render UsersComparationItem component and trigger ModalResetPassword', async () => {
@@ -106,15 +153,16 @@ test('render UsersComparationItem component and trigger ModalResetPassword', asy
     JSON.stringify({ id: '123-456', password: '123457' })
   );
 
-  const { queryByTestId, getByTestId } = render(
+  render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );
 
-  await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+  const email = await screen.findByTestId(`users-comparation-item-${props.email}`);
+  expect(email).toBeInTheDocument();
 
-  await wait();
+  const resetPasswordButton = await screen.findByTestId('labeledIcon-shield');
+  userEvent.click(resetPasswordButton);
 
-  const buttonResetPassword = queryByTestId('labeledIcon-shield');
-  fireEvent.click(buttonResetPassword);
-  await wait(() => expect(queryByTestId('modal-default')).toBeInTheDocument());
+  const modal = screen.queryByTestId('modal-default');
+  expect(modal).toBeInTheDocument();
 });

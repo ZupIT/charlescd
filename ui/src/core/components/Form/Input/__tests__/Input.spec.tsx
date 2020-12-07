@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen} from 'unit-test/testUtils';
+import { render, screen} from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { dark as inputTheme } from 'core/assets/themes/input';
 import Input from '..';
 
@@ -65,7 +66,7 @@ test('renders Input component with label', () => {
   expect(label).toBeInTheDocument();
   expect(element).not.toHaveFocus();
 
-  fireEvent.click(label);
+  userEvent.click(label);
 
   expect(element).toHaveFocus();
 });
@@ -79,7 +80,7 @@ test('renders Input component disabled with label', () => {
   expect(label).toBeInTheDocument();
   expect(element).not.toHaveFocus();
 
-  fireEvent.click(label);
+  userEvent.click(label);
 
   expect(element).not.toHaveFocus();
 });
@@ -95,7 +96,6 @@ test('renders Input component loading', () => {
   render(<Input name="keyName" label="Label" isLoading />);
 
   const loading = screen.getByTestId('icon-ellipse-loading');
-
   expect(loading).toBeInTheDocument();
 });
 
@@ -117,4 +117,18 @@ test('renders Input component error', () => {
 
   expect(inputElement).toHaveStyle(`border-bottom: 1px solid ${borderColor}`);
   expect(labelElement).toHaveStyle(`color: ${color}`);
+});
+
+test('renders Input component with error message', async () => {
+  render(
+    <Input
+      error="message error"
+      type={textProps.type}
+      name={textProps.name}
+      label="Label"
+    />
+  );
+
+  const error = await screen.findByText('message error');
+  expect(error).toBeInTheDocument();
 });
