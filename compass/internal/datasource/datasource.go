@@ -22,13 +22,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"io"
-	"strconv"
-	"time"
-
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"io"
+	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 )

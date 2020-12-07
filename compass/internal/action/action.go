@@ -22,14 +22,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"strings"
-	"time"
-
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
+	"io"
+	"strings"
+	"time"
 )
 
 type Action struct {
@@ -222,6 +221,7 @@ func (main Main) SaveAction(action Request) (Response, error) {
 func (main Main) DeleteAction(id string) error {
 	db := main.db.Model(&Action{}).Where("id = ?", id).Delete(&Action{})
 	if db.Error != nil {
+		logger.Error(util.DeleteActionError, "DeleteAction", db.Error, "Id = "+id)
 		return db.Error
 	}
 

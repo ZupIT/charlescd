@@ -20,12 +20,11 @@ package datasource
 
 import (
 	"encoding/json"
-	"io"
-
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
+	"io"
 
 	"github.com/jinzhu/gorm"
 )

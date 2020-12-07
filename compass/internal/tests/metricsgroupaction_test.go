@@ -20,11 +20,6 @@ package tests
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"strings"
-	"testing"
-	"time"
-
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
@@ -33,6 +28,10 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"io/ioutil"
+	"strings"
+	"testing"
+	"time"
 )
 
 type MetricsGroupActionSuite struct {

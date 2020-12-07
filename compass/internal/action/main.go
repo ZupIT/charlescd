@@ -19,12 +19,11 @@
 package action
 
 import (
-	"io"
-
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"io"
 )
 
 type UseCases interface {

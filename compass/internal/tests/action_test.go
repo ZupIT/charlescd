@@ -20,10 +20,6 @@ package tests
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"strings"
-	"testing"
-
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
@@ -31,6 +27,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"io/ioutil"
+	"strings"
+	"testing"
 )
 
 type ActionSuite struct {
