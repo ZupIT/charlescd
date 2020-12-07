@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { KubernetesManifest } from '../integrations/interfaces/k8s-manifest.interface';
+import { KubernetesManifest } from '../integrations/interfaces/k8s-manifest.interface'
 import { ManifestConfig } from './manifest.interface'
 
 export interface Manifest {

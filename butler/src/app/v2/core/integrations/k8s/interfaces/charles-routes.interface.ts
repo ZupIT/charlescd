@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import * as k8s from '@kubernetes/client-node'
+import { KubernetesManifest } from '../../interfaces/k8s-manifest.interface'
 
-export interface CharlesRoutes extends k8s.KubernetesObject { // TODO extend KubernetesObject interface
+export interface CharlesRoutes extends KubernetesManifest { // TODO extend KubernetesObject interface
 
   spec: CharlesRouteSpec
 }

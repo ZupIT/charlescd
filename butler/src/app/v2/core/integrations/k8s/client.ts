@@ -15,10 +15,11 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { Deployment } from '../../../api/deployments/interfaces'
+import { Component, Deployment } from '../../../api/deployments/interfaces'
 import * as k8s from '@kubernetes/client-node'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { CrdBuilder } from './crd-builder'
+import { KubernetesManifest } from '../interfaces/k8s-manifest.interface'
 
 @Injectable()
 export class K8sClient {
@@ -47,7 +48,7 @@ export class K8sClient {
   }
 
   public async applyUndeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
-    this.consoleLoggerService.log('START:UNDEPLOY_CUSTOM_RESOURCE', { deploymentId: deployment.id })
+    this.consoleLoggerService.log('START:UNDEPLOY_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
 
     try {
@@ -59,7 +60,20 @@ export class K8sClient {
     }
   }
 
-  private async patchResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+  public async applyRoutingCustomResource(cdConfigurationId: string, activeComponents: Component[]): Promise<void> { // TODO return type?
+    this.consoleLoggerService.log('START:APPLY_ROUTING_CUSTOM_RESOURCE', { cdConfigurationId, activeComponents })
+    const routingManifest = CrdBuilder.buildRoutingCrdManifest(cdConfigurationId, activeComponents)
+
+    try {
+      await this.readResource(routingManifest)
+      await this.patchResource(routingManifest)
+    } catch(error) {
+      this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { routingManifest })
+      throw error
+    }
+  }
+
+  private async patchResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:PATCH_RESOURCE_MANIFEST')
       const res = await this.client.patch(
@@ -76,7 +90,7 @@ export class K8sClient {
     }
   }
 
-  private async createResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+  private async createResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:CREATE_RESOURCE_MANIFEST')
       const res = await this.client.create(manifest)
@@ -86,7 +100,7 @@ export class K8sClient {
     }
   }
 
-  private async readResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+  private async readResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:READ_RESOURCE_MANIFEST')
       await this.client.read(manifest)
@@ -96,7 +110,7 @@ export class K8sClient {
     }
   }
 
-  private async deleteResource(manifest: k8s.KubernetesObject): Promise<void> { // TODO return type and use butler type
+  private async deleteResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:DELETE_RESOURCE_MANIFEST')
       const res = await this.client.delete(manifest)
