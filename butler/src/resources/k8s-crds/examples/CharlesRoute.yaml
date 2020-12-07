@@ -1,0 +1,10 @@
+apiVersion: zupit.com/v1
+kind: CharlesRoute
+metadata:
+  name: cluster-routes
+spec:
+  circles:
+    - id: <id-circle>
+      components:
+      - quiz-app-backend
+      - quiz-app-frontend

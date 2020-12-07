@@ -1,0 +1,19 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: charlescd-controller
+spec:
+  generateSelector: true
+  parentResource:
+    apiVersion: zupit.com/v1
+    resource: charlesroutes # crd this controller is watching
+  childResources:
+  - apiVersion: networking.istio.io/v1
+    resource: virtualservices
+    updateStrategy:
+      method: InPlace
+  hooks:
+    sync:
+      webhook:
+        url: http://nodejs-hook.hello/routes # butler url
+
