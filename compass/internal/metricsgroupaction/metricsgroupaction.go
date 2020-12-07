@@ -114,7 +114,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, work
 		})
 	}
 
-	var act action.Action
+	var act action.Response
 	if metricsGroupAction.ActionID == uuid.Nil {
 		needConfigValidation = false
 		ers = append(ers, util.ErrorUtil{
