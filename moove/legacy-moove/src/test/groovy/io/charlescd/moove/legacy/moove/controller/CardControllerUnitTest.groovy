@@ -16,26 +16,10 @@
 
 package io.charlescd.moove.legacy.moove.controller
 
-import io.charlescd.moove.commons.representation.CardColumnRepresentation
-import io.charlescd.moove.commons.representation.CardRepresentation
-import io.charlescd.moove.commons.representation.CommentRepresentation
-import io.charlescd.moove.commons.representation.SimpleLabelRepresentation
-import io.charlescd.moove.commons.representation.SimpleUserRepresentation
-import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.card.CreateCardRequest
 import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
-import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
-import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.CardService
-import io.charlescd.moove.legacy.moove.service.KeycloakService
-import io.charlescd.moove.legacy.moove.service.UserServiceLegacy
-import org.keycloak.representations.idm.GroupRepresentation
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 class CardControllerUnitTest extends Specification {
 
