@@ -1,0 +1,15 @@
+apiVersion: zupit.com/v1
+kind: CharlesDeployment
+metadata:
+  name: some-circle-name
+spec:
+  deploymentId: "123"
+  circleId: "123"
+  components:
+    - name: quizapp-backend
+      chart: http://chart-repo/quizapp-backend
+      tag: v1
+    - name: quizapp-front
+      chart: http://github.com/cpgo/quizapp-front/minhabranch
+      tag: v1
+

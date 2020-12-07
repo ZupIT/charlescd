@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { KubernetesObject } from '@kubernetes/client-node'
+
 interface Cookie {
   regex: string
 }
@@ -98,3 +100,5 @@ export interface K8sManifest {
   metadata: ManifestMetadata
   spec: Spec
 }
+
+export interface KubernetesManifest extends KubernetesObject {}

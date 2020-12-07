@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.moove.request.user
+import { KubernetesManifest } from '../integrations/interfaces/k8s-manifest.interface';
+import { ManifestConfig } from './manifest.interface'
 
-import javax.validation.constraints.NotBlank
-
-data class UpdateUserRequest(
-
-    @field:NotBlank
-    val name: String,
-
-    @field:NotBlank
-    val email: String,
-
-    val photoUrl: String?
-)
+export interface Manifest {
+  generate(config: ManifestConfig): Promise<KubernetesManifest[]>
+}
