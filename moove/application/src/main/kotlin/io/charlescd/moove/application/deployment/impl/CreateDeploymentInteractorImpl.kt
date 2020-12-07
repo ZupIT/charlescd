@@ -47,7 +47,6 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
 
         if (build.canBeDeployed()) {
             val deployment = createDeployment(request, workspaceId)
-            undeployActiveDeploymentFromCircleIfExists(deployment, workspaceId)
             deploymentService.save(deployment)
             deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
             return DeploymentResponse.from(deployment, build)
@@ -67,20 +66,5 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val user = userService.find(request.authorId)
         val circle = circleService.find(request.circleId)
         return request.toDeployment(workspaceId, user, circle)
-    }
-
-    private fun undeployActiveDeploymentFromCircleIfExists(
-        deployment: Deployment,
-        workspaceId: String
-    ) {
-        findActiveDeployment(deployment.circle.id, workspaceId)
-            ?.also { deployService.undeploy(it.id, it.author.id) }
-            ?.let { deploymentService.updateStatus(it.id, DeploymentStatusEnum.UNDEPLOYING) }
-    }
-
-    private fun findActiveDeployment(circleId: String, workspaceId: String): Deployment? {
-        return deploymentService.findByCircleIdAndWorkspaceId(circleId, workspaceId).filter { deployment ->
-            deployment.isActive()
-        }.maxBy { it.createdAt }
     }
 }
