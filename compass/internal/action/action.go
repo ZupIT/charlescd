@@ -127,11 +127,10 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionByIdAndWorkspace(id, workspaceID string) (Action, error) {
+func (main Main) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Action, error) {
 	action := Action{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ? and workspace_id = ?", id, workspaceID).First(&action)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
 		return Action{}, db.Error
 	}
 
@@ -142,38 +141,37 @@ func (main Main) FindActionById(id string) (Action, error) {
 	action := Action{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&action)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
 		return Action{}, db.Error
 	}
 
 	return action, nil
 }
 
-func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Action, error) {
+func (main Main) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Action, error) {
 	var actions []Action
 
 	db := main.db.Set("gorm:auto_preload", true).Where("workspace_id = ?", workspaceID).Find(&actions)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindAllActionsByWorkspace", db.Error, actions)
 		return []Action{}, db.Error
 	}
+
 	return actions, nil
 }
 
 func (main Main) SaveAction(action Action) (Action, error) {
 	db := main.db.Create(&action)
 	if db.Error != nil {
-		logger.Error(util.SaveActionError, "SaveAction", db.Error, action)
 		return Action{}, db.Error
 	}
+
 	return action, nil
 }
 
 func (main Main) DeleteAction(id string) error {
 	db := main.db.Model(&Action{}).Where("id = ?", id).Delete(&Action{})
 	if db.Error != nil {
-		logger.Error(util.DeleteActionError, "DeleteAction", db.Error, "Id = "+id)
 		return db.Error
 	}
+
 	return nil
 }

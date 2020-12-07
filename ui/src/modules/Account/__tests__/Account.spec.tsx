@@ -15,15 +15,15 @@
  */
 
 import React from 'react';
-import { render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
-import Account from '../';
 import { saveProfile } from 'core/utils/profile';
+import Account from '../';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -35,17 +35,18 @@ beforeAll(() => {
   saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br' });
 });
 
+const profile = {
+  id: '123',
+  name: 'User',
+  email: 'user@zup.com.br',
+  photoUrl: 'https://charlescd.io/avatar1'
+}
+
 test('render account tab profile', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    id: '123',
-    name: 'User',
-    email: 'user@zup.com.br',
-    photoUrl: ''
-  }));
+  (fetch as FetchMock).mockResponse(JSON.stringify(profile));
 
   render(<Router history={history}><Account /></Router>);
 
@@ -57,13 +58,7 @@ test('show change password modal', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    id: '123',
-    name: 'User',
-    email: 'user@zup.com.br',
-    photoUrl: ''
-  }));
+  (fetch as FetchMock).mockResponse(JSON.stringify(profile));
 
   render(<Router history={history}><Account /></Router>);
 

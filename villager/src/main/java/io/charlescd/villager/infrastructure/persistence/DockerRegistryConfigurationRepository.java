@@ -239,6 +239,13 @@ public class DockerRegistryConfigurationRepository {
                         dockerHubRegistryAuth.get("username"),
                         dockerHubRegistryAuth.get("password"));
                 break;
+            case HARBOR:
+                var harborRegistryAuth = deserializeConnectionData(rs);
+                entity.connectionData = new DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData(
+                        harborRegistryAuth.get("address"),
+                        harborRegistryAuth.get("username"),
+                        harborRegistryAuth.get("password"));
+                break;
             default:
                 entity.connectionData = null;
         }
