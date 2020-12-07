@@ -1,0 +1,12 @@
+apiVersion: charlescd.io/v1
+kind: CharlesRoutes
+metadata:
+  name: cluster-routes
+spec:
+  components:
+    - name: <name-component>
+      circles:
+        - id: <id-circle>
+          tag: v1
+        - id: <id-circle2>
+          tag: v2

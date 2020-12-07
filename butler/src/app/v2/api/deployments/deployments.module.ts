@@ -80,7 +80,7 @@ import { K8sClient } from '../../core/integrations/k8s/client'
     GitHubRepository,
     GitLabRepository,
     RepositoryStrategyFactory,
-    HelmManifest
+    HelmManifest,
     K8sClient
   ],
   exports: [

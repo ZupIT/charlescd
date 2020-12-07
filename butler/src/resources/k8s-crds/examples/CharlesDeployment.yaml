@@ -1,4 +1,4 @@
-apiVersion: zupit.com/v1
+apiVersion: charlescd.io/v1
 kind: CharlesDeployment
 metadata:
   name: some-circle-name
