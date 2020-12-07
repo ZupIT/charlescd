@@ -68,19 +68,20 @@ class CardService(
             .let { this.cardRepository.save(it) }
             .apply { createNewFeatureBranches(card = this) }
             .toRepresentation()
+            .updateProtectedBranchInformation()
     }
 
     fun findAll(pageable: Pageable, workspaceId: String): Page<CardRepresentation> {
         return cardRepository.findAllByWorkspaceId(workspaceId, pageable)
-            .map { it.toRepresentation() }
+            .map {
+                it.toRepresentation().updateProtectedBranchInformation()
+            }
     }
 
     fun findById(id: String, workspaceId: String): CardRepresentation {
-        val cardRepresentation = cardRepository.findByIdAndWorkspaceId(id, workspaceId)
-            .map { it.toRepresentation() }
+        return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
+            .map { it.toRepresentation().updateProtectedBranchInformation() }
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
-            cardRepresentation.isProtected = isProtectedBranch(cardRepresentation)
-            return cardRepresentation
     }
 
     @Transactional
@@ -90,6 +91,7 @@ class CardService(
             .fetchCardCommentsAndMembers()
             .let { saveUpdatedCard(updateCardRequest, it) }
             .toRepresentation()
+            .updateProtectedBranchInformation()
     }
 
     @Transactional
@@ -153,15 +155,6 @@ class CardService(
             .orElseThrow { NotFoundExceptionLegacy("card", cardId) }
             .let { it.copyToArchive() }
             .let { this.cardRepository.save(it) }
-    }
-
-    private fun isProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
-        val branchName = cardRepresentation.feature?.branchName
-        if (StringUtils.isEmpty(branchName)) {
-            return isProtectedBranch(branchName.toString())
-        }
-
-        return false
     }
 
     private fun deleteFeatureBranches(card: Card, branchDeletion: Boolean = false) {
@@ -298,6 +291,11 @@ class CardService(
             SoftwareCardType.HOT_FIX.name -> card.updateSoftwareCard(updateCardRequest)
             else -> throw IllegalArgumentException("Invalid card type")
         }
+    }
+
+    private fun CardRepresentation.updateProtectedBranchInformation(): CardRepresentation {
+        this.isProtected = verifyIsProtectedBranch(this)
+        return this
     }
 
     private fun Card.updateActionCard(updateCardRequest: UpdateCardRequest): ActionCard {
@@ -527,5 +525,13 @@ class CardService(
         } catch (e: Exception) {
             log.error("error notification add comment to card", e)
         }
+    }
+
+    private fun verifyIsProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
+        val branchName = cardRepresentation.feature?.branchName
+        if (StringUtils.isEmpty(branchName)) {
+            return isProtectedBranch(branchName.toString())
+        }
+        return false
     }
 }
