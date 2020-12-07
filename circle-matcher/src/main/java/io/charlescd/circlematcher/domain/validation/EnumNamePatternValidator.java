@@ -22,7 +22,7 @@ public class EnumNamePatternValidator implements ConstraintValidator<EnumNameCon
     @Override
     public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
         if (value == null) {
-            return false;
+            return true;
         }
 
         Matcher matcher = pattern.matcher(value.name());

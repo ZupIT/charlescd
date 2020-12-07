@@ -42,7 +42,7 @@ class EnumNamePatternValidationTest extends Specification {
         assert !validator.isValid(nodeType, null)
     }
 
-    def "Null is invalid node type"() {
+    def "Null is valid node type"() {
         given:
         def enumNameConstraint = Mockito.mock(EnumNameConstraint.class)
         Mockito.when(enumNameConstraint.regexp()).thenReturn("CLAUSE")
@@ -50,6 +50,6 @@ class EnumNamePatternValidationTest extends Specification {
         def validator = new EnumNamePatternValidator()
         validator.initialize(enumNameConstraint)
         then:
-        assert !validator.isValid(null, null)
+        assert validator.isValid(null, null)
     }
 }
