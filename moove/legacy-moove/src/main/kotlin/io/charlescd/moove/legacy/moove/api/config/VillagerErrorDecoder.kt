@@ -58,9 +58,9 @@ class VillagerErrorDecoder : ErrorDecoder {
         }
     }
 
-    private fun getJsonResponse(response: Response):ResponseError {
+    private fun getJsonResponse(response: Response): ResponseError {
         try {
-           return Gson().fromJson<ResponseError>(response.body().toString(), ResponseError::class.java)
+            return Gson().fromJson<ResponseError>(response.body().toString(), ResponseError::class.java)
         } catch (ex: Exception) {
             throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_UNEXPECTED_ERROR, "")
         }

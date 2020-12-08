@@ -6,7 +6,7 @@
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
  *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *     https://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
  *  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -93,7 +93,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val createdAt = LocalDateTime.now()
         val incomingRequestConfigData =
-            CreateSpinnakerCdConfigurationData("account", "git-account", "namespace", "http://my-spinnaker.com")
+            CreateSpinnakerCdConfigurationData("account", "git-account", "namespace", "https://my-spinnaker.com")
         val incomingRequest = CreateSpinnakerCdConfigurationRequest(incomingRequestConfigData, "name", "authorId")
         val deployRequest = incomingRequest.toDeployRequest()
         val deployResponse = CreateDeployCdConfigurationResponse("id", "name", "authorId", "workspaceId", createdAt)
@@ -225,8 +225,8 @@ class CredentialConfigurationServiceUnitTest {
         assertEquals(expectedResult, credentialConfigurations)
     }
 
-    @Test
-    fun `when creating azure configuration, method should return the correct CredentialConfigurationRepresentation`() {
+    @Test(expected = IllegalArgumentException::class)
+    fun `when creating any registry configuration with invalid address, method should throw InvalidArgumentException`() {
 
         val request = CreateAzureRegistryConfigurationRequest(
             name = "name",
@@ -239,6 +239,53 @@ class CredentialConfigurationServiceUnitTest {
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
             address = "address",
+            provider = CreateVillagerRegistryConfigurationProvider.Azure,
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerResponse = CreateVillagerRegistryConfigurationResponse(
+            id = "id"
+        )
+
+        val workspaceId = "workspaceId"
+        val user = User(
+            name = "userName",
+            id = "authorId",
+            email = "user@email.com.br",
+            photoUrl = "www.google.com.br",
+            isRoot = false,
+            createdAt = LocalDateTime.now()
+        )
+        val expectedResponse =
+            CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
+
+        every {
+            villagerApi.createRegistryConfiguration(villagerRequest, workspaceId)
+        } throws IllegalArgumentException("Invalid url address")
+
+        every {
+            userRepository.findById("authorId")
+        } returns Optional.of(user)
+
+        credentialConfigurationService.createRegistryConfig(request, workspaceId)
+    }
+
+    @Test
+    fun `when creating azure configuration, method should return the correct CredentialConfigurationRepresentation`() {
+
+        val request = CreateAzureRegistryConfigurationRequest(
+            name = "name",
+            address = "https://address",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.Azure,
             username = "username",
             password = "password",
@@ -281,7 +328,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateHarborRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -289,7 +336,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.HARBOR,
             username = "username",
             password = "password",
@@ -332,6 +379,36 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAzureRegistryConfigurationRequest(
             name = "name",
+            address = "https://address",
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val villagerRequest = CreateVillagerRegistryConfigurationRequest(
+            name = "name",
+            address = "https://address",
+            provider = CreateVillagerRegistryConfigurationProvider.Azure,
+            username = "username",
+            password = "password",
+            authorId = "authorId"
+        )
+
+        val workspaceId = "workspaceId"
+
+        every {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } returns Unit
+
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `when test new any registry configuration, method should throw IllegalArgumentException`() {
+
+        val request = CreateAzureRegistryConfigurationRequest(
+            name = "name",
             address = "address",
             username = "username",
             password = "password",
@@ -351,7 +428,7 @@ class CredentialConfigurationServiceUnitTest {
 
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
-        } returns Unit
+        } throws IllegalArgumentException("Invalid url address")
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
@@ -362,7 +439,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAzureRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -370,7 +447,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.Azure,
             username = "username",
             password = "password",
@@ -392,7 +469,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAzureRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -400,7 +477,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.Azure,
             username = "username",
             password = "password",
@@ -422,7 +499,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAzureRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -430,7 +507,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.Azure,
             username = "username",
             password = "password",
@@ -452,7 +529,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAzureRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -460,7 +537,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.Azure,
             username = "username",
             password = "password",
@@ -482,7 +559,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAWSRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             accessKey = "accessKey",
             secretKey = "secretKey",
             region = "region",
@@ -491,7 +568,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.AWS,
             accessKey = "accessKey",
             secretKey = "secretKey",
@@ -535,7 +612,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAWSRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             accessKey = "accessKey",
             secretKey = "secretKey",
             region = "region",
@@ -544,7 +621,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.AWS,
             accessKey = "accessKey",
             secretKey = "secretKey",
@@ -567,7 +644,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAWSRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             accessKey = "accessKey",
             secretKey = "secretKey",
             region = "region",
@@ -576,7 +653,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.AWS,
             accessKey = "accessKey",
             secretKey = "secretKey",
@@ -599,7 +676,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAWSRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             accessKey = "accessKey",
             secretKey = "secretKey",
             region = "region",
@@ -608,7 +685,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.AWS,
             accessKey = "accessKey",
             secretKey = "secretKey",
@@ -631,7 +708,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAWSRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             accessKey = "accessKey",
             secretKey = "secretKey",
             region = "region",
@@ -640,7 +717,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.AWS,
             accessKey = "accessKey",
             secretKey = "secretKey",
@@ -663,7 +740,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAWSRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             accessKey = "accessKey",
             secretKey = "secretKey",
             region = "region",
@@ -672,7 +749,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.AWS,
             accessKey = "accessKey",
             secretKey = "secretKey",
@@ -695,7 +772,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateGCPRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             organization = "organization",
             jsonKey = "jsonKey",
             authorId = "authorId"
@@ -703,7 +780,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
             username = "_json_key",
@@ -869,7 +946,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateGCPRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             organization = "organization",
             jsonKey = "jsonKey",
             authorId = "authorId"
@@ -877,7 +954,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
             username = "_json_key",
@@ -900,7 +977,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateGCPRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             organization = "organization",
             jsonKey = "jsonKey",
             authorId = "authorId"
@@ -908,7 +985,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
             username = "_json_key",
@@ -931,7 +1008,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateGCPRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             organization = "organization",
             jsonKey = "jsonKey",
             authorId = "authorId"
@@ -939,7 +1016,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
             username = "_json_key",
@@ -962,7 +1039,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateGCPRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             organization = "organization",
             jsonKey = "jsonKey",
             authorId = "authorId"
@@ -970,7 +1047,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
             username = "_json_key",
@@ -993,7 +1070,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateGCPRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             organization = "organization",
             jsonKey = "jsonKey",
             authorId = "authorId"
@@ -1001,7 +1078,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
             username = "_json_key",
@@ -1024,7 +1101,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateGCPRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             organization = "organization",
             jsonKey = "jsonKey",
             authorId = "authorId"
@@ -1032,7 +1109,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
             username = "_json_key",
@@ -1055,7 +1132,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -1063,7 +1140,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
             organization = "username",
             username = "username",
@@ -1107,7 +1184,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -1115,7 +1192,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
             organization = "username",
             username = "username",
@@ -1138,7 +1215,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -1146,7 +1223,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
             organization = "username",
             username = "username",
@@ -1169,7 +1246,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -1177,7 +1254,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
             organization = "username",
             username = "username",
@@ -1200,7 +1277,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -1208,7 +1285,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
             organization = "username",
             username = "username",
@@ -1231,7 +1308,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateDockerHubRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             username = "username",
             password = "password",
             authorId = "authorId"
@@ -1239,7 +1316,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val villagerRequest = CreateVillagerRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
             organization = "username",
             username = "username",
@@ -1262,7 +1339,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val request = CreateAWSRegistryConfigurationRequest(
             name = "name",
-            address = "address",
+            address = "https://address",
             accessKey = "accessKey",
             secretKey = "secretKey",
             region = "region",
