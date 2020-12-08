@@ -20,7 +20,6 @@ import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
 import io.charlescd.circlematcher.domain.validation.NodeConstraint;
-
 import java.time.LocalDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;

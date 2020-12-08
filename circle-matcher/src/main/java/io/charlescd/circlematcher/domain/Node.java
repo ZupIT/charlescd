@@ -19,10 +19,9 @@ package io.charlescd.circlematcher.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.infrastructure.Constants;
-
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node {
