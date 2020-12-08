@@ -18,13 +18,21 @@ package io.charlescd.circlematcher.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Content {
 
+    @NotBlank
     private String key;
+    @NotBlank
     private String condition;
+    @NotNull
+    @Size(min = 1)
     private List<String> value;
 
     public Content() {

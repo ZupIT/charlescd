@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.infrastructure.Constants;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -29,7 +30,9 @@ public class Node {
     @NotNull
     private NodeType type;
     private LogicalOperatorType logicalOperator;
+    @Valid
     private List<Node> clauses;
+    @Valid
     private Content content;
 
     public Node() {

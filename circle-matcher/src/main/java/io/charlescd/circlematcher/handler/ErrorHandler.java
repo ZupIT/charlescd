@@ -16,14 +16,20 @@
 
 package io.charlescd.circlematcher.handler;
 
-import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static java.util.stream.Collectors.joining;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -41,12 +47,25 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public DefaultErrorResponse handleConstraintsValidation(MethodArgumentNotValidException exception) {
         logger.error("BAD REQUEST ERROR - ", exception);
-        return new DefaultErrorResponse("Invalid request body.");
+        return new DefaultErrorResponse("Invalid request body. " + processFieldErrors(exception.getFieldErrors()));
+    }
+
+    private String processFieldErrors(List<FieldError> fieldErrors) {
+        return fieldErrors.stream()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .collect(joining("\n"));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public DefaultErrorResponse handleIllegalArgument(IllegalArgumentException exception) {
+        logger.error("BAD REQUEST ERROR - ", exception);
+        return new DefaultErrorResponse(exception.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public DefaultErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         logger.error("BAD REQUEST ERROR - ", exception);
         return new DefaultErrorResponse(exception.getMessage());
     }
