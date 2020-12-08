@@ -156,6 +156,38 @@ test('should render CircleComparationItem with an Inactive Default Circle', asyn
   expect(iconBack).toBeInTheDocument();
 });
 
+test('should not disable delete button and show tooltip when is an Inactive Circle (i.e., not a Default Circle)', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(circleWithoutDeployment))
+    .mockResponseOnce(JSON.stringify(circleWithoutDeployment));
+  const handleChange = jest.fn();
+
+  render(
+    <AllTheProviders>
+      <CirclesComparationItem id={props.id} onChange={handleChange} />
+    </AllTheProviders>
+  );
+
+  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(dropdownIcon).toBeInTheDocument();
+  act(() => userEvent.click(dropdownIcon));
+
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
+
+  const deleteButtonText = await screen.findByText('Delete');
+  expect(deleteButtonText).not.toHaveStyle(`color: ${COLOR_COMET}`);
+
+  await act(async () => userEvent.click(deleteButton));
+  const deleteCircleModal = screen.getByTestId('modal-trigger');
+  expect(deleteCircleModal).toBeInTheDocument();
+
+  userEvent.hover(deleteButton);
+  expect(screen.queryByText('Active circle cannot be deleted,')).not.toBeInTheDocument();
+  expect(screen.queryByText('you can undeploy first and then')).not.toBeInTheDocument();
+  expect(screen.queryByText('delete this circle.')).not.toBeInTheDocument();
+});
+
 test('should disable delete button and show tooltip when is an Active Default Circle', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
@@ -211,7 +243,7 @@ test('should disable delete button and show tooltip when is an Inactive Default 
   expect(deleteButton).toBeInTheDocument();
 
   const deleteButtonText = await screen.findByText('Delete');
-  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`));
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
 
   userEvent.hover(deleteButton);
   expect(screen.getByText('Default circle cannot be deleted.')).toBeInTheDocument();
@@ -248,42 +280,10 @@ test('should disable delete button and show tooltip when is an Active Circle (i.
   expect(deleteButton).toBeInTheDocument();
 
   const deleteButtonText = await screen.findByText('Delete');
-  await waitFor(() => expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`));
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
 
   userEvent.hover(deleteButton);
   expect(screen.getByText('Active circle cannot be deleted,')).toBeInTheDocument();
   expect(screen.getByText('you can undeploy first and then')).toBeInTheDocument();
   expect(screen.getByText('delete this circle.')).toBeInTheDocument();
-});
-
-test('should not disable delete button and show tooltip when is an Inactive Circle (i.e., not a Default Circle)', async () => {
-  (fetch as FetchMock)
-    .mockResponseOnce(JSON.stringify(circleWithoutDeployment))
-    .mockResponseOnce(JSON.stringify(circleWithoutDeployment));
-  const handleChange = jest.fn();
-
-  render(
-    <AllTheProviders>
-      <CirclesComparationItem id={props.id} onChange={handleChange} />
-    </AllTheProviders>
-  );
-
-  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
-  expect(dropdownIcon).toBeInTheDocument();
-  act(() => userEvent.click(dropdownIcon));
-
-  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
-  expect(deleteButton).toBeInTheDocument();
-
-  const deleteButtonText = await screen.findByText('Delete');
-  await waitFor(() => expect(deleteButtonText).not.toHaveStyle(`color: ${COLOR_COMET}`));
-
-  await act(async () => userEvent.click(deleteButton));
-  const deleteCircleModal = screen.getByTestId('modal-trigger');
-  expect(deleteCircleModal).toBeInTheDocument();
-
-  userEvent.hover(deleteButton);
-  expect(screen.queryByText('Active circle cannot be deleted,')).not.toBeInTheDocument();
-  expect(screen.queryByText('you can undeploy first and then')).not.toBeInTheDocument();
-  expect(screen.queryByText('delete this circle.')).not.toBeInTheDocument();
 });
