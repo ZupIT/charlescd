@@ -28,7 +28,7 @@ import java.lang.IllegalArgumentException
 class VillagerErrorDecoder : ErrorDecoder {
     override fun decode(methodKey: String?, response: Response?): Exception {
         response?.let {
-            val fromJson = Gson().fromJson<ResponseError>(it.body().toString(), ResponseError::class.java)
+            val fromJson = getJsonResponse(response)
 
             checkBadRequest(it.status(), fromJson)
 
@@ -55,6 +55,14 @@ class VillagerErrorDecoder : ErrorDecoder {
     private fun checkCommunicationServerError(httpStatus: Int, response: ResponseError) {
         if (httpStatus == 503 || httpStatus == 502 || httpStatus == 504) {
             throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, response.message)
+        }
+    }
+
+    private fun getJsonResponse(response: Response):ResponseError {
+        try {
+           return Gson().fromJson<ResponseError>(response.body().toString(), ResponseError::class.java)
+        } catch (ex: Exception) {
+            throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_UNEXPECTED_ERROR, "")
         }
     }
 

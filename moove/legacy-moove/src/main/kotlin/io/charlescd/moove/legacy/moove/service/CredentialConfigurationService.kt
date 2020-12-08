@@ -39,9 +39,10 @@ import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User
+import org.springframework.stereotype.Service
+import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
-import org.springframework.stereotype.Service
 
 @Service
 class CredentialConfigurationService(
@@ -180,6 +181,7 @@ class CredentialConfigurationService(
     private fun buildVillagerRegistryConfigurationRequest(
         createRegistryConfigRequest: CreateRegistryConfigurationRequest
     ): CreateVillagerRegistryConfigurationRequest {
+        urlValidation(createRegistryConfigRequest.address)
         return when (createRegistryConfigRequest) {
             is CreateAzureRegistryConfigurationRequest -> buildAzureRegistryRequest(createRegistryConfigRequest)
             is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest)
@@ -306,5 +308,13 @@ class CredentialConfigurationService(
             type = CredentialConfigurationType.GIT,
             workspaceId = workspaceId
         )
+    }
+
+    private fun urlValidation(address: String) {
+        try {
+            URL(address).toURI()
+        } catch (exception: java.lang.Exception) {
+            throw IllegalArgumentException("Invalid address url")
+        }
     }
 }
