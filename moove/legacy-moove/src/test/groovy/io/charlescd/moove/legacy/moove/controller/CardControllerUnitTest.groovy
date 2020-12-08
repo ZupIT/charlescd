@@ -20,14 +20,17 @@ import io.charlescd.moove.commons.request.comment.AddCommentRequest
 import io.charlescd.moove.commons.request.member.AddMemberRequest
 import io.charlescd.moove.legacy.moove.request.card.CreateCardRequest
 import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
+import io.charlescd.moove.legacy.moove.request.git.FindBranchParam
 import io.charlescd.moove.legacy.moove.service.CardService
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import spock.lang.Specification
 
 class CardControllerUnitTest extends Specification {
 
     String workspaceId = "09s861b6f-2b6e-44a1-a745-83e298a5ssl3"
     String id = "3ass861b6f-2b6e-44a1-a745-83e298a5asd2"
-
 
     CardService service = Mock(CardService)
     CardController controller
@@ -116,6 +119,21 @@ class CardControllerUnitTest extends Specification {
         notThrown()
     }
 
+    def "should find branches"() {
+        given:
+        def param = new FindBranchParam (
+                ["id_1, id_2"],
+                "branchName"
+        )
+
+        when:
+        controller.findBranches(workspaceId, param)
+
+        then:
+        1 * service.findBranches(param, workspaceId)
+        notThrown()
+    }
+
     def "should add a member"() {
         given:
         def request = new AddMemberRequest(
@@ -144,7 +162,7 @@ class CardControllerUnitTest extends Specification {
         notThrown()
     }
 
-    def "should add a commnet"() {
+    def "should add a comment"() {
         given:
         def request = new AddCommentRequest(
                 "authorId",
