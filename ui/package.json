@@ -91,6 +91,7 @@
     ]
   },
   "devDependencies": {
+    "@hapi/hapi": "^20.0.3",
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@testing-library/react-hooks": "^3.4.2",
@@ -115,7 +116,6 @@
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-testing-library": "^3.8.0",
     "esm": "^3.2.25",
-    "hapi": "^18.1.0",
     "jest-fetch-mock": "^3.0.3",
     "lodash": "^4.17.15",
     "mutation-observer": "^1.0.3",
