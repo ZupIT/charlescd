@@ -18,7 +18,6 @@ package io.charlescd.circlematcher.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.charlescd.circlematcher.domain.validation.EnumNameConstraint;
 import io.charlescd.circlematcher.infrastructure.Constants;
 
 import javax.validation.constraints.NotNull;
@@ -28,9 +27,7 @@ import java.util.List;
 public class Node {
 
     @NotNull
-    @EnumNameConstraint(regexp = "CLAUSE|RULE")
     private NodeType type;
-    @EnumNameConstraint(regexp = "AND|OR")
     private LogicalOperatorType logicalOperator;
     private List<Node> clauses;
     private Content content;
