@@ -14,12 +14,30 @@
  * limitations under the License.
  */
 
-import { DeploymentComponent } from '../../../../api/deployments/interfaces/deployment.interface'
+import { KubernetesManifest } from '../../interfaces/k8s-manifest.interface'
 
-const CommonTemplateUtils = {
-  getDeploymentName: (component: DeploymentComponent, circleId: string): string => {
-    return `${component.name}-${component.imageTag}-${circleId}`
-  }
+export interface CharlesRoutes extends KubernetesManifest { // TODO extend KubernetesObject interface
+
+  spec: CharlesRouteSpec
 }
 
-export { CommonTemplateUtils }
+export interface CharlesRouteSpec {
+
+  components: CharlesRouteComponent[]
+}
+
+export interface CharlesRouteComponent {
+
+  name: string
+
+  circles: CharlesComponentCircle[]
+}
+
+export interface CharlesComponentCircle {
+
+  id: string
+
+  tag: string
+
+  default: boolean
+}

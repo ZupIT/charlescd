@@ -14,9 +14,27 @@
  * limitations under the License.
  */
 
-import { KubernetesManifest } from '../integrations/interfaces/k8s-manifest.interface'
-import { ManifestConfig } from './manifest.interface'
+import { KubernetesManifest } from '../../interfaces/k8s-manifest.interface'
 
-export interface Manifest {
-  generate(config: ManifestConfig): Promise<KubernetesManifest[]>
+export interface CharlesDeployment extends KubernetesManifest { // TODO extend KubernetesObject interface
+
+  spec: CharlesDeploymentSpec
+}
+
+export interface CharlesDeploymentSpec {
+
+  deploymentId: string | undefined
+
+  circleId: string
+
+  components: CharlesDeploymentComponent[]
+}
+
+export interface CharlesDeploymentComponent {
+
+  name: string
+
+  chart: string
+
+  tag: string
 }

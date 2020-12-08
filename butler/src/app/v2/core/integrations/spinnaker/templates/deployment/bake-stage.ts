@@ -16,9 +16,9 @@
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { CdConfiguration } from '../../../../../api/deployments/interfaces'
-import { CommonTemplateUtils } from '../../utils/common-template.utils'
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
+import { DeploymentUtils } from '../../../utils/deployment.utils'
 
 export const getBakeStage = (component: DeploymentComponent, configuration: CdConfiguration, stageId: number, circleId: string): Stage => ({
   completeOtherBranchesThenFail: false,
@@ -56,7 +56,7 @@ export const getBakeStage = (component: DeploymentComponent, configuration: CdCo
   outputName: `${component.name}-${component.imageTag}`,
   overrides: {
     'image.tag': component.imageUrl,
-    deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
+    deploymentName: DeploymentUtils.getDeploymentName(component, circleId),
     component: component.name,
     tag: component.imageTag,
     circleId: circleId

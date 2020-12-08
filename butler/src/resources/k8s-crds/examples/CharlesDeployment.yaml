@@ -1,4 +1,4 @@
-apiVersion: zupit.com/v1
+apiVersion: charlescd.io/v1
 kind: CharlesDeployment
 metadata:
   name: some-circle-name
@@ -12,4 +12,3 @@ spec:
     - name: quizapp-front
       chart: http://github.com/cpgo/quizapp-front/minhabranch
       tag: v1
-

@@ -18,6 +18,10 @@ import { Component } from '../../../api/deployments/interfaces'
 import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const DeploymentUtils = {
+  getDeploymentName: (component: DeploymentComponent, circleId: string): string => {
+    return `${component.name}-${component.imageTag}-${circleId}`
+  },
+
   getActiveSameCircleTagComponent: (activeComponents: Component[], component: DeploymentComponent, circleId: string | null): Component | undefined => {
     const activeByName = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
     return activeByName.find(

@@ -43,6 +43,7 @@ import { HelmManifest } from '../../core/manifests/helm/helm-manifest'
 import { GitHubRepository } from '../../core/integrations/github/github-repository'
 import { GitLabRepository } from '../../core/integrations/gitlab/gitlab-repository'
 import { RepositoryStrategyFactory } from '../../core/integrations/repository-strategy-factory'
+import { K8sClient } from '../../core/integrations/k8s/client'
 
 @Module({
   imports: [
@@ -79,7 +80,8 @@ import { RepositoryStrategyFactory } from '../../core/integrations/repository-st
     GitHubRepository,
     GitLabRepository,
     RepositoryStrategyFactory,
-    HelmManifest
+    HelmManifest,
+    K8sClient
   ],
   exports: [
   ]

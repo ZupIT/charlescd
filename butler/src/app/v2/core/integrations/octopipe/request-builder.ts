@@ -15,6 +15,9 @@
  */
 
 import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
+import { UrlUtils } from '../../utils/url.utils'
+import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
+import { DeploymentUtils } from '../utils/deployment.utils'
 import {
   ClusterProviderEnum,
   IEKSClusterConfig,
@@ -173,7 +176,7 @@ export class OctopipeRequestBuilder {
     return {
       overrideValues: {
         'image.tag': component.imageUrl,
-        deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
+        deploymentName: DeploymentUtils.getDeploymentName(component, circleId),
         component: component.name,
         tag: component.imageTag,
         circleId: circleId
