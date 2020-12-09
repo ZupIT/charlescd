@@ -111,4 +111,28 @@ class NodeTest extends Specification {
         assert expression == "(toStr(getPath(input, 'username')) == toStr('email@zup.com.br'))"
     }
 
+    def "Expression with one clause"() {
+        given:
+        def content = new Content("username", "EQUAL", ["email@zup.com.br"])
+        def node = new Node(NodeType.RULE, null, [], content)
+        def nodeClause = new Node(NodeType.CLAUSE, LogicalOperatorType.AND, [node], null)
+        when:
+        def expression = nodeClause.expression()
+        then:
+        assert expression == "((toStr(getPath(input, 'username')) == toStr('email@zup.com.br'))&&true)"
+    }
+
+    def "Expression with more than one clause"() {
+        given:
+        def contentUsername = new Content("username", "EQUAL", ["email@zup.com.br"])
+        def nodeUsername = new Node(NodeType.RULE, null, [], contentUsername)
+        def contentAge = new Content("age", "EQUAL", ["35"])
+        def nodeAge = new Node(NodeType.RULE, null, [], contentAge)
+
+        def nodeClause = new Node(NodeType.CLAUSE, LogicalOperatorType.AND, [nodeUsername, nodeAge], null)
+        when:
+        def expression = nodeClause.expression()
+        then:
+        assert expression == "((toStr(getPath(input, 'username')) == toStr('email@zup.com.br'))&&(toStr(getPath(input, 'age')) == toStr(35)))"
+    }
 }
