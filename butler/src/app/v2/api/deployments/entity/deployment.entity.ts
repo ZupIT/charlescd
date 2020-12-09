@@ -15,7 +15,7 @@
  */
 
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { CdConfigurationEntity } from '../../configurations/entity'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { ReadModuleDeploymentDto } from '../dto/read-module-deployment.dto'
 import { Deployment } from '../interfaces'
