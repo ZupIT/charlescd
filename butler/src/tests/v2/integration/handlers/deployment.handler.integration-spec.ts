@@ -21,9 +21,8 @@ import { Server } from 'http'
 import { JobWithDoneCallback } from 'pg-boss'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
-import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
+import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import {
   ComponentEntityV2 as ComponentEntity
 } from '../../../../app/v2/api/deployments/entity/component.entity'
@@ -33,10 +32,11 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandlerUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-handler.usecase'
 import { ReceiveNotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/receive-notification.usecase'
-import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import express = require('express')
 import { SpinnakerConnector } from '../../../../app/v2/core/integrations/spinnaker/connector'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { TestSetupUtils } from '../test-setup-utils'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 let mock = express()
 

@@ -18,7 +18,7 @@ import { K8sManifest } from '../../interfaces/k8s-manifest.interface'
 import {
   IEKSClusterConfig,
   IGenericClusterConfig
-} from '../../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+} from './octopipe-payload.interface'
 import { HelmConfig, HelmRepositoryConfig } from './helm-config.interface'
 
 export interface OctopipeUndeployment {

@@ -15,12 +15,12 @@
  */
 
 import 'jest'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import { OctopipeRequestBuilder } from '../../../../app/v2/core/integrations/octopipe/request-builder'
 import { completeOctopipeUndeploymentRequest } from './fixtures/undeployment/undeploy-complete-pipeline'
-import { GitProvidersEnum } from '../../../../app/v1/core/integrations/configuration/interfaces'
-import { ClusterProviderEnum } from '../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { dummyVirtualServicePipelineOctopipe } from './fixtures/undeployment/dummy-virtualservice-pipeline'
 import { undeploySameTagDiffCirclesUnusedOctopipe } from './fixtures/undeployment/undeploy-same-tag-diff-circles-unused'
 import { undeployOneSameTagDiffCirclesUnusedOctopipe } from './fixtures/undeployment/undeploy-one-same-tag-diff-circles-unused'
@@ -619,7 +619,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
       new OctopipeRequestBuilder().buildUndeploymentRequest(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(undeploySameTagDiffCirclesUnusedOctopipe)
   })
-  
+
   it('should create the correct request object with 2 components being undeployed, even with one same tag in diff circle', async() => {
 
     const activeComponents: Component[] = [

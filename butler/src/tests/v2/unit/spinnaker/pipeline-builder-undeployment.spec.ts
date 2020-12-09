@@ -17,7 +17,7 @@
 import 'jest'
 
 import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import {
   completeSpinnakerUndeploymentPipeline,
@@ -1028,13 +1028,9 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
-        },
-        namespace: 'sandbox',
-=======
           defaultCircle: false
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-9',

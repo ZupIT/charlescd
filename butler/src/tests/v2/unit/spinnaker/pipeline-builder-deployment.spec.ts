@@ -15,7 +15,7 @@
  */
 
 import 'jest'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
 import {
@@ -403,8 +403,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-            defaultCircle: true
-    },
+          defaultCircle: true
+        },
         namespace: 'sandbox'
       },
       {
@@ -436,9 +436,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-            defaultCircle: true
-  },
-      namespace: 'sandbox'
+          defaultCircle: true
+        },
+        namespace: 'sandbox'
       }
     ]
 
@@ -479,11 +479,11 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-            defaultCircle: true
-    },
+          defaultCircle: true
+        },
 
         namespace: 'sandbox'
-        },
+      },
       {
         id: 'component-id-7',
         helmUrl: 'http://localhost:2222/helm',
@@ -626,7 +626,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         },
         namespace: 'sandbox'
 
-        },
+      },
       {
         id: 'component-id-8',
         helmUrl: 'http://localhost:2222/helm',
@@ -659,7 +659,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           defaultCircle: true
         },
         namespace: 'sandbox'
-        }
+      }
     ]
 
     expect(
@@ -732,7 +732,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        defaultCircle: false
+          defaultCircle: false
         },
         namespace: 'sandbox'
 
@@ -1017,13 +1017,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: true
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-3',
@@ -1054,13 +1050,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: true
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-4',
@@ -1091,15 +1083,10 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: false
         },
         namespace: 'sandbox'
-      }
-=======
-          defaultCircle: false
-        }
       },
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
     ]
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
@@ -1138,13 +1125,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: true
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-6',
@@ -1174,15 +1157,10 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-<<<<<<< HEAD
-          }
-        },
-        namespace: 'sandbox'
-=======
           },
           defaultCircle: false
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -1213,13 +1191,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: false
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: false
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-2',
@@ -1250,13 +1224,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
-        },
-        namespace: 'sandbox'
-=======
           defaultCircle: true
         },
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-3',
@@ -1287,13 +1257,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: true
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-4',
@@ -1324,13 +1290,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: false
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       }
     ]
 
@@ -1371,13 +1333,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: false
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-7',
@@ -1408,13 +1366,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: false
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-2',
@@ -1445,13 +1399,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null,
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: true
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       },
       {
         id: 'component-id-3',
@@ -1515,13 +1465,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-<<<<<<< HEAD
+          defaultCircle: true
         },
         namespace: 'sandbox'
-=======
-          defaultCircle: false
-        }
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
       }
     ]
 

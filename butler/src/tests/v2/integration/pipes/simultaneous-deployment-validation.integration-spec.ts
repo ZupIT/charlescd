@@ -19,9 +19,9 @@ import { BadRequestException, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums/cd-type.enum'
-import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums/deployment-status.enum'
+import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { CreateCircleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-circle-request.dto'
 import { CreateComponentRequestDto } from '../../../../app/v2/api/deployments/dto/create-component-request.dto'
 import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
@@ -31,8 +31,8 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { SimultaneousDeploymentValidationPipe } from '../../../../app/v2/api/deployments/pipes'
-import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication

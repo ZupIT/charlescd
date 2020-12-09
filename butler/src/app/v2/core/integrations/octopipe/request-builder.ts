@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
-import {
-  ClusterProviderEnum,
-  IEKSClusterConfig,
-  IGenericClusterConfig
-} from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { OctopipeConfigurationData } from '../../../api/configurations/interfaces'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { UrlUtils } from '../../utils/url.utils'
@@ -31,6 +26,11 @@ import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifes
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
 import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
 import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
+import {
+  ClusterProviderEnum,
+  IEKSClusterConfig,
+  IGenericClusterConfig
+} from './interfaces/octopipe-payload.interface'
 import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 
 export class OctopipeRequestBuilder {

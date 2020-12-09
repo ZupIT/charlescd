@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 import { IstioUndeploymentManifestsUtils } from '../../../utils/istio-undeployment-manifests.utils'
 import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
+import { ISpinnakerConfigurationData } from '../../../../../api/configurations/interfaces/spinnaker-configuration-data.interface'
 
 export const getUndeploymentVirtualServiceStage = (
   component: DeploymentComponent,

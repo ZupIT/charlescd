@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 
 export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRequest = {

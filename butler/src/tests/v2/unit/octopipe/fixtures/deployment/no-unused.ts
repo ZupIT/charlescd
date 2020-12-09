@@ -15,7 +15,7 @@
  */
 
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 
 export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
   deployments: [
