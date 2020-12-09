@@ -11,14 +11,16 @@ import (
 )
 
 func TestGetManifest(t *testing.T) {
-	serviceJSONExpected := `{"apiVersion":"v1","kind":"Service","metadata":{"creationTimestamp":null,"labels":{"app":"dragonboarding","service":"dragonboarding"},"name":"dragonboarding","namespace":"default"},"spec":{"ports":[{"name":"http","port":80,"targetPort":80}],"selector":{"app":"dragonboarding"},"type":"ClusterIP"},"status":{"loadBalancer":{}}}`
-	deploymentJSONExpected := `{"apiVersion":"apps/v1","kind":"Deployment","metadata":{"creationTimestamp":null,"labels":{"app":"dragonboarding","version":"dragonboarding"},"name":"test-1","namespace":"default"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"dragonboarding","version":"test-1"}},"strategy":{},"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"},"creationTimestamp":null,"labels":{"app":"dragonboarding","version":"test-1"}},"spec":{"containers":[{"image":"realwavelab.azurecr.io/darwin-content:darwin-acarditi","imagePullPolicy":"Always","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/","port":80,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":20,"successThreshold":1,"timeoutSeconds":1},"name":"dragonboarding","readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/","port":80,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":20,"successThreshold":1,"timeoutSeconds":1},"resources":{"limits":{"cpu":"128m","memory":"128Mi"},"requests":{"cpu":"64m","memory":"64Mi"}}}],"imagePullSecrets":[{"name":"realwavelab-registry"}]}}},"status":{}}`
+	serviceJSONExpected := `{"apiVersion":"v1","kind":"Service","metadata":{"creationTimestamp":null,"labels":{"app":"dragonboarding","service":"dragonboarding"},"name":"dragonboarding"},"spec":{"ports":[{"name":"http","port":80,"targetPort":80}],"selector":{"app":"dragonboarding"},"type":"ClusterIP"},"status":{"loadBalancer":{}}}`
+	deploymentJSONExpected := `{"apiVersion":"apps/v1","kind":"Deployment","metadata":{"creationTimestamp":null,"labels":{"app":"dragonboarding","version":"dragonboarding","circleId":"dummy-circle-id", "component": "darwin-content", "tag": "darwin-acarditi"},"name":"test-1"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"dragonboarding","version":"darwin-acarditi","circleId":"dummy-circle-id", "component": "darwin-content", "tag": "darwin-acarditi"}},"strategy":{},"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"},"creationTimestamp":null,"labels":{"app":"dragonboarding","version":"darwin-acarditi","circleId":"dummy-circle-id", "component": "darwin-content", "tag": "darwin-acarditi"}},"spec":{"containers":[{"image":"realwavelab.azurecr.io/darwin-content:darwin-acarditi","imagePullPolicy":"Always","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/","port":80,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":20,"successThreshold":1,"timeoutSeconds":1},"name":"dragonboarding","readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/","port":80,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":20,"successThreshold":1,"timeoutSeconds":1},"resources":{"limits":{"cpu":"128m","memory":"128Mi"},"requests":{"cpu":"64m","memory":"64Mi"}}}],"imagePullSecrets":[{"name":"realwavelab-registry"}]}}},"status":{}}`
 
 	helmTamplate := HelmTemplate{
 		OverrideValues: map[string]string{
-			"Name":      "test-1",
-			"Namespace": "default",
+			"deploymentName":  "test-1",
 			"image.tag": "realwavelab.azurecr.io/darwin-content:darwin-acarditi",
+			"tag": "darwin-acarditi",
+			"component": "darwin-content",
+			"circleId": "dummy-circle-id",
 		},
 	}
 
@@ -105,5 +107,5 @@ func TestOverrideValuesFailed(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.Contains(t, err.Error(), "Error override values in template", "Should be override values error")
+	assert.Contains(t, err.Error(), "Error overriding values in template", "Path can not be empty")
 }
