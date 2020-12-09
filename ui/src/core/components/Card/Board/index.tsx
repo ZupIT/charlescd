@@ -136,6 +136,7 @@ const CardBoard = forwardRef(
 
     return (
       <Styled.CardBoard
+        data-testid={`card-board-${type}-${description}`}
         ref={cardRef}
         type={type}
         onClick={() => onClick()}

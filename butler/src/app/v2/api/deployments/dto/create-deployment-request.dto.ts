@@ -17,13 +17,13 @@
 import { Type } from 'class-transformer'
 import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
 import { flatten } from 'lodash'
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
 import { CreateModuleDeploymentDto } from './create-module-request.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ApiProperty } from '@nestjs/swagger'
+import { CdConfigurationEntity } from '../../configurations/entity/cd-configuration.entity'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 
 export class CreateDeploymentRequestDto {
 
