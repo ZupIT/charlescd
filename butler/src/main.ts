@@ -25,14 +25,22 @@ import * as rTracer from 'cls-rtracer'
 import * as hpropagate from 'hpropagate'
 import * as morgan from 'morgan'
 import { AppModule } from './app/app.module'
-import { AppConstants } from './app/v1/core/constants'
-import { EntityNotFoundExceptionFilter } from './app/v1/core/filters/entity-not-found-exception.filter'
-import { ConsoleLoggerService } from './app/v1/core/logs/console'
+import { AppConstants } from './app/v2/core/constants'
+import { EntityNotFoundExceptionFilter } from './app/v2/core/filters/entity-not-found-exception.filter'
+import { ConsoleLoggerService } from './app/v2/core/logs/console'
 import {
   OctopipeEKSConfigurationDataSchema,
   OctopipeGenericConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
-} from './app/v1/core/validations/schemas'
+} from './app/v2/core/validations/schemas'
+import { Request, Response, Router } from 'express'
+
+const healtCheckRouter = Router()
+healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
+  res.send({
+    'status': 'ok'
+  })
+})
 
 async function bootstrap() {
 
@@ -60,6 +68,7 @@ async function bootstrap() {
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
   app.use(rTracer.expressMiddleware())
+  app.use(healtCheckRouter)
   SwaggerModule.setup('/api/swagger', app, document)
   app.enableShutdownHooks()
   await app.listen(3000)

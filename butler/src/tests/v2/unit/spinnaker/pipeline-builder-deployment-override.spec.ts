@@ -15,7 +15,7 @@
  */
 
 import 'jest'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
 import { completeWithOverrides } from './fixtures/deployment/deployment-complete-with-overrides'
