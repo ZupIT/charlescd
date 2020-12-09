@@ -101,4 +101,4 @@ export interface K8sManifest {
   spec: Spec
 }
 
-export interface KubernetesManifest extends KubernetesObject {}
+export type KubernetesManifest = KubernetesObject
