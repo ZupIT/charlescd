@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Configuration } from '../../../v1/core/config/configurations'
+import { Configuration } from '../config/configurations'
+
 
 const UrlUtils = {
   getDeploymentNotificationUrl: (executionId: string): string => {
