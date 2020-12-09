@@ -20,6 +20,7 @@ import io.charlescd.moove.commons.request.comment.AddCommentRequest
 import io.charlescd.moove.commons.request.member.AddMemberRequest
 import io.charlescd.moove.legacy.moove.request.card.CreateCardRequest
 import io.charlescd.moove.legacy.moove.request.card.UpdateCardRequest
+import io.charlescd.moove.legacy.moove.request.git.FindBranchParam
 import io.charlescd.moove.legacy.moove.service.CardService
 import spock.lang.Specification
 
@@ -111,6 +112,22 @@ class CardControllerUnitTest extends Specification {
 
         then:
         1 * service.findById(id, workspaceId)
+        notThrown()
+    }
+
+
+    def "should find branches"() {
+        given:
+        def param = new FindBranchParam (
+                ["id_1, id_2"],
+                "branchName"
+        )
+
+        when:
+        controller.findBranches(workspaceId, param)
+
+        then:
+        1 * service.findBranches(param, workspaceId)
         notThrown()
     }
 
