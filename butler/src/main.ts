@@ -25,14 +25,14 @@ import * as rTracer from 'cls-rtracer'
 import * as hpropagate from 'hpropagate'
 import * as morgan from 'morgan'
 import { AppModule } from './app/app.module'
-import { AppConstants } from './app/v1/core/constants'
-import { EntityNotFoundExceptionFilter } from './app/v1/core/filters/entity-not-found-exception.filter'
-import { ConsoleLoggerService } from './app/v1/core/logs/console'
+import { AppConstants } from './app/v2/core/constants'
+import { EntityNotFoundExceptionFilter } from './app/v2/core/filters/entity-not-found-exception.filter'
+import { ConsoleLoggerService } from './app/v2/core/logs/console'
 import {
   OctopipeEKSConfigurationDataSchema,
   OctopipeGenericConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
-} from './app/v1/core/validations/schemas'
+} from './app/v2/core/validations/schemas'
 
 async function bootstrap() {
 
