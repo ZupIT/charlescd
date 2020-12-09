@@ -22,6 +22,7 @@ import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.application.user.response.UserResponse
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
@@ -55,6 +56,16 @@ class V2UserController(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: UUID
     ) = findUserByIdInteractor.execute(authorization, id)
+
+    @ApiOperation(value = "Find user workspaces")
+    @GetMapping("/{id}/workspaces")
+    @ResponseStatus(HttpStatus.OK)
+    fun findWorkspacesByUserId(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("id") id: UUID
+    ) : List<SimpleWorkspaceResponse>{
+        return findUserByIdInteractor.execute(authorization, id).workspaces
+    }
 
     @ApiOperation(value = "Find all users")
     @GetMapping
