@@ -23,6 +23,7 @@ import { Configuration } from './v2/core/config/configurations'
 import { AppConstants } from './v2/core/constants'
 import { IoCTokensConstants } from './v2/core/constants/ioc'
 import { CoreModule } from './v2/core/core.module'
+import { HealthcheckModule } from './v1/api/healthcheck/healthcheck.module'
 
 @Global()
 @Module({})
@@ -40,6 +41,7 @@ export class AppModule {
       imports: [
         CoreModule,
         ApiModuleV2,
+        HealthcheckModule,
         TypeOrmModule.forRootAsync({
           useFactory: () => (
             DatabasesService.getPostgresConnectionOptions(envConfiguration)
