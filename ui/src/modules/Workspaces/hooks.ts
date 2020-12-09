@@ -22,15 +22,18 @@ import { useDispatch } from 'core/state/hooks';
 import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
+import { isRoot } from 'core/utils/auth';
 
 export const useWorkspace = (): [Function, Function, boolean] => {
   const dispatch = useDispatch();
   const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
   const { response, error, loading } = workspacesData;
 
-  const filerWorkspace = useCallback(
+  const filterWorkspace = useCallback(
     (name: string) => {
-      getWorkspace({ name });
+      if (isRoot()) {
+        getWorkspace({ name });
+      }
     },
     [getWorkspace]
   );
@@ -43,7 +46,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [filerWorkspace, getWorkspace, loading];
+  return [filterWorkspace, getWorkspace, loading];
 };
 
 export const useSaveWorkspace = (): {
