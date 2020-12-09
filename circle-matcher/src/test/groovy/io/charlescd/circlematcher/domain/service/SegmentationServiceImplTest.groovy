@@ -16,7 +16,7 @@
 
 package io.charlescd.circlematcher.domain.service
 
-
+import io.charlescd.circlematcher.domain.Content
 import io.charlescd.circlematcher.domain.KeyMetadata
 import io.charlescd.circlematcher.domain.SegmentationType
 import io.charlescd.circlematcher.domain.service.impl.SegmentationServiceImpl
@@ -43,13 +43,13 @@ class SegmentationServiceImplTest extends Specification {
 
         given:
 
-        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:REGULAR"
 
         def value = "user@zup.com.br"
         def values = new ArrayList()
         values.add(value)
 
-        def content = TestUtils.createContent(values)
+        def content = new Content("username", "CONTAINS", values)
         def node = TestUtils.createNode(content)
         def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
