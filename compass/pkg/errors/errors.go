@@ -21,6 +21,7 @@ type Error interface {
 type ErrorList interface {
 	Append(err *AdvancedError) *CustomErrorList
 	Get() *CustomErrorList
+	GetErrors() []Error
 }
 
 type SimpleError struct {
@@ -88,4 +89,8 @@ func (errList *CustomErrorList) Append(err *AdvancedError) *CustomErrorList {
 
 func (errList *CustomErrorList) Get() *CustomErrorList {
 	return errList
+}
+
+func (errList *CustomErrorList) GetErrors() []Error {
+	return errList.Errors
 }

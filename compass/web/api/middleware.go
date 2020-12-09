@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"strconv"
 
+	"github.com/ZupIT/charlescd/compass/web/api/util"
+
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -40,7 +42,7 @@ func ValidatorMiddleware(next http.Handler) http.Handler {
 				errors.NewError("Invalid request", "WorkspaceId is required").WithOperations("ValidatorMiddleware"),
 			)
 
-			NewResponse(w, http.StatusForbidden, ers)
+			util.NewResponse(w, http.StatusForbidden, ers)
 			return
 		}
 
