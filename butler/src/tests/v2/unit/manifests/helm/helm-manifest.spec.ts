@@ -22,13 +22,13 @@ import { HttpService } from '@nestjs/common'
 import * as yaml from 'js-yaml'
 
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
-import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
 import { RequestConfig, Resource, ResourceType } from '../../../../../app/v2/core/integrations/interfaces/repository.interface'
-import { ConsoleLoggerService } from '../../../../../app/v1/core/logs/console'
 import { KubernetesManifest } from '../../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 import { RepositoryStrategyFactory } from '../../../../../app/v2/core/integrations/repository-strategy-factory'
 import { GitHubRepository } from '../../../../../app/v2/core/integrations/github/github-repository'
 import { GitLabRepository } from '../../../../../app/v2/core/integrations/gitlab/gitlab-repository'
+import { GitProvidersEnum } from '../../../../../app/v2/core/configuration/interfaces/git-providers.type'
+import { ConsoleLoggerService } from '../../../../../app/v2/core/logs/console/console-logger.service'
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')

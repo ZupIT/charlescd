@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Component } from '../../../../app/v2/api/deployments/interfaces'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder'
 import { expectedRouteCrd } from './fixtures/expected-route-crd'
 

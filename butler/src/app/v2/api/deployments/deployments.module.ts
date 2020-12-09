@@ -16,11 +16,10 @@
 
 import { HttpModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { CdConfigurationEntity } from '../../../v1/api/configurations/entity'
-import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository'
-import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
-import { MooveService } from '../../../v1/core/integrations/moove'
-import { ConsoleLoggerService } from '../../../v1/core/logs/console'
+import { CdConfigurationEntity } from '../configurations/entity'
+import { CdConfigurationsRepository } from '../configurations/repository'
+import { SpinnakerApiService } from '../../core/integrations/spinnaker/spinnaker-api.service'
+import { MooveService } from '../../core/integrations/moove'
 import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
 import { Execution } from './entity/execution.entity'
@@ -44,6 +43,7 @@ import { GitHubRepository } from '../../core/integrations/github/github-reposito
 import { GitLabRepository } from '../../core/integrations/gitlab/gitlab-repository'
 import { RepositoryStrategyFactory } from '../../core/integrations/repository-strategy-factory'
 import { K8sClient } from '../../core/integrations/k8s/client'
+import { ConsoleLoggerService } from '../../core/logs/console/console-logger.service'
 
 @Module({
   imports: [

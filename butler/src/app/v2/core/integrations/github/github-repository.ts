@@ -16,9 +16,9 @@
 
 import { HttpService, Injectable } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
+import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
 @Injectable()
 export class GitHubRepository implements Repository {
@@ -38,7 +38,7 @@ export class GitHubRepository implements Repository {
 
   private async downloadResource(url: URL, resourceName: string, headers: Record<string, string>): Promise<Resource> {
     const response = await this.fetch(url, headers)
-    
+
     if(this.isFile(response.data)) {
       return {
         name: response.data.name,
@@ -46,7 +46,7 @@ export class GitHubRepository implements Repository {
         content: response.data.content
       } as Resource
     }
-    
+
     const resource: Resource = {
       name: resourceName,
       type: ResourceType.DIR,

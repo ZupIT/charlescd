@@ -17,9 +17,9 @@
 import { Injectable } from '@nestjs/common'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import * as k8s from '@kubernetes/client-node'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { CrdBuilder } from './crd-builder'
 import { KubernetesManifest } from '../interfaces/k8s-manifest.interface'
+import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 
 @Injectable()
 export class K8sClient {
