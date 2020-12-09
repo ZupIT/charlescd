@@ -1,6 +1,6 @@
-package io.charlescd.moove.application
+package io.charlescd.moove.application.hypothesis
 
-
+import io.charlescd.moove.application.HypothesisService
 import io.charlescd.moove.domain.Hypothesis
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -41,10 +41,9 @@ class HypothesisServiceTest extends Specification {
         given:
         def id = "1"
         def workspaceId = UUID.randomUUID().toString()
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
 
         when:
-        final def response = this.hypothesisService.find(id, workspaceId)
+        this.hypothesisService.find(id, workspaceId)
 
         then:
         1 * this.hypothesisRepository.findByIdAndWorkspaceId(id, workspaceId) >> Optional.empty()
