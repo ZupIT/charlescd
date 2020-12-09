@@ -69,6 +69,23 @@ class CharlesSecurityFilterTest extends Specification {
         notThrown()
     }
 
+    def "should allow open path"(){
+        given:
+        def request = new MockHttpServletRequest()
+        request.addHeader("Authorization", dummyToken())
+        request.setRequestURI(" /api/rectangle")
+        request.setMethod(HttpMethod.GET.name())
+
+        def response = new MockHttpServletResponse()
+        def filterChain = new MockFilterChain()
+
+        when:
+        charlesSecurityFilter.doFilter(request, response, filterChain)
+
+        then:
+        notThrown()
+    }
+
     def "should allow user management to post with authorization"(){
         given:
         def request = new MockHttpServletRequest()

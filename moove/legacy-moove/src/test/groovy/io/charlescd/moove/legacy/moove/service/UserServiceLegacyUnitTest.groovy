@@ -2,10 +2,10 @@ package io.charlescd.moove.legacy.moove.service
 
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
+import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
 import spock.lang.Specification
-
 import java.time.LocalDateTime
 
 class UserServiceLegacyUnitTest extends Specification {
@@ -74,10 +74,11 @@ class UserServiceLegacyUnitTest extends Specification {
 
     }
 
-    void "when requested to remove user and not exists should throw NotFoundExceptionLegacy"() {
+    void "when request to remove user from group and user not found should throw NotFoundExceptionLegacy"() {
         given:
         def userId = "1"
         def userEmail = "teste@teste.com"
+        def user = new User(userId, "Teste", userEmail, "http://teste.com", true, LocalDateTime.now())
         def groupId = "1"
 
         when:
@@ -86,11 +87,52 @@ class UserServiceLegacyUnitTest extends Specification {
         then:
         1 * this.userRepository.findById(userId) >> Optional.empty()
         0 * this.keycloakService.removeUserFromGroup(userEmail, groupId)
+        thrown(NotFoundExceptionLegacy)
 
-        def ex = thrown(NotFoundExceptionLegacy)
-        ex.resourceName == "user"
-        ex.id == userId
+    }
 
+    void "when requested to reset password should be successfully"() {
+        given:
+        def userId = "1"
+        def userEmail = "teste@teste.com"
+        def request = new ResetPasswordRequest("newPassword")
 
+        when:
+        this.userServiceLegacy.resetPassword(userEmail, request)
+
+        then:
+        0 * this.userRepository.findById(userId) >> Optional.empty()
+        1 * this.keycloakService.resetPassword(userEmail, request.newPassword)
+
+        notThrown()
+
+    }
+
+    void "when requested a user should be successfully and return them"() {
+        given:
+        def userId = "1"
+        def userEmail = "teste@teste.com"
+        def user = new User(userId, "Teste", userEmail, "http://teste.com", true, LocalDateTime.now())
+
+        when:
+        this.userServiceLegacy.findUser(userId)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.of(user)
+
+        notThrown()
+    }
+
+    void "when requested a user and not exist should throw NotFoundExceptionLegacy"() {
+        given:
+        def userId = "1"
+
+        when:
+        this.userServiceLegacy.findUser(userId)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.empty()
+
+        thrown(NotFoundExceptionLegacy)
     }
 }
