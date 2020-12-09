@@ -20,7 +20,6 @@ import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
-import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
 import spock.lang.Specification
@@ -65,36 +64,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         service = new UserServiceLegacy(repository, keycloakService, idmEnabled)
     }
 
-    def "should update user by id"() {
-        given:
-        def request = new UpdateUserRequest("John Doe", "email", "https://www.photos.com/johndoe")
-
-        when:
-        def response = service.update(representation.id, request)
-
-        then:
-        1 * repository.findById(representation.id) >> Optional.of(user)
-        1 * repository.saveAndFlush(user) >> user
-        response.id == representation.id
-        response.name == request.name
-        response.photoUrl == request.photoUrl
-    }
-
-    def "should throw exception on update if user id do not exist"() {
-        given:
-        def request = new UpdateUserRequest("John Doe", "email", "https://www.photos.com/johndoe")
-
-        when:
-        service.update("test", request)
-
-        then:
-        1 * repository.findById("test") >> Optional.empty()
-        def ex = thrown(NotFoundExceptionLegacy)
-        ex.resourceName == "user"
-        ex.id == "test"
-    }
-
-    def "should delete by id when root"() {
+    def "should delete by id"() {
         when:
         def response = service.delete("81861b6f-2b6e-44a1-a745-83e298a550c9", authorization)
 

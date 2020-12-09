@@ -21,7 +21,6 @@ package io.charlescd.moove.legacy.moove.service
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
-import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
 import javax.transaction.Transactional
@@ -34,14 +33,6 @@ class UserServiceLegacy(
     private val keycloakServiceLegacy: KeycloakServiceLegacy,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) {
-
-    fun update(id: String, updateUserRequest: UpdateUserRequest): UserRepresentation {
-        return userRepository.findById(id)
-            .map(this.updateUserData(updateUserRequest))
-            .map(this::saveAndFlushUser)
-            .map(this::toRepresentation)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
-    }
 
     @Transactional
     fun delete(id: String, authorization: String): UserRepresentation {
@@ -85,17 +76,6 @@ class UserServiceLegacy(
         }
         return it
     }
-
-    private fun updateUserData(updateUserRequest: UpdateUserRequest): (User) -> User = { user ->
-        user.copy(
-            name = updateUserRequest.name,
-            email = updateUserRequest.email.toLowerCase(),
-            photoUrl = updateUserRequest.photoUrl
-        )
-    }
-
-    private fun saveAndFlushUser(user: User): User =
-        userRepository.saveAndFlush(user)
 
     private fun deleteUser(user: User): User =
         user.also { userRepository.delete(it) }

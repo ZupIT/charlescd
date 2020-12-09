@@ -46,7 +46,6 @@ type SuiteMetricGroup struct {
 	mock sqlmock.Sqlmock
 
 	repository metricsgroup.UseCases
-	datasource *metricsgroup.MetricsGroup
 }
 
 func (s *SuiteMetricGroup) SetupSuite() {
@@ -204,7 +203,7 @@ func (s *SuiteMetricGroup) TestFindAllError() {
 	require.Error(s.T(), err)
 }
 
-func (s *SuiteMetricGroup) TestFindById() {
+func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
 	metricGroup := newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)

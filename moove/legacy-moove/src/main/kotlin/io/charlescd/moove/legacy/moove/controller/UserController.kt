@@ -16,12 +16,9 @@
 
 package io.charlescd.moove.legacy.moove.controller
 
-import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.UserServiceLegacy
 import io.swagger.annotations.Api
-import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
-import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -31,21 +28,6 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userService: UserServiceLegacy
 ) {
-
-    // TODO: doing on task 30351
-    @ApiOperation(value = "Update User")
-    @ApiImplicitParam(
-        name = "updateUserRequest",
-        value = "Update User",
-        required = true,
-        dataType = "UpdateUserRequest"
-    )
-    @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun update(@PathVariable id: String, @Valid @RequestBody updateUserRequest: UpdateUserRequest) {
-        userService.update(id, updateUserRequest)
-    }
-
     @ApiOperation(value = "Delete by id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

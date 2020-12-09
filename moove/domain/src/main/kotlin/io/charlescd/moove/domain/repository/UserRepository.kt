@@ -36,4 +36,6 @@ interface UserRepository {
     fun save(user: User): User
 
     fun delete(id: String)
+
+    fun update(user: User): User
 }

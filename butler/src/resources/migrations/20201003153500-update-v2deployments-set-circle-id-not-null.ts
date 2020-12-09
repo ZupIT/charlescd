@@ -15,7 +15,7 @@
  */
 
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { AppConstants } from '../../app/v1/core/constants'
+import { AppConstants } from '../../app/v2/core/constants'
 
 export class UpdateV2DeploymentsSetCircleIdNotNull20201003153500 implements MigrationInterface {
 
@@ -28,7 +28,7 @@ export class UpdateV2DeploymentsSetCircleIdNotNull20201003153500 implements Migr
 
   public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query(`
-    UPDATE v2deployments SET circle_id = NULL WHERE circle_id = '${AppConstants.DEFAULT_CIRCLE_ID}' 
+    UPDATE v2deployments SET circle_id = NULL WHERE circle_id = '${AppConstants.DEFAULT_CIRCLE_ID}'
     `)
     await queryRunner.query('ALTER TABLE v2deployments ALTER COLUMN circle_id DROP NOT NULL ')
   }

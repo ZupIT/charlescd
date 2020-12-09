@@ -331,4 +331,19 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
             parameters.toTypedArray()
         ) { resultSet, _ -> resultSet.getInt(1) }
     }
+
+    override fun update(user: User): User {
+        updateUser(user)
+        return findById(user.id).get()
+    }
+
+    private fun updateUser(user: User) {
+        val statement = "UPDATE users SET name = ? WHERE id = ?"
+
+        this.jdbcTemplate.update(
+            statement,
+            user.name,
+            user.id
+        )
+    }
 }

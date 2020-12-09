@@ -2,8 +2,6 @@ const rootUser = {
   id: 'a7c3e4b6-4qe3-4d62-8140-e2d23274d03f',
   name: 'User',
   email: 'user@zup.com.br',
-  photoUrl:
-    'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png',
   createdAt: '2020-04-30 17:10:52',
   workspaces: [
     {
@@ -24,8 +22,6 @@ const users = {
       id: 'c7e6dete-aa7a-4216-be1b-34eacd4c2915',
       name: 'User 1',
       email: 'user.1@zup.com.br',
-      photoUrl:
-        'https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png',
       createdAt: '2020-05-07 20:24:46',
       workspaces: [],
       isRoot: true
@@ -34,7 +30,6 @@ const users = {
       id: 'a7c3e4b6-4be3-4d62-8140-e2d23214e03f',
       name: 'User 2',
       email: 'user.2@zup.com.br',
-      photoUrl: '',
       createdAt: '2020-04-30 17:10:52',
       workspaces: [],
       isRoot: true
@@ -43,7 +38,6 @@ const users = {
       id: '13ea193b-f9d2-4wed-b1ce-471a7ae871c2',
       name: 'User 3',
       email: 'user.3@zup.com.br',
-      photoUrl: '',
       createdAusuariot: '2020-05-19 17:48:47',
       workspaces: [
         { id: 'efbf25e0-c4dc-46c5-9fe4-61eb24049ac7', name: 'New Workspace 1' },
@@ -55,7 +49,7 @@ const users = {
       id: '8b81e7a7-33f1-46cb-aedf-73222bf8769f',
       name: 'User 4',
       email: 'user.4@zup.com.br',
-      photoUrl: '',
+
       createdAt: '2020-05-13 21:50:28',
       workspaces: [],
       isRoot: false
@@ -64,7 +58,6 @@ const users = {
       id: 'd3123d52-b59u-4ee9-9f8f-8bf42c00dd45',
       name: 'User 5',
       email: 'user.5@zup.com.br',
-      photoUrl: '',
       createdAt: '2020-05-13 18:02:03',
       workspaces: [
         { id: 'd90fd814-5e33-43c6-ba2d-d9d04c5a5ec6', name: 'New Workspace 4' }
@@ -82,7 +75,6 @@ const users = {
 const newUser = {
   name: 'New User',
   email: 'new.user@zup.com.br',
-  photoUrl: '',
   password: '123mudar',
   isRoot: true
 };
@@ -90,8 +82,7 @@ const newUser = {
 const updateProfile = {
   id: 'a7c3e4b6-4qe3-4d62-8140-e2d23274d03f',
   name: 'Updated User',
-  email: 'user.updated@zup.com.br',
-  photoUrl: ''
+  email: 'user.updated@zup.com.br'
 };
 
 const defaultAuthorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTExMjM4MTEsImlhdCI6MTU5MTEyMDIxMSwianRpIjoiMDFkMjE1MTYtNDA5OS00MGNkLTg2ZWQtOWIzOWQwNjdlZjc1IiwiaXNzIjoiaHR0cHM6Ly9jaGFybGVzLmNvbS9hdXRoL3JlYWxtcy9kYXJ3aW4iLCJhdWQiOlsiZGFyd2luLWNsaWVudCIsImFjY291bnQiXSwic3ViIjoiMGVjODFlODEtNGMzZi00ZmRjLWI4ODYtMzM3YTBjMmQyNTUwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZGFyd2luLWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiJiZWQwYjIzMy1mZTZkLTQ5YzAtOWQ5Mi1iMGI4MWQ2M2Q1M2QiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNSb290IjpmYWxzZSwibmFtZSI6Ik10eiIsIndvcmtzcGFjZXMiOlt7ImlkIjoiNjI2N2Q4ZWItMzExYy00OTY0LWE3YWMtYzRjMWNhMTc4NzZhIiwicGVybWlzc2lvbnMiOlsiaHlwb3RoZXNpc193cml0ZSIsIm1vZHVsZXNfcmVhZCIsIm1vZHVsZXNfd3JpdGUiLCJjaXJjbGVzX3JlYWQiLCJtYWludGVuYW5jZV93cml0ZSIsImh5cG90aGVzaXNfcmVhZCIsImNpcmNsZXNfd3JpdGUiLCJkZXBsb3lfd3JpdGUiXX0seyJpZCI6IjIzNjk4NDdjLTk0ZjctNDNjOS04N2MyLTRmMDBjNzMyOTBlNyIsInBlcm1pc3Npb25zIjpbImh5cG90aGVzaXNfd3JpdGUiLCJtb2R1bGVzX3JlYWQiLCJtb2R1bGVzX3dyaXRlIiwiY2lyY2xlc19yZWFkIiwiaHlwb3RoZXNpc19yZWFkIiwiY2lyY2xlc193cml0ZSIsImRlcGxveV93cml0ZSJdfSx7ImlkIjoiYjUzZTA3YTQtOGIwZC00NDlkLTk4NWEtOTcwYTlhMGUwNTc2IiwicGVybWlzc2lvbnMiOlsiaHlwb3RoZXNpc193cml0ZSIsIm1vZHVsZXNfcmVhZCIsIm1vZHVsZXNfd3JpdGUiLCJjaXJjbGVzX3JlYWQiLCJoeXBvdGhlc2lzX3JlYWQiLCJjaXJjbGVzX3dyaXRlIiwiZGVwbG95X3dyaXRlIl19LHsiaWQiOiJhZjE1MzU2Yi1hODVkLTQ1MWItODEzYS04Mzk1M2U0YjdmNTYiLCJwZXJtaXNzaW9ucyI6WyJoeXBvdGhlc2lzX3dyaXRlIiwibW9kdWxlc19yZWFkIiwibW9kdWxlc193cml0ZSIsImNpcmNsZXNfcmVhZCIsIm1haW50ZW5hbmNlX3dyaXRlIiwiaHlwb3RoZXNpc19yZWFkIiwiY2lyY2xlc193cml0ZSIsImRlcGxveV93cml0ZSJdfSx7ImlkIjoiZWZiZjI1ZTAtYzRkYy00NmM1LTlmZTQtNjFlYjI0MDQ5YWM3IiwicGVybWlzc2lvbnMiOlsiaHlwb3RoZXNpc193cml0ZSIsIm1vZHVsZXNfcmVhZCIsIm1vZHVsZXNfd3JpdGUiLCJjaXJjbGVzX3JlYWQiLCJtYWludGVuYW5jZV93cml0ZSIsImh5cG90aGVzaXNfcmVhZCIsImNpcmNsZXNfd3JpdGUiLCJkZXBsb3lfd3JpdGUiXX1dLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ1c2VyY2hhcmxlc0B6dXAuY29tLmJyIiwiZ2l2ZW5fbmFtZSI6Ik10eiIsImVtYWlsIjoidXNlcmNoYXJsZXNAenVwLmNvbS5iciJ9.RgJtnUHrg-h4C6xeb6KjXmQCxQyXz2QQ0SIJ9Eu1vzM`;
