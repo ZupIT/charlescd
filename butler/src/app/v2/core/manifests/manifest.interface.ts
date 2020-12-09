@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { GitProvidersEnum } from '../../../v1/core/integrations/configuration/interfaces'
+import { GitProvidersEnum } from '../configuration/interfaces/git-providers.type'
+
 
 export interface RepoConfig {
   provider: GitProvidersEnum,
@@ -27,6 +28,6 @@ export interface ManifestConfig {
   repo: RepoConfig,
   componentName: string,
   imageUrl: string,
-  namespace?: string, 
+  namespace?: string,
   circleId?: string
 }

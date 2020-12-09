@@ -27,9 +27,9 @@ import * as yaml from 'js-yaml'
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
 import { Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { KubernetesManifest } from '../../integrations/interfaces/k8s-manifest.interface'
 import { RepositoryStrategyFactory } from '../../integrations/repository-strategy-factory'
+import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 
 @Injectable()
 export class HelmManifest implements Manifest {
@@ -40,9 +40,9 @@ export class HelmManifest implements Manifest {
 
   public async generate(config: ManifestConfig): Promise<KubernetesManifest[]> {
     this.consoleLoggerService.log('START:GENERATING MANIFEST USING HELM')
-    const requestConfig = { 
-      url: config.repo.url, 
-      token: config.repo.token, 
+    const requestConfig = {
+      url: config.repo.url,
+      token: config.repo.token,
       resourceName: config.componentName,
       branch: config.repo.branch
     }
@@ -122,7 +122,7 @@ export class HelmManifest implements Manifest {
       command.push('--namespace')
       command.push(config.namespace)
     }
-    
+
     const overrideValues = this.toStringArray(this.extractCustomValues(config))
     if(overrideValues) {
       command.push('--set')

@@ -15,8 +15,8 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { GitProvidersEnum } from '../../../v1/core/integrations/configuration/interfaces'
-import { ConsoleLoggerService } from '../../../v1/core/logs/console'
+import { GitProvidersEnum } from '../configuration/interfaces/git-providers.type'
+import { ConsoleLoggerService } from '../logs/console/console-logger.service'
 import { GitHubRepository } from './github/github-repository'
 import { GitLabRepository } from './gitlab/gitlab-repository'
 import { Repository } from './interfaces/repository.interface'

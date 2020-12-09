@@ -23,7 +23,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
-import { ConsoleLoggerService } from '../../../../app/v1/core/logs/console'
+import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
 
 describe('Download resources from github', () => {
   const contents = getStubContents()

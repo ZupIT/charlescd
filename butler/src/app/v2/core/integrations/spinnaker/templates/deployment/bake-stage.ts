@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
+import { ISpinnakerConfigurationData } from '../../../../../api/configurations/interfaces/spinnaker-configuration-data.interface'
 import { CdConfiguration } from '../../../../../api/deployments/interfaces'
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 import { DeploymentUtils } from '../../../utils/deployment.utils'
+import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 
 export const getBakeStage = (component: DeploymentComponent, configuration: CdConfiguration, stageId: number, circleId: string): Stage => ({
   completeOtherBranchesThenFail: false,
