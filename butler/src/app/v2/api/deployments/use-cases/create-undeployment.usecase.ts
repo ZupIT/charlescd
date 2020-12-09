@@ -17,13 +17,13 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { ExecutionTypeEnum } from '../enums'
 import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 
 @Injectable()
 export class CreateUndeploymentUseCase {

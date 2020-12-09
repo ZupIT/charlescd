@@ -24,6 +24,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/google/uuid"
 )
 
 type ComponentMetricRepresentation struct {
@@ -39,7 +40,7 @@ type ComponentRepresentation struct {
 }
 
 // TODO: Send lookup plugin method to plugin pkg
-func (main Main) getQueryPeriod(workspaceId, query string, period, interval datasourcePKG.Period) ([]datasourcePKG.Value, error) {
+func (main Main) getQueryPeriod(query string, period, interval datasourcePKG.Period, workspaceId uuid.UUID) ([]datasourcePKG.Value, error) {
 	datasource, err := main.datasource.FindHealthByWorkspaceId(workspaceId)
 	if err != nil {
 		logger.Error(util.QueryGetPluginError, "getHealthPlugin", err, "prometheus")
@@ -76,38 +77,38 @@ func (main Main) getPeriodAndIntervalByProjectionType(projectionType string) (da
 	return period, interval
 }
 
-func (main Main) getDatasourceValuesByMetricType(workspaceId, circleId, projectionType, metricType string) ([]datasourcePKG.Value, error, string) {
+func (main Main) getDatasourceValuesByMetricType(circleId, projectionType, metricType string, workspaceID uuid.UUID) ([]datasourcePKG.Value, error, string) {
 	switch metricType {
 	case "REQUESTS_BY_CIRCLE":
-		query := main.getTotalRequestStringQuery(workspaceId, circleId, true)
+		query := main.getTotalRequestStringQuery(circleId, true)
 		period, interval := main.getPeriodAndIntervalByProjectionType(projectionType)
-		values, err := main.getQueryPeriod(workspaceId, query, period, interval)
+		values, err := main.getQueryPeriod(query, period, interval, workspaceID)
 
 		return values, err, REQUESTS_BY_CIRCLE
 	case "REQUESTS_ERRORS_BY_CIRCLE":
-		query := main.GetAverageHttpErrorsPercentageStringQuery(workspaceId, circleId)
+		query := main.GetAverageHttpErrorsPercentageStringQuery(circleId)
 		period, interval := main.getPeriodAndIntervalByProjectionType(projectionType)
-		values, err := main.getQueryPeriod(workspaceId, query, period, interval)
+		values, err := main.getQueryPeriod(query, period, interval, workspaceID)
 
 		return values, err, REQUESTS_ERRORS_BY_CIRCLE
 	case "REQUESTS_LATENCY_BY_CIRCLE":
-		query := main.GetAverageLatencyStringQuery(workspaceId, circleId)
+		query := main.GetAverageLatencyStringQuery(circleId)
 		period, interval := main.getPeriodAndIntervalByProjectionType(projectionType)
-		values, err := main.getQueryPeriod(workspaceId, query, period, interval)
+		values, err := main.getQueryPeriod(query, period, interval, workspaceID)
 
 		return values, err, REQUESTS_LATENCY_BY_CIRCLE
 	default:
-		return nil, errors.New("Not found metric type"), ""
+		return nil, errors.New("not found metric type"), ""
 	}
 }
 
-func (main Main) Components(circleIDHeader, workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error) {
+func (main Main) Components(circleIDHeader, circleId, projectionType, metricType string, workspaceID uuid.UUID) (ComponentMetricRepresentation, error) {
 	metricComponents := ComponentMetricRepresentation{
 		Period: projectionType,
 		Type:   metricType,
 	}
 
-	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceId)
+	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceID)
 	if err != nil {
 		return ComponentMetricRepresentation{}, err
 	}
@@ -119,7 +120,7 @@ func (main Main) Components(circleIDHeader, workspaceId, circleId, projectionTyp
 	}
 
 	for _, component := range components {
-		data, err, _ := main.getDatasourceValuesByMetricType(workspaceId, circleId, projectionType, metricType)
+		data, err, _ := main.getDatasourceValuesByMetricType(circleId, projectionType, metricType, workspaceID)
 		if err != nil {
 			return ComponentMetricRepresentation{}, err
 		}
