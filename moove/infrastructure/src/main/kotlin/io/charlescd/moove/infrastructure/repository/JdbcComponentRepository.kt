@@ -70,11 +70,8 @@ class JdbcComponentRepository(
 	                    components.latency_threshold    AS components_latency_threshold,
                         components.host_value           AS components_host_value,
                         components.gateway_name         AS components_gateway_name,
-<<<<<<< HEAD
-                        components.namespace            AS components_namespace
-=======
+                        components.namespace            AS components_namespace,
                         module_snapshots.name           AS module_name
->>>>>>> 4a588881e8cd9bf1e29a4c3094fea7fd6c9edc38
                 FROM components components
                     INNER JOIN component_snapshots component_snapshots  ON components.id = component_snapshots.component_id
                     INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id

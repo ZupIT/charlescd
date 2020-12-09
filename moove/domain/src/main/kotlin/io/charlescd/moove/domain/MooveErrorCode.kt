@@ -57,9 +57,6 @@ enum class MooveErrorCode(val key: String) {
     CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS("create.user.error.email.already.exists"),
     USER_PASSWORD_DOES_NOT_MATCH("user.password.does.not.match"),
     CANNOT_RESET_YOUR_OWN_PASSWORD("cannot.reset.your.own.password"),
-<<<<<<< HEAD
-    COMPONENT_NAME_ALREADY_REGISTERED_IN_THIS_WORKSPACE_WITH_THIS_NAMESPACE("Component.name.already.registered.in.this.workspace.with.this.namespace")
-=======
+    COMPONENT_NAME_ALREADY_REGISTERED_IN_THIS_WORKSPACE_WITH_THIS_NAMESPACE("Component.name.already.registered.in.this.workspace.with.this.namespace"),
     EXTERNAL_IDM_FORBIDDEN("external.idm.forbidden")
->>>>>>> 71352d53896805840618aa73186f25f50c7db647
 }
