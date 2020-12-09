@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces/git-providers.type'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces/git-providers.type'
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
 
 export const completeOctopipeDeploymentWithOverrides: OctopipeDeploymentRequest = {
