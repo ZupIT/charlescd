@@ -88,47 +88,55 @@ func (helmTemplate HelmTemplate) getHelmChartAndValues(templateContent, valueCon
 		return chart.Chart{}, nil, errors.New("Error load chart values. Error: " + err.Error())
 	}
 
-	renderedValues, err := chartutil.ToRenderValues(newChart, values.AsMap(), chartutil.ReleaseOptions{}, nil)
+	renderedHelmObjects, err := chartutil.ToRenderValues(newChart, values.AsMap(), chartutil.ReleaseOptions{}, nil)
 	if err != nil {
 		return chart.Chart{}, nil, err
 	}
 
-	overridedValues, err := helmTemplate.overrideValues(renderedValues.AsMap(), overrideValues)
+	renderedValues, err := helmTemplate.getValuesHelmObject(renderedHelmObjects)
 	if err != nil {
-		return chart.Chart{}, nil, errors.New("Error override values in template. Error: " + err.Error())
+		return chart.Chart{}, nil, errors.New("Error overriding values in template. Error: " + err.Error())
 	}
 
-	return *newChart, overridedValues, nil
+	overridedValues, err := helmTemplate.overrideValues(renderedValues, overrideValues)
+	if err != nil {
+		return chart.Chart{}, nil, errors.New("Error overriding values in template. Error: " + err.Error())
+	}
 
+	renderedHelmObjects["Values"] = overridedValues
+
+	return *newChart, renderedHelmObjects, nil
+
+}
+
+func (helmTemplate HelmTemplate) getValuesHelmObject(renderedHelmObjects chartutil.Values) (map[string]interface{}, error) {
+	var values map[string]interface{}
+	valuesBytes, _ := json.Marshal(renderedHelmObjects["Values"])
+	err := json.Unmarshal(valuesBytes, &values)
+	 if err != nil {
+	 	return nil, err
+	 }
+	return values, nil
 }
 
 func (helmTemplate HelmTemplate) overrideValues(
 	chartValues map[string]interface{}, overrideValues map[string]string,
 ) (map[string]interface{}, error) {
-	overridedChartValues := map[string]interface{}{}
 	chartValuesBytes,_ := json.Marshal(chartValues)
-	log.WithFields(log.Fields{"function": "overrideValues"}).Info("START:OVERRIDE_VALUES",string(chartValuesBytes))
-	for chartValueKey, chartValue := range chartValues {
-		if chartValueKey == "Values" {
-			chartValueBytes, _ := json.Marshal(chartValue)
-			newChartValueBytes, err := helmTemplate.overrideValueInChartValueBytes(chartValueBytes, overrideValues)
-			if err != nil {
-				return nil, err
-			}
+	log.WithFields(log.Fields{"function": "overrideValues"}).Info("START:OVERRIDE_VALUES", string(chartValuesBytes))
 
-			newChartValue, err := helmTemplate.chartValueBytesToStructure(newChartValueBytes)
-			if err != nil {
-				return nil, err
-			}
-			overridedChartValues[chartValueKey] = newChartValue
-		} else {
-			overridedChartValues[chartValueKey] = chartValue
-		}
-
+	newChartValueBytes, err := helmTemplate.overrideValueInChartValueBytes(chartValuesBytes, overrideValues)
+	if err != nil {
+		return nil, err
 	}
-	chartValuesOverrideBytes,_ := json.Marshal(overridedChartValues)
-	log.WithFields(log.Fields{"function": "overrideValues"}).Info("FINISH:OVERRIDE_VALUES",string(chartValuesOverrideBytes))
-	return overridedChartValues, nil
+	newChartValue, err := helmTemplate.chartValueBytesToStructure(newChartValueBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	chartValuesOverrideBytes,_ := json.Marshal(newChartValue)
+	log.WithFields(log.Fields{"function": "overrideValues"}).Info("FINISH:OVERRIDE_VALUES", string(chartValuesOverrideBytes))
+	return newChartValue, nil
 }
 
 func (helmTemplate HelmTemplate) chartValueBytesToStructure(chartValueBytes []byte) (map[string]interface{}, error) {
