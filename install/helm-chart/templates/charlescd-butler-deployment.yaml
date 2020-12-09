@@ -21,6 +21,7 @@ spec:
         app: {{ .Values.butler.name }}
         version: {{ .Values.butler.name }}
     spec:
+      serviceAccountName: {{ .Release.Name }}-charlescd-butler
       initContainers:
       - name: check-db-ready
         image: postgres:9.6.5
