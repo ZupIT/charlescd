@@ -25,6 +25,7 @@ import io.charlescd.moove.application.circle.UpdateCircleWithCsvFileInteractor
 import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.CircleMatcherService
 import spock.lang.Specification
@@ -203,6 +204,58 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         assert response.reference != circle.reference
         assert response.importedKvRecords == 0
         assert response.importedAt == null
+    }
+
+    def "not should update a circle when circle not found"() {
+        given:
+
+        def circleId = "b40477e2-9374-47b5-a54e-8909fb867e6d"
+        def name = "Women"
+        def workspaceId = "c4ffc9ac-47ef-4f73-b7fa-0c0384e978e9"
+        def authorId = "b312dd87-28e5-490d-967b-293a7e65f77d"
+        def request = new UpdateCircleWithCsvRequest(circleId, name, null, null)
+
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
+
+        def author = getDummyUser(authorId)
+        def circle = getDummyCircle(circleId, author, nodePart, workspaceId, false)
+        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
+
+        def deploymentId = "1bbb7057-5415-463b-9c25-0e3af442cf69"
+        def deployment = getDummyDeployment(deploymentId, author, circle, build.id, workspaceId)
+
+        when:
+        this.updateCircleWithCsvFileInteractor.execute(request, workspaceId)
+
+        then:
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.empty()
+        0 * this.circleRepository.update(_) >> { arguments ->
+            def updatedCircle = arguments[0]
+
+            assert updatedCircle instanceof Circle
+            assert updatedCircle.id == circle.id
+            assert updatedCircle.name == name
+            assert updatedCircle.matcherType == circle.matcherType
+            assert !updatedCircle.defaultCircle
+            assert updatedCircle.importedAt == circle.importedAt
+            assert updatedCircle.author == author
+            assert updatedCircle.importedKvRecords == circle.importedKvRecords
+
+            return updatedCircle
+        }
+
+        0 * this.keyValueRuleRepository.saveAll(_)
+
+        0 * this.workspaceRepository.find(_)
+
+        0 * circleMatcherService.updateImport(_, _, _, _)
+
+        0 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
+        0 * buildRepository.findById(deployment.buildId) >> Optional.of(build)
+        thrown(NotFoundException)
+
     }
 
     private static Deployment getDummyDeployment(String deploymentId, User user, Circle circle, String buildId, String workspaceId) {
