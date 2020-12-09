@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 
+	"github.com/ZupIT/charlescd/compass/web/api/v1/action"
+
 	"github.com/ZupIT/charlescd/compass/web/api/v1/metricsgroup"
 )
 
@@ -19,6 +21,23 @@ import (
 func (api *Api) newV1Api() {
 	api.router.PathPrefix("/v1")
 	{
+		path := "/actions"
+		api.router.HandleFunc(path, action.List(api.actionMain)).Methods("GET")
+		api.router.HandleFunc(path, action.Create(api.actionMain)).Methods("POST")
+		api.router.HandleFunc(fmt.Sprintf("%s/{actionID}", path), action.Delete(api.actionMain)).Methods("DELETE")
+	}
+	{
+		//v1.Router.GET(v1.getCompletePath(apiPath), v1.HttpValidator(dataSourceAPI.findAllByWorkspace))
+		//v1.Router.POST(v1.getCompletePath(apiPath), v1.HttpValidator(dataSourceAPI.create))
+		//v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(dataSourceAPI.deleteDataSource))
+		//v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics"), v1.HttpValidator(dataSourceAPI.getMetrics))
+		//v1.Router.POST(v1.getCompletePath(apiPath+"/test-connection"), v1.HttpValidator(dataSourceAPI.testConnection))
+		path := "/datasources"
+		api.router.HandleFunc(path, action.List(api.actionMain)).Methods("GET")
+		api.router.HandleFunc(path, action.Create(api.actionMain)).Methods("POST")
+		api.router.HandleFunc(fmt.Sprintf("%s/{datasourceID}", path), action.Delete(api.actionMain)).Methods("DELETE")
+	}
+	{
 		path := "/metrics-groups"
 		api.router.HandleFunc(path, metricsgroup.Create(api.metricsGroupMain)).Methods("POST")
 		api.router.HandleFunc(path, metricsgroup.GetAll(api.metricsGroupMain)).Methods("GET")
@@ -30,8 +49,4 @@ func (api *Api) newV1Api() {
 		api.router.HandleFunc(fmt.Sprintf("%s/{metricGroupID}", path), metricsgroup.Delete(api.metricsGroupMain)).Methods("DELETE")
 		api.router.HandleFunc(fmt.Sprintf("resume/%s", path), metricsgroup.Resume(api.metricsGroupMain)).Methods("GET")
 	}
-	{
-
-	}
-
 }

@@ -19,7 +19,7 @@ type Error interface {
 }
 
 type ErrorList interface {
-	Append(err *AdvancedError) *CustomErrorList
+	Append(ers ...Error) *CustomErrorList
 	Get() *CustomErrorList
 	GetErrors() []Error
 }
@@ -82,8 +82,8 @@ func NewErrorList() ErrorList {
 	return &CustomErrorList{}
 }
 
-func (errList *CustomErrorList) Append(err *AdvancedError) *CustomErrorList {
-	errList.Errors = append(errList.Errors, err)
+func (errList *CustomErrorList) Append(ers ...Error) *CustomErrorList {
+	errList.Errors = append(errList.Errors, ers...)
 	return errList
 }
 

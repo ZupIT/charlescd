@@ -47,11 +47,11 @@ func Create(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, 
 			return
 		}
 		workspaceID := r.Header.Get("x-workspace-id")
-		uuid, parseErr := uuid.Parse(workspaceID)
+		workspaceUUID, parseErr := uuid.Parse(workspaceID)
 		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
+			util.NewResponse(w, http.StatusInternalServerError, parseErr)
 		}
-		metricsGroup.WorkspaceID = uuid
+		metricsGroup.WorkspaceID = workspaceUUID
 
 		if err := metricsgroupMain.Validate(metricsGroup); len(err.Get().Errors) > 0 {
 			util.NewResponse(w, http.StatusInternalServerError, err)
