@@ -13,6 +13,6 @@ class CharlesRateLimitConfiguration(rateLimitService: RateLimitService) : WebMvc
     private val interceptor: RateLimitInterceptor = RateLimitInterceptor(rateLimitService)
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(interceptor)
-            .addPathPatterns("/v2/**")
+            .addPathPatterns("/**")
     }
 }

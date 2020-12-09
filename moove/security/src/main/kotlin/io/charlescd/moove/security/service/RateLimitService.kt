@@ -18,7 +18,7 @@ class RateLimitService {
     @Value("\${charlescd.ratelimit.tokens:1}")
     private var tokens: Long = 0
 
-    @Value("\${charlescd.ratelimit.minutes:1}")
+    @Value("\${charlescd.ratelimit.seconds:1}")
     private var seconds: Long = 0
 
     private val cache: MutableMap<String, Bucket> = ConcurrentHashMap()
