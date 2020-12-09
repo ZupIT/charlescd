@@ -152,7 +152,7 @@ func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
 	actionToFind.WorkspaceId = workspaceID
 
 	s.DB.Create(&actionToFind)
-	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID.String(), workspaceID.String())
+	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID, workspaceID)
 
 	require.NoError(s.T(), err)
 	actionToFind.BaseModel = res.BaseModel
@@ -162,7 +162,7 @@ func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspaceError() {
 	s.DB.Close()
-	_, err := s.repository.FindActionByIdAndWorkspace(uuid.New().String(), uuid.New().String())
+	_, err := s.repository.FindActionByIdAndWorkspace(uuid.New(), uuid.New())
 	require.Error(s.T(), err)
 }
 
@@ -177,7 +177,7 @@ func (s *ActionSuite) TestFindAllActionByWorkspace() {
 	s.DB.Create(&actionStruct1)
 	s.DB.Create(&actionStruct2)
 
-	res, err := s.repository.FindAllActionsByWorkspace(wspID.String())
+	res, err := s.repository.FindAllActionsByWorkspace(wspID)
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
@@ -186,7 +186,7 @@ func (s *ActionSuite) TestFindAllActionByWorkspace() {
 
 func (s *ActionSuite) TestFindByAllActionError() {
 	s.DB.Close()
-	_, err := s.repository.FindAllActionsByWorkspace(uuid.New().String())
+	_, err := s.repository.FindAllActionsByWorkspace(uuid.New())
 
 	require.Error(s.T(), err)
 }
