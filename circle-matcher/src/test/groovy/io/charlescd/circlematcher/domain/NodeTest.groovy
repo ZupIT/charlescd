@@ -1,5 +1,6 @@
 package io.charlescd.circlematcher.domain
 
+import io.charlescd.circlematcher.domain.validation.NodeValidator
 import io.charlescd.circlematcher.utils.TestUtils
 import spock.lang.Specification
 
@@ -134,5 +135,33 @@ class NodeTest extends Specification {
         def expression = nodeClause.expression()
         then:
         assert expression == "((toStr(getPath(input, 'username')) == toStr('email@zup.com.br'))&&(toStr(getPath(input, 'age')) == toStr(35)))"
+    }
+
+    def "Not decomposable node when type is CLAUSE and operator is AND"() {
+        given:
+        def node = new Node(NodeType.CLAUSE, LogicalOperatorType.AND, [new Node()], null)
+        when:
+        def notDecomposable = node.isNotDecomposable()
+        then:
+        assert notDecomposable
+    }
+
+    def "Not decomposable node when type is RULE"() {
+        given:
+        def contentUsername = new Content("username", "EQUAL", ["email@zup.com.br"])
+        def node = new Node(NodeType.RULE, null, [], contentUsername)
+        when:
+        def notDecomposable = node.isNotDecomposable()
+        then:
+        assert notDecomposable
+    }
+
+    def "Decomposable node when type is CLAUSE and operator is OR"() {
+        given:
+        def node = new Node(NodeType.CLAUSE, LogicalOperatorType.OR, [new Node()], null)
+        when:
+        def decomposable = node.isDecomposable()
+        then:
+        assert decomposable
     }
 }

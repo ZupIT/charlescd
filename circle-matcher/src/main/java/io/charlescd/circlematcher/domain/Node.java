@@ -103,4 +103,23 @@ public class Node {
                 && this.getClauses() != null
                 && this.getClauses().size() > 0;
     }
+
+    @JsonIgnore
+    public boolean isNotDecomposable() {
+        return (NodeType.CLAUSE == type && LogicalOperatorType.AND == logicalOperator)
+                || NodeType.RULE == type;
+    }
+
+    @JsonIgnore
+    public boolean isDecomposable() {
+        return NodeType.CLAUSE == type
+                && LogicalOperatorType.OR == logicalOperator;
+    }
+
+    @JsonIgnore
+    public boolean isConvertibleToKv() {
+        return NodeType.RULE == type
+                && content != null
+                && Condition.EQUAL.name().equals(content.getCondition());
+    }
 }
