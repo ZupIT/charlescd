@@ -17,7 +17,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { ExecutionTypeEnum } from '../enums'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { NotificationStatusEnum } from '../../../core/enums/notification-status.enum'
 
 @Entity('v2executions')

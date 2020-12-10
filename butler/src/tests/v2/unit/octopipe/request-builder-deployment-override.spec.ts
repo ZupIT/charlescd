@@ -15,10 +15,10 @@
  */
 
 import 'jest'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
-import { GitProvidersEnum } from '../../../../app/v1/core/integrations/configuration/interfaces/git-providers.type'
-import { ClusterProviderEnum } from '../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
+import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { OctopipeRequestBuilder } from '../../../../app/v2/core/integrations/octopipe/request-builder'
 import { completeOctopipeDeploymentWithOverrides } from './fixtures/deployment/complete-request-override'
 

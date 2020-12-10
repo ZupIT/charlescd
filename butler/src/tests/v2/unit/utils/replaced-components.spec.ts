@@ -1,9 +1,9 @@
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
-import { GitProvidersEnum } from '../../../../app/v1/core/integrations/configuration/interfaces'
-import { ClusterProviderEnum } from '../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity/cd-configuration.entity'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
+import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { componentsToBeRemoved } from '../../../../app/v2/core/integrations/utils/deployment.utils'
 
 it('new deployment with active components on default circle', async() => {
