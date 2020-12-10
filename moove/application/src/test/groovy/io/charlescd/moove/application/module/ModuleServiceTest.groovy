@@ -1,17 +1,12 @@
 package io.charlescd.moove.application.module
 
-import io.charlescd.moove.application.HypothesisService
 import io.charlescd.moove.application.ModuleService
 import io.charlescd.moove.domain.Component
-import io.charlescd.moove.domain.Hypothesis
 import io.charlescd.moove.domain.Module
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.HypothesisRepository
 import io.charlescd.moove.domain.repository.ModuleRepository
-import jdk.internal.loader.Loader
 import spock.lang.Specification
-
 import java.time.LocalDateTime
 
 class ModuleServiceTest extends Specification {
@@ -58,7 +53,7 @@ class ModuleServiceTest extends Specification {
         this.moduleService.delete(module)
 
         then:
-        1 * this.moduleRepository.delete(module)
+        1 * this.moduleRepository.delete(module.id, module.workspaceId)
         notThrown()
     }
 
