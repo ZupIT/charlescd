@@ -14,48 +14,25 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import React from 'react';
 import Styled from './styled';
 import { getNameInitials } from './helper';
 
 export interface Props {
-  src: string;
   name?: string;
   initials?: string;
   className?: string;
   size?: string;
-  alt?: string;
 }
 
-const AvatarName = ({
-  src,
-  name,
-  initials,
-  className,
-  size = '40px',
-  alt
-}: Props) => {
-  const [error, setError] = useState(false);
-
-  if (error || isEmpty(src)) {
-    return (
-      <Styled.Wrapper className={`${className} avatar-initials`} size={size}>
-        {initials || getNameInitials(name)}
-      </Styled.Wrapper>
-    );
-  } else {
-    return (
-      <Styled.Image
-        data-testid={name}
-        className={className}
-        size={size}
-        alt={alt || ''}
-        src={src}
-        onError={() => setError(true)}
-      />
-    );
-  }
-};
+const AvatarName = ({ name, initials, className, size = '40px' }: Props) => (
+  <Styled.Wrapper
+    className={`${className} avatar-initials`}
+    size={size}
+    data-testid={name}
+  >
+    {initials || getNameInitials(name)}
+  </Styled.Wrapper>
+);
 
 export default AvatarName;

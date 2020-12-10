@@ -4,6 +4,7 @@ import io.charlescd.moove.domain.GitCredentials
 import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
+import org.apache.http.HttpStatus
 import org.gitlab4j.api.*
 import org.gitlab4j.api.models.*
 import spock.lang.Specification
@@ -13,6 +14,7 @@ class GitLabServiceTest extends Specification {
     private GitLabService gitLabService
     private GitLabClientFactory gitLabClientFactory = Mock(GitLabClientFactory)
     private GitLabApi gitLabApi = Mock(GitLabApi)
+    private ProjectApi projectApi = Mock(ProjectApi)
     private RepositoryApi repositoryApi = Mock(RepositoryApi)
     private MergeRequestApi mergeRequestApi = Mock(MergeRequestApi)
     private TagsApi tagsApi = Mock(TagsApi)
@@ -24,6 +26,55 @@ class GitLabServiceTest extends Specification {
         this.gitLabService = new GitLabService(gitLabClientFactory)
         this.mergeRequestFilter = new MergeRequestFilter()
         this.mergeRequest = new MergeRequest()
+    }
+
+    def "when trying to test connection  if does not work return 'false'"() {
+        given:
+        def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
+
+        when:
+        def testConnection = gitLabService.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
+        1 * gitLabApi.getProjectApi() >> projectApi
+        1 * projectApi.getProjects(0, 1) >> null
+
+        assert !testConnection
+    }
+
+    def "when trying to test connection  if does not connection should raise an exception"() {
+        given:
+        def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
+
+        when:
+        gitLabService.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
+        1 * gitLabApi.getProjectApi() >> null
+
+        def exception = thrown(Exception.class)
+
+    }
+
+    def "when trying to test connection  if works return 'true'"() {
+        given:
+        def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
+        def response = new ArrayList<Project>()
+        response.add(new Project())
+        when:
+        def testConnection = gitLabService.testConnection(gitCredentials)
+
+        then:
+
+        1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
+        1 * gitLabApi.getProjectApi() >> projectApi
+        1 * projectApi.getProjects(0, 1) >> response
+
+        assert testConnection
     }
 
     def "when trying to create branch if it does not exist should create it"() {
@@ -43,6 +94,21 @@ class GitLabServiceTest extends Specification {
         1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
         1 * gitLabApi.getRepositoryApi() >> repositoryApi
         1 * repositoryApi.createBranch(repositoryName, newBranchName, baseBranchName) >> branch
+    }
+
+    def "when trying to connect in GitLab server if does not works should throw exception"() {
+        given:
+        def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
+
+        when:
+        gitLabService.testConnection(gitCredentials)
+
+        then:
+        1 * gitLabClientFactory.buildGitClient(gitCredentials) >> { throw new GitLabApiException("git.Forbidden", 403) }
+
+        def exception = thrown(BusinessException.class)
+
+        assert exception.errorCode == MooveErrorCode.GIT_ERROR_FORBIDDEN
     }
 
     def "when trying to create branch if base branch does not exist should throw exception"() {
@@ -111,7 +177,58 @@ class GitLabServiceTest extends Specification {
         1 * mergeRequestApi.acceptMergeRequest(repositoryName, mergeRequest.iid)
     }
 
-    def "when  there is no merge request should create a new merge request"() {
+    def "when created merge request merge it if possible"() {
+        given:
+        def repositoryName = "repository-name"
+        def baseBranchName = "master"
+        def headBranchName = "head-branch"
+
+        mergeRequestFilter.sourceBranch = headBranchName
+        mergeRequestFilter.targetBranch = baseBranchName
+        mergeRequestFilter.state = Constants.MergeRequestState.OPENED
+
+        mergeRequest.mergeStatus = "merge"
+        mergeRequest.iid = 1
+
+        when:
+        gitLabService.createMergeRequestAndMergeItIfPossible(gitLabApi, repositoryName, headBranchName, baseBranchName)
+
+        then:
+        2 * gitLabApi.getMergeRequestApi() >> mergeRequestApi
+
+        1 * mergeRequestApi.createMergeRequest(repositoryName, headBranchName, baseBranchName, "MERGE $headBranchName into $baseBranchName",
+                GitLabService.COMMIT_MESSAGE, null) >> mergeRequest
+        1 * mergeRequestApi.acceptMergeRequest(repositoryName, mergeRequest.iid)
+    }
+
+    def "when trying merge request, if the mergeStatus were 'cannot_be_merged' should throw exception"() {
+        given:
+        def repositoryName = "repository-name"
+        def baseBranchName = "master"
+        def headBranchName = "head-branch"
+
+        mergeRequestFilter.sourceBranch = headBranchName
+        mergeRequestFilter.targetBranch = baseBranchName
+        mergeRequestFilter.state = Constants.MergeRequestState.OPENED
+
+        mergeRequest.mergeStatus = "cannot_be_merged"
+        mergeRequest.iid = 1
+
+        when:
+        gitLabService.createMergeRequestAndMergeItIfPossible(gitLabApi, repositoryName, headBranchName, baseBranchName)
+
+        then:
+        1 * gitLabApi.getMergeRequestApi() >> mergeRequestApi
+
+        1 * mergeRequestApi.createMergeRequest(repositoryName, headBranchName, baseBranchName, "MERGE $headBranchName into $baseBranchName",
+                GitLabService.COMMIT_MESSAGE, null) >> mergeRequest
+        0 * mergeRequestApi.acceptMergeRequest(repositoryName, mergeRequest.iid)
+
+        def exception = thrown(GitLabApiException.class)
+        assert exception.getHttpStatus() == HttpStatus.SC_CONFLICT
+    }
+
+    def "when there is no merge request should create a new merge request"() {
         given:
         def gitCredentials = new GitCredentials("https://gitlab.com", null, null, "token", GitServiceProvider.GITLAB)
         def repositoryName = "repository-name"
@@ -483,7 +600,7 @@ class GitLabServiceTest extends Specification {
         then:
         1 * gitLabClientFactory.buildGitClient(gitCredentials) >> gitLabApi
         1 * gitLabApi.getRepositoryApi() >> repositoryApi
-        1 * repositoryApi.deleteBranch(repositoryName, branchName) >> { throw new  GitLabApiException("404 Branch Not Found", 404) }
+        1 * repositoryApi.deleteBranch(repositoryName, branchName) >> { throw new GitLabApiException("404 Branch Not Found", 404) }
 
         def exception = thrown(BusinessException.class)
         assert exception.errorCode == MooveErrorCode.GIT_ERROR_BRANCH_NOT_FOUND

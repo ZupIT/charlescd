@@ -15,7 +15,7 @@
  */
 
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 
 export const oneComponentDiffSubsetsSameTagOctopipe: OctopipeDeploymentRequest = {
   namespace: 'sandbox',
@@ -82,6 +82,14 @@ export const oneComponentDiffSubsetsSameTagOctopipe: OctopipeDeploymentRequest =
             labels: {
               component: 'A',
               tag: 'v0',
+              circleId: 'default-circle-id'
+            },
+            name: 'default-circle-id'
+          },
+          {
+            labels: {
+              component: 'A',
+              tag: 'v0',
               circleId: 'circle-id3'
             },
             name: 'circle-id3'
@@ -93,14 +101,6 @@ export const oneComponentDiffSubsetsSameTagOctopipe: OctopipeDeploymentRequest =
               circleId: 'circle-id5'
             },
             name: 'circle-id5'
-          },
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: 'default-circle-id'
-            },
-            name: 'default-circle-id'
           }
         ]
       }

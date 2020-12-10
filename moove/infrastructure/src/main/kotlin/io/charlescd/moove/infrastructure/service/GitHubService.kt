@@ -155,14 +155,6 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
                 )
                 Optional.empty()
             }
-            logger.error("failed to create release: $releaseName with error: ${exception.message}")
-            handleResponseError(
-                error = exception,
-                repository = repository,
-                baseBranch = sourceBranch,
-                releaseName = releaseName
-            )
-            Optional.empty()
         }
     }
 
@@ -202,6 +194,20 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
             logger.error("failed to find branch: $branchName with error: ${exception.message}")
             handleResponseError(error = exception, repository = repository, branchName = branchName)
             Optional.empty()
+        }
+    }
+
+    override fun testConnection(gitCredentials: GitCredentials): Boolean {
+        logger.info("Testing connection into GitHub")
+        val client = getClient(gitCredentials)
+        val userService = getUserService(client)
+        val repositoryService = getRepositoryService(client)
+        return try {
+            userService.user != null && repositoryService.repositories != null
+        } catch (exception: Exception) {
+            logger.error("failed to connect to GitHub with error: ${exception.message}")
+            handleResponseError(error = exception)
+            return false
         }
     }
 

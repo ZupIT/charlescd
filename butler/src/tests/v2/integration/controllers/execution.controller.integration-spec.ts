@@ -1,18 +1,34 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService

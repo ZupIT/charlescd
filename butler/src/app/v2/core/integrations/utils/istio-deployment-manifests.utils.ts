@@ -15,7 +15,7 @@
  */
 
 import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
-import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
+import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
@@ -59,18 +59,12 @@ const IstioDeploymentManifestsUtils = {
   getDestinationRulesSubsets: (newComponent: DeploymentComponent, circleId: string, activeByName: Component[]): Subset[] => {
     const subsets: Subset[] = []
     subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(newComponent, circleId))
-
     activeByName.forEach(component => {
-      const activeCircleId = component.deployment?.circleId
-      if (DeploymentUtils.isDistinctAndNotDefault(component, circleId)) {
+      const activeCircleId = component.deployment.circleId
+      if (DeploymentUtils.isDistinctCircle(component, circleId)) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
-
-    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && component.deployment.defaultCircle)
-    if (defaultComponent && defaultComponent.deployment) {
-      subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(defaultComponent, defaultComponent.deployment.circleId))
-    }
     return subsets
   },
 
@@ -94,6 +88,7 @@ const IstioDeploymentManifestsUtils = {
     }
     return rules
   },
+
   getDefaultCircleHTTPRules: (newComponent: DeploymentComponent, activeByName: Component[], circleId: string): Http[] => {
     const rules: Http[] = []
 

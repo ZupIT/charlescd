@@ -118,3 +118,17 @@ test('renders Input component error', () => {
   expect(inputElement).toHaveStyle(`border-bottom: 1px solid ${borderColor}`);
   expect(labelElement).toHaveStyle(`color: ${color}`);
 });
+
+test('renders Input component with error message', async () => {
+  render(
+    <Input
+      error="message error"
+      type={textProps.type}
+      name={textProps.name}
+      label="Label"
+    />
+  );
+
+  const error = await screen.findByText('message error');
+  expect(error).toBeInTheDocument();
+});

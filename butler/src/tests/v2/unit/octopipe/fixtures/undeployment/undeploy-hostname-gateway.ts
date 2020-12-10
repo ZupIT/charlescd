@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 
 export const undeployHostnameGatewayOctopipe: OctopipeUndeploymentRequest = {
@@ -72,6 +72,14 @@ export const undeployHostnameGatewayOctopipe: OctopipeUndeploymentRequest = {
             labels: {
               component: 'A',
               tag: 'v0',
+              circleId: 'default-circle-id'
+            },
+            name: 'default-circle-id'
+          },
+          {
+            labels: {
+              component: 'A',
+              tag: 'v0',
               circleId: 'circle-id2'
             },
             name: 'circle-id2'
@@ -83,14 +91,6 @@ export const undeployHostnameGatewayOctopipe: OctopipeUndeploymentRequest = {
               circleId: 'circle-id3'
             },
             name: 'circle-id3'
-          },
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: 'default-circle-id'
-            },
-            name: 'default-circle-id'
           }
         ]
       }
