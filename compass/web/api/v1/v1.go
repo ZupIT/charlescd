@@ -33,6 +33,8 @@ import (
 	"github.com/ZupIT/charlescd/compass/web/api"
 	"github.com/casbin/casbin/v2"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth/limiter"
 	"github.com/google/uuid"
 	"io/ioutil"
 	"net/http"
@@ -60,6 +62,7 @@ type V1 struct {
 	Path      string
 	Enforcer  *casbin.Enforcer
 	MooveMain moove.UseCases
+	Limiter   *limiter.Limiter
 }
 
 type AuthToken struct {
@@ -72,12 +75,12 @@ const (
 	v1Path = "/api/v1"
 )
 
-func NewV1(mooveMain moove.UseCases, authEnforcer *casbin.Enforcer) UseCases {
+func NewV1(mooveMain moove.UseCases, authEnforcer *casbin.Enforcer, limiter *limiter.Limiter) UseCases {
 	router := httprouter.New()
 	router.GET("/health", health)
 	router.GET("/metrics", metricHandler)
 
-	return V1{Router: router, Path: v1Path, Enforcer: authEnforcer, MooveMain: mooveMain}
+	return V1{Router: router, Path: v1Path, Enforcer: authEnforcer, MooveMain: mooveMain, Limiter: limiter}
 }
 
 func metricHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -103,6 +106,12 @@ func (v1 V1) HttpValidator(
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		var err error
 		var workspaceUUID uuid.UUID
+
+		reqErr := tollbooth.LimitByRequest(v1.Limiter, w, r)
+		if reqErr != nil {
+			api.NewRestError(w, http.StatusTooManyRequests, []error{errors.New("take a break")})
+			return
+		}
 
 		workspaceID := strings.TrimSpace(r.Header.Get("x-workspace-id"))
 		if workspaceID == "" {
