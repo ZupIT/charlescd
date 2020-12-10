@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { ConsoleLoggerService } from '../../logs/console'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'

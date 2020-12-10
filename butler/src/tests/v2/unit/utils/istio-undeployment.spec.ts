@@ -1,5 +1,5 @@
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { DeploymentComponent } from '../../../../app/v2/api/deployments/interfaces/deployment.interface'
 import { IstioUndeploymentManifestsUtils } from '../../../../app/v2/core/integrations/utils/istio-undeployment-manifests.utils'
 import { noRepeatedUndeploymentCircleDr } from './fixtures/undeployment/no-repeated-undeployment-circle-dr'

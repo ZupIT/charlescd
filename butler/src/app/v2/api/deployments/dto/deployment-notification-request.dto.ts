@@ -15,7 +15,7 @@
  */
 
 import { IsEnum, IsNotEmpty } from 'class-validator'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { ExecutionTypeEnum } from '../enums'
 import { ApiProperty } from '@nestjs/swagger'
 
