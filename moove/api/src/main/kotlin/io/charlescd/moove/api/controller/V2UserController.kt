@@ -51,21 +51,13 @@ class V2UserController(
         return findUserByEmailInteractor.execute(email)
     }
 
-    @ApiOperation(value = "Find user by Id")
-    @GetMapping("/id/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    fun findById(
-        @RequestHeader(value = "Authorization") authorization: String,
-        @PathVariable("id") id: UUID
-    ) = findUserByIdInteractor.execute(authorization, id)
-
     @ApiOperation(value = "Find user workspaces")
     @GetMapping("/{id}/workspaces")
     @ResponseStatus(HttpStatus.OK)
     fun findWorkspacesByUserId(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: UUID
-    ) : List<SimpleWorkspaceResponse>{
+    ): List<SimpleWorkspaceResponse> {
         return findUserByIdInteractor.execute(authorization, id).workspaces
     }
 
