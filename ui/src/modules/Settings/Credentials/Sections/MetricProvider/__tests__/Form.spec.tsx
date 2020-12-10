@@ -21,7 +21,6 @@ import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
-import * as TestConnectionHook from 'core/hooks/useTestConnection';
 import { FetchMock } from 'jest-fetch-mock/types';
 
 test('render Metrics Provider default component', async () => {
@@ -61,23 +60,13 @@ test('render datasource input by datasource change', async () => {
 })
 
 test.only('render button test connection', async () => {
-  const testConnection = jest.fn()
-  const finish = jest.fn();
-  
-  jest.spyOn(MetricProviderHooks, 'usePlugins').mockImplementation(() => ({
-    getAll: jest.fn,
-    response: Plugins
-  }));
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(Plugins))
+    .mockResponseOnce(JSON.stringify({
+      response: '401 unauthorized'
+    }));
 
-  jest.spyOn(TestConnectionHook, 'useTestConnection').mockImplementation(() => ({
-    save: testConnection,
-    loading: false,
-    response: '401 unauthorized'
-  }));
-
-  render(
-    <Form onFinish={finish} />
-  );
+  render(<Form onFinish={jest.fn()}/>)
 
   const datasourcePlugin1 = await screen.findByText('Select a datasource plugin');
   selectEvent.select(datasourcePlugin1, 'Prometheus');
@@ -93,9 +82,10 @@ test.only('render button test connection', async () => {
   await act(() => userEvent.type(screen.getByTestId('input-text-data.url'), 'name'));
 
   const btn = await screen.findByTestId('button-default-test-connection');
-
   expect(btn).not.toBeDisabled();
 
-  userEvent.click(screen.getByTestId('button-default-test-connection'));
-  expect(testConnection).toHaveBeenCalled();
+  userEvent.click(btn);
+
+  const status = await screen.findByTestId("connection-success");
+  expect(status).toBeInTheDocument();
 });
