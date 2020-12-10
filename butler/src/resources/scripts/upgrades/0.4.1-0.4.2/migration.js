@@ -42,6 +42,7 @@ const getDefaultActiveCircleDeployments = async (pgClient) => {
     return deployments.rows
   } catch (error) {
     console.error(chalk.red(`Error fetching active default deployments: ${error}`))
+    closePgConnection(pgClient)
   }
 }
 
