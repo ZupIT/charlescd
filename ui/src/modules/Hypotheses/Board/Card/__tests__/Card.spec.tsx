@@ -178,3 +178,22 @@ test('render Card type.ACTION and open dropdown options', async () => {
   const DropdownOptions = await screen.findByTestId("dropdown-actions");
   expect(DropdownOptions).toBeInTheDocument();
 });
+
+test('render Card type.FEATURE and open modal to delete card', async () => {
+  render(<CardBoard {...propsFeature} />);
+
+  const Card = await screen.findByTestId(`card-board-${propsFeature.card.id}`);
+  expect(Card).toBeInTheDocument();
+
+  const DropdownTrigger = await screen.findByTestId("icon-vertical-dots");
+  await act(async () => userEvent.click(DropdownTrigger));
+
+  const DropdownOptions = await screen.findByTestId("dropdown-actions");
+  expect(DropdownOptions).toBeInTheDocument();
+
+  const DeleteAction = await screen.findByTestId("dropdown-item-delete-Delete");
+  await act(async () => userEvent.click(DeleteAction));
+
+  const Modal = await screen.findByText("Choose what you want to delete");
+  expect(Modal).toBeInTheDocument();
+});
