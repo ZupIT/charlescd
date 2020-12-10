@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
+import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
 import io.charlescd.moove.infrastructure.service.client.response.IdentifyResponse
@@ -25,7 +26,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "circleMatcherClient", url = "\${charlescd.matcher.url}")
+@FeignClient(name = "circleMatcherClient", url = "\${charlescd.matcher.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface CircleMatcherClient {
 
     @ResponseBody

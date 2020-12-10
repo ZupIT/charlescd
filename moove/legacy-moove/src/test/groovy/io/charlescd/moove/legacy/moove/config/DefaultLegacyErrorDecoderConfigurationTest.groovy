@@ -14,28 +14,37 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.configuration
+package io.charlescd.moove.legacy.moove.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
-import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
+import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyErrorDecoderConfiguration
+import org.springframework.beans.factory.ObjectFactory
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 
-
-
-class FeignErrorDecoderConfigurationTest extends Specification {
-    FeignErrorDecoderConfiguration feignErrorDecoderConfiguration
+class DefaultLegacyErrorDecoderConfigurationTest extends Specification {
+    DefaultLegacyErrorDecoderConfiguration feignErrorDecoderConfiguration
     ErrorDecoder errorDecoder
+
+    void setup() {
+        HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper())
+        ObjectFactory<HttpMessageConverters> objectFactory = { -> new HttpMessageConverters(jacksonConverter) }
+        feignErrorDecoderConfiguration = new DefaultLegacyErrorDecoderConfiguration(objectFactory)
+        errorDecoder = feignErrorDecoderConfiguration.defaultLegacyErrorDecoder()
+    }
 
     def "should return illegal argument exception when status is 400"() {
         given:
-        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration()
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def response = GroovyMock(Response)
         def body = Mock(Response.Body)
         ReflectionTestUtils.setField(response, "status", 400)
-        ReflectionTestUtils.setField(response, "body",body)
+        ReflectionTestUtils.setField(response, "body", body)
 
         when:
         def exception = errorDecoder.decode("methodkey", response)
@@ -48,34 +57,27 @@ class FeignErrorDecoderConfigurationTest extends Specification {
     }
 
     def "should return business exception when status is 422"() {
-        given:
-
-        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration()
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def response = GroovyMock(Response)
         def body = Mock(Response.Body)
-        ReflectionTestUtils.setField(response,"reason", 'Error')
-        ReflectionTestUtils.setField(response,"status", 422)
-        ReflectionTestUtils.setField(response,"body", body)
+        ReflectionTestUtils.setField(response, "reason", 'Error')
+        ReflectionTestUtils.setField(response, "status", 422)
+        ReflectionTestUtils.setField(response, "body", body)
 
         when:
         def exception = errorDecoder.decode("methodkey", response)
 
         then:
         body.asInputStream() >> this.getArrayMessageReturnAsInputStream()
-        assert exception instanceof BusinessException
+        assert exception instanceof BusinessExceptionLegacy
         assert exception.message == '[0.Sum of lengths of componentName and buildImageTag cant be greater than 63]'
     }
 
     def "should return RunTimeException when status is 500"() {
-        given:
-        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def response = GroovyMock(Response)
         def body = Mock(Response.Body)
-        ReflectionTestUtils.setField(response,"reason", 'Error')
-        ReflectionTestUtils.setField(response,"status", 500)
-        ReflectionTestUtils.setField(response,"body", body)
+        ReflectionTestUtils.setField(response, "reason", 'Error')
+        ReflectionTestUtils.setField(response, "status", 500)
+        ReflectionTestUtils.setField(response, "body", body)
 
         when:
         def exception = errorDecoder.decode("methodkey", response)
@@ -87,9 +89,6 @@ class FeignErrorDecoderConfigurationTest extends Specification {
     }
 
     def "should return RunTimeException when response is null"() {
-        given:
-        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def body = Mock(Response.Body)
 
         when:
@@ -102,14 +101,11 @@ class FeignErrorDecoderConfigurationTest extends Specification {
     }
 
     def "should return RunTimeException when fails to  read response"() {
-        given:
-        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def body = Mock(Response.Body)
         def response = GroovyMock(Response)
-        ReflectionTestUtils.setField(response,"reason", 'Error')
-        ReflectionTestUtils.setField(response,"status", 500)
-        ReflectionTestUtils.setField(response,"body", body)
+        ReflectionTestUtils.setField(response, "reason", 'Error')
+        ReflectionTestUtils.setField(response, "status", 500)
+        ReflectionTestUtils.setField(response, "body", body)
 
         when:
         def exception = errorDecoder.decode("methodkey", response)
@@ -121,14 +117,11 @@ class FeignErrorDecoderConfigurationTest extends Specification {
     }
 
     def "should return run time exception with the original message when can not parse the object "() {
-        given:
-        feignErrorDecoderConfiguration = new FeignErrorDecoderConfiguration();
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
         def body = Mock(Response.Body)
         def response = GroovyMock(Response)
-        ReflectionTestUtils.setField(response,"reason", 'Error')
-        ReflectionTestUtils.setField(response,"status", 500)
-        ReflectionTestUtils.setField(response,"body", body)
+        ReflectionTestUtils.setField(response, "reason", 'Error')
+        ReflectionTestUtils.setField(response, "status", 500)
+        ReflectionTestUtils.setField(response, "body", body)
 
         when:
         def exception = errorDecoder.decode("methodkey", response)
@@ -145,8 +138,9 @@ class FeignErrorDecoderConfigurationTest extends Specification {
                 "    \"message\": \"CdConfiguration not found - id: e29fe7e8-4b35-453a-ad8b-4da910861851\",\n" +
                 "    \"error\": \"Not Found\"\n" +
                 "}"
-       return new ByteArrayInputStream(response.getBytes())
+        return new ByteArrayInputStream(response.getBytes())
     }
+
     private InputStream getArrayMessageReturnAsInputStream() {
         String response = "{\n" +
                 "    \"statusCode\": 400,\n" +
@@ -165,5 +159,3 @@ class FeignErrorDecoderConfigurationTest extends Specification {
 
 
 }
-
-
