@@ -9,3 +9,5 @@ dependencies:
   condition: nginx.enabled
 - name: keycloak
   condition: keycloak.enabled
+- name: metacontroller
+  conditon: metacontroller.enabled

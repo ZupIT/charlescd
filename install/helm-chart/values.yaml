@@ -11,8 +11,8 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.4.4
-    pullPolicy: Always
+    name: charlescd-butler:1.0
+    pullPolicy: Never
   service:
     name: charlescd-butler
     type: ClusterIP
@@ -117,7 +117,7 @@ ui:
       memory: 64Mi
 
 circlematcher:
-  enabled: true
+  enabled: false
   name: charlescd-circle-matcher
   redis:
     host: charlescd-redis-master
@@ -144,7 +144,7 @@ circlematcher:
       memory: 128Mi
 
 keycloak:
-  enabled: true
+  enabled: false
   keycloak:
     extraEnv: |
       - name: PROXY_ADDRESS_FORWARDING
@@ -178,11 +178,11 @@ postgresql:
   postgresqlPassword: "firstpassword"
 
 redis:
-  enabled: true
+  enabled: false
   password: "hb2Fj9MGKjBkZ6zV"
 
 nginx:
-  enabled: true
+  enabled: false
   ui:
     enabled: true
   moove:
@@ -256,3 +256,6 @@ compass:
     requests:
       cpu: 64m
       memory: 64Mi
+
+metacontroller:
+  enabled: true

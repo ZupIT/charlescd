@@ -47,10 +47,4 @@ spec:
     plural: charlesroutes
     singular: charlesroute
   scope: Namespaced
----
-apiVersion: charlescd.io/v1
-kind: CharlesRoutes
-metadata:
-  name: cluster-routes
-spec:
-  components:
+  
