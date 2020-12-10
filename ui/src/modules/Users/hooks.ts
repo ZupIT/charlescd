@@ -27,6 +27,7 @@ import {
   resetPasswordById,
   updateProfileById,
   findUserByEmail,
+  findUserById,
   createNewUser,
   deleteUserById
 } from 'core/providers/users';
@@ -39,11 +40,13 @@ import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
+  findById: Function;
   user: User;
   error: ResponseError;
 } => {
   const dispatch = useDispatch();
   const getUserByEmail = useFetchData<User>(findUserByEmail);
+  const getUserById = useFetchData<User>(findUserById);
   const [user, setUser] = useState<User>(null);
   const [error, setError] = useState<ResponseError>(null);
 
@@ -52,8 +55,6 @@ export const useUser = (): {
       try {
         if (email) {
           const res = await getUserByEmail(email);
-
-          setUser(res);
 
           return res;
         }
@@ -73,8 +74,35 @@ export const useUser = (): {
     [dispatch, getUserByEmail]
   );
 
+  const findById = useCallback(
+    async (id: Pick<User, 'id'>) => {
+      try {
+        if (id) {
+          const res = await getUserById(id);
+
+          setUser(res);
+
+          return res;
+        }
+      } catch (e) {
+        setError(e);
+
+        if (!isIDMAuthFlow()) {
+          dispatch(
+            toogleNotification({
+              text: `Error when trying to fetch the user info for id ${id}`,
+              status: 'error'
+            })
+          );
+        }
+      }
+    },
+    [dispatch, getUserById]
+  );
+
   return {
     findByEmail,
+    findById,
     user,
     error
   };
