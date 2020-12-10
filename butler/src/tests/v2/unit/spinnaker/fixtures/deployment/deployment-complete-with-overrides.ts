@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces/spinnaker-pipeline.interface'
 
 export const completeWithOverrides : SpinnakerPipeline = {
