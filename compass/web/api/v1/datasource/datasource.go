@@ -3,87 +3,105 @@ package datasource
 import (
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/web/api/util"
+	"github.com/gorilla/mux"
 	"net/http"
 
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/google/uuid"
-	"github.com/julienschmidt/httprouter"
 )
 
 func FindAllByWorkspace(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		dataSources, dbErr := dataSourceApi.dataSourceMain.FindAllByWorkspace(workspaceID, r.URL.Query().Get("healthy"))
+		workspaceID := r.Header.Get("x-workspace-id")
+		workspaceUUID, parseErr := uuid.Parse(workspaceID)
+		if parseErr != nil {
+			util.NewResponse(w, http.StatusInternalServerError, parseErr)
+		}
+
+		dataSources, dbErr := datasourceMain.FindAllByWorkspace(workspaceUUID, r.URL.Query().Get("healthy"))
 		if dbErr != nil {
-			api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error doing the process")})
+			util.NewResponse(w, http.StatusInternalServerError, []error{errors.New("error doing the process")})
 			return
 		}
 
-		api.NewRestSuccess(w, http.StatusOK, dataSources)
+		util.NewResponse(w, http.StatusOK, dataSources)
 	}
 }
 
-type TestConnection struct {
+type TestConnectionData struct {
 	PluginSrc string          `json:"pluginSrc"`
 	Data      json.RawMessage `json:"data"`
 }
 
-func testConnection(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func TestConnection(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var newTestConnection TestConnection
+		var newTestConnection TestConnectionData
 		err := json.NewDecoder(r.Body).Decode(&newTestConnection)
 		if err != nil {
-			api.NewRestError(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, []error{err})
 			return
 		}
 
-		err = dataSourceApi.dataSourceMain.TestConnection(newTestConnection.PluginSrc, newTestConnection.Data)
+		err = datasourceMain.TestConnection(newTestConnection.PluginSrc, newTestConnection.Data)
 		if err != nil {
-			api.NewRestError(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, []error{err})
 			return
 		}
 
-		api.NewRestSuccess(w, http.StatusNoContent, nil)
+		util.NewResponse(w, http.StatusNoContent, nil)
 	}
 }
 
-func create(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func Create(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		dataSource, err := dataSourceApi.dataSourceMain.Parse(r.Body)
+		dataSource, err := datasourceMain.Parse(r.Body)
 		if err != nil {
-			api.NewRestError(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, []error{err})
 			return
 		}
-		dataSource.WorkspaceID = workspaceID
+		workspaceID := r.Header.Get("x-workspace-id")
+		workspaceUUID, parseErr := uuid.Parse(workspaceID)
+		if parseErr != nil {
+			util.NewResponse(w, http.StatusInternalServerError, parseErr)
+		}
+		dataSource.WorkspaceID = workspaceUUID
 
-		if err := dataSourceApi.dataSourceMain.Validate(dataSource); len(err) > 0 {
-			api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not create datasource")
+		if err := datasourceMain.Validate(dataSource); len(err) > 0 {
+			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		createdDataSource, err := dataSourceApi.dataSourceMain.Save(dataSource)
+		createdDataSource, err := datasourceMain.Save(dataSource)
 		if err != nil {
-			api.NewRestError(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, []error{err})
 			return
 		}
 
-		api.NewRestSuccess(w, http.StatusOK, createdDataSource)
+		util.NewResponse(w, http.StatusOK, createdDataSource)
 	}
 }
 
-func deleteDataSource(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ uuid.UUID) {
-	err := dataSourceApi.dataSourceMain.Delete(ps.ByName("id"))
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
+func Delete(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := mux.Vars(r)["datasourceID"]
+		err := datasourceMain.Delete(id)
+		if err != nil {
+			util.NewResponse(w, http.StatusInternalServerError, []error{err})
+			return
+		}
+		util.NewResponse(w, http.StatusNoContent, nil)
 	}
-	w.WriteHeader(http.StatusNoContent)
 }
 
-func getMetrics(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
-	metrics, err := dataSourceApi.dataSourceMain.GetMetrics(ps.ByName("id"))
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
+func GetMetrics(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := mux.Vars(r)["datasourceID"]
+		metrics, err := datasourceMain.GetMetrics(id)
+		if err != nil {
+			util.NewResponse(w, http.StatusInternalServerError, []error{err})
+			return
+		}
+		util.NewResponse(w, http.StatusOK, metrics)
 	}
-	api.NewRestSuccess(w, http.StatusOK, metrics)
 }
