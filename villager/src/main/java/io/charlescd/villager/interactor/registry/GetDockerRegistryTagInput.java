@@ -19,14 +19,14 @@ package io.charlescd.villager.interactor.registry;
 public class GetDockerRegistryTagInput {
     private String artifactName;
     private String workspaceId;
-    private String artifactRepositoryConfigurationId;
+    private String configurationId;
     private String name;
 
     private GetDockerRegistryTagInput(String artifactName, String workspaceId,
-                                      String artifactRepositoryConfigurationId, String name) {
+                                      String configurationId, String name) {
         this.artifactName = artifactName;
         this.workspaceId = workspaceId;
-        this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
+        this.configurationId = configurationId;
         this.name = name;
     }
 
@@ -39,8 +39,8 @@ public class GetDockerRegistryTagInput {
         return workspaceId;
     }
 
-    public String getArtifactRepositoryConfigurationId() {
-        return artifactRepositoryConfigurationId;
+    public String getConfigurationId() {
+        return configurationId;
     }
 
     public String getName() {
@@ -54,8 +54,9 @@ public class GetDockerRegistryTagInput {
     public static final class ListDockerRegistryTagsInputBuilder {
         private String artifactName;
         private String workspaceId;
-        private String artifactRepositoryConfigurationId;
+        private String configurationId;
         private String name;
+
 
         private ListDockerRegistryTagsInputBuilder() {
         }
@@ -74,9 +75,9 @@ public class GetDockerRegistryTagInput {
             return this;
         }
 
-        public ListDockerRegistryTagsInputBuilder withArtifactRepositoryConfigurationId(
+        public ListDockerRegistryTagsInputBuilder withConfigurationId(
                 String artifactRepositoryConfigurationId) {
-            this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
+            this.configurationId = artifactRepositoryConfigurationId;
             return this;
         }
 
@@ -86,7 +87,7 @@ public class GetDockerRegistryTagInput {
         }
 
         public GetDockerRegistryTagInput build() {
-            return new GetDockerRegistryTagInput(artifactName, workspaceId, artifactRepositoryConfigurationId, name);
+            return new GetDockerRegistryTagInput(artifactName, workspaceId, configurationId, name);
         }
     }
 }
