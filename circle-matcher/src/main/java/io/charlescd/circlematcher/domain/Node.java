@@ -105,12 +105,6 @@ public class Node {
     }
 
     @JsonIgnore
-    public boolean isNotDecomposable() {
-        return (NodeType.CLAUSE == type && LogicalOperatorType.AND == logicalOperator)
-                || NodeType.RULE == type;
-    }
-
-    @JsonIgnore
     public boolean isDecomposable() {
         return NodeType.CLAUSE == type
                 && LogicalOperatorType.OR == logicalOperator;
@@ -118,8 +112,7 @@ public class Node {
 
     @JsonIgnore
     public boolean isConvertibleToKv() {
-        return NodeType.RULE == type
-                && content != null
+        return isValidRuleType()
                 && Condition.EQUAL.name().equals(content.getCondition());
     }
 }

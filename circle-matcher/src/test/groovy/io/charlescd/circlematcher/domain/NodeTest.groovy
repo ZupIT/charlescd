@@ -137,25 +137,6 @@ class NodeTest extends Specification {
         assert expression == "((toStr(getPath(input, 'username')) == toStr('email@zup.com.br'))&&(toStr(getPath(input, 'age')) == toStr(35)))"
     }
 
-    def "Not decomposable node when type is CLAUSE and operator is AND"() {
-        given:
-        def node = new Node(NodeType.CLAUSE, LogicalOperatorType.AND, [new Node()], null)
-        when:
-        def notDecomposable = node.isNotDecomposable()
-        then:
-        assert notDecomposable
-    }
-
-    def "Not decomposable node when type is RULE"() {
-        given:
-        def contentUsername = new Content("username", "EQUAL", ["email@zup.com.br"])
-        def node = new Node(NodeType.RULE, null, [], contentUsername)
-        when:
-        def notDecomposable = node.isNotDecomposable()
-        then:
-        assert notDecomposable
-    }
-
     def "Decomposable node when type is CLAUSE and operator is OR"() {
         given:
         def node = new Node(NodeType.CLAUSE, LogicalOperatorType.OR, [new Node()], null)
@@ -163,6 +144,25 @@ class NodeTest extends Specification {
         def decomposable = node.isDecomposable()
         then:
         assert decomposable
+    }
+
+    def "Not decomposable node when type is RULE"() {
+        given:
+        def contentUsername = new Content("username", "EQUAL", ["email@zup.com.br"])
+        def node = new Node(NodeType.RULE, null, [], contentUsername)
+        when:
+        def decomposable = node.isDecomposable()
+        then:
+        assert !decomposable
+    }
+
+    def "Decomposable node when type is CLAUSE and operator is AND"() {
+        given:
+        def node = new Node(NodeType.CLAUSE, LogicalOperatorType.AND, [new Node()], null)
+        when:
+        def decomposable = node.isDecomposable()
+        then:
+        assert !decomposable
     }
 
     def "Convertible to Kv"() {
@@ -173,5 +173,24 @@ class NodeTest extends Specification {
         def convertibleToKv = node.isConvertibleToKv()
         then:
         assert convertibleToKv
+    }
+
+    def "Not convertible to Kv when node is not a valid RULE type"() {
+        given:
+        def invalidNodeRuleType = new Node(NodeType.RULE, null, [], null)
+        when:
+        def convertibleToKv = invalidNodeRuleType.isConvertibleToKv()
+        then:
+        assert !convertibleToKv
+    }
+
+    def "Not convertible to Kv when content condition is not EQUAL"() {
+        given:
+        def contentNotEqualCondition = new Content("username", "CONTAINS", ["email@zup.com.br"])
+        def node = new Node(NodeType.RULE, null, [], contentNotEqualCondition)
+        when:
+        def convertibleToKv = node.isConvertibleToKv()
+        then:
+        assert !convertibleToKv
     }
 }

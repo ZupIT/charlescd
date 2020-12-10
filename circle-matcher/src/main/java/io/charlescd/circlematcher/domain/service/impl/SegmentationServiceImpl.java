@@ -125,10 +125,10 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     private void recursiveNodeExtraction(Node node, List<Node> nodes) {
-        if (node.isNotDecomposable()) {
-            nodes.add(node);
-        } else if (node.isDecomposable()) {
+        if (node.isDecomposable()) {
             node.getClauses().forEach(item -> recursiveNodeExtraction(item, nodes));
+        } else {
+            nodes.add(node);
         }
     }
 
