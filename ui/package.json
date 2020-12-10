@@ -27,6 +27,8 @@
     "react-hook-form": "^6.10.1",
     "react-infinite-scroll-component": "^5.0.5",
     "react-popper": "^2.2.3",
+    "react-query": "^2.26.4",
+    "react-query-devtools": "^2.6.3",
     "react-router-dom": "^5.1.2",
     "react-select": "^3.1.0",
     "react-svg": "^11.0.11",

@@ -41,7 +41,9 @@ const Circles = () => {
 
   useEffect(() => {
     filterCircles(name, status);
-    if (message === 'Deleted') filterCircles(name, status);
+    if (message === 'success') {
+      filterCircles(name, status);
+    }
   }, [status, name, filterCircles, message]);
 
   const renderPlaceholder = () => (

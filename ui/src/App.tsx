@@ -16,6 +16,8 @@
 
 import React, { useReducer } from 'react';
 import { ThemeProvider } from 'styled-components';
+import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query-devtools';
 import GlobalStyle from 'core/assets/style/global';
 import THEME from 'core/assets/themes';
 import { Provider as ContextProvider } from 'core/state/store';
@@ -38,17 +40,29 @@ interface Props {
   isMicrofrontend?: boolean;
 }
 
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false
+    }
+  }
+});
+
 function App({ isMicrofrontend }: Props) {
   const globalState = useReducer(rootReducer, rootState);
   setIsMicrofrontend(isMicrofrontend);
 
   return (
-    <ContextProvider value={globalState}>
-      <ThemeProvider theme={THEME[currentTheme]}>
-        <Routes />
-        <GlobalStyle />
-      </ThemeProvider>
-    </ContextProvider>
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <ReactQueryDevtools />
+      <ContextProvider value={globalState}>
+        <ThemeProvider theme={THEME[currentTheme]}>
+          <Routes />
+          <GlobalStyle />
+        </ThemeProvider>
+      </ContextProvider>
+    </ReactQueryCacheProvider>
   );
 }
 

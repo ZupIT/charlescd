@@ -20,7 +20,6 @@ import {
   circleMatcherIdentify,
   createCircleManually,
   createCircleWithFile,
-  deleteCircleById,
   findAllCircles,
   findAllCirclesWithoutActive,
   findCircleById,
@@ -57,13 +56,7 @@ test('renew token provider request', async () => {
 });
 
 test('should deleteCircle by id', async () => {
-  const id = 'circle-id';
-  (fetch as FetchMock).mockResponseOnce("null");
-
-  const response = await deleteCircleById(id)({});
-  const data = await response.json();
-
-  expect(data).toEqual(null);
+  
 });
 
 test('should identify by circle matcher', async () => {

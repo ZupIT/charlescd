@@ -20,12 +20,14 @@ import {
   findAllCircles,
   findCircleById,
   findComponents,
-  deleteCircleById,
   updateCircleWithFile,
   createCircleWithFile,
   createCircleManually,
   updateCircleManually,
-  findAllCirclesWithoutActive
+  findAllCirclesWithoutActive,
+  findCircleByIdQuery,
+  findComponentsQuery,
+  deleteCircleByIdQuery
 } from 'core/providers/circle';
 import { undeploy } from 'core/providers/deployment';
 import { useDispatch } from 'core/state/hooks';
@@ -45,6 +47,7 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { buildFormData } from './helpers';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import { Pagination } from 'core/interfaces/Pagination';
+import { useMutation, useQuery } from 'react-query';
 
 export enum CIRCLE_TYPES {
   metrics = 'metrics',
@@ -56,6 +59,18 @@ export enum CIRCLE_STATUS {
   inactives = 'inactives',
   hypotheses = 'hypotheses'
 }
+
+export const useCircleQuery = (id: string) => {
+  return useQuery(['getCircleById', id], findCircleByIdQuery, {
+    enabled: id !== NEW_TAB
+  });
+};
+
+export const useCircleComponentsQuery = (id: string, hasDeploy: boolean) => {
+  return useQuery(['getCircleComponents', id], findComponentsQuery, {
+    enabled: hasDeploy
+  });
+};
 
 export const useCircle = () => {
   const [circle, getCircle] = useFetch<Circle>(findCircleById);
@@ -119,50 +134,44 @@ export const useCirclePolling = (): {
   };
 };
 
-export const useDeleteCircle = (): [Function, string] => {
-  const [deleteData, deleteCircle] = useFetch<Circle>(deleteCircleById);
-  const [circleName, setCircleName] = useState(undefined);
-  const [circleStatus, setCircleStatus] = useState('');
-  const { response, error } = deleteData;
+export const useDeleteCircleQuery = () => {
   const dispatch = useDispatch();
+  const [mutate, { status }] = useMutation(deleteCircleByIdQuery, {
+    onError: (error, { name }) => {
+      dispatch(
+        toogleNotification({
+          text: `The circle ${name} could not be deleted.`,
+          status: 'error'
+        })
+      );
+    },
+    onSuccess: (error, { name }) => {
+      dispatch(
+        toogleNotification({
+          text: `The circle ${name} has been deleted.`,
+          status: 'success'
+        })
+      );
+    }
+  });
 
-  const delCircle = useCallback(
-    (id: string, deployStatus: string, circleName: string) => {
-      setCircleName(circleName);
+  const deleteCircle = useCallback(
+    (id: string, deployStatus: string, name: string) => {
       if (deployStatus === undefined) {
-        deleteCircle(id);
+        mutate({ id, name });
       } else {
         dispatch(
           toogleNotification({
-            text: `The circle ${circleName} could not be deleted.`,
+            text: `The circle ${name} could not be deleted.`,
             status: 'error'
           })
         );
       }
     },
-    [deleteCircle, dispatch]
+    [dispatch, mutate]
   );
 
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `The circle ${circleName} could not be deleted.`,
-          status: 'error'
-        })
-      );
-    } else if (response) {
-      setCircleStatus('Deleted');
-      dispatch(
-        toogleNotification({
-          text: `The circle ${circleName} has been deleted.`,
-          status: 'success'
-        })
-      );
-    }
-  }, [response, error, dispatch, circleName]);
-
-  return [delCircle, circleStatus];
+  return { deleteCircle, deleteCircleStatus: status };
 };
 
 export const useCirclesData = () => {

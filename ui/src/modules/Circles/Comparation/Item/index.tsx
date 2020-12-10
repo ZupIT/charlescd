@@ -18,11 +18,12 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
 import {
-  useCircle,
-  useDeleteCircle,
   useSaveCircleManually,
   useSaveCircleWithFile,
-  useCircleUndeploy
+  useCircleUndeploy,
+  useCircleQuery,
+  useCircleComponentsQuery,
+  useDeleteCircleQuery
 } from 'modules/Circles/hooks';
 import { delParam, updateParam } from 'core/utils/path';
 import { useDispatch } from 'core/state/hooks';
@@ -52,7 +53,8 @@ import {
   isDefaultCircle,
   pathCircleById,
   isUndeployable,
-  isBusy
+  isBusy,
+  hasDeploy
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -63,14 +65,17 @@ interface Props {
 }
 
 const CirclesComparationItem = ({ id, onChange }: Props) => {
+  const { data: circleResponse, isLoading, refetch } = useCircleQuery(id);
+  const { data: components } = useCircleComponentsQuery(
+    id,
+    hasDeploy(circleResponse)
+  );
+  const { deleteCircle, deleteCircleStatus } = useDeleteCircleQuery();
+  const isEditing = id !== NEW_TAB;
+
   const history = useHistory();
   const dispatch = useDispatch();
   const [activeSection, setActiveSection] = useState<SECTIONS>();
-  const [isEditing, setIsEditing] = useState(false);
-  const [data, circleActions] = useCircle();
-  const { circleResponse, components, loading } = data;
-  const { loadCircle, loadComponents } = circleActions;
-  const [delCircle, delCircleResponse] = useDeleteCircle();
   const {
     undeployRelease,
     status: undeployStatus,
@@ -116,12 +121,6 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   }, [dispatch, updateManualResponse]);
 
   useEffect(() => {
-    if (circle?.deployment) {
-      loadComponents(id);
-    }
-  }, [id, loadComponents, circle]);
-
-  useEffect(() => {
     if (undeployStatus === 'resolved') {
       resetUndeployStatus();
       setCircle({
@@ -135,23 +134,14 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   }, [undeployStatus, setCircle, circle, resetUndeployStatus]);
 
   useEffect(() => {
-    if (id === NEW_TAB) {
-      setIsEditing(false);
-    } else {
-      setIsEditing(true);
-      loadCircle(id);
-    }
-  }, [id, loadCircle]);
-
-  useEffect(() => {
-    if (delCircleResponse === 'Deleted') {
-      onChange(delCircleResponse);
+    if (deleteCircleStatus === 'success') {
+      onChange(deleteCircleStatus);
       delParam('circle', routes.circlesComparation, history, id);
     }
-  }, [delCircleResponse, history, id, onChange]);
+  }, [deleteCircleStatus, history, id, onChange]);
 
   const handleDelete = (deployStatus: string) => {
-    delCircle(id, deployStatus, circle?.name);
+    deleteCircle(id, deployStatus, circle?.name);
     setAction('');
   };
 
@@ -167,7 +157,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
 
   const onSaveCircle = (circleData: Circle) => {
     if (isEditing) {
-      loadCircle(id);
+      refetch();
     } else {
       updateParam(
         'circle',
@@ -325,7 +315,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
 
   return (
     <Styled.Wrapper data-testid={`circle-comparation-item-${id}`}>
-      {loading && isEditing ? <Loader.Tab /> : renderPanel()}
+      {isLoading && isEditing ? <Loader.Tab /> : renderPanel()}
     </Styled.Wrapper>
   );
 };
