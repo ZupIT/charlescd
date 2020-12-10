@@ -529,7 +529,7 @@ class CardService(
 
     private fun verifyIsProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
         val branchName = cardRepresentation.feature?.branchName
-        if (StringUtils.isEmpty(branchName)) {
+        if (!StringUtils.isEmpty(branchName)) {
             return isProtectedBranch(branchName.toString())
         }
         return false
