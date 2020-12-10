@@ -33,6 +33,14 @@ import {
   OctopipeGenericConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
 } from './app/v2/core/validations/schemas'
+import { Request, Response, Router } from 'express'
+
+const healtCheckRouter = Router()
+healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
+  res.send({
+    'status': 'ok'
+  })
+})
 
 async function bootstrap() {
 
@@ -60,6 +68,7 @@ async function bootstrap() {
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
   app.use(rTracer.expressMiddleware())
+  app.use(healtCheckRouter)
   SwaggerModule.setup('/api/swagger', app, document)
   app.enableShutdownHooks()
   await app.listen(3000)
