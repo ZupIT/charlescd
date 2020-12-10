@@ -8,6 +8,7 @@ data:
     }
 
     http {
+        server_tokens off;
         resolver kube-dns.kube-system.svc.cluster.local;
         lua_package_path '/usr/local/openresty/site/?.lua;;';
         # cache for discovery metadata documents

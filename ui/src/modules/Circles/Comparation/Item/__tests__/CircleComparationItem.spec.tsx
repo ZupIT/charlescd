@@ -61,6 +61,7 @@ const circle = {
   }
 }
 
+
 test('render CircleComparationItem default component', async () => {
   const handleChange = jest.fn();
 
