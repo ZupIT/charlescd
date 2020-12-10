@@ -50,7 +50,7 @@ class SegmentationServiceImplTest extends Specification {
         values.add(value)
 
         def content = new Content("username", "CONTAINS", values)
-        def node = TestUtils.createNode(content)
+        def node = TestUtils.createClauseNode([TestUtils.createNode(content)])
         def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def request = TestUtils.createSegmentationRequest(node, SegmentationType.REGULAR)

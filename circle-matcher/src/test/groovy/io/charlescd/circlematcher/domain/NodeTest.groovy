@@ -164,4 +164,14 @@ class NodeTest extends Specification {
         then:
         assert decomposable
     }
+
+    def "Convertible to Kv"() {
+        given:
+        def contentUsername = new Content("username", "EQUAL", ["email@zup.com.br"])
+        def node = new Node(NodeType.RULE, null, [], contentUsername)
+        when:
+        def convertibleToKv = node.isConvertibleToKv()
+        then:
+        assert convertibleToKv
+    }
 }
