@@ -19,6 +19,7 @@
 package moove
 
 import (
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"net/http"
 	"time"
 
@@ -27,7 +28,7 @@ import (
 )
 
 type ApiUseCases interface {
-	GetMooveComponents(circleIDHeader, circleId string, workspaceId uuid.UUID) ([]byte, error)
+	GetMooveComponents(circleIDHeader, circleId string, workspaceId uuid.UUID) ([]byte, errors.Error)
 }
 
 type APIClient struct {
@@ -49,8 +50,8 @@ type Main struct {
 }
 
 type UseCases interface {
-	FindUserByEmail(email string) (User, error)
-	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error)
+	FindUserByEmail(email string) (User, errors.Error)
+	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, errors.Error)
 }
 
 func NewMain(mooveDb *gorm.DB) UseCases {

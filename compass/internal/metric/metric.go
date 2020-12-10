@@ -271,19 +271,17 @@ func (main Main) getQueryByMetric(metric Metric) string {
 func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
-		return 0, errors.NewError("Result error", err.Error()).
-			WithOperations("ResultQuery.FindById")
+		return 0, err.WithOperations("ResultQuery.FindById")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		return 0, errors.NewError("Result error", err.Error()).
-			WithOperations("ResultQuery.GetPluginBySrc")
+		return 0, err.WithOperations("ResultQuery.GetPluginBySrc")
 	}
 
-	getQuery, err := plugin.Lookup("Result")
+	getQuery, lookupErr := plugin.Lookup("Result")
 	if err != nil {
-		return 0, errors.NewError("Result error", err.Error()).
+		return 0, errors.NewError("Result error", lookupErr.Error()).
 			WithOperations("ResultQuery.Lookup")
 	}
 
@@ -298,14 +296,14 @@ func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 		})
 	}
 
-	result, err := getQuery.(func(request datasource.ResultRequest) (float64, error))(datasource.ResultRequest{
+	result, castError := getQuery.(func(request datasource.ResultRequest) (float64, error))(datasource.ResultRequest{
 		DatasourceConfiguration: dataSourceConfigurationData,
 		Query:                   query,
 		Filters:                 metric.Filters,
 	})
 
 	if err != nil {
-		return 0, errors.NewError("Result error", err.Error()).
+		return 0, errors.NewError("Result error", castError.Error()).
 			WithOperations("ResultQuery.getQuery")
 	}
 
@@ -315,21 +313,17 @@ func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 func (main Main) Query(metric Metric, period, interval datasource.Period) (interface{}, errors.Error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
-		return nil, errors.NewError("Query error", err.Error()).
-			WithOperations("ResultQuery.FindById")
+		return nil, err.WithOperations("ResultQuery.FindById")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "Query", err, dataSourceResult.PluginSrc)
-		return nil, errors.NewError("Query error", err.Error()).
-			WithOperations("ResultQuery.GetPluginBySrc")
+		return nil, err.WithOperations("ResultQuery.GetPluginBySrc")
 	}
 
-	getQuery, err := plugin.Lookup("Query")
+	getQuery, lookupErr := plugin.Lookup("Query")
 	if err != nil {
-		logger.Error(util.PluginLookupError, "Query", err, plugin)
-		return nil, errors.NewError("Query error", err.Error()).
+		return nil, errors.NewError("Query error", lookupErr.Error()).
 			WithOperations("ResultQuery.Lookup")
 	}
 
@@ -344,7 +338,7 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 		})
 	}
 
-	queryResult, err :=  getQuery.(func(request datasource.QueryRequest) ([]datasource.Value, error))(datasource.QueryRequest{
+	queryResult, castErr :=  getQuery.(func(request datasource.QueryRequest) ([]datasource.Value, error))(datasource.QueryRequest{
 		ResultRequest: datasource.ResultRequest{
 			DatasourceConfiguration: dataSourceConfigurationData,
 			Query:                   query,
@@ -355,7 +349,7 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 	})
 
 	if err != nil {
-		return nil, errors.NewError("Query error", err.Error()).
+		return nil, errors.NewError("Query error", castErr.Error()).
 			WithOperations("ResultQuery.getQuery")
 	}
 

@@ -22,14 +22,15 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	Components(circleIDHeader, circleId, projectionType, metricType string, workspaceID uuid.UUID) (ComponentMetricRepresentation, error)
-	ComponentsHealth(circleIDHeader, circleId string, workspaceID uuid.UUID) (CircleHealthRepresentation, error)
+	Components(circleIDHeader, circleId, projectionType, metricType string, workspaceID uuid.UUID) (ComponentMetricRepresentation, errors.Error)
+	ComponentsHealth(circleIDHeader, circleId string, workspaceID uuid.UUID) (CircleHealthRepresentation, errors.Error)
 }
 
 type Main struct {

@@ -20,11 +20,9 @@ package health
 
 import (
 	"encoding/json"
-	"errors"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 
-	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 )
 
@@ -41,26 +39,24 @@ type ComponentRepresentation struct {
 }
 
 // TODO: Send lookup plugin method to plugin pkg
-func (main Main) getQueryPeriod(query string, period, interval datasourcePKG.Period, workspaceId uuid.UUID) ([]datasourcePKG.Value, error) {
+func (main Main) getQueryPeriod(query string, period, interval datasourcePKG.Period, workspaceId uuid.UUID) ([]datasourcePKG.Value, errors.Error) {
 	datasource, err := main.datasource.FindHealthByWorkspaceId(workspaceId)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getHealthPlugin", err, "prometheus")
-		return nil, err
+		return nil, err.WithOperations("getQueryPeriod.FindHealthByWorkspaceId")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(datasource.PluginSrc)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getHealthPlugin", err, "prometheus")
-		return nil, err
+		return nil, err.WithOperations("getQueryPeriod.GetPluginBySrc")
 	}
 
-	getQuery, err := plugin.Lookup("Query")
+	getQuery, lookupErr := plugin.Lookup("Query")
 	if err != nil {
-		logger.Error(util.PluginLookupError, "getHealthPlugin", err, plugin)
-		return nil, err
+		return nil, errors.NewError("Get error", lookupErr.Error()).
+			WithOperations("getQueryPeriod.Lookup")
 	}
 
-	return getQuery.(func(request datasourcePKG.QueryRequest) ([]datasourcePKG.Value, error))(datasourcePKG.QueryRequest{
+	return getQuery.(func(request datasourcePKG.QueryRequest) ([]datasourcePKG.Value, errors.Error))(datasourcePKG.QueryRequest{
 		ResultRequest: datasourcePKG.ResultRequest{
 			DatasourceConfiguration: datasource.Data,
 			Query:                   query,
@@ -78,7 +74,7 @@ func (main Main) getPeriodAndIntervalByProjectionType(projectionType string) (da
 	return period, interval
 }
 
-func (main Main) getDatasourceValuesByMetricType(circleId, projectionType, metricType string, workspaceID uuid.UUID) ([]datasourcePKG.Value, error, string) {
+func (main Main) getDatasourceValuesByMetricType(circleId, projectionType, metricType string, workspaceID uuid.UUID) ([]datasourcePKG.Value, errors.Error, string) {
 	switch metricType {
 	case "REQUESTS_BY_CIRCLE":
 		query := main.getTotalRequestStringQuery(circleId, true)
@@ -99,11 +95,12 @@ func (main Main) getDatasourceValuesByMetricType(circleId, projectionType, metri
 
 		return values, err, REQUESTS_LATENCY_BY_CIRCLE
 	default:
-		return nil, errors.New("not found metric type"), ""
+		return nil, errors.NewError("Get error", "not found metric type").
+			WithOperations("getQueryPeriod.Lookup"), ""
 	}
 }
 
-func (main Main) Components(circleIDHeader, circleId, projectionType, metricType string, workspaceID uuid.UUID) (ComponentMetricRepresentation, error) {
+func (main Main) Components(circleIDHeader, circleId, projectionType, metricType string, workspaceID uuid.UUID) (ComponentMetricRepresentation, errors.Error) {
 	metricComponents := ComponentMetricRepresentation{
 		Period: projectionType,
 		Type:   metricType,
@@ -111,19 +108,20 @@ func (main Main) Components(circleIDHeader, circleId, projectionType, metricType
 
 	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceID)
 	if err != nil {
-		return ComponentMetricRepresentation{}, err
+		return ComponentMetricRepresentation{}, err.WithOperations("Components.GetMooveComponents")
 	}
 
 	var components []DeploymentInCircle
-	err = json.Unmarshal(body, &components)
+	jsonErr := json.Unmarshal(body, &components)
 	if err != nil {
-		return ComponentMetricRepresentation{}, err
+		return ComponentMetricRepresentation{}, errors.NewError("Get error", jsonErr.Error()).
+			WithOperations("Components.Unmarshal")
 	}
 
 	for _, component := range components {
 		data, err, _ := main.getDatasourceValuesByMetricType(circleId, projectionType, metricType, workspaceID)
 		if err != nil {
-			return ComponentMetricRepresentation{}, err
+			return ComponentMetricRepresentation{}, err.WithOperations("Components.getDatasourceValuesByMetricType")
 		}
 
 		metricComponents.Components = append(metricComponents.Components, ComponentRepresentation{

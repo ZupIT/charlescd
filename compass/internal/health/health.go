@@ -20,11 +20,9 @@ package health
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 
-	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 )
 
@@ -51,30 +49,25 @@ type CircleComponentHealthRepresentation struct {
 	Status    string  `json:"status"`
 }
 
-// TODO: Send lookup plugin method to plugin pkg
-func (main Main) getResultQuery(query string, workspaceID uuid.UUID) (float64, error) {
-
-	fmt.Println("QUERY: ", query)
+func (main Main) getResultQuery(query string, workspaceID uuid.UUID) (float64, errors.Error) {
 
 	datasource, err := main.datasource.FindHealthByWorkspaceId(workspaceID)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getResultQuery", err, "prometheus")
-		return 0, err
+		return 0, err.WithOperations("getResultQuery.FindHealthByWorkspaceId")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(datasource.PluginSrc)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getResultQuery", err, "prometheus")
-		return 0, err
+		return 0, err.WithOperations("getResultQuery.GetPluginBySrc")
 	}
 
-	getQuery, err := plugin.Lookup("Result")
+	getQuery, lookupErr := plugin.Lookup("Result")
 	if err != nil {
-		logger.Error(util.PluginLookupError, "getResultQuery", err, plugin)
-		return 0, err
+		return 0, errors.NewError("Get error", lookupErr.Error()).
+			WithOperations("getResultQuery.Lookup")
 	}
 
-	return getQuery.(func(request datasourcePKG.ResultRequest) (float64, error))(datasourcePKG.ResultRequest{
+	return getQuery.(func(request datasourcePKG.ResultRequest) (float64, errors.Error))(datasourcePKG.ResultRequest{
 		DatasourceConfiguration: datasource.Data,
 		Query:                   query,
 		Filters:                 []datasourcePKG.MetricFilter{},
@@ -91,17 +84,17 @@ func (main Main) getComponentStatus(thresholdValue, metricValue float64) string 
 	return "STABLE"
 }
 
-func (main Main) getComponentsErrorPercentage(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]CircleComponentHealthRepresentation, error) {
+func (main Main) getComponentsErrorPercentage(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]CircleComponentHealthRepresentation, errors.Error) {
 	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceID)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getComponentsErrorPercentage", err, nil)
-		return nil, err
+		return nil, err.WithOperations("getResultQuery.Lookup")
 	}
 
 	var components []DeploymentInCircle
-	err = json.Unmarshal(body, &components)
+	jsonErr := json.Unmarshal(body, &components)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewError("Get error", jsonErr.Error()).
+			WithOperations("getComponentsErrorPercentage.Unmarshal")
 	}
 
 	var circleComponents []CircleComponentHealthRepresentation
@@ -109,8 +102,7 @@ func (main Main) getComponentsErrorPercentage(circleIDHeader, circleId string, w
 		query := main.GetAverageHttpErrorsPercentageStringQuery(circleId)
 		value, err := main.getResultQuery(query, workspaceID)
 		if err != nil {
-			logger.Error(util.QueryGetPluginError, "getComponentsErrorPercentage", err, nil)
-			return nil, err
+			return nil, err.WithOperations("getComponentsErrorPercentage.getResultQuery")
 		}
 
 		circleComponents = append(circleComponents, CircleComponentHealthRepresentation{
@@ -124,17 +116,17 @@ func (main Main) getComponentsErrorPercentage(circleIDHeader, circleId string, w
 	return circleComponents, nil
 }
 
-func (main Main) getComponentsLatency(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]CircleComponentHealthRepresentation, error) {
+func (main Main) getComponentsLatency(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]CircleComponentHealthRepresentation, errors.Error) {
 	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceID)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getComponentsLatency", err, nil)
-		return nil, err
+		return nil, err.WithOperations("getComponentsLatency.GetMooveComponents")
 	}
 
 	var components []DeploymentInCircle
-	err = json.Unmarshal(body, &components)
+	jsonErr := json.Unmarshal(body, &components)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewError("Get error", jsonErr.Error()).
+			WithOperations("getComponentsLatency.Unmarshal")
 	}
 
 	var circleComponents []CircleComponentHealthRepresentation
@@ -142,8 +134,7 @@ func (main Main) getComponentsLatency(circleIDHeader, circleId string, workspace
 		query := main.GetAverageHttpErrorsPercentageStringQuery(circleId)
 		value, err := main.getResultQuery(query, workspaceID)
 		if err != nil {
-			logger.Error(util.QueryGetPluginError, "getComponentsLatency", err, nil)
-			return nil, err
+			return nil, err.WithOperations("getComponentsLatency.getResultQuery")
 		}
 
 		circleComponents = append(circleComponents, CircleComponentHealthRepresentation{
@@ -157,21 +148,21 @@ func (main Main) getComponentsLatency(circleIDHeader, circleId string, workspace
 	return circleComponents, nil
 }
 
-func (main Main) ComponentsHealth(circleIDHeader, circleId string, workspaceID uuid.UUID) (CircleHealthRepresentation, error) {
+func (main Main) ComponentsHealth(circleIDHeader, circleId string, workspaceID uuid.UUID) (CircleHealthRepresentation, errors.Error) {
 	requestTotalQueryString := main.getTotalRequestStringQuery(circleId, true)
 	requestsTotal, err := main.getResultQuery(requestTotalQueryString, workspaceID)
 	if err != nil {
-		return CircleHealthRepresentation{}, err
+		return CircleHealthRepresentation{}, err.WithOperations("ComponentsHealth.getResultQuery")
 	}
 
 	componentsErrorPercentage, err := main.getComponentsErrorPercentage(circleIDHeader, circleId, workspaceID)
 	if err != nil {
-		return CircleHealthRepresentation{}, err
+		return CircleHealthRepresentation{}, err.WithOperations("ComponentsHealth.getComponentsErrorPercentage")
 	}
 
 	componentsErrorLatency, err := main.getComponentsLatency(circleIDHeader, circleId, workspaceID)
 	if err != nil {
-		return CircleHealthRepresentation{}, err
+		return CircleHealthRepresentation{}, err.WithOperations("ComponentsHealth.getComponentsLatency")
 	}
 
 	return CircleHealthRepresentation{

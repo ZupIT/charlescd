@@ -288,13 +288,11 @@ func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation,
 	for idx, _ := range metricsGroups {
 		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
-			return []MetricsGroupRepresentation{}, errors.NewError("ListGroupActionExecutionResumeByGroup error", err.Error()).
-				WithOperations("ListAllByCircle.ListGroupActionExecutionResumeByGroup")
+			return []MetricsGroupRepresentation{}, err.WithOperations("ListAllByCircle.ListGroupActionExecutionResumeByGroup")
 		}
 		metrics, err := main.metricMain.FindAllByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
-			return []MetricsGroupRepresentation{}, errors.NewError("FindAllByGroup error", err.Error()).
-				WithOperations("ListAllByCircle.FindAllByGroup")
+			return nil, err.WithOperations("ListAllByCircle.FindAllByGroup")
 		}
 		metricsGroups[idx].Actions = actionResume
 		metricsGroups[idx].Metrics = metrics
@@ -346,8 +344,7 @@ func (main Main) QueryByGroupID(id string, period, interval datasource.Period) (
 
 		query, err := main.metricMain.Query(metr, period, interval)
 		if err != nil {
-			return []datasource.MetricValues{}, errors.NewError("Query error", err.Error()).
-				WithOperations("QueryByGroupID.Query")
+			return []datasource.MetricValues{}, err.WithOperations("QueryByGroupID.Query")
 		}
 
 		metricsValues = append(metricsValues, datasource.MetricValues{
@@ -366,8 +363,7 @@ func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, e
 
 		result, err := main.metricMain.ResultQuery(metr)
 		if err != nil {
-			return nil, errors.NewError("ResultByGroup error", err.Error()).
-				WithOperations("ResultByGroup.ResultQuery")
+			return nil, err.WithOperations("ResultByGroup.ResultQuery")
 		}
 
 		metricsResults = append(metricsResults, datasource.MetricResult{
