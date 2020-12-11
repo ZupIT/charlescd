@@ -72,7 +72,7 @@ test('render Registry form default component', () => {
   expect(chooseRegistryText).toBeInTheDocument();
 });
 
-test('render Registry form with azure values', async () => {
+test('render Registry form with AZURE values', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
@@ -80,7 +80,10 @@ test('render Registry form with azure values', async () => {
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Azure');
 
-  const text = await screen.findByText('Enter the username');
+  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  expect(fillInfoText).toBeInTheDocument();
+
+  const text = screen.getByText('Enter the username');
   expect(text).toBeInTheDocument();
 });
 
@@ -89,10 +92,10 @@ test('should submit AZURE form', async () => {
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  const azure = screen.getByTestId("radio-group-registry-item-AZURE");
-  await act(async () => userEvent.click(azure));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Azure');
 
-  const registryField = screen.getByText('Type a name for Registry');
+  const registryField = await screen.findByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
@@ -104,10 +107,75 @@ test('should submit AZURE form', async () => {
     userEvent.type(passwordField, '123mudar!');
   });
 
-  await waitFor(() => expect(screen.getByText('Test connection')).not.toBeDisabled());
-  await waitFor(() => expect(screen.getByTestId('button-default-submit-registry')).toBeDisabled());
-  userEvent.click(screen.getByText('Test connection'));
-  await waitFor(() => expect(screen.getByTestId('button-default-submit-registry')).not.toBeDisabled());
+  const testConnectionButton = await screen.findByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  expect(testConnectionButton).not.toBeDisabled();
+  expect(submitButton).toBeDisabled();
+  await act(async () => userEvent.click(testConnectionButton));
+  expect(submitButton).not.toBeDisabled();
+});
+
+test('should have successful test connection with AZURE registry', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({ }));
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Azure');
+  
+  const registryField = await screen.findByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  expect(submitButton).toBeDisabled();
+
+  await act(async () => userEvent.click(testConnectionButton));
+  const successMessage = await screen.findByText('Successful connection.');
+  expect(successMessage).toBeInTheDocument();
+  expect(submitButton).not.toBeDisabled();
+});
+
+test('should have failed test connection with AZURE registry', async () => {
+  const error = {
+    status: '404',
+    message: 'invalid registry'
+  };
+  (fetch as FetchMock).mockRejectedValueOnce(new Response(JSON.stringify(error)));
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Azure');
+  
+  const registryField = await screen.findByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  let submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  expect(submitButton).toBeDisabled();
+
+  await act(async () => userEvent.click(testConnectionButton));
+  const errorMessage = await screen.findByText('invalid registry');
+  expect(errorMessage).toBeInTheDocument();
+  expect(submitButton).toBeDisabled();
 });
 
 test('should render AWS form', async () => {
@@ -131,90 +199,6 @@ test('should render AWS form with acess key', async () => {
   expect(text).toBeInTheDocument();
 });
 
-test('should render AZURE form', async () => {
-  render(
-    <FormRegistry onFinish={mockOnFinish}/>
-  );
-
-  const azure = screen.getByTestId("radio-group-registry-item-AZURE");
-  await act(async () => userEvent.click(azure));
-
-  const registryField = screen.getByText('Type a name for Registry');
-  const usernameField = screen.getByText('Enter the username');
-  const passwordField = screen.getByText('Enter the password');
-  const submitButton = screen.getByTestId('button-default-submit-registry');
-
-  await act(async () => {
-    userEvent.type(registryField, 'fake-name');
-    userEvent.type(usernameField, 'fake username');
-    userEvent.type(passwordField, '123mudar');
-  });
-
-  await waitFor(() => expect(screen.getByText('Test connection')).toBeDisabled());
-  expect(submitButton).toBeDisabled();
-});
-
-test('should have succesfull connection with AZURE registry', async () => {
-  (fetch as FetchMock).mockResponse(JSON.stringify({ }));
-  render(<FormRegistry onFinish={mockOnFinish}/>);
-
-  const azure = screen.getByTestId('radio-group-registry-item-AZURE');
-  await act(async () => userEvent.click(azure));
-  
-  const registryField = screen.getByText('Type a name for Registry');
-  const registryURLField = screen.getByText('Enter the registry url');
-  const usernameField = screen.getByText('Enter the username');
-  const passwordField = screen.getByText('Enter the password');
-  const testConnectionButton = screen.getByText('Test connection');
-  const submitButton = screen.getByTestId('button-default-submit-registry');
-
-  await act(async () => {
-    userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
-    userEvent.type(usernameField, 'fake username');
-    userEvent.type(passwordField, '123mudar');
-  });
-
-  expect(submitButton).toBeDisabled();
-
-  await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = await screen.findByText('Successful connection.');
-  expect(successMessage).toBeInTheDocument();
-  expect(submitButton).not.toBeDisabled();
-});
-
-test('should have failed connection with AZURE registry', async () => {
-  const error = {
-    status: '404',
-    message: 'invalid registry'
-  };
-  (fetch as FetchMock).mockRejectedValueOnce(new Response(JSON.stringify(error)));
-  render(<FormRegistry onFinish={mockOnFinish}/>);
-
-  const azure = screen.getByTestId('radio-group-registry-item-AZURE');
-  await act(async () => userEvent.click(azure));
-  
-  const registryField = screen.getByText('Type a name for Registry');
-  const registryURLField = screen.getByText('Enter the registry url');
-  const usernameField = screen.getByText('Enter the username');
-  const passwordField = screen.getByText('Enter the password');
-  const testConnectionButton = screen.getByText('Test connection');
-  let submitButton = screen.getByTestId('button-default-submit-registry');
-
-  await act(async () => {
-    userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
-    userEvent.type(usernameField, 'fake username');
-    userEvent.type(passwordField, '123mudar');
-  });
-
-  expect(submitButton).toBeDisabled();
-
-  await act(async () => userEvent.click(testConnectionButton));
-  const errorMessage = await screen.findByText('invalid registry');
-  expect(errorMessage).toBeInTheDocument();
-  expect(submitButton).toBeDisabled();
-});
 
 test('render Registry form with AWS values', async () => {
   render(
