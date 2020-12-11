@@ -256,3 +256,6 @@ compass:
     requests:
       cpu: 64m
       memory: 64Mi
+
+metacontroller:
+  enabled: true
