@@ -30,7 +30,6 @@ import io.charlescd.moove.legacy.repository.entity.*
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
-import kotlin.streams.toList
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -392,10 +391,10 @@ class HypothesisServiceLegacy(
         } ?: throw RuntimeException("Invalid column")
     }
     private fun isProtectedCard(card: Card): Boolean {
-        if(card is SoftwareCard) {
+        if (card is SoftwareCard) {
             return isProtectedBranch(card.feature.branchName)
         }
-        return false;
+        return false
     }
 
     private fun isProtectedBranch(branchName: String): Boolean {
