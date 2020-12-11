@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, screen, waitFor } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import SectionRegistry from '../';
 

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = CreateAzureRegistryConfigurationRequest::class, name = "AZURE"),
     JsonSubTypes.Type(value = CreateAWSRegistryConfigurationRequest::class, name = "AWS"),
     JsonSubTypes.Type(value = CreateGCPRegistryConfigurationRequest::class, name = "GCP"),
-    JsonSubTypes.Type(value = CreateDockerHubRegistryConfigurationRequest::class, name = "DOCKER_HUB")
+    JsonSubTypes.Type(value = CreateDockerHubRegistryConfigurationRequest::class, name = "DOCKER_HUB"),
+    JsonSubTypes.Type(value = CreateHarborRegistryConfigurationRequest::class, name = "HARBOR")
 )
 abstract class CreateRegistryConfigurationRequest(
     open val name: String,
@@ -68,6 +69,14 @@ data class CreateDockerHubRegistryConfigurationRequest(
     val password: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.DOCKER_HUB, authorId)
 
+data class CreateHarborRegistryConfigurationRequest(
+    override val name: String,
+    override val address: String,
+    override val authorId: String,
+    val username: String,
+    val password: String
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.HARBOR, authorId)
+
 enum class CreateRegistryConfigurationProvider {
-    AWS, Azure, GCP, DOCKER_HUB
+    AWS, Azure, GCP, DOCKER_HUB, HARBOR
 }

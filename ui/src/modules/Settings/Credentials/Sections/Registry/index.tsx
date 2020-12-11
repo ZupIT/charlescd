@@ -35,10 +35,10 @@ interface Props {
 const SectionRegistry = ({ form, setForm, data }: Props) => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const isLoading = status === 'pending';
-  const [isDisabled, setIsDisabled] = useState(true);
   const [isAction, setIsAction] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
   const { remove, responseRemove, loadingRemove } = useRegistry();
-  const { registryConnection, response, error } = useRegistryConnection();
+  const { testConnection, response, error } = useRegistryConnection();
 
   useEffect(() => {
     setIsAction(true);
@@ -62,11 +62,11 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
 
       (async () => {
         setStatus('pending');
-        await registryConnection(data.id);
+        await testConnection(data.id);
         setStatus('resolved');
       })();
     }
-  }, [registryConnection, data]);
+  }, [testConnection, data]);
 
   const renderError = () => (
     <Notification.Log type="error" content={error.message} />

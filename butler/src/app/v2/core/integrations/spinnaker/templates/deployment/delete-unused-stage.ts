@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import { ISpinnakerConfigurationData } from '../../../../../api/configurations/interfaces/spinnaker-configuration-data.interface'
+import { CdConfiguration } from '../../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
-import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
 
 export const getDeleteUnusedStage = (
-  component: Component,
+  component: DeploymentComponent,
   configuration: CdConfiguration,
   stageId: number,
   evalStageId: number,

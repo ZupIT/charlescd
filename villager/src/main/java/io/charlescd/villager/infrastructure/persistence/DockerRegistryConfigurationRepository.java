@@ -17,7 +17,6 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agroal.api.AgroalDataSource;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
@@ -36,6 +35,7 @@ import javax.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 @ApplicationScoped
 public class DockerRegistryConfigurationRepository {
@@ -238,6 +238,13 @@ public class DockerRegistryConfigurationRepository {
                         dockerHubRegistryAuth.get("organization"),
                         dockerHubRegistryAuth.get("username"),
                         dockerHubRegistryAuth.get("password"));
+                break;
+            case HARBOR:
+                var harborRegistryAuth = deserializeConnectionData(rs);
+                entity.connectionData = new DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData(
+                        harborRegistryAuth.get("address"),
+                        harborRegistryAuth.get("username"),
+                        harborRegistryAuth.get("password"));
                 break;
             default:
                 entity.connectionData = null;

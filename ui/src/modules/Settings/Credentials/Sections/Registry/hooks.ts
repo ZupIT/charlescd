@@ -15,16 +15,13 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { addConfig, delConfig } from 'core/providers/workspace';
-import { useDispatch } from 'core/state/hooks';
-import { toogleNotification } from 'core/components/Notification/state/actions';
-import { Registry, Response } from './interfaces';
 import {
   create,
   configPath,
-  validateConnection,
-  testConnection
+  validation,
+  validationConnection
 } from 'core/providers/registry';
+import { addConfig, delConfig } from 'core/providers/workspace';
 import {
   useFetch,
   FetchProps,
@@ -33,6 +30,9 @@ import {
   useFetchStatus,
   FetchStatus
 } from 'core/providers/base/hooks';
+import { useDispatch } from 'core/state/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import { Registry, Response } from './interfaces';
 
 export const useRegistry = (): FetchProps => {
   const dispatch = useDispatch();
@@ -95,21 +95,28 @@ export const useRegistry = (): FetchProps => {
     }
   }, [errorRemove, dispatch]);
 
-  return { responseAdd, save, responseRemove, remove, loadingSave, loadingAdd };
+  return {
+    responseAdd,
+    save,
+    responseRemove,
+    remove,
+    loadingSave,
+    loadingAdd
+  };
 };
 
 export const useRegistryTest = (): {
-  testRegistryConnection: Function;
+  testConnection: Function;
   response: Response;
   error: ResponseError;
   status: FetchStatus;
 } => {
   const status = useFetchStatus();
-  const test = useFetchData<Response>(testConnection);
+  const test = useFetchData<Response>(validation);
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  const testRegistryConnection = useCallback(
+  const testConnection = useCallback(
     async (registry: Registry) => {
       try {
         if (registry) {
@@ -133,7 +140,7 @@ export const useRegistryTest = (): {
   );
 
   return {
-    testRegistryConnection,
+    testConnection,
     response,
     error,
     status
@@ -141,15 +148,15 @@ export const useRegistryTest = (): {
 };
 
 export const useRegistryConnection = (): {
-  registryConnection: Function;
+  testConnection: Function;
   response: Response;
   error: ResponseError;
 } => {
-  const test = useFetchData<Response>(validateConnection);
+  const test = useFetchData<Response>(validationConnection);
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  const registryConnection = useCallback(
+  const testConnection = useCallback(
     async (configurationId: string) => {
       try {
         if (configurationId) {
@@ -170,7 +177,7 @@ export const useRegistryConnection = (): {
   );
 
   return {
-    registryConnection,
+    testConnection,
     response,
     error
   };

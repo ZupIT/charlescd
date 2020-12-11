@@ -9,8 +9,6 @@ const circles = {
         id: 'c7e6dete-aa7a-4216-be1b-34eacd4c2915',
         name: 'User 1',
         email: 'user.1@zup.com.br',
-        photoUrl:
-          'https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png',
         createdAt: '2020-05-07 20:24:46'
       },
       createdAt: '2019-09-17 17:56:11',
@@ -47,7 +45,6 @@ const circles = {
         id: 'a7c3e4b6-4be3-4d62-8140-e2d23214e03f',
         name: 'User 2',
         email: 'user.2@zup.com.br',
-        photoUrl: '',
         createdAt: '2020-04-30 17:10:52'
       },
       createdAt: '2020-01-28 22:21:30',
@@ -109,7 +106,6 @@ const circles = {
         id: '8b81e7a7-33f1-46cb-aedf-73222bf8769f',
         name: 'User 4',
         email: 'user.4@zup.com.br',
-        photoUrl: '',
         createdAt: '2020-05-13 21:50:28'
       },
       createdAt: '2020-01-29 19:44:05',
@@ -139,7 +135,6 @@ const circle = {
     id: 'a7c3e4b6-4be3-4d62-8140-e2d23214e03f',
     name: 'User 2',
     email: 'user.2@zup.com.br',
-    photoUrl: '',
     createdAt: '2020-04-30 17:10:52'
   },
   createdAt: '2019-12-23 17:38:22',

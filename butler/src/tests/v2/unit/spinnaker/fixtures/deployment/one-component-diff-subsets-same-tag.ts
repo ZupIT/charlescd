@@ -15,8 +15,8 @@
  */
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
@@ -173,6 +173,14 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
                 labels: {
                   component: 'A',
                   tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
                   circleId: 'circle-id3'
                 },
                 name: 'circle-id3'
@@ -184,15 +192,7 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
                   circleId: 'circle-id5'
                 },
                 name: 'circle-id5'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
-              },
+              }
             ]
           }
         }

@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm'
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 import { ExecutionQuery } from '../dto/execution/paginated-execution-query.dto'
 import { PaginatedExecutions } from '../dto/execution/paginated-executions.dto'
 import { ExecutionRepository } from '../repository/execution.repository'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
 export class PaginatedExecutionsUseCase {
   constructor(

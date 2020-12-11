@@ -16,7 +16,7 @@
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
-import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 export const dummyVirtualserviceSpinnakerPipeline: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',

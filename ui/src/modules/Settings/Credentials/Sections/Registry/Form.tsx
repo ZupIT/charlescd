@@ -18,27 +18,28 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
-import RadioGroup from 'core/components/RadioGroup';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
 import { useRegistry, useRegistryTest } from './hooks';
-import { radios } from './constants';
+import { options } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
+import CustomOption from 'core/components/Form/Select/CustomOption';
+import { Option } from 'core/components/Form/Select/interfaces';
 
 const FormRegistry = ({ onFinish }: Props) => {
-  const { save, loadingSave, loadingAdd, responseAdd } = useRegistry();
-  const { testRegistryConnection, response, error, status } = useRegistryTest();
+  const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
+  const { testConnection, response, error, status } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const profileId = getProfileByKey('id');
-  const [message, setMessage] = useState<ConnectionProps>(null);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [message, setMessage] = useState<ConnectionProps>(null);
+  const profileId = getProfileByKey('id');
   const isAzure = registryType === 'AZURE';
   const {
     register,
@@ -67,18 +68,10 @@ const FormRegistry = ({ onFinish }: Props) => {
     }
   }, [error]);
 
-  const onChange = (value: string) => {
+  const onChange = (option: Option) => {
     reset();
     setMessage(null);
-    setRegistryType(value);
-  };
-
-  const onSubmit = (registry: Registry) => {
-    save({
-      ...registry,
-      authorId: profileId,
-      provider: registryType
-    });
+    setRegistryType(option.value);
   };
 
   const onClick = () => {
@@ -87,8 +80,15 @@ const FormRegistry = ({ onFinish }: Props) => {
       authorId: profileId,
       provider: registryType
     };
+    testConnection(registry);
+  };
 
-    testRegistryConnection(registry);
+  const onSubmit = (registry: Registry) => {
+    save({
+      ...registry,
+      authorId: profileId,
+      provider: registryType
+    });
   };
 
   const renderAwsFields = () => {
@@ -105,7 +105,7 @@ const FormRegistry = ({ onFinish }: Props) => {
           active={awsUseSecret}
           onChange={() => setAwsUseSecret(!awsUseSecret)}
         />
-        {awsUseSecret ? (
+        {awsUseSecret && (
           <>
             <Form.Password
               ref={register({ required: true })}
@@ -118,30 +118,7 @@ const FormRegistry = ({ onFinish }: Props) => {
               label="Enter the secret key"
             />
           </>
-        ) : null}
-      </>
-    );
-  };
-
-  const renderAzureFields = () => {
-    return (
-      <>
-        <Form.Input ref={register} name="username" label="Enter the username" />
-        <Form.Password
-          ref={register({ required: true })}
-          name="password"
-          label="Enter the password"
-        />
-        {message && <ConnectionStatus {...message} />}
-        <Button.Default
-          type="button"
-          id="test-connection"
-          onClick={onClick}
-          isDisabled={!isValid}
-          isLoading={status.isPending}
-        >
-          Test connection
-        </Button.Default>
+        )}
       </>
     );
   };
@@ -158,18 +135,28 @@ const FormRegistry = ({ onFinish }: Props) => {
           Enter the json key below:
         </Styled.Subtitle>
         <AceEditorForm
-          width={'270px'}
+          width="270px"
           mode="json"
           name="jsonKey"
           rules={{ required: true }}
           control={control}
           theme="monokai"
         />
+        {message && <ConnectionStatus {...message} />}
+        <Button.Default
+          type="button"
+          id="test-connection"
+          onClick={onClick}
+          isDisabled={!isValid}
+          isLoading={status.isPending}
+        >
+          Test connection
+        </Button.Default>
       </>
     );
   };
 
-  const renderDockerHubFields = () => {
+  const renderLoginFields = () => {
     return (
       <>
         <Form.Input
@@ -190,13 +177,11 @@ const FormRegistry = ({ onFinish }: Props) => {
     if (registryType === 'AWS') {
       return renderAwsFields();
     }
+
     if (registryType === 'GCP') {
       return renderGCPFields();
     }
-    if (registryType === 'DOCKER_HUB') {
-      return renderDockerHubFields();
-    }
-    return renderAzureFields();
+    return renderLoginFields();
   };
 
   const renderForm = () => (
@@ -240,13 +225,11 @@ const FormRegistry = ({ onFinish }: Props) => {
           description="Adding your Docker Registry allows Charles to watch for new images being generated and list all the images saved in your registry in order to deploy them. Consult our documentation for further details. "
         />
       </Styled.Title>
-      <Styled.Subtitle color="dark">
-        Choose which one you want to add:
-      </Styled.Subtitle>
-      <RadioGroup
-        name="registry"
-        items={radios}
-        onChange={({ currentTarget }) => onChange(currentTarget.value)}
+      <Styled.Select
+        placeholder="Choose which one you want to add:"
+        customOption={CustomOption.Icon}
+        options={options}
+        onChange={option => onChange(option as Option)}
       />
       {registryType && renderForm()}
     </Styled.Content>
