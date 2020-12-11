@@ -179,65 +179,52 @@ test('should have failed test connection with AZURE registry', async () => {
 });
 
 
-test('render Registry form with GCP form', async () => {
+test('should render Registry with GCP form', async () => {
   render(
     <FormRegistry onFinish={mockOnFinish} />
   );
 
-  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  await act(async () => userEvent.click(radioButton));
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'GCP');
+
+  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  expect(fillInfoText).toBeInTheDocument();
   
   const projectIdInput = screen.getByText('Enter the project id');
   expect(projectIdInput).toBeInTheDocument();
 });
 
-test('Not trigger onSubmit on json parse error with GCP form', async () => {
-  render(<FormRegistry onFinish={mockOnFinish} />);
-
-  const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
-  userEvent.click(radioButton);
-  
-  const inputGCPName = screen.getByTestId('input-text-name');
-  expect(inputGCPName).toBeInTheDocument();
-
-  const inputGCPAddress = screen.getByTestId('input-text-address');
-  expect(inputGCPAddress).toBeInTheDocument();
-
-  const inputGCPOrganization = screen.getByTestId('input-text-organization');
-  expect(inputGCPOrganization).toBeInTheDocument();
-
-  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
-  expect(inputGCPJsonKey).toBeInTheDocument();
-
-  const submitButton = screen.getByTestId('button-default-submit-registry');
-  expect(submitButton).toBeInTheDocument();
-
-  userEvent.type(inputGCPName, 'fake-name');
-  userEvent.type(inputGCPAddress, 'http://fake-host');
-  userEvent.type(inputGCPOrganization, 'fake-access-key');
-  userEvent.type(inputGCPJsonKey, 'te');
-  userEvent.click(submitButton);
-
-  await waitFor(() => expect(mockOnFinish).not.toBeCalled());
-});
-
-test('should render GCP registry form', async () => {
+test('should not trigger onSubmit on json parse error with GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'GCP');
   
-  const projectIdInput = await screen.findByText('Enter the project id');
-  waitFor(() => expect(projectIdInput).toBeInTheDocument());
+  const inputGCPName = await screen.findByTestId('input-text-name');
+  const inputGCPAddress = screen.getByTestId('input-text-address');
+  const inputGCPOrganization = screen.getByTestId('input-text-organization');
+  const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(inputGCPName, 'fake-name');
+    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPOrganization, 'fake-access-key');
+    userEvent.type(inputGCPJsonKey, 'te');
+    userEvent.click(submitButton);
+
+  });
+
+  expect(mockOnFinish).not.toBeCalled();
 });
 
 test('should not enable submit button after partially filled GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
-  await act(async () => selectEvent.select(registryLabel, 'GCP'));
+  selectEvent.select(registryLabel, 'GCP');
 
-  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPName = await screen.findByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
@@ -259,13 +246,12 @@ test('should enable submit button after fill GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
-  await act(async () => selectEvent.select(registryLabel, 'GCP'));
+  selectEvent.select(registryLabel, 'GCP');
 
-  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPName = await screen.findByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
-  const testConnectionButton = screen.getByText('Test connection');
   const submitButton = screen.getByText('Save');
 
   await act(async () => {
@@ -275,7 +261,12 @@ test('should enable submit button after fill GCP form', async () => {
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
   
-  await waitFor(() => expect(submitButton).not.toBeDisabled());
+  const testConnectionButton = screen.getByText('Test connection');
+  await act(async () => userEvent.click(testConnectionButton));
+
+  const successMessage = await screen.findByText('Successful connection.');
+  expect(successMessage).toBeInTheDocument();
+  expect(submitButton).not.toBeDisabled();
 });
 
 test('should test connectivity with GCR successful', async () => {
@@ -284,13 +275,12 @@ test('should test connectivity with GCR successful', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
-  await act(async () => selectEvent.select(registryLabel, 'GCP'));
+  selectEvent.select(registryLabel, 'GCP');
   
-  const inputGCPName = screen.getByTestId('input-text-name');
+  const inputGCPName = await screen.findByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
-  const testConnectionButton = screen.getByText('Test connection');
 
   await act(async () => {
     userEvent.type(inputGCPName, 'fake-name');
@@ -299,6 +289,7 @@ test('should test connectivity with GCR successful', async () => {
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
   
+  const testConnectionButton = screen.getByText('Test connection');
   await act(async () => userEvent.click(testConnectionButton));
 
   const successMessage = await screen.findByText('Successful connection.');
@@ -315,9 +306,9 @@ test('should test connectivity with GCR error', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
-  await act(async () => selectEvent.select(registryLabel, 'GCP'));
-
-  const inputGCPName = screen.getByTestId('input-text-name');
+  selectEvent.select(registryLabel, 'GCP');
+  
+  const inputGCPName = await screen.findByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
   const inputGCPJsonKey = screen.getByTestId('input-text-jsonKey');
