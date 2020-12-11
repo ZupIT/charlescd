@@ -20,7 +20,7 @@ import Card from 'core/components/Card';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useRegistry, useRegistryConnection } from './hooks';
+import { useRegistry, useRegistryValidateConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import { FetchStatuses } from 'core/providers/base/hooks';
@@ -38,7 +38,11 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
   const { remove, responseRemove, loadingRemove } = useRegistry();
-  const { testConnection, response, error } = useRegistryConnection();
+  const {
+    validateConnectionRegistry,
+    response,
+    error
+  } = useRegistryValidateConnection();
 
   useEffect(() => {
     setIsAction(true);
@@ -62,11 +66,11 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
 
       (async () => {
         setStatus('pending');
-        await testConnection(data.id);
+        await validateConnectionRegistry(data.id);
         setStatus('resolved');
       })();
     }
-  }, [testConnection, data]);
+  }, [validateConnectionRegistry, data]);
 
   const renderError = () => (
     <Notification.Log type="error" content={error.message} />

@@ -21,7 +21,7 @@ import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
-import { useRegistry, useRegistryTest } from './hooks';
+import { useRegistry, useRegistryTestConnection } from './hooks';
 import { options } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
@@ -34,7 +34,12 @@ import { Option } from 'core/components/Form/Select/interfaces';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
-  const { testConnection, response, error, status } = useRegistryTest();
+  const {
+    testConnectionRegistry,
+    response,
+    error,
+    status
+  } = useRegistryTestConnection();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -80,7 +85,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       authorId: profileId,
       provider: registryType
     };
-    testConnection(registry);
+    testConnectionRegistry(registry);
   };
 
   const onSubmit = (registry: Registry) => {
