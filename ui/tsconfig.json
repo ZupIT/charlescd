@@ -20,13 +20,18 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react-jsx",
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"
   ],
   "paths": {
-    "core/*": ["core/*"],
-    "unit-test/*": ["unit-test/*"]
+    "core/*": [
+      "core/*"
+    ],
+    "unit-test/*": [
+      "unit-test/*"
+    ]
   }
 }
