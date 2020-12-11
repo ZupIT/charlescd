@@ -41,3 +41,8 @@ export interface Response {
   id?: string;
   registry?: Registry;
 }
+
+export enum ConnectionStatusEnum {
+  FAILED = 'FAILED',
+  SUCCESS = 'SUCCESS'
+}

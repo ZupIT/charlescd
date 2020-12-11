@@ -16,7 +16,11 @@
 
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
+import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ThirdPartyIntegrationExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
@@ -25,6 +29,7 @@ import io.charlescd.moove.legacy.moove.api.VillagerApi
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.api.request.CreateVillagerRegistryConfigurationProvider
 import io.charlescd.moove.legacy.moove.api.request.CreateVillagerRegistryConfigurationRequest
+import io.charlescd.moove.legacy.moove.api.request.TestVillagerRegistryConnectionRequest
 import io.charlescd.moove.legacy.moove.api.response.CreateDeployCdConfigurationResponse
 import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfigurationResponse
 import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
@@ -33,6 +38,7 @@ import io.charlescd.moove.legacy.repository.CredentialConfigurationRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User
+import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
 import org.springframework.stereotype.Service
@@ -111,8 +117,55 @@ class CredentialConfigurationService(
         if (!checkIfCdConfigurationExists(cdConfigurationId, workspaceId)) {
             throw NotFoundExceptionLegacy("cdConfigurationId", cdConfigurationId)
         }
-
         deployApi.deleteCdConfiguration(cdConfigurationId, workspaceId)
+    }
+
+    fun testRegistryConfiguration(
+        workspaceId: String,
+        request: CreateRegistryConfigurationRequest
+    ) {
+        val villagerRequest: CreateVillagerRegistryConfigurationRequest =
+            buildVillagerRegistryConfigurationRequest(request)
+
+        try {
+            villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            throw InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONFIGURATION)
+        } catch (ex: ThirdPartyIntegrationExceptionLegacy) {
+            throw ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        } catch (ex: IntegrationExceptionLegacy) {
+            checkIntegrationExceptionLegacy(ex)
+        } catch (exception: Exception) {
+            throw exception
+        }
+    }
+
+    fun testRegistryConnection(
+        workspaceId: String,
+        request: TestRegistryConnectionRequest
+    ) {
+
+        val villagerRequest: TestVillagerRegistryConnectionRequest =
+            buildVillagerTestRegistryConnectionRequest(request)
+
+        try {
+            villagerApi.testRegistryConnection(villagerRequest, workspaceId)
+        } catch (ex: IllegalArgumentException) {
+            throw InvalidRegistryExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_REGISTRY_CONNECTION)
+        } catch (ex: ThirdPartyIntegrationExceptionLegacy) {
+            throw ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        } catch (ex: IntegrationExceptionLegacy) {
+            checkIntegrationExceptionLegacy(ex)
+        } catch (exception: Exception) {
+            throw exception
+        }
+    }
+
+    private fun checkIntegrationExceptionLegacy(ex: IntegrationExceptionLegacy) {
+        if (ex.getErrorCode() == MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR) {
+            throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, ex.getDetails())
+        }
+        throw IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_GENERAL_ERROR, ex.getDetails())
     }
 
     private fun checkIfCdConfigurationExists(id: String, workspaceId: String): Boolean {
@@ -130,6 +183,7 @@ class CredentialConfigurationService(
         createRegistryConfigRequest: CreateRegistryConfigurationRequest,
         authorId: String
     ): CreateVillagerRegistryConfigurationRequest {
+        urlValidation(createRegistryConfigRequest.address)
         return when (createRegistryConfigRequest) {
             is CreateAzureRegistryConfigurationRequest -> buildAzureRegistryRequest(createRegistryConfigRequest, authorId)
             is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest, authorId)
@@ -140,10 +194,20 @@ class CredentialConfigurationService(
         }
     }
 
+<<<<<<< HEAD
     private fun buildAWSRegistryRequest(
         createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest,
         authorId: String
     ): CreateVillagerRegistryConfigurationRequest {
+=======
+    private fun buildVillagerTestRegistryConnectionRequest(
+        request: TestRegistryConnectionRequest
+    ): TestVillagerRegistryConnectionRequest {
+        return TestVillagerRegistryConnectionRequest(request.configurationId)
+    }
+
+    private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
+>>>>>>> 1c88bd6ac730e55ba1accbc8e648594ea087d0df
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
@@ -248,7 +312,15 @@ class CredentialConfigurationService(
             }
     }
 
+<<<<<<< HEAD
     private fun CreateGitConfigurationRequest.toEntity(workspaceId: String, author: User): CredentialConfiguration {
+=======
+    private fun findUser(id: String): User =
+        this.userRepository.findById(id)
+            .orElseThrow { NotFoundExceptionLegacy("user", id) }
+
+    private fun CreateGitConfigurationRequest.toEntity(workspaceId: String): CredentialConfiguration {
+>>>>>>> 1c88bd6ac730e55ba1accbc8e648594ea087d0df
         return CredentialConfiguration(
             id = UUID.randomUUID().toString(),
             name = this.name,
@@ -257,5 +329,13 @@ class CredentialConfigurationService(
             type = CredentialConfigurationType.GIT,
             workspaceId = workspaceId
         )
+    }
+
+    private fun urlValidation(address: String) {
+        try {
+            URL(address).toURI()
+        } catch (exception: java.lang.Exception) {
+            throw IllegalArgumentException("Invalid address url")
+        }
     }
 }
