@@ -18,8 +18,10 @@
 
 package io.charlescd.moove.legacy.moove.api
 
+import io.charlescd.moove.legacy.moove.api.config.VillagerFeignConfig
 import io.charlescd.moove.legacy.moove.api.request.BuildRequest
 import io.charlescd.moove.legacy.moove.api.request.CreateVillagerRegistryConfigurationRequest
+import io.charlescd.moove.legacy.moove.api.request.TestVillagerRegistryConnectionRequest
 import io.charlescd.moove.legacy.moove.api.response.BuildResponse
 import io.charlescd.moove.legacy.moove.api.response.ComponentTagsResponse
 import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfigurationResponse
@@ -30,13 +32,15 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "villagerApi", url = "\${charlescd.villager.url}")
+@FeignClient(name = "villagerApi", url = "\${charlescd.villager.url}", configuration = [VillagerFeignConfig::class])
 interface VillagerApi {
 
     companion object {
         const val BUILD_URL = "/build"
         const val REGISTRY_URL = "/registry"
         const val COMPONENT_TAGS_URL = "$REGISTRY_URL/{registryConfigurationId}/components/{componentName}/tags"
+        const val TEST_REGISTRY_CONFIG_URL = "$REGISTRY_URL/configuration-validation"
+        const val TEST_REGISTRY_CONNECTION_URL = "$REGISTRY_URL/connection-validation"
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -82,4 +86,24 @@ interface VillagerApi {
     fun getRegistryConfigurations(
         @RequestHeader("x-workspace-id") workspaceId: String
     ): List<GetVillagerRegistryConfigurationsResponse>
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(
+        value = [TEST_REGISTRY_CONFIG_URL],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun testRegistryConfiguration(
+        @Valid @RequestBody request: CreateVillagerRegistryConfigurationRequest,
+        @RequestHeader("x-workspace-id") workspaceId: String
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(
+        value = [TEST_REGISTRY_CONNECTION_URL],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun testRegistryConnection(
+        @Valid @RequestBody request: TestVillagerRegistryConnectionRequest,
+        @RequestHeader("x-workspace-id") workspaceId: String
+    )
 }

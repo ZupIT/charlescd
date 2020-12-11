@@ -18,14 +18,13 @@ package io.charlescd.villager.test;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
-import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.integration.registry.TagsResponse;
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
-import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.impl.GetDockerRegistryTagInteractorImpl;
+import io.charlescd.villager.service.RegistryService;
+import io.charlescd.villager.utils.DockerRegistryTestUtils;
+import org.apache.http.HttpStatus;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.specimpl.BuiltResponse;
@@ -34,9 +33,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
+import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -49,20 +47,22 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class GetDockerRegistryTagInteractorTest {
 
-    @Mock
-    private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
+    private static final String ARTIFACT_NAME = "charles_cd";
+    private static final String ID_DEFAULT_VALUE = "1a3d413d-2255-4a1b-94ba-82e7366e4342";
+    private static final String TAG_NAME = "test";
 
     @Mock
-    private RegistryClient registryClient;
+    private RegistryService registryService;
 
     @Test
-    public void testContainsTag() throws IOException {
+    public void testContainsTag()  {
 
-        var entity = generateDockerRegistryConfigurationEntity();
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity( RegistryType.AZURE);
+        var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
 
-        when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> {
+        when(registryService.getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME)).then(invocationOnMock -> {
 
             var tagsResponse = new TagsResponse();
             Annotation[] annotations = new Annotation[1];
@@ -84,124 +84,104 @@ public class GetDockerRegistryTagInteractorTest {
         });
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
-
-        GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
-                .withArtifactName("name")
-                .withWorkspaceId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
-                .withArtifactRepositoryConfigurationId("123")
-                .withName("test")
-                .build();
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
         ComponentTagDTO component = interactor.execute(input).get();
 
         assertThat(component.getName(), is("test"));
-        assertThat(component.getArtifact(), is("test.org/name:test"));
-        verify(registryClient, times(1))
-                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
-        verify(registryClient, times(1))
-                .getImage("name", "test", entity.connectionData);
-        verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
+        assertThat(component.getArtifact(), is("registry.io.com/charles_cd:test"));
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+        verify(registryService, times(1))
+                .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
 
     }
 
     @Test
-    public void testArtifactFoundButContainsNoTags() throws IOException {
+    public void testArtifactFoundButContainsNoTags() {
 
-        var entity = generateDockerRegistryConfigurationEntity();
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
+        var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
-
-        when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> Optional.empty());
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
-
-        GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
-                .withArtifactName("name")
-                .withWorkspaceId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
-                .withArtifactRepositoryConfigurationId("123")
-                .withName("test")
-                .build();
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
         assertTrue(interactor.execute(input).isEmpty());
-        verify(registryClient, times(1))
-                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
-        verify(registryClient, times(1))
-                .getImage("name", "test", entity.connectionData);
-        verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
+
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+        verify(registryService, times(1))
+                .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
     }
 
     @Test
-    public void testDockerRegistryForbidden() throws IOException {
+    public void testArtifactFoundButErrorHappensGettingTags() {
 
-        var entity = generateDockerRegistryConfigurationEntity();
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
+        var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).then(invocationOnMock -> entity);
+        when(registryService.getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME))
+                .thenReturn(Optional.of(Response.status(HttpStatus.SC_CONFLICT).build()));
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
-        GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
-                .withArtifactName("name")
-                .withWorkspaceId("123")
-                .withArtifactRepositoryConfigurationId("123")
-                .withName("test")
-                .build();
+        assertTrue(interactor.execute(input).isEmpty());
+
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+        verify(registryService, times(1))
+                .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
+    }
+
+
+    @Test
+    public void testDockerRegistryForbiddenWorkspace()  {
+
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
+        entity.workspaceId = "123";
+
+        var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
+
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenThrow(IllegalAccessResourceException.class);
+
+        var interactor =
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
         Exception exception = assertThrows(IllegalAccessResourceException.class, () -> {
-            ComponentTagDTO component = interactor.execute(input).get();
+            interactor.execute(input);
         });
 
-        assertThat(exception.getMessage(), is("This docker registry does not belongs to the request application id."));
-        verify(registryClient, times(0))
-                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
-        verify(registryClient, times(0))
-                .getImage("name", "test", entity.connectionData);
-        verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+        verify(registryService, times(0))
+                .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
 
     }
 
     @Test
     public void testDockerRegistryNotFound() throws ResourceNotFoundException {
 
-        var entity = generateDockerRegistryConfigurationEntity();
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
+        var input = DockerRegistryTestUtils.generateDockerRegistryTagInput(ID_DEFAULT_VALUE);
 
-        when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.empty());
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenThrow(ResourceNotFoundException.class);
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(registryService);
 
-        GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
-                .withArtifactName("name")
-                .withWorkspaceId("123")
-                .withArtifactRepositoryConfigurationId("123")
-                .withName("test")
-                .build();
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             ComponentTagDTO component = interactor.execute(input).get();
         });
 
-        assertThat(exception.getMessage(), is("Resource DOCKER_REGISTRY not found"));
-        verify(registryClient, times(0))
-                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
-        verify(registryClient, times(0))
-                .getImage("name", "test", entity.connectionData);
-        verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+        verify(registryService, times(0))
+                .getDockerRegistryTag(entity, ARTIFACT_NAME, TAG_NAME);
 
-    }
-
-    private DockerRegistryConfigurationEntity generateDockerRegistryConfigurationEntity() {
-        var entity = new DockerRegistryConfigurationEntity();
-        entity.id = "123";
-        entity.name = "Testing";
-        entity.type = RegistryType.AZURE;
-        entity.workspaceId = "1a3d413d-2255-4a1b-94ba-82e7366e4342";
-        entity.createdAt = LocalDateTime.now();
-        entity.connectionData = new DockerRegistryConfigurationEntity
-                .AzureDockerRegistryConnectionData("http://test.org", "usertest", "userpass");
-
-        return entity;
     }
 }
