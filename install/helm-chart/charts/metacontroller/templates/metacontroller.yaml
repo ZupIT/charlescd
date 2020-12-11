@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/name: metacontroller
+  name: {{ .Release.Name }}-metacontroller
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: metacontroller
+  serviceName: ""
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: metacontroller
+    spec:
+      serviceAccountName: metacontroller
+      containers:
+      - name: metacontroller
+        image: metacontroller/metacontroller:v0.4.0
+        command: ["/usr/bin/metacontroller"]
+        args:
+        - --logtostderr
+        - -v=4
+        - --discovery-interval=20s
+  volumeClaimTemplates: []
+---
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: charlesdeployments-controller
+spec:
+  generateSelector: true
+  parentResource:
+    apiVersion: charlescd.io/v1
+    resource: charlesdeployments
+  childResources:
+  - apiVersion: v1
+    resource: pods
+    updateStrategy:
+      method: InPlace
+  hooks:
+    sync:
+      webhook:
+        url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/deployment/hook"
+---
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: charlesroutes-controller
+spec:
+  generateSelector: true
+  parentResource:
+    apiVersion: charlescd.io/v1
+    resource: charlesroutes
+  childResources:
+  - apiVersion: networking.istio.io/v1
+    resource: virtualservices
+    updateStrategy:
+      method: InPlace
+  hooks:
+    sync:
+      webhook:
+        url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/routes/hook"

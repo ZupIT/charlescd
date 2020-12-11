@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-charlescd-butler-role
+rules:
+- apiGroups:
+  - charlescd.io
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
