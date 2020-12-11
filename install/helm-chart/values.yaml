@@ -206,9 +206,10 @@ envoy:
 ingress:
   host: charles.info.example
   class: nginx
-  controller:
-    nginx:
-      enabled: true
+  enabled: true
+
+nginx-ingress-controller:
+  enabled: true
 
 octopipe:
   enabled: true

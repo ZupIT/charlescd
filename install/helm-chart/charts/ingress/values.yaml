@@ -1,5 +1,0 @@
-host: charles.info.example
-class: nginx
-controller:
-  nginx:
-    enabled: true
