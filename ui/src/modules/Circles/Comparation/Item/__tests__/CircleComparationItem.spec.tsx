@@ -61,12 +61,6 @@ const circle = {
   }
 }
 
-const defaultCircle = {
-  name: 'Default',
-  deployment: {
-    status: 'DEPLOYED'
-  }
-}
 
 test('render CircleComparationItem default component', async () => {
   const handleChange = jest.fn();
@@ -108,54 +102,10 @@ test('render CircleComparationItem with release', async () => {
   await waitFor(() => {
     expect(screen.getByTestId('layer-metrics')).toBeInTheDocument();
     expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument();
+    expect(screen.getByText('Override release')).toBeInTheDocument();
     expect(screen.getByText('Last release deployed')).toBeInTheDocument();
     expect(screen.getByText('Add datasource health')).toBeInTheDocument();
   });
-
-  expect(screen.queryByText('Override release')).not.toBeInTheDocument();
-});
-
-test('render CircleComparationItem Default Circle with release', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123-workspace',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
-  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
-    responseAll: [],
-    getAll: jest.fn
-  });
-  (fetch as FetchMock)
-    .mockResponseOnce(JSON.stringify(defaultCircle))
-    .mockResponseOnce(JSON.stringify(defaultCircle));
-  const handleChange = jest.fn();
-
-  render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
-  );
-
-  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
-  expect(DropdownIcon).toBeInTheDocument();
-
-  act(() => userEvent.click(DropdownIcon));
-
-  const DropdownActions = screen.getByTestId('dropdown-actions');
-
-  await waitFor(() => {
-    expect(DropdownActions).toBeInTheDocument();
-    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
-  });
-
-  const OverrideRelease = screen.getByText('Override release');
-  expect(OverrideRelease).toBeInTheDocument();
-  act(() => userEvent.click(OverrideRelease));
-
-  const IconBack = await screen.findByTestId('icon-arrow-left');
-  expect(IconBack).toBeInTheDocument();
-  
 });
 
 test('render CircleComparationItem Default Circle', async () => {
@@ -178,21 +128,4 @@ test('render CircleComparationItem Default Circle', async () => {
     expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
     expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
   });
-
-  const IconEdit = await screen.findByTestId('icon-edit');
-  expect(IconEdit).toBeInTheDocument();
-  act(() => userEvent.click(IconEdit));
-
-  const IconBack = await screen.findByTestId('icon-arrow-left');
-  expect(IconBack).toBeInTheDocument();
-  act(() => userEvent.click(IconBack));
-
-  act(() => userEvent.click(DropdownIcon));
-
-  const IconDelete = await screen.findByTestId('icon-delete');
-  expect(IconDelete).toBeInTheDocument();
-  act(() => userEvent.click(IconDelete));
-
-  const ModalTrigger = await screen.findByTestId('modal-trigger');
-  expect(ModalTrigger).toBeInTheDocument();
 });

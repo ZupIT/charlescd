@@ -18,15 +18,15 @@ import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@
 import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
 import { Repository } from 'typeorm'
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
-import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { IoCTokensConstants } from '../../../core/constants/ioc'
+import IEnvConfiguration from '../../../core/configuration/interfaces/env-configuration.interface'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { QueueNames } from '../enums/queue-names.enum'
 import { DeploymentCleanupHandler } from '../use-cases/deployment-cleanup-handler'
 import { DeploymentHandlerUseCase } from '../use-cases/deployment-handler.usecase'
 import PgBoss = require('pg-boss');
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 
 @Injectable()
 export class PgBossWorker implements OnModuleInit, OnModuleDestroy {

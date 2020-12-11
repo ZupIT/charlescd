@@ -20,12 +20,13 @@ import {
   useFetchData,
   useFetchStatus,
   FetchStatus,
-  ResponseError
+  ResponseError,
+  FetchStatuses
 } from 'core/providers/base/hooks';
 import {
   findAllUsers,
   resetPasswordById,
-  updateProfileById,
+  patchProfileById,
   findUserByEmail,
   findUserById,
   createNewUser,
@@ -35,7 +36,7 @@ import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, Profile, NewUser, NewPassword } from './interfaces/User';
+import { User, NewUser, NewPassword } from './interfaces/User';
 import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
@@ -183,20 +184,40 @@ export const useDeleteUser = (): [Function, string] => {
   return [delUser, userStatus];
 };
 
-export const useUpdateProfile = (): [boolean, Function, User, string] => {
-  const [status, setStatus] = useState<string>('');
-  const [dataUpdate, , update] = useFetch<User>(updateProfileById);
-  const { response, loading: updateLoading } = dataUpdate;
+export const useUpdateName = (): {
+  status: string;
+  user: User;
+  updateNameById: (id: string, name: string) => void;
+} => {
+  const dispatch = useDispatch();
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const [user, setNewUser] = useState<User>();
+  const patch = useFetchData<User>(patchProfileById);
 
-  const updateProfile = useCallback(
-    (id: string, profile: Profile) => {
-      setStatus('');
-      update(id, profile).then(() => setStatus('resolved'));
+  const updateNameById = useCallback(
+    async (id: string, name: string) => {
+      try {
+        setStatus('pending');
+        const res = await patch(id, name);
+        setNewUser(res);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+
+        const error = await e?.json();
+
+        dispatch(
+          toogleNotification({
+            text: error?.message,
+            status: 'error'
+          })
+        );
+      }
     },
-    [update]
+    [patch, dispatch]
   );
 
-  return [updateLoading, updateProfile, response, status];
+  return { status, user, updateNameById };
 };
 
 export const useResetPassword = (): {
@@ -216,9 +237,11 @@ export const useResetPassword = (): {
       setResponse(putResponse);
       status.resolved();
     } catch (e) {
+      const error = await e.json();
+
       dispatch(
         toogleNotification({
-          text: 'The password could not be reset.',
+          text: error?.message,
           status: 'error'
         })
       );
