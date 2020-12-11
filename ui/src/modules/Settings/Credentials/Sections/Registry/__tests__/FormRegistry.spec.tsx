@@ -629,3 +629,134 @@ test('should test connectivity with Docker Hub error', async () => {
   expect(submitButton).toBeDisabled();
 });
 
+test('should render Harbor form', async () => {
+  render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Harbor');
+
+  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  expect(fillInfoText).toBeInTheDocument();
+
+  const input = await screen.findByText('Enter the username');
+  expect(input).toBeInTheDocument();
+});
+
+test('should submit Harbor form', async () => {
+  render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Harbor');
+
+  const registryField = await screen.findByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar!');
+  });
+
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  expect(testConnectionButton).not.toBeDisabled();
+  expect(submitButton).toBeDisabled();
+  await act(async () => userEvent.click(testConnectionButton));
+  expect(submitButton).not.toBeDisabled();
+});
+
+test('should not submit Harbor form (missing registry url)', async () => {
+  render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Harbor');
+
+  const registryField = await screen.findByText('Type a name for Registry');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  expect(testConnectionButton).toBeDisabled();
+  expect(submitButton).toBeDisabled();
+});
+
+test('should test connection with Harbor (success)', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({ }));
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Harbor');
+  
+  const registryField = await screen.findByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  const submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  expect(submitButton).toBeDisabled();
+
+  await act(async () => userEvent.click(testConnectionButton));
+  const successMessage = await screen.findByText('Successful connection.');
+  expect(successMessage).toBeInTheDocument();
+  expect(submitButton).not.toBeDisabled();
+});
+
+test('should test connection with Harbor (error)', async () => {
+  const error = {
+    status: '404',
+    message: 'invalid registry'
+  };
+  (fetch as FetchMock).mockRejectedValueOnce(new Response(JSON.stringify(error)));
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Harbor');
+  
+  const registryField = await screen.findByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  let submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+  expect(submitButton).toBeDisabled();
+
+  await act(async () => userEvent.click(testConnectionButton));
+  const errorMessage = await screen.findByText('invalid registry');
+  expect(errorMessage).toBeInTheDocument();
+  expect(submitButton).toBeDisabled();
+});
+
