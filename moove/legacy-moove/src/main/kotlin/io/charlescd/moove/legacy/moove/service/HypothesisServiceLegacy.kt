@@ -242,13 +242,13 @@ class HypothesisServiceLegacy(
         return if (isItDeployedReleasesColumn(cardColumn)) {
             getCardsWithValidDeployments(cardColumn, hypothesis)
         } else {
-            val isProtectedCard = isProtectedCard(hypothesis)
+
             return cardColumn.copy(
                 id = cardColumn.id,
                 name = cardColumn.name,
                 cards = hypothesis.cards.filter { it.column.id == cardColumn.id && it.status == CardStatus.ACTIVE }
                     .sortedBy { it.index }
-                    .map { it.toSimpleRepresentation(isProtectedCard) },
+                    .map { it.toSimpleRepresentation(isProtectedCard(it)) },
                 builds = hypothesis.builds.filter { it.column?.id == cardColumn.id && it.status != BuildStatus.ARCHIVED }
                     .orderDeploymentsByDate()
                     .sortedByDescending { it.createdAt }
@@ -391,9 +391,11 @@ class HypothesisServiceLegacy(
                     it.name == ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME
         } ?: throw RuntimeException("Invalid column")
     }
-    private fun isProtectedCard(hypothesis: Hypothesis): Boolean {
-        val branchNames = hypothesis.cards.filterIsInstance<SoftwareCard>().toList().stream().map { it.feature.branchName }.toList()
-        return branchNames.stream().filter { isProtectedBranch(it) }.findAny().isPresent
+    private fun isProtectedCard(card: Card): Boolean {
+        if(card is SoftwareCard) {
+            return isProtectedBranch(card.feature.branchName)
+        }
+        return false;
     }
 
     private fun isProtectedBranch(branchName: String): Boolean {
