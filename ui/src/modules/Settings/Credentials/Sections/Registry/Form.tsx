@@ -45,7 +45,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [message, setMessage] = useState<ConnectionProps>(null);
   const profileId = getProfileByKey('id');
-  const isAzure = registryType === 'AZURE';
   const {
     register,
     handleSubmit,
@@ -211,7 +210,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
-        isDisabled={isAzure ? isDisabled : !isValid}
+        isDisabled={isDisabled}
       >
         Save
       </Button.Default>
