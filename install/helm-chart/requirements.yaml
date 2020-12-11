@@ -10,7 +10,7 @@ dependencies:
   version: "1.0.4"
 - name: envoy
   condition: envoy.enabled
-  version: "charles-0.3.10"
+  version: "0.3.10"
 - name: keycloak
   condition: keycloak.enabled
   version: "7.5.8"

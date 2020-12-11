@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-    {{ if .Values.nginx-ingress-controller.enabled }}
+    {{ if .Values.nginx_ingress_controller.enabled }}
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     {{- end}}
   name: charlescd-ingress

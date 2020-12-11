@@ -208,7 +208,7 @@ ingress:
   class: nginx
   enabled: true
 
-nginx-ingress-controller:
+nginx_ingress_controller:
   enabled: true
 
 octopipe:
