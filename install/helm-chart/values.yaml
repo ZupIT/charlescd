@@ -211,6 +211,11 @@ ingress:
 nginx_ingress_controller:
   enabled: true
 
+ingress-nginx:
+  controller:
+    extraArgs:
+      default-ssl-certificate: "default/nginx-certs"
+
 octopipe:
   enabled: true
   envVars:

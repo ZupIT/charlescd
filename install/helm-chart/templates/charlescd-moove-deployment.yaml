@@ -61,13 +61,13 @@ spec:
             - name: DB_PASSWORD
               value: "{{ .Values.moove.database.password}}"
             - name: KEYCLOCK_REALM
-              value: "ZupDev"
+              value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
               value: "{{ .Values.moove.keycloakHost}}"
             - name: KEYCLOAK_PUBLIC_CLIENT_ID
-              value: "charlescd-client"
+              value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_ID
-              value: "charlescd-client"
+              value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
               value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
             - name: INTERNAL_IDM_ENABLED
