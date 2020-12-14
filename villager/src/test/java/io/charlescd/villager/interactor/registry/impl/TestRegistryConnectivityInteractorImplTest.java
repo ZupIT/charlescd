@@ -1,5 +1,11 @@
 package io.charlescd.villager.interactor.registry.impl;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.service.RegistryService;
 import io.charlescd.villager.utils.DockerRegistryTestUtils;
@@ -8,8 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestRegistryConnectivityInteractorImplTest {
@@ -50,7 +54,8 @@ public class TestRegistryConnectivityInteractorImplTest {
 
         when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
-        doThrow(new IllegalArgumentException("Invalid registry")).when(registryService).testRegistryConnectivityConfig(entity);
+        doThrow(new IllegalArgumentException("Invalid registry")).when(registryService)
+            .testRegistryConnectivityConfig(entity);
 
         var interactor =
                 new TestRegistryConnectivityInteractorImpl(registryService);
@@ -58,7 +63,9 @@ public class TestRegistryConnectivityInteractorImplTest {
         try {
             interactor.execute(input);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
+
 
         verify(registryService, times(1))
                 .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);

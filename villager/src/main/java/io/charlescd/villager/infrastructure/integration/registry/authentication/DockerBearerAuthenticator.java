@@ -16,11 +16,14 @@
 
 package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import java.util.Arrays;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Response;
+
 
 public final class DockerBearerAuthenticator implements ClientRequestFilter {
 
@@ -31,12 +34,8 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
     private final String authUrl;
     private final String service;
 
-    public DockerBearerAuthenticator(String organization,
-                                     String username,
-                                     String password,
-                                     String imageName,
-                                     String authUrl,
-                                     String service) {
+    public DockerBearerAuthenticator(String organization, String username, String password, String imageName,
+            String authUrl, String service) {
         this.organization = organization;
         this.username = username;
         this.password = password;
@@ -52,9 +51,13 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
 
         client.register(new CommonBasicAuthenticator(this.username, this.password));
 
-        DockerBasicAuthResponse response = client.target(url).request().get().readEntity(DockerBasicAuthResponse.class);
+        Response response = client.target(url).request().get();
+        if (response.getStatus() == 200) {
+            DockerBasicAuthResponse basicResponse = response.readEntity(DockerBasicAuthResponse.class);
+            return String.format("Bearer %s", basicResponse.getToken());
+        }
+        throw new ThirdPartyIntegrationException("Docker hub credentials invalid.");
 
-        return String.format("Bearer %s", response.getToken());
     }
 
     @Override
@@ -63,14 +66,7 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
     }
 
     public String createAuthUrl() {
-        return new StringBuilder(authUrl)
-                .append("?service=")
-                .append(service)
-                .append("&scope=repository:")
-                .append(organization)
-                .append("/")
-                .append(imageName)
-                .append(":pull")
-                .toString();
+        return new StringBuilder(authUrl).append("?service=").append(service).append("&scope=repository:")
+                .append(organization).append("/").append(imageName).append(":pull").toString();
     }
 }

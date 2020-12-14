@@ -99,6 +99,18 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         return Optional.ofNullable(this.client.target(url).request().get());
     }
 
+    @Override
+    public Optional<Response> getV2Path(
+            DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData
+    ) {
+
+        String url = this.baseAddress + "/v2/";
+
+
+
+        return Optional.ofNullable(this.client.target(url).request().get());
+    }
+
     private String createGetImageUrl(String baseAddress, String name, String tagName) {
 
         UriBuilder builder = UriBuilder.fromUri(baseAddress);
