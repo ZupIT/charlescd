@@ -146,7 +146,7 @@ const deployActualVersionDefaultDeployments = async (deployments, loginObject, p
     const deploymentId = newDeployment.data.id
     console.log('Actual version deployment requested. Id:'+ deploymentId)
     console.log('Sleeping for 4 seconds')
-    await sleep(4000)
+    sleep(4000)
     await checkIfDeployFinished(pgClient, deploymentId)
   }
 }
@@ -188,14 +188,13 @@ const getPgConnection = async () => {
 }
 
 async function checkIfDeployFinished(pgClient, deploymentId) {
-  await sleep(5000)
+  sleep(5000)
   let deployments = await getRunningCircleDeployment(pgClient, deploymentId)
   let retry = 0
   console.log(`Active deployment: ${JSON.stringify(deployments)} `)
   while (deployments && deployments.length &&  retry < 10 ) {
     console.log(`Retry ${retry+1}/10: Still active deployment:  Sleeping for 15 seconds: `)
-
-    await sleep(15000)
+    sleep(15000)
     retry++;
     deployments = await getRunningCircleDeployment(pgClient, deploymentId)
     console.log(`Active deployment: ${JSON.stringify(deployments)} `)
