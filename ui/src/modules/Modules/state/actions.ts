@@ -19,52 +19,52 @@ import { Component } from '../interfaces/Component';
 import { ModulePagination } from '../interfaces/ModulePagination';
 
 export enum ACTION_TYPES {
-  loadModules = 'MODULES/LIST',
-  loadModule = 'MODULES/GET',
-  loadComponent = 'MODULES/ADD_COMPONENT',
-  resetModule = 'MODULES/RESET'
+  LoadModules = 'MODULES/LIST',
+  LoadModule = 'MODULES/GET',
+  LoadComponent = 'MODULES/ADD_COMPONENT',
+  ResetModule = 'MODULES/RESET'
 }
 
 interface LoadModulesActionType {
-  type: typeof ACTION_TYPES.loadModules;
+  type: typeof ACTION_TYPES.LoadModules;
   payload: ModulePagination;
 }
 
 interface LoadModuleActionType {
-  type: typeof ACTION_TYPES.loadModule;
+  type: typeof ACTION_TYPES.LoadModule;
   payload: Module;
 }
 
 interface LoadComponentActionType {
-  type: typeof ACTION_TYPES.loadComponent;
+  type: typeof ACTION_TYPES.LoadComponent;
   payload: Component;
 }
 
 interface ResetModuleActionType {
-  type: typeof ACTION_TYPES.resetModule;
+  type: typeof ACTION_TYPES.ResetModule;
 }
 
 export const loadModulesAction = (
   payload: ModulePagination
 ): LoadModulesActionType => ({
-  type: ACTION_TYPES.loadModules,
+  type: ACTION_TYPES.LoadModules,
   payload
 });
 
 export const loadModuleAction = (payload: Module): LoadModuleActionType => ({
-  type: ACTION_TYPES.loadModule,
+  type: ACTION_TYPES.LoadModule,
   payload
 });
 
 export const loadComponentAction = (
   payload: Component
 ): LoadComponentActionType => ({
-  type: ACTION_TYPES.loadComponent,
+  type: ACTION_TYPES.LoadComponent,
   payload
 });
 
 export const resetModuleAction = (): ResetModuleActionType => ({
-  type: ACTION_TYPES.resetModule
+  type: ACTION_TYPES.ResetModule
 });
 
 export type ModulesActionTypes =

@@ -146,7 +146,7 @@ const Credentials = ({ onClickHelp }: Props) => {
       <Section.MetricProvider
         form={form}
         setForm={setForm}
-        data={datasources as Datasource[]}
+        data={datasources}
         getNewDatasources={getDatasources}
       />
       {actionDataStatus.isResolved && (

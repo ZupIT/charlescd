@@ -201,7 +201,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         placeholder="Choose witch one you want to add:"
         customOption={CustomOption.Icon}
         options={options}
-        onChange={option => onChange(option as Option)}
+        onChange={option => onChange(option)}
       />
       {registryType && renderForm()}
     </Styled.Content>

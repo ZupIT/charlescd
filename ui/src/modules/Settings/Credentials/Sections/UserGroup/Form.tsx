@@ -58,7 +58,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
   const [group, setGroup] = useState(null);
 
   useEffect(() => {
-    const options = map(rolesAll as Role[], (role: Role) => ({
+    const options = map(rolesAll, (role: Role) => ({
       value: role.id,
       label: role.name,
       description: role.description
@@ -159,7 +159,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
         control={control}
         name="userGroup"
         customOption={CustomOption.Icon}
-        options={reduce(responseAll as UserGroup[])}
+        options={reduce(responseAll)}
         label="Select a user group"
         isDisabled={loadingAll}
         loadOptions={loadUserGroups}

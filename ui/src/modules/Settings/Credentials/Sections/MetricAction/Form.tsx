@@ -40,7 +40,7 @@ const FormAddAction = ({ onFinish }: Props) => {
     watch,
     formState: { isValid }
   } = formMethods;
-  const nickname = watch('nickname') as string;
+  const nickname = watch('nickname');
 
   const { getPlugins } = usePlugins();
   const { createAction, status } = useCreateAction();
@@ -56,7 +56,7 @@ const FormAddAction = ({ onFinish }: Props) => {
   }, [getPlugins]);
 
   const onSubmit = (data: ActionForm) => {
-    const payload = buildActionPayload(data, isDefault) as ActionPayload;
+    const payload = buildActionPayload(data, isDefault);
 
     createAction(payload)
       .then(response => {

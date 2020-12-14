@@ -147,8 +147,8 @@ export const createCardPayload = ({
   branchName: '',
   description: '',
   hypothesisId,
-  labels: [] as string[],
-  modules: [] as string[],
+  labels: [],
+  modules: [],
   type: 'ACTION',
   name
 });
