@@ -281,6 +281,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         onClickCreate={() => setActiveSection(SECTIONS.RELEASE)}
       />
       <LayerMetricsGroups
+        circle={circle}
         circleId={id}
         onClickCreate={() => setActiveSection(SECTIONS.GROUP_METRICS)}
       />
