@@ -2,22 +2,23 @@ package api
 
 import (
 	"fmt"
+
+	"github.com/ZupIT/charlescd/compass/web/api/v1/plugin"
+
+	"github.com/ZupIT/charlescd/compass/web/api/v1/metricsgroupaction"
+
+	"github.com/ZupIT/charlescd/compass/web/api/v1/metric"
+
+	"github.com/ZupIT/charlescd/compass/web/api/v1/health"
+
+	"github.com/ZupIT/charlescd/compass/web/api/v1/circle"
+
 	"github.com/ZupIT/charlescd/compass/web/api/v1/datasource"
 
 	"github.com/ZupIT/charlescd/compass/web/api/v1/action"
 
 	"github.com/ZupIT/charlescd/compass/web/api/v1/metricsgroup"
 )
-
-// v1.Router.GET(v1.getCompletePath(apiPath), v1.HttpValidator(metricsGroupApi.list))
-// 	v1.Router.POST(v1.getCompletePath(apiPath), v1.HttpValidator(metricsGroupApi.create))
-// 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.show))
-// 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/query"), v1.HttpValidator(metricsGroupApi.query))
-// 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/result"), v1.HttpValidator(metricsGroupApi.result))
-// 	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.update))
-// 	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.updateName))
-// 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), v1.HttpValidator(metricsGroupApi.delete))
-// 	v1.Router.GET(v1.getCompletePath("/resume"+apiPath), v1.HttpValidator(metricsGroupApi.resume))
 
 func (api *Api) newV1Api() {
 	api.router.PathPrefix("/v1")
@@ -47,5 +48,31 @@ func (api *Api) newV1Api() {
 		api.router.HandleFunc(fmt.Sprintf("%s/{metricGroupID}", path), metricsgroup.UpdateName(api.metricsGroupMain)).Methods("PATCH") // TODO: Discutir necessidade desse patch
 		api.router.HandleFunc(fmt.Sprintf("%s/{metricGroupID}", path), metricsgroup.Delete(api.metricsGroupMain)).Methods("DELETE")
 		api.router.HandleFunc(fmt.Sprintf("resume/%s", path), metricsgroup.Resume(api.metricsGroupMain)).Methods("GET")
+	}
+	{
+		path := "/metrics-groups"
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupID}/metrics", path), metric.Create(api.metricMain, api.metricsGroupMain)).Methods("GET")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupID}/metrics/{metricID}", path), metric.Update(api.metricMain, api.metricsGroupMain)).Methods("PUT")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupID}/metrics/{metricID}", path), metric.Delete(api.metricMain)).Methods("DELETE")
+	}
+	{
+		path := "/group-actions"
+		api.router.HandleFunc(path, metricsgroupaction.Create(api.metricGroupActionMain)).Methods("POST")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}"), metricsgroupaction.FindByID(api.metricGroupActionMain)).Methods("GET")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}"), metricsgroupaction.Update(api.metricGroupActionMain)).Methods("PUT")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}"), metricsgroupaction.Delete(api.metricGroupActionMain)).Methods("DELETE")
+	}
+	{
+		path := "/circles"
+		api.router.HandleFunc(fmt.Sprintf("%s/{circleID}/metrics-groups", path), circle.ListMetricGroupInCircle(api.metricsGroupMain)).Methods("GET")
+	}
+	{
+		path := "/application-health"
+		api.router.HandleFunc(fmt.Sprintf("%s/{circleID}/components", path), health.Components(api.healthMain)).Methods("GET")
+		api.router.HandleFunc(fmt.Sprintf("%s/{circleID}/components/health", path), health.ComponentsHealth(api.healthMain)).Methods("GET")
+	}
+	{
+		path := "/plugins"
+		api.router.HandleFunc(path, plugin.List(api.pluginMain)).Methods("GET")
 	}
 }
