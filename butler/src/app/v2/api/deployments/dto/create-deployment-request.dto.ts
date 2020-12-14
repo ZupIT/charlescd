@@ -15,7 +15,7 @@
  */
 
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
 import { flatten } from 'lodash'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
@@ -57,6 +57,8 @@ export class CreateDeploymentRequestDto {
 
   public status: DeploymentStatusEnum
 
+  @IsBoolean()
+  @ApiProperty()
   public defaultCircle: boolean
 
   @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
