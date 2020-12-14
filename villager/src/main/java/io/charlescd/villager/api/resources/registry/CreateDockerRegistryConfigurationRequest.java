@@ -39,7 +39,7 @@ public abstract class CreateDockerRegistryConfigurationRequest {
     @NotEmpty
     protected String name;
 
-    @URL
+    @URL(message = "Invalid address url")
     @NotEmpty
     protected String address;
 
