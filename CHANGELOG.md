@@ -1,33 +1,46 @@
 # Changelog
 
+## 0.4.5 (10/12/2020)
+- [#672](https://github.com/ZupIT/charlescd/pull/672) validate default circle
+- [#745](https://github.com/ZupIT/charlescd/pull/745) changing compass limit rate
+- [#680](https://github.com/ZupIT/charlescd/pull/680) Fix workspace infinite loading
+- [#666](https://github.com/ZupIT/charlescd/pull/666) Api authorization refactor
+- [#627](https://github.com/ZupIT/charlescd/pull/627) Test registry connectivity gcr
+- [#741](https://github.com/ZupIT/charlescd/pull/741) Restore healthcheck module and map it on the v2 base module
+- [#732](https://github.com/ZupIT/charlescd/pull/732) Delete v1 dir
+- [#688](https://github.com/ZupIT/charlescd/pull/688) Compass http limit
+- [#644](https://github.com/ZupIT/charlescd/pull/644) add request limiter octopipe
+- [#727](https://github.com/ZupIT/charlescd/pull/727) Butler k8s client
+- [#736](https://github.com/ZupIT/charlescd/pull/736) Removing workflow
+- [#735](https://github.com/ZupIT/charlescd/pull/735) General security static analysis
+- [#690](https://github.com/ZupIT/charlescd/pull/690) OpenResty version in header disabled
+- [#725](https://github.com/ZupIT/charlescd/pull/725) Butler operator crd
+- [#700](https://github.com/ZupIT/charlescd/pull/700) Compass encrypt
+- [#674](https://github.com/ZupIT/charlescd/pull/674) Compass authorization
+- [#721](https://github.com/ZupIT/charlescd/pull/721) Remove old components when deploying on a circle (Override deployment) 
+- [#722](https://github.com/ZupIT/charlescd/pull/722) Butler helm strategy
+- [#734](https://github.com/ZupIT/charlescd/pull/734) CI Update of charts and changelog
+
+---
+
+## 0.4.4 (03/12/2020)
+- [#728](https://github.com/ZupIT/charlescd/pull/728) Patch user and database error handler
+- [#733](https://github.com/ZupIT/charlescd/pull/733) Implementing gitlab ignore certificate errors.
+- [#731](https://github.com/ZupIT/charlescd/pull/731) Adding workflow configs for new environments
+- [#715](https://github.com/ZupIT/charlescd/pull/715) Fix multicluster/opensea bugs
+- [#693](https://github.com/ZupIT/charlescd/pull/693) accepted adr
+- [#691](https://github.com/ZupIT/charlescd/pull/691) CI Update of charts and changelog
+- [#718](https://github.com/ZupIT/charlescd/pull/718) Adding running options to README
+- [#716](https://github.com/ZupIT/charlescd/pull/716) Readme on compass
+
+---
+
 ## 0.4.3 (26/11/2020)
 *No changelog for this release.*
 
 ---
 
 ## 0.4.2 (26/11/2020)
-
----
-
-## 0.4.2rc.3 (19/11/2020)
-- [#697](https://github.com/ZupIT/charlescd/pull/697) Fix default deployment merge strategy
-- [#624](https://github.com/ZupIT/charlescd/pull/624) Created test of connections with git providers
-- [#652](https://github.com/ZupIT/charlescd/pull/652) Improve error messages moove
-- [#694](https://github.com/ZupIT/charlescd/pull/694) add input error
-- [#685](https://github.com/ZupIT/charlescd/pull/685) Circle matcher spring update and swagger add
-
----
-
-## 0.4.2rc.2 (18/11/2020)
-- [#689](https://github.com/ZupIT/charlescd/pull/689) Fixing UI workflow.
-
----
-
-## 0.4.2rc.1 (18/11/2020)
-
----
-
-## 0.4.2rc (18/11/2020)
 
 ---
 
@@ -443,3 +456,11 @@
 ---
 
 ## v0.2.8 (03/06/2020)
+
+---
+
+## 0.2.7 (03/06/2020)
+
+---
+
+## 0.2.6 (03/06/2020)

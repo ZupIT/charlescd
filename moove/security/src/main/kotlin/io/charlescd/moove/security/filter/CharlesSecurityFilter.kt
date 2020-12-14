@@ -66,10 +66,13 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
             doAuthorization(workspaceId, authorization, path, method)
             chain.doFilter(request, response)
         } catch (feignException: FeignException) {
+            logger.error(feignException.message, feignException)
             createResponse(response, feignException.contentUTF8(), HttpStatus.UNAUTHORIZED)
         } catch (businessException: BusinessException) {
+            logger.error(businessException.message, businessException)
             createResponse(response, businessException.message, HttpStatus.FORBIDDEN)
         } catch (exception: Exception) {
+            logger.error(exception.message, exception)
             createResponse(response, exception.message, HttpStatus.UNAUTHORIZED)
         }
     }
@@ -100,13 +103,13 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
         val workspace = user.workspaces.firstOrNull { it.id == workspaceId }
 
         workspace?.let {
-            if (!isValidToken(constraints, path, workspace, method)) {
+            if (!isValidConstraintPath(constraints, path, workspace, method)) {
                 throw BusinessException.of(MooveErrorCode.FORBIDDEN)
             }
         } ?: throw BusinessException.of(MooveErrorCode.FORBIDDEN)
     }
 
-    private fun isValidToken(
+    private fun isValidConstraintPath(
         constraints: SecurityConstraints,
         path: String,
         workspace: WorkspacePermissions,
