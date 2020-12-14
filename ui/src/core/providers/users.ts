@@ -18,6 +18,7 @@ import { baseRequest, putRequest, postRequest, patchRequest } from './base';
 import { Profile, NewUser } from 'modules/Users/interfaces/User';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
 import { getWorkspaceId } from 'core/utils/workspace';
+import { buildParams } from 'core/utils/query';
 
 const endpoint = '/moove/v2/users';
 const endpointWorkspaces = '/moove/v2/workspaces';
@@ -36,15 +37,13 @@ export const findAllWorkspaceUsers = (
   filter: UserFilter = initialUserFilter
 ) => {
   const workspaceId = getWorkspaceId();
-  const defaultPage = 0;
-  const defaultSize = 100;
-  const params = new URLSearchParams({
-    size: `${defaultSize}`,
-    page: `${defaultPage}`
+  const page = '0';
+  const size = '100';
+  const params = buildParams({
+    size,
+    page,
+    ...filter
   });
-
-  if (filter?.name) params.append('name', filter?.name);
-  if (filter?.email) params.append('email', filter?.email);
 
   return baseRequest(`${endpointWorkspaces}/${workspaceId}/users?${params}`);
 };
