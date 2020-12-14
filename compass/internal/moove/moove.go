@@ -19,39 +19,77 @@
 package moove
 
 import (
-	"errors"
-	"fmt"
+	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
-	"io/ioutil"
-	"net/http"
-	"os"
+	"github.com/google/uuid"
 )
 
-func (api APIClient) GetMooveComponents(circleIDHeader, circleId, workspaceId string) ([]byte, error) {
-	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleId)
+type User struct {
+	util.BaseModel
+	Email  string
+	Name   string
+	IsRoot bool
+}
 
-	request, err := http.NewRequest(http.MethodGet, mooveUrl, nil)
+type Permission struct {
+	Name string
+}
+
+type PermissionsResult struct {
+	Permissions json.RawMessage
+}
+
+const permissionQuery = `
+						SELECT permissions 
+						FROM workspaces_user_groups 
+						WHERE workspace_id = ? 
+							AND user_group_id IN (SELECT user_group_id FROM user_groups_users WHERE user_id = ?)
+						`
+
+func (main Main) FindUserByEmail(email string) (User, error) {
+	user := User{}
+	db := main.Db.Where("email = ?", email).First(&user)
+	if db.Error != nil {
+		return User{}, db.Error
+	}
+
+	return user, nil
+}
+
+func (main Main) GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error) {
+	rawPermissions := make([]PermissionsResult, 0)
+	db := main.Db.Raw(permissionQuery, workspaceID, userID).Scan(&rawPermissions)
+	if db.Error != nil {
+		return nil, db.Error
+	}
+
+	permsSet, err := getPermissionSet(rawPermissions)
 	if err != nil {
 		return nil, err
 	}
 
-	request.Header.Add("x-workspace-id", workspaceId)
-	request.Header.Add("x-circle-id", circleIDHeader)
-	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
-
-	response, err := api.httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusOK {
-		logger.Error(util.QueryGetPluginError, "GetMooveComponents", errors.New("Internal server error"), response)
-		return nil, errors.New("Internal server error")
+	resultPerms := make([]string, 0)
+	for perm := range permsSet {
+		resultPerms = append(resultPerms, perm)
 	}
 
-	resultBody, err := ioutil.ReadAll(response.Body)
+	return resultPerms, nil
+}
 
-	return resultBody, nil
+func getPermissionSet(rawPermissions []PermissionsResult) (map[string]bool, error) {
+	permsMap := make(map[string]bool)
+	for _, raw := range rawPermissions {
+		perm := make([]Permission, 0)
+		err := json.Unmarshal(raw.Permissions, &perm)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, singlePerm := range perm {
+			permsMap[singlePerm.Name] = true
+		}
+
+	}
+
+	return permsMap, nil
 }
