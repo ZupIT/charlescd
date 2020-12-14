@@ -46,7 +46,7 @@ const PrivateRoute = ({
       workspaceId &&
       hasPermission('maintenance_write') &&
       (status === 'idle' ||
-        (status !== 'pending' && workspaceId !== workspace?.id))
+        (status === 'resolved' && workspaceId !== workspace?.id))
     ) {
       loadWorkspace(workspaceId);
     }
