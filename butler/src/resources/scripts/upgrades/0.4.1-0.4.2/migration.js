@@ -37,8 +37,26 @@ const getDefaultActiveCircleDeployments = async (pgClient) => {
       ` select d.build_id, d.circle_id,d.id,d.user_id,d.workspace_id from deployments d 
         INNER JOIN circles circles ON d.circle_id = circles.id
         WHERE d.STATUS = 'DEPLOYED' and circles.default_circle = true
+        order by d.created_at ASC
     `)
     console.log(`Active default deployments: ${JSON.stringify(deployments.rows)}`)
+    return deployments.rows
+  } catch (error) {
+    console.error(chalk.red(`Error fetching active default deployments: ${error}`))
+    closePgConnection(pgClient)
+  }
+}
+
+const getRunningCircleDeployment = async (pgClient, deploymentId) => {
+
+  try {
+    console.log('Fetching default active circle deployment')
+    const deployments = await pgClient.query(
+        ` select d.build_id, d.circle_id,d.id,d.user_id,d.workspace_id from deployments d 
+        INNER JOIN circles circles ON d.circle_id = circles.id
+        WHERE d.STATUS = 'DEPLOYING' and circles.default_circle = true and d.id='${deploymentId}'
+    `)
+    console.log(`Active default deployment: ${JSON.stringify(deployments.rows)}`)
     return deployments.rows
   } catch (error) {
     console.error(chalk.red(`Error fetching active default deployments: ${error}`))
@@ -62,7 +80,7 @@ const doLogin = async () => {
             'Accept': '*/*',
             'Content-Type': 'application/x-www-form-urlencoded'
           },
-          timeout: 10000
+          timeout: 20000
         }
     )
     console.log('Done authentication')
@@ -85,8 +103,7 @@ const doDefaultCircleUndeployRequest = async (deployment) => {
       }
     )
   } catch (error) {
-    console.error(chalk.red(`Error doing old version undeployment: ${error}`))
-    throw error
+    console.error(chalk.red(`Error doing v2 undeployment: ${error}`))
   }
 }
 
@@ -121,18 +138,20 @@ const sleep = (milliseconds) => {
   } while (currentDate - date < milliseconds)
 }
 
-const deployActualVersionDefaultDeployments = async (deployments, loginObject) => {
+const deployActualVersionDefaultDeployments = async (deployments, loginObject, pgClient) => {
 
   for (const deployment of deployments) {
     console.log(`Deploying ${deployment.id} with V2 api`)
-    await defaultCircleDeployRequest(deployment, loginObject)
-    console.log('Actual version deployment requested')
-    console.log('Sleeping for 2 seconds')
-    sleep(2000)
+    const newDeployment = await defaultCircleDeployRequest(deployment, loginObject)
+    const deploymentId = newDeployment.data.id
+    console.log('Actual version deployment requested. Id:'+ deploymentId)
+    console.log('Sleeping for 4 seconds')
+    await sleep(4000)
+    await checkIfDeployFinished(pgClient, deploymentId)
   }
 }
 
-const undeployOldVersionDefaultDeployments = async (deployments, loginObject) => {
+const undeployOldVersionDefaultDeployments = async (deployments, pgClient) => {
   console.log('Starting old version  default undeployments')
   for (const deployment of deployments) {
     console.log(`Undeploying ${deployment.id}`)
@@ -168,23 +187,25 @@ const getPgConnection = async () => {
   return client
 }
 
-async function checkIfUndeployFinished(pgClient) {
-  sleep(5000)
-  let deployments = getDefaultActiveCircleDeployments(pgClient)
+async function checkIfDeployFinished(pgClient, deploymentId) {
+  await sleep(5000)
+  let deployments = await getRunningCircleDeployment(pgClient, deploymentId)
   let retry = 0
-  while(deployments && deployments.length &&  retry < 10 ){
-    console.log(`Retry ${retry+1}/10: Still active deployments:  Sleeping for 20 seconds: `)
-    console.log(`Active deployments: ${JSON.stringify(deployments)} `)
-    sleep(20000)
+  console.log(`Active deployment: ${JSON.stringify(deployments)} `)
+  while (deployments && deployments.length &&  retry < 10 ) {
+    console.log(`Retry ${retry+1}/10: Still active deployment:  Sleeping for 15 seconds: `)
+
+    await sleep(15000)
     retry++;
-    deployments = getDefaultActiveCircleDeployments(pgClient)
+    deployments = await getRunningCircleDeployment(pgClient, deploymentId)
+    console.log(`Active deployment: ${JSON.stringify(deployments)} `)
   }
   if (retry === 10) {
-    console.error(chalk.red(`Error undeploying: Some deployments still active ${JSON.stringify(deployments)}`))
+    console.error(chalk.red(`Error deploying: Deploy still active ${JSON.stringify(deployments)}`))
   }
 }
 
-const doV2Migration = async () => {
+const doV2Migration = async (pgClient) => {
   try {
     console.log(chalk.bold.green('Butler migration script: v0.4.1 to v0.4.2 \n'))
     console.log(chalk.green('This script is divided in two steps:'))
@@ -192,25 +213,24 @@ const doV2Migration = async () => {
     console.log(chalk.green('2 - Second, it needs to deploy the same releases using the 0.4.2 APIs\n'))
 
 
-    const pgClient = await getPgConnection()
     const activeDefaultDeployments = await getDefaultActiveCircleDeployments(pgClient)
     if (!activeDefaultDeployments) {
       return
     }
     let loginObject = await doLogin()
     if (loginObject) {
-      await undeployOldVersionDefaultDeployments(activeDefaultDeployments, loginObject)
-      await checkIfUndeployFinished(pgClient)
-      await deployActualVersionDefaultDeployments(activeDefaultDeployments, loginObject)
+      await undeployOldVersionDefaultDeployments(activeDefaultDeployments, pgClient)
+      await deployActualVersionDefaultDeployments(activeDefaultDeployments, loginObject, pgClient)
     }
 
     closePgConnection(pgClient)
     console.log(chalk.bold.green('\nMigration finished'))
   } catch(error) {
+    closePgConnection(pgClient)
     console.error(chalk.red(`Error running migration script: ${error}`))
   }
 }
 
 (async () => {
-  await doV2Migration()
+  await doV2Migration(await getPgConnection())
 })()
