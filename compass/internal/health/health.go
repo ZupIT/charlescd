@@ -20,6 +20,7 @@ package health
 
 import (
 	"encoding/json"
+
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
@@ -67,11 +68,17 @@ func (main Main) getResultQuery(query string, workspaceID uuid.UUID) (float64, e
 			WithOperations("getResultQuery.Lookup")
 	}
 
-	return getQuery.(func(request datasourcePKG.ResultRequest) (float64, errors.Error))(datasourcePKG.ResultRequest{
+	result, getQueryErr := getQuery.(func(request datasourcePKG.ResultRequest) (float64, error))(datasourcePKG.ResultRequest{
 		DatasourceConfiguration: datasource.Data,
 		Query:                   query,
 		Filters:                 []datasourcePKG.MetricFilter{},
 	})
+	if getQueryErr != nil {
+		return 0, errors.NewError("Get error", getQueryErr.Error()).
+			WithOperations("getResultQuery.getQuery")
+	}
+
+	return result, nil
 }
 
 func (main Main) getComponentStatus(thresholdValue, metricValue float64) string {

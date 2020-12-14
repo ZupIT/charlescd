@@ -162,9 +162,9 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 		return ers
 	}
 
-	pluginErrs, err := plugin.Lookup("ValidateActionConfiguration")
+	pluginErrs, lookupErr := plugin.Lookup("ValidateActionConfiguration")
 	if err != nil {
-		err := errors.NewError("Invalid data", "action type is invalid").
+		err := errors.NewError("Invalid data", lookupErr.Error()).
 			WithMeta("field", "type").
 			WithOperations("validateActionConfig.Lookup")
 		ers.Append(err)

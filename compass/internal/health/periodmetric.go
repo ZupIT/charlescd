@@ -20,6 +20,7 @@ package health
 
 import (
 	"encoding/json"
+
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
@@ -56,7 +57,7 @@ func (main Main) getQueryPeriod(query string, period, interval datasourcePKG.Per
 			WithOperations("getQueryPeriod.Lookup")
 	}
 
-	return getQuery.(func(request datasourcePKG.QueryRequest) ([]datasourcePKG.Value, errors.Error))(datasourcePKG.QueryRequest{
+	values, getQueryErr := getQuery.(func(request datasourcePKG.QueryRequest) ([]datasourcePKG.Value, error))(datasourcePKG.QueryRequest{
 		ResultRequest: datasourcePKG.ResultRequest{
 			DatasourceConfiguration: datasource.Data,
 			Query:                   query,
@@ -65,6 +66,12 @@ func (main Main) getQueryPeriod(query string, period, interval datasourcePKG.Per
 		RangePeriod: period,
 		Interval:    interval,
 	})
+	if getQueryErr != nil {
+		return nil, errors.NewError("Get error", lookupErr.Error()).
+			WithOperations("getQueryPeriod.getQuery")
+	}
+
+	return values, nil
 }
 
 func (main Main) getPeriodAndIntervalByProjectionType(projectionType string) (datasourcePKG.Period, datasourcePKG.Period) {

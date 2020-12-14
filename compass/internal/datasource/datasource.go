@@ -187,10 +187,9 @@ func (main Main) GetMetrics(dataSourceID string) (datasource.MetricList, errors.
 		return datasource.MetricList{}, err.WithOperations("GetMetrics.FindById")
 	}
 
-	plugin, pluginErr := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
+	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		return datasource.MetricList{}, errors.NewError("Get plugin error", pluginErr.Error()).
-			WithOperations("GetMetrics.GetPluginBySrc")
+		return datasource.MetricList{}, err.WithOperations("GetMetrics.GetPluginBySrc")
 	}
 
 	getList, lookupErr := plugin.Lookup("GetMetrics")
@@ -212,20 +211,19 @@ func (main Main) GetMetrics(dataSourceID string) (datasource.MetricList, errors.
 func (main Main) TestConnection(pluginSrc string, datasourceData json.RawMessage) errors.Error {
 	plugin, err := main.pluginMain.GetPluginBySrc(pluginSrc)
 	if err != nil {
-		return errors.NewError("Test Conn error", err.Error()).
-			WithOperations("TestConnection.GetPluginBySrc")
+		return err.WithOperations("TestConnection.GetPluginBySrc")
 	}
 
-	testConnection, err := plugin.Lookup("TestConnection")
+	testConnection, lookupError := plugin.Lookup("TestConnection")
 	if err != nil {
-		return errors.NewError("Test Conn error", err.Error()).
+		return errors.NewError("Test Conn error", lookupError.Error()).
 			WithOperations("TestConnection.Lookup")
 	}
 
 	configurationData, _ := json.Marshal(datasourceData)
-	err = testConnection.(func(configurationData []byte) error)(configurationData)
+	testConnError := testConnection.(func(configurationData []byte) error)(configurationData)
 	if err != nil {
-		return errors.NewError("Test Conn error", err.Error()).
+		return errors.NewError("Test Conn error", testConnError.Error()).
 			WithOperations("TestConnection.Marshal")
 	}
 

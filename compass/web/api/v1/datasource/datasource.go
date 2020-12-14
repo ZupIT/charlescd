@@ -3,9 +3,10 @@ package datasource
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+
 	"github.com/ZupIT/charlescd/compass/web/api/util"
 	"github.com/gorilla/mux"
-	"net/http"
 
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/google/uuid"
@@ -43,9 +44,9 @@ func TestConnection(datasourceMain datasource.UseCases) func(w http.ResponseWrit
 			return
 		}
 
-		err = datasourceMain.TestConnection(newTestConnection.PluginSrc, newTestConnection.Data)
+		testConnErr := datasourceMain.TestConnection(newTestConnection.PluginSrc, newTestConnection.Data)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, testConnErr)
 			return
 		}
 
@@ -57,7 +58,7 @@ func Create(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *h
 	return func(w http.ResponseWriter, r *http.Request) {
 		dataSource, err := datasourceMain.Parse(r.Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 		workspaceID := r.Header.Get("x-workspace-id")
@@ -67,14 +68,14 @@ func Create(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *h
 		}
 		dataSource.WorkspaceID = workspaceUUID
 
-		if err := datasourceMain.Validate(dataSource); len(err) > 0 {
+		if err := datasourceMain.Validate(dataSource); len(err.GetErrors()) > 0 {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
 		createdDataSource, err := datasourceMain.Save(dataSource)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
@@ -87,7 +88,7 @@ func Delete(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *h
 		id := mux.Vars(r)["datasourceID"]
 		err := datasourceMain.Delete(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 		util.NewResponse(w, http.StatusNoContent, nil)
@@ -99,7 +100,7 @@ func GetMetrics(datasourceMain datasource.UseCases) func(w http.ResponseWriter, 
 		id := mux.Vars(r)["datasourceID"]
 		metrics, err := datasourceMain.GetMetrics(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, []error{err})
+			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 		util.NewResponse(w, http.StatusOK, metrics)

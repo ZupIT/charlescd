@@ -99,8 +99,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot run dispatch", err.Error()).
-				WithOperations("getMetricResult.ResultQuery"),
+			"err": err.WithOperations("getMetricResult.ResultQuery"),
 		}).Errorln()
 
 		execution.Status = metric.MetricError
@@ -134,7 +133,6 @@ func (dispatcher *Dispatcher) Start(stopChan chan bool) error {
 		return err
 	}
 
-	logrus.Infoln("Starting metrics dispatcher")
 	ticker := time.NewTicker(interval)
 	for {
 		select {

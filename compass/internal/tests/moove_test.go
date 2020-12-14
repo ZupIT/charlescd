@@ -60,10 +60,10 @@ func TestInitMoove(t *testing.T) {
 func (s *SuiteMoove) TestGetMooveComponentsError() {
 	s.server.Close()
 	_, err := s.repository.GetMooveComponents("", "", uuid.New())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMoove) TestGetMooveComponentsStatusError() {
 	_, err := s.repository.GetMooveComponents("", "", uuid.New())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }

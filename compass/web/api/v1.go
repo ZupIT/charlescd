@@ -58,9 +58,9 @@ func (api *Api) newV1Api() {
 	{
 		path := "/group-actions"
 		api.router.HandleFunc(path, metricsgroupaction.Create(api.metricGroupActionMain)).Methods("POST")
-		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}"), metricsgroupaction.FindByID(api.metricGroupActionMain)).Methods("GET")
-		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}"), metricsgroupaction.Update(api.metricGroupActionMain)).Methods("PUT")
-		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}"), metricsgroupaction.Delete(api.metricGroupActionMain)).Methods("DELETE")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}", path), metricsgroupaction.FindByID(api.metricGroupActionMain)).Methods("GET")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}", path), metricsgroupaction.Update(api.metricGroupActionMain)).Methods("PUT")
+		api.router.HandleFunc(fmt.Sprintf("%s/{metricgroupactionID}", path), metricsgroupaction.Delete(api.metricGroupActionMain)).Methods("DELETE")
 	}
 	{
 		path := "/circles"
