@@ -58,6 +58,10 @@ const ReactTooltipStyled = styled(ReactTooltip)`
   background-color: ${({ theme }) => theme.dropdown.background} !important;
   color: ${({ theme }) => theme.dropdown.color} !important;
 
+  ::after {
+    border-right-color: ${({ theme }) => theme.dropdown.background} !important;
+  }
+
   span {
     text-align: left !important;
     padding: 0px !important;
