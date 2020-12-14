@@ -19,6 +19,7 @@ package io.charlescd.circlematcher.domain.service
 
 import io.charlescd.circlematcher.domain.KeyMetadata
 import io.charlescd.circlematcher.domain.SegmentationType
+import io.charlescd.circlematcher.domain.exception.BusinessException
 import io.charlescd.circlematcher.domain.service.impl.SegmentationServiceImpl
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository
@@ -220,7 +221,7 @@ class SegmentationServiceImplTest extends Specification {
         0 * keyMetadataRepository.create(_) >> 0
         0 * segmentationRepository.create(composedKey, _)
 
-        thrown(IllegalStateException)
+        thrown(BusinessException)
     }
 
     def "should allow to create a segmentation rule in default circle when none have been registered yet"() {
@@ -273,7 +274,6 @@ class SegmentationServiceImplTest extends Specification {
         0 * keyMetadataRepository.create(_) >> 0
         0 * segmentationRepository.create(composedKey, _)
 
-        def exception = thrown(IllegalArgumentException)
-        assert exception.message == 'Cannot update default segmentation'
+        def exception = thrown(BusinessException)
     }
 }

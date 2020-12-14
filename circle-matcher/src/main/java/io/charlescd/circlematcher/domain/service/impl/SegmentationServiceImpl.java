@@ -26,6 +26,8 @@ import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.NodeType;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
+import io.charlescd.circlematcher.domain.exception.BusinessException;
+import io.charlescd.circlematcher.domain.exception.MatcherErrorCode;
 import io.charlescd.circlematcher.domain.service.SegmentationService;
 import io.charlescd.circlematcher.infrastructure.SegmentationKeyUtils;
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository;
@@ -160,7 +162,7 @@ public class SegmentationServiceImpl implements SegmentationService {
             return;
         }
         if (isUpdate) {
-            throw new IllegalArgumentException("Cannot update default segmentation");
+            throw new BusinessException(MatcherErrorCode.CANNOT_UPDATE_DEFAULT_SEGMENTATION);
         }
 
         var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
@@ -168,7 +170,7 @@ public class SegmentationServiceImpl implements SegmentationService {
                 .filter(metadata -> metadata.getIsDefault())
                 .collect(Collectors.toList());
         if (!metadataDefaultList.isEmpty()) {
-            throw new IllegalStateException("Default segmentation already registered in workspace");
+            throw new BusinessException(MatcherErrorCode.DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE);
         }
     }
 

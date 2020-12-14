@@ -17,6 +17,8 @@
 package io.charlescd.circlematcher.handler;
 
 import java.util.NoSuchElementException;
+
+import io.charlescd.circlematcher.domain.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,11 +32,11 @@ public class ErrorHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
 
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(IllegalStateException.class)
-    public DefaultErrorResponse handleIllegalStateException(IllegalStateException exception) {
-        logger.error("CONFLICT ERROR - ", exception);
-        return new DefaultErrorResponse(exception.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BusinessException.class)
+    public DefaultErrorResponse handleBusinessException(BusinessException exception) {
+        logger.error("BAD REQUEST ERROR - ", exception);
+        return new DefaultErrorResponse(exception.getErrorCode().getKey());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
