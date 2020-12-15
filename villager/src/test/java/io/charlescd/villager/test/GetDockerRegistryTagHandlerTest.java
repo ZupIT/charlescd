@@ -36,7 +36,7 @@ public class GetDockerRegistryTagHandlerTest {
 
         var input = handler.handle();
         assertThat(input.getArtifactName(), is(componentName));
-        assertThat(input.getArtifactRepositoryConfigurationId(), is(registryConfigurationId));
+        assertThat(input.getConfigurationId(), is(registryConfigurationId));
         assertThat(input.getName(), is(name));
         assertThat(input.getWorkspaceId(), is(workspaceId));
     }

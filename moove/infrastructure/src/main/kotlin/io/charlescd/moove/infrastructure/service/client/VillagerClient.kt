@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
+import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
 import io.charlescd.moove.infrastructure.service.client.request.CreateVillagerRegistryConfigurationRequest
 import io.charlescd.moove.infrastructure.service.client.request.VillagerBuildRequest
 import io.charlescd.moove.infrastructure.service.client.response.CreateVillagerRegistryConfigurationResponse
@@ -27,7 +28,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "villagerClient", url = "\${charlescd.villager.url}")
+@FeignClient(name = "villagerClient", url = "\${charlescd.villager.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface VillagerClient {
 
     @ResponseStatus(HttpStatus.CREATED)
