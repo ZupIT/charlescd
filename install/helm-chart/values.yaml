@@ -197,6 +197,7 @@ envoy:
     enabled: true
   cors:
     enabled: true
+    hosts: []
   idm:
     endpoint: charlescd-keycloak-http
     port: 80

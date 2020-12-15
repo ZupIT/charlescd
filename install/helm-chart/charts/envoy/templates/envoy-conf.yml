@@ -28,8 +28,9 @@ data:
                   {{ if .Values.cors.enabled }}
                   cors:
                     allow_origin_string_match:
-                    - exact: "http://charles.info.example"
-                    - exact: "https://charles.info.example"
+                    {{- range $host := .Values.cors.hosts }}
+                    - exact: "{{ $host }}"
+                    {{- end }}
                     allow_methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
                     allow_headers: "Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
                   {{- end}}
