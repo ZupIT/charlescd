@@ -43,6 +43,7 @@ const Content = styled.div`
 const Form = styled.form`
   margin-top: 20px;
   width: 271px;
+  // overflow: hidden;
 `;
 
 const Fields = styled.div`
@@ -75,6 +76,14 @@ const Select = styled(SelectSingle)`
   width: 271px;
 `;
 
+const StyledInputPlaceholder = styled(TextComponent.h4)`
+  pointer-events: none;
+  margin-top: -21px;
+  margin-left: 45px;
+  opacity: 60%;
+  overflow: hidden;
+`;
+
 export default {
   Content,
   Title,
@@ -82,5 +91,6 @@ export default {
   Form,
   Fields,
   Message,
-  Select
+  Select,
+  StyledInputPlaceholder
 };

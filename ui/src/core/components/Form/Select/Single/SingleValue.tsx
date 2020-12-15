@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import Icon from 'core/components/Icon';
 import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+import { SingleValueProps, OptionTypeBase } from 'react-select';
+import Styled from './styled';
 
 const SingleValue = ({
   children,
@@ -32,7 +34,13 @@ const SingleValue = ({
     }
   }, [options, clearValue]);
 
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
+  return (
+    <Styled.StyledSingleValue {...props}>
+      {props.selectProps?.icon && <Icon name={props.selectProps.icon} />}
+      {children}
+    </Styled.StyledSingleValue>
+  );
+
 };
 
 export default SingleValue;
