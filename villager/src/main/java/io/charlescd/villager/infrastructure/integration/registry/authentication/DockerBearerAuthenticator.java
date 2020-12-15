@@ -17,13 +17,13 @@
 package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
 import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
-import java.util.Arrays;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
-
+import java.util.Arrays;
 
 public final class DockerBearerAuthenticator implements ClientRequestFilter {
 
@@ -35,7 +35,7 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
     private final String service;
 
     public DockerBearerAuthenticator(String organization, String username, String password, String imageName,
-            String authUrl, String service) {
+                                     String authUrl, String service) {
         this.organization = organization;
         this.username = username;
         this.password = password;
@@ -44,25 +44,25 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
         this.service = service;
     }
 
-    public String dockerBearerAuthorization() {
+    public String getBearerAuthorization() {
         String url = createAuthUrl();
-
         Client client = ClientBuilder.newClient();
-
         client.register(new CommonBasicAuthenticator(this.username, this.password));
 
         Response response = client.target(url).request().get();
+
         if (response.getStatus() == 200) {
             DockerBasicAuthResponse basicResponse = response.readEntity(DockerBasicAuthResponse.class);
             return String.format("Bearer %s", basicResponse.getToken());
         }
+
         throw new ThirdPartyIntegrationException("Docker hub credentials invalid.");
 
     }
 
     @Override
     public void filter(ClientRequestContext clientRequestContext) {
-        clientRequestContext.getHeaders().put("Authorization", Arrays.asList(dockerBearerAuthorization()));
+        clientRequestContext.getHeaders().put("Authorization", Arrays.asList(getBearerAuthorization()));
     }
 
     public String createAuthUrl() {
