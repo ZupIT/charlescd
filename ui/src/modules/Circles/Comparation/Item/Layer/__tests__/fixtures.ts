@@ -111,4 +111,27 @@ export const circleWithoutDeployment: Circle = {
   rules: null,
   percentage: 10,
   matcherType: "PERCENTAGE"
+}
+
+export const circleData: Circle = {
+  id: '427',
+  name: 'yyz',
+  author: {
+    id: '1980',
+    name: 'Rush',
+    email: 'rush@zup',
+    createdAt: 'old'
+  },
+  createdAt: '1981',
+  deployment: undefined,
+  rules: undefined
+};
+
+export const newCircleData: Circle = {
+  id: undefined,
+  name: undefined,
+  author: undefined,
+  createdAt: undefined,
+  deployment: undefined,
+  rules: undefined
 };
