@@ -16,9 +16,8 @@
 
 package io.charlescd.circlematcher.handler;
 
-import java.util.NoSuchElementException;
-
 import io.charlescd.circlematcher.domain.exception.BusinessException;
+import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

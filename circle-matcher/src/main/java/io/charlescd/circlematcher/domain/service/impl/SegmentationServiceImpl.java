@@ -166,10 +166,9 @@ public class SegmentationServiceImpl implements SegmentationService {
         }
 
         var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
-        var metadataDefaultList = metadataList.stream().parallel()
-                .filter(metadata -> metadata.getIsDefault())
-                .collect(Collectors.toList());
-        if (!metadataDefaultList.isEmpty()) {
+        var hasMetadataDefault = metadataList.stream().parallel()
+                .anyMatch(keyMetadata -> keyMetadata.getIsDefault());
+        if (hasMetadataDefault) {
             throw new BusinessException(MatcherErrorCode.DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE);
         }
     }

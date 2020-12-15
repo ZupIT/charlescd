@@ -274,6 +274,6 @@ class SegmentationServiceImplTest extends Specification {
         0 * keyMetadataRepository.create(_) >> 0
         0 * segmentationRepository.create(composedKey, _)
 
-        def exception = thrown(BusinessException)
+        thrown(BusinessException)
     }
 }
