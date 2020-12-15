@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:11.8-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=charlescd_hermes
+      - POSTGRES_PASSWORD=charlescd_hermes
+      - MAX_CONNECTIONS=300
+    networks:
+      - development
+
+networks:
+  development:
+    driver: bridge
