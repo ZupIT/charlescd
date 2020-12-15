@@ -213,8 +213,10 @@ nginx_ingress_controller:
 
 ingress-nginx:
   controller:
-    extraArgs:
-      default-ssl-certificate: "default/nginx-certs"
+    service:
+      annotations: {}
+##    extraArgs:
+##      default-ssl-certificate: "namespace/secret"
 
 octopipe:
   enabled: true
