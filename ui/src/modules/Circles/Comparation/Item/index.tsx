@@ -55,7 +55,8 @@ import {
   isBusy,
   getTooltipMessage,
   circleCannotBeDeleted,
-  isDeploying
+  isDeploying,
+  isUndeploying
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -227,6 +228,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           name="Delete"
           tooltip={getTooltipMessage(circle)}
           deploying={isDeploying(circle?.deployment?.status)}
+          undeploying={isUndeploying(circle?.deployment?.status)}
           isInactive={circleCannotBeDeleted(circle)}
           onClick={() => setAction('Delete')}
         />

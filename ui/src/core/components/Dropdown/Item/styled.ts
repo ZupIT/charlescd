@@ -57,6 +57,14 @@ const Item = styled.button<Partial<Props>>`
         color: ${({ theme }) => theme.dropdown.disabled.color};
       }
     `};
+
+  ${({ undeploying }) =>
+    undeploying &&
+    css`
+      ${Icon}, ${Text} {
+        color: ${({ theme }) => theme.dropdown.disabled.color};
+      }
+    `};
 `;
 
 const ReactTooltipStyled = styled(ReactTooltip)`

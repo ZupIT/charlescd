@@ -27,6 +27,7 @@ export interface Props {
   isInactive?: boolean;
   tooltip?: string;
   deploying?: boolean;
+  undeploying?: boolean;
 }
 
 const DropdownItem = ({
@@ -39,6 +40,7 @@ const DropdownItem = ({
   isInactive,
   tooltip,
   deploying,
+  undeploying,
   ...rest
 }: Props) => {
   const handleClick = (event: MouseEvent) => {
@@ -54,9 +56,10 @@ const DropdownItem = ({
         data-testid={`dropdown-item-${icon}-${name}`}
         className={className}
         onClick={(event: MouseEvent) =>
-          !isInactive && !deploying && handleClick(event)
+          !isInactive && !deploying && !undeploying && handleClick(event)
         }
         deploying={deploying}
+        undeploying={undeploying}
         isInactive={isInactive}
         data-tip={tooltip}
         data-for={id}
