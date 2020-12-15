@@ -17,13 +17,12 @@
 package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
 import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
-
+import java.util.Arrays;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
 
 public final class DockerBearerAuthenticator implements ClientRequestFilter {
 
