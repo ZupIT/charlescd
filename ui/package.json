@@ -12,6 +12,7 @@
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
     "@types/single-spa-react": "^2.12.0",
+    "@types/uuid": "^8.3.0",
     "ace-builds": "^1.4.11",
     "apexcharts": "^3.16.0",
     "cross-env": "^7.0.2",
@@ -33,7 +34,8 @@
     "react-tooltip": "^4.2.6",
     "single-spa-react": "^3.0.1",
     "styled-components": "^5.0.1",
-    "systemjs-webpack-interop": "^2.1.2"
+    "systemjs-webpack-interop": "^2.1.2",
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "start": "cross-env ENVIRONMENT=development node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",

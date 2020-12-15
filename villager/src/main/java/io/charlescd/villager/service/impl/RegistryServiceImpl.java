@@ -151,10 +151,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void validateResponse(RegistryType type, Optional<Response> response) {
-        if (Objects.isNull(response)) {
-            throw new ThirdPartyIntegrationException("Registry service not respond.");
-        }
-        if (response.isEmpty()) {
+        if (Objects.isNull(response) || response.isEmpty()) {
             throw new ThirdPartyIntegrationException("Registry service not respond.");
         }
 
@@ -172,7 +169,7 @@ public class RegistryServiceImpl implements RegistryService {
         }
     }
 
-    private boolean notFoundImageError(int status, RegistryType type) {
+    private boolean isNotFoundImageError(int status, RegistryType type) {
         return status == HttpStatus.SC_NOT_FOUND && (type == RegistryType.DOCKER_HUB || type == RegistryType.GCP);
     }
 
@@ -182,7 +179,7 @@ public class RegistryServiceImpl implements RegistryService {
         if (status == HttpStatus.SC_UNAUTHORIZED || status == HttpStatus.SC_FORBIDDEN) {
             throw new IllegalArgumentException("Invalid registry config");
         }
-        if (!isSuccessfullyHttpStatus(status) && !notFoundImageError(status, type)) {
+        if (!isSuccessfullyHttpStatus(status) && !isNotFoundImageError(status, type)) {
             throw new ThirdPartyIntegrationException(
                     type + "integration error: " + response.get().getStatusInfo().getReasonPhrase());
         }
