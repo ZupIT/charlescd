@@ -17,12 +17,13 @@
 import React from 'react';
 import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
+import { circleData, newCircleData } from './fixtures';
 import MetricsGroups from '../MetricsGroups';
 
 test('render Metrics Groups Layer without data', async () => {
   const handleClick = jest.fn();
 
-  render(<MetricsGroups circleId={'1'} onClickCreate={handleClick}/>);
+  render(<MetricsGroups circleId={'1'} onClickCreate={handleClick} circle={circleData}/>);
 
   const addMetricsGroups = screen.getByTestId('button-iconRounded-add');
   expect(addMetricsGroups).toBeInTheDocument();
@@ -32,4 +33,14 @@ test('render Metrics Groups Layer without data', async () => {
 
   await act(async () => userEvent.click(addMetricsGroups));
   expect(handleClick).toHaveBeenCalled();
+});
+
+test('render Metrics Groups Layer without any circle data', async () => {
+  const handleClick = jest.fn();
+
+  render(<MetricsGroups circleId={'1'} onClickCreate={handleClick} circle={newCircleData}/>);
+
+  const addMetricsGroups = screen.getByTestId('button-iconRounded-add');
+  expect(addMetricsGroups).toBeInTheDocument();
+  expect(addMetricsGroups).toBeDisabled();
 });
