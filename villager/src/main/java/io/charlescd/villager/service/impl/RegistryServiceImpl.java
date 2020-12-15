@@ -30,6 +30,7 @@ import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInpu
 import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.HarborDockerRegistryAuth;
 import io.charlescd.villager.service.RegistryService;
+import java.util.Objects;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -150,7 +151,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void validateResponse(RegistryType type, Optional<Response> response) {
-        if (response == null) {
+        if (Objects.isNull(response)) {
             throw new ThirdPartyIntegrationException("Registry service not respond.");
         }
         if (response.isEmpty()) {
