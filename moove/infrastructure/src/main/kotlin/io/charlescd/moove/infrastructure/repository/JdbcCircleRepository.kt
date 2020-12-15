@@ -337,6 +337,7 @@ class JdbcCircleRepository(
 
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
         statement.appendln("AND circles.workspace_id = ?")
+        statement.appendln("ORDER BY circles.name")
 
         return statement
     }
@@ -376,6 +377,7 @@ class JdbcCircleRepository(
 
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
         statement.appendln("AND circles.workspace_id = ?")
+        statement.appendln("ORDER BY circles.name")
 
         return statement
     }
@@ -407,6 +409,7 @@ class JdbcCircleRepository(
 
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
         statement.appendln("AND circles.workspace_id = ?")
+        statement.appendln("ORDER BY circles.name")
 
         return statement
     }
