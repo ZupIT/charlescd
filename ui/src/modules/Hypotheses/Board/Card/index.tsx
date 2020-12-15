@@ -37,10 +37,6 @@ interface Props {
   isSelectable?: boolean;
 }
 
-type Params = {
-  hypothesisId: string;
-};
-
 const CardBoard = forwardRef(
   (
     {
@@ -54,7 +50,7 @@ const CardBoard = forwardRef(
     }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
-    const { hypothesisId } = useParams<Params>();
+    const { hypothesisId } = useParams();
     const dispatch = useDispatch();
     const { getAll } = useBoard();
     const { removeBy, responseRemove, archiveBy, responseArchive } = useCard();

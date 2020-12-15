@@ -60,7 +60,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   };
 
   const onChange = (option: Option) => {
-    setPlugin(find(plugins, { id: option['value'] }));
+    setPlugin(find(plugins as Plugin[], { id: option['value'] }));
   };
 
   const onClose = () => {
@@ -83,7 +83,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         description={plugin.name}
         onClose={() => onClose()}
       />
-      {(plugin.inputParameters).health && (
+      {(plugin.inputParameters as PluginDatasource).health && (
         <Styled.HealthWrapper>
           <Styled.HealthSwitch
             name="healthy"
@@ -107,7 +107,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       />
 
       {map(
-        (plugin.inputParameters)['configurationInputs'],
+        (plugin.inputParameters as PluginDatasource)['configurationInputs'],
         input => (
           <Styled.Input
             key={input.name}
@@ -138,7 +138,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       control={control}
       name="url"
       label="Select a datasource plugin"
-      options={serializePlugins(plugins)}
+      options={serializePlugins(plugins as Plugin[])}
       onChange={option => onChange(option)}
     />
   );

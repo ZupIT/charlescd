@@ -106,11 +106,11 @@ const HistoryLegend = styled.div`
   }
 `;
 
-interface DotProp {
+interface Dot {
   status: string;
 }
 
-const Dot = styled.div<DotProp>`
+const Dot = styled.div<Dot>`
   height: 16px;
   width: 16px;
   background-color: ${({ theme, status }) => theme.metrics.circles[status]};

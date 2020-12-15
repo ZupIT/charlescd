@@ -19,44 +19,44 @@ import { WorkspacePagination } from '../interfaces/WorkspacePagination';
 import { Workspace } from '../interfaces/Workspace';
 
 export enum ACTION_TYPES {
-  LoadedWorkspaces = 'WORKSPACES/LOADED_WORKSPACES',
-  LoadedWorkspace = 'WORKSPACES/LOADED_WORKSPACE',
-  StatusWorkspace = 'WORKSPACES/STATUS'
+  loadedWorkspaces = 'WORKSPACES/LOADED_WORKSPACES',
+  loadedWorkspace = 'WORKSPACES/LOADED_WORKSPACE',
+  statusWorkspace = 'WORKSPACES/STATUS'
 }
 
 interface LoadedWorkspacesActionType {
-  type: typeof ACTION_TYPES.LoadedWorkspaces;
+  type: typeof ACTION_TYPES.loadedWorkspaces;
   payload: WorkspacePagination;
 }
 
 interface LoadedWorkspaceActionType {
-  type: typeof ACTION_TYPES.LoadedWorkspace;
+  type: typeof ACTION_TYPES.loadedWorkspace;
   payload: Workspace;
 }
 
 interface StatusWorkspaceActionType {
-  type: typeof ACTION_TYPES.StatusWorkspace;
+  type: typeof ACTION_TYPES.statusWorkspace;
   payload: FetchStatuses;
 }
 
 export const loadedWorkspacesAction = (
   payload: WorkspacePagination
 ): WorkspacesActionTypes => ({
-  type: ACTION_TYPES.LoadedWorkspaces,
+  type: ACTION_TYPES.loadedWorkspaces,
   payload
 });
 
 export const loadedWorkspaceAction = (
   payload: Workspace
 ): WorkspacesActionTypes => ({
-  type: ACTION_TYPES.LoadedWorkspace,
+  type: ACTION_TYPES.loadedWorkspace,
   payload
 });
 
 export const statusWorkspaceAction = (
   payload: FetchStatuses
 ): WorkspacesActionTypes => ({
-  type: ACTION_TYPES.StatusWorkspace,
+  type: ACTION_TYPES.statusWorkspace,
   payload
 });
 

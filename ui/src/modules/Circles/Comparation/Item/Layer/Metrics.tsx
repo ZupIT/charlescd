@@ -51,8 +51,8 @@ const LayerMetrics = ({ id }: Props) => {
   );
 
   useEffect(() => {
-    getAll();
-  }, [getAll]);
+    getAll()
+  }, [getAll])
 
   const handleChangeMetricTypes = (changeType: ChangeType) => {
     const activeMetric = getActiveMetric(changeType, activeMetricType);
@@ -87,15 +87,15 @@ const LayerMetrics = ({ id }: Props) => {
   );
 
   const renderContent = () => {
-    return some(responseAll as Datasource[], { healthy: true }) ? (
+    return some((responseAll as Datasource[]), { healthy: true }) ? (
       <CircleMetrics
         id={id}
         metricType={activeMetricType}
         chartType={CHART_TYPE.COMPARISON}
       />
     ) : (
-      renderNoMetrics()
-    );
+        renderNoMetrics()
+      );
   };
 
   return (

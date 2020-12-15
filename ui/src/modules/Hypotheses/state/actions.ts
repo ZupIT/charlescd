@@ -18,51 +18,51 @@ import { Column, Card } from '../Board/interfaces';
 import { Hypothesis } from '../interfaces';
 
 export enum ACTION_TYPES {
-  UpdateBoard = 'BOARD/UPDATE',
-  UpdateColumn = 'BOARD/COLUMN/UPDATE',
-  UpdateCard = 'BOARD/CARD/UPDATE',
-  LoadedHypotheses = 'HYPOTHESES/LOADED'
+  updateBoard = 'BOARD/UPDATE',
+  updateColumn = 'BOARD/COLUMN/UPDATE',
+  updateCard = 'BOARD/CARD/UPDATE',
+  loadedHypotheses = 'HYPOTHESES/LOADED'
 }
 
 interface UpdateBoard {
-  type: typeof ACTION_TYPES.UpdateBoard;
+  type: typeof ACTION_TYPES.updateBoard;
   payload: Column[];
 }
 
 export const setBoard = (payload: Column[]): UpdateBoard => ({
-  type: ACTION_TYPES.UpdateBoard,
+  type: ACTION_TYPES.updateBoard,
   payload
 });
 
 interface UpdateColumn {
-  type: typeof ACTION_TYPES.UpdateColumn;
+  type: typeof ACTION_TYPES.updateColumn;
   payload: Column;
 }
 
 export const setColumn = (payload: Column): UpdateColumn => ({
-  type: ACTION_TYPES.UpdateColumn,
+  type: ACTION_TYPES.updateColumn,
   payload
 });
 
 interface UpdateCard {
-  type: typeof ACTION_TYPES.UpdateCard;
+  type: typeof ACTION_TYPES.updateCard;
   columnId: string;
   payload: Card;
 }
 
 export const setCard = (columnId: string, payload: Card): UpdateCard => ({
-  type: ACTION_TYPES.UpdateCard,
+  type: ACTION_TYPES.updateCard,
   columnId,
   payload
 });
 
 interface LoadedHypotheses {
-  type: typeof ACTION_TYPES.LoadedHypotheses;
+  type: typeof ACTION_TYPES.loadedHypotheses;
   payload: Hypothesis[];
 }
 
 export const loadedHypotheses = (payload: Hypothesis[]): LoadedHypotheses => ({
-  type: ACTION_TYPES.LoadedHypotheses,
+  type: ACTION_TYPES.loadedHypotheses,
   payload
 });
 

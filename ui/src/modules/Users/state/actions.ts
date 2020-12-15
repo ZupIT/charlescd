@@ -18,29 +18,29 @@ import { UserPagination } from '../interfaces/UserPagination';
 import { User } from '../interfaces/User';
 
 export enum ACTION_TYPES {
-  LoadedUsers = 'USERS/LOADED_USERS',
-  LoadedUser = 'USERS/LOADED_USER'
+  loadedUsers = 'USERS/LOADED_USERS',
+  loadedUser = 'USERS/LOADED_USER'
 }
 
 interface LoadedUsersActionType {
-  type: typeof ACTION_TYPES.LoadedUsers;
+  type: typeof ACTION_TYPES.loadedUsers;
   payload: UserPagination;
 }
 
 interface LoadedUserActionType {
-  type: typeof ACTION_TYPES.LoadedUser;
+  type: typeof ACTION_TYPES.loadedUser;
   payload: User;
 }
 
 export const LoadedUsersAction = (
   payload: UserPagination
 ): UsersActionTypes => ({
-  type: ACTION_TYPES.LoadedUsers,
+  type: ACTION_TYPES.loadedUsers,
   payload
 });
 
 export const LoadedUserAction = (payload: User): UsersActionTypes => ({
-  type: ACTION_TYPES.LoadedUser,
+  type: ACTION_TYPES.loadedUser,
   payload
 });
 

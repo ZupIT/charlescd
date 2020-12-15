@@ -1,5 +1,5 @@
 import map from 'lodash/map';
-import Hapi from '@hapi/hapi';
+import Hapi from 'hapi';
 import routes from './routes';
 
 const latency = 500;

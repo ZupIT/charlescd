@@ -17,7 +17,7 @@
 import styled, { css } from 'styled-components';
 import { Props } from '.';
 
-interface HeaderProps {
+interface Header {
   hasCaption?: boolean;
 }
 
@@ -67,7 +67,7 @@ const Column = styled.div<Partial<Props>>`
   }
 `;
 
-const Header = styled.div<HeaderProps>`
+const Header = styled.div<Header>`
   display: flex;
   align-items: center;
   width: 100%;

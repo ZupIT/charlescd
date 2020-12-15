@@ -26,10 +26,7 @@ export const headers = {
   'Content-Type': 'application/json'
 };
 
-export const buildHeaders = (
-  isFormData = false,
-  circleId: string | undefined
-) => ({
+export const buildHeaders = (isFormData = false, circleId: string | undefined) => ({
   Authorization: `Bearer ${getAccessToken()}`,
   'x-workspace-id': getWorkspaceId(),
   ...(circleId && { 'x-circle-id': circleId }),
