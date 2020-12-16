@@ -1,0 +1,20 @@
+{{ if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    {{ if .Values.nginx_ingress_controller.enabled }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    {{- end}}
+  name: charlescd-ingress
+spec:
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - path: /(.*)
+        backend:
+          serviceName: envoy-proxy
+          servicePort: 80
+{{- end}}
