@@ -16,8 +16,8 @@
 
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
+import RadioButtons from '../';
 import userEvent from '@testing-library/user-event';
-import RadioGroup from '../';
 
 const props = {
   name: 'git',
@@ -30,7 +30,7 @@ const props = {
 test('render RadioGroup default component', () => {
   const onChange = jest.fn();
   render(
-    <RadioGroup
+    <RadioButtons
       name={props.name}
       items={props.radios}
       onChange={onChange}
@@ -47,7 +47,7 @@ test('render RadioGroup default component', () => {
 test('render RadioGroup and trigger event', () => {
   const onChange = jest.fn();
   render(
-    <RadioGroup
+    <RadioButtons
       name={props.name}
       items={props.radios}
       onChange={onChange}

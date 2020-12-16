@@ -18,7 +18,7 @@
 
 package io.charlescd.moove.legacy.moove.controller
 
-import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
+import      io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
 import io.charlescd.moove.legacy.moove.request.configuration.CreateCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.request.configuration.CreateRegistryConfigurationRequest
 import io.charlescd.moove.legacy.moove.request.configuration.TestRegistryConnectionRequest

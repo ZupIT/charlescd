@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
 
 @Service
 class CardService(
@@ -68,16 +69,19 @@ class CardService(
             .let { this.cardRepository.save(it) }
             .apply { createNewFeatureBranches(card = this) }
             .toRepresentation()
+            .updateProtectedBranchInformation()
     }
 
     fun findAll(pageable: Pageable, workspaceId: String): Page<CardRepresentation> {
         return cardRepository.findAllByWorkspaceId(workspaceId, pageable)
-            .map { it.toRepresentation() }
+            .map {
+                it.toRepresentation().updateProtectedBranchInformation()
+            }
     }
 
     fun findById(id: String, workspaceId: String): CardRepresentation {
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
-            .map { it.toRepresentation() }
+            .map { it.toRepresentation().updateProtectedBranchInformation() }
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
     }
 
@@ -88,15 +92,16 @@ class CardService(
             .fetchCardCommentsAndMembers()
             .let { saveUpdatedCard(updateCardRequest, it) }
             .toRepresentation()
+            .updateProtectedBranchInformation()
     }
 
     @Transactional
-    fun delete(id: String, workspaceId: String) {
+    fun delete(id: String, workspaceId: String, branchDeletion: Boolean = false) {
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .also { deleteCardRelationships(it) }
             .also { this.cardRepository.delete(it) }
-            .let { deleteFeatureBranches(it) }
+            .let { deleteFeatureBranches(it, branchDeletion) }
     }
 
     @Transactional
@@ -155,8 +160,8 @@ class CardService(
             .let { this.cardRepository.save(it) }
     }
 
-    private fun deleteFeatureBranches(card: Card) {
-        if (card is SoftwareCard) {
+    private fun deleteFeatureBranches(card: Card, branchDeletion: Boolean = false) {
+        if (card is SoftwareCard && branchDeletion) {
             card.feature.modules.forEach { module ->
                 validateWorkspace(module.workspace)
                 deleteBranch(
@@ -210,6 +215,10 @@ class CardService(
 
     private fun isExcludableBranch(branchName: String): Boolean {
         return !protectedBranches.contains(branchName)
+    }
+
+    private fun isProtectedBranch(branchName: String): Boolean {
+        return protectedBranches.contains(branchName)
     }
 
     private fun createNewBranch(
@@ -286,12 +295,17 @@ class CardService(
         }
     }
 
+    private fun CardRepresentation.updateProtectedBranchInformation(): CardRepresentation {
+        this.isProtected = verifyIsProtectedBranch(this)
+        return this
+    }
+
     private fun Card.updateActionCard(updateCardRequest: UpdateCardRequest): ActionCard {
         return when (this) {
             is SoftwareCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .also { cardRepository.deleteById(it.id) }
                 .also { cardRepository.save(it) }
-                .also { deleteFeatureBranches(this) }
+                .also { deleteFeatureBranches(this, updateCardRequest.branchDeletion) }
             is ActionCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .let { cardRepository.save(it) }
             else -> throw IllegalArgumentException("Invalid card type")
@@ -510,5 +524,13 @@ class CardService(
         } catch (e: Exception) {
             log.error("error notification add comment to card", e)
         }
+    }
+
+    private fun verifyIsProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
+        val branchName = cardRepresentation.feature?.branchName
+        if (!StringUtils.isEmpty(branchName)) {
+            return isProtectedBranch(branchName.toString())
+        }
+        return false
     }
 }

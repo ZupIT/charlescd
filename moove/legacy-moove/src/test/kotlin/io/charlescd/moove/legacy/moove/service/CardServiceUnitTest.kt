@@ -395,7 +395,7 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should delete a card and branch`() {
+    fun `should delete a software card and branch`() {
         val card = buildSoftwareCard()
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
@@ -406,7 +406,7 @@ class CardServiceUnitTest {
         every { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) } answers {}
         every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
 
-        cardService.delete(card.id, workspaceId)
+        cardService.delete(card.id, workspaceId, true)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
         verify(exactly = 1) { cardRepository.delete(card) }
@@ -418,7 +418,24 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should delete only the card`() {
+    fun `should delete a action card and branch`() {
+        val card = buildActionCard()
+
+        val gitConfigurationId = module1.workspace.gitConfigurationId!!
+
+        every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
+        every { cardRepository.deleteLabelsRelationship(any()) } answers {}
+        every { cardRepository.deleteMembersRelationship(any()) } answers {}
+        every { cardRepository.delete(card) } answers {}
+
+        cardService.delete(card.id, workspaceId, true)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
+        verify(exactly = 1) { cardRepository.delete(card) }
+    }
+
+    @Test
+    fun `should delete only the software card | blacklist rule`() {
         val card = buildSoftwareCard("master")
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
@@ -435,13 +452,37 @@ class CardServiceUnitTest {
         verify(exactly = 1) { cardRepository.delete(card) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
-        verify(exactly = 2) {
+        verify(exactly = 0) {
             gitConfigurationRepository.findById(gitConfigurationId)
         }
     }
 
     @Test
-    fun `should not delete not found card`() {
+    fun `should delete only the software card | service option rule`() {
+        val card = buildSoftwareCard()
+
+        val gitConfigurationId = module1.workspace.gitConfigurationId!!
+
+        every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
+        every { cardRepository.deleteLabelsRelationship(any()) } answers {}
+        every { cardRepository.deleteMembersRelationship(any()) } answers {}
+        every { cardRepository.delete(card) } answers {}
+        every { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) } answers {}
+        every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
+
+        cardService.delete(card.id, workspaceId)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
+        verify(exactly = 1) { cardRepository.delete(card) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
+        verify(exactly = 0) {
+            gitConfigurationRepository.findById(gitConfigurationId)
+        }
+    }
+
+    @Test
+    fun `should not delete not found software card`() {
         val card = buildSoftwareCard()
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.empty()
@@ -476,7 +517,7 @@ class CardServiceUnitTest {
                 BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_BRANCH_NOT_FOUND)
         every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
 
-        cardService.delete(card.id, workspaceId)
+        cardService.delete(card.id, workspaceId, true)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
         verify(exactly = 1) { cardRepository.delete(card) }
@@ -559,7 +600,7 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should update feature card to action card`() {
+    fun `should update feature card to action card and branch not associated with protected branch list`() {
         val softwareCard = buildSoftwareCard()
         val actionCard = buildActionCard().copy(id = softwareCard.id)
         val authorization = "Bearer qwerty"
@@ -602,6 +643,67 @@ class CardServiceUnitTest {
         verify(exactly = 2) { gitServiceMapper.getByType(GitServiceProvider.GITHUB) }
         verify(exactly = 1) { gitService.deleteBranch(gitCredential, module1.name, feature.branchName) }
         verify(exactly = 1) { gitService.deleteBranch(gitCredential, module2.name, feature.branchName) }
+
+        assertEquals(actionCard.id, updatedCard.id)
+        assertEquals(updateCardRequest.name, updatedCard.name)
+        assertEquals(updateCardRequest.description, updatedCard.description)
+        assertEquals(cardColumn.id, updatedCard.column.id)
+        assertEquals(cardColumn.name, updatedCard.column.name)
+        assertNotNull(updatedCard.createdAt)
+        assertEquals(cardRequest.labels.size, updatedCard.labels.size)
+        assertEquals(label.name, updatedCard.labels[0].name)
+        assertEquals(updateRequest.type, updatedCard.type)
+        assertNull(updatedCard.feature)
+        assertEquals(0, updatedCard.comments.size)
+        assertEquals(hypothesisId, updatedCard.hypothesisId)
+        assertEquals(0, updatedCard.members.size)
+        assertEquals(0, updatedCard.index)
+    }
+
+    @Test
+    fun `should update feature card to action card and branch is associated with protected branch list`() {
+        val softwareCard = buildSoftwareCard("master")
+        val actionCard = buildActionCard().copy(id = softwareCard.id)
+        val authorization = "Bearer qwerty"
+
+        every {
+            cardRepository.findByIdAndWorkspaceId(
+                actionCard.id,
+                workspaceId
+            )
+        } returns Optional.of(softwareCard)
+        every { labelRepository.findAllById(labels) } returns listOf(label)
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
+        every { moduleRepository.findByIdAndWorkspaceId(modules[0], workspaceId) } returns Optional.of(module1)
+        every { moduleRepository.findByIdAndWorkspaceId(modules[1], workspaceId) } returns Optional.of(module2)
+        every { cardRepository.save(any() as Card) } returns actionCard
+        every { cardRepository.deleteById(softwareCard.id) } answers {}
+        every {
+            gitService.deleteBranch(
+                gitCredential,
+                module1.name,
+                feature.branchName
+            )
+        } answers {}
+        every {
+            gitService.deleteBranch(
+                gitCredential,
+                module2.name,
+                feature.branchName
+            )
+        } answers {}
+
+        val updateRequest = updateCardRequest.copy(type = "ACTION")
+
+        val updatedCard = cardService.update(softwareCard.id, updateRequest, workspaceId)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(softwareCard.id, workspaceId) }
+        verify(exactly = 1) { labelRepository.findAllById(labels) }
+        verify(exactly = 1) { cardRepository.save(any() as Card) }
+        verify(exactly = 1) { cardRepository.deleteById(softwareCard.id) }
+        verify(exactly = 0) { gitServiceMapper.getByType(GitServiceProvider.GITHUB) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, feature.branchName) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, feature.branchName) }
 
         assertEquals(actionCard.id, updatedCard.id)
         assertEquals(updateCardRequest.name, updatedCard.name)
