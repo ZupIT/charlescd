@@ -18,8 +18,7 @@ var initialValues = map[string]string{
 	"DB_NAME":             "charlescd_hermes",
 	"DB_SSL":              "disable",
 	"DB_PORT":             "5432",
-	"PLUGINS_DIR":         "./plugins",
-	"DISPATCHER_INTERVAL": "15s",
+	"ENCRYPTION_KEY":      "maycon",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {

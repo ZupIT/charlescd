@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE SUBSCRIPTIONS
 (
     id          varchar(36) PRIMARY KEY,
@@ -30,8 +32,9 @@ CREATE TABLE SUBSCRIPTION_EVENTS
 
 CREATE TABLE SUBSCRIPTION_CONFIGURATION_EVENTS
 (
-    subscription_id varchar(36) PRIMARY KEY,
-    event_id        varchar(36) PRIMARY KEY,
+    subscription_id varchar(36),
+    event_id        varchar(36),
+    PRIMARY KEY (subscription_id, event_id),
     CONSTRAINT FK_subscription_id_configuration_event FOREIGN KEY (subscription_id) REFERENCES SUBSCRIPTIONS (ID),
     CONSTRAINT FK_event_id_configuration_event FOREIGN KEY (event_id) REFERENCES SUBSCRIPTION_EVENTS (ID)
 );
