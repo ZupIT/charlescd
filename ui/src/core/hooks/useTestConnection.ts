@@ -17,10 +17,13 @@
 import { FetchParams, useFetchData } from 'core/providers/base/hooks';
 import { useCallback, useState } from 'react';
 
-export const CONNECTION_SUCCESS = 'SUCCESS';
+export type TestConnection = {
+  status: 'error' | 'success' | 'idle';
+  message?: string;
+};
 
 export const useTestConnection = (testConnection: FetchParams) => {
-  const [connectionResponse, setConnectionResponse] = useState('');
+  const [response, setResponse] = useState<TestConnection>({ status: 'idle' });
   const [loading, setLoading] = useState(false);
   const testConnectionFetchData = useFetchData<number>(testConnection);
 
@@ -29,13 +32,18 @@ export const useTestConnection = (testConnection: FetchParams) => {
       try {
         setLoading(true);
         await testConnectionFetchData(payload);
+        setResponse({
+          status: 'success'
+        });
         setLoading(false);
-        setConnectionResponse(CONNECTION_SUCCESS);
       } catch (error) {
         setLoading(false);
         error?.text?.().then((errorMessage: string) => {
           const parsedError = JSON.parse(errorMessage);
-          setConnectionResponse(parsedError?.message);
+          setResponse({
+            status: 'error',
+            message: parsedError?.message || 'error when trying to connect.'
+          });
         });
       }
     },
@@ -44,7 +52,7 @@ export const useTestConnection = (testConnection: FetchParams) => {
 
   return {
     save,
-    response: connectionResponse,
+    response,
     loading
   };
 };

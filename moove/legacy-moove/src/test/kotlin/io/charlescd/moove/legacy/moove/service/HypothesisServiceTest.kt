@@ -29,12 +29,12 @@ import io.mockk.mockkClass
 import io.mockk.verify
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
+import kotlin.test.*
+import org.junit.Before
 import org.junit.Test
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.test.util.ReflectionTestUtils
 
 class HypothesisServiceTest {
 
@@ -161,15 +161,20 @@ class HypothesisServiceTest {
     )
 
     private val hypothesisRepository: HypothesisRepository = mockkClass(
-        HypothesisRepository::class)
+        HypothesisRepository::class
+    )
     private val labelRepository: LabelRepository = mockkClass(
-        LabelRepository::class)
+        LabelRepository::class
+    )
     private val userRepository: UserRepository = mockkClass(
-        UserRepository::class)
+        UserRepository::class
+    )
     private val cardColumnRepository: CardColumnRepository = mockkClass(
-        CardColumnRepository::class)
+        CardColumnRepository::class
+    )
     private val cardRepository: CardRepository = mockkClass(
-        CardRepository::class)
+        CardRepository::class
+    )
 
     private val hypothesisService: HypothesisServiceLegacy = HypothesisServiceLegacy(
         hypothesisRepository,
@@ -178,6 +183,11 @@ class HypothesisServiceTest {
         cardColumnRepository,
         cardRepository
     )
+
+    @Before
+    fun setup() {
+        ReflectionTestUtils.setField(hypothesisService, "protectedBranches", arrayOf("master", "main"))
+    }
 
     @Test(expected = NotFoundExceptionLegacy::class)
     fun `when trying to find validated builds by hypothesis id, if there is no hypothesis should throw exception`() {
@@ -742,6 +752,82 @@ class HypothesisServiceTest {
     }
 
     @Test
+    fun `when getting board, if is a SoftwareCard and card not associated with a branch in protected branch list `() {
+
+        val buildMock = getDummyBuild(emptyList(), cardColumnToDo, BuildStatus.BUILT)
+        val deploymentNotDeployed = getDummyDeployment(buildMock, DeploymentStatus.NOT_DEPLOYED)
+        val deploymentDeploying = getDummyDeployment(buildMock, DeploymentStatus.DEPLOYING)
+        val buildWithoutDeploymentsDeployed =
+            getDummyBuild(listOf(deploymentNotDeployed, deploymentDeploying), cardColumnDoing, BuildStatus.BUILT)
+
+        val hypothesis = Hypothesis(
+            id = "id", name = "name", description = "description",
+            author = user, createdAt = LocalDateTime.now(),
+            builds = listOf(buildWithoutDeploymentsDeployed, buildWithoutDeploymentsDeployed),
+            cards = listOf(createSofwareCard()),
+            workspaceId = workspaceId
+        )
+
+        every { hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) } returns Optional.of(
+            hypothesis
+        )
+        every {
+            cardColumnRepository.findAllByHypothesisIdAndWorkspaceId(
+                hypothesis.id,
+                workspaceId
+            )
+        } returns listOf(
+            cardColumnToDo,
+            cardColumnDoing,
+            cardColumnReadyToGo,
+            cardColumnBuilds,
+            cardColumnDeployedReleases
+        )
+
+        val listOfSimpleBuildRepresentation = hypothesisService.getBoard(hypothesis.id, workspaceId)
+
+        assertFalse(listOfSimpleBuildRepresentation.board[0].cards[0].isProtected)
+    }
+
+    @Test
+    fun `when getting board, if is a SoftwareCard and card is associated with a branch in protected branch list `() {
+
+        val buildMock = getDummyBuild(emptyList(), cardColumnToDo, BuildStatus.BUILT)
+        val deploymentNotDeployed = getDummyDeployment(buildMock, DeploymentStatus.NOT_DEPLOYED)
+        val deploymentDeploying = getDummyDeployment(buildMock, DeploymentStatus.DEPLOYING)
+        val buildWithoutDeploymentsDeployed =
+            getDummyBuild(listOf(deploymentNotDeployed, deploymentDeploying), cardColumnDoing, BuildStatus.BUILT)
+
+        val hypothesis = Hypothesis(
+            id = "id", name = "name", description = "description",
+            author = user, createdAt = LocalDateTime.now(),
+            builds = listOf(buildWithoutDeploymentsDeployed, buildWithoutDeploymentsDeployed),
+            cards = listOf(createSofwareCard("master")),
+            workspaceId = workspaceId
+        )
+
+        every { hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) } returns Optional.of(
+            hypothesis
+        )
+        every {
+            cardColumnRepository.findAllByHypothesisIdAndWorkspaceId(
+                hypothesis.id,
+                workspaceId
+            )
+        } returns listOf(
+            cardColumnToDo,
+            cardColumnDoing,
+            cardColumnReadyToGo,
+            cardColumnBuilds,
+            cardColumnDeployedReleases
+        )
+
+        val listOfSimpleBuildRepresentation = hypothesisService.getBoard(hypothesis.id, workspaceId)
+
+        assertTrue(listOfSimpleBuildRepresentation.board[0].cards[0].isProtected)
+    }
+
+    @Test
     fun `should create a new hypothesis`() {
 
         val createHypothesisRequest = CreateHypothesisRequest(
@@ -796,4 +882,23 @@ class HypothesisServiceTest {
             status = status, deployments = deployments, workspaceId = workspaceId
         )
     }
+
+    private fun createSofwareCard(branchName: String = "feature-branch"): SoftwareCard =
+        SoftwareCard(
+            id = "cardId",
+            name = "Card Name",
+            description = "Description",
+            column = cardColumnToDo,
+            author = user,
+            createdAt = LocalDateTime.now(),
+            labels = listOf(label),
+            hypothesis = hypothesis,
+            status = CardStatus.ACTIVE,
+            type = SoftwareCardType.FEATURE,
+            workspaceId = workspaceId,
+            feature = Feature(
+                "featureId", "featureName", branchName,
+                user, LocalDateTime.now(), listOf(module2), workspaceId
+            )
+        )
 }

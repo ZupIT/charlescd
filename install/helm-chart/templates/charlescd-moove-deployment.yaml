@@ -65,7 +65,7 @@ spec:
             - name: KEYCLOAK_SERVER_URL
               value: "{{ .Values.moove.keycloakHost}}"
             - name: KEYCLOAK_PUBLIC_CLIENT_ID
-              value: "charlescd-client"
+              value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET

@@ -16,3 +16,5 @@
 
 export const CARD_STATUS_DEFAULT = 'DEFAULT';
 export const CARD_STATUS_BUILD = 'BUILD';
+export const CARD_TYPE_ACTION = 'ACTION';
+export const CARD_TYPE_FEATURE = 'FEATURE';

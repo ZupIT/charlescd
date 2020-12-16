@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
+import { ISpinnakerConfigurationData } from '../../../../../api/configurations/interfaces/spinnaker-configuration-data.interface'
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 import { IstioDeploymentManifestsUtils } from '../../../utils/istio-deployment-manifests.utils'

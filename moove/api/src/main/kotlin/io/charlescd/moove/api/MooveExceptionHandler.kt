@@ -18,8 +18,7 @@ package io.charlescd.moove.api
 
 import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
-import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
-import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
+import io.charlescd.moove.commons.exceptions.*
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
@@ -161,5 +160,32 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun handleNotFoundExceptionLegacy(request: HttpServletRequest, ex: NotFoundExceptionLegacy): ResourceValueResponse {
         this.logger.error(ex.message, ex)
         return ResourceValueResponse(ex.resourceName, ex.id)
+    }
+
+    @ExceptionHandler(IntegrationExceptionLegacy::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    fun integrationException(ex: IntegrationExceptionLegacy): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
+        return ErrorMessageResponse.of(ex.getErrorCode().name, message, ex.getDetails())
+    }
+
+    @ExceptionHandler(ThirdPartyIntegrationExceptionLegacy::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    fun integrationException(ex: ThirdPartyIntegrationExceptionLegacy): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
+        return ErrorMessageResponse.of(ex.getErrorCode().name, message, ex.getDetails())
+    }
+
+    @ExceptionHandler(InvalidRegistryExceptionLegacy::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun invalidIntegrationRequestExceptionLegacy(ex: InvalidRegistryExceptionLegacy): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        val message = messageSource.getMessage(ex.getErrorCode().key, null, Locale.ENGLISH)
+        return ErrorMessageResponse.of(ex.getErrorCode().name, message)
     }
 }
