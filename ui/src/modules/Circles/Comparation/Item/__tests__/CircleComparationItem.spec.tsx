@@ -17,7 +17,6 @@
 import React, { ReactElement } from 'react';
 import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
 import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
@@ -25,9 +24,6 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
-
-(global as any).MutationObserver = MutationObserver
-
 interface fakeCanProps {
   I?: Actions;
   a?: Subjects;

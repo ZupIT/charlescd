@@ -40,6 +40,7 @@ const Routes = () => {
   const { getCircleId } = useCircleMatcher();
   const [enabledRoutes, setEnabledRoutes] = useState(false);
   const isEnabledRoutes = enabledRoutes || !isIDMAuthFlow();
+  
   const { findByEmail, user, error } = useUser();
   const { getTokens, grants } = useAuth();
   const { create, newUser } = useCreateUser();

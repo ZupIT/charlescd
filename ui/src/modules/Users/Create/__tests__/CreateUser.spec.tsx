@@ -15,12 +15,9 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
+import { render, act, screen, waitFor } from 'unit-test/testUtils';
 import CreateUser from '..';
 import userEvent from '@testing-library/user-event';
-
-(global as any).MutationObserver = MutationObserver
 
 const props = {
   onFinish: jest.fn()

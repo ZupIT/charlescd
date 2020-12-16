@@ -15,13 +15,10 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
 import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import CreateSegments from '..';
-
-(global as any).MutationObserver = MutationObserver
 
 const circle = {
   deployment: {

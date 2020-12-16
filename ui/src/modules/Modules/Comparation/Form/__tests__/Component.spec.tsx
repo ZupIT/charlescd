@@ -21,11 +21,7 @@ import { Component as ComponentInterface } from "modules/Modules/interfaces/Comp
 import { AllTheProviders } from "unit-test/testUtils";
 import { Module, Author } from "modules/Modules/interfaces/Module";
 import { Actions, Subjects } from "core/utils/abilities";
-import MutationObserver from 'mutation-observer'
 import userEvent from "@testing-library/user-event";
-
-(global as any).MutationObserver = MutationObserver
-
 interface fakeCanProps {
   I?: Actions;
   a?: Subjects;
