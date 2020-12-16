@@ -262,6 +262,10 @@ compass:
       value: "5"
     - name: LIMITER_HEADERS_TTL
       value: "5"
+  secretEnvVars:
+    - name: ENCRYPTION_KEY
+      secretName: "compass-aes256-key"
+      secretKey: "encryption-key"
   image:
     name: zupcharles/charlescd-compass:0.4.5
     pullPolicy: Always
