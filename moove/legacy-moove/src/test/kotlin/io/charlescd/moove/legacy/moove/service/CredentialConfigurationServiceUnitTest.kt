@@ -256,7 +256,7 @@ class CredentialConfigurationServiceUnitTest {
             isRoot = false,
             createdAt = LocalDateTime.now()
         )
-        val authorization = getAuthorization();
+        val authorization = getAuthorization()
 
         val expectedResponse =
             CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
@@ -268,7 +268,6 @@ class CredentialConfigurationServiceUnitTest {
         every {
             userServiceLegacy.findByAuthorizationToken(authorization)
         } returns user
-
 
         credentialConfigurationService.createRegistryConfig(request, workspaceId, authorization)
     }
@@ -489,7 +488,6 @@ class CredentialConfigurationServiceUnitTest {
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
-
     @Test(expected = ThirdPartyIntegrationExceptionLegacy::class)
     fun `when test new azure configuration and registry api not respond, method should throw IntegrationExceptionLegacy`() {
 
@@ -514,7 +512,6 @@ class CredentialConfigurationServiceUnitTest {
         every {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
         } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
-
 
         credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }

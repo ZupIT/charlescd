@@ -35,7 +35,6 @@ import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfig
 import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
 import io.charlescd.moove.legacy.moove.request.configuration.*
 import io.charlescd.moove.legacy.repository.CredentialConfigurationRepository
-import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User
@@ -311,7 +310,7 @@ class CredentialConfigurationService(
             }
     }
 
-    private fun CreateGitConfigurationRequest.toEntity(workspaceId: String, author:User): CredentialConfiguration {
+    private fun CreateGitConfigurationRequest.toEntity(workspaceId: String, author: User): CredentialConfiguration {
         return CredentialConfiguration(
             id = UUID.randomUUID().toString(),
             name = this.name,
