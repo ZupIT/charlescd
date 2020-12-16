@@ -86,8 +86,8 @@ export const findUserByEmail = (email: string) => {
   return baseRequest(`${endpoint}/${decodeEmail}`);
 };
 
-export const findUserById = (id: string) => {
-  return baseRequest(`${endpoint}/id/${id}`);
+export const findWorkspacesByUserId = (id: string) => {
+  return baseRequest(`${endpoint}/${id}/workspaces`);
 };
 
 export const deleteUserById = (id: string) =>

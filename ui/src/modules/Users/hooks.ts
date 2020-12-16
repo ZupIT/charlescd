@@ -28,7 +28,7 @@ import {
   resetPasswordById,
   patchProfileById,
   findUserByEmail,
-  findUserById,
+  findWorkspacesByUserId,
   createNewUser,
   deleteUserById
 } from 'core/providers/users';
@@ -41,21 +41,26 @@ import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
-  findById: Function;
+  findWorkspacesByUser: Function;
   user: User;
+  userAndWorkspaces: User;
   error: ResponseError;
 } => {
   const dispatch = useDispatch();
   const getUserByEmail = useFetchData<User>(findUserByEmail);
-  const getUserById = useFetchData<User>(findUserById);
+  const getWorkspacesByUserId = useFetchData<User>(findWorkspacesByUserId);
   const [user, setUser] = useState<User>(null);
   const [error, setError] = useState<ResponseError>(null);
+  const [workspaces, setWorkspaces] = useState<User>(null);
+  const [userAndWorkspaces, setUserAndWorkspaces] = useState<User>(null);
 
   const findByEmail = useCallback(
     async (email: Pick<User, 'email'>) => {
       try {
         if (email) {
           const res = await getUserByEmail(email);
+
+          setUser(res);
 
           return res;
         }
@@ -75,13 +80,13 @@ export const useUser = (): {
     [dispatch, getUserByEmail]
   );
 
-  const findById = useCallback(
+  const findWorkspacesByUser = useCallback(
     async (id: Pick<User, 'id'>) => {
       try {
         if (id) {
-          const res = await getUserById(id);
+          const res = await getWorkspacesByUserId(id);
 
-          setUser(res);
+          setWorkspaces(res);
 
           return res;
         }
@@ -98,13 +103,19 @@ export const useUser = (): {
         }
       }
     },
-    [dispatch, getUserById]
+    [dispatch, getWorkspacesByUserId]
   );
+
+  useEffect(() => {
+    const newstr = { ...user, ...workspaces };
+    setUserAndWorkspaces(newstr);
+  }, [workspaces, user]);
 
   return {
     findByEmail,
-    findById,
+    findWorkspacesByUser,
     user,
+    userAndWorkspaces,
     error
   };
 };
