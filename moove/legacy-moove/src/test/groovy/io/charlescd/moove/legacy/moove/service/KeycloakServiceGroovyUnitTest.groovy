@@ -33,7 +33,6 @@ import spock.lang.Specification
 import javax.ws.rs.core.Response
 import java.time.LocalDateTime
 
-//TODO To remove after vulnerability-fixes pr(#670) accepted
 class KeycloakServiceGroovyUnitTest extends Specification {
 
     private KeycloakService service

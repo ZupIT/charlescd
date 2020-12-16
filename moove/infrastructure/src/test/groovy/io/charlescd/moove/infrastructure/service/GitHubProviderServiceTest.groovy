@@ -34,23 +34,14 @@ class GitHubProviderServiceTest extends Specification {
     private GitHubClient gitHubClient = Mock(GitHubClient)
     private GitHubProviderService gitHubProviderService
     private HttpURLConnection httpURLConnection = Mock(HttpURLConnection)
-
-
     private workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
     private author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
             new ArrayList<WorkspacePermissions>(), true, LocalDateTime.now())
-
     private componentSnapshotList = new ArrayList<ComponentSnapshot>()
-
     private moduleSnapshotList = new ArrayList<ModuleSnapshot>()
-
     private featureSnapshotList = new ArrayList<FeatureSnapshot>()
-
     private Build build
     private GitCredentials gitCredentials = new GitCredentials("address", "username", "password", null, GitServiceProvider.GITHUB)
-    private gitConfiguration = new GitConfiguration("04432b68-6957-4542-ace7-6da7d4bffa98", "git-config",
-            gitCredentials,
-            LocalDateTime.now(), author, workspaceId)
 
     def setup() {
         componentSnapshotList.add(new ComponentSnapshot('70189ffc-b517-4719-8e20-278a7e5f9b33', '20209ffc-b517-4719-8e20-278a7e5f9b00',
@@ -76,7 +67,6 @@ class GitHubProviderServiceTest extends Specification {
         reference.setObject(new TypedResource())
         reference.setRef("teste")
         reference.setUrl("teste")
-        //def request = new UpdateUserRequest("John Doe", "email", "https://www.photos.com/johndoe")
 
         when:
         gitHubProviderService.createReleaseCandidates(build, gitCredentials)
@@ -85,6 +75,5 @@ class GitHubProviderServiceTest extends Specification {
         4 * gitHubClientFactory.buildGitClient(gitCredentials) >> gitHubClient
         2 * gitHubClient.get(_) >> new GitHubResponse(httpURLConnection, reference)
         3 * gitHubClient.post(_, _, _) >> reference
-        //1 * gitHubService.mergeBranches(gitCredentials, "repository", "master", "master", "teste")
     }
 }
