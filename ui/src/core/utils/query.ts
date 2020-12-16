@@ -20,7 +20,7 @@ import forEach from 'lodash/forEach';
 const getQueryStrings = () => new URLSearchParams(window.location.search);
 
 export type URLParams = {
-  [key: string]: string | number | string[] | number[];
+  [key: string]: boolean | string | number | string[] | number[];
 };
 
 export const buildParams = (data: URLParams) => {
