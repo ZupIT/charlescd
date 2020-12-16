@@ -69,7 +69,7 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.OK)
     fun findGitConfigurations(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @Valid pageRequest: PageRequest
+        pageRequest: PageRequest
     ): ResourcePageResponse<GitConfigurationResponse> {
         return this.findGitConfigurationsInteractor.execute(workspaceId, pageRequest)
     }

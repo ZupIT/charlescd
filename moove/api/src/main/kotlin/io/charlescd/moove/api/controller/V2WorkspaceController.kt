@@ -78,7 +78,7 @@ class V2WorkspaceController(
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun findAll(
-        @Valid pageRequest: PageRequest,
+        pageRequest: PageRequest,
         @RequestParam(required = false, name = "name") name: String?
     ): ResourcePageResponse<WorkspaceResponse> {
         return findAllWorkspacesInteractor.execute(pageRequest, name)
@@ -124,7 +124,7 @@ class V2WorkspaceController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
-        @Valid pageable: PageRequest
+        pageable: PageRequest
     ): ResourcePageResponse<UserResponse> {
         return this.findAllWorkspaceUsersInteractor.execute(workspaceId, name, email, pageable)
     }

@@ -53,7 +53,7 @@ class V2UserController(
     fun findAll(
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
-        @Valid pageable: PageRequest
+        pageable: PageRequest
     ): ResourcePageResponse<UserResponse> {
         return this.findAllUsersInteractor.execute(name, email, pageable)
     }

@@ -83,7 +83,7 @@ class V2ModuleController(
     fun findAllModules(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name", required = false) name: String?,
-        @Valid pageRequest: PageRequest
+        pageRequest: PageRequest
     ): ResourcePageResponse<ModuleResponse> {
         return this.findAllModulesInteractor.execute(workspaceId, name, pageRequest)
     }

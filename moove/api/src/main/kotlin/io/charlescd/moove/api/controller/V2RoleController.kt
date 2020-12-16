@@ -34,7 +34,7 @@ class V2RoleController(private val findAllRolesInteractor: FindAllRolesInteracto
 
     @ApiOperation(value = "Find all Roles")
     @GetMapping
-    fun findAll(@Valid pageable: PageRequest): ResourcePageResponse<RoleResponse> {
+    fun findAll(pageable: PageRequest): ResourcePageResponse<RoleResponse> {
         return this.findAllRolesInteractor.execute(pageable)
     }
 }
