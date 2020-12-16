@@ -1,12 +1,14 @@
 package api
 
-import "hermes/web/api/subscription"
+import (
+	"github.com/gorilla/mux"
+	"hermes/web/api/subscription"
+)
 
-func (api *Api) newV1Api() {
-	api.router.PathPrefix("/v1")
+func (api *Api) newV1Api(s *mux.Router) {
+	r := s.PathPrefix("/v1").Subrouter()
 	{
 		path := "/subscription"
-		//api.router.HandleFunc(path, subscription.Create(api.subscriptionMain)).Methods("POST")
-		api.router.HandleFunc(path, subscription.Create(api.subscriptionMain)).Methods("GET")
+		r.HandleFunc(path, subscription.Create(api.subscriptionMain)).Methods("POST")
 	}
 }

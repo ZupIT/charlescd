@@ -1,10 +1,13 @@
-package router
+package api
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"hermes/pkg/errors"
 	"hermes/web/util"
+	"log"
 	"net/http"
+	"net/http/httptest"
 	"strconv"
 )
 
@@ -26,7 +29,7 @@ func ValidatorMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-type", "application/json")
 		workspaceID := r.Header.Get("x-workspace-id")
-		ers := NewApiErrors()
+		ers := util.NewApiErrors()
 
 		fmt.Println(r.RequestURI)
 
@@ -45,7 +48,25 @@ func ValidatorMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-//func NewResponse(w http.ResponseWriter, status int, data interface{}) {
-//	w.WriteHeader(status)
-//	json.NewEncoder(w).Encode(data)
-//}
+func LoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		recorderWrite := httptest.NewRecorder()
+		next.ServeHTTP(recorderWrite, r)
+
+		for key := range recorderWrite.Header() {
+			w.Header().Add(key, recorderWrite.Header().Get(key))
+		}
+
+		log.Println(recorderWrite.Code)
+
+		if recorderWrite.Code < 200 || recorderWrite.Code > 210 {
+			logrus.WithFields(logrus.Fields{
+				"err": recorderWrite.Body.String(),
+			}).Warnln()
+		}
+
+		w.WriteHeader(recorderWrite.Code)
+		recorderWrite.Body.WriteTo(w)
+	})
+}

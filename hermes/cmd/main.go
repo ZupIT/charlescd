@@ -19,5 +19,5 @@ func main() {
 	subscriptionMain := subscription.NewMain(db)
 
 	router := api.NewApi(subscriptionMain)
-	router.Start()
+	api.Start(router)
 }
