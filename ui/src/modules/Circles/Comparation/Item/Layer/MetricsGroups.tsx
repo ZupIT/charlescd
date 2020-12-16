@@ -25,15 +25,17 @@ import isEmpty from 'lodash/isEmpty';
 import Loader from '../Loaders/index';
 import { useMetricsGroupsResume } from '../MetricsGroups/hooks';
 import { MetricsGroupsResume } from '../MetricsGroups/types';
+import { Circle } from 'modules/Circles/interfaces/Circle';
 import { getThresholdStatus } from '../MetricsGroups/helpers';
 import Styled from '../styled';
 
 type Props = {
   onClickCreate: () => void;
   circleId: string;
+  circle: Circle;
 };
 
-const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
+const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
   const { getMetricsgroupsResume, resume, status } = useMetricsGroupsResume();
 
   useEffect(() => {
@@ -43,7 +45,13 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
   }, [getMetricsgroupsResume, circleId, status]);
 
   const renderAddMetricsGroups = () => (
-    <Button.Rounded name="add" icon="add" color="dark" onClick={onClickCreate}>
+    <Button.Rounded
+      name="add"
+      icon="add"
+      color="dark"
+      onClick={onClickCreate}
+      isDisabled={!circle?.id}
+    >
       Add metrics group
     </Button.Rounded>
   );

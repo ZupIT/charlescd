@@ -124,8 +124,9 @@ class CredentialConfigurationService(
         workspaceId: String,
         request: CreateRegistryConfigurationRequest
     ) {
+
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
-            buildVillagerRegistryConfigurationRequest(request)
+            buildVillagerRegistryConfigurationRequest(request, "")
 
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
@@ -184,6 +185,7 @@ class CredentialConfigurationService(
         authorId: String
     ): CreateVillagerRegistryConfigurationRequest {
         urlValidation(createRegistryConfigRequest.address)
+
         return when (createRegistryConfigRequest) {
             is CreateAzureRegistryConfigurationRequest -> buildAzureRegistryRequest(createRegistryConfigRequest, authorId)
             is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest, authorId)
@@ -194,20 +196,16 @@ class CredentialConfigurationService(
         }
     }
 
-<<<<<<< HEAD
-    private fun buildAWSRegistryRequest(
-        createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest,
-        authorId: String
-    ): CreateVillagerRegistryConfigurationRequest {
-=======
     private fun buildVillagerTestRegistryConnectionRequest(
         request: TestRegistryConnectionRequest
     ): TestVillagerRegistryConnectionRequest {
         return TestVillagerRegistryConnectionRequest(request.configurationId)
     }
 
-    private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
->>>>>>> 1c88bd6ac730e55ba1accbc8e648594ea087d0df
+    private fun buildAWSRegistryRequest(
+        createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
@@ -312,15 +310,7 @@ class CredentialConfigurationService(
             }
     }
 
-<<<<<<< HEAD
     private fun CreateGitConfigurationRequest.toEntity(workspaceId: String, author: User): CredentialConfiguration {
-=======
-    private fun findUser(id: String): User =
-        this.userRepository.findById(id)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
-
-    private fun CreateGitConfigurationRequest.toEntity(workspaceId: String): CredentialConfiguration {
->>>>>>> 1c88bd6ac730e55ba1accbc8e648594ea087d0df
         return CredentialConfiguration(
             id = UUID.randomUUID().toString(),
             name = this.name,
