@@ -19,6 +19,7 @@ package io.charlescd.circlematcher.domain.service
 
 import io.charlescd.circlematcher.domain.KeyMetadata
 import io.charlescd.circlematcher.domain.SegmentationType
+import io.charlescd.circlematcher.domain.exception.BusinessException
 import io.charlescd.circlematcher.domain.service.impl.SegmentationServiceImpl
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository
@@ -193,5 +194,86 @@ class SegmentationServiceImplTest extends Specification {
         1 * keyMetadataRepository.findByReference("74b21efa-d52f-4266-9e6f-a28f26f7fffd") >> metadataList
         1 * segmentationRepository.removeByKey(composedKey)
         1 * keyMetadataRepository.remove(keyMetadata)
+    }
+
+    def "should not create a segmentation rule in default circle if another is already registered"() {
+
+        given:
+
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def segmentation = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+        def request = TestUtils.createDefaultSegmentationRequest(node, SegmentationType.REGULAR)
+
+        when:
+
+        segmentationService.create(request)
+
+        then:
+        1 * keyMetadataRepository.findByWorkspaceId(_) >> [keyMetadata]
+        0 * keyMetadataRepository.create(_) >> 0
+        0 * segmentationRepository.create(composedKey, _)
+
+        thrown(BusinessException)
+    }
+
+    def "should allow to create a segmentation rule in default circle when none have been registered yet"() {
+
+        given:
+
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+        def request = TestUtils.createDefaultSegmentationRequest(node, SegmentationType.REGULAR)
+
+        when:
+
+        segmentationService.create(request)
+
+        then:
+        1 * keyMetadataRepository.findByWorkspaceId(_) >> [keyMetadata]
+        1 * keyMetadataRepository.create(_) >> keyMetadata
+        0 * segmentationRepository.create(composedKey, _)
+
+        notThrown()
+    }
+
+    def "should not update a segmentation rule in default circle"() {
+
+        given:
+
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+        def request = TestUtils.createUpdateDefaultSegmentationRequest(node, SegmentationType.REGULAR)
+
+        when:
+
+        segmentationService.update(request)
+
+        then:
+        0 * keyMetadataRepository.create(_) >> 0
+        0 * segmentationRepository.create(composedKey, _)
+
+        thrown(BusinessException)
     }
 }
