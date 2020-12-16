@@ -11,18 +11,23 @@ export interface HookParams {
     }
   }
   children: {
-    'Pod.v1': Record<string, childSpec>
+    'Deployment.apps/v1': DeploymentSpec
   }
   finalizing: boolean
 }
 
-interface childSpec {
-  name: string
-  status: {
-    containerStatuses: {
-      ready: boolean
-      restartCount: number
-      started: boolean
+interface DeploymentSpec {
+  [key: string]: {
+    status: {
+      availableReplicas: number
+      conditions: {
+        lastTransitionTime: string
+        lastUpdateTime: string
+        message: string
+        reason: string
+        status: 'True' | 'False' // TODO: check if this can be other values
+        type: 'Progressing' | 'Available'  // TODO: check if this can be other values
+      }[]
     }
   }
 }
