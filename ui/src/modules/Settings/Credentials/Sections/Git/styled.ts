@@ -32,6 +32,21 @@ const Subtitle = styled(ComponentText.h5)`
   margin-bottom: 10px;
 `;
 
+const Info = styled(ComponentText.h5)`
+  margin-bottom: 20px;
+`;
+
+const Link = styled.a`
+  text-decoration: underline;
+  color: ${({ theme }) => theme.popover.link.color};
+  text-decoration-color: ${({ theme }) => theme.popover.link.color};
+
+  :hover {
+    text-decoration: underline;
+    text-decoration-color: ${({ theme }) => theme.popover.link.color};
+  }
+`;
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -60,6 +75,8 @@ export default {
   Content,
   Title,
   Subtitle,
+  Info,
+  Link,
   Form,
   Fields,
   TestConnectionButton

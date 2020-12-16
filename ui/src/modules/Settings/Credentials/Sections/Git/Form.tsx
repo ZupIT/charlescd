@@ -20,7 +20,6 @@ import Button from 'core/components/Button';
 import RadioGroup from 'core/components/RadioGroup';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
 import { useGit } from './hooks';
 import { radios } from './constants';
@@ -44,9 +43,17 @@ const FormGit = ({ onFinish }: Props) => {
     register,
     handleSubmit,
     getValues,
+    setValue,
     formState: { isValid }
   } = useForm<GitFormData>({
-    mode: 'onChange'
+    mode: 'onChange',
+    defaultValues: {
+      credentials: {
+        address: '.',
+        accessToken: '',
+        serviceProvider: ''
+      }
+    }
   });
   const profileId = getProfileByKey('id');
 
@@ -55,6 +62,14 @@ const FormGit = ({ onFinish }: Props) => {
       onFinish();
     }
   }, [onFinish, responseAdd]);
+
+  useEffect(() => {
+    if (gitType === 'GitHub') {
+      setValue('credentials.address', 'https://github.com');
+    } else if (gitType === 'GitLab') {
+      setValue('credentials.address', 'https://gitlab.com');
+    }
+  }, [setValue, gitType]);
 
   const onSubmit = (git: GitFormData) => {
     save({
@@ -70,6 +85,7 @@ const FormGit = ({ onFinish }: Props) => {
   const handleTestConnection = () => {
     const data = getValues();
 
+    console.log('data', data);
     const payload = buildTestConnectionPayload(data, gitType);
     testConnection(payload);
   };
@@ -82,15 +98,10 @@ const FormGit = ({ onFinish }: Props) => {
       <Styled.Fields>
         <Form.Input
           ref={register({ required: true })}
-          name="name"
-          label={`Type a name for ${gitType}`}
-        />
-        <Form.Input
-          ref={register({ required: true })}
           name="credentials.address"
           label={`Enter the ${gitType} url`}
         />
-        <Form.Input
+        <Form.Password
           ref={register({ required: true })}
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
@@ -116,16 +127,18 @@ const FormGit = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content>
-      <Styled.Title color="light">
-        Add Git
-        <Popover
-          title="Why we need a Git?"
-          icon="info"
-          link={`${CHARLES_DOC}/get-started/defining-a-workspace/github`}
-          linkLabel="View documentation"
-          description="Adding a Git allows Charles to create, delete and merge branches as well as view repositories and generate releases. Consult our documentation for further details."
-        />
-      </Styled.Title>
+      <Styled.Title color="light">Add Git</Styled.Title>
+      <Styled.Info color="dark">
+        Adding a Git allows Charles to create, delete and merge branches as well
+        as view repositories and generate releases. Consult our{' '}
+        <Styled.Link
+          href="https://docs.charlescd.io/get-started/defining-a-workspace/github"
+          target="_blank"
+        >
+          documentation
+        </Styled.Link>{' '}
+        for further details.
+      </Styled.Info>
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>

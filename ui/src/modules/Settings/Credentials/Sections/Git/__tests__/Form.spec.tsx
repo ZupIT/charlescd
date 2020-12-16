@@ -33,9 +33,11 @@ test('should test a git connection', async () => {
 
   userEvent.click(githubButton);
 
-  userEvent.type(screen.getByTestId('input-text-name'), 'github');
-  userEvent.type(screen.getByTestId('input-text-credentials.address'), 'github.com');
-  userEvent.type(screen.getByTestId('input-text-credentials.accessToken'), '123');
+  const address = await screen.findByTestId('input-text-credentials.address');
+  const accessToken = await screen.findByTestId('input-password-credentials.accessToken');
+
+  userEvent.type(address, 'github.com');
+  userEvent.type(accessToken, '123');
 
   const testConnectionButton = screen.getByTestId('button-default-test-connection');
   userEvent.click(testConnectionButton);
@@ -43,5 +45,3 @@ test('should test a git connection', async () => {
   const connectionMessageElement = await screen.findByText('Successful connection with the metrics provider.');
   expect(connectionMessageElement).toBeInTheDocument();
 });
-
-
