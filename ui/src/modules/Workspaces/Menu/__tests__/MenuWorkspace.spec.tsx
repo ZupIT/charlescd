@@ -17,10 +17,10 @@
 import React from 'react';
 import { fireEvent, render, screen } from 'unit-test/testUtils';
 import Menu from '../index';
-import workspaces from '../../../../../stub/workspaces/mock';
+import { workspaces } from './fixtures';
 
 const props = {
-  items: workspaces.workspaces.content,
+  items: workspaces.content,
   onSearch: jest.fn()
 };
 

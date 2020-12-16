@@ -133,7 +133,7 @@ test('click on Delete button in Modal.Trigger component', async () => {
 });
 
 test('close UsersComparationItem component', async () => {
-  const delParamSpy = spyOn(PathUtils, 'delParam');
+  const delParamSpy = jest.spyOn(PathUtils, 'delParam');
   render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );

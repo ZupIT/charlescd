@@ -25,7 +25,7 @@ jest.mock('core/state/hooks', () => ({
   useDispatch: () => jest.fn()
 }));
 
-test('match a circle id', async () => {
+test.only('match a circle id', async () => {
   const id = '123';
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     circles: [{ id, name: 'circle' }]
