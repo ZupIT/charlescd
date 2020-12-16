@@ -41,6 +41,6 @@ test('should test a git connection', async () => {
   const testConnectionButton = await screen.findByTestId('button-default-test-connection');
   userEvent.click(testConnectionButton);
 
-  const connectionMessageElement = await screen.findByText('Successful connection with the metrics provider.');
+  const connectionMessageElement = await screen.findByText('Successful connection with git.');
   expect(connectionMessageElement).toBeInTheDocument();
 });

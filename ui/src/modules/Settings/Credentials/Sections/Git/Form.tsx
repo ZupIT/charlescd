@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
-import RadioGroup from 'core/components/RadioGroup';
+import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { useGit } from './hooks';
@@ -102,9 +102,11 @@ const FormGit = ({ onFinish }: Props) => {
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
         />
-        {!loadingConnectionResponse && testConnectionResponse && (
-          <ConnectionStatus message={testConnectionResponse} />
-        )}
+        <ConnectionStatus
+          successMessage="Successful connection with git."
+          errorMessage={testConnectionResponse?.message}
+          status={testConnectionResponse?.status}
+        />
         <Styled.TestConnectionButton
           id="test-connection"
           type="button"
@@ -115,7 +117,11 @@ const FormGit = ({ onFinish }: Props) => {
           Test connection
         </Styled.TestConnectionButton>
       </Styled.Fields>
-      <Button.Default type="submit" isLoading={loadingSave || loadingAdd}>
+      <Button.Default
+        type="submit"
+        isDisabled={!isValid}
+        isLoading={loadingSave || loadingAdd}
+      >
         Save
       </Button.Default>
     </Styled.Form>
@@ -138,7 +144,7 @@ const FormGit = ({ onFinish }: Props) => {
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>
-      <RadioGroup
+      <Radio.Buttons
         name="git"
         items={radios}
         onChange={({ currentTarget }) => setGitType(currentTarget.value)}

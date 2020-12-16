@@ -21,7 +21,7 @@ import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
-import * as TestConnectionHook from 'core/hooks/useTestConnection';
+import { FetchMock } from 'jest-fetch-mock/types';
 
 test('render Metrics Provider default component', async () => {
   const finish = jest.fn();
@@ -59,26 +59,16 @@ test('render datasource input by datasource change', async () => {
   expect(screen.getByText('Service Account')).toBeInTheDocument();
 })
 
-test('render button test connection', async () => {
-  const testConnection = jest.fn()
-  const finish = jest.fn();
+test.only('render button test connection', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(Plugins))
+    .mockResponseOnce(JSON.stringify({
+      response: '401 unauthorized'
+    }));
 
-  jest.spyOn(MetricProviderHooks, 'usePlugins').mockImplementation(() => ({
-    getAll: jest.fn,
-    response: Plugins
-  }));
+  render(<Form onFinish={jest.fn()}/>)
 
-  jest.spyOn(TestConnectionHook, 'useTestConnection').mockImplementation(() => ({
-    save: testConnection,
-    loading: false,
-    response: '401 unauthorized'
-  }));
-
-  render(
-    <Form onFinish={finish} />
-  );
-
-  const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
+  const datasourcePlugin1 = await screen.findByText('Select a datasource plugin');
   selectEvent.select(datasourcePlugin1, 'Prometheus');
   const dataSourceHealth = await screen.findByText('Datasource health');
   const dataSourceName = await screen.findByText('Datasource name');
@@ -92,10 +82,10 @@ test('render button test connection', async () => {
   await act(() => userEvent.type(screen.getByTestId('input-text-data.url'), 'name'));
 
   const btn = await screen.findByTestId('button-default-test-connection');
-
   expect(btn).not.toBeDisabled();
 
-  fireEvent.click(screen.getByTestId('button-default-test-connection'));
-  expect(testConnection).toHaveBeenCalled();
-  expect(screen.getByTestId('connection-error')).toBeInTheDocument();
-})
+  userEvent.click(btn);
+
+  const status = await screen.findByTestId("connection-success");
+  expect(status).toBeInTheDocument();
+});
