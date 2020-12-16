@@ -72,7 +72,6 @@ class CardControllerUnitTest extends Specification {
                 "branchName",
                 new ArrayList<String>(),
                 false
-
         )
 
         when:
