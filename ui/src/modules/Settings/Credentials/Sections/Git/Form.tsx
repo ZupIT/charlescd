@@ -20,7 +20,6 @@ import Button from 'core/components/Button';
 import RadioGroup from 'core/components/RadioGroup';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import { getProfileByKey } from 'core/utils/profile';
 import { useGit } from './hooks';
 import { radios } from './constants';
 import { GitFormData } from './interfaces';
@@ -55,7 +54,6 @@ const FormGit = ({ onFinish }: Props) => {
       }
     }
   });
-  const profileId = getProfileByKey('id');
 
   useEffect(() => {
     if (responseAdd) {
@@ -74,7 +72,6 @@ const FormGit = ({ onFinish }: Props) => {
   const onSubmit = (git: GitFormData) => {
     save({
       ...git,
-      authorId: profileId,
       credentials: {
         ...git.credentials,
         serviceProvider: gitType.toUpperCase()
@@ -85,7 +82,6 @@ const FormGit = ({ onFinish }: Props) => {
   const handleTestConnection = () => {
     const data = getValues();
 
-    console.log('data', data);
     const payload = buildTestConnectionPayload(data, gitType);
     testConnection(payload);
   };

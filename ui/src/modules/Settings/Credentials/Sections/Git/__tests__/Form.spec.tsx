@@ -15,10 +15,9 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import userEvent from '@testing-library/user-event';
-import selectEvent from 'react-select-event';
 import FormGit from '../Form';
 
 test('should test a git connection', async () => {
@@ -39,7 +38,7 @@ test('should test a git connection', async () => {
   userEvent.type(address, 'github.com');
   userEvent.type(accessToken, '123');
 
-  const testConnectionButton = screen.getByTestId('button-default-test-connection');
+  const testConnectionButton = await screen.findByTestId('button-default-test-connection');
   userEvent.click(testConnectionButton);
 
   const connectionMessageElement = await screen.findByText('Successful connection with the metrics provider.');
