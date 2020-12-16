@@ -19,13 +19,13 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	metricRepo "compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/plugin"
-	datasourcePKG "compass/pkg/datasource"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	metricRepo "github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -364,20 +364,13 @@ func (s *SuiteMetric) TestResultQuery() {
 		WorkspaceID: uuid.New(),
 	}
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	s.DB.Create(&dataSource)
+	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
 	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
+		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
 		GroupBy:        []metricRepo.MetricGroupBy{},
@@ -438,21 +431,13 @@ func (s *SuiteMetric) TestQuery() {
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
+	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
 	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
+		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
 		GroupBy:        []metricRepo.MetricGroupBy{},

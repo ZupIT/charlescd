@@ -1,13 +1,29 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
@@ -76,7 +92,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
 
     const expectedResponse : ReadDeploymentDto = {
@@ -141,7 +158,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: '067765f8-aa29-49f7-bf2b-3ec676a71583',
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -169,6 +187,8 @@ describe('DeploymentController v2', () => {
       'callbackUrl must be a string',
       'cdConfigurationId should not be empty',
       'cdConfigurationId must be an UUID',
+      'circle should not be empty',
+      'defaultCircle must be a boolean value',
       'modules should not be empty'
     ]
     await request(app.getHttpServer())
@@ -211,7 +231,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -284,7 +305,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     const errorMessages = [
       '2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
@@ -334,7 +356,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
     }
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -380,7 +403,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: true
     }
 
     const errorMessages = [
@@ -436,7 +460,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: true
     }
 
     const errorMessages = [

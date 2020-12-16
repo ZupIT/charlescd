@@ -22,8 +22,6 @@ test('render chart buttons', async () => {
   const onReset = jest.fn();
   const { getByTestId } = render(<ChartMenu onReset={onReset}/>);
 
-  await wait();
-
   expect(getByTestId('chart-menu')).toBeInTheDocument();
 });
 
@@ -31,8 +29,6 @@ test('Chart button on click should be call', async () => {
   const onReset = jest.fn();
   
   render(<ChartMenu onReset={onReset}/>);
-
-  await wait();
 
   const button = screen.getByTestId('icon-horizontal-dots');
   fireEvent.click(button);

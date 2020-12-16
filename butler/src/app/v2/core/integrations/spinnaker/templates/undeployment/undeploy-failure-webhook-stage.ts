@@ -15,12 +15,13 @@
  */
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { Component, Deployment } from '../../../../../api/deployments/interfaces'
-import { DeploymentStatusEnum } from '../../../../../../v1/api/deployments/enums'
+import { Deployment } from '../../../../../api/deployments/interfaces'
+import { DeploymentStatusEnum } from '../../../../../api/deployments/enums/deployment-status.enum'
 import { ExecutionTypeEnum } from '../../../../../api/deployments/enums'
 import { UrlUtils } from '../../../../utils/url.utils'
 import { UndeploymentTemplateUtils } from '../../utils/undeployment-template.utils'
 import { ConnectorConfiguration } from '../../../interfaces/connector-configuration.interface'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
 export const getUndeploymentFailureWebhookStage = (deployment: Deployment, stageId: number, configuration: ConnectorConfiguration): Stage => ({
   completeOtherBranchesThenFail: false,
@@ -46,7 +47,7 @@ export const getUndeploymentFailureWebhookStage = (deployment: Deployment, stage
   url: UrlUtils.getDeploymentNotificationUrl(configuration.executionId)
 })
 
-const getRequisiteStageRefIds = (components: Component[]): string[] => {
+const getRequisiteStageRefIds = (components: DeploymentComponent[]): string[] => {
   const proxiesEvalId: number = UndeploymentTemplateUtils.getProxyEvalStageId(components)
   return [
     `${proxiesEvalId}`

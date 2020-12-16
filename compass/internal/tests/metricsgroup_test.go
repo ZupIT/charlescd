@@ -19,16 +19,16 @@
 package tests
 
 import (
-	"compass/internal/action"
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/metricsgroupaction"
-	"compass/internal/plugin"
-	"compass/internal/util"
-	datasource2 "compass/pkg/datasource"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	datasource2 "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -46,7 +46,6 @@ type SuiteMetricGroup struct {
 	mock sqlmock.Sqlmock
 
 	repository metricsgroup.UseCases
-	datasource *metricsgroup.MetricsGroup
 }
 
 func (s *SuiteMetricGroup) SetupSuite() {
@@ -204,7 +203,7 @@ func (s *SuiteMetricGroup) TestFindAllError() {
 	require.Error(s.T(), err)
 }
 
-func (s *SuiteMetricGroup) TestFindById() {
+func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
 	metricGroup := newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)

@@ -61,6 +61,6 @@ test('add New action', async () => {
   const inputNickname = await screen.findByTestId('input-text-nickname');
   const selectActionType = screen.getByText('Select a action type');
     
-  await act(async () => userEvent.type(inputNickname, 'nickname'));
-  await selectEvent.select(selectActionType, 'foobar');
+  await act(() => userEvent.type(inputNickname, 'nickname'));
+  await act(() => selectEvent.select(selectActionType, 'foobar'));
 });

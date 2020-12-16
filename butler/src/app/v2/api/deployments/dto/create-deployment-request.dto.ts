@@ -15,15 +15,15 @@
  */
 
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsString, IsUUID, ValidateIf, ValidateNested } from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
 import { flatten } from 'lodash'
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
 import { CreateModuleDeploymentDto } from './create-module-request.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ApiProperty } from '@nestjs/swagger'
+import { CdConfigurationEntity } from '../../configurations/entity/cd-configuration.entity'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 
 export class CreateDeploymentRequestDto {
 
@@ -50,12 +50,16 @@ export class CreateDeploymentRequestDto {
   public cdConfiguration!: CdConfigurationEntity
 
   @ApiProperty({ type: () => CreateCircleDeploymentDto })
-  @ValidateIf((obj, value) => { return value })
   @ValidateNested({ each: true })
+  @IsNotEmpty()
   @Type(() => CreateCircleDeploymentDto)
-  public circle: CreateCircleDeploymentDto | null
+  public circle: CreateCircleDeploymentDto
 
   public status: DeploymentStatusEnum
+
+  @IsBoolean()
+  @ApiProperty()
+  public defaultCircle: boolean
 
   @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
   @IsNotEmpty()
@@ -68,9 +72,10 @@ export class CreateDeploymentRequestDto {
     authorId: string,
     callbackUrl: string,
     cdConfigurationId: string,
-    circle: CreateCircleDeploymentDto | null,
+    circle: CreateCircleDeploymentDto,
     status: DeploymentStatusEnum,
-    modules: CreateModuleDeploymentDto[]
+    modules: CreateModuleDeploymentDto[],
+    defaultCircle: boolean
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -79,16 +84,18 @@ export class CreateDeploymentRequestDto {
     this.circle = circle
     this.status = status
     this.modules = modules
+    this.defaultCircle = defaultCircle
   }
 
   public toCircleEntity(): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      this.circle ? this.circle.headerValue : null,
+      this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
-      this.getDeploymentComponents()
+      this.getDeploymentComponents(),
+      this.defaultCircle
     )
   }
 
@@ -96,10 +103,11 @@ export class CreateDeploymentRequestDto {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      null,
+      this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
-      [ ...activeComponents, ...this.getDeploymentComponents()]
+      [ ...activeComponents, ...this.getDeploymentComponents()],
+      this.defaultCircle
     )
   }
 

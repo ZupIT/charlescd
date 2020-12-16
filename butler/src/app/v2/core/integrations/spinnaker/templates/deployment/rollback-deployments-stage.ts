@@ -15,16 +15,16 @@
  */
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
-import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
-import { CommonTemplateUtils } from '../../utils/common-template.utils'
+import { ISpinnakerConfigurationData } from '../../../../../api/configurations/interfaces/spinnaker-configuration-data.interface'
+import { CdConfiguration } from '../../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
 export const getRollbackDeploymentsStage = (
-  component: Component,
+  component: DeploymentComponent,
   configuration: CdConfiguration,
   stageId: number,
   evalStageId: number,
-  circleId: string | null
+  circleId: string
 ): Stage => ({
   account: (configuration.configurationData as ISpinnakerConfigurationData).account,
   app: `app-${configuration.id}`,
@@ -55,7 +55,7 @@ export const getRollbackDeploymentsStage = (
         key: 'circleId',
         kind: 'EQUALS',
         values: [
-          CommonTemplateUtils.getCircleId(circleId)
+          circleId
         ]
       }
     ]

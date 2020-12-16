@@ -19,24 +19,25 @@
 package datasource
 
 import (
-	"compass/internal/plugin"
-	"compass/internal/util"
-	"compass/pkg/datasource"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/google/uuid"
 	"io"
 
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	Parse(dataSource io.ReadCloser) (DataSource, error)
-	FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error)
-	FindHealthByWorkspaceId(workspaceID string) (DataSource, error)
-	FindById(id string) (DataSource, error)
-	Save(dataSource DataSource) (DataSource, error)
+	Parse(dataSource io.ReadCloser) (Request, error)
+	FindAllByWorkspace(workspaceID uuid.UUID, health string) ([]Response, error)
+	FindHealthByWorkspaceId(workspaceID uuid.UUID) (Response, error)
+	FindById(id string) (Response, error)
+	Save(dataSource Request) (Response, error)
 	Delete(id string) error
-	GetMetrics(dataSourceID, name string) (datasource.MetricList, error)
-	Validate(dataSource DataSource) []util.ErrorUtil
+	GetMetrics(dataSourceID string) (datasource.MetricList, error)
+	Validate(dataSource Request) []util.ErrorUtil
 	TestConnection(pluginSrc string, datasourceData json.RawMessage) error
 }
 

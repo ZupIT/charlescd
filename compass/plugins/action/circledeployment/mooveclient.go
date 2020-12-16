@@ -20,10 +20,10 @@ package main
 
 import (
 	"bytes"
-	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"io/ioutil"
 	"net/http"
 	"os"

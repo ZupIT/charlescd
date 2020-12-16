@@ -15,7 +15,7 @@
  */
 
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { CdConfigurationEntity } from '../../configurations/entity'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { ReadModuleDeploymentDto } from '../dto/read-module-deployment.dto'
 import { Deployment } from '../interfaces'
@@ -47,8 +47,9 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => Execution, execution => execution.deployment)
   public executions!: Execution[]
 
-  @Column({ name: 'circle_id', nullable: true, type: 'varchar' })
-  public circleId!: string | null
+  @Column({ name: 'circle_id', nullable: false, type: 'varchar' })
+  public circleId!: string
+
 
   @Column({ name: 'active' })
   public active!: boolean
@@ -56,13 +57,17 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
+  @Column({ name: 'default_circle' })
+  public defaultCircle!: boolean
+
   constructor(
     deploymentId: string,
     authorId: string,
-    circleId: string | null,
+    circleId: string,
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
-    components: ComponentEntity[]
+    components: ComponentEntity[],
+    defaultCircle: boolean
   ) {
     this.id = deploymentId
     this.authorId = authorId
@@ -70,12 +75,13 @@ export class DeploymentEntityV2 implements Deployment {
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
+    this.defaultCircle = defaultCircle
   }
 
   public toReadDto(): ReadDeploymentDto {
-    return this.circleId ?
-      this.getCircleDto(this.circleId) :
-      this.getDefaultDto()
+    return this.defaultCircle ?
+      this.getDefaultDto() :
+      this.getCircleDto(this.circleId)
   }
 
   private getCircleDto(circleId: string): ReadDeploymentDto {
@@ -102,7 +108,7 @@ export class DeploymentEntityV2 implements Deployment {
       createdAt: this.createdAt,
       description: '',
       modulesDeployments: [this.componentsToModules()],
-      defaultCircle: false
+      defaultCircle: true
     }
   }
 

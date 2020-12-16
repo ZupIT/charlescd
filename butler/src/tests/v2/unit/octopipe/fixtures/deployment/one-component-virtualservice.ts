@@ -15,8 +15,7 @@
  */
 
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 
 export const oneComponentVSOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
   namespace: 'sandbox',
@@ -63,18 +62,18 @@ export const oneComponentVSOctopipeDeploymentRequest: OctopipeDeploymentRequest 
           {
             labels: {
               component: 'A',
-              tag: 'v1',
-              circleId: 'circle-id2'
+              tag: 'v0',
+              circleId: 'default-circle-id'
             },
-            name: 'circle-id2'
+            name: 'default-circle-id'
           },
           {
             labels: {
               component: 'A',
-              tag: 'v0',
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
+              tag: 'v1',
+              circleId: 'circle-id2'
             },
-            name: AppConstants.DEFAULT_CIRCLE_ID
+            name: 'circle-id2'
           }
         ]
       }
@@ -221,17 +220,17 @@ export const oneComponentVSOctopipeDeploymentRequest: OctopipeDeploymentRequest 
               {
                 destination: {
                   host: 'A',
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
+                  subset: 'default-circle-id'
                 },
                 headers: {
                   request: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   },
                   response: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   }
                 }

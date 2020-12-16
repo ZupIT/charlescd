@@ -19,15 +19,16 @@
 package metricsgroupaction
 
 import (
-	"compass/internal/action"
-	"compass/internal/plugin"
-	"compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"io"
 )
 
 type UseCases interface {
-	ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID string) []util.ErrorUtil
+	ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) []util.ErrorUtil
 	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, error)
 	FindGroupActionById(id string) (MetricsGroupAction, error)
 	SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)

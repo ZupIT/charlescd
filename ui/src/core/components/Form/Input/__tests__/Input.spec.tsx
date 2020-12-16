@@ -118,3 +118,32 @@ test('renders Input component error', () => {
   expect(inputElement).toHaveStyle(`border-bottom: 1px solid ${borderColor}`);
   expect(labelElement).toHaveStyle(`color: ${color}`);
 });
+
+test('renders Input component with error message', async () => {
+  render(
+    <Input
+      error="message error"
+      type={textProps.type}
+      name={textProps.name}
+      label="Label"
+    />
+  );
+
+  const error = await screen.findByText('message error');
+  expect(error).toBeInTheDocument();
+});
+
+test('renders Input component with Popover', async () => {
+  render(
+    <Input
+      type={textProps.type}
+      name={textProps.name}
+      label="Label"
+      tipTitle="Title"
+      tipDescription="Info message"
+    />
+  );
+
+  const iconInfo = await screen.findByTestId('icon-info');
+  expect(iconInfo).toBeInTheDocument();
+});

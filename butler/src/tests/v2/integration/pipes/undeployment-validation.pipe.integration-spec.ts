@@ -1,18 +1,34 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums/cd-type.enum'
-import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums/deployment-status.enum'
+import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { UndeploymentValidation } from '../../../../app/v2/api/deployments/pipes/undeployment-validation.pipe'
-import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication
@@ -75,7 +91,8 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: false
     }
 
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, false, false)
@@ -102,7 +119,8 @@ describe('DeploymentCleanupHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
-      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
+      incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
+      defaultCircle: false
     }
 
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, true, false)
@@ -141,7 +159,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components
+    components,
+    params.defaultCircle
   ))
 
   deployment.active = status

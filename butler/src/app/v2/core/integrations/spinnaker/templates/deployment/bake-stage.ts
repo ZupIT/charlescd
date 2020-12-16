@@ -15,11 +15,12 @@
  */
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
+import { CdConfiguration } from '../../../../../api/deployments/interfaces'
 import { CommonTemplateUtils } from '../../utils/common-template.utils'
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
+import { ISpinnakerConfigurationData } from '../../../../../api/configurations/interfaces/spinnaker-configuration-data.interface'
 
-export const getBakeStage = (component: Component, configuration: CdConfiguration, stageId: number, circleId: string | null): Stage => ({
+export const getBakeStage = (component: DeploymentComponent, configuration: CdConfiguration, stageId: number, circleId: string): Stage => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   expectedArtifacts: [
@@ -58,7 +59,7 @@ export const getBakeStage = (component: Component, configuration: CdConfiguratio
     deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
     component: component.name,
     tag: component.imageTag,
-    circleId: CommonTemplateUtils.getCircleId(circleId)
+    circleId: circleId
   },
   refId: `${stageId}`,
   requisiteStageRefIds: [],

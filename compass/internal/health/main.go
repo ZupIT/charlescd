@@ -19,16 +19,17 @@
 package health
 
 import (
-	"compass/internal/datasource"
-	"compass/internal/moove"
-	"compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/google/uuid"
 
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	Components(circleIDHeader, workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error)
-	ComponentsHealth(circleIDHeader, workspaceId, circleId string) (CircleHealthRepresentation, error)
+	Components(circleIDHeader, circleId, projectionType, metricType string, workspaceID uuid.UUID) (ComponentMetricRepresentation, error)
+	ComponentsHealth(circleIDHeader, circleId string, workspaceID uuid.UUID) (CircleHealthRepresentation, error)
 }
 
 type Main struct {

@@ -19,8 +19,9 @@
 package v1
 
 import (
-	"compass/internal/metricsgroup"
-	"compass/web/api"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -32,12 +33,12 @@ type CircleApi struct {
 func (v1 V1) NewCircleApi(circleMain metricsgroup.UseCases) CircleApi {
 	apiPath := "/circles"
 	circleApi := CircleApi{circleMain}
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics-groups"), api.HttpValidator(circleApi.ListMetricsGroupInCircle))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics-groups"), v1.HttpValidator(circleApi.ListMetricsGroupInCircle))
 
 	return circleApi
 }
 
-func (circleApi CircleApi) ListMetricsGroupInCircle(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
+func (circleApi CircleApi) ListMetricsGroupInCircle(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 	metricsGroups, err := circleApi.circleMain.ListAllByCircle(id)
 	if err != nil {

@@ -16,8 +16,9 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, wait, fireEvent, act } from 'unit-test/testUtils';
+import { render, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
 import CreateUser from '..';
+import userEvent from '@testing-library/user-event';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -43,76 +44,74 @@ jest.mock('../../hooks', () => {
 });
 
 test('render CreateUser default component', async () => {
-  const { getByTestId } = render(
+  render(
     <CreateUser {...props} onFinish={props.onFinish}/>
   );
 
-  await wait(() => expect(getByTestId('create-user')).toBeInTheDocument());
+  expect(await screen.findByTestId('create-user')).toBeInTheDocument();
 });
 
 test('close CreateUser component', async () => {
-  const { queryByTestId, getByTestId } = render(
+  render(
     <CreateUser {...props} onFinish={props.onFinish}/>
   );
 
-  await wait(() => expect(getByTestId('create-user')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId('create-user')).toBeInTheDocument());
 
-  const tabPanelCloseButton = queryByTestId('icon-cancel');
+  const tabPanelCloseButton = screen.queryByTestId('icon-cancel');
   expect(tabPanelCloseButton).toBeInTheDocument();
 
-  fireEvent.click(tabPanelCloseButton);
-  wait(() => expect(getByTestId('create-user')).not.toBeInTheDocument())
+  act(() => (userEvent.click(tabPanelCloseButton)));
+  waitFor(() => expect(screen.getByTestId('create-user')).not.toBeInTheDocument());
 });
 
 test("render CreateUser Form component with empty fields", async () => {
-  const { getByTestId } = render(
+  render(
     <CreateUser {...props} onFinish={props.onFinish} />
   );
 
-  expect(getByTestId("create-user")).toBeInTheDocument();
+  expect(screen.getByTestId("create-user")).toBeInTheDocument();
 
-  const ContentCreateUser = getByTestId("content-create-user");
+  const ContentCreateUser = screen.getByTestId("content-create-user");
   expect(ContentCreateUser).toBeInTheDocument();
 
-  const FormCreateUser = getByTestId("form-create-user");
+  const FormCreateUser = screen.getByTestId("form-create-user");
   expect(FormCreateUser).toBeInTheDocument();
 
-  const ButtonCreateUser = getByTestId("button-create-user");
+  const ButtonCreateUser = screen.getByTestId("button-create-user");
   expect(ButtonCreateUser).toBeInTheDocument();
-  await wait (() => expect(ButtonCreateUser).toBeDisabled());
+  await waitFor (() => expect(ButtonCreateUser).toBeDisabled());
 
-  const InputName = getByTestId("input-text-name");
-  const InputEmail = getByTestId("input-text-email");
-  const InputPhotourl = getByTestId("input-text-photoUrl");
-  const InputPassword = getByTestId("input-password-password");
+  const InputName = screen.getByTestId("input-text-name");
+  const InputEmail = screen.getByTestId("input-text-email");
+  const InputPassword = screen.getByTestId("input-password-password");
   
-  expect(InputName).toBeEmpty();
-  expect(InputEmail).toBeEmpty();
-  expect(InputPhotourl).toBeEmpty();
-  expect(InputPassword).toBeEmpty();
+  expect(InputName).toBeEmptyDOMElement();
+  expect(InputEmail).toBeEmptyDOMElement();
+  expect(InputPassword).toBeEmptyDOMElement();
 });
 
 test("render CreateUser Form and submit when required fields filled", async () => {
-  const { getByTestId } = render(
+  render(
     <CreateUser {...props} onFinish={props.onFinish} />
   );
 
-  const ButtonCreateUser = getByTestId("button-create-user");
-  const InputName = getByTestId("input-text-name");
-  const InputEmail = getByTestId("input-text-email");
-  const InputPassword = getByTestId("input-password-password");
+  const ButtonCreateUser = screen.getByTestId("button-create-user");
+  const InputName = screen.getByTestId("input-text-name");
+  const InputEmail = screen.getByTestId("input-text-email");
+  const InputPassword = screen.getByTestId("input-password-password");
 
   await act(async () => {
-    fireEvent.change(InputName, { target: { value: 'name' }});
-    fireEvent.change(InputEmail, { target: { value: 'charles@zup.com.br' }});
-    fireEvent.change(InputPassword, { target: { value: '123457' }});
+    userEvent.type(InputName, 'name');
+    userEvent.type(InputEmail, 'charles@zup.com.br');
+    userEvent.type(InputPassword, '1!@charles123');
 
     expect(ButtonCreateUser).not.toBeDisabled();
 
-    fireEvent.click(ButtonCreateUser);
+    userEvent.click(ButtonCreateUser);
   })
 
-  await wait(() => {
+  await waitFor(() => {
     expect(props.onFinish).toBeCalled();
     expect(mockCreate).toBeCalledTimes(1);
   });

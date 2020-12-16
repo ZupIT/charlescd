@@ -1,5 +1,88 @@
 # Changelog
 
+## 0.4.5 (10/12/2020)
+- [#672](https://github.com/ZupIT/charlescd/pull/672) validate default circle
+- [#745](https://github.com/ZupIT/charlescd/pull/745) changing compass limit rate
+- [#680](https://github.com/ZupIT/charlescd/pull/680) Fix workspace infinite loading
+- [#666](https://github.com/ZupIT/charlescd/pull/666) Api authorization refactor
+- [#627](https://github.com/ZupIT/charlescd/pull/627) Test registry connectivity gcr
+- [#741](https://github.com/ZupIT/charlescd/pull/741) Restore healthcheck module and map it on the v2 base module
+- [#732](https://github.com/ZupIT/charlescd/pull/732) Delete v1 dir
+- [#688](https://github.com/ZupIT/charlescd/pull/688) Compass http limit
+- [#644](https://github.com/ZupIT/charlescd/pull/644) add request limiter octopipe
+- [#727](https://github.com/ZupIT/charlescd/pull/727) Butler k8s client
+- [#736](https://github.com/ZupIT/charlescd/pull/736) Removing workflow
+- [#735](https://github.com/ZupIT/charlescd/pull/735) General security static analysis
+- [#690](https://github.com/ZupIT/charlescd/pull/690) OpenResty version in header disabled
+- [#725](https://github.com/ZupIT/charlescd/pull/725) Butler operator crd
+- [#700](https://github.com/ZupIT/charlescd/pull/700) Compass encrypt
+- [#674](https://github.com/ZupIT/charlescd/pull/674) Compass authorization
+- [#721](https://github.com/ZupIT/charlescd/pull/721) Remove old components when deploying on a circle (Override deployment) 
+- [#722](https://github.com/ZupIT/charlescd/pull/722) Butler helm strategy
+- [#734](https://github.com/ZupIT/charlescd/pull/734) CI Update of charts and changelog
+
+---
+
+## 0.4.4 (03/12/2020)
+- [#728](https://github.com/ZupIT/charlescd/pull/728) Patch user and database error handler
+- [#733](https://github.com/ZupIT/charlescd/pull/733) Implementing gitlab ignore certificate errors.
+- [#731](https://github.com/ZupIT/charlescd/pull/731) Adding workflow configs for new environments
+- [#715](https://github.com/ZupIT/charlescd/pull/715) Fix multicluster/opensea bugs
+- [#693](https://github.com/ZupIT/charlescd/pull/693) accepted adr
+- [#691](https://github.com/ZupIT/charlescd/pull/691) CI Update of charts and changelog
+- [#718](https://github.com/ZupIT/charlescd/pull/718) Adding running options to README
+- [#716](https://github.com/ZupIT/charlescd/pull/716) Readme on compass
+
+---
+
+## 0.4.3 (26/11/2020)
+*No changelog for this release.*
+
+---
+
+## 0.4.2 (26/11/2020)
+
+---
+
+## 0.4.1 (12/11/2020)
+- [#659](https://github.com/ZupIT/charlescd/pull/659) CI Update of charts and changelog
+- [#614](https://github.com/ZupIT/charlescd/pull/614) Fixing Docker Hub Bearer Authentication and Deploy
+- [#664](https://github.com/ZupIT/charlescd/pull/664) Fix warning on test
+- [#648](https://github.com/ZupIT/charlescd/pull/648) Bugfix: Service adjusted to accept merging with "master" and "main"
+- [#615](https://github.com/ZupIT/charlescd/pull/615) Changing Octopipe name to CharlesCD at CD Configuration
+- [#612](https://github.com/ZupIT/charlescd/pull/612) Fix wrong failed build status
+- [#663](https://github.com/ZupIT/charlescd/pull/663) compass-pkg-url
+- [#630](https://github.com/ZupIT/charlescd/pull/630) Git not required hypothesis board
+
+---
+
+## 0.4.0 (06/11/2020)
+- [#643](https://github.com/ZupIT/charlescd/pull/643) fix workspace search bug
+- [#650](https://github.com/ZupIT/charlescd/pull/650) Update Testing Library
+- [#636](https://github.com/ZupIT/charlescd/pull/636) Update React Hook Form
+- [#656](https://github.com/ZupIT/charlescd/pull/656) fix responsive layout
+- [#657](https://github.com/ZupIT/charlescd/pull/657) create typeorm cli config file
+- [#655](https://github.com/ZupIT/charlescd/pull/655) Fixing horus calls
+- [#651](https://github.com/ZupIT/charlescd/pull/651) Adding services security scan CI step
+- [#609](https://github.com/ZupIT/charlescd/pull/609) Metric actions v 2
+- [#608](https://github.com/ZupIT/charlescd/pull/608) Compass actions health
+- [#649](https://github.com/ZupIT/charlescd/pull/649) Ends_with, matchers and contains conditions 
+- [#640](https://github.com/ZupIT/charlescd/pull/640) Add Log component into core
+- [#605](https://github.com/ZupIT/charlescd/pull/605) Butler v2
+- [#639](https://github.com/ZupIT/charlescd/pull/639) Add BUTLER_URL env var
+- [#638](https://github.com/ZupIT/charlescd/pull/638) Fixing matcher s3 pipeline for devrelease.
+- [#637](https://github.com/ZupIT/charlescd/pull/637) Update moove-devrelease.yml
+- [#635](https://github.com/ZupIT/charlescd/pull/635) Release darwin ecr
+- [#632](https://github.com/ZupIT/charlescd/pull/632) Create styled components declaration file
+- [#631](https://github.com/ZupIT/charlescd/pull/631) Butler v1 endpoints
+- [#629](https://github.com/ZupIT/charlescd/pull/629) Feature ui test connection with gcr
+- [#621](https://github.com/ZupIT/charlescd/pull/621) Use butler v2 api
+- [#620](https://github.com/ZupIT/charlescd/pull/620) Removing contributors session
+- [#578](https://github.com/ZupIT/charlescd/pull/578) Fixed some typos in CONTRIBUTING.md
+- [#610](https://github.com/ZupIT/charlescd/pull/610) CI Update of charts and changelog
+
+---
+
 ## 0.3.11 (19/10/2020)
 - [#606](https://github.com/ZupIT/charlescd/pull/606) Protected branches list configuration
 - [#349](https://github.com/ZupIT/charlescd/pull/349) Feature wizard
@@ -381,28 +464,3 @@
 ---
 
 ## 0.2.6 (03/06/2020)
-
----
-
-## 0.2.5 (03/06/2020)
-
----
-
-## 0.2.4 (02/06/2020)
-
----
-
-## 0.2.3 (02/06/2020)
-
----
-
-## 1.0.1-beta.4 (06/05/2020)
-- Removed rollback for octopipe deployments. This will be butler's responsability (@lucasbfernandes  in #28 )
----
-
-## 1.0.1-beta.3 (06/05/2020)
-- Add resource verification and unit test structure for octopipe (@maycommit in #26)
----
-
-## 1.0.1-beta.2 (04/05/2020)
-- Handle first pipeline error and stop execution (@maycommit in #12)

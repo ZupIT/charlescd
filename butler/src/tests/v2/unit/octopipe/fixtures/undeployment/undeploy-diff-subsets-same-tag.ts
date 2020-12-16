@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 import { OctopipeUndeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-undeployment.interface'
 
 export const undeployDiffSubsetsSameTagOctopipe: OctopipeUndeploymentRequest = {
@@ -73,6 +72,14 @@ export const undeployDiffSubsetsSameTagOctopipe: OctopipeUndeploymentRequest = {
             labels: {
               component: 'A',
               tag: 'v0',
+              circleId: 'default-circle-id'
+            },
+            name: 'default-circle-id'
+          },
+          {
+            labels: {
+              component: 'A',
+              tag: 'v0',
               circleId: 'circle-id2'
             },
             name: 'circle-id2'
@@ -84,14 +91,6 @@ export const undeployDiffSubsetsSameTagOctopipe: OctopipeUndeploymentRequest = {
               circleId: 'circle-id3'
             },
             name: 'circle-id3'
-          },
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
-            },
-            name: AppConstants.DEFAULT_CIRCLE_ID
           }
         ]
       }
@@ -238,17 +237,17 @@ export const undeployDiffSubsetsSameTagOctopipe: OctopipeUndeploymentRequest = {
               {
                 destination: {
                   host: 'A',
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
+                  subset: 'default-circle-id'
                 },
                 headers: {
                   request: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   },
                   response: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   }
                 }
@@ -272,9 +271,9 @@ export const undeployDiffSubsetsSameTagOctopipe: OctopipeUndeploymentRequest = {
             labels: {
               component: 'B',
               tag: 'v1',
-              circleId: AppConstants.DEFAULT_CIRCLE_ID
+              circleId: 'default-circle-id'
             },
-            name: AppConstants.DEFAULT_CIRCLE_ID
+            name: 'default-circle-id'
           }
         ]
       }
@@ -297,17 +296,18 @@ export const undeployDiffSubsetsSameTagOctopipe: OctopipeUndeploymentRequest = {
               {
                 destination: {
                   host: 'B',
-                  subset: AppConstants.DEFAULT_CIRCLE_ID
+                  subset: 'default-circle-id'
                 },
                 headers: {
                   request: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
                     }
                   },
                   response: {
                     set: {
-                      'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                      'x-circle-source': 'default-circle-id'
+
                     }
                   }
                 }

@@ -19,7 +19,7 @@
 package logger
 
 import (
-	"compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/sirupsen/logrus"
 	"time"
 )

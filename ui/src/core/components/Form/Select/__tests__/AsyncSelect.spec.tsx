@@ -37,6 +37,7 @@ test('render async select component', () => {
       label="Select..."
       customOption={CustomOption.Icon}
       options={options}
+      defaultValue={options[0]}
       loadOptions={loadOptions}
       onChange={onChange}
     />
@@ -62,6 +63,7 @@ test('should call loadOptions', () => {
       name="select"
       label="Select..."
       customOption={CustomOption.Icon}
+      defaultValue={options[0]}
       options={options}
       loadOptions={loadOptions}
       onChange={onChange}

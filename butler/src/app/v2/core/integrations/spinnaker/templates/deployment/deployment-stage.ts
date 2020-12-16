@@ -15,10 +15,11 @@
  */
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
-import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
+import { ISpinnakerConfigurationData } from '../../../../../api/configurations/interfaces/spinnaker-configuration-data.interface'
+import { CdConfiguration } from '../../../../../api/deployments/interfaces'
+import { DeploymentComponent } from '../../../../../api/deployments/interfaces/deployment.interface'
 
-export const getDeploymentStage = (component: Component, configuration: CdConfiguration, stageId: number): Stage => ({
+export const getDeploymentStage = (component: DeploymentComponent, configuration: CdConfiguration, stageId: number): Stage => ({
   account: (configuration.configurationData as ISpinnakerConfigurationData).account,
   cloudProvider: 'kubernetes',
   completeOtherBranchesThenFail: false,
