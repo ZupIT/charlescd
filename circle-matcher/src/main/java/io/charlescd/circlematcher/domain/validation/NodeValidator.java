@@ -2,9 +2,9 @@ package io.charlescd.circlematcher.domain.validation;
 
 import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.NodeType;
+import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.List;
 
 public class NodeValidator implements ConstraintValidator<NodeConstraint, Node> {
 
