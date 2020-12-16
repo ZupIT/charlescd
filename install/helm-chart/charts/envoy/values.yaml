@@ -1,0 +1,20 @@
+ui:
+  enabled: true
+moove:
+  enabled: true
+circlematcher:
+  enabled: true
+keycloak:
+  enabled: true
+octopipe:
+  enabled: true
+compass:
+  enabled: true
+cors:
+  enabled: true
+  hosts: []
+idm:
+  endpoint: charlescd-keycloak-http
+  port: 80
+  path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo
+  protocol: http
