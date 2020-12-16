@@ -95,9 +95,11 @@ const FormGit = ({ onFinish }: Props) => {
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
         />
-        {!loadingConnectionResponse && testConnectionResponse && (
-          <ConnectionStatus message={testConnectionResponse} />
-        )}
+        <ConnectionStatus
+          successMessage="Successful connection with git."
+          errorMessage={testConnectionResponse?.message}
+          status={testConnectionResponse?.status}
+        />
         <Styled.TestConnectionButton
           id="test-connection"
           type="button"
@@ -108,7 +110,11 @@ const FormGit = ({ onFinish }: Props) => {
           Test connection
         </Styled.TestConnectionButton>
       </Styled.Fields>
-      <Button.Default type="submit" isLoading={loadingSave || loadingAdd}>
+      <Button.Default
+        type="submit"
+        isDisabled={!isValid}
+        isLoading={loadingSave || loadingAdd}
+      >
         Save
       </Button.Default>
     </Styled.Form>
