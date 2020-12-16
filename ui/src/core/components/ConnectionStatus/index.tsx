@@ -17,40 +17,28 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { CONNECTION_SUCCESS } from 'core/hooks/useTestConnection';
 import Styled from './styled';
 
 type Props = {
-  message?: string;
+  status: 'error' | 'success' | 'idle';
+  successMessage: string;
+  errorMessage: string;
 };
 
-type MessageProps = {
-  status: string;
-  messageText: string;
-};
-
-const MessageStatus = ({ status, messageText }: MessageProps) => (
-  <Styled.StatusMessageWrapper
-    data-testid={`connection-${status}`}
-    status={status}
-  >
-    <Icon name={status} />
-    <Text.h5>{messageText}</Text.h5>
-  </Styled.StatusMessageWrapper>
-);
-
-const ConnectionStatus = ({ message }: Props) => {
-  if (message !== CONNECTION_SUCCESS) {
-    return MessageStatus({
-      status: 'error',
-      messageText: message || 'Connection to metric provider failed.'
-    });
-  }
-
-  return MessageStatus({
-    status: 'success',
-    messageText: 'Successful connection with the metrics provider.'
-  });
+const ConnectionStatus = ({ successMessage, errorMessage, status }: Props) => {
+  return (
+    status !== 'idle' && (
+      <Styled.StatusMessageWrapper
+        data-testid={`connection-${status}`}
+        status={status}
+      >
+        <Icon name={status} />
+        <Text.h5>
+          {status === 'success' ? successMessage : errorMessage}
+        </Text.h5>
+      </Styled.StatusMessageWrapper>
+    )
+  );
 };
 
 export default ConnectionStatus;
