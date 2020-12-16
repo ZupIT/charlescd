@@ -19,10 +19,7 @@ import { render, screen, fireEvent, act, waitFor, wait } from 'unit-test/testUti
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
-import MutationObserver from 'mutation-observer';
 import Workspace from '../';
-
-(global as any).MutationObserver = MutationObserver;
 
 const originalWindow = { ...window };
 

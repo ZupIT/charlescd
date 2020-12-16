@@ -41,7 +41,7 @@ export interface Props {
   customMultiValue?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
-  components?: SelectComponentsConfig<OptionTypeBase>;
+  components?: SelectComponentsConfig<OptionTypeBase, false>;
   label?: string;
   hasError?: boolean;
   defaultOptions?: Option[];

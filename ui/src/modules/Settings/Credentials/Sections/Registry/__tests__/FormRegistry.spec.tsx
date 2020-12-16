@@ -18,13 +18,10 @@ import React from 'react';
 import { render, act, screen, waitFor } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
-import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
-
-(global as any).MutationObserver = MutationObserver;
 
 const mockOnFinish = jest.fn();
 
