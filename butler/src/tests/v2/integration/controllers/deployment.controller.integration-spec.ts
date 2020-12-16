@@ -188,6 +188,7 @@ describe('DeploymentController v2', () => {
       'cdConfigurationId should not be empty',
       'cdConfigurationId must be an UUID',
       'circle should not be empty',
+      'defaultCircle must be a boolean value',
       'modules should not be empty'
     ]
     await request(app.getHttpServer())
@@ -402,7 +403,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: true
     }
 
     const errorMessages = [
@@ -458,7 +460,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: true
     }
 
     const errorMessages = [

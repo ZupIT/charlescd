@@ -132,3 +132,18 @@ test('renders Input component with error message', async () => {
   const error = await screen.findByText('message error');
   expect(error).toBeInTheDocument();
 });
+
+test('renders Input component with Popover', async () => {
+  render(
+    <Input
+      type={textProps.type}
+      name={textProps.name}
+      label="Label"
+      tipTitle="Title"
+      tipDescription="Info message"
+    />
+  );
+
+  const iconInfo = await screen.findByTestId('icon-info');
+  expect(iconInfo).toBeInTheDocument();
+});
