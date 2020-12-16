@@ -23,10 +23,9 @@ interface LabelProps {
   value: string;
 }
 
-const RadioGroup = styled.div`
+const RadioButtons = styled.div`
   display: flex;
   flex-direction: row;
-
   > * + * {
     margin-left: 10px;
   }
@@ -46,7 +45,6 @@ const Label = styled.label<LabelProps>`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-
   > * + * {
     margin-left: 5px;
   }
@@ -58,30 +56,24 @@ const Input = styled.input`
   height: 0;
   position: absolute;
   pointer-events: none;
-
   :checked + ${Label} {
-    background-color: ${({ theme }) => theme.radio.checked.background};
+    background-color: ${({ theme }) => theme.radio.button.checked.background};
     transition: 0.2s;
-
     :hover {
       transform: scale(1.1);
     }
-
     ${Icon}, ${Text} {
-      color: ${({ theme }) => theme.radio.checked.color};
+      color: ${({ theme }) => theme.radio.button.checked.color};
     }
   }
-
   :not(:checked) + ${Label} {
-    background-color: ${({ theme }) => theme.radio.unchecked.background};
+    background-color: ${({ theme }) => theme.radio.button.unchecked.background};
     transition: 0.2s;
-
     :hover {
       transform: scale(1.1);
     }
-
     ${Icon}, ${Text} {
-      color: ${({ theme }) => theme.radio.unchecked.color};
+      color: ${({ theme }) => theme.radio.button.unchecked.color};
     }
   }
 `;
@@ -92,5 +84,5 @@ export default {
   Icon,
   Text,
   Radio,
-  RadioGroup
+  RadioButtons
 };

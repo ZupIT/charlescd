@@ -16,7 +16,9 @@
 
 import styled from 'styled-components';
 import FormComponent from 'core/components/Form';
-import PopoverComponent from 'core/components/Popover';
+import ComponentPopover, {
+  Props as PopoverProps
+} from 'core/components/Popover';
 import ButtonComponent from 'core/components/Button';
 import IconComponent from 'core/components/Icon';
 import Text from 'core/components/Text';
@@ -58,7 +60,7 @@ const FieldPopover = styled.div`
   width: 271px;
 `;
 
-const Popover = styled(PopoverComponent)`
+const Popover = styled(ComponentPopover)<PopoverProps>`
   position: absolute;
   bottom: 1px;
   right: -25px;
