@@ -83,7 +83,7 @@ func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGrou
 	return mgAct, nil
 }
 
-func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID string) []util.ErrorUtil {
+func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 	needConfigValidation := true
 
@@ -114,7 +114,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, work
 		})
 	}
 
-	var act action.Action
+	var act action.Response
 	if metricsGroupAction.ActionID == uuid.Nil {
 		needConfigValidation = false
 		ers = append(ers, util.ErrorUtil{
@@ -123,7 +123,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, work
 		})
 	} else {
 		var err error
-		act, err = main.actionRepo.FindActionByIdAndWorkspace(metricsGroupAction.ActionID.String(), workspaceID)
+		act, err = main.actionRepo.FindActionByIdAndWorkspace(metricsGroupAction.ActionID, workspaceID)
 		if err != nil || act.Type == "" {
 			needConfigValidation = false
 			logger.Error("error finding action", "ValidateGroupAction", err, metricsGroupAction.ActionID.String())
