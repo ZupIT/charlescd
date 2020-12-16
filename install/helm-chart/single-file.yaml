@@ -1,4 +1,12 @@
 ---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -72,6 +80,15 @@ data:
 kind: Secret
 metadata:
   name: deploy-aes256-key
+type: Opaque
+---
+# Source: Charles-CD/templates/charlescd-compass-secret.yaml
+apiVersion: v1
+data:
+  encryption-key: NmRkZGU0MTAtM2YxYi0xMWViLWIzNzgtMDI0MmFjMTMwMDAy
+kind: Secret
+metadata:
+  name: compass-aes256-key
 type: Opaque
 ---
 # Source: Charles-CD/templates/charlescd-moove-secret.yaml
@@ -455,14 +472,6 @@ data:
     "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
     "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
     exit $exit_status
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1251,6 +1260,12 @@ spec:
             value: "5"
           - name: LIMITER_HEADERS_TTL
             value: "5"
+          
+          - name: ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: compass-aes256-key
+                key: encryption-key
           
           resources:
             limits:
