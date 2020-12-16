@@ -18,12 +18,12 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
@@ -188,6 +188,7 @@ describe('DeploymentController v2', () => {
       'cdConfigurationId should not be empty',
       'cdConfigurationId must be an UUID',
       'circle should not be empty',
+      'defaultCircle must be a boolean value',
       'modules should not be empty'
     ]
     await request(app.getHttpServer())
@@ -402,7 +403,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: true
     }
 
     const errorMessages = [
@@ -458,7 +460,8 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: true
     }
 
     const errorMessages = [

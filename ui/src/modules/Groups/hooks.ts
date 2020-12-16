@@ -16,7 +16,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'core/state/hooks';
-import { useFetch } from 'core/providers/base/hooks';
+import {
+  FetchStatus,
+  FetchStatuses,
+  useFetch,
+  useFetchData,
+  useFetchStatus
+} from 'core/providers/base/hooks';
 import { UserGroup } from './interfaces/UserGroups';
 import {
   findAllUserGroup,
@@ -33,9 +39,6 @@ import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
 import { getProfileByKey } from 'core/utils/profile';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { addParamUserGroup } from './helpers';
-import { useHistory } from 'react-router-dom';
-import { FormAction } from '.';
 
 export const useFindAllUserGroup = (): [
   Function,
@@ -93,44 +96,48 @@ export const useListUser = (): [Function, UserPagination] => {
 };
 
 export const useCreateUserGroup = (): {
-  createUserGroup: Function;
-  loading: boolean;
+  createUserGroup: (name: string) => Promise<UserGroup>;
   response: UserGroup;
+  status: FetchStatus;
 } => {
-  const history = useHistory();
-  const [listUserGroups] = useFindAllUserGroup();
-  const [usersData, save] = useFetch<UserGroup>(saveUserGroup);
-  const { response, loading } = usersData;
+  const dispatch = useDispatch();
+  const status = useFetchStatus();
+  const [response, setResponse] = useState<UserGroup>();
+  const save = useFetchData<UserGroup>(saveUserGroup);
 
-  const createUserGroup = useCallback(
-    (name: string) => {
-      save({ name, authorId: getProfileByKey('id') });
-    },
-    [save]
-  );
+  const createUserGroup = async (name: string) => {
+    try {
+      status.pending();
+      const data = await save({ name, authorId: getProfileByKey('id') });
+      setResponse(data);
+      status.resolved();
 
-  useEffect(() => {
-    if (response) {
-      listUserGroups();
-      addParamUserGroup(history, `${response?.id}~${FormAction.edit}`);
+      return data;
+    } catch (e) {
+      const error = await e.json();
+
+      dispatch(
+        toogleNotification({
+          text: error?.message,
+          status: 'error'
+        })
+      );
+
+      status.rejected();
     }
-  }, [response, listUserGroups, history]);
-
-  return {
-    createUserGroup,
-    loading,
-    response
   };
+
+  return { createUserGroup, response, status };
 };
 
 export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
   const [data, update] = useFetch<UserGroup>(updateUserGroup);
-  const [status, setStatus] = useState('');
-  const { response } = data;
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const { response, error } = data;
 
   const doUpdateUserGroup = useCallback(
     (id: string, name: string) => {
-      setStatus('');
+      setStatus('pending');
       update(id, { name, authorId: getProfileByKey('id') });
     },
     [update]
@@ -141,6 +148,12 @@ export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
       setStatus('resolved');
     }
   }, [setStatus, response]);
+
+  useEffect(() => {
+    if (error) {
+      setStatus('rejected');
+    }
+  }, [setStatus, error]);
 
   return [doUpdateUserGroup, response, status];
 };
@@ -197,19 +210,27 @@ export const useManagerMemberInUserGroup = (): [Function, string] => {
   const [, , onRemoveMemberUserGroup] = useFetch<UserGroup>(
     removeMemberToUserGroup
   );
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const managerMemberUserGroup = useCallback(
     (checked: boolean, groupId: string, memberId: string) => {
-      setStatus('');
+      setStatus('pending');
       if (checked) {
-        onAddMemberUserGroup(groupId, { memberId }).then(() => {
-          setStatus('resolved');
-        });
+        onAddMemberUserGroup(groupId, { memberId })
+          .then(() => {
+            setStatus('resolved');
+          })
+          .catch(() => {
+            setStatus('rejected');
+          });
       } else {
-        onRemoveMemberUserGroup(groupId, memberId).then(() => {
-          setStatus('resolved');
-        });
+        onRemoveMemberUserGroup(groupId, memberId)
+          .then(() => {
+            setStatus('resolved');
+          })
+          .catch(() => {
+            setStatus('rejected');
+          });
       }
     },
     [onAddMemberUserGroup, onRemoveMemberUserGroup]

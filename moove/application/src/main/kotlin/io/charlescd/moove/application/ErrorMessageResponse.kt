@@ -23,19 +23,24 @@ import io.charlescd.moove.domain.MooveErrorCode
 data class ErrorMessageResponse(
     val code: String?,
     val message: String?,
-    val fields: Map<String, List<String>>?
+    val fields: Map<String, List<String>>?,
+    val details: String?
 ) {
     companion object {
         fun of(code: String, message: String?): ErrorMessageResponse {
-            return ErrorMessageResponse(code, message, null)
+            return ErrorMessageResponse(code, message, null, null)
         }
 
         fun of(code: MooveErrorCode, message: String?): ErrorMessageResponse {
-            return ErrorMessageResponse(code.name, message, null)
+            return ErrorMessageResponse(code.name, message, null, null)
         }
 
         fun of(code: MooveErrorCode, fields: Map<String, List<String>>): ErrorMessageResponse {
-            return ErrorMessageResponse(code.name, null, fields)
+            return ErrorMessageResponse(code.name, null, fields, null)
+        }
+
+        fun of(code: String, message: String?, details: String?): ErrorMessageResponse {
+            return ErrorMessageResponse(code, message, null, details)
         }
     }
 }
