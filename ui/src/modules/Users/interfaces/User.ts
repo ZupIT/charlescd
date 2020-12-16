@@ -23,7 +23,6 @@ export interface Workspace {
 interface Base {
   name: string;
   email: string;
-  photoUrl?: string;
 }
 
 export interface NewPassword {
@@ -34,6 +33,7 @@ export interface User extends Base {
   id: string;
   workspaces?: Workspace;
   createdAt?: string;
+  isRoot?: boolean;
 }
 
 export interface NewUser extends Base {
@@ -45,7 +45,6 @@ export interface Profile extends Base {
   id?: string;
   name: string;
   email: string;
-  photoUrl?: string;
   workspaces?: Workspace;
   createdAt?: string;
 }

@@ -22,6 +22,7 @@ import Styled from './styled';
 
 export interface Props {
   isLoading?: boolean;
+  isDisabled?: boolean;
   icon: string;
   description: string;
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -39,7 +40,8 @@ const CardConfig = ({
   onClick,
   children,
   className,
-  isLoading
+  isLoading,
+  isDisabled
 }: Props) => {
   const headerIcon = <Icon name={icon} color="light" size="15px" />;
 
@@ -62,14 +64,18 @@ const CardConfig = ({
   );
 
   const renderBody = () => (
-    <Card.Body>
+    <Styled.Body>
       <Text.h4 color="light">{description}</Text.h4>
       {children}
-    </Card.Body>
+    </Styled.Body>
   );
 
   return (
-    <Styled.CardConfig className={className} onClick={onClick}>
+    <Styled.CardConfig
+      className={className}
+      onClick={onClick}
+      isDisabled={isDisabled}
+    >
       {renderHeader()}
       {renderBody()}
     </Styled.CardConfig>

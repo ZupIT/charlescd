@@ -1,4 +1,12 @@
 ---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -72,6 +80,15 @@ data:
 kind: Secret
 metadata:
   name: deploy-aes256-key
+type: Opaque
+---
+# Source: Charles-CD/templates/charlescd-compass-secret.yaml
+apiVersion: v1
+data:
+  encryption-key: NmRkZGU0MTAtM2YxYi0xMWViLWIzNzgtMDI0MmFjMTMwMDAy
+kind: Secret
+metadata:
+  name: compass-aes256-key
 type: Opaque
 ---
 # Source: Charles-CD/templates/charlescd-moove-secret.yaml
@@ -164,6 +181,7 @@ data:
     }
 
     http {
+        server_tokens off;
         resolver kube-dns.kube-system.svc.cluster.local;
         lua_package_path '/usr/local/openresty/site/?.lua;;';
         # cache for discovery metadata documents
@@ -454,14 +472,6 @@ data:
     "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
     "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
     exit $exit_status
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -980,6 +990,8 @@ spec:
             value: "IN_CLUSTER"
           - name: TIMEOUT_RESOURCE_VERIFICATION
             value: "300"
+          - name: LIMIT_REQUESTS_BY_SECOND
+            value: "10"
           
           
           
@@ -1029,7 +1041,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.4.1
+          image: zupcharles/charlescd-butler:0.4.5
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1111,7 +1123,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.4.1
+          image: zupcharles/charlescd-circle-matcher:0.4.5
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1185,7 +1197,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.4.1
+          image: zupcharles/charlescd-compass:0.4.5
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1218,12 +1230,22 @@ spec:
             value: "C1UinUu6N0vc"
           - name: DB_NAME
             value: "charlescd_compass"
+          - name: MOOVE_DB_HOST
+            value: "charlescd-postgresql"
+          - name: MOOVE_DB_NAME
+            value: "charlescd_moove"
+          - name: MOOVE_DB_PORT
+            value: "5432"
+          - name: MOOVE_DB_USER
+            value: "charlescd_moove"
+          - name: MOOVE_DB_PASSWORD
+            value: "7Qs2KuM9gYzw48BS"
           - name: DB_SSL
             value: "disable"
           - name: PLUGINS_DIR
             value: "./plugins"
           - name: ENV
-            value: "DEV"
+            value: "PROD"
           - name: DISPATCHER_INTERVAL
             value: "15s"
           - name: MOOVE_USER
@@ -1232,6 +1254,18 @@ spec:
             value: "http://charlescd-moove:8080"
           - name: MOOVE_AUTH
             value: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpcm9waWVJZS0yVUt5U0dxN1F5Q0J1bmpHR1h3TTVuQmFuQnJrSGtWODJFIn0.eyJleHAiOjE2MDI3MDQxODIsImlhdCI6MTYwMjcwMDU4MiwianRpIjoiMzkzZWZlY2ItMWNiOC00YWUxLWJkODItZmJlYTEzNTA4ODQ0IiwiaXNzIjoiaHR0cHM6Ly9jaGFybGVzLXNhbmRib3guY29udGludW91c3BsYXRmb3JtLmNvbS9rZXljbG9hay9hdXRoL3JlYWxtcy9jaGFybGVzY2QiLCJhdWQiOiJkYXJ3aW4tY2xpZW50Iiwic3ViIjoiZDAwMDkxZDAtMjNkZC00MDUzLTkwOWEtMWI2OWFlY2NkOWE1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2hhcmxlc2NkLWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiI2MzgyMWY4MC1lMjg3LTQ1YjUtOTAzOC1iYTgzODllMjdhN2QiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzUm9vdCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2hhcmxlc2FkbWluQGFkbWluIiwiZW1haWwiOiJjaGFybGVzYWRtaW5AYWRtaW4ifQ.dE2nQm6r9mKmiRX68tjNUspPEdtBf1H3Ae7fIRQY-lVu3HQQqgP9B9ik0RFhpWioQ62itaG_-fTYxVWQiy8ecgAYVW8bIufKlOnFbeeBZ5C1cQKkPAwur8xX980ZgMEeUuQPo_BhzsvuxkOSFXJrR_qFNZg1ChzfWCtAxy8nbXUlg1yijlPsCght5AAn6WWWTgsIjnOc1Hk1hsPD9qJCHXIuyUyMZ2OZRm4ROHyHoupMgSyh54eJ-6EqWNrSItFDwEH0aRu5YXBxTrG8xyjVV8mZKdeBMZ94As61ZrAWjzxmdL043TrW1VqEKISPX28jkx7zchAsFJP3_5h_cnRVpg"
+          - name: REQUESTS_PER_SECOND_LIMIT
+            value: "4"
+          - name: LIMITER_TOKEN_TTL
+            value: "5"
+          - name: LIMITER_HEADERS_TTL
+            value: "5"
+          
+          - name: ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: compass-aes256-key
+                key: encryption-key
           
           resources:
             limits:
@@ -1272,7 +1306,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.4.1
+          image: zupcharles/charlescd-moove:0.4.5
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1355,7 +1389,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.4.1
+          image: zupcharles/charlescd-ui:0.4.5
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1433,7 +1467,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.4.1
+          image: zupcharles/charlescd-villager:0.4.5
           livenessProbe:
             failureThreshold: 3
             httpGet:

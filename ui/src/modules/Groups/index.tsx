@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
@@ -38,6 +38,7 @@ const UserGroups = () => {
   const profileName = getProfileByKey('name');
   const history = useHistory();
   const [search, setSearch] = useState('');
+  const [listUserGroups] = useFindAllUserGroup();
   const [toggleModal, setToggleModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [getUserGroups, loading] = useFindAllUserGroup();
@@ -46,8 +47,8 @@ const UserGroups = () => {
   const watchName = watch('name');
   const {
     createUserGroup,
-    response: userGroupResponse,
-    loading: loadingCreate
+    response: responseUserGroup,
+    status
   } = useCreateUserGroup();
 
   useEffect(() => {
@@ -59,39 +60,41 @@ const UserGroups = () => {
   }, [search, getUserGroups]);
 
   useEffect(() => {
-    if (userGroupResponse) {
+    if (responseUserGroup) {
       setToggleModal(false);
+      listUserGroups();
+      addParamUserGroup(history, `${responseUserGroup?.id}~${FormAction.edit}`);
     }
-  }, [userGroupResponse]);
+  }, [responseUserGroup, listUserGroups, history]);
 
   const onSubmit = ({ name }: Record<string, string>) => {
     createUserGroup(name);
   };
 
-  const renderModal = () =>
-    toggleModal && (
-      <Modal.Default onClose={() => setToggleModal(false)}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Styled.Modal.Title color="light">New user group</Styled.Modal.Title>
-          <Styled.Modal.Input
-            name="name"
-            label="Type a name"
-            ref={register({ required: true })}
-          />
-          <Styled.Modal.Button
-            type="submit"
-            isDisabled={isDisabled}
-            isLoading={loadingCreate}
-          >
-            Create user group
-          </Styled.Modal.Button>
-        </form>
-      </Modal.Default>
-    );
+  const renderModal = () => (
+    <Modal.Default onClose={() => setToggleModal(false)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Styled.Modal.Title color="light">New user group</Styled.Modal.Title>
+        <Styled.Modal.Input
+          name="name"
+          label="Type a name"
+          ref={register({ required: true })}
+        />
+        <Styled.Modal.Button
+          type="submit"
+          id="user-group"
+          isDisabled={isDisabled}
+          isLoading={status.isPending}
+        >
+          Create user group
+        </Styled.Modal.Button>
+      </form>
+    </Modal.Default>
+  );
 
   return (
     <Page>
-      {renderModal()}
+      {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
           items={list?.content}
@@ -104,18 +107,16 @@ const UserGroups = () => {
           onCreate={() => setToggleModal(true)}
         />
       </Page.Menu>
-      <Suspense fallback="">
-        <Switch>
-          <Route path={routes.groupsShow} component={Tabs} />
-          <Route path={routes.groups}>
-            <Page.Placeholder
-              icon="empty-groups"
-              title={`Hello, ${profileName}!`}
-              subtitle="Create user group using the side menu."
-            />
-          </Route>
-        </Switch>
-      </Suspense>
+      <Switch>
+        <Route path={routes.groupsShow} component={Tabs} />
+        <Route path={routes.groups}>
+          <Page.Placeholder
+            icon="empty-groups"
+            title={`Hello, ${profileName}!`}
+            subtitle="Create user group using the side menu."
+          />
+        </Route>
+      </Switch>
     </Page>
   );
 };

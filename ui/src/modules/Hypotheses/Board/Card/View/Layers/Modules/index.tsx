@@ -55,7 +55,7 @@ const Modules = ({ card, onFinish }: Props) => {
     );
 
   return (
-    <Layer>
+    <Layer data-testid="card-view-layer-modules">
       <ContentIcon icon="modules">
         <Text.h2 color="light">Modules</Text.h2>
         <Styled.ButtonAdd
