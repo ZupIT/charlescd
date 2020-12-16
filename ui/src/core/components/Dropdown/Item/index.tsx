@@ -55,9 +55,9 @@ const DropdownItem = ({
         key={`dropdown-item-${icon}-${name}`}
         data-testid={`dropdown-item-${icon}-${name}`}
         className={className}
-        onClick={(event: MouseEvent) =>
-          !isInactive && !deploying && !undeploying && handleClick(event)
-        }
+        onClick={(event: MouseEvent) => {
+          if (!isInactive && !deploying && !undeploying) handleClick(event);
+        }}
         deploying={deploying}
         undeploying={undeploying}
         isInactive={isInactive}
