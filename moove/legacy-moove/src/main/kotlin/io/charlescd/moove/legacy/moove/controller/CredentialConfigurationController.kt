@@ -45,8 +45,8 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/registry")
     fun createRegistryConfig(
-        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody createRegistryConfigRequest: CreateRegistryConfigurationRequest
     ): CredentialConfigurationRepresentation {
         return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId, authorization)
@@ -62,8 +62,8 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/cd")
     fun createCdConfig(
-        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody createCdConfigRequest: CreateCdConfigurationRequest
     ): CredentialConfigurationRepresentation {
         return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId, authorization)
