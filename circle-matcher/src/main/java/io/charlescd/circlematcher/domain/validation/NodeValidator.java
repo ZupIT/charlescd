@@ -4,6 +4,7 @@ import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.NodeType;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.List;
 
 public class NodeValidator implements ConstraintValidator<NodeConstraint, Node> {
 
@@ -17,19 +18,20 @@ public class NodeValidator implements ConstraintValidator<NodeConstraint, Node> 
 
     private boolean validate(Node node) {
         if (node.getType() == NodeType.CLAUSE) {
-            if (node.isValidClauseType()) {
-                boolean valid = false;
-                for (var clause : node.getClauses()) {
-                    valid = validate(clause);
-                    if (!valid) {
-                        break;
-                    }
-                }
-                return valid;
-            }
-            return false;
+            return node.isValidClauseType() && validateClauses(node.getClauses());
         } else {
             return node.isValidRuleType();
         }
+    }
+
+    private boolean validateClauses(List<Node> clauses) {
+        boolean valid = false;
+        for (var clause : clauses) {
+            valid = validate(clause);
+            if (!valid) {
+                break;
+            }
+        }
+        return valid;
     }
 }
