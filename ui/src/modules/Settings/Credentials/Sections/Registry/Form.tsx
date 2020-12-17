@@ -59,11 +59,11 @@ const FormRegistry = ({ onFinish }: Props) => {
   }, [onFinish, responseAdd]);
 
   useEffect(() => {
-    if (response) {
+    if (status.isResolved && response) {
       setMessage({ type: 'success', message: 'Successful connection.' });
       setIsDisabled(false);
     }
-  }, [response]);
+  }, [status.isResolved, response]);
 
   useEffect(() => {
     if (error) {
