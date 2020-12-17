@@ -95,8 +95,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       onContinue={() => handleDelete(currentUser.id, currentUser.name)}
       onDismiss={() => setAction('Cancel')}
     >
-      By deleting this user, his information will be also deleted. Do you wish
-      to continue?
+      <Text.h4 color="light">
+        By deleting this user, his information will be also deleted. Do you wish
+        to continue?
+      </Text.h4>
     </Modal.Trigger>
   );
 
