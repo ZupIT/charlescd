@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
 import { HookParams } from './params.interface'
-
+import { isEmpty } from 'lodash'
 @Controller('deploymentsHook')
 export class DeploymentsHookController {
 
@@ -27,24 +27,38 @@ export class DeploymentsHookController {
   @Post('/v2/operator/deployment/hook/finalize')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: Record<string, unknown>[], finalized: boolean }> {
+  public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: Record<string, unknown>[], finalized: boolean, resyncAfterSeconds?: number }> {
     // console.log(JSON.stringify(params))
-    // deploymentRepository.update(params.parent.spec.deploymentId, {active: false})
-    // params.parent.spec.deploymentId = 123
-    // params.children = [
-    //   pod: {name: quiz-app-backend}
-    //   pod: {name: quiz-app-front}
-    // ]
-    // k8sClient.createRoutesResource(params.children)
-    // - id: 123  << remove those
-    //   components:
-    //   - quiz-app-backend
-    //   - quiz-app-frontend
-
-    return { children: [], finalized: true }
+    const deploymentId = params.parent.spec.deploymentId
+    let finalized = false
+    let specs = deploymentsSpec
+    console.log('=======================')
+    console.log(JSON.stringify(params.children['Service.v1']))
+    console.log('=======================')
+    if (isEmpty(params.children['Service.v1'])) {
+      specs = []
+      // k8sClient.createRoutesResource(params.children)
+      // - id: 123  << remove those
+      //   components:
+      //   - quiz-app-backend
+      //   - quiz-app-frontend
+    }
+    if (isEmpty(params.children['Service.v1']) && isEmpty(params.children['Deployment.apps/v1'])) {
+      // when everything is cleaned up update the database to signal the undeploy
+      // deploymentRepository.update(params.parent.spec.deploymentId, {active: false})
+      finalized = true
+    }
+    console.log(JSON.stringify(specs))
+    if (finalized) {
+      return { children: specs, finalized: finalized }
+    }
+    else {
+      return { children: specs, finalized: finalized, resyncAfterSeconds: 2 }
+    }
   }
 }
 
+// example spec to represent istio manifests
 const routesSpec : Record<string, unknown>[] = [
   {
     'apiVersion': 'v1',
@@ -72,6 +86,7 @@ const routesSpec : Record<string, unknown>[] = [
   }
 ]
 
+// example spec to represent helm manifests
 const deploymentsSpec : Record<string, unknown>[]= [
   {
     'apiVersion': 'apps/v1',

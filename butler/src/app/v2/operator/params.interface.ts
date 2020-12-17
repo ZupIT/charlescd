@@ -11,7 +11,8 @@ export interface HookParams {
     }
   }
   children: {
-    'Deployment.apps/v1': DeploymentSpec
+    'Deployment.apps/v1': DeploymentSpec,
+    'Service.v1': Record<string, unknown>
   }
   finalizing: boolean
 }
