@@ -139,13 +139,14 @@ export const useAddModule = (): AddModuleProps => {
       } catch (e) {
         setStatus('rejected');
         const error = await e.json();
-
         dispatch(
           toogleNotification({
             text: `${error.message}`,
             status: 'error'
           })
         );
+
+        return Promise.reject(error);
       }
     },
     [updateCard, dispatch]

@@ -42,6 +42,13 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const [moduleIds, setModuleIds] = useState<string[]>();
   const handleClose = () => onClose();
 
+  const updateModalIds = (id: string, modules?: string[]) => {
+    const toggledModuleIds = xor(modules || moduleIds, [id]);
+    setModuleIds(toggledModuleIds);
+
+    return toggledModuleIds;
+  };
+
   useEffect(() => {
     if (modules) {
       setModuleIds(map(modules, 'id'));
@@ -57,15 +64,17 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
   };
 
   const toggleModule = (id: string) => {
-    const toggledModuleIds = xor(moduleIds, [id]);
-    setModuleIds(toggledModuleIds);
+    const modules = updateModalIds(id);
+
     addModules(card.id, {
       branchName: card.name,
       description: card.description,
       labels: [],
-      modules: toggledModuleIds,
+      modules,
       name: card.name,
-      type: isEmpty(toggledModuleIds) ? 'ACTION' : 'FEATURE'
+      type: isEmpty(modules) ? 'ACTION' : 'FEATURE'
+    }).catch(() => {
+      updateModalIds(id, modules);
     });
   };
 
