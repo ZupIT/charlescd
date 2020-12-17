@@ -52,7 +52,7 @@ const Content = styled.div`
   text-align: left;
   background: ${({ theme }) => theme.modal.trigger.background};
   width: 408px;
-  height: 210px;
+  min-height: 210px;
   box-sizing: border-box;
   border-radius: 6px;
   opacity: 1.2;
@@ -64,7 +64,6 @@ const Title = styled(Text.h2)`
 `;
 
 const ContinueButton = styled(DefaultButton)`
-  cursor: pointer;
   padding: 5px;
   margin-top: 15px;
   margin-left: 15px;

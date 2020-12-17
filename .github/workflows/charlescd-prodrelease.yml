@@ -331,6 +331,11 @@ jobs:
         cat ./install/helm-chart/Chart.yaml &&
         sed -i -E "s/(zupcharles\/.*:)(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml
 
+    - name: Update helm dependencies
+      uses: WyriHaximus/github-action-helm3@v1.0.0
+      with:
+        exec: helm dependency update ./install/helm-chart
+
     - name: Generate single file
       uses: WyriHaximus/github-action-helm3@v1.0.0
       with:
@@ -380,19 +385,9 @@ jobs:
         cat <<-EOF > values-charles-dev.yaml
         ${{ secrets.VALUES_CHARLES_DEV }}
         EOF
-        cat <<-EOF > ./install/helm-chart/charts/nginx/templates/nginx-service.yaml
-        ${{ secrets.NGINX_SERVICE }}
-        EOF
-        cat <<-EOF > ./install/helm-chart/charts/nginx/templates/nginx-conf.yaml
-        ${{ secrets.CONFNGINXDEFAULT }}
-        EOF
-        cat <<-EOF > ./install/helm-chart/charts/nginx/templates/nginx.deployment.yaml
-        ${{ secrets.NGINXDEPLOYMENT }}
-        EOF
-        cat <<-EOF > ./install/helm-chart/charts/nginx/templates/nginx-cert.yaml
+        cat <<-EOF > ./install/helm-chart/templates/nginx-cert.yaml
         ${{ secrets.NGINX_CERT }}
         EOF
-        sed -i -E "s/\{\{ \.Values\.butler\.database\.password\}\}/\"{{ .Values.butler.database.password }}\"/" ./install/helm-chart/templates/charlescd-butler-deployment.yaml
 
     - name: Deploy dev
       uses: WyriHaximus/github-action-helm3@v1.0.0

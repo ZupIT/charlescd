@@ -26,9 +26,6 @@ data class CreateHypothesisRequest(
     @field:NotNull
     val description: String,
 
-    @field:NotBlank
-    val authorId: String,
-
     @field:NotNull
     val labels: List<String> = emptyList()
 )

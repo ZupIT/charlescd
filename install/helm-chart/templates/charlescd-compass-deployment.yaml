@@ -76,6 +76,13 @@ spec:
           - name: {{ $var.name | upper}}
             value: {{ $var.value | quote}}
           {{ end }}
+          {{ range $i, $var := .Values.compass.secretEnvVars -}}
+          - name: {{ $var.name | upper }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $var.secretName }}
+                key: {{ $var.secretKey }}
+          {{ end }}
           resources:
 {{ toYaml .Values.compass.resources | indent 12 }}
     {{- with .Values.compass.nodeSelector }}

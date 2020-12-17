@@ -21,6 +21,7 @@ import io.charlescd.moove.infrastructure.configuration.InfrastructureConfigurati
 import io.charlescd.moove.legacy.moove.config.LegacyMooveConfig
 import io.charlescd.moove.legacy.repository.configuration.LegacyRepositoriesConfig
 import io.charlescd.moove.metrics.config.MetricsConfig
+import io.charlescd.moove.security.config.CharlesRateLimitConfiguration
 import io.charlescd.moove.security.config.CharlesSecurityConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Import
 @SpringBootApplication
 @EnableFeignClients
 @Import(
+    CharlesRateLimitConfiguration::class,
     CharlesSecurityConfiguration::class,
     ApiConfiguration::class,
     InfrastructureConfiguration::class,
