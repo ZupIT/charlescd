@@ -22,7 +22,6 @@ export interface Credentials {
 
 export interface GitFormData {
   name?: string;
-  authorId?: string;
   credentials?: Credentials;
 }
 
