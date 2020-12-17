@@ -89,7 +89,7 @@ func main() {
 	go metricDispatcher.Start(stopChan)
 	go actionDispatcher.Start(stopChan)
 
-	api.NewApi(
+	router := api.NewApi(
 		pluginMain,
 		datasourceMain,
 		metricMain,
@@ -98,7 +98,9 @@ func main() {
 		metricsgroupMain,
 		mooveMain,
 		healthMain,
-	).Start()
+	)
+
+	api.Start(router)
 }
 
 func configureRequestLimiter() *limiter.Limiter {

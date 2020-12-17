@@ -26,10 +26,6 @@ type Api struct {
 	metricsGroupMain      metricsgroup.UseCases
 	mooveMain             moove.UseCases
 	healthMain            health.UseCases
-
-	//Server
-	router *mux.Router
-	server *http.Server
 }
 
 func NewApi(
@@ -41,7 +37,7 @@ func NewApi(
 	metricsGroupMain metricsgroup.UseCases,
 	mooveMain moove.UseCases,
 	healthMain health.UseCases,
-) Api {
+) *mux.Router {
 
 	api := Api{
 		pluginMain:            pluginMain,
@@ -52,31 +48,32 @@ func NewApi(
 		metricsGroupMain:      metricsGroupMain,
 		mooveMain:             mooveMain,
 		healthMain:            healthMain,
-		router:                mux.NewRouter(),
 	}
-	api.server = &http.Server{
-		Handler: api.router,
-		Addr:    ":8080",
-		// Good practice: enforce timeouts for servers you create!
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-	api.router.PathPrefix("/api")
-	api.router.Use(LoggingMiddleware)
-	api.router.Use(ValidatorMiddleware)
-	api.health()
-	api.newV1Api()
+	router := mux.NewRouter()
+	s := router.PathPrefix("/api").Subrouter()
 
-	return api
+	router.Use(LoggingMiddleware)
+	router.Use(ValidatorMiddleware)
+	api.health(router)
+	api.newV1Api(s)
+
+	return router
 }
 
-func (api *Api) health() {
-	api.router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+func (api *Api) health(router *mux.Router) {
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(":)"))
 		return
 	})
 }
 
-func (api Api) Start() {
-	log.Fatal(api.server.ListenAndServe())
+func Start(router *mux.Router) {
+	server := &http.Server{
+		Handler: router,
+		Addr:    ":8080",
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	log.Fatal(server.ListenAndServe())
 }
