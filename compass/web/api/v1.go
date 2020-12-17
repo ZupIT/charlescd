@@ -35,8 +35,8 @@ func (api *Api) newV1Api(router *mux.Router) {
 		s.HandleFunc(path, datasource.FindAllByWorkspace(api.datasourceMain)).Methods("GET")
 		s.HandleFunc(path, datasource.Create(api.datasourceMain)).Methods("POST")
 		s.HandleFunc(fmt.Sprintf("%s/{datasourceID}", path), datasource.Delete(api.datasourceMain)).Methods("DELETE")
-		s.HandleFunc(fmt.Sprintf("%s/{datasourceID}/metrics", path), datasource.GetMetrics(api.datasourceMain)).Methods("DELETE")
-		s.HandleFunc(fmt.Sprintf("%s/{datasourceID}/test-connection", path), datasource.TestConnection(api.datasourceMain)).Methods("DELETE")
+		s.HandleFunc(fmt.Sprintf("%s/{datasourceID}/metrics", path), datasource.GetMetrics(api.datasourceMain)).Methods("GET")
+		s.HandleFunc(fmt.Sprintf("%s/test-connection", path), datasource.TestConnection(api.datasourceMain)).Methods("POST")
 
 	}
 	{
@@ -49,13 +49,13 @@ func (api *Api) newV1Api(router *mux.Router) {
 		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}", path), metricsgroup.Update(api.metricsGroupMain)).Methods("PUT")
 		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}", path), metricsgroup.UpdateName(api.metricsGroupMain)).Methods("PATCH") // TODO: Discutir necessidade desse patch
 		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}", path), metricsgroup.Delete(api.metricsGroupMain)).Methods("DELETE")
-		s.HandleFunc(fmt.Sprintf("resume/%s", path), metricsgroup.Resume(api.metricsGroupMain)).Methods("GET")
+		s.HandleFunc(fmt.Sprintf("/resume%s", path), metricsgroup.Resume(api.metricsGroupMain)).Methods("GET")
 	}
 	{
 		path := "/metrics-groups"
-		s.HandleFunc(fmt.Sprintf("%s/{metricgroupID}/metrics", path), metric.Create(api.metricMain, api.metricsGroupMain)).Methods("GET")
-		s.HandleFunc(fmt.Sprintf("%s/{metricgroupID}/metrics/{metricID}", path), metric.Update(api.metricMain, api.metricsGroupMain)).Methods("PUT")
-		s.HandleFunc(fmt.Sprintf("%s/{metricgroupID}/metrics/{metricID}", path), metric.Delete(api.metricMain)).Methods("DELETE")
+		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics", path), metric.Create(api.metricMain, api.metricsGroupMain)).Methods("POST")
+		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Update(api.metricMain, api.metricsGroupMain)).Methods("PUT")
+		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Delete(api.metricMain)).Methods("DELETE")
 	}
 	{
 		path := "/group-actions"

@@ -5,6 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/didip/tollbooth/limiter"
+
+	"github.com/casbin/casbin/v2"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/health"
@@ -18,6 +22,8 @@ import (
 
 type Api struct {
 	// Dependencies
+	enforcer              *casbin.Enforcer
+	limiter               *limiter.Limiter
 	pluginMain            plugin.UseCases
 	datasourceMain        datasource.UseCases
 	metricMain            metric.UseCases
@@ -29,6 +35,8 @@ type Api struct {
 }
 
 func NewApi(
+	enforcer *casbin.Enforcer,
+	limiter *limiter.Limiter,
 	pluginMain plugin.UseCases,
 	datasourceMain datasource.UseCases,
 	metricMain metric.UseCases,
@@ -40,6 +48,8 @@ func NewApi(
 ) *mux.Router {
 
 	api := Api{
+		enforcer:              enforcer,
+		limiter:               limiter,
 		pluginMain:            pluginMain,
 		datasourceMain:        datasourceMain,
 		metricMain:            metricMain,
@@ -53,7 +63,7 @@ func NewApi(
 	s := router.PathPrefix("/api").Subrouter()
 
 	router.Use(LoggingMiddleware)
-	router.Use(ValidatorMiddleware)
+	router.Use(api.ValidatorMiddleware)
 	api.health(router)
 	api.newV1Api(s)
 

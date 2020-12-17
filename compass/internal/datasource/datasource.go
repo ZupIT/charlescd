@@ -243,8 +243,14 @@ func (main Main) VerifyHealthAtWorkspace(workspaceId string) (bool, errors.Error
 
 func (main Main) Save(dataSource Request) (Response, errors.Error) {
 	if dataSource.Health == true {
-		if hasHealth, err := main.VerifyHealthAtWorkspace(dataSource.WorkspaceID.String()); err != nil || hasHealth {
+		hasHealth, err := main.VerifyHealthAtWorkspace(dataSource.WorkspaceID.String())
+		if err != nil {
 			return Response{}, err.WithOperations("Save.Count")
+		}
+
+		if hasHealth {
+			return Response{}, errors.NewError("Cannot save", "Has datasource health in workspace").
+				WithOperations("Save.VerifyHealthAtWorkspace")
 		}
 	}
 	id := uuid.New().String()

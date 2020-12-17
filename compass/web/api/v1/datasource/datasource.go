@@ -62,12 +62,9 @@ func Create(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *h
 			return
 		}
 		workspaceID := r.Header.Get("x-workspace-id")
-		workspaceUUID, parseErr := uuid.Parse(workspaceID)
-		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, parseErr)
-		}
-		dataSource.WorkspaceID = workspaceUUID
+		workspaceUUID := uuid.MustParse(workspaceID)
 
+		dataSource.WorkspaceID = workspaceUUID
 		if err := datasourceMain.Validate(dataSource); len(err.GetErrors()) > 0 {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return

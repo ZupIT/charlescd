@@ -22,6 +22,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/casbin/casbin/v2"
+
+	utils "github.com/ZupIT/charlescd/compass/internal/util"
+
 	"strconv"
 
 	"github.com/ZupIT/charlescd/compass/internal/action"
@@ -39,15 +43,13 @@ import (
 	"github.com/didip/tollbooth/limiter"
 	"github.com/sirupsen/logrus"
 
-	utils "github.com/ZupIT/charlescd/compass/internal/util"
-
 	"github.com/joho/godotenv"
 )
 
 func main() {
 	godotenv.Load()
 
-	logrus.SetFormatter(&logrus.TextFormatter{})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	db, err := configuration.GetDBConnection("migrations")
 	if err != nil {
@@ -61,12 +63,12 @@ func main() {
 	}
 	defer mooveDb.Close()
 
-	// enforcer, err := casbin.NewEnforcer("./auth.conf", "./policy.csv")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	enforcer, err := casbin.NewEnforcer("./auth.conf", "./policy.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	//lmt := configureRequestLimiter()
+	lmt := configureRequestLimiter()
 
 	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
@@ -90,6 +92,8 @@ func main() {
 	go actionDispatcher.Start(stopChan)
 
 	router := api.NewApi(
+		enforcer,
+		lmt,
 		pluginMain,
 		datasourceMain,
 		metricMain,

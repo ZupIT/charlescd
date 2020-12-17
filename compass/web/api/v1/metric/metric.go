@@ -14,7 +14,7 @@ import (
 
 func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		metricgroupId := mux.Vars(r)["metricgroupID"]
+		metricgroupId := mux.Vars(r)["metricGroupID"]
 
 		newMetric, err := metricMain.ParseMetric(r.Body)
 		if err != nil {
@@ -47,7 +47,7 @@ func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) 
 
 func Update(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		metricgroupId := mux.Vars(r)["metricgroupID"]
+		metricgroupId := mux.Vars(r)["metricGroupID"]
 		metricId := mux.Vars(r)["metricID"]
 
 		newMetric, err := metricMain.ParseMetric(r.Body)
