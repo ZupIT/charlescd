@@ -18,6 +18,7 @@ package io.charlescd.circlematcher.handler;
 
 import static java.util.stream.Collectors.joining;
 
+import io.charlescd.circlematcher.domain.exception.BusinessException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
@@ -35,6 +36,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BusinessException.class)
+    public DefaultErrorResponse handleBusinessException(BusinessException exception) {
+        logger.error("BAD REQUEST ERROR - ", exception);
+        return new DefaultErrorResponse(exception.getErrorCode().getKey());
+    }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
