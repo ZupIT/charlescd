@@ -79,6 +79,7 @@ const Container = styled.div`
   transform: translate(-50%, 0);
   text-align: left;
   opacity: 1.2;
+  border-radius: 4px;
 `;
 
 const Content = styled.div`
