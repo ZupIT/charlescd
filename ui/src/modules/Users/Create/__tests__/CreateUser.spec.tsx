@@ -59,7 +59,7 @@ test('close CreateUser component', async () => {
   expect(tabPanelCloseButton).toBeInTheDocument();
 
   act(() => (userEvent.click(tabPanelCloseButton)));
-  waitFor(() => expect(screen.getByTestId('create-user')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId('create-user')).not.toBeInTheDocument());
 });
 
 test("render CreateUser Form component with empty fields", async () => {

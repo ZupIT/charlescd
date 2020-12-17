@@ -81,7 +81,7 @@ test('to save new git and trigger error', async () => {
     await result.current.save(git);
   });
 
-  waitFor(() => expect(toogleNotificationSpy).toBeCalled());
+  await waitFor(() => expect(toogleNotificationSpy).toBeCalled());
 });
 
 test('to save new git and trigger error on add', async () => {
@@ -107,7 +107,7 @@ test('to save new git and trigger error on add', async () => {
     await result.current.save(git);
   });
 
-  waitFor(() => expect(toogleNotificationSpy).toBeCalled());
+  await waitFor(() => expect(toogleNotificationSpy).toBeCalled());
 });
 
 test('to remove a git', async () => {

@@ -108,7 +108,7 @@ test("Test component for create mode render", async () => {
   await waitFor(() => expect(container.innerHTML).toMatch("Create component"));
 });
 
-test("Test component for show advanced options", async () => {
+test("component for show advanced options", async () => {
   const { container } = render(
     <AllTheProviders>
       <Component
@@ -124,10 +124,10 @@ test("Test component for show advanced options", async () => {
   const componentButton: any = container.querySelector("span");
   expect(container.innerHTML).toMatch("Show");
   userEvent.click(componentButton);
-  waitFor(() => expect(container.innerHTML).toMatch("Hide"))
+  await waitFor(() => expect(container.innerHTML).toMatch("Hide"))
 });
 
-test("Test component to not render more options", async () => {
+test("component to not render more options", async () => {
   const { container } = render(
     <AllTheProviders>
       <Component
@@ -147,7 +147,7 @@ test("Test component to not render more options", async () => {
   await waitFor(() => expect(componentHostValue.value).not.toEqual(""));
 });
 
-test("Test component to not render more options", async () => {
+test("component to not render more options", async () => {
   const { container } = render(
     <AllTheProviders>
       <Component

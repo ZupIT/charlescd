@@ -211,7 +211,7 @@ test('should render GCP registry form', async () => {
   selectEvent.select(registryLabel, 'GCP');
   
   const projectIdInput = await screen.findByText('Enter the project id');
-  waitFor(() => expect(projectIdInput).toBeInTheDocument());
+  await waitFor(() => expect(projectIdInput).toBeInTheDocument());
 });
 
 test('should not enable submit button after partially filled GCP form', async () => {
@@ -260,7 +260,7 @@ test('should enable submit button after fill GCP form', async () => {
   
   expect(testConnectionButton).not.toBeDisabled();
   await act(async () => userEvent.click(testConnectionButton));
-  waitFor(() => expect(submitButton).not.toBeDisabled());
+  await waitFor(() => expect(submitButton).not.toBeDisabled());
 });
 
 test('should test connectivity with GCR successful', async () => {
