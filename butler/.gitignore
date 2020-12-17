@@ -8,3 +8,5 @@ dist
 .scannerwork
 
 coverage/
+
+kubeconfig.yaml

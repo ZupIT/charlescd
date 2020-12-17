@@ -1,6 +1,30 @@
 version: '3'
 services:
 
+  server:
+    image: "rancher/k3s:${K3S_VERSION:-latest}"
+    command: server --bind-address server
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_TOKEN=292752682514621
+    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+    - K3S_KUBECONFIG_MODE=666
+    - K3S_NODE_NAME=server
+    volumes:
+    - k3s-server:/var/lib/rancher/k3s
+    # This is just so that we get the kubeconfig file out
+    - .:/output
+    ports:
+    - 6500:6443
+
+  registry:
+    image: registry:2.7.1
+    ports:
+      - 5000:5000
+
   postgres:
     image: postgres:11.8-alpine
     ports:
@@ -23,10 +47,21 @@ services:
     volumes:
       - ./src/resources/stubby/integrations.yml:/usr/local/stubby.yml
 
+  k3s_setup:
+    image: "bitnami/kubectl:latest"
+    entrypoint: /app/run.sh
+    environment:
+      - KUBECONFIG=/app/kubeconfig.yaml
+    volumes:
+      - ../install/helm-chart/crds:/manifests
+      - ./k3s-setup.sh:/app/run.sh
+      - ./kubeconfig.yaml:/app/kubeconfig.yaml
+
   app:
     image: node:12.17.0-alpine3.9
     depends_on:
       - stubby4j
+      - server
     volumes:
     - ./:/app
     working_dir: /app
@@ -44,3 +79,6 @@ services:
         HELM_TEMPLATE_URL: http://stubby4j:8883/helm
         HELM_PREFIX_URL: http://stubby4j:8883/helm
         OCTOPIPE_URL: http://stubby4j:8883/octopipe
+
+volumes:
+  k3s-server: {}
