@@ -1146,7 +1146,6 @@ class CardServiceUnitTest {
             workspaceId
         )
 
-<<<<<<< HEAD
     companion object {
         fun invalidBranchNames() = listOf(
             "feature/.test",
@@ -1168,9 +1167,9 @@ class CardServiceUnitTest {
             "feature\\test",
             "-feature-test"
         )
-=======
+    }
+    
     private fun getAuthorization(): String {
         return "Bearer dokqwodksoksd"
->>>>>>> bfa6ed1546e63fc69ca4f9da1b3bcc513e94e57d
     }
 }

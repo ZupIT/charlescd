@@ -63,15 +63,11 @@ class CardService(
     lateinit var protectedBranches: Array<String>
 
     @Transactional
-<<<<<<< HEAD
-    fun create(createCardRequest: CreateCardRequest, workspaceId: String): CardRepresentation {
-        createCardRequest.validate()
-        return createCardRequest.toEntity(workspaceId)
-=======
     fun create(createCardRequest: CreateCardRequest, workspaceId: String, authorization: String): CardRepresentation {
         val user = userServiceLegacy.findByAuthorizationToken(authorization)
+        createCardRequest.validate()
+
         return createCardRequest.toEntity(workspaceId, user)
->>>>>>> bfa6ed1546e63fc69ca4f9da1b3bcc513e94e57d
             .let { this.cardRepository.save(it) }
             .apply { createNewFeatureBranches(card = this) }
             .toRepresentation()
