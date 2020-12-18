@@ -18,11 +18,7 @@ func Create(actionMain action.UseCases) func(w http.ResponseWriter, r *http.Requ
 			return
 		}
 		workspaceID := r.Header.Get("x-workspace-id")
-		workspaceUUID, parseErr := uuid.Parse(workspaceID)
-		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, parseErr)
-		}
-		request.WorkspaceId = workspaceUUID
+		request.WorkspaceId = uuid.MustParse(workspaceID)
 
 		if err := actionMain.ValidateAction(request); len(err.GetErrors()) > 0 {
 			util.NewResponse(w, http.StatusInternalServerError, err)

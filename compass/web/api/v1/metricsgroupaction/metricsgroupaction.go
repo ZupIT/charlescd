@@ -24,6 +24,11 @@ func Create(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.Resp
 			util.NewResponse(w, http.StatusInternalServerError, parseErr)
 		}
 
+		newActionGroup.ActionsConfiguration = metricsgroupaction.ActionsConfiguration{
+			Repeatable:     false,
+			NumberOfCycles: 1,
+		}
+
 		if err := metricsgroupactionMain.ValidateGroupAction(newActionGroup, workspaceUUID); len(err.GetErrors()) > 0 {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
