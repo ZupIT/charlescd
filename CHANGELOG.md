@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.4.6 (18/12/2020)
+- [#670](https://github.com/ZupIT/charlescd/pull/670) Vulnerabilites fixes
+- [#623](https://github.com/ZupIT/charlescd/pull/623) removing unused legacy code
+- [#686](https://github.com/ZupIT/charlescd/pull/686) Creating rate limit of APIs access
+- [#706](https://github.com/ZupIT/charlescd/pull/706) The 'delete' button should be inactive when the circle is active
+- [#756](https://github.com/ZupIT/charlescd/pull/756) Ingress envoy
+- [#730](https://github.com/ZupIT/charlescd/pull/730) Circle-matcher should allow create only one default circle by workspace
+- [#755](https://github.com/ZupIT/charlescd/pull/755) Hotfix compass secret installation
+- [#619](https://github.com/ZupIT/charlescd/pull/619) Delete card options and edit branchName 
+- [#707](https://github.com/ZupIT/charlescd/pull/707) Update of the ConnectionStatus component to be generic
+- [#754](https://github.com/ZupIT/charlescd/pull/754) Envoy k8s nginx ingress
+- [#747](https://github.com/ZupIT/charlescd/pull/747) fix metrics groups button
+- [#740](https://github.com/ZupIT/charlescd/pull/740) Butler operator install
+- [#746](https://github.com/ZupIT/charlescd/pull/746) CI Update of charts and changelog
+
+---
+
 ## 0.4.5 (10/12/2020)
 - [#672](https://github.com/ZupIT/charlescd/pull/672) validate default circle
 - [#745](https://github.com/ZupIT/charlescd/pull/745) changing compass limit rate
@@ -460,7 +477,3 @@
 ---
 
 ## 0.2.7 (03/06/2020)
-
----
-
-## 0.2.6 (03/06/2020)
