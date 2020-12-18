@@ -24,6 +24,10 @@ import storageMock from 'unit-test/local-storage';
 import { mockCookie } from './unit-test/cookie';
 import 'mutationobserver-shim';
 
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
 interface CustomDocument {
   cookie?: string;
 }

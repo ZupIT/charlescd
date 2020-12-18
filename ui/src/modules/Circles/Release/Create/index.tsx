@@ -46,6 +46,8 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     loading: savingBuild
   } = useComposeBuild();
   const { createDeployment, response: deploy } = useCreateDeployment();
+  console.log({ build, deploy });
+  
   const authorId = getProfileByKey('id');
   const form = useForm<ModuleForm>({
     defaultValues,

@@ -63,7 +63,7 @@ test('render default route', async () => {
   await waitFor(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
 });
 
-test.only('render with a valid session token', async () => {
+test('render with a valid session token', async () => {
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
 
   setAccessToken(token);
@@ -87,8 +87,8 @@ test.only('render with a valid session token', async () => {
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
 
-  // const email = getProfileByKey('email');
-  // expect(email).toMatch(user.email);
+  const email = getProfileByKey('email');
+  expect(email).toMatch(user.email);
 });
 
 test('render with an invalid session token', async () => {
@@ -127,6 +127,7 @@ test('render and valid login saving the session', async () => {
       'access_token': token,
       'refresh_token': 'opqrstuvwxyz'
     }))
+    .mockResponseOnce(JSON.stringify({}))
     .mockResponseOnce(JSON.stringify({
       id: '1',
       name: 'charlescd',

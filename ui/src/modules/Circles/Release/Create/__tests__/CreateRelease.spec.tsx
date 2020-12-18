@@ -47,8 +47,9 @@ const mockGetTags = JSON.stringify(
 );
 
 test('form should be valid', async () => {
-  (fetch as FetchMock).mockResponseOnce(mockGetModules);
-  (fetch as FetchMock).mockResponseOnce(mockGetTags);
+  (fetch as FetchMock)
+    .mockResponseOnce(mockGetModules)
+    .mockResponseOnce(mockGetTags);
 
   render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
