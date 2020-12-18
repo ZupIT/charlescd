@@ -20,7 +20,6 @@ import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
 import { useRegistry, useRegistryTestConnection } from './hooks';
 import { options } from './constants';
 import { Registry } from './interfaces';
