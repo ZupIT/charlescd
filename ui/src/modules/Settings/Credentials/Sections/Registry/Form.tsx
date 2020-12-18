@@ -44,7 +44,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [message, setMessage] = useState<ConnectionProps>(null);
-  const profileId = getProfileByKey('id');
   const {
     register,
     handleSubmit,
@@ -81,7 +80,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const onClick = () => {
     const registry = {
       ...getValues(),
-      authorId: profileId,
       provider: registryType
     };
     testConnectionRegistry(registry);
@@ -90,7 +88,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const onSubmit = (registry: Registry) => {
     save({
       ...registry,
-      authorId: profileId,
       provider: registryType
     });
   };

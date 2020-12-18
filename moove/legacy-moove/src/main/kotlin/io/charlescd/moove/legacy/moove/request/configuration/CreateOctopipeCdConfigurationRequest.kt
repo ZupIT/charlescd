@@ -25,16 +25,14 @@ import io.charlescd.moove.legacy.moove.api.request.K8sClusterProvidersEnum
 
 data class CreateOctopipeCdConfigurationRequest(
     val configurationData: CreateOctopipeCdConfigurationData,
-    val name: String,
-    override val authorId: String
-) : CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE, authorId) {
+    val name: String
+) : CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE) {
 
     fun toDeployRequest(): CreateDeployOctopipeCdConfigurationRequest {
         return CreateDeployOctopipeCdConfigurationRequest(
             this.type,
             this.getDeployConfigurationData(),
-            this.name,
-            this.authorId
+            this.name
         )
     }
 
