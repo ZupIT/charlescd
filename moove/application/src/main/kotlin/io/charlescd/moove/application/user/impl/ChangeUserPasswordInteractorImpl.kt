@@ -19,19 +19,16 @@ package io.charlescd.moove.application.user.impl
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
-import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
 class ChangeUserPasswordInteractorImpl @Inject constructor(
-    private val userService: UserService,
-    private val keycloakService: KeycloakService
+    private val userService: UserService
 ) : ChangeUserPasswordInteractor {
 
     override fun execute(authorization: String, request: ChangeUserPasswordRequest) {
-        val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
-        val user = userService.findByEmail(parsedEmail)
-        keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
+        val user = userService.findByAuthorizationToken(authorization)
+        userService.changePassword(user.email, request.oldPassword, request.newPassword)
     }
 }

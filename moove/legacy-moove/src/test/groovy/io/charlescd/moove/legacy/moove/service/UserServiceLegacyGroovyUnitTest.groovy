@@ -37,6 +37,15 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             false,
             LocalDateTime.now()
     )
+
+    private User root = new User(
+            "82861b6f-2b6e-44a1-a745-83e298a550c2",
+            "John Doe Root",
+            decodedEmail,
+            "https://www.photos.com/johndoe",
+            true,
+            LocalDateTime.now()
+    )
     private UserRepresentation representation = new UserRepresentation(
             "81861b6f-2b6e-44a1-a745-83e298a550c9",
             "John Doe",
@@ -45,8 +54,9 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             false,
             LocalDateTime.now()
     )
+
     private UserRepository repository = Mock(UserRepository)
-    private KeycloakService keycloakService = Mock(KeycloakService)
+    private KeycloakServiceLegacy keycloakService = Mock(KeycloakServiceLegacy)
     private UserServiceLegacy service
     private Boolean idmEnabled = true
 
@@ -56,11 +66,30 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     def "should delete by id"() {
         when:
-        def response = service.delete(representation.id)
+        def response = service.delete("81861b6f-2b6e-44a1-a745-83e298a550c9", authorization)
 
         then:
-        1 * repository.findById(representation.id) >> Optional.of(user)
-        1 * keycloakService.deleteUserByEmail(_)
+        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * repository.findByEmail("email@email.com") >> Optional.of(root)
+        1 * repository.findById("81861b6f-2b6e-44a1-a745-83e298a550c9") >> Optional.of(user)
+        1 * keycloakService.deleteUserById(_)
+        1 * repository.delete(user)
+        response.id == representation.id
+        response.name == representation.name
+        response.photoUrl == representation.photoUrl
+        notThrown()
+    }
+
+    def "should delete by user token when not root"() {
+        when:
+        def response = service.delete("1123", authorization)
+
+        then:
+        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * repository.findByEmail("email@email.com") >> Optional.of(user)
+        1 * repository.findById(user.id) >> Optional.of(user)
+        0 * repository.findById("1123") >> Optional.of(user)
+        1 * keycloakService.deleteUserById(_)
         1 * repository.delete(user)
         response.id == representation.id
         response.name == representation.name
@@ -70,10 +99,11 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     def "should throw exception on delete if user id do not exist"() {
         when:
-        service.delete("test")
+        service.delete("test", authorization)
 
         then:
-        1 * repository.findById("test") >> Optional.empty()
+        1 * keycloakService.getEmailByToken(authorization) >> "test"
+        1 * repository.findByEmail("test") >> Optional.empty()
         def ex = thrown(NotFoundExceptionLegacy)
         ex.resourceName == "user"
         ex.id == "test"
@@ -84,11 +114,13 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         service = new UserServiceLegacy(repository, keycloakService, false)
 
         when:
-        def response = service.delete(representation.id)
+        def response = service.delete(representation.id, authorization)
 
         then:
+        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * repository.findByEmail("email@email.com") >> Optional.of(user)
         1 * repository.findById(representation.id) >> Optional.of(user)
-        0 * keycloakService.deleteUserByEmail(_)
+        0 * keycloakService.deleteUserById(_)
         1 * repository.delete(user)
         response.id == representation.id
         response.name == representation.name
@@ -96,78 +128,75 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         notThrown()
     }
 
-    def "should add groups to an user"() {
-
-        given:
-        def userId = "fake-user-id"
-        def email = "john.doe@zup.com.br"
-        def user = new User(userId, "John Doe", email, "http://fakephoto.com.br/john.jpg", false, LocalDateTime.now())
-        def groupIds = new ArrayList()
-        groupIds.add("fake-group-id")
-        def request = new AddGroupsRequest(groupIds)
+    def "should get user by id"() {
 
         when:
-        service.addGroupsToUser(userId, request)
+        def response = service.findUser(representation.id)
 
         then:
-        1 * repository.findById(userId) >> Optional.of(user)
-        1 * keycloakService.addGroupsToUser(email, groupIds)
-
-        notThrown()
-
+        1 * repository.findById(representation.id) >> Optional.of(user)
+        response.id == representation.id
     }
 
-    def "should remove an user from a group"() {
-
-        given:
-        def userId = "fake-user-id"
-        def groupId = "fake-group-id"
-        def email = "john.doe@zup.com.br"
-        def user = new User(userId, "John Doe", email, "http://fakephoto.com.br/john.jpg", false, LocalDateTime.now())
+    def "should throw NotFoundException when get invalid user by id"() {
 
         when:
-        service.removeUserFromGroup(userId, groupId)
+        service.findUser(representation.id)
 
         then:
+        1 * repository.findById(representation.id) >> Optional.empty()
+        thrown(NotFoundExceptionLegacy)
+    }
 
-        1 * this.repository.findById(userId) >> Optional.of(user)
-        1 * this.keycloakService.removeUserFromGroup(user.email, groupId)
+    def "should get users "() {
 
+        given:
+        def ids = ['id']
+
+        when:
+        service.findUsers(ids)
+
+        then:
+        1 * repository.findAllById(ids) >> [user]
         notThrown()
     }
 
-    def "should thrown an user from a group"() {
+    def "should throw NotFoundException when get invalid users"() {
 
         given:
-        def userId = "fake-user-id"
-        def groupId = "fake-group-id"
-        def email = "john.doe@zup.com.br"
-        def user = new User(userId, "John Doe", email, "http://fakephoto.com.br/john.jpg", false, LocalDateTime.now())
+        def ids = ['id']
 
         when:
-        service.removeUserFromGroup(userId, groupId)
+        service.findUsers(ids)
 
         then:
-
-        1 * this.repository.findById(userId) >> Optional.of(user)
-        1 * this.keycloakService.removeUserFromGroup(user.email, groupId)
-
-        notThrown()
+        1 * repository.findAllById(ids) >> []
+        thrown(NotFoundExceptionLegacy)
     }
 
-    def "should reset password to an user"() {
-
-        given:
-        def email = "john.doe@zup.com.br"
-        def request = new ResetPasswordRequest("newPassword")
+    def "should get user by auth token"() {
 
         when:
-        service.resetPassword(email, request)
+        def response = service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakService.resetPassword(email, request.newPassword)
-        notThrown()
-
+        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * repository.findByEmail(user.email) >> Optional.of(user)
+        response.id == representation.id
     }
 
+    def "should throw NotFoundException when get invalid user by auth roken"() {
+
+        when:
+        service.findByAuthorizationToken(authorization)
+
+        then:
+        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * repository.findByEmail(user.email) >> Optional.empty()
+        thrown(NotFoundExceptionLegacy)
+    }
+
+        private String getAuthorization() {
+        return  "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3";
+    }
 }
