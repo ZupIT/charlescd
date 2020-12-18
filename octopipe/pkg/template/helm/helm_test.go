@@ -46,7 +46,7 @@ func TestGetManifest(t *testing.T) {
 }
 
 func TestFailedLoadArchive(t *testing.T) {
-	helmTamplate := HelmTemplate{
+	helmTemplate := HelmTemplate{
 		OverrideValues: map[string]string{
 			"Name":      "test-1",
 			"Namespace": "default",
@@ -56,7 +56,7 @@ func TestFailedLoadArchive(t *testing.T) {
 
 	templateContent := "fake file content"
 	valueContent, _ := ioutil.ReadFile(filepath.Join(".", "fake", "simple.yaml"))
-	helmFake := NewHelmTemplate(helmTamplate)
+	helmFake := NewHelmTemplate(helmTemplate)
 
 	_, err := helmFake.GetManifests(string(templateContent), string(valueContent))
 	if err == nil {
