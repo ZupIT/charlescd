@@ -25,6 +25,7 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
+import {COLOR_COMET} from 'core/assets/colors';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -61,11 +62,21 @@ const circle = {
   }
 }
 
+const circleWithoutDeployment = {
+  name: 'Circle',
+  deployment: {}
+}
+
 const defaultCircle = {
   name: 'Default',
   deployment: {
     status: 'DEPLOYED'
   }
+}
+
+const defaultCircleWithoutDeployment = {
+  name: 'Default',
+  deployment: {}
 }
 
 test('render CircleComparationItem default component', async () => {
@@ -108,14 +119,76 @@ test('render CircleComparationItem with release', async () => {
   await waitFor(() => {
     expect(screen.getByTestId('layer-metrics')).toBeInTheDocument();
     expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument();
+    expect(screen.getByText('Override release')).toBeInTheDocument();
     expect(screen.getByText('Last release deployed')).toBeInTheDocument();
     expect(screen.getByText('Add datasource health')).toBeInTheDocument();
   });
-
-  expect(screen.queryByText('Override release')).not.toBeInTheDocument();
 });
 
-test('render CircleComparationItem Default Circle with release', async () => {
+test('should render CircleComparationItem with an Inactive Default Circle', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment))
+    .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment));
+  const handleChange = jest.fn();
+
+  render(
+    <CirclesComparationItem id={props.id} onChange={handleChange} />
+  );
+
+  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(dropdownIcon).toBeInTheDocument();
+
+  act(() => userEvent.click(dropdownIcon));
+
+  const dropdownActions = screen.getByTestId('dropdown-actions');
+
+  await waitFor(() => {
+    expect(dropdownActions).toBeInTheDocument();
+    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
+  });
+
+  const iconEdit = await screen.findByTestId('icon-edit');
+  expect(iconEdit).toBeInTheDocument();
+  act(() => userEvent.click(iconEdit));
+
+  const iconBack = await screen.findByTestId('icon-arrow-left');
+  expect(iconBack).toBeInTheDocument();
+});
+
+test('should not disable delete button and show tooltip when is an Inactive Circle (i.e., not a Default Circle)', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(circleWithoutDeployment))
+    .mockResponseOnce(JSON.stringify(circleWithoutDeployment));
+  const handleChange = jest.fn();
+
+  render(
+    <AllTheProviders>
+      <CirclesComparationItem id={props.id} onChange={handleChange} />
+    </AllTheProviders>
+  );
+
+  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(dropdownIcon).toBeInTheDocument();
+  act(() => userEvent.click(dropdownIcon));
+
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
+
+  const deleteButtonText = await screen.findByText('Delete');
+  expect(deleteButtonText).not.toHaveStyle(`color: ${COLOR_COMET}`);
+
+  await act(async () => userEvent.click(deleteButton));
+  const deleteCircleModal = screen.getByTestId('modal-trigger');
+  expect(deleteCircleModal).toBeInTheDocument();
+
+  userEvent.hover(deleteButton);
+  expect(screen.queryByText('Active circle cannot be deleted,')).not.toBeInTheDocument();
+  expect(screen.queryByText('you can undeploy first and then')).not.toBeInTheDocument();
+  expect(screen.queryByText('delete this circle.')).not.toBeInTheDocument();
+});
+
+test('should disable delete button and show tooltip when is an Active Default Circle', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123-workspace',
@@ -138,61 +211,79 @@ test('render CircleComparationItem Default Circle with release', async () => {
 
   const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
   expect(DropdownIcon).toBeInTheDocument();
-
   act(() => userEvent.click(DropdownIcon));
 
-  const DropdownActions = screen.getByTestId('dropdown-actions');
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
 
-  await waitFor(() => {
-    expect(DropdownActions).toBeInTheDocument();
-    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
-  });
+  const deleteButtonText = await screen.findByText('Delete');
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
 
-  const OverrideRelease = screen.getByText('Override release');
-  expect(OverrideRelease).toBeInTheDocument();
-  act(() => userEvent.click(OverrideRelease));
-
-  const IconBack = await screen.findByTestId('icon-arrow-left');
-  expect(IconBack).toBeInTheDocument();
-  
+  userEvent.hover(deleteButton);
+  expect(screen.getByText('Default circle is deployed to all')).toBeInTheDocument();
+  expect(screen.getByText('users, so it cannot be deleted.')).toBeInTheDocument();
 });
 
-test('render CircleComparationItem Default Circle', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
+test('should disable delete button and show tooltip when is an Inactive Default Circle', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment))
+    .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment));
   const handleChange = jest.fn();
 
   render(
     <CirclesComparationItem id={props.id} onChange={handleChange} />
   );
 
-  const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
-  expect(DropdownIcon).toBeInTheDocument();
+  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(dropdownIcon).toBeInTheDocument();
 
-  act(() => userEvent.click(DropdownIcon));
+  act(() => userEvent.click(dropdownIcon));
 
-  const DropdownActions = screen.getByTestId('dropdown-actions');
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
 
-  await waitFor(() => {
-    expect(DropdownActions).toBeInTheDocument();
-    expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
+  const deleteButtonText = await screen.findByText('Delete');
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
+
+  userEvent.hover(deleteButton);
+  expect(screen.getByText('Default circle cannot be deleted.')).toBeInTheDocument();
+});
+
+test('should disable delete button and show tooltip when is an Active Circle (i.e., not a Default Circle)', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123-workspace',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+    responseAll: [],
+    getAll: jest.fn
   });
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(circle))
+    .mockResponseOnce(JSON.stringify(circle));
+  const handleChange = jest.fn();
 
-  const IconEdit = await screen.findByTestId('icon-edit');
-  expect(IconEdit).toBeInTheDocument();
-  act(() => userEvent.click(IconEdit));
+  render(
+    <AllTheProviders>
+      <CirclesComparationItem id={props.id} onChange={handleChange} />
+    </AllTheProviders>
+  );
 
-  const IconBack = await screen.findByTestId('icon-arrow-left');
-  expect(IconBack).toBeInTheDocument();
-  act(() => userEvent.click(IconBack));
+  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(dropdownIcon).toBeInTheDocument();
+  act(() => userEvent.click(dropdownIcon));
 
-  act(() => userEvent.click(DropdownIcon));
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
 
-  const IconDelete = await screen.findByTestId('icon-delete');
-  expect(IconDelete).toBeInTheDocument();
-  act(() => userEvent.click(IconDelete));
+  const deleteButtonText = await screen.findByText('Delete');
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
 
-  const ModalTrigger = await screen.findByTestId('modal-trigger');
-  expect(ModalTrigger).toBeInTheDocument();
+  userEvent.hover(deleteButton);
+  expect(screen.getByText('Active circle cannot be deleted,')).toBeInTheDocument();
+  expect(screen.getByText('you can undeploy first and then')).toBeInTheDocument();
+  expect(screen.getByText('delete this circle.')).toBeInTheDocument();
 });

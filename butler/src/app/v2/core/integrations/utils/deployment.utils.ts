@@ -15,7 +15,7 @@
  */
 
 import { Component } from '../../../api/deployments/interfaces'
-import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const DeploymentUtils = {
   getActiveSameCircleTagComponent: (activeComponents: Component[], component: DeploymentComponent, circleId: string | null): Component | undefined => {
@@ -50,3 +50,27 @@ const DeploymentUtils = {
 }
 
 export { DeploymentUtils }
+
+
+export const componentsToBeRemoved = (deployment: Deployment, activeComponents: Component[]): DeploymentComponent[] => {
+  const sameCircleComponents = activeComponents.filter(c => c.deployment.circleId === deployment.circleId)
+  return sameCircleComponents.filter(c => {
+    return removedComponents(deployment.components, c) || updatedComponents(deployment.components, c)
+  })
+}
+
+const removedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
+  return !deploymentComponents?.some(dc => isSameName(dc, activeComponent))
+}
+
+const updatedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
+  return deploymentComponents?.some(dc => isSameNameAndDifferentVersion(dc, activeComponent))
+}
+
+const isSameNameAndDifferentVersion = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return isSameName(deploymentComponent, activeComponent) && deploymentComponent.imageTag !== activeComponent.imageTag
+}
+
+const isSameName = (deploymentComponent: DeploymentComponent, activeComponent: Component): boolean => {
+  return deploymentComponent.name === activeComponent.name
+}

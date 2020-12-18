@@ -41,12 +41,13 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
 
 @Service
 class CardService(
     private val cardRepository: CardRepository,
     private val cardColumnRepository: CardColumnRepository,
-    private val userRepository: UserRepository,
+    private val userServiceLegacy: UserServiceLegacy,
     private val featureRepository: FeatureRepository,
     private val labelRepository: LabelRepository,
     private val commentRepository: CommentRepository,
@@ -62,21 +63,25 @@ class CardService(
     lateinit var protectedBranches: Array<String>
 
     @Transactional
-    fun create(createCardRequest: CreateCardRequest, workspaceId: String): CardRepresentation {
-        return createCardRequest.toEntity(workspaceId)
+    fun create(createCardRequest: CreateCardRequest, workspaceId: String, authorization: String): CardRepresentation {
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
+        return createCardRequest.toEntity(workspaceId, user)
             .let { this.cardRepository.save(it) }
             .apply { createNewFeatureBranches(card = this) }
             .toRepresentation()
+            .updateProtectedBranchInformation()
     }
 
     fun findAll(pageable: Pageable, workspaceId: String): Page<CardRepresentation> {
         return cardRepository.findAllByWorkspaceId(workspaceId, pageable)
-            .map { it.toRepresentation() }
+            .map {
+                it.toRepresentation().updateProtectedBranchInformation()
+            }
     }
 
     fun findById(id: String, workspaceId: String): CardRepresentation {
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
-            .map { it.toRepresentation() }
+            .map { it.toRepresentation().updateProtectedBranchInformation() }
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
     }
 
@@ -87,33 +92,36 @@ class CardService(
             .fetchCardCommentsAndMembers()
             .let { saveUpdatedCard(updateCardRequest, it) }
             .toRepresentation()
+            .updateProtectedBranchInformation()
     }
 
     @Transactional
-    fun delete(id: String, workspaceId: String) {
+    fun delete(id: String, workspaceId: String, branchDeletion: Boolean = false) {
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .also { deleteCardRelationships(it) }
             .also { this.cardRepository.delete(it) }
-            .let { deleteFeatureBranches(it) }
+            .let { deleteFeatureBranches(it, branchDeletion) }
     }
 
     @Transactional
-    fun addComment(id: String, addCommentRequest: AddCommentRequest, workspaceId: String): CardRepresentation {
+    fun addComment(id: String, addCommentRequest: AddCommentRequest, workspaceId: String, authorization: String): CardRepresentation {
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
-            .let { addCommentToCard(it, addCommentRequest) }
+            .let { addCommentToCard(it, addCommentRequest, user) }
             .let { cardRepository.save(it) }
             .toRepresentation()
     }
 
     @Transactional
-    fun addMembers(id: String, addMemberRequest: AddMemberRequest, workspaceId: String): CardRepresentation {
+    fun addMembers(id: String, addMemberRequest: AddMemberRequest, workspaceId: String, authorization: String): CardRepresentation {
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .let { addMemberToCard(it, addMemberRequest) }
             .let { cardRepository.save(it) }
-            .also { notificationAddMemberToCard(it, addMemberRequest) }
+            .also { notificationAddMemberToCard(it, addMemberRequest, user) }
             .toRepresentation()
     }
 
@@ -152,8 +160,8 @@ class CardService(
             .let { this.cardRepository.save(it) }
     }
 
-    private fun deleteFeatureBranches(card: Card) {
-        if (card is SoftwareCard) {
+    private fun deleteFeatureBranches(card: Card, branchDeletion: Boolean = false) {
+        if (card is SoftwareCard && branchDeletion) {
             card.feature.modules.forEach { module ->
                 validateWorkspace(module.workspace)
                 deleteBranch(
@@ -209,6 +217,10 @@ class CardService(
         return !protectedBranches.contains(branchName)
     }
 
+    private fun isProtectedBranch(branchName: String): Boolean {
+        return protectedBranches.contains(branchName)
+    }
+
     private fun createNewBranch(
         credentials: GitCredentials,
         module: Module,
@@ -249,15 +261,15 @@ class CardService(
         }
     }
 
-    private fun AddCommentRequest.toEntity() = Comment(
+    private fun AddCommentRequest.toEntity(user: User) = Comment(
         comment = this.comment,
-        author = findUserById(this.authorId),
+        author = user,
         createdAt = LocalDateTime.now(),
         id = UUID.randomUUID().toString()
     )
 
-    private fun addCommentToCard(card: Card, addCommentRequest: AddCommentRequest): Card {
-        return addCommentRequest.toEntity()
+    private fun addCommentToCard(card: Card, addCommentRequest: AddCommentRequest, user: User): Card {
+        return addCommentRequest.toEntity(user)
             .let { commentRepository.save(it) }
             .also { notificationAddCommentMemberToCard(card, it) }
             .let { card.addComment(it) }
@@ -265,8 +277,7 @@ class CardService(
 
     private fun AddMemberRequest.toEntity(): Set<User> =
         this.memberIds.map {
-            userRepository.findById(it)
-                .orElseThrow { NotFoundExceptionLegacy("user", it) }
+            userServiceLegacy.findUser(it)
         }.toSet()
 
     private fun addMemberToCard(card: Card, addMemberRequest: AddMemberRequest): Card {
@@ -284,12 +295,17 @@ class CardService(
         }
     }
 
+    private fun CardRepresentation.updateProtectedBranchInformation(): CardRepresentation {
+        this.isProtected = verifyIsProtectedBranch(this)
+        return this
+    }
+
     private fun Card.updateActionCard(updateCardRequest: UpdateCardRequest): ActionCard {
         return when (this) {
             is SoftwareCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .also { cardRepository.deleteById(it.id) }
                 .also { cardRepository.save(it) }
-                .also { deleteFeatureBranches(this) }
+                .also { deleteFeatureBranches(this, updateCardRequest.branchDeletion) }
             is ActionCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .let { cardRepository.save(it) }
             else -> throw IllegalArgumentException("Invalid card type")
@@ -332,7 +348,7 @@ class CardService(
             type = SoftwareCardType.valueOf(updateCardRequest.type),
             feature = createCardFeature(
                 this.name,
-                this.author.id,
+                this.author,
                 updateCardRequest.modules,
                 updateCardRequest.branchName,
                 this.workspaceId
@@ -396,8 +412,7 @@ class CardService(
         )
 
     private fun findUserById(authorId: String): User {
-        return userRepository.findById(authorId)
-            .orElseThrow { NotFoundExceptionLegacy("user", authorId) }
+        return userServiceLegacy.findUser(authorId)
     }
 
     private fun findHypothesisById(hypothesisId: String): Hypothesis {
@@ -412,7 +427,7 @@ class CardService(
 
     private fun buildFeature(
         name: String,
-        authorId: String,
+        author: User,
         modules: List<String>,
         branchName: String,
         workspaceId: String
@@ -421,7 +436,7 @@ class CardService(
             id = UUID.randomUUID().toString(),
             name = name,
             branchName = branchName,
-            author = findUserById(authorId),
+            author = author,
             createdAt = LocalDateTime.now(),
             modules = modules.map { findModuleById(it) },
             workspaceId = workspaceId
@@ -429,12 +444,12 @@ class CardService(
 
     private fun createCardFeature(
         name: String,
-        authorId: String,
+        author: User,
         modules: List<String>,
         branchName: String,
         workspaceId: String
     ): Feature {
-        return buildFeature(name, authorId, modules, branchName, workspaceId)
+        return buildFeature(name, author, modules, branchName, workspaceId)
             .let { this.featureRepository.save(it) }
     }
 
@@ -443,17 +458,17 @@ class CardService(
             .orElseThrow { NotFoundExceptionLegacy("card_column", name) }
     }
 
-    private fun CreateCardRequest.toEntity(workspaceId: String): Card {
+    private fun CreateCardRequest.toEntity(workspaceId: String, user: User): Card {
         return when (this.type) {
-            ActionCardType.ACTION.name -> buildActionCard(workspaceId).calculateIndex()
+            ActionCardType.ACTION.name -> buildActionCard(workspaceId, user).calculateIndex()
             SoftwareCardType.HOT_FIX.name, SoftwareCardType.ENHANCEMENT.name, SoftwareCardType.FEATURE.name -> buildSoftwareCard(
-                workspaceId
+                workspaceId, user
             ).calculateIndex()
             else -> throw IllegalArgumentException("Card type not supported")
         }
     }
 
-    private fun CreateCardRequest.buildActionCard(workspaceId: String) = ActionCard(
+    private fun CreateCardRequest.buildActionCard(workspaceId: String, user: User) = ActionCard(
         id = UUID.randomUUID().toString(),
         name = this.name,
         description = this.description,
@@ -465,12 +480,12 @@ class CardService(
         labels = findLabels(this.labels),
         hypothesis = findHypothesisById(this.hypothesisId),
         status = CardStatus.ACTIVE,
-        author = findUserById(this.authorId),
+        author = user,
         createdAt = LocalDateTime.now(),
         workspaceId = workspaceId
     )
 
-    private fun CreateCardRequest.buildSoftwareCard(workspaceId: String) = SoftwareCard(
+    private fun CreateCardRequest.buildSoftwareCard(workspaceId: String, user: User) = SoftwareCard(
         id = UUID.randomUUID().toString(),
         name = this.name,
         description = this.description,
@@ -481,8 +496,8 @@ class CardService(
         ),
         labels = findLabels(this.labels),
         hypothesis = findHypothesisById(this.hypothesisId),
-        author = findUserById(this.authorId),
-        feature = createCardFeature(this.name, this.authorId, this.modules, this.branchName, workspaceId),
+        author = user,
+        feature = createCardFeature(this.name, user, this.modules, this.branchName, workspaceId),
         createdAt = LocalDateTime.now(),
         workspaceId = workspaceId
     )
@@ -495,11 +510,9 @@ class CardService(
         }
     }
 
-    private fun notificationAddMemberToCard(card: Card, addMemberRequest: AddMemberRequest) {
+    private fun notificationAddMemberToCard(card: Card, addMemberRequest: AddMemberRequest, user: User) {
         try {
-            userRepository.findById(addMemberRequest.authorId)
-                .orElseThrow { NotFoundExceptionLegacy("user", addMemberRequest.authorId) }
-                .let { charlesNotificationService.addMembersCard(card, it, addMemberRequest.memberIds) }
+            charlesNotificationService.addMembersCard(card, user, addMemberRequest.memberIds)
         } catch (e: Exception) {
             log.error("error notification add member to card", e)
         }
@@ -511,5 +524,13 @@ class CardService(
         } catch (e: Exception) {
             log.error("error notification add comment to card", e)
         }
+    }
+
+    private fun verifyIsProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
+        val branchName = cardRepresentation.feature?.branchName
+        if (!StringUtils.isEmpty(branchName)) {
+            return isProtectedBranch(branchName.toString())
+        }
+        return false
     }
 }

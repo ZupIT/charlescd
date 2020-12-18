@@ -93,6 +93,33 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         return findById(user.id).get()
     }
 
+    override fun delete(id: String) {
+        deleteUserFromUserGroup(id)
+        deleteUser(id)
+    }
+
+    private fun deleteUser(id: String) {
+        val statement = "DELETE FROM users " +
+                "WHERE id = " +
+                "?"
+
+        this.jdbcTemplate.update(
+            statement,
+            id
+        )
+    }
+
+    private fun deleteUserFromUserGroup(id: String) {
+        val statement = "DELETE FROM users_groups_users " +
+                "WHERE user_id = " +
+                "?"
+
+        this.jdbcTemplate.update(
+            statement,
+            id
+        )
+    }
+
     private fun createUser(user: User) {
         val statement = "INSERT INTO users(" +
                 "id," +
@@ -303,5 +330,20 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
             countStatement.toString(),
             parameters.toTypedArray()
         ) { resultSet, _ -> resultSet.getInt(1) }
+    }
+
+    override fun update(user: User): User {
+        updateUser(user)
+        return findById(user.id).get()
+    }
+
+    private fun updateUser(user: User) {
+        val statement = "UPDATE users SET name = ? WHERE id = ?"
+
+        this.jdbcTemplate.update(
+            statement,
+            user.name,
+            user.id
+        )
     }
 }

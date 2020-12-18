@@ -90,7 +90,6 @@ const defaultModule = {
 
 const newModule = {
   name: 'New Module',
-  authorId: 'a7c3e4b6-4qe3-4d62-8140-e2d23274d03f',
   gitRepositoryAddress: 'git addres',
   helmRepository: 'helm-repository',
   components: [
@@ -104,7 +103,6 @@ const newModule = {
 
 const updateModule = {
   name: 'Update Module',
-  authorId: 'a7c31qs6-4qe3-4d62-8140-e2d2327yhe3f',
   gitRepositoryAddress: 'update-git-addres',
   helmRepository: 'update-helm-repository',
   components: [

@@ -20,11 +20,14 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -75,6 +78,24 @@ func newBasicDatasource() datasource.DataSource {
 	}
 }
 
+func datasourceInsert(pluginSrc string) (string, datasource.Response) {
+	entity := datasource.Response{
+		BaseModel: util.BaseModel{
+			ID: uuid.New(),
+		},
+		Name:        "Name",
+		PluginSrc:   pluginSrc,
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+		WorkspaceID: uuid.New(),
+		DeletedAt:   nil,
+	}
+
+	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, health, deleted_at, plugin_src)
+							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', %t, null, '%s');`,
+		entity.ID, entity.Name, entity.Data, configuration.GetConfiguration("ENCRYPTION_KEY"), entity.WorkspaceID, entity.Health, pluginSrc), entity
+}
+
 func newBasicMetric() metric.Metric {
 	return metric.Metric{
 		Nickname:        "Nickname",
@@ -91,6 +112,36 @@ func newBasicMetric() metric.Metric {
 
 func newBasicAction() action.Action {
 	return action.Action{
+		WorkspaceId:   uuid.New(),
+		Nickname:      "nickname",
+		Type:          "validaction",
+		Description:   "Some description",
+		Configuration: json.RawMessage(`{"someProperty": "someValue"}`),
+		DeletedAt:     nil,
+	}
+}
+
+func actionInsert(actionType string) (string, action.Response) {
+	entity := action.Response{
+		BaseModel: util.BaseModel{
+			ID: uuid.New(),
+		},
+		WorkspaceId:   uuid.New(),
+		Nickname:      "nickname",
+		Type:          "validaction",
+		Description:   "Some description",
+		Configuration: json.RawMessage(`{"someProperty": "someValue"}`),
+		DeletedAt:     nil,
+	}
+
+	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
+			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), null);`,
+			entity.ID, entity.WorkspaceId, entity.Nickname, actionType, entity.Description, entity.Configuration, configuration.GetConfiguration("ENCRYPTION_KEY")),
+		entity
+}
+
+func newBasicActionRequest() action.Request {
+	return action.Request{
 		WorkspaceId:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",

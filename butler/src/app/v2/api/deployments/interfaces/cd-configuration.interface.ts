@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../../../v1/api/configurations/enums'
-import { ICdConfigurationData } from '../../../../v1/api/configurations/interfaces'
+import { CdTypeEnum } from '../../configurations/enums/cd-type.enum'
+import { ICdConfigurationData } from '../../configurations/interfaces/cd-configuration-data.interface'
 import { Deployment } from './'
 
 export interface CdConfiguration {
