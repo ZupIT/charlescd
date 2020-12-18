@@ -21,6 +21,7 @@ export enum ACTION_TYPES {
   updateBoard = 'BOARD/UPDATE',
   updateColumn = 'BOARD/COLUMN/UPDATE',
   updateCard = 'BOARD/CARD/UPDATE',
+  removeCard = 'BOARD/CARD/REMOVE',
   loadedHypotheses = 'HYPOTHESES/LOADED'
 }
 
@@ -56,6 +57,18 @@ export const setCard = (columnId: string, payload: Card): UpdateCard => ({
   payload
 });
 
+interface RemoveCard {
+  type: typeof ACTION_TYPES.removeCard;
+  columnId: string;
+  cardId: string;
+}
+
+export const removeCard = (columnId: string, cardId: string): RemoveCard => ({
+  type: ACTION_TYPES.removeCard,
+  columnId,
+  cardId
+});
+
 interface LoadedHypotheses {
   type: typeof ACTION_TYPES.loadedHypotheses;
   payload: Hypothesis[];
@@ -70,4 +83,5 @@ export type HypothesesActionTypes =
   | UpdateBoard
   | UpdateColumn
   | UpdateCard
+  | RemoveCard
   | LoadedHypotheses;

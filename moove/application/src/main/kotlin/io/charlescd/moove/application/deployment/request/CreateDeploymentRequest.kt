@@ -27,8 +27,6 @@ import java.util.*
 import javax.validation.constraints.NotBlank
 
 data class CreateDeploymentRequest(
-    @field:NotBlank
-    val authorId: String,
 
     @field:NotBlank
     val circleId: String,

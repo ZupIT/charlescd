@@ -8,8 +8,8 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
-import io.charlescd.moove.domain.repository.UserRepository
-import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.exceptions.NotFoundException
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.beans.factory.annotation.Value
@@ -17,24 +17,28 @@ import org.springframework.beans.factory.annotation.Value
 @Named
 class CreateUserInteractorImpl @Inject constructor(
     private val userService: UserService,
-    private val userRepository: UserRepository,
-    private val keycloakService: KeycloakService,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) : CreateUserInteractor {
 
     override fun execute(createUserRequest: CreateUserRequest, authorization: String): UserResponse {
         val newUser = createUserRequest.toUser()
         val password = createUserRequest.password
-        val emailFromToken = keycloakService.getEmailByAccessToken(authorization)
-        val userFromToken = userRepository.findByEmail(emailFromToken)
-
+        val userFromToken = getUserFromToken(authorization)
         userFromToken.ifPresentOrElse({
             createUserWhenUserFromTokenExists(it, newUser, password)
         }, {
-            createOwnUser(emailFromToken, newUser, password)
+            createOwnUser(userService.getEmailFromToken(authorization), newUser, password)
         })
-
         return UserResponse.from(newUser)
+    }
+
+    private fun getUserFromToken(authorization: String): Optional<User> {
+        try {
+            val user = userService.findByAuthorizationToken(authorization)
+            return Optional.of(user)
+        } catch (ex: NotFoundException) {
+            return Optional.empty()
+        }
     }
 
     private fun createOwnUser(emailFromToken: String, newUser: User, password: String?) {
@@ -64,7 +68,7 @@ class CreateUserInteractorImpl @Inject constructor(
 
     private fun saveUserOnKeycloak(user: User, password: String?) {
         if (password.isNullOrBlank()) throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER).withParameters("password")
-        this.keycloakService.createUser(
+        this.userService.createUserOnKeycloak(
             user.email,
             user.name,
             password

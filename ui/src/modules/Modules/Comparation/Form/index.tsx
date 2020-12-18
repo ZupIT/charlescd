@@ -20,7 +20,6 @@ import isEqual from 'lodash/isEqual';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
-import { getProfileByKey } from 'core/utils/profile';
 import Can from 'containers/Can';
 import { updateParam } from 'core/utils/path';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -47,7 +46,6 @@ const formDefaultValues = {
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
-  const authorId = getProfileByKey('id');
   const isEdit = !isEmpty(module);
   const [isDisabled, setIsDisabled] = useState(true);
   const history = useHistory();
@@ -82,7 +80,7 @@ const FormModule = ({ module, onChange }: Props) => {
     if (isEdit) {
       updateModule(module?.id, data);
     } else {
-      saveModule({ ...data, authorId });
+      saveModule({ ...data });
     }
   };
 

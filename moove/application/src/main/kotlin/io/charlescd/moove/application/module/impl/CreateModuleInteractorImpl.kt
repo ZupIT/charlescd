@@ -40,7 +40,9 @@ open class CreateModuleInteractorImpl(
     CreateModuleInteractor {
 
     @Transactional
-    override fun execute(request: CreateModuleRequest, workspaceId: String): ModuleResponse {
+    override fun execute(request: CreateModuleRequest, workspaceId: String, authorization: String): ModuleResponse {
+
+        val user = userService.findByAuthorizationToken(authorization)
 
         val workspace = workspaceService.find(workspaceId)
 
@@ -53,7 +55,7 @@ open class CreateModuleInteractorImpl(
                 request.toDomain(
                     UUID.randomUUID().toString(),
                     workspace.id,
-                    userService.find(request.authorId)
+                    user
                 )
             )
         )

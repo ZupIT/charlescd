@@ -100,7 +100,7 @@ class CardServiceUnitTest {
 
     private val cardRepository = mockkClass(CardRepository::class)
     private val cardColumnRepository = mockkClass(CardColumnRepository::class)
-    private val userRepository = mockkClass(UserRepository::class)
+    private val userServiceLegacy = mockkClass(UserServiceLegacy::class)
     private val featureRepository = mockkClass(FeatureRepository::class)
     private val labelRepository = mockkClass(LabelRepository::class)
     private val commentRepository = mockkClass(CommentRepository::class)
@@ -114,7 +114,7 @@ class CardServiceUnitTest {
     private val cardService = CardService(
         cardRepository,
         cardColumnRepository,
-        userRepository,
+        userServiceLegacy,
         featureRepository,
         labelRepository,
         commentRepository,
@@ -143,7 +143,6 @@ class CardServiceUnitTest {
     @Test
     fun `should create a new software card`() {
         val card = buildSoftwareCard()
-
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
         every {
@@ -154,7 +153,7 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userRepository.findById(authorId) } returns Optional.of(user)
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { moduleRepository.findById(modules[0]) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[1]) } returns Optional.of(module2)
         every { featureRepository.save(any() as Feature) } returns feature
@@ -188,7 +187,7 @@ class CardServiceUnitTest {
             )
         } returns Optional.of(feature.branchName)
 
-        val createdCard = cardService.create(cardRequest, workspaceId)
+        val createdCard = cardService.create(cardRequest, workspaceId, getAuthorization())
 
         verify(exactly = 1) {
             cardColumnRepository.findByNameAndHypothesis(
@@ -198,7 +197,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify(exactly = 2) { userRepository.findById(authorId) }
+        verify { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { moduleRepository.findById(modules[0]) }
         verify(exactly = 1) { moduleRepository.findById(modules[1]) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
@@ -215,7 +214,6 @@ class CardServiceUnitTest {
         assertEquals(cardRequest.description, createdCard.description)
         assertEquals(cardColumn.id, createdCard.column.id)
         assertEquals(cardColumn.name, createdCard.column.name)
-        assertEquals(cardRequest.authorId, createdCard.author.id)
         assertNotNull(createdCard.createdAt)
         assertEquals(cardRequest.labels.size, createdCard.labels.size)
         assertEquals(label.name, createdCard.labels[0].name)
@@ -239,12 +237,12 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userRepository.findById(authorId) } returns Optional.of(user)
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { cardRepository.save(any() as Card) } returns card
 
         val cardType = "ACTION"
         val createCardRequest = this.cardRequest.copy(type = cardType)
-        val createdCard = cardService.create(createCardRequest, workspaceId)
+        val createdCard = cardService.create(createCardRequest, workspaceId, getAuthorization())
 
         verify(exactly = 1) {
             cardColumnRepository.findByNameAndHypothesis(
@@ -254,7 +252,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify(exactly = 1) { userRepository.findById(authorId) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
 
         assertNotNull(createdCard.id)
@@ -262,7 +260,6 @@ class CardServiceUnitTest {
         assertEquals(cardRequest.description, createdCard.description)
         assertEquals(cardColumn.id, createdCard.column.id)
         assertEquals(cardColumn.name, createdCard.column.name)
-        assertEquals(cardRequest.authorId, createdCard.author.id)
         assertNotNull(createdCard.createdAt)
         assertEquals(cardRequest.labels.size, createdCard.labels.size)
         assertEquals(label.name, createdCard.labels[0].name)
@@ -288,7 +285,7 @@ class CardServiceUnitTest {
         } returns Optional.of(cardColumn)
         every { labelRepository.findAllById(labels) } returns listOf(label)
         every { hypothesisRepository.findById(hypothesisId) } returns Optional.of(hypothesis)
-        every { userRepository.findById(authorId) } returns Optional.of(user)
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { moduleRepository.findById(modules[0]) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[1]) } returns Optional.of(module2)
         every { featureRepository.save(any() as Feature) } returns feature
@@ -329,7 +326,7 @@ class CardServiceUnitTest {
         )
         every { gitService.deleteBranch(gitCredential, module1.name, feature.branchName) } answers {}
 
-        val e = assertFailsWith<BusinessExceptionLegacy> { cardService.create(cardRequest, workspaceId) }
+        val e = assertFailsWith<BusinessExceptionLegacy> { cardService.create(cardRequest, workspaceId, getAuthorization()) }
 
         verify(exactly = 1) {
             cardColumnRepository.findByNameAndHypothesis(
@@ -339,7 +336,7 @@ class CardServiceUnitTest {
         }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
         verify(exactly = 2) { hypothesisRepository.findById(hypothesisId) }
-        verify(exactly = 2) { userRepository.findById(authorId) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { moduleRepository.findById(modules[0]) }
         verify(exactly = 1) { moduleRepository.findById(modules[1]) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
@@ -398,9 +395,48 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should delete a card and branch`() {
+    fun `should delete a software card and branch`() {
         val card = buildSoftwareCard()
+        val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
+        every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
+        every { cardRepository.deleteLabelsRelationship(any()) } answers {}
+        every { cardRepository.deleteMembersRelationship(any()) } answers {}
+        every { cardRepository.delete(card) } answers {}
+        every { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) } answers {}
+        every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
+
+        cardService.delete(card.id, workspaceId, true)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
+        verify(exactly = 1) { cardRepository.delete(card) }
+        verify(exactly = 1) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
+        verify(exactly = 1) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
+        verify(exactly = 2) {
+            gitConfigurationRepository.findById(gitConfigurationId)
+        }
+    }
+
+    @Test
+    fun `should delete a action card and branch`() {
+        val card = buildActionCard()
+
+        val gitConfigurationId = module1.workspace.gitConfigurationId!!
+
+        every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
+        every { cardRepository.deleteLabelsRelationship(any()) } answers {}
+        every { cardRepository.deleteMembersRelationship(any()) } answers {}
+        every { cardRepository.delete(card) } answers {}
+
+        cardService.delete(card.id, workspaceId, true)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
+        verify(exactly = 1) { cardRepository.delete(card) }
+    }
+
+    @Test
+    fun `should delete only the software card | blacklist rule`() {
+        val card = buildSoftwareCard("master")
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
@@ -414,16 +450,16 @@ class CardServiceUnitTest {
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
         verify(exactly = 1) { cardRepository.delete(card) }
-        verify(exactly = 1) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
-        verify(exactly = 1) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
-        verify(exactly = 2) {
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
+        verify(exactly = 0) {
             gitConfigurationRepository.findById(gitConfigurationId)
         }
     }
 
     @Test
-    fun `should delete only the card`() {
-        val card = buildSoftwareCard("master")
+    fun `should delete only the software card | service option rule`() {
+        val card = buildSoftwareCard()
 
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
@@ -440,13 +476,13 @@ class CardServiceUnitTest {
         verify(exactly = 1) { cardRepository.delete(card) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
-        verify(exactly = 2) {
+        verify(exactly = 0) {
             gitConfigurationRepository.findById(gitConfigurationId)
         }
     }
 
     @Test
-    fun `should not delete not found card`() {
+    fun `should not delete not found software card`() {
         val card = buildSoftwareCard()
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.empty()
@@ -471,7 +507,6 @@ class CardServiceUnitTest {
     @Test
     fun `should proceed card deletion on branch deletion errors`() {
         val card = buildSoftwareCard()
-
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
@@ -482,7 +517,7 @@ class CardServiceUnitTest {
                 BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_BRANCH_NOT_FOUND)
         every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
 
-        cardService.delete(card.id, workspaceId)
+        cardService.delete(card.id, workspaceId, true)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
         verify(exactly = 1) { cardRepository.delete(card) }
@@ -500,7 +535,7 @@ class CardServiceUnitTest {
 
         every { cardRepository.findByIdAndWorkspaceId(actionCard.id, workspaceId) } returns Optional.of(actionCard)
         every { labelRepository.findAllById(labels) } returns listOf(label)
-        every { userRepository.findById(authorId) } returns Optional.of(user)
+        every { userServiceLegacy.findUser(user.id) } returns user
         every { moduleRepository.findByIdAndWorkspaceId(modules[0], workspaceId) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[0]) } returns Optional.of(module1)
         every { moduleRepository.findById(modules[1]) } returns Optional.of(module2)
@@ -541,7 +576,6 @@ class CardServiceUnitTest {
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(actionCard.id, workspaceId) }
         verify(exactly = 1) { labelRepository.findAllById(labels) }
-        verify(exactly = 1) { userRepository.findById(authorId) }
         verify(exactly = 1) { featureRepository.save(any() as Feature) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
         verify(exactly = 1) { cardRepository.deleteById(actionCard.id) }
@@ -554,7 +588,6 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -567,9 +600,10 @@ class CardServiceUnitTest {
     }
 
     @Test
-    fun `should update feature card to action card`() {
+    fun `should update feature card to action card and branch not associated with protected branch list`() {
         val softwareCard = buildSoftwareCard()
         val actionCard = buildActionCard().copy(id = softwareCard.id)
+        val authorization = "Bearer qwerty"
 
         every {
             cardRepository.findByIdAndWorkspaceId(
@@ -578,7 +612,7 @@ class CardServiceUnitTest {
             )
         } returns Optional.of(softwareCard)
         every { labelRepository.findAllById(labels) } returns listOf(label)
-        every { userRepository.findById(authorId) } returns Optional.of(user)
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
         every { moduleRepository.findByIdAndWorkspaceId(modules[0], workspaceId) } returns Optional.of(module1)
         every { moduleRepository.findByIdAndWorkspaceId(modules[1], workspaceId) } returns Optional.of(module2)
         every { cardRepository.save(any() as Card) } returns actionCard
@@ -615,7 +649,67 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
+        assertNotNull(updatedCard.createdAt)
+        assertEquals(cardRequest.labels.size, updatedCard.labels.size)
+        assertEquals(label.name, updatedCard.labels[0].name)
+        assertEquals(updateRequest.type, updatedCard.type)
+        assertNull(updatedCard.feature)
+        assertEquals(0, updatedCard.comments.size)
+        assertEquals(hypothesisId, updatedCard.hypothesisId)
+        assertEquals(0, updatedCard.members.size)
+        assertEquals(0, updatedCard.index)
+    }
+
+    @Test
+    fun `should update feature card to action card and branch is associated with protected branch list`() {
+        val softwareCard = buildSoftwareCard("master")
+        val actionCard = buildActionCard().copy(id = softwareCard.id)
+        val authorization = "Bearer qwerty"
+
+        every {
+            cardRepository.findByIdAndWorkspaceId(
+                actionCard.id,
+                workspaceId
+            )
+        } returns Optional.of(softwareCard)
+        every { labelRepository.findAllById(labels) } returns listOf(label)
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
+        every { moduleRepository.findByIdAndWorkspaceId(modules[0], workspaceId) } returns Optional.of(module1)
+        every { moduleRepository.findByIdAndWorkspaceId(modules[1], workspaceId) } returns Optional.of(module2)
+        every { cardRepository.save(any() as Card) } returns actionCard
+        every { cardRepository.deleteById(softwareCard.id) } answers {}
+        every {
+            gitService.deleteBranch(
+                gitCredential,
+                module1.name,
+                feature.branchName
+            )
+        } answers {}
+        every {
+            gitService.deleteBranch(
+                gitCredential,
+                module2.name,
+                feature.branchName
+            )
+        } answers {}
+
+        val updateRequest = updateCardRequest.copy(type = "ACTION")
+
+        val updatedCard = cardService.update(softwareCard.id, updateRequest, workspaceId)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(softwareCard.id, workspaceId) }
+        verify(exactly = 1) { labelRepository.findAllById(labels) }
+        verify(exactly = 1) { cardRepository.save(any() as Card) }
+        verify(exactly = 1) { cardRepository.deleteById(softwareCard.id) }
+        verify(exactly = 0) { gitServiceMapper.getByType(GitServiceProvider.GITHUB) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, feature.branchName) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, feature.branchName) }
+
+        assertEquals(actionCard.id, updatedCard.id)
+        assertEquals(updateCardRequest.name, updatedCard.name)
+        assertEquals(updateCardRequest.description, updatedCard.description)
+        assertEquals(cardColumn.id, updatedCard.column.id)
+        assertEquals(cardColumn.name, updatedCard.column.name)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -654,7 +748,6 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -725,7 +818,6 @@ class CardServiceUnitTest {
         assertEquals(updateCardRequest.description, updatedCard.description)
         assertEquals(cardColumn.id, updatedCard.column.id)
         assertEquals(cardColumn.name, updatedCard.column.name)
-        assertEquals(cardRequest.authorId, updatedCard.author.id)
         assertNotNull(updatedCard.createdAt)
         assertEquals(cardRequest.labels.size, updatedCard.labels.size)
         assertEquals(label.name, updatedCard.labels[0].name)
@@ -804,16 +896,18 @@ class CardServiceUnitTest {
         val card = buildActionCard()
         val comment = buildComment()
         val addCommentRequest = buildAddCommentRequest()
+        val authorization = "Bearer qwerty"
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
-        every { userRepository.findById(authorId) } returns Optional.of(user)
+
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
         every { commentRepository.save(any() as Comment) } returns comment
         every { cardRepository.save(any() as Card) } returns card
 
-        val commentedCard = cardService.addComment(card.id, addCommentRequest, workspaceId)
+        val commentedCard = cardService.addComment(card.id, addCommentRequest, workspaceId, authorization)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
-        verify(exactly = 1) { userRepository.findById(authorId) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(authorization) }
         verify(exactly = 1) { commentRepository.save(any() as Comment) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
 
@@ -838,21 +932,23 @@ class CardServiceUnitTest {
     fun `should add members to a card`() {
         val card = buildActionCard()
         val addMemberRequest = buildAddMemberRequest()
+        val authorization = "Bearer qwerty"
 
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
-        every { userRepository.findById(authorId) } returns Optional.of(user)
-        every { userRepository.findById("fake-author-id") } returns Optional.of(
+        every { userServiceLegacy.findByAuthorizationToken(authorization) } returns user
+        every { userServiceLegacy.findUser(user.id) } returns user
+        every { userServiceLegacy.findUser("fake-author-id") } returns
             user.copy(
                 id = "fake-author-id",
                 name = "add-member-author-name"
             )
-        )
+
         every { cardRepository.save(any() as Card) } returns card
 
-        val cardWithMember = cardService.addMembers(card.id, addMemberRequest, workspaceId)
+        val cardWithMember = cardService.addMembers(card.id, addMemberRequest, workspaceId, authorization)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
-        verify(exactly = 1) { userRepository.findById(authorId) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(authorization) }
         verify(exactly = 1) { cardRepository.save(any() as Card) }
 
         assertEquals(card.id, cardWithMember.id)
@@ -959,14 +1055,13 @@ class CardServiceUnitTest {
 
     private fun buildAddCommentRequest(): AddCommentRequest {
         return AddCommentRequest(
-            authorId = authorId,
             comment = "comment"
         )
     }
 
     private fun buildCreateCardRequest(branchName: String): CreateCardRequest {
         return CreateCardRequest(
-            cardName, cardDescription, authorId, "FEATURE",
+            cardName, cardDescription, "FEATURE",
             labels, hypothesisId, branchName, modules
         )
     }
@@ -1051,6 +1146,7 @@ class CardServiceUnitTest {
             workspaceId
         )
 
+<<<<<<< HEAD
     companion object {
         fun invalidBranchNames() = listOf(
             "feature/.test",
@@ -1072,5 +1168,9 @@ class CardServiceUnitTest {
             "feature\\test",
             "-feature-test"
         )
+=======
+    private fun getAuthorization(): String {
+        return "Bearer dokqwodksoksd"
+>>>>>>> bfa6ed1546e63fc69ca4f9da1b3bcc513e94e57d
     }
 }

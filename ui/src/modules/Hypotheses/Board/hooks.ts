@@ -33,8 +33,8 @@ import {
 import {
   useFetch,
   FetchProps,
-  useFetchData,
-  FetchStatuses
+  FetchStatuses,
+  useFetchData
 } from 'core/providers/base/hooks';
 import { Payload as CardPayload } from 'core/providers/card';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -49,25 +49,32 @@ interface BoardFetchProps extends FetchProps {
 
 export const useBoard = (): BoardFetchProps => {
   const dispatch = useDispatch();
-  const [responseBoard, getBoard] = useFetch<{ board: Column[] }>(
-    findBoardByHypothesisId
-  );
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const getBoard = useFetchData<{ board: Column[] }>(findBoardByHypothesisId);
   const [, moveCard] = useFetch(moveCardBetweenBoard);
   const [, orderCard] = useFetch(orderCardInBoard);
-  const { response, loading } = responseBoard;
+  const [fetchedBoard, setFetchedBoard] = useState(null);
 
   const getAll = useCallback(
-    (id: string) => {
-      getBoard(id);
-    },
-    [getBoard]
-  );
+    async (id: string) => {
+      try {
+        if (id) {
+          setStatus('pending');
+          const res = await getBoard(id);
 
-  useEffect(() => {
-    if (response) {
-      dispatch(setBoard(response?.board));
-    }
-  }, [response, dispatch]);
+          setFetchedBoard(res?.board);
+          dispatch(setBoard(res?.board));
+
+          setStatus('resolved');
+
+          return res;
+        }
+      } catch (e) {
+        setStatus('rejected');
+      }
+    },
+    [getBoard, dispatch]
+  );
 
   const movingCard = useCallback(
     (hypothesisId: string, cardId: string, payload: CardMovement) => {
@@ -87,14 +94,14 @@ export const useBoard = (): BoardFetchProps => {
     getAll,
     movingCard,
     reorderColumn,
-    loadingAll: loading,
-    responseAll: response?.board
+    loadingAll: status === 'pending',
+    responseAll: fetchedBoard
   };
 };
 
 interface Props extends FetchProps {
   getById: Function;
-  removeBy: Function;
+  removeById: Function;
   archiveBy: Function;
 }
 
@@ -108,8 +115,8 @@ export const useAddMember = (): AddMemberProps => {
   const { loading } = data;
 
   const addMembers = useCallback(
-    (cardId: string, authorId: string, memberIds: string[]) => {
-      addMembersToCard(cardId, authorId, memberIds);
+    (cardId: string, memberIds: string[]) => {
+      addMembersToCard(cardId, memberIds);
     },
     [addMembersToCard]
   );
@@ -122,15 +129,15 @@ export const useAddMember = (): AddMemberProps => {
 
 interface AddModuleProps {
   status: FetchStatuses;
-  addModules: Function;
+  persistModules: Function;
 }
 
-export const useAddModule = (): AddModuleProps => {
+export const useModules = (): AddModuleProps => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const updateCard = useFetchData(updateById);
 
-  const addModules = useCallback(
+  const persistModules = useCallback(
     async (cardId: string, payload: CardPayload) => {
       try {
         setStatus('pending');
@@ -141,11 +148,10 @@ export const useAddModule = (): AddModuleProps => {
         const error = await e.json();
         dispatch(
           toogleNotification({
-            text: `${error.message}`,
+            text: `[${error.status}] This module could not be tied.`,
             status: 'error'
           })
         );
-
         return Promise.reject(error);
       }
     },
@@ -154,7 +160,7 @@ export const useAddModule = (): AddModuleProps => {
 
   return {
     status,
-    addModules
+    persistModules
   };
 };
 
@@ -165,7 +171,11 @@ export const useCard = (): Props => {
   const [archivedCard, archiveCard] = useFetch(archiveById);
   const [updateResponse, updateCard] = useFetch(updateById);
   const { response, loading, error } = card;
-  const { response: responseRemove, error: errorRemove } = removedCard;
+  const {
+    response: responseRemove,
+    error: errorRemove,
+    loading: loadingRemove
+  } = removedCard;
   const { response: responseArchive, error: errorArchive } = archivedCard;
   const { loading: loadingUpdate, error: errorUpdate } = updateResponse;
 
@@ -187,9 +197,9 @@ export const useCard = (): Props => {
     }
   }, [error, dispatch]);
 
-  const removeBy = useCallback(
-    (id: string) => {
-      removeCard(id);
+  const removeById = useCallback(
+    (id: string, branchDeletion: boolean) => {
+      removeCard(id, branchDeletion);
     },
     [removeCard]
   );
@@ -243,8 +253,9 @@ export const useCard = (): Props => {
 
   return {
     getById,
-    removeBy,
+    removeById,
     responseRemove,
+    loadingRemove,
     archiveBy,
     responseArchive,
     response,
