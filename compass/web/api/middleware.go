@@ -76,8 +76,13 @@ func (api Api) ValidatorMiddleware(next http.Handler) http.Handler {
 				}
 
 				allowed, err := api.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
-				if err != nil || !allowed {
+				if err != nil {
 					util.NewResponse(w, http.StatusForbidden, err)
+					return
+				}
+
+				if !allowed {
+					util.NewResponse(w, http.StatusForbidden, errors.NewError("Forbidden", "Access denied"))
 					return
 				}
 
@@ -133,7 +138,7 @@ func (api Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (
 
 	permissions, err := api.mooveMain.GetUserPermissions(user.ID, workspaceID)
 	if err != nil {
-		return false, err
+		return false, err.WithOperations("authorizeUser.GetUserPermissions")
 	}
 
 	for _, permission := range permissions {
