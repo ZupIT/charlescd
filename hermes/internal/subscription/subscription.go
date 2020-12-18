@@ -11,32 +11,28 @@ import (
 
 type Subscription struct {
 	util.BaseModel
-	ExternalId uuid.UUID  `json:"externalId"`
-	Url        string     `json:"url"`
-	ApiKey     []byte     `json:"apiKey" gorm:"type:bytea"`
-	CreatedBy  string     `json:"createdBy"`
-	DeletedBy  string     `json:"-"`
-	DeletedAt  *time.Time `json:"-"`
+	ExternalId  uuid.UUID  `json:"externalId"`
+	Url         string     `json:"url"`
+	Description string     `json:"description"`
+	ApiKey      []byte     `json:"apiKey" gorm:"type:bytea"`
+	CreatedBy   string     `json:"createdBy"`
+	DeletedBy   string     `json:"-"`
+	DeletedAt   *time.Time `json:"-"`
 }
 
 type Request struct {
 	util.BaseModel
-	ExternalId uuid.UUID  `json:"externalId"`
-	Url        string     `json:"url"`
-	ApiKey     string     `json:"apiKey"`
-	CreatedBy  string     `json:"createdBy"`
-	DeletedBy  string     `json:"-"`
-	DeletedAt  *time.Time `json:"-"`
+	ExternalId  uuid.UUID  `json:"externalId"`
+	Url         string     `json:"url"`
+	Description string     `json:"description"`
+	ApiKey      string     `json:"apiKey"`
+	CreatedBy   string     `json:"createdBy"`
+	DeletedBy   string     `json:"-"`
+	DeletedAt   *time.Time `json:"-"`
 }
 
-type Response struct {
+type SaveResponse struct {
 	util.BaseModel
-	ExternalId uuid.UUID  `json:"externalId"`
-	Url        string     `json:"url"`
-	ApiKey     string     `json:"apiKey"`
-	CreatedBy  string     `json:"createdBy"`
-	DeletedBy  string     `json:"-"`
-	DeletedAt  *time.Time `json:"-"`
 }
 
 func (main Main) ParseSubscription(subscription io.ReadCloser) (Request, errors.Error) {
@@ -49,31 +45,21 @@ func (main Main) ParseSubscription(subscription io.ReadCloser) (Request, errors.
 	return *newSubs, nil
 }
 
-func (main Main) Save(subscription Request) (Response, errors.Error) {
-	id := uuid.New().String()
-	entity := Subscription{}
+func (main Main) Save(subscription Request) (SaveResponse, errors.Error) {
+	id := uuid.New()
+	response := SaveResponse{}
 
-	row := main.db.Exec(Insert(id, subscription.ExternalId.String(), subscription.Url, subscription.CreatedBy, []byte(subscription.ApiKey))).
-		Raw(saveSubscriptionQuery, id).
-		Row()
-
-	err := row.Scan(&entity.ID, &entity.ExternalId, &entity.Url, &entity.CreatedBy, &entity.CreatedAt)
-	if err != nil {
-		return Response{}, errors.NewError("Save Subscription error", err.Error()).
-			WithOperations("Save.RowScan")
+	insert := main.db.Exec(Insert(id.String(), subscription.Description, subscription.ExternalId.String(), subscription.Url, subscription.CreatedBy, []byte(subscription.ApiKey)))
+	if insert.Error != nil {
+		return SaveResponse{}, errors.NewError("Save Subscription error", insert.Error.Error()).
+			WithOperations("Save.Insert")
 	}
 
-	return entity.toResponse(), nil
-}
-
-func (entity Subscription) toResponse() Response {
-	return Response{
-		BaseModel:  entity.BaseModel,
-		ExternalId: entity.ExternalId,
-		Url:        entity.Url,
-		ApiKey:     string(entity.ApiKey),
-		CreatedBy:  entity.CreatedBy,
-		DeletedBy:  entity.DeletedBy,
-		DeletedAt:  entity.DeletedAt,
+	query := insert.Model(&Subscription{}).Where("id = ?", id).Find(&response)
+	if query.Error != nil {
+		return SaveResponse{}, errors.NewError("Save Subscription error", query.Error.Error()).
+			WithOperations("Save.Query")
 	}
+
+	return response, nil
 }

@@ -8,7 +8,7 @@ import (
 
 type BaseModel struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
+	CreatedAt time.Time `json:"-"`
 }
 
 func (baseModel *BaseModel) BeforeCreate(scope *gorm.DB) error {

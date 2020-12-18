@@ -3,6 +3,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE SUBSCRIPTIONS
 (
     id          varchar(36) PRIMARY KEY,
+    description varchar(256)                        NOT NULL,
     external_id varchar(36)                         NOT NULL,
     url         varchar(256)                        NOT NULL,
     api_key     bytea,
@@ -38,3 +39,8 @@ CREATE TABLE SUBSCRIPTION_CONFIGURATION_EVENTS
     CONSTRAINT FK_subscription_id_configuration_event FOREIGN KEY (subscription_id) REFERENCES SUBSCRIPTIONS (ID),
     CONSTRAINT FK_event_id_configuration_event FOREIGN KEY (event_id) REFERENCES SUBSCRIPTION_EVENTS (ID)
 );
+
+INSERT INTO SUBSCRIPTION_EVENTS
+VALUES ('bcbc2ca8-a1ed-42e7-823c-af17b9c4d3b1', 'DEPLOY');
+INSERT INTO SUBSCRIPTION_EVENTS
+VALUES ('a10a93c5-3f40-4983-b082-1e565e98050a', 'UNDEPLOY');

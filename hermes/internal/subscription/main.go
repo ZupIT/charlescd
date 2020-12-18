@@ -8,7 +8,7 @@ import (
 
 type UseCases interface {
 	ParseSubscription(subscription io.ReadCloser) (Request, errors.Error)
-	Save(subscription Request) (Response, errors.Error)
+	Save(subscription Request) (SaveResponse, errors.Error)
 }
 type Main struct {
 	db         *gorm.DB

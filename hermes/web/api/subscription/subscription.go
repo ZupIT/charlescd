@@ -1,6 +1,7 @@
 package subscription
 
 import (
+	"errors"
 	"hermes/internal/subscription"
 	util2 "hermes/web/util"
 	"net/http"
@@ -13,6 +14,13 @@ func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
+
+		author := r.Header.Get("x-author")
+		if author == "" {
+			util2.NewResponse(w, http.StatusInternalServerError, errors.New("author is required"))
+			return
+		}
+		request.CreatedBy = author
 
 		createdSubscription, err := subscriptionMain.Save(request)
 		if err != nil {
