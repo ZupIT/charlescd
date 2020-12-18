@@ -16,6 +16,5 @@
 
 export interface CreateDeployment {
   buildId: string;
-  authorId: string;
   circleId: string;
 }
