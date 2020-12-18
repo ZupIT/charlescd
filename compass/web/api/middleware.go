@@ -45,7 +45,7 @@ func (api Api) ValidatorMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-type", "application/json")
 		workspaceID := r.Header.Get("x-workspace-id")
-		workspaceUUID := uuid.MustParse(workspaceID)
+
 		ers := NewApiErrors()
 
 		reqErr := tollbooth.LimitByRequest(api.limiter, w, r)
@@ -56,30 +56,36 @@ func (api Api) ValidatorMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		if getWhiteList(r.RequestURI) == "" && workspaceUUID == uuid.Nil {
-			ers.ToApiErrors(
-				strconv.Itoa(http.StatusForbidden),
-				"https://docs.charlescd.io/v/v0.3.x-pt/primeiros-passos/definindo-workspace",
-				errors.NewError("Invalid request", "WorkspaceId is required").WithOperations("ValidatorMiddleware"),
-			)
+		if getWhiteList(r.RequestURI) == "" {
+			if workspaceID == "" {
+				ers.ToApiErrors(
+					strconv.Itoa(http.StatusForbidden),
+					"https://docs.charlescd.io/v/v0.3.x-pt/primeiros-passos/definindo-workspace",
+					errors.NewError("Invalid request", "WorkspaceId is required").WithOperations("ValidatorMiddleware"),
+				)
 
-			util.NewResponse(w, http.StatusForbidden, ers)
-			return
+				util.NewResponse(w, http.StatusForbidden, ers)
+				return
+			} else {
+				workspaceUUID := uuid.MustParse(workspaceID)
+
+				authToken, err := extractToken(r.Header.Get("Authorization"))
+				if err != nil {
+					util.NewResponse(w, http.StatusUnauthorized, err)
+					return
+				}
+
+				allowed, err := api.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
+				if err != nil || !allowed {
+					util.NewResponse(w, http.StatusForbidden, err)
+					return
+				}
+
+				next.ServeHTTP(w, r)
+			}
+		} else {
+			next.ServeHTTP(w, r)
 		}
-
-		authToken, err := extractToken(r.Header.Get("Authorization"))
-		if err != nil {
-			util.NewResponse(w, http.StatusUnauthorized, err)
-			return
-		}
-
-		allowed, err := api.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
-		if err != nil || !allowed {
-			util.NewResponse(w, http.StatusForbidden, err)
-			return
-		}
-
-		next.ServeHTTP(w, r)
 	})
 }
 
