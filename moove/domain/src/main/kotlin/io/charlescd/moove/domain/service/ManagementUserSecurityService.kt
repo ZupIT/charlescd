@@ -18,7 +18,8 @@
 
 package io.charlescd.moove.domain.service
 
-interface ManagementUserSecurityService {
+interface
+ManagementUserSecurityService {
 
     fun getUserEmail(authorization: String): String
 

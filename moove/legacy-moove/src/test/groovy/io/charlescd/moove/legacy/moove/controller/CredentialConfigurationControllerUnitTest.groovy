@@ -28,9 +28,9 @@ import spock.lang.Specification
 
 class CredentialConfigurationControllerUnitTest extends Specification {
 
-    String workspaceId = "81861b6f-2b6e-44a1-a745-83e298a550c9";
-    String authorId = "cc1861b6f-2b6e-44a1-a745-83e298aj3qq1";
-    String generalId = "aas61b6f-2b6e-44a1-a745-83e298aj3d112";
+    String workspaceId = "81861b6f-2b6e-44a1-a745-83e298a550c9"
+    String generalId = "aas61b6f-2b6e-44a1-a745-83e298aj3d112"
+    String authorization = "qwerty123"
 
     CredentialConfigurationService service = Mock(CredentialConfigurationService)
     CredentialConfigurationController controller
@@ -41,13 +41,13 @@ class CredentialConfigurationControllerUnitTest extends Specification {
 
     def "should create registry config"() {
         given:
-        def request = new CreateGCPRegistryConfigurationRequest("GCP", "https://gcp.com.io", authorId, "charlescd", "{}")
+        def request = new CreateGCPRegistryConfigurationRequest("GCP", "https://gcp.com.io", "charlescd", "{}")
 
         when:
-        controller.createRegistryConfig(workspaceId, request)
+        controller.createRegistryConfig(workspaceId, authorization, request)
 
         then:
-        1 * service.createRegistryConfig(request, workspaceId)
+        1 * service.createRegistryConfig(request, workspaceId, authorization)
         notThrown()
     }
 
@@ -58,13 +58,13 @@ class CredentialConfigurationControllerUnitTest extends Specification {
             GitProvidersEnum.GITHUB, K8sClusterProvidersEnum.DEFAULT,
                 null, null, null, null, null, null, null, null, null, null)
 
-        def request = new CreateOctopipeCdConfigurationRequest(configData, "octopite", authorId)
+        def request = new CreateOctopipeCdConfigurationRequest(configData, "octopite")
 
         when:
-        controller.createCdConfig(workspaceId, request)
+        controller.createCdConfig(workspaceId, authorization, request)
 
         then:
-        1 * service.createCdConfig(request, workspaceId)
+        1 * service.createCdConfig(request, workspaceId, authorization)
         notThrown()
     }
 
@@ -92,7 +92,7 @@ class CredentialConfigurationControllerUnitTest extends Specification {
 
     def "should test registry config"() {
         given:
-        def request = new CreateGCPRegistryConfigurationRequest("GCP", "https://gcp.com.io", authorId, "charlescd", "{}")
+        def request = new CreateGCPRegistryConfigurationRequest("GCP", "https://gcp.com.io", "charlescd", "{}")
 
         when:
         controller.configurationValidation(workspaceId, request)

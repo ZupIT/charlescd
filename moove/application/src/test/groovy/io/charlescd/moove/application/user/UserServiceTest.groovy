@@ -84,6 +84,7 @@ class UserServiceTest extends Specification {
     def "when find all users and not exists should return empty list"() {
         given:
         def pageRequest = new PageRequest()
+        def user = getDummyUser("charles@charles.com")
         def emptyPage = new Page([], 0, 20, 0)
         def name = "charles"
 
@@ -151,7 +152,7 @@ class UserServiceTest extends Specification {
         this.userService.checkIfEmailAlreadyExists(user)
 
         then:
-        1 * userRepository.findByEmail('charles@email.com') >> Optional.of(user)
+        1 * this.userRepository.findByEmail(email) >> Optional.of(getDummyUser(email))
 
         thrown(BusinessException)
 
@@ -177,7 +178,7 @@ class UserServiceTest extends Specification {
         def email = "charles@email.com"
 
         when:
-        this.userService.findByToken(authorization)
+        this.userService.findByAuthorizationToken(authorization)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> email
@@ -193,7 +194,7 @@ class UserServiceTest extends Specification {
         def email = "charles@email.com"
 
         when:
-        this.userService.findByToken(authorization)
+        this.userService.findByAuthorizationToken(authorization)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> email
@@ -232,7 +233,7 @@ class UserServiceTest extends Specification {
         notThrown()
     }
 
-    def "should create user on keycloak"() {
+    def "should create user on keycloack"() {
         given:
         def userEmail = "charles@email.com"
         def userName = "charles"
@@ -250,5 +251,4 @@ class UserServiceTest extends Specification {
     private User getDummyUser(String email) {
         new User("qwerty-12345-asdf-98760", "charles", email, "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
     }
-
 }

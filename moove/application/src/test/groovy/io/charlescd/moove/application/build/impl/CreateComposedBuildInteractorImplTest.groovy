@@ -18,6 +18,7 @@ package io.charlescd.moove.application.build.impl
 
 import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.ModuleService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.build.request.CreateComposedBuildRequest
 import io.charlescd.moove.domain.*
@@ -49,37 +50,39 @@ class CreateComposedBuildInteractorImplTest extends Specification {
 
     def 'when user does not exist should throw exception'() {
         given:
-        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-        def author = getDummyUser()
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
 
-        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest(author)
+        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest()
 
         when:
-        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId)
+        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
 
         then:
-        1 * userRepository.findById(author.id) >> Optional.empty()
+        1 * managementUserSecurityService.getUserEmail(authorization) >> "email@email.com"
+        1 * userRepository.findByEmail("email@email.com") >> Optional.empty()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
-        ex.id == author.id
     }
 
     def 'when module does not exist should throw exception'() {
         given:
         def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-        def author = getDummyUser()
+        def author = TestUtils.user
+        def authorization = TestUtils.authorization
 
-        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest(author)
+        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest()
 
         def listOfModulesId = new ArrayList()
         listOfModulesId.add(createComposedBuildRequest.modules[0].id)
 
         when:
-        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId)
+        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
 
         then:
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> new ArrayList<String>()
 
         def ex = thrown(NotFoundException)
@@ -92,10 +95,11 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         given:
         def gitRepositoryAddress = 'http://git-repository-address.com'
         def helmRepository = 'http://helm-repository.com'
-        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-        def author = getDummyUser()
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
 
-        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest(author)
+        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest()
 
         def listOfModulesId = new ArrayList()
         listOfModulesId.add(createComposedBuildRequest.modules[0].id)
@@ -120,10 +124,11 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         listOfModules.add(module)
 
         when:
-        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId)
+        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
 
         then:
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
@@ -158,10 +163,11 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         given:
         def gitRepositoryAddress = 'http://git-repository-address.com'
         def helmRepository = 'http://helm-repository.com'
-        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-        def author = getDummyUser()
+        def workspaceId = TestUtils.workspaceId
+        def author = TestUtils.user
+        def authorization = TestUtils.authorization
 
-        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest(author)
+        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest()
 
         def listOfModulesId = new ArrayList()
         listOfModulesId.add(createComposedBuildRequest.modules[0].id)
@@ -186,10 +192,11 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         listOfModules.add(module)
 
         when:
-        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId)
+        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
 
         then:
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
@@ -219,18 +226,13 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         response.features[0].branchName == createComposedBuildRequest.releaseName
     }
 
-    private CreateComposedBuildRequest getDummyCreateComposedBuildRequest(User author) {
+    private static CreateComposedBuildRequest getDummyCreateComposedBuildRequest() {
         def componentRequestList = new ArrayList<CreateComposedBuildRequest.ComponentRequest>()
         componentRequestList.add(new CreateComposedBuildRequest.ComponentRequest('1a58c67c-6acb-11ea-bc55-0242ac130003', 'v-0102', 'Artifact'))
 
         def moduleRequestList = new ArrayList<CreateComposedBuildRequest.ModuleRequest>()
         moduleRequestList.add(new CreateComposedBuildRequest.ModuleRequest('1a58c280-6acb-11ea-bc55-0242ac130003', componentRequestList))
 
-        return new CreateComposedBuildRequest('release-name', author.id, moduleRequestList)
-    }
-
-    private User getDummyUser() {
-        new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
+        return new CreateComposedBuildRequest('release-name', moduleRequestList)
     }
 }

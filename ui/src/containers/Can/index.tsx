@@ -65,7 +65,9 @@ const Element = ({
           cursor: 'default',
           opacity: '0.3',
           transform: 'scale(1)'
-        }
+        },
+        'data-tip': true,
+        'data-for': childProps.id || id
       });
 
       return newChildren;
@@ -79,10 +81,7 @@ const Element = ({
   const renderChildren = (allowed: boolean) => (
     <>
       {!allowed && renderTooltip()}
-      {cloneElement(getChildren(allowed), {
-        'data-tip': true,
-        'data-for': id
-      })}
+      {cloneElement(getChildren(allowed))}
     </>
   );
 

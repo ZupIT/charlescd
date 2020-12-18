@@ -22,11 +22,11 @@ import spock.lang.Specification
 
 class KeycloakManagementUserSecurityServiceTest extends Specification {
 
-    private KeycloakManagementUserSecurityService keycloakManagementUserSecurityService
+    private KeycloackManagementUserSecurityService keycloackManagementUserSecurityService
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        keycloakManagementUserSecurityService = new KeycloakManagementUserSecurityService(keycloakService)
+        keycloackManagementUserSecurityService = new KeycloackManagementUserSecurityService(keycloakService)
     }
 
     def 'should create a new user'() {
@@ -36,7 +36,7 @@ class KeycloakManagementUserSecurityServiceTest extends Specification {
         def password = "xpto123@"
 
         when:
-        keycloakManagementUserSecurityService.createUser(email, fullName, password)
+        keycloackManagementUserSecurityService.createUser(email, fullName, password)
 
         then:
         1 * keycloakService.createUser(email, fullName, password)
@@ -51,7 +51,7 @@ class KeycloakManagementUserSecurityServiceTest extends Specification {
         def newPassword = "new-password"
 
         when:
-        keycloakManagementUserSecurityService.changePassword(email, oldPassword, newPassword)
+        keycloackManagementUserSecurityService.changePassword(email, oldPassword, newPassword)
 
         then:
         1 * keycloakService.changeUserPassword(email, oldPassword, newPassword) >> {}
@@ -65,23 +65,10 @@ class KeycloakManagementUserSecurityServiceTest extends Specification {
         def newPassword = "newPassword"
 
         when:
-        keycloakManagementUserSecurityService.resetUserPassword(email, newPassword)
+        keycloackManagementUserSecurityService.resetUserPassword(email, newPassword)
 
         then:
         1 * keycloakService.resetPassword(email, newPassword)
-
-        notThrown()
-    }
-
-    def 'should get email by authorization header value'() {
-        given:
-        def authorization = "Bearer qwerty"
-
-        when:
-        keycloakManagementUserSecurityService.getUserEmail(authorization)
-
-        then:
-        1 * keycloakService.getEmailByAccessToken(authorization) >> "email@email.com"
 
         notThrown()
     }

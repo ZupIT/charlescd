@@ -55,22 +55,40 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
     )
 
     private UserRepository repository = Mock(UserRepository)
-    private KeycloakServiceLegacy keycloakServiceLegacy = Mock(KeycloakServiceLegacy)
-    private KeycloakService keycloackService = Mock(KeycloakService)
+    private KeycloakServiceLegacy keycloakService = Mock(KeycloakServiceLegacy)
     private UserServiceLegacy service
     private Boolean idmEnabled = true
 
     def setup() {
-        service = new UserServiceLegacy(repository, keycloackService, keycloakServiceLegacy, idmEnabled)
+        service = new UserServiceLegacy(repository, keycloakService, idmEnabled)
     }
 
     def "should delete by id"() {
         when:
-        def response = service.delete("81861b6f-2b6e-44a1-a745-83e298a550c9")
+        def response = service.delete("81861b6f-2b6e-44a1-a745-83e298a550c9", authorization)
 
         then:
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
+        1 * repository.findByEmail("email@email.com") >> Optional.of(root)
         1 * repository.findById("81861b6f-2b6e-44a1-a745-83e298a550c9") >> Optional.of(user)
-        1 * keycloackService.deleteUserByEmail('email')
+        1 * keycloakService.deleteUserById(_)
+        1 * repository.delete(user)
+        response.id == representation.id
+        response.name == representation.name
+        response.photoUrl == representation.photoUrl
+        notThrown()
+    }
+
+    def "should delete by user token when not root"() {
+        when:
+        def response = service.delete("1123", authorization)
+
+        then:
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
+        1 * repository.findByEmail("email@email.com") >> Optional.of(user)
+        1 * repository.findById(user.id) >> Optional.of(user)
+        0 * repository.findById("1123") >> Optional.of(user)
+        1 * keycloakService.deleteUserById(_)
         1 * repository.delete(user)
         response.id == representation.id
         response.name == representation.name
@@ -80,13 +98,33 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     def "should throw exception on delete if user id do not exist"() {
         when:
-        service.delete("test")
+        service.delete("test", authorization)
 
         then:
-        1 * repository.findById("test") >> Optional.empty()
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "test"
+        1 * repository.findByEmail("test") >> Optional.empty()
         def ex = thrown(NotFoundExceptionLegacy)
         ex.resourceName == "user"
         ex.id == "test"
+    }
+
+    def "should delete user and shouldnt delete on keycloak"() {
+        given:
+        service = new UserServiceLegacy(repository, keycloakService, false)
+
+        when:
+        def response = service.delete(representation.id, authorization)
+
+        then:
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
+        1 * repository.findByEmail("email@email.com") >> Optional.of(user)
+        1 * repository.findById(representation.id) >> Optional.of(user)
+        0 * keycloakService.deleteUserById(_)
+        1 * repository.delete(user)
+        response.id == representation.id
+        response.name == representation.name
+        response.photoUrl == representation.photoUrl
+        notThrown()
     }
 
     def "should get user by id"() {
@@ -135,73 +173,29 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         thrown(NotFoundExceptionLegacy)
     }
 
-    def "should get user by authorization header"() {
-
-        given:
-        def authorization = "Bearer qwerty"
-        def email = "email@email.com"
-
-        when:
-        service.findByAuthorizationToken(authorization)
-
-        then:
-        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> email
-        1 * repository.findByEmail(email) >> Optional.of(user)
-    }
-
-    def "should throw NotFoundException when get invalid user by authorization header"() {
-
-        given:
-        def authorization = "Bearer qwerty"
-        def email = "email@email.com"
-
-        when:
-        service.findByAuthorizationToken(authorization)
-
-        then:
-        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> email
-        1 * repository.findByEmail(email) >> Optional.empty()
-        thrown(NotFoundExceptionLegacy)
-    }
-
-    def "should reset user by email"() {
-        given:
-        final email = "teste@zup.com.br"
-        final password = "teste@Teste123!"
-        final request = new ResetPasswordRequest(password)
-
-        when:
-        service.resetPassword(email, request)
-
-        then:
-        1 * keycloackService.resetPassword(email, password)
-        notThrown()
-    }
-
-
     def "should get user by auth token"() {
 
         when:
         def response = service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> user.email
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> user.email
         1 * repository.findByEmail(user.email) >> Optional.of(user)
         response.id == representation.id
     }
 
-    def "should throw NotFoundException when get invalid user by auth token"() {
+    def "should throw NotFoundException when get invalid user by auth roken"() {
 
         when:
         service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> user.email
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> user.email
         1 * repository.findByEmail(user.email) >> Optional.empty()
         thrown(NotFoundExceptionLegacy)
     }
 
-    private String getAuthorization() {
+        private String getAuthorization() {
         return  "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3";
     }
 }

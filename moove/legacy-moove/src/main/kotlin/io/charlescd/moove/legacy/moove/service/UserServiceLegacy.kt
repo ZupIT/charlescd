@@ -21,8 +21,6 @@ package io.charlescd.moove.legacy.moove.service
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
-import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
 import javax.transaction.Transactional
@@ -32,50 +30,17 @@ import org.springframework.stereotype.Service
 @Service
 class UserServiceLegacy(
     private val userRepository: UserRepository,
-    private val keycloakService: KeycloakService,
     private val keycloakServiceLegacy: KeycloakServiceLegacy,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) {
 
-    fun addGroupsToUser(userId: String, addGroupsRequest: AddGroupsRequest) {
-        this.userRepository.findById(userId)
-            .map { this.keycloakService.addGroupsToUser(it.email, addGroupsRequest.groupIds) }
-            .orElseThrow { NotFoundExceptionLegacy("user", userId) }
-    }
-
-    fun removeUserFromGroup(userId: String, groupId: String) {
-        this.userRepository.findById(userId)
-            .orElseThrow { NotFoundExceptionLegacy("user", userId) }
-            .let { keycloakService.removeUserFromGroup(it.email, groupId) }
-    }
-
     @Transactional
-    fun delete(id: String): UserRepresentation {
-        return userRepository.findById(id)
-            .map(this::deleteUser)
-            .map(this::deleteOnKeycloak)
-            .map(this::toRepresentation)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
-    }
-
-    private fun deleteOnKeycloak(it: User): User {
-        if (internalIdmEnabled) {
-            keycloakService.deleteUserByEmail(it.email)
+    fun delete(id: String, authorization: String): UserRepresentation {
+        val user = findByAuthorizationToken(authorization)
+        if (user.isRoot) {
+            return deleteUser(id)
         }
-        return it
-    }
-
-    private fun deleteUser(user: User): User =
-        user.also { userRepository.delete(it) }
-
-    private fun toRepresentation(user: User): UserRepresentation = user.toRepresentation()
-
-    fun resetPassword(email: String, request: ResetPasswordRequest) {
-
-        keycloakService.resetPassword(
-            email,
-            request.newPassword
-        )
+        return deleteUser(user.id)
     }
 
     fun findUsers(users: List<String>): List<User> =
@@ -96,4 +61,24 @@ class UserServiceLegacy(
             NotFoundExceptionLegacy("user", email)
         }
     }
+
+    private fun deleteUser(id: String): UserRepresentation {
+        return userRepository.findById(id)
+            .map(this::deleteUser)
+            .map(this::deleteOnKeycloak)
+            .map(this::toRepresentation)
+            .orElseThrow { NotFoundExceptionLegacy("user", id) }
+    }
+
+    private fun deleteOnKeycloak(it: User): User {
+        if (internalIdmEnabled) {
+            keycloakServiceLegacy.deleteUserById(it.id)
+        }
+        return it
+    }
+
+    private fun deleteUser(user: User): User =
+        user.also { userRepository.delete(it) }
+
+    private fun toRepresentation(user: User): UserRepresentation = user.toRepresentation()
 }

@@ -211,4 +211,21 @@ class KeycloakClientServiceTest extends Specification {
 
         notThrown()
     }
+
+    def 'should delete a keycloak user by userId'() {
+        given:
+        def userId = "qwerty"
+
+        when:
+        keycloakClientService.deleteUser(userId)
+
+        then:
+        1 * keycloakClient.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.delete(_) >> { arguments ->
+
+            return response
+        }
+        notThrown()
+    }
 }

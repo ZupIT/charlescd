@@ -31,6 +31,7 @@ class CardControllerUnitTest extends Specification {
 
     String workspaceId = "09s861b6f-2b6e-44a1-a745-83e298a5ssl3"
     String id = "3ass861b6f-2b6e-44a1-a745-83e298a5asd2"
+    String authorization = "Bearer qwerty"
 
     CardService service = Mock(CardService)
     CardController controller
@@ -45,7 +46,6 @@ class CardControllerUnitTest extends Specification {
         def request = new CreateCardRequest(
                 "Card name",
                 "Card description",
-                "qw2131b6f-2b6e-44a1-a745-83e298y56dr3",
                 "SoftwareCard",
                 new ArrayList<String>(),
                 "81861b6f-2b6e-44a1-a745-83e298a550c9",
@@ -55,10 +55,10 @@ class CardControllerUnitTest extends Specification {
         )
 
         when:
-        controller.create(workspaceId, request)
+        controller.create(authorization, workspaceId, request)
 
         then:
-        1 * service.create(request, workspaceId)
+        1 * service.create(request, workspaceId, authorization)
         notThrown()
     }
 
@@ -141,10 +141,10 @@ class CardControllerUnitTest extends Specification {
         )
 
         when:
-        controller.addMembers(workspaceId, id, request)
+        controller.addMembers(authorization, workspaceId,  id, request)
 
         then:
-        1 * service.addMembers(id, request, workspaceId)
+        1 * service.addMembers(id, request, workspaceId, authorization)
         notThrown()
     }
 
@@ -164,15 +164,14 @@ class CardControllerUnitTest extends Specification {
     def "should add a comment"() {
         given:
         def request = new AddCommentRequest(
-                "authorId",
                 "comment"
         )
 
         when:
-        controller.addComment(workspaceId, id, request)
+        controller.addComment(authorization,  workspaceId, id, request)
 
         then:
-        1 * service.addComment(id, request, workspaceId)
+        1 * service.addComment(id, request, workspaceId, authorization)
         notThrown()
     }
 }

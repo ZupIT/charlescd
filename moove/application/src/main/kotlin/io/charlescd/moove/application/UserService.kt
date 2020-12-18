@@ -62,7 +62,7 @@ class UserService(private val userRepository: UserRepository, private val manage
         return this.userRepository.save(user)
     }
 
-    fun findByToken(authorization: String): User {
+    fun findByAuthorizationToken(authorization: String): User {
         val email = getEmailFromToken(authorization)
         return userRepository
             .findByEmail(email).orElseThrow {
