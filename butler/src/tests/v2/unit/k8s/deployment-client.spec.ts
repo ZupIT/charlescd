@@ -86,7 +86,7 @@ describe('Deployment CRD client apply method', () => {
     expect(readSpy).toHaveBeenCalledWith(expectedManifest)
   })
 
-  it('should call the patch method with the correct arguments', async() => {
+  it('should call the patch method with the correct arguments and should not call the create method', async() => {
     jest.spyOn(k8sClient.client, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
     const patchSpy = jest.spyOn(k8sClient.client, 'patch')
@@ -107,7 +107,7 @@ describe('Deployment CRD client apply method', () => {
     expect(createSpy).not.toHaveBeenCalled()
   })
 
-  it('should call the create method with the correct arguments', async() => {
+  it('should call the create method with the correct arguments and should not call the patch method', async() => {
     jest.spyOn(k8sClient.client, 'read')
       .mockImplementation(() => Promise.reject(new k8s.HttpError({} as http.IncomingMessage, {}, 404)))
     const patchSpy = jest.spyOn(k8sClient.client, 'patch')
@@ -122,22 +122,45 @@ describe('Deployment CRD client apply method', () => {
   })
 
   it('should throw error when create method fails', async() => {
+    const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
+
     jest.spyOn(k8sClient.client, 'read')
-      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+      .mockImplementation(() => Promise.reject(new k8s.HttpError({} as http.IncomingMessage, {}, 404)))
     jest.spyOn(k8sClient.client, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
     jest.spyOn(k8sClient.client, 'create')
-      .mockImplementation(() => Promise.reject(new k8s.HttpError({} as http.IncomingMessage, {}, 500)))
+      .mockImplementation(() => Promise.reject(expectedError))
 
-    await expect(await k8sClient.applyDeploymentCustomResource(deployment))
-      .rejects.toEqual(expect.anything())
+    await expect(k8sClient.applyDeploymentCustomResource(deployment))
+      .rejects.toEqual(expectedError)
   })
 
-  it('should throw error when patch method fails', () => {
+  it('should throw error when patch method fails', async() => {
+    const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
+    jest.spyOn(k8sClient.client, 'read')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+    jest.spyOn(k8sClient.client, 'patch')
+      .mockImplementation(() => Promise.reject(expectedError))
+    jest.spyOn(k8sClient.client, 'create')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+
+    await expect(k8sClient.applyDeploymentCustomResource(deployment))
+      .rejects.toEqual(expectedError)
   })
 
-  it('should throw error when create method fails', () => {
+  it('should throw error when read method fails and should not call the create method', async() => {
+    const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
+    jest.spyOn(k8sClient.client, 'read')
+      .mockImplementation(() => Promise.reject(expectedError))
+    jest.spyOn(k8sClient.client, 'patch')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+    const createSpy = jest.spyOn(k8sClient.client, 'create')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+
+    await expect(k8sClient.applyDeploymentCustomResource(deployment))
+      .rejects.toEqual(expectedError)
+    expect(createSpy).not.toHaveBeenCalled()
   })
 })
