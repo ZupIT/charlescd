@@ -1024,9 +1024,11 @@ class CardServiceUnitTest {
 
     @Test
     fun `shouldn't create card with invalid branch names`() {
+
         invalidBranchNames().forEach {
+            every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
             assertFailsWith<IllegalArgumentException> {
-                cardService.create(buildCreateCardRequest(it), workspaceId)
+                cardService.create(buildCreateCardRequest(it), workspaceId, getAuthorization())
             }
         }
     }
@@ -1168,7 +1170,7 @@ class CardServiceUnitTest {
             "-feature-test"
         )
     }
-    
+
     private fun getAuthorization(): String {
         return "Bearer dokqwodksoksd"
     }
