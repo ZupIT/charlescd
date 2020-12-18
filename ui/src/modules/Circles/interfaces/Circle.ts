@@ -68,14 +68,12 @@ export interface Circle {
 }
 
 export interface CreateCircleWithFilePayload {
-  authorId: string;
   file: File;
   keyName: string;
   name: string;
 }
 
 export interface CreateCircleManuallyPayload {
-  authorId: string;
   rules: Rules;
   name: string;
 }

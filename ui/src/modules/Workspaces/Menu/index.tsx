@@ -21,7 +21,6 @@ import map from 'lodash/map';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
-import { getProfileByKey } from 'core/utils/profile';
 import routes from 'core/constants/routes';
 import { saveWorkspace } from 'core/utils/workspace';
 import { isRoot } from 'core/utils/auth';
@@ -77,8 +76,7 @@ const WorkspaceMenu = ({
   const openWorkspaceModal = () => setToggleModal(true);
 
   const onSubmit = ({ name }: Record<string, string>) => {
-    const authorId = getProfileByKey('id');
-    save({ name, authorId });
+    save({ name });
   };
 
   useEffect(() => {

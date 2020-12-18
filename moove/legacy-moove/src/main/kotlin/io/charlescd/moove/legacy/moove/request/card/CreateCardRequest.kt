@@ -26,9 +26,6 @@ data class CreateCardRequest(
     val description: String?,
 
     @field:NotBlank
-    val authorId: String,
-
-    @field:NotBlank
     val type: String,
 
     @field:NotNull

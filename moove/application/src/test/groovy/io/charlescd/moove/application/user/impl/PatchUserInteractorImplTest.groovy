@@ -26,6 +26,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -34,10 +35,10 @@ class PatchUserInteractorImplTest extends Specification {
 
     private PatchUserInteractor patchUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
-    private KeycloakService keycloakService = Mock(KeycloakService)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), keycloakService, true)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), true)
     }
 
     def "when trying to update user name should do it successfully"() {
@@ -57,7 +58,7 @@ class PatchUserInteractorImplTest extends Specification {
         def userResponse = patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         1 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         1 * this.userRepository.update(_) >> { arguments ->
@@ -93,7 +94,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
@@ -119,7 +120,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
@@ -145,7 +146,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
@@ -171,7 +172,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
@@ -197,7 +198,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
@@ -223,7 +224,7 @@ class PatchUserInteractorImplTest extends Specification {
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        1 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         1 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
@@ -245,13 +246,13 @@ class PatchUserInteractorImplTest extends Specification {
         def request = new PatchUserRequest(patches)
         def authorization = "Bearer token"
 
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository), keycloakService, false)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), false)
 
         when:
         patchUserInteractor.execute(userId, request, authorization)
 
         then:
-        0 * this.keycloakService.getEmailByAccessToken(authorization) >> authEmail
+        0 * this.managementUserSecurityService.getUserEmail(authorization) >> authEmail
         0 * this.userRepository.findByEmail(authEmail) >> Optional.of(authUser)
         0 * this.userRepository.findById(userId.toString()) >> Optional.of(user)
         0 * this.userRepository.update(_) >> any()
