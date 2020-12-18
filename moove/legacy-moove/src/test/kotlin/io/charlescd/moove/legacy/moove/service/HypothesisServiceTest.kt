@@ -175,11 +175,14 @@ class HypothesisServiceTest {
     private val cardRepository: CardRepository = mockkClass(
         CardRepository::class
     )
+    private val userServiceLegacy: UserServiceLegacy = mockkClass(
+        UserServiceLegacy::class
+    )
 
     private val hypothesisService: HypothesisServiceLegacy = HypothesisServiceLegacy(
         hypothesisRepository,
         labelRepository,
-        userRepository,
+        userServiceLegacy,
         cardColumnRepository,
         cardRepository
     )
@@ -450,7 +453,7 @@ class HypothesisServiceTest {
         val description = "Description Test"
         val authorId = "204a5dfa-0ea1-4a45-bc51-12933ef92d42"
         val labels: List<String> = emptyList()
-        val testCreatedHypothesisRequest = CreateHypothesisRequest(name, description, authorId, labels)
+        val testCreatedHypothesisRequest = CreateHypothesisRequest(name, description, labels)
         val workspaceId = "337da7e5-2ca4-410f-aa78-44c93b2cbb9d"
 
         val hypothesis = Hypothesis(
@@ -458,13 +461,17 @@ class HypothesisServiceTest {
             emptyList(), emptyList(), emptyList(), workspaceId
         )
 
-        every { userRepository.findById(authorId) } returns Optional.of(user)
+        every {
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+        } returns user
+
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { hypothesisRepository.save(any() as Hypothesis) } returns hypothesis
         every { cardColumnRepository.saveAll(any() as List<CardColumn>) } returns emptyList()
 
-        val hypothesisCreated = hypothesisService.create(testCreatedHypothesisRequest, workspaceId)
+        val hypothesisCreated = hypothesisService.create(testCreatedHypothesisRequest, workspaceId, getAuthorization())
 
-        verify(exactly = 1) { userRepository.findById(authorId) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { hypothesisRepository.save(any() as Hypothesis) }
         verify(exactly = 1) { cardColumnRepository.saveAll(any() as List<CardColumn>) }
 
@@ -478,16 +485,20 @@ class HypothesisServiceTest {
         val description = "Description Test"
         val authorId = "204a5dfa-0ea1-4a45-bc51-12933ef92d42"
         val labels: List<String> = emptyList()
-        val testCreatedHypothesisRequest = CreateHypothesisRequest(name, description, authorId, labels)
+        val testCreatedHypothesisRequest = CreateHypothesisRequest(name, description, labels)
         val workspaceId = "337da7e5-2ca4-410f-aa78-44c93b2cbb9d"
         val hypothesis = Hypothesis(
             "739562ae-5991-11ea-8e2d-0242ac130003", name, description, user, LocalDateTime.now(),
             emptyList(), emptyList(), emptyList(), workspaceId
         )
-        every { userRepository.findById(authorId) } returns Optional.empty()
+
+        every {
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+        } throws NotFoundExceptionLegacy("user", "email")
+
         every { hypothesisRepository.save(any() as Hypothesis) } returns hypothesis
 
-        hypothesisService.create(testCreatedHypothesisRequest, workspaceId)
+        hypothesisService.create(testCreatedHypothesisRequest, workspaceId, getAuthorization())
         verify(exactly = 1) { userRepository.findById(authorId) }
         verify(exactly = 1) { hypothesisRepository.save(any() as Hypothesis) }
     }
@@ -833,11 +844,10 @@ class HypothesisServiceTest {
         val createHypothesisRequest = CreateHypothesisRequest(
             name = hypothesis.name,
             description = hypothesis.description,
-            authorId = user.id,
             labels = listOf()
         )
 
-        every { userRepository.findById(user.id) } returns Optional.of(user)
+        every { userServiceLegacy.findByAuthorizationToken(getAuthorization()) } returns user
         every { hypothesisRepository.save(any() as Hypothesis) } returns hypothesis
 
         every { cardColumnRepository.saveAll(any() as List<CardColumn>) } returns listOf(
@@ -848,9 +858,9 @@ class HypothesisServiceTest {
             cardColumnDeployedReleases
         )
 
-        val response = hypothesisService.create(createHypothesisRequest, workspaceId)
+        val response = hypothesisService.create(createHypothesisRequest, workspaceId, getAuthorization())
 
-        verify(exactly = 1) { userRepository.findById(user.id) }
+        verify(exactly = 1) { userServiceLegacy.findByAuthorizationToken(getAuthorization()) }
         verify(exactly = 1) { hypothesisRepository.save(any() as Hypothesis) }
         verify(exactly = 1) { cardColumnRepository.saveAll(any() as List<CardColumn>) }
 
@@ -881,6 +891,10 @@ class HypothesisServiceTest {
             tag = "RC-1.0.0", hypothesis = hypothesis, column = cardColumn,
             status = status, deployments = deployments, workspaceId = workspaceId
         )
+    }
+
+    private fun getAuthorization(): String {
+        return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
     }
 
     private fun createSofwareCard(branchName: String = "feature-branch"): SoftwareCard =

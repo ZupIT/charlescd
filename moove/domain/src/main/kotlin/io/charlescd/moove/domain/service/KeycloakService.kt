@@ -27,4 +27,6 @@ interface KeycloakService {
     fun getEmailByAccessToken(authorization: String): String
 
     fun changeUserPassword(email: String, oldPassword: String, newPassword: String)
+
+    fun deleteUser(userId: String)
 }

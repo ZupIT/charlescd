@@ -20,7 +20,6 @@ import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
 import { useRegistry, useRegistryTestConnection } from './hooks';
 import { options } from './constants';
 import { Registry } from './interfaces';
@@ -44,7 +43,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [message, setMessage] = useState<ConnectionProps>(null);
-  const profileId = getProfileByKey('id');
   const {
     register,
     handleSubmit,
@@ -81,7 +79,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const onClick = () => {
     const registry = {
       ...getValues(),
-      authorId: profileId,
       provider: registryType
     };
     testConnectionRegistry(registry);
@@ -90,7 +87,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const onSubmit = (registry: Registry) => {
     save({
       ...registry,
-      authorId: profileId,
       provider: registryType
     });
   };

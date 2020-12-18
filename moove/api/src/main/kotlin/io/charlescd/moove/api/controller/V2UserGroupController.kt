@@ -52,8 +52,11 @@ class V2UserGroupController(
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody request: CreateUserGroupRequest): UserGroupResponse {
-        return this.createUserGroupInteractor.execute(request)
+    fun create(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @Valid @RequestBody request: CreateUserGroupRequest
+    ): UserGroupResponse {
+        return this.createUserGroupInteractor.execute(request, authorization)
     }
 
     @ApiOperation(value = "Update a existing User Group")
@@ -111,6 +114,7 @@ class V2UserGroupController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/members/{memberId}")
     fun delete(@PathVariable("id") id: String, @PathVariable("memberId") memberId: String) {
+
         this.removeMemberFromUserGroupInteractor.execute(id, memberId)
     }
 }
