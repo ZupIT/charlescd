@@ -82,7 +82,6 @@ test.only('render with a valid session token', async () => {
   );
 
   const sidebar = await screen.findByTestId('sidebar');
-  screen.debug();
   expect(sidebar).toBeInTheDocument();
 
   const accessToken = localStorage.getItem(accessTokenKey);
