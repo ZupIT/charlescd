@@ -19,12 +19,12 @@ import { Component, Deployment } from '../../../api/deployments/interfaces'
 import * as k8s from '@kubernetes/client-node'
 import { CrdBuilder } from './crd-builder'
 import { KubernetesManifest } from '../interfaces/k8s-manifest.interface'
-import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
+import { ConsoleLoggerService } from '../../logs/console'
 
 @Injectable()
 export class K8sClient {
 
-  private client: k8s.KubernetesObjectApi
+  public client: k8s.KubernetesObjectApi
 
   constructor(
     private consoleLoggerService: ConsoleLoggerService
@@ -42,7 +42,11 @@ export class K8sClient {
       await this.readResource(deploymentManifest)
       await this.patchResource(deploymentManifest)
     } catch(error) {
-      await this.createResource(deploymentManifest) // TODO create condition? If 404 create?
+      if (!(error instanceof k8s.HttpError) || error.statusCode !== 404) {
+        this.consoleLoggerService.log('ERROR:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { error })
+        throw error
+      }
+      await this.createResource(deploymentManifest)
     }
     this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT_CUSTOM_RESOURCE')
   }
@@ -84,9 +88,10 @@ export class K8sClient {
         undefined,
         { headers: { 'Content-type': 'application/merge-patch+json' } }
       )
-      console.log('GET:PATCH_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      this.consoleLoggerService.log('GET:PATCH_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
     } catch(error) {
       this.consoleLoggerService.log('ERROR:PATCH_RESOURCE_MANIFEST', { error })
+      throw error
     }
   }
 
@@ -94,9 +99,10 @@ export class K8sClient {
     try {
       this.consoleLoggerService.log('START:CREATE_RESOURCE_MANIFEST')
       const res = await this.client.create(manifest)
-      console.log('GET:CREATE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      this.consoleLoggerService.log('GET:CREATE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
     } catch(error) {
       this.consoleLoggerService.log('ERROR:CREATE_RESOURCE_MANIFEST', { error })
+      throw error
     }
   }
 
@@ -114,9 +120,10 @@ export class K8sClient {
     try {
       this.consoleLoggerService.log('START:DELETE_RESOURCE_MANIFEST')
       const res = await this.client.delete(manifest)
-      console.log('GET:DELETE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      this.consoleLoggerService.log('GET:DELETE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
     } catch(error) {
       this.consoleLoggerService.log('ERROR:DELETE_RESOURCE_MANIFEST', { error })
+      throw error
     }
   }
 }
