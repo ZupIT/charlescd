@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.7 (21/12/2020)
+- [#769](https://github.com/ZupIT/charlescd/pull/769) Fixing rate limit variables at moove chart
+- [#767](https://github.com/ZupIT/charlescd/pull/767) Hotfix: fixing moove chart and updating circle matcher readme
+- [#764](https://github.com/ZupIT/charlescd/pull/764) CI Update of charts and changelog
+
+---
+
 ## 0.4.6 (18/12/2020)
 - [#670](https://github.com/ZupIT/charlescd/pull/670) Vulnerabilites fixes
 - [#623](https://github.com/ZupIT/charlescd/pull/623) removing unused legacy code
@@ -473,7 +480,3 @@
 ---
 
 ## v0.2.8 (03/06/2020)
-
----
-
-## 0.2.7 (03/06/2020)
