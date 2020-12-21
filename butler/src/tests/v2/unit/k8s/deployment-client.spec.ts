@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// jest.mock('@kubernetes/client-node')
-
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
