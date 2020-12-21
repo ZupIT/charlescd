@@ -54,7 +54,7 @@ export class TestSetupUtils {
       return app
     } catch (error) {
       throw new Error(`ERROR: Could not boot nestjs application: ${error}`)
-    }0
+    }
   }
 
   public static seApplicationConstants(): void {
