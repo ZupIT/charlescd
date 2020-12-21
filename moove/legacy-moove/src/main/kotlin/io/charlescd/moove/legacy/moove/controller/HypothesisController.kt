@@ -66,10 +66,11 @@ class HypothesisController(private val hypothesisService: HypothesisServiceLegac
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody request: CreateHypothesisRequest
     ): HypothesisRepresentation =
-        this.hypothesisService.create(request, workspaceId)
+        this.hypothesisService.create(request, workspaceId, authorization)
 
     @ApiOperation(value = "Update Hypothesis")
     @ApiImplicitParam(

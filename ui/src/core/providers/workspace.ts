@@ -33,7 +33,6 @@ export interface Filter {
 
 export interface WorkspaceSave {
   name: string;
-  authorId: string;
 }
 
 export type GitConnectionTest = {

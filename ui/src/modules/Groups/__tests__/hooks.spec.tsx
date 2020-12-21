@@ -37,13 +37,10 @@ test('create a new user group', async () => {
 
   const { result } = renderHook(() => useCreateUserGroup());
 
-  let response: UserGroup;
-
   await act(async () => {
-    response = await result.current.createUserGroup(newUserGroup.name);
+    await result.current.createUserGroup(newUserGroup.name);
   });
 
-  await wait(() => expect(response).toMatchObject(newUserGroup));
   await wait(() => expect(result.current.response).toMatchObject(newUserGroup));
 });
 

@@ -32,50 +32,44 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 abstract class CreateRegistryConfigurationRequest(
     open val name: String,
     open val address: String,
-    open val provider: CreateRegistryConfigurationProvider,
-    open val authorId: String
+    open val provider: CreateRegistryConfigurationProvider
 )
 
 data class CreateAzureRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
-    override val authorId: String,
     val username: String,
     val password: String
-) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.Azure, authorId)
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.Azure)
 
 data class CreateAWSRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
-    override val authorId: String,
     val accessKey: String?,
     val secretKey: String?,
     val region: String
-) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.AWS, authorId)
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.AWS)
 
 data class CreateGCPRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
-    override val authorId: String,
     val organization: String,
     val jsonKey: String
-) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.GCP, authorId)
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.GCP)
 
 data class CreateDockerHubRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
-    override val authorId: String,
     val username: String,
     val password: String
-) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.DOCKER_HUB, authorId)
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.DOCKER_HUB)
 
 data class CreateHarborRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
-    override val authorId: String,
     val username: String,
     val password: String
-) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.HARBOR, authorId)
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.HARBOR)
 
 enum class CreateRegistryConfigurationProvider {
     AWS, Azure, GCP, DOCKER_HUB, HARBOR
