@@ -3,6 +3,7 @@ package subscription
 import (
 	"encoding/json"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"hermes/pkg/errors"
 	"hermes/util"
 	"io"
@@ -20,15 +21,21 @@ type Subscription struct {
 	DeletedAt   *time.Time `json:"-"`
 }
 
+type SubscriptionConfigurationEvents struct {
+	SubscriptionId uuid.UUID `json:"externalId"`
+	EventId        uuid.UUID `json:"eventId"`
+}
+
 type Request struct {
 	util.BaseModel
-	ExternalId  uuid.UUID  `json:"externalId"`
-	Url         string     `json:"url"`
-	Description string     `json:"description"`
-	ApiKey      string     `json:"apiKey"`
-	CreatedBy   string     `json:"createdBy"`
-	DeletedBy   string     `json:"-"`
-	DeletedAt   *time.Time `json:"-"`
+	ExternalId  uuid.UUID   `json:"externalId"`
+	Url         string      `json:"url"`
+	Description string      `json:"description"`
+	ApiKey      string      `json:"apiKey"`
+	Events      []uuid.UUID `json:"events"`
+	CreatedBy   string      `json:"createdBy"`
+	DeletedBy   string      `json:"-"`
+	DeletedAt   *time.Time  `json:"-"`
 }
 
 type SaveResponse struct {
@@ -45,21 +52,50 @@ func (main Main) ParseSubscription(subscription io.ReadCloser) (Request, errors.
 	return *newSubs, nil
 }
 
-func (main Main) Save(subscription Request) (SaveResponse, errors.Error) {
+func (main Main) Save(request Request) (SaveResponse, errors.Error) {
 	id := uuid.New()
-	response := SaveResponse{}
+	var response = SaveResponse{}
 
-	insert := main.db.Exec(Insert(id.String(), subscription.Description, subscription.ExternalId.String(), subscription.Url, subscription.CreatedBy, []byte(subscription.ApiKey)))
-	if insert.Error != nil {
-		return SaveResponse{}, errors.NewError("Save Subscription error", insert.Error.Error()).
-			WithOperations("Save.Insert")
-	}
+	err := main.db.Transaction(func(tx *gorm.DB) error {
+		insert := tx.Model(Subscription{}).Create(InsertMap(id, request.ExternalId, request.Url, request.Description, request.ApiKey, request.CreatedBy))
+		if insert.Error != nil {
+			return insert.Error
+		}
 
-	query := insert.Model(&Subscription{}).Where("id = ?", id).Find(&response)
-	if query.Error != nil {
-		return SaveResponse{}, errors.NewError("Save Subscription error", query.Error.Error()).
-			WithOperations("Save.Query")
+		_, err := main.saveSubscriptionEvents(request.Events, id, tx)
+		if err != nil {
+			return err
+		}
+
+		query := insert.Model(&Subscription{}).Where("id = ?", id).Find(&response)
+		if query.Error != nil {
+			return query.Error
+		}
+
+		return nil
+	})
+	if err != nil {
+		return SaveResponse{}, errors.NewError("Save Subscription error", err.Error()).
+			WithOperations("Save.Transaction")
 	}
 
 	return response, nil
+}
+
+func (main Main) saveSubscriptionEvents(events []uuid.UUID, subscriptionId uuid.UUID, tx *gorm.DB) ([]SubscriptionConfigurationEvents, error) {
+	configEvents := make([]SubscriptionConfigurationEvents, 0)
+
+	for _, event := range events {
+		configEvents = append(configEvents, SubscriptionConfigurationEvents{
+			SubscriptionId: subscriptionId,
+			EventId:        event,
+		})
+	}
+
+	save := tx.Create(&configEvents)
+	if save.Error != nil {
+		return []SubscriptionConfigurationEvents{}, save.Error
+	}
+
+	return configEvents, nil
 }

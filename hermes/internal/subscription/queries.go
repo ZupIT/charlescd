@@ -2,11 +2,25 @@ package subscription
 
 import (
 	"fmt"
+	"github.com/google/uuid"
+	"gorm.io/gorm/clause"
 	"hermes/internal/configuration"
 )
 
-func Insert(id, description, externalId, url, createdBy string, apiKey []byte) string {
-	return fmt.Sprintf(`INSERT INTO subscriptions (id, description, external_id, url, api_key, created_by)
-				VALUES ('%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s');`,
-		id, description, externalId, url, apiKey, configuration.GetConfiguration("ENCRYPTION_KEY"), createdBy)
+func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string) map[string]interface{} {
+	return map[string]interface{}{
+		"id":          id,
+		"ExternalId":  externalId,
+		"Url":         url,
+		"Description": description,
+		"ApiKey": clause.Expr{
+			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
+			Vars: []interface{}{
+				fmt.Sprintf("%s", apiKey),
+				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
+			},
+		},
+		"CreatedBy": createdBy,
+	}
+
 }
