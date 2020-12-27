@@ -55,9 +55,10 @@ class V2DeploymentController(
     @PostMapping
     fun createDeployment(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody createDeploymentRequest: CreateDeploymentRequest
     ): DeploymentResponse {
-        return this.createDeploymentInteractor.execute(createDeploymentRequest, workspaceId)
+        return this.createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Deployment Callback")

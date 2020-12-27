@@ -25,7 +25,10 @@ import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.commons.representation.*
 import io.charlescd.moove.legacy.moove.request.hypothesis.*
-import io.charlescd.moove.legacy.repository.*
+import io.charlescd.moove.legacy.repository.CardColumnRepository
+import io.charlescd.moove.legacy.repository.CardRepository
+import io.charlescd.moove.legacy.repository.HypothesisRepository
+import io.charlescd.moove.legacy.repository.LabelRepository
 import io.charlescd.moove.legacy.repository.entity.*
 import java.time.LocalDateTime
 import java.util.*
@@ -39,7 +42,7 @@ import org.springframework.stereotype.Service
 class HypothesisServiceLegacy(
     private val hypothesisRepository: HypothesisRepository,
     private val labelRepository: LabelRepository,
-    private val userRepository: UserRepository,
+    private val userServiceLegacy: UserServiceLegacy,
     private val cardColumnRepository: CardColumnRepository,
     private val cardRepository: CardRepository
 ) {
@@ -63,9 +66,9 @@ class HypothesisServiceLegacy(
             .orElseThrow { NotFoundExceptionLegacy("hypothesis", id) }
 
     @Transactional
-    fun create(request: CreateHypothesisRequest, workspaceId: String): HypothesisRepresentation =
+    fun create(request: CreateHypothesisRequest, workspaceId: String, authorization: String): HypothesisRepresentation =
         request
-            .toEntity(workspaceId)
+            .toEntity(workspaceId, userServiceLegacy.findByAuthorizationToken(authorization))
             .let(hypothesisRepository::save)
             .also { createHypothesisCardColumns(it, workspaceId) }
             .toRepresentation()
@@ -322,19 +325,15 @@ class HypothesisServiceLegacy(
             description = this.description
         )
 
-    private fun CreateHypothesisRequest.toEntity(workspaceId: String) = Hypothesis(
+    private fun CreateHypothesisRequest.toEntity(workspaceId: String, author: User) = Hypothesis(
         id = UUID.randomUUID().toString(),
         name = this.name,
-        author = findUserById(this.authorId),
+        author = author,
         description = this.description,
         createdAt = LocalDateTime.now(),
         labels = findLabelsByIds(this.labels),
         workspaceId = workspaceId
     )
-
-    private fun findUserById(id: String): User =
-        userRepository.findById(id)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
     private fun findLabelsByIds(ids: List<String>): List<Label> =
         ids.takeIf { it.isNotEmpty() }

@@ -85,6 +85,13 @@ class KeycloakClientService(
             ?: throw RuntimeException("Could not create user on keycloak.")
     }
 
+    override fun deleteUser(userId: String) {
+        this.keycloak
+            .realm(realm)
+            .users()
+            .delete(userId)
+    }
+
     private fun createUserRepresentation(
         email: String,
         name: String,
