@@ -80,7 +80,6 @@ export class CreateComponentRequestDto {
       this.componentId,
       this.hostValue ? this.hostValue : null,
       this.gatewayName ? this.gatewayName : null,
-      false,
       manifests
     )
   }

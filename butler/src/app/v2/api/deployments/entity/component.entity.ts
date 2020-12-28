@@ -68,8 +68,8 @@ export class ComponentEntityV2 implements Component {
     componentId: string,
     hostValue: string | null,
     gatewayName: string | null,
-    merged = false,
-    manifests: KubernetesObject[]
+    manifests: KubernetesObject[],
+    merged = false
   ) {
     this.helmUrl = helmUrl
     this.imageTag = buildImageTag
@@ -91,8 +91,8 @@ export class ComponentEntityV2 implements Component {
       this.componentId,
       this.hostValue,
       this.gatewayName,
-      true,
-      this.manifests
+      this.manifests,
+      true
     )
   }
 }

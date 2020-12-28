@@ -65,31 +65,9 @@ export class CreateDeploymentUseCase {
   }
 
   private async newDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
-    const deployment = createDeploymentDto.defaultCircle ?
-      this.newCircleDeployment(createDeploymentDto) :
-      await this.newDefaultDeployment(createDeploymentDto)
-
-    return this.addManifestsTo(deployment)
-  }
-
-  private async addManifestsTo(deployment: DeploymentEntity): Promise<DeploymentEntity> {
-    const config = deployment.cdConfiguration.configurationData as IDefaultConfig
-
-    deployment.components.forEach(async(componentEntity: ComponentEntity) => {
-      const repoConfig = this.getRepoConfig(config, componentEntity.helmUrl)
-      const manifestConfig = {
-        repo: repoConfig,
-        componentName: componentEntity.name,
-        imageUrl: componentEntity.imageUrl,
-        namespace: deployment.cdConfiguration.configurationData.namespace,
-        circleId: deployment.circleId
-      }
-      // TODO: utilizar aqui a interface Manifest e obter de um factory
-      const manifests = await this.helmManifest.generate(manifestConfig)
-      componentEntity.manifests = manifests
-    })
-
-    return deployment
+    return createDeploymentDto.defaultCircle ?
+      await this.createCircleDeployment(createDeploymentDto) :
+      await this.createDefaultDeployment(createDeploymentDto)
   }
 
   private async getDeploymentComponents(config: IDefaultConfig, circleId: string, modules: CreateModuleDeploymentDto[]): Promise<ComponentEntity[]> {
@@ -128,14 +106,14 @@ export class CreateDeploymentUseCase {
     }
   }
 
-  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
+  private async createCircleDeployment_(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT')
     const deployment = await manager.save(createDeploymentDto.toCircleEntity())
     this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT')
     return deployment
   }
 
-  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
+  private async createDefaultDeployment_(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
     const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
       createDeploymentDto.circle.headerValue
@@ -153,14 +131,14 @@ export class CreateDeploymentUseCase {
     return deployment
   }
 
-  private newCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): DeploymentEntity {
+  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT')
     const deployment = createDeploymentDto.toCircleEntity()
     this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT')
     return deployment
   }
 
-  private async newDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
+  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
     const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
       createDeploymentDto.circle.headerValue
