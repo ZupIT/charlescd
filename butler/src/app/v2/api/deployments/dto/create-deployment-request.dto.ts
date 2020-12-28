@@ -111,7 +111,7 @@ export class CreateDeploymentRequestDto {
 
   private getDeploymentComponents(): ComponentEntity[] {
     return flatten(
-      this.modules.map(module => module.components.map(component => component.toEntity(module.helmRepository)))
+      this.modules.map(module => module.components.map(component => component.toEntity(module.helmRepository, [])))
     )
   }
 }

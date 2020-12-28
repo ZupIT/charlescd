@@ -17,6 +17,7 @@
 import { IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ApiProperty } from '@nestjs/swagger'
+import { KubernetesManifest } from '../../../core/integrations/interfaces/k8s-manifest.interface'
 
 export class CreateComponentRequestDto {
 
@@ -70,7 +71,7 @@ export class CreateComponentRequestDto {
     this.gatewayName = gatewayName
   }
 
-  public toEntity(helmRepositoryUrl: string): ComponentEntity {
+  public toEntity(helmRepositoryUrl: string, manifests: KubernetesManifest[]): ComponentEntity {
     return new ComponentEntity(
       helmRepositoryUrl,
       this.buildImageTag,
@@ -78,7 +79,9 @@ export class CreateComponentRequestDto {
       this.componentName,
       this.componentId,
       this.hostValue ? this.hostValue : null,
-      this.gatewayName ? this.gatewayName : null
+      this.gatewayName ? this.gatewayName : null,
+      false,
+      manifests
     )
   }
 }
