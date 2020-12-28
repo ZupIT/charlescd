@@ -17,21 +17,23 @@
 package io.charlescd.circlematcher.domain.service;
 
 import io.charlescd.circlematcher.domain.Node;
+import org.graalvm.polyglot.Context;
+
 import java.util.Map;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
 public interface ScriptManagerService {
 
-    ScriptContext scriptContext();
+    Context scriptContext();
 
     boolean isMatch(Node node, Map<String, Object> data);
 
-    Object evalJsWithResult(ScriptContext scriptContext, String script, Object input) throws ScriptException;
+    Object evalJsWithResult(String script, Object input) throws ScriptException;
 
-    Object evalJs(ScriptContext context, String script) throws ScriptException;
+    Object evalJs(String script) throws ScriptException;
 
-    <T> T getResultVar(ScriptContext context);
+    <T> T getResultVar();
 
-    <T> T getVar(ScriptContext context, String key);
+    <T> T getVar(String key);
 }
