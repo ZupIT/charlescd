@@ -70,70 +70,11 @@ export class CreateDeploymentUseCase {
       await this.createDefaultDeployment(createDeploymentDto)
   }
 
-  private async getDeploymentComponents(config: IDefaultConfig, circleId: string, modules: CreateModuleDeploymentDto[]): Promise<ComponentEntity[]> {
-    const components =
-      await Promise.all(modules.map(async module => {
-        const components = Promise.all(module.components.map(async component => {
-          const manifests = await this.getManifestsFor(config, circleId, module.helmRepository, component)
-          return component.toEntity(module.helmRepository, manifests)
-        }))
-        return components
-      }))
-    return flatten(components)
-  }
-
-  private async getManifestsFor(config: IDefaultConfig, circleId: string, repoUrl: string, component: CreateComponentRequestDto): Promise<KubernetesManifest[]> {
-    // const config = deployment.cdConfiguration.configurationData as IDefaultConfig
-    const repoConfig = this.getRepoConfig(config, repoUrl)
-    const manifestConfig = {
-      repo: repoConfig,
-      componentName: component.componentName,
-      imageUrl: component.buildImageUrl,
-      namespace: config.namespace,
-      circleId: circleId
-    }
-
-    // TODO: utilizar aqui a interface Manifest e obter de um factory
-    return this.helmManifest.generate(manifestConfig)
-  }
-
-  private getRepoConfig(config: IDefaultConfig, repoUrl: string): RepoConfig {
-    return {
-      provider: config.gitProvider,
-      url: repoUrl,
-      token: config.gitToken,
-      branch: 'master' // TODO obter branch
-    }
-  }
-
-  private async createCircleDeployment_(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
-    this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT')
-    const deployment = await manager.save(createDeploymentDto.toCircleEntity())
-    this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT')
-    return deployment
-  }
-
-  private async createDefaultDeployment_(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
-    this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
-      createDeploymentDto.circle.headerValue
-    )
-    const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
-    const unchangedComponents: ComponentEntity[] = activeComponents
-      .filter(component => !requestedComponentsNames.includes(component.name))
-      .map(component => component.clone())
-    this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
-
-    const deployment = await manager.save(
-      createDeploymentDto.toDefaultEntity(unchangedComponents)
-    )
-    this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
-    return deployment
-  }
-
   private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT')
-    const deployment = createDeploymentDto.toCircleEntity()
+    const cdConfig = createDeploymentDto.cdConfiguration.configurationData as IDefaultConfig
+    const components = await this.getDeploymentComponents(cdConfig, createDeploymentDto.circle.headerValue, createDeploymentDto.modules)
+    const deployment = createDeploymentDto.toCircleEntity(components)
     this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT')
     return deployment
   }
@@ -149,10 +90,51 @@ export class CreateDeploymentUseCase {
       .map(component => component.clone())
     this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
 
-    const deployment = createDeploymentDto.toDefaultEntity(unchangedComponents)
+    const cdConfig = createDeploymentDto.cdConfiguration.configurationData as IDefaultConfig
+    const components = await this.getDeploymentComponents(cdConfig, createDeploymentDto.circle.headerValue, createDeploymentDto.modules)
+    const deployment = createDeploymentDto.toDefaultEntity(unchangedComponents, components)
 
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
+  }
+
+  private async getDeploymentComponents(config: IDefaultConfig, circleId: string, modules: CreateModuleDeploymentDto[]): Promise<ComponentEntity[]> {
+    this.consoleLoggerService.log('START:CREATE_MANIFESTS')
+    const components =
+      await Promise.all(modules.map(async module => 
+        Promise.all(module.components.map(async component => {
+          const manifests = await this.getManifestsFor(config, circleId, module.helmRepository, component)
+          return component.toEntity(module.helmRepository, manifests)
+        }))
+      ))
+    this.consoleLoggerService.log('FINISH:CREATE_MANIFESTS')
+    return flatten(components)
+  }
+
+  private async getManifestsFor(cdConfig: IDefaultConfig, 
+    circleId: string, 
+    repoUrl: string, 
+    component: CreateComponentRequestDto
+  ): Promise<KubernetesManifest[]> {
+    const repoConfig = this.getRepoConfig(cdConfig, repoUrl)
+    const manifestConfig = {
+      repo: repoConfig,
+      componentName: component.componentName,
+      imageUrl: component.buildImageUrl,
+      namespace: cdConfig.namespace,
+      circleId: circleId
+    }
+    // TODO: utilizar aqui a interface Manifest e obter de um factory
+    return this.helmManifest.generate(manifestConfig)
+  }
+
+  private getRepoConfig(cdConfig: IDefaultConfig, repoUrl: string): RepoConfig {
+    return {
+      provider: cdConfig.gitProvider,
+      url: repoUrl,
+      token: cdConfig.gitToken,
+      branch: 'master' // TODO obter branch
+    }
   }
 
   private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null, manager: EntityManager): Promise<Execution> {
