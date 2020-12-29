@@ -52,9 +52,9 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
     }
 
     public Context scriptContext() {
-        Context context = Context.create("js");
-        try{
 
+        try{
+            Context context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true").build();
             context.eval("js", this.getPathScript);
             context.eval("js", this.toNumberScript);
             context.eval("js", this.toStrScript);
@@ -68,16 +68,27 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
     public boolean isMatch(Node node, Map<String, Object> data) {
         try {
             var exp = node.expression();
-            evalJsWithResult(exp, data);
+            System.out.println(getVar(Constants.INPUT_VARIABLE).toString());
+            var result = evalJsWithResult(exp, data);
+
             return getResultVar();
         } catch (ScriptException ex) {
+            System.out.println(ex.getMessage());
             return false;
         }
     }
 
     public Object evalJsWithResult(String script, Object input) throws ScriptException {
-        putVar(Constants.INPUT_VARIABLE, input);
-        return this.context.eval("js", OpUtils.evalExpression(script));
+        try{
+            System.out.println(getVar(Constants.INPUT_VARIABLE).toString());
+            putVar(Constants.INPUT_VARIABLE, input);
+            System.out.println(getVar(Constants.INPUT_VARIABLE).toString());
+            return this.context.eval("js", OpUtils.evalExpression(script));
+        }catch (Exception exception){
+            System.out.println(exception.getMessage());
+            return null;
+        }
+
     }
 
     public Object evalJs(String script) throws ScriptException {
