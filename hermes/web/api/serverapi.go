@@ -12,7 +12,6 @@ type Api struct {
 	// Dependencies
 	subscriptionMain subscription.UseCases
 
-
 }
 
 func NewApi(subscriptionMain subscription.UseCases) *mux.Router {
