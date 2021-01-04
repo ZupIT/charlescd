@@ -22,6 +22,7 @@ import io.charlescd.circlematcher.infrastructure.Constants;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
 
+import java.sql.SQLOutput;
 import java.util.Map;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -30,6 +31,8 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,55 +40,45 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScriptManagerServiceImpl implements ScriptManagerService {
 
-    private Context context;
-    private String getPathScript;
-    private String toStrScript;
-    private String toNumberScript;
-
     private Logger logger = LoggerFactory.getLogger(ScriptManagerServiceImpl.class);
-
+    private Context context;
     public ScriptManagerServiceImpl() {
-        this.toStrScript = ResourceUtils.getResourceAsString("js/toStr.js");
-        this.toNumberScript = ResourceUtils.getResourceAsString("js/toNumber.js");
-        this.getPathScript = ResourceUtils.getResourceAsString("js/getPath.js");
-        this.context = scriptContext();
+
     }
 
-    public Context scriptContext() {
+    public void scriptContext() {
 
         try{
-            Context context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true").build();
-            context.eval("js", this.getPathScript);
-            context.eval("js", this.toNumberScript);
-            context.eval("js", this.toStrScript);
+            var toStrScript = ResourceUtils.getResourceAsString("js/toStr.js");
+            var toNumberScript = ResourceUtils.getResourceAsString("js/toNumber.js");
+            var getPathScript = ResourceUtils.getResourceAsString("js/getPath.js");
+            this.context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true").build();
+            context.eval("js", getPathScript);
+            context.eval("js", toNumberScript);
+            context.eval("js", toStrScript);
         } catch (Exception ex) {
             this.logger.error("Could not evaluate expression", ex);
         }
-
-        return context;
     }
 
     public boolean isMatch(Node node, Map<String, Object> data) {
         try {
+            scriptContext();
             var exp = node.expression();
-            System.out.println(getVar(Constants.INPUT_VARIABLE).toString());
             var result = evalJsWithResult(exp, data);
-
-            return getResultVar();
-        } catch (ScriptException ex) {
-            System.out.println(ex.getMessage());
+            return result.asBoolean();
+        } catch (Exception ex) {
+            System.out.println(ex);
             return false;
         }
     }
 
-    public Object evalJsWithResult(String script, Object input) throws ScriptException {
+    public Value evalJsWithResult(String script, Map<String,Object> input) {
         try{
-            System.out.println(getVar(Constants.INPUT_VARIABLE).toString());
-            putVar(Constants.INPUT_VARIABLE, input);
-            System.out.println(getVar(Constants.INPUT_VARIABLE).toString());
-            return this.context.eval("js", OpUtils.evalExpression(script));
+            putVar(Constants.INPUT_VARIABLE, ProxyObject.fromMap(input));
+            this.context.eval("js", OpUtils.evalExpression(script));
+            return this.getVar(Constants.RESULT_VARIABLE);
         }catch (Exception exception){
-            System.out.println(exception.getMessage());
             return null;
         }
 
@@ -101,11 +94,12 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
     }
 
     public <T> T getVar(String key) {
+        System.out.println(context.getBindings("js").getMember(key));
         return (T) context.getBindings("js").getMember(key);
     }
 
     private void putVar(String key, Object value) {
-
         context.getBindings("js").putMember(key, value);
+
     }
 }
