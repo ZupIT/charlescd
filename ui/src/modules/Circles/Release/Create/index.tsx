@@ -46,7 +46,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     loading: savingBuild
   } = useComposeBuild();
   const { createDeployment, response: deploy } = useCreateDeployment();
-  console.log({ build, deploy });
   
   const authorId = getProfileByKey('id');
   const form = useForm<ModuleForm>({
@@ -137,6 +136,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           deploy
         </Styled.Submit>
+        {console.log(watchFields, isEmptyFields, !isEmpty(errors), isEmptyFields || !isEmpty(errors))}
       </Styled.Form>
     </FormProvider>
   );
