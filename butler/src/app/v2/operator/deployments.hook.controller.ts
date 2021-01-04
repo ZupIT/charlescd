@@ -1,16 +1,25 @@
 import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
+import { ComponentsRepositoryV2 } from '../api/deployments/repository/component.repository'
+import { DeploymentRepositoryV2 } from '../api/deployments/repository/deployment.repository'
+import { K8sClient } from '../core/integrations/k8s/client'
 import { HookParams } from './params.interface'
 
 @Controller('deploymentsHook')
 export class DeploymentsHookController {
+
+  constructor(
+    private readonly k8sClient: K8sClient,
+    private readonly deploymentRepository: DeploymentRepositoryV2,
+    private readonly componentRepository: ComponentsRepositoryV2
+  ) { }
 
   @Post('/v2/operator/deployment/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: Record<string, unknown>[]}> {
     console.log(JSON.stringify(params.children))
-    const deploymentId = params.parent.spec.deploymentId
-    // const specs = `select manifests from v2deployments where id = deploymentId`
+    const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId })
+    // const specs = deployment.compiledSpec?? check this name with leandro
     const specs = deploymentsSpec
     const deploymentNames = Object.keys(params.children['Deployment.apps/v1'])
     const allReady = deploymentNames.every(d => {
@@ -18,7 +27,8 @@ export class DeploymentsHookController {
       return conditions.some(condition => condition.type === 'Available' && condition.status === 'True')
     })
     if (allReady) {
-      // k8sClient.createRoutesCrd(deploymentId)
+      const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
+      this.k8sClient.applyRoutingCustomResource(deployment.cdConfiguration.id, activeComponents)
     }
     return { children: specs }
   }
@@ -28,15 +38,15 @@ export class DeploymentsHookController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: Record<string, unknown>[], finalized: boolean, resyncAfterSeconds?: number }> {
     // console.log(JSON.stringify(params))
-    const deploymentId = params.parent.spec.deploymentId
+    await this.deploymentRepository.update({ id: params.parent.spec.deploymentId }, { active: false })
+    const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId })
     const finalized = false
-    // deploymentRepository.update(params.parent.spec.deploymentId, {active: false})
-    // const activeDeployment = deploymentRepository.findActives(params.parent.spec.circleId)
-    // applyRoutingCustomResource(activeDeployment.cdConfigurationId, activeDeployment.components)
-    // const specs = activeDeployment.toK8sSpecs() ???
+    const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
+    this.k8sClient.applyRoutingCustomResource(deployment.cdConfiguration.id, activeComponents)
+    // const specs = deployment.compiledSpec?? check this name with leandro
     const specs : Record<string, unknown>[] = []
 
-    // wen cant trust that everything went well instantly, we need to keep returning finalized = true until we are sure there are no more routes to this deployment
+    // we cant trust that everything went well instantly, we need to keep returning finalized = true until we are sure there are no more routes to this deployment
     // if (checkRoutes(, deploymentIdk8sClientGetCrdRoutes())) {
     // when everything is cleaned up update the database to signal the undeploy
     // finalized = true
