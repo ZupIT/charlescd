@@ -33,12 +33,15 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { SimultaneousDeploymentValidationPipe } from '../../../../app/v2/api/deployments/pipes'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests } from '../../fixtures/manifests.fixture'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication
   let fixtureUtilsService: FixtureUtilsService
   let pipe: SimultaneousDeploymentValidationPipe
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -52,6 +55,7 @@ describe('DeploymentCleanupHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     pipe = app.get<SimultaneousDeploymentValidationPipe>(SimultaneousDeploymentValidationPipe)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
     TestSetupUtils.seApplicationConstants()
   })
 
@@ -86,7 +90,7 @@ describe('DeploymentCleanupHandler', () => {
       defaultCircle: defaultCircle
     }
 
-    await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
+    await createDeploymentAndExecution(params, fixtureUtilsService, manifests, manager, DeploymentStatusEnum.CREATED)
     const createDeploymentDto = createDto(componentName, circleId, defaultCircle)
     const execution = await manager.findOneOrFail(Execution)
 
@@ -118,7 +122,7 @@ describe('DeploymentCleanupHandler', () => {
       defaultCircle: defaultCircle
     }
 
-    await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
+    await createDeploymentAndExecution(params, fixtureUtilsService, manifests, manager, DeploymentStatusEnum.CREATED)
     const createDeploymentDto = createDto(componentName, circleId, defaultCircle)
     const execution = await manager.findOneOrFail(Execution)
     await expect(
@@ -146,7 +150,7 @@ describe('DeploymentCleanupHandler', () => {
       defaultCircle: true
     }
 
-    await createDeploymentAndExecution(params, fixtureUtilsService, manager, DeploymentStatusEnum.CREATED)
+    await createDeploymentAndExecution(params, fixtureUtilsService, manifests, manager, DeploymentStatusEnum.CREATED)
     const createDeploymentDto = createDto(componentName, '5d1fc2bd-1275-458b-bf54-71727f8cb33b', true)
     await expect(
       pipe.transform(createDeploymentDto)
@@ -185,7 +189,7 @@ describe('DeploymentCleanupHandler', () => {
     return createDeploymentDto
   }
 
-  const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manager: any, status: DeploymentStatusEnum): Promise<DeploymentEntity> => {
+  const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manifests: KubernetesManifest[], manager: any, status: DeploymentStatusEnum): Promise<DeploymentEntity> => {
     const components = params.components.map((c: any) => {
       const component = new ComponentEntity(
         c.helmRepository,
@@ -194,7 +198,8 @@ describe('DeploymentCleanupHandler', () => {
         c.componentName,
         c.componentId,
         c.hostValue,
-        c.gatewayName
+        c.gatewayName,
+        manifests
       )
       component.running = true
       return component

@@ -26,12 +26,15 @@ import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
+import { KubernetesManifest } from 'src/app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests } from '../../fixtures/manifests.fixture'
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -47,6 +50,7 @@ describe('CreateDeploymentUsecase v2', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
   })
 
   afterAll(async() => {
@@ -104,6 +108,7 @@ describe('CreateDeploymentUsecase v2', () => {
       '777765f8-bb29-49f7-bf2b-3ec956a71583',
       null,
       null,
+      manifests
     )
     component1.running = false
     component1.id = expect.anything()
@@ -115,7 +120,8 @@ describe('CreateDeploymentUsecase v2', () => {
       'B',
       '1c29210c-e313-4447-80e3-db89b2359138',
       null,
-      null
+      null,
+      manifests
     )
     component2.running = false
     component2.id = expect.anything()
@@ -140,7 +146,8 @@ describe('CreateDeploymentUsecase v2', () => {
           'A',
           'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
           null,
-          null
+          null,
+          manifests
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -149,7 +156,8 @@ describe('CreateDeploymentUsecase v2', () => {
           'B',
           '1c29210c-e313-4447-80e3-db89b2359138',
           null,
-          null
+          null,
+          manifests
         )
       ],
       true
@@ -170,7 +178,8 @@ describe('CreateDeploymentUsecase v2', () => {
           'C',
           '46b83994-bfae-4f1e-84cd-0d18b59735bc',
           null,
-          null
+          null,
+          manifests
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -179,7 +188,8 @@ describe('CreateDeploymentUsecase v2', () => {
           'D',
           '5ff6c5f3-fca5-440a-aaf5-ab3c25fdf0f5',
           null,
-          null
+          null,
+          manifests
         )
       ],
       true
@@ -200,7 +210,8 @@ describe('CreateDeploymentUsecase v2', () => {
           'E',
           '222cd8db-3767-45d5-a415-7cca09cccf91',
           null,
-          null
+          null,
+          manifests
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -209,7 +220,8 @@ describe('CreateDeploymentUsecase v2', () => {
           'F',
           '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
           null,
-          null
+          null,
+          manifests
         )
       ],
       false

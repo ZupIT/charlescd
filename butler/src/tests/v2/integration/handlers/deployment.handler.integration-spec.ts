@@ -37,6 +37,8 @@ import { SpinnakerConnector } from '../../../../app/v2/core/integrations/spinnak
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests } from '../../fixtures/manifests.fixture'
 
 let mock = express()
 
@@ -49,6 +51,7 @@ describe('DeploymentHandler', () => {
   let mockServer: Server
   let notificationUseCase: ReceiveNotificationUseCase
   let spinnakerConnector: SpinnakerConnector
+  let manifests: KubernetesManifest[]
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -68,6 +71,7 @@ describe('DeploymentHandler', () => {
     notificationUseCase = app.get<ReceiveNotificationUseCase>(ReceiveNotificationUseCase)
     spinnakerConnector = app.get<SpinnakerConnector>(SpinnakerConnector)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
   })
 
   afterAll(async() => {
@@ -139,12 +143,12 @@ describe('DeploymentHandler', () => {
 
     const secondDeploymentId = 'a666cbe1-7da3-46a6-bad3-5a3553960f55'
 
-    const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+    const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manifests, manager)
     const firstDeployment = firstFixtures.deployment
     const firstExecution = firstFixtures.execution
     const firstJob = firstFixtures.job
 
-    const secondFixtures = await createDeploymentAndExecution({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
+    const secondFixtures = await createDeploymentAndExecution({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manifests, manager)
     const secondDeployment = secondFixtures.deployment
     const secondExecution = secondFixtures.execution
     const secondJob = secondFixtures.job
@@ -219,7 +223,7 @@ describe('DeploymentHandler', () => {
       defaultCircle: false
     }
 
-    const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+    const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manifests, manager)
     const firstDeployment = firstFixtures.deployment
     const firstJob = firstFixtures.job
 
@@ -258,7 +262,7 @@ describe('DeploymentHandler', () => {
       defaultCircle: false
     }
 
-    const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+    const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manifests, manager)
 
     await expect(
       deploymentHandler.run(fixtures.job)
@@ -292,7 +296,8 @@ describe('DeploymentHandler', () => {
           'A',
           'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
           null,
-          null
+          null,
+          manifests
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -301,7 +306,8 @@ describe('DeploymentHandler', () => {
           'B',
           '1c29210c-e313-4447-80e3-db89b2359138',
           null,
-          null
+          null,
+          manifests
         )
       ],
       true
@@ -332,7 +338,8 @@ describe('DeploymentHandler', () => {
           'C',
           '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
           null,
-          null
+          null,
+          manifests
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -341,7 +348,8 @@ describe('DeploymentHandler', () => {
           'D',
           'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
           null,
-          null
+          null,
+          manifests
         )
       ],
       true
@@ -363,7 +371,8 @@ describe('DeploymentHandler', () => {
           'E',
           '463e7680-0e59-4bda-9eb6-eb10bb2cdc90',
           null,
-          null
+          null,
+          manifests
         )
       ],
       true
@@ -437,7 +446,8 @@ describe('DeploymentHandler', () => {
           'A',
           'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
           null,
-          null
+          null,
+          manifests
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -446,7 +456,8 @@ describe('DeploymentHandler', () => {
           'B',
           '1c29210c-e313-4447-80e3-db89b2359138',
           null,
-          null
+          null,
+          manifests
         )
       ],
       true
@@ -477,7 +488,8 @@ describe('DeploymentHandler', () => {
           'C',
           '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
           null,
-          null
+          null,
+          manifests
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -486,7 +498,8 @@ describe('DeploymentHandler', () => {
           'D',
           'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
           null,
-          null
+          null,
+          manifests
         )
       ],
       true
@@ -539,7 +552,7 @@ describe('DeploymentHandler', () => {
   })
 })
 
-const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<{deployment: DeploymentEntity, execution:Execution, job: JobWithDoneCallback<Execution, unknown>  }> => {
+const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manifests: KubernetesManifest[], manager: any) : Promise<{deployment: DeploymentEntity, execution:Execution, job: JobWithDoneCallback<Execution, unknown>  }> => {
   const components = params.components.map((c: any) => {
     return new ComponentEntity(
       c.helmRepository,
@@ -548,7 +561,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      manifests
     )
   })
 

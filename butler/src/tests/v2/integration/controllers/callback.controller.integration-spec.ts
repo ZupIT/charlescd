@@ -35,6 +35,8 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests } from '../../fixtures/manifests.fixture'
 
 let mock = express()
 
@@ -44,6 +46,7 @@ describe('CallbackController v2', () => {
   let mockServer: Server
   let worker: PgBossWorker
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -59,6 +62,7 @@ describe('CallbackController v2', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
   })
 
   afterAll(async() => {
@@ -117,7 +121,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
@@ -215,7 +219,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
@@ -314,7 +318,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.active = true
     deploymentEntity.cdConfiguration = cdConfiguration
     const savedDeployment = await manager.save(deploymentEntity)
@@ -413,7 +417,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.active = true
     deploymentEntity.cdConfiguration = cdConfiguration
     const savedDeployment = await manager.save(deploymentEntity)

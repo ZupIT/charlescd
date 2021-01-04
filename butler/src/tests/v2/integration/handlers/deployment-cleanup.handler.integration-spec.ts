@@ -33,6 +33,8 @@ import { ConfigurationConstants } from '../../../../app/v2/core/constants/applic
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests } from '../../fixtures/manifests.fixture'
 
 let mock = express()
 
@@ -42,6 +44,7 @@ describe('DeploymentCleanupHandler', () => {
   let mockServer: Server
   let cleanupHandler: DeploymentCleanupHandler
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -57,6 +60,7 @@ describe('DeploymentCleanupHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     cleanupHandler = app.get<DeploymentCleanupHandler>(DeploymentCleanupHandler)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
   })
 
   beforeEach(async() => {
@@ -98,11 +102,11 @@ describe('DeploymentCleanupHandler', () => {
     }
     const secondDeploymentId = 'a666cbe1-7da3-46a6-bad3-5a3553960f55'
 
-    const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
+    const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manifests, manager)
     const createdAt = new Date()
     createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
     await manager.update(Execution, { deploymentId: timedOutDeployment.id }, { createdAt: createdAt })
-    const { deployment: recentDeployment } = await createDeployment({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
+    const { deployment: recentDeployment } = await createDeployment({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manifests, manager)
     await setComponentsToRunning(timedOutDeployment, manager)
 
     mock.post('/deploy/notifications/deployment', (req, res) => {
@@ -146,7 +150,7 @@ describe('DeploymentCleanupHandler', () => {
       incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
     }
 
-    const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
+    const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manifests, manager)
     const createdAt = new Date()
     createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
     await manager.update(Execution, { deploymentId: timedOutDeployment.id }, { createdAt: createdAt })
@@ -171,7 +175,7 @@ const setComponentsToRunning = async(deployment: DeploymentEntity, manager: Enti
     .execute()
 }
 
-const createDeployment = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any): Promise<
+const createDeployment = async(params: any, cdConfiguration: CdConfigurationEntity, manifests: KubernetesManifest[], manager: any): Promise<
   {
     deployment: DeploymentEntity,
     job: JobWithDoneCallback<unknown, unknown>,
@@ -185,7 +189,8 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      manifests
     )
   })
 
