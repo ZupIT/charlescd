@@ -16,6 +16,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { testGitConnection } from 'core/providers/workspace';
+import { useTestConnection } from 'core/hooks/useTestConnection';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 import Button from 'core/components/Button';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
@@ -24,11 +27,8 @@ import { useGit } from './hooks';
 import { radios } from './constants';
 import { GitFormData } from './interfaces';
 import { Props } from '../interfaces';
-import Styled from './styled';
 import { buildTestConnectionPayload } from './helpers';
-import { testGitConnection } from 'core/providers/workspace';
-import { useTestConnection } from 'core/hooks/useTestConnection';
-import ConnectionStatus from 'core/components/ConnectionStatus';
+import Styled from './styled';
 
 const FormGit = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
@@ -48,7 +48,7 @@ const FormGit = ({ onFinish }: Props) => {
     mode: 'onChange',
     defaultValues: {
       credentials: {
-        address: '.',
+        address: '',
         accessToken: '',
         serviceProvider: ''
       }
@@ -131,8 +131,8 @@ const FormGit = ({ onFinish }: Props) => {
     <Styled.Content>
       <Styled.Title color="light">Add Git</Styled.Title>
       <Styled.Info color="dark">
-        Adding a Git allows Charles to create, delete and merge branches as well
-        as view repositories and generate releases. Consult our{' '}
+        Adding a Git allows Charles to create, delete and merge branches, as
+        well as view repositories and generate releases. Consult our{' '}
         <Styled.Link
           href="https://docs.charlescd.io/get-started/defining-a-workspace/github"
           target="_blank"
@@ -142,7 +142,7 @@ const FormGit = ({ onFinish }: Props) => {
         for further details.
       </Styled.Info>
       <Styled.Subtitle color="dark">
-        Choose witch one you want to add:
+        Choose which one you want to add:
       </Styled.Subtitle>
       <Radio.Buttons
         name="git"
