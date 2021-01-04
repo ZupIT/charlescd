@@ -84,7 +84,7 @@ test('render Modal.Trigger on UsersComparationItem component', async () => {
   expect(deleteIcon).toBeInTheDocument();
   userEvent.click(deleteIcon);
 
-  const Description = await screen.findByText('By deleting this user, his information will be also deleted. Do you wish to continue?');
+  const Description = await screen.findByText('By deleting this user, all related information will also be deleted. Do you wish to continue?');
   expect(Description).toBeInTheDocument();
 
   const modal = screen.getByTestId('modal-trigger');
