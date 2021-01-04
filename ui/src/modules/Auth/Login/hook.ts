@@ -65,16 +65,16 @@ export const useLogin = (): {
 } => {
   const [, , getSession] = useFetch<AuthResponse>(login);
   const { getCircleId } = useCircleMatcher();
-  const { findByEmail, findWorkspacesByUser, userAndWorkspaces } = useUser();
+  const { findByEmail, userProfileData } = useUser();
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (userAndWorkspaces) {
-      saveProfile(userAndWorkspaces);
+    if (userProfileData) {
+      saveProfile(userProfileData);
       setStatus('resolved');
     }
-  }, [userAndWorkspaces]);
+  }, [userProfileData]);
 
   const doLogin = useCallback(
     async (email: string, password: string) => {
@@ -84,15 +84,14 @@ export const useLogin = (): {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);
         await getCircleId({ username: email });
-        const { id } = await findByEmail(email);
-        findWorkspacesByUser(id);
+        await findByEmail(email);
       } catch (e) {
         const errorMessage = e.message || `${e.status}: ${e.statusText}`;
         setError(errorMessage);
         setStatus('rejected');
       }
     },
-    [getSession, getCircleId, findByEmail, findWorkspacesByUser]
+    [getSession, getCircleId, findByEmail]
   );
 
   return {
