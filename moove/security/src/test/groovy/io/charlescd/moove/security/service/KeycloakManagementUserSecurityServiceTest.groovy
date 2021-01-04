@@ -16,17 +16,16 @@
 
 package io.charlescd.moove.security.service
 
-
 import io.charlescd.moove.domain.service.KeycloakService
 import spock.lang.Specification
 
 class KeycloakManagementUserSecurityServiceTest extends Specification {
 
-    private KeycloackManagementUserSecurityService keycloackManagementUserSecurityService
+    private KeycloakManagementUserSecurityService keycloackManagementUserSecurityService
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        keycloackManagementUserSecurityService = new KeycloackManagementUserSecurityService(keycloakService)
+        keycloackManagementUserSecurityService = new KeycloakManagementUserSecurityService(keycloakService)
     }
 
     def 'should create a new user'() {
