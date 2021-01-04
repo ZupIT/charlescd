@@ -20,11 +20,10 @@ import isEmpty from 'lodash/isEmpty';
 import first from 'lodash/first';
 import Button from 'core/components/Button';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import RadioGroup from 'core/components/RadioGroup';
+import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import { getProfileByKey } from 'core/utils/profile';
 import { radios, providers, gitProviders } from './constants';
 import { CDConfiguration } from './interfaces';
 import { Props } from '../interfaces';
@@ -36,7 +35,6 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
   const { control, register, handleSubmit } = useForm<CDConfiguration>();
   const [configType, setConfigType] = useState('');
   const [providerType, setProviderType] = useState('');
-  const profileId = getProfileByKey('id');
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -46,7 +44,6 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
     save({
       ...cdConfiguration,
       type: `${configType}`,
-      authorId: profileId,
       configurationData: {
         ...cdConfiguration.configurationData,
         provider: providerType
@@ -126,7 +123,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
       <Styled.Subtitle color="dark">
         Choose the deployment manager:
       </Styled.Subtitle>
-      <RadioGroup
+      <Radio.Buttons
         name="cd-configuration-provider"
         items={providers}
         onChange={({ currentTarget }) => setProviderType(currentTarget.value)}
@@ -203,7 +200,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>
-      <RadioGroup
+      <Radio.Buttons
         name="cd-configuration"
         items={radios}
         onChange={({ currentTarget }) => setConfigType(currentTarget.value)}

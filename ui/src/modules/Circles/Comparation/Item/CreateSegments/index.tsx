@@ -23,7 +23,6 @@ import { NEW_TAB } from 'core/components/TabPanel/constants';
 import Segments, { Rules } from 'modules/Circles/Segments';
 import ImportCSV from './ImportCSV';
 import { useSaveCircleManually } from 'modules/Circles/hooks';
-import { getProfileByKey } from 'core/utils/profile';
 import Styled from './styled';
 import { getWarningText, WarningMessage } from './helpers';
 import Percentage from './Percentage';
@@ -71,8 +70,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
 
   const saveCircleManually = (rules: Rules) => {
     const { name } = circle;
-    const authorId = getProfileByKey('id');
-    saveCircle({ ...circle, rules, name, authorId });
+    saveCircle({ ...circle, rules, name });
   };
 
   const onDismissWarningMessage = () => {
@@ -137,7 +135,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
       onContinue={onContinue}
       onDismiss={onDismissWarningMessage}
     >
-      {getWarningText(warningMessage)}
+      <Text.h4 color="light">{getWarningText(warningMessage)}</Text.h4>
     </Modal.Trigger>
   );
   return (

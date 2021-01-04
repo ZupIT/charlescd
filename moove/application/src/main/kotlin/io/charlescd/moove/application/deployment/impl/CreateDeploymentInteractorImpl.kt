@@ -40,13 +40,13 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
 ) : CreateDeploymentInteractor {
 
     @Transactional
-    override fun execute(request: CreateDeploymentRequest, workspaceId: String): DeploymentResponse {
+    override fun execute(request: CreateDeploymentRequest, workspaceId: String, authorization: String): DeploymentResponse {
         val build: Build = buildService.find(request.buildId, workspaceId)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
-
+        val user = userService.findByAuthorizationToken(authorization)
         if (build.canBeDeployed()) {
-            val deployment = createDeployment(request, workspaceId)
+            val deployment = createDeployment(request, workspaceId, user)
             checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
             deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
@@ -68,9 +68,10 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
 
     private fun createDeployment(
         request: CreateDeploymentRequest,
-        workspaceId: String
+        workspaceId: String,
+        user: User
     ): Deployment {
-        val user = userService.find(request.authorId)
+        val user = user
         val circle = circleService.find(request.circleId)
         return request.toDeployment(workspaceId, user, circle)
     }

@@ -17,6 +17,7 @@
 package io.charlescd.moove.commons.representation
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 
 data class CardRepresentation(
@@ -31,6 +32,8 @@ data class CardRepresentation(
     val type: String,
     val feature: FeatureRepresentation?,
     val hypothesisId: String,
+    @get:JsonProperty("isProtected")
+    var isProtected: Boolean = false,
     val comments: List<CommentRepresentation> = emptyList(),
     val members: List<UserRepresentation> = emptyList(),
     val index: Int?

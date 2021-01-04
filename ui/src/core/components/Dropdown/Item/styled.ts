@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { Props } from './';
+import ComponentIcon from 'core/components/Icon';
+import ComponentText from 'core/components/Text';
+import ReactTooltip from 'react-tooltip';
 
-const Item = styled.button`
+const Icon = styled(ComponentIcon)``;
+
+const Text = styled(ComponentText.h5)``;
+
+const Item = styled.button<Partial<Props>>`
   color: ${({ theme }) => theme.dropdown.color};
   cursor: pointer;
   border: none;
@@ -33,8 +41,39 @@ const Item = styled.button`
   > * + * {
     margin-left: 5px;
   }
+
+  ${({ isInactive, deploying, undeploying }) =>
+    (isInactive || deploying || undeploying) &&
+    css`
+      ${Icon}, ${Text} {
+        color: ${({ theme }) => theme.dropdown.disabled.color};
+      }
+    `};
+`;
+
+const ReactTooltipStyled = styled(ReactTooltip)`
+  text-align: left !important;
+  padding: 8px !important;
+  font-size: 12px !important;
+  background-color: ${({ theme }) => theme.dropdown.background} !important;
+  color: ${({ theme }) => theme.dropdown.color} !important;
+
+  ::after {
+    border-right-color: ${({ theme }) => theme.dropdown.background} !important;
+  }
+
+  span {
+    text-align: left !important;
+    padding: 0px !important;
+    font-size: 12px;
+    background-color: ${({ theme }) => theme.dropdown.background};
+    color: ${({ theme }) => theme.dropdown.color};
+  }
 `;
 
 export default {
-  Item
+  Item,
+  Icon,
+  Text,
+  ReactTooltipStyled
 };

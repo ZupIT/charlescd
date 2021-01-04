@@ -15,27 +15,28 @@
  */
 
 import { baseRequest, putRequest, deleteRequest, postRequest } from './base';
-import { Module } from 'modules/Modules/interfaces/Module';
+import {
+  CARD_TYPE_ACTION,
+  CARD_TYPE_FEATURE
+} from 'modules/Hypotheses/Board/Card/constants';
+import { buildParams } from 'core/utils/query';
 
 const endpoint = '/moove/cards';
 
 export interface Payload {
   id?: string;
   labels: string[];
-  modules: Module[];
-  type: 'ACTION';
+  modules: string[];
+  type: typeof CARD_TYPE_ACTION | typeof CARD_TYPE_FEATURE;
   branchName: string;
   name: string;
-  desription: string;
+  description: string;
 }
 
 export const findById = (id: string) => baseRequest(`${endpoint}/${id}`);
 
-export const addCardMembers = (
-  cardId: string,
-  authorId: string,
-  memberIds: string[]
-) => postRequest(`${endpoint}/${cardId}/members`, { authorId, memberIds });
+export const addCardMembers = (cardId: string, memberIds: string[]) =>
+  postRequest(`${endpoint}/${cardId}/members`, { memberIds });
 
 export const archiveById = (cardId: string) =>
   baseRequest(`${endpoint}/${cardId}/archive`, null, { method: 'PATCH' });
@@ -43,7 +44,8 @@ export const archiveById = (cardId: string) =>
 export const updateById = (id: string, payload: Payload) =>
   putRequest(`${endpoint}/${id}`, payload);
 
-export const deleteById = (id: string) => deleteRequest(`${endpoint}/${id}`);
+export const deleteById = (id: string, branchDeletion = false) =>
+  deleteRequest(`${endpoint}/${id}?${buildParams({ branchDeletion })}`);
 
 export const createCard = (payload: Payload) =>
   postRequest(`${endpoint}`, payload);

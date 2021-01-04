@@ -26,12 +26,15 @@ import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.NodeType;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
+import io.charlescd.circlematcher.domain.exception.BusinessException;
+import io.charlescd.circlematcher.domain.exception.MatcherErrorCode;
 import io.charlescd.circlematcher.domain.service.SegmentationService;
 import io.charlescd.circlematcher.infrastructure.SegmentationKeyUtils;
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository;
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,12 +50,14 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     public void create(CreateSegmentationRequest request) {
+        validateSegmentation(request);
         var segmentation = decomposeSegmentation(request);
 
         segmentation.forEach(this::createSegmentationData);
     }
 
     public void update(UpdateSegmentationRequest updateSegmentationRequest) {
+        validateSegmentation(updateSegmentationRequest);
         var previousMetadata = this.keyMetadataRepository.findByReference(
                 updateSegmentationRequest.getPreviousReference()
         );
@@ -150,6 +155,25 @@ public class SegmentationServiceImpl implements SegmentationService {
     private boolean shouldDecompose(SegmentationRequest segmentationRequest) {
         return SegmentationType.REGULAR.equals(segmentationRequest.getType()) && !segmentationRequest.getIsDefault();
     }
+
+    private void validateSegmentation(SegmentationRequest request) {
+        var isUpdate = request instanceof UpdateSegmentationRequest;
+
+        if (!request.getIsDefault()) {
+            return;
+        }
+        if (isUpdate) {
+            throw new BusinessException(MatcherErrorCode.CANNOT_UPDATE_DEFAULT_SEGMENTATION);
+        }
+
+        var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
+        var hasMetadataDefault = metadataList.stream().parallel()
+                .anyMatch(keyMetadata -> keyMetadata.getIsDefault());
+        if (hasMetadataDefault) {
+            throw new BusinessException(MatcherErrorCode.DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE);
+        }
+    }
+
 }
 
 
