@@ -26,7 +26,6 @@ export interface Component {
 
 export interface ModuleSave {
   name: string;
-  authorId: string;
   helmRepository: string;
   gitRepositoryAddress: string;
   components: Component[];

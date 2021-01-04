@@ -25,7 +25,6 @@ export interface UserGroupFilter {
 
 export interface UserGroupSave {
   name: string;
-  authorId: string;
 }
 
 export interface UserGroupMemberSave {
