@@ -32,7 +32,7 @@ import { IDefaultConfig } from '../../configurations/interfaces/octopipe-configu
 import { RepoConfig } from '../../../core/manifests/manifest.interface'
 import { HelmManifest } from '../../../core/manifests/helm/helm-manifest'
 import { CreateModuleDeploymentDto } from '../dto/create-module-request.dto'
-import { KubernetesManifest } from 'src/app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { KubernetesManifest } from '../../../core/integrations/interfaces/k8s-manifest.interface'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 
 @Injectable()

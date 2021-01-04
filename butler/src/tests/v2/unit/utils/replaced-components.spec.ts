@@ -28,7 +28,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a',
       'component-a-id-1',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -37,7 +38,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b',
       'component-b-id-2',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -46,7 +48,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c',
       'component-c-id-33',
       null,
-      null
+      null,
+      []
     )
   ]
 
@@ -58,7 +61,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a',
       'component-a-id-3',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -67,7 +71,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b',
       'component-b-id-4',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -76,7 +81,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c',
       'component-c-id-5',
       null,
-      null
+      null,
+      []
     )
   ]
 
@@ -119,7 +125,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a',
       'component-a-id-11',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -128,7 +135,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b',
       'component-b-id-22',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -137,7 +145,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c',
       'component-c-id-33',
       null,
-      null
+      null,
+      []
     )
   ]
 
