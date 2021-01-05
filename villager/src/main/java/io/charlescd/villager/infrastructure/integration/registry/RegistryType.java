@@ -16,12 +16,12 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.AwsConfig;
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.AzureConfig;
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.ConfigParameters;
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.DockerHubConfig;
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.GcpConfig;
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.HarborConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.AwsConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.AzureConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.ConfigParameters;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.DockerHubConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.GcpConfig;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.HarborConfig;
 import java.util.function.Function;
 
 public enum RegistryType {

@@ -1,4 +1,4 @@
-package io.charlescd.villager.infrastructure.integration.registry.configuraton;
+package io.charlescd.villager.infrastructure.integration.registry.configuration;
 
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicCredentialsProvider;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;

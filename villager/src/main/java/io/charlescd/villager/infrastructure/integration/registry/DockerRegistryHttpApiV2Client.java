@@ -16,7 +16,7 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.integration.registry.configuraton.ConfigParameters;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.ConfigParameters;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import java.io.IOException;
 import java.util.Optional;
