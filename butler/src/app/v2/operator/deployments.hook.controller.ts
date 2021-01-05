@@ -47,7 +47,9 @@ export class DeploymentsHookController {
     const specs : Record<string, unknown>[] = []
 
     // we cant trust that everything went well instantly, we need to keep returning finalized = true until we are sure there are no more routes to this deployment
-    // if (checkRoutes(, deploymentIdk8sClientGetCrdRoutes())) {
+    // const currentRoutes = this.k8sClient.getRoutingResource()
+    // here we have to check if currentRoutes match the desired state based on activeComponents from database
+    // if (checkRoutes(currentRoutes)) {
     // when everything is cleaned up update the database to signal the undeploy
     // finalized = true
     // }
