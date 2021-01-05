@@ -35,11 +35,11 @@ class CreateUserInteractorImpl @Inject constructor(
     }
 
     private fun getUserFromToken(authorization: String): Optional<User> {
-        try {
+        return try {
             val user = userService.findByAuthorizationToken(authorization)
-            return Optional.of(user)
+            Optional.of(user)
         } catch (ex: NotFoundException) {
-            return Optional.empty()
+            Optional.empty()
         }
     }
 
