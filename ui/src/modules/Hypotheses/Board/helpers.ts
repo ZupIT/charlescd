@@ -17,7 +17,6 @@
 import map from 'lodash/map';
 import get from 'lodash/get';
 import find from 'lodash/find';
-import { getProfile } from 'core/utils/profile';
 import { DropResult, DraggableLocation } from 'react-beautiful-dnd';
 import { Card } from './interfaces';
 import { Column as Props, CreateCardParams } from './interfaces';
@@ -143,7 +142,6 @@ export const createCardPayload = ({
   name,
   hypothesisId
 }: CreateCardParams) => ({
-  authorId: getProfile().id,
   branchName: '',
   description: '',
   hypothesisId,

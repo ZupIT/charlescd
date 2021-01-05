@@ -21,7 +21,6 @@ export interface Props {
 export interface CDConfiguration {
   name: string;
   type: string;
-  authorId: string;
   configurationData: {
     namespace: string;
     url: string;
