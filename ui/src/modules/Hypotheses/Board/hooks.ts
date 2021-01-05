@@ -148,7 +148,7 @@ export const useModules = (): AddModuleProps => {
         const error = await e.json();
         dispatch(
           toogleNotification({
-            text: `[${error.code}] ${error.message}`,
+            text: `[${e.status}] ${error.message}`,
             status: 'error'
           })
         );
