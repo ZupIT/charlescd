@@ -78,7 +78,7 @@ class CreateUserInteractorImpl @Inject constructor(
                 password
             )
         } catch (exception: Exception) {
-            throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_ERROR)
+            throw BusinessException.of(MooveErrorCode.UNEXPECTED_IDM_ERROR)
         }
     }
 }
