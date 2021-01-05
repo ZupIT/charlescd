@@ -139,6 +139,33 @@ func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
 	return nil
 }
 
+func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
+	result := Response{}
+
+	subsQuery := main.db.Raw(FindOneQuery(subscriptionId.String())).Row()
+	subsErr := subsQuery.Scan(&result.ExternalId, &result.Url, &result.Description, &result.ApiKey)
+	if subsErr != nil {
+		return Response{}, errors.NewError("Delete Subscription error", subsErr.Error()).
+			WithOperations("Delete.DeleteSubscription")
+	}
+
+	rows, err := main.db.Raw(FindEventsQuery(subscriptionId.String())).Rows()
+	if err != nil {
+		return Response{}, errors.NewError("Find Subscription error", err.Error()).
+			WithOperations("Find.FindSubscription")
+	}
+
+	for rows.Next() {
+		errF := main.db.ScanRows(rows, &result.Events)
+		if errF != nil {
+			return Response{}, errors.NewError("Find Subscription error", errF.Error()).
+				WithOperations("Find.FindSubscription")
+		}
+	}
+
+	return result, nil
+}
+
 func (main Main) saveSubscriptionEvents(events []uuid.UUID, subscriptionId uuid.UUID, tx *gorm.DB) ([]SubscriptionConfigurationEvents, error) {
 	configEvents := make([]SubscriptionConfigurationEvents, 0)
 

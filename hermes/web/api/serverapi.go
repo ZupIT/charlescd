@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gorilla/mux"
+	"hermes/internal/event"
 	"hermes/internal/subscription"
 	"log"
 	"net/http"
@@ -11,12 +12,13 @@ import (
 type Api struct {
 	// Dependencies
 	subscriptionMain subscription.UseCases
-
+	eventMain        event.UseCases
 }
 
-func NewApi(subscriptionMain subscription.UseCases) *mux.Router {
+func NewApi(subscriptionMain subscription.UseCases, eventMain event.UseCases) *mux.Router {
 	api := Api{
 		subscriptionMain: subscriptionMain,
+		eventMain: eventMain,
 	}
 	router := mux.NewRouter()
 	s := router.PathPrefix("/api").Subrouter()
@@ -37,10 +39,10 @@ func (api *Api) health(r *mux.Router) {
 }
 
 func Start(r *mux.Router) {
-	server :=  &http.Server{
-		Handler:     r,
-		Addr:        ":8080",
-		ReadTimeout: 15 * time.Second,
+	server := &http.Server{
+		Handler:      r,
+		Addr:         ":8080",
+		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 	}
 	log.Fatal(server.ListenAndServe())

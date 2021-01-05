@@ -28,5 +28,13 @@ type SaveResponse struct {
 }
 
 type UpdateResponse struct {
-	Events         []uuid.UUID `json:"events"`
+	Events []uuid.UUID `json:"events"`
+}
+
+type Response struct {
+	ExternalId  uuid.UUID `json:"externalId"`
+	Url         string    `json:"url"`
+	Description string    `json:"description"`
+	ApiKey      string    `json:"apiKey"`
+	Events      []string  `json:"events"`
 }

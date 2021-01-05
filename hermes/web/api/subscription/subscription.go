@@ -90,3 +90,22 @@ func Delete(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 		util2.NewResponse(w, http.StatusOK, nil)
 	}
 }
+
+func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		if uuidErr != nil {
+			util2.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			return
+		}
+
+		result, err := subscriptionMain.FindById(subscriptionId)
+		if err != nil {
+			util2.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		util2.NewResponse(w, http.StatusOK, result)
+	}
+}

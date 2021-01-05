@@ -24,3 +24,17 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 	}
 
 }
+
+func FindOneQuery(subscriptionId string) string {
+	return fmt.Sprintf(`SELECT external_id, url, description, PGP_SYM_DECRYPT(api_key, '%s')
+	FROM SUBSCRIPTIONS
+	WHERE  id = '%s'
+	AND deleted_at IS NULL`, configuration.GetConfiguration("ENCRYPTION_KEY"), subscriptionId)
+}
+
+func FindEventsQuery(subscriptionId string) string {
+	return fmt.Sprintf(`SELECT se.event
+	FROM subscription_events se
+			INNER JOIN subscription_configuration_events sce ON sce.event_id = se.id
+	WHERE sce.subscription_id = '%s'`, subscriptionId)
+}

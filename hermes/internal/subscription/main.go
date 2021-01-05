@@ -14,6 +14,7 @@ type UseCases interface {
 	Save(subscription Request) (SaveResponse, errors.Error)
 	Update(subscription UpdateRequest) (UpdateResponse, errors.Error)
 	Delete(subscriptionId uuid.UUID, author string) errors.Error
+	FindById(subscriptionId uuid.UUID) (Response, errors.Error)
 }
 type Main struct {
 	db         *gorm.DB
