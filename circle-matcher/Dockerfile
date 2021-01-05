@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.4_11-alpine-slim
+FROM oracle/graalvm-ce:20.3.0-java11
 
 ENV APP_TARGET target
 ENV APP charlescd-circle-matcher.jar
