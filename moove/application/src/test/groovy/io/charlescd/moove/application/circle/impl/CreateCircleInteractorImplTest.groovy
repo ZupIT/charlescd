@@ -159,7 +159,7 @@ class CreateCircleInteractorImplTest extends Specification {
         )
     }
 
-    private Circle getDummyCircle(String circleId, User author, git NodePart nodePart, String workspaceId) {
+    private Circle getDummyCircle(String circleId, User author, NodePart nodePart, String workspaceId) {
         new Circle(
                 circleId,
                 "Women",

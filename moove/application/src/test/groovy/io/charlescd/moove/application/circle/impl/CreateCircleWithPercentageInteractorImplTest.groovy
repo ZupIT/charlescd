@@ -32,6 +32,7 @@ import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import org.jetbrains.annotations.NotNull
 import spock.lang.Specification
 
@@ -43,13 +44,14 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
 
     private CircleRepository circleRepository = Mock(CircleRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
 
     void setup() {
         this.createCircleWIthPercentageInteractor = new CreateCircleWithPercentageInteractorImpl(
                 new CircleService(circleRepository),
-                new UserService(userRepository),
+                new UserService(userRepository, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository),
                 circleMatcherService
         );
