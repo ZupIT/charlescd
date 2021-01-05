@@ -17,12 +17,11 @@
 package io.charlescd.circlematcher.domain.service;
 
 import io.charlescd.circlematcher.domain.Node;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Value;
-
 import java.util.Map;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
 
 public interface ScriptManagerService {
 

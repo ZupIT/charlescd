@@ -21,15 +21,9 @@ import io.charlescd.circlematcher.domain.service.ScriptManagerService;
 import io.charlescd.circlematcher.infrastructure.Constants;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
-
-import java.sql.SQLOutput;
 import java.util.Map;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
-
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
@@ -42,20 +36,21 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
 
     private Logger logger = LoggerFactory.getLogger(ScriptManagerServiceImpl.class);
     private Context context;
+
     public ScriptManagerServiceImpl() {
 
     }
 
     public void scriptContext() {
-
-        try{
+        try {
             var toStrScript = ResourceUtils.getResourceAsString("js/toStr.js");
             var toNumberScript = ResourceUtils.getResourceAsString("js/toNumber.js");
             var getPathScript = ResourceUtils.getResourceAsString("js/getPath.js");
-            this.context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true").build();
-            context.eval("js", getPathScript);
-            context.eval("js", toNumberScript);
             context.eval("js", toStrScript);
+            context.eval("js", toNumberScript);
+            context.eval("js", getPathScript);
+            this.context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true")
+                    .build();
         } catch (Exception ex) {
             this.logger.error("Could not evaluate expression", ex);
         }
@@ -73,12 +68,12 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
         }
     }
 
-    public Value evalJsWithResult(String script, Map<String,Object> input) {
-        try{
+    public Value evalJsWithResult(String script, Map<String, Object> input) {
+        try {
             putVar(Constants.INPUT_VARIABLE, ProxyObject.fromMap(input));
             this.context.eval("js", OpUtils.evalExpression(script));
-            return this.getVar(Constants.RESULT_VARIABLE);
-        }catch (Exception exception){
+            return this.getVar(Constants. RESULT_VARIABLE);
+        } catch (Exception exception) {
             return null;
         }
 
