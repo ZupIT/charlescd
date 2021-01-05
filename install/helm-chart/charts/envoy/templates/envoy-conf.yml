@@ -1,0 +1,224 @@
+apiVersion: v1
+data:
+  envoy.yaml: |-
+    static_resources:
+      listeners:
+      - address:
+          socket_address:
+            address: 0.0.0.0
+            port_value: 80
+        filter_chains:
+        - filters:
+          - name: envoy.http_connection_manager
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+              codec_type: auto
+              stat_prefix: ingress_http
+              access_log:
+              - name: envoy.access_loggers.file
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
+                  path: "/dev/stdout"
+              route_config:
+                name: local_route
+                virtual_hosts:
+                - name: backend
+                  domains:
+                  - "*"
+                  {{ if .Values.cors.enabled }}
+                  cors:
+                    allow_origin_string_match:
+                    {{- range $host := .Values.cors.hosts }}
+                    - exact: "{{ $host }}"
+                    {{- end }}
+                    allow_methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+                    allow_headers: "Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+                  {{- end}}
+                  routes:
+                  {{ if .Values.moove.enabled }}
+                  - match:
+                      prefix: "/moove/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-moove
+                  {{- end}}
+                  {{ if .Values.octopipe.enabled }}
+                  - match:
+                      prefix: "/octopipe/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-octopipe
+                  {{- end}}
+                  {{ if .Values.circlematcher.enabled }}
+                  - match:
+                      prefix: "/charlescd-circle-matcher/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-circle-matcher
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
+                  {{- end}}
+                  {{ if .Values.keycloak.enabled }}
+                  - match:
+                      prefix: "/keycloak"
+                    route:
+                      cluster: charlescd-keycloak-http
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
+                  {{- end}}
+                  {{ if .Values.compass.enabled }}
+                  - match:
+                      prefix: "/compass/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-compass
+                  {{- end}}
+                  {{ if .Values.ui.enabled }}
+                  - match:
+                      prefix: "/"
+                    route:
+                      cluster: charlescd-ui
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
+                  {{- end}}
+              http_filters:
+              {{ if .Values.cors.enabled }}
+              - name: envoy.filters.http.cors
+                typed_config: {}
+              {{- end}}
+              - name: envoy.filters.http.lua
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                  inline_code: |
+                    function envoy_on_request(request_handle)
+                      local token = request_handle:headers():get("authorization")
+                      local request = require("luajit-init")
+                      local response = request.send(
+                        "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
+                        {
+                          headers = {
+                            authorization = token
+                          }
+                        }
+                      )
+                      request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
+                      request_handle:logInfo(response.code)
+                      if response.code ~= 200 then
+                        request_handle:respond({
+                          [":status"] = response.code
+                        }, response.body)
+                      end
+                    end
+              - name: envoy.filters.http.router
+                typed_config: {}
+
+      clusters:
+      {{ if .Values.ui.enabled }}
+      - name: charlescd-ui
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-ui
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-ui
+                    port_value: 3000
+      {{- end}}
+      {{ if .Values.moove.enabled }}
+      - name: charlescd-moove
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-moove
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-moove
+                    port_value: 8080
+      {{- end}}
+      {{ if .Values.octopipe.enabled }}
+      - name: charlescd-octopipe
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-octopipe
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-octopipe
+                    port_value: 8080
+      {{- end}}
+      {{ if .Values.circlematcher.enabled }}
+      - name: charlescd-circle-matcher
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-circle-matcher
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-circle-matcher
+                    port_value: 8080
+      {{- end}}
+      - name: charlescd-keycloak-http
+        connect_timeout: 2.00s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-keycloak-http
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: {{ .Values.idm.endpoint }}
+                    port_value: {{ .Values.idm.port }}
+      {{ if .Values.compass.enabled }}
+      - name: charlescd-compass
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-compass
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-compass
+                    port_value: 8080
+      {{- end}}
+    admin:
+      access_log_path: "/dev/stdout"
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 8001
+kind: ConfigMap
+metadata:
+  name: confenvoy

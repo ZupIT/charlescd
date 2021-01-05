@@ -42,10 +42,14 @@ open class DeleteCircleByIdInteractorImpl(
     @Transactional
     override fun execute(id: String, workspaceId: String) {
         val circle = circleService.find(id, workspaceId)
-        deleteDeployments(id)
-        keyValueRuleService.delete(id)
-        circleService.delete(id)
-        deleteFromCircleMatcher(workspaceId, circle)
+        if (!circle.isDefaultCircle()) {
+            deleteDeployments(id)
+            keyValueRuleService.delete(id)
+            circleService.delete(id)
+            deleteFromCircleMatcher(workspaceId, circle)
+        } else {
+            throw BusinessException.of(MooveErrorCode.CANNOT_DELETE_DEFAULT_CIRCLE)
+        }
     }
 
     private fun deleteFromCircleMatcher(workspaceId: String, circle: Circle) {

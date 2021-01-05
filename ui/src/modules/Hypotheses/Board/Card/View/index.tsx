@@ -65,7 +65,7 @@ const CardView = ({ id, onClose }: Props) => {
 
   const renderContent = () => (
     <Fragment>
-      <Layer>
+      <Layer data-testid={`card-view-${card.id}-content`}>
         <ContentIcon icon="card">
           <Form.InputTitle
             name="name"

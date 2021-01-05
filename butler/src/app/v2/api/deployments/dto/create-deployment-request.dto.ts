@@ -57,9 +57,8 @@ export class CreateDeploymentRequestDto {
 
   public status: DeploymentStatusEnum
 
-  @ApiProperty()
   @IsBoolean()
-  @IsNotEmpty()
+  @ApiProperty()
   public defaultCircle: boolean
 
   @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
