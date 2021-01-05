@@ -21,7 +21,7 @@ jobs:
     - name: Set up GraalVM
       uses: DeLaGuardo/setup-graalvm@master
       with:
-          graalvm-version: "20.3.0 java11"
+          graalvm-version: "20.3.0.java11"
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository
