@@ -43,14 +43,14 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
 
     public void scriptContext() {
         try {
+            this.context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true")
+                    .build();
             var toStrScript = ResourceUtils.getResourceAsString("js/toStr.js");
             var toNumberScript = ResourceUtils.getResourceAsString("js/toNumber.js");
             var getPathScript = ResourceUtils.getResourceAsString("js/getPath.js");
             context.eval("js", toStrScript);
             context.eval("js", toNumberScript);
             context.eval("js", getPathScript);
-            this.context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true")
-                    .build();
         } catch (Exception ex) {
             this.logger.error("Could not evaluate expression", ex);
         }
