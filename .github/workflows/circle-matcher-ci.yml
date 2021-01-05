@@ -19,10 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up GraalVM
-      uses: rinx/setup-graalvm-ce@v0.0.5
+      uses: DeLaGuardo/setup-graalvm@master
       with:
-          graalvm-version: "20.3.0"
-          java-version: "java11"
+          graalvm-version: "20.3.0 java11"
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository
