@@ -77,7 +77,7 @@ describe('DeploymentCleanupHandler', () => {
       circle: circleId,
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -109,7 +109,7 @@ describe('DeploymentCleanupHandler', () => {
       circle: circleId,
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -137,7 +137,7 @@ describe('DeploymentCleanupHandler', () => {
       circle: '3eb609b0-829c-4861-8fc3-856197e1b85b',
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -169,7 +169,7 @@ describe('DeploymentCleanupHandler', () => {
 
     const modules = new CreateModuleDeploymentDto(
       'acf45587-3684-476a-8e6f-b479820a8cd5',
-      'https://some-helm.repo',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 

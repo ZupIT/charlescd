@@ -83,7 +83,7 @@ describe('CreateDeploymentUsecase v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -101,7 +101,7 @@ describe('CreateDeploymentUsecase v2', () => {
     }
 
     const component1 = new ComponentEntity(
-      'https://some-helm.repo',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       'v2',
       'imageurl.com',
       'A',

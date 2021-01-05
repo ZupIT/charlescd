@@ -84,7 +84,7 @@ describe('DeploymentController v2', () => {
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -178,7 +178,7 @@ describe('DeploymentController v2', () => {
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',

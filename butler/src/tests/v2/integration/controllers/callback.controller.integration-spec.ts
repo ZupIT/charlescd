@@ -107,7 +107,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -147,7 +147,7 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
             name: 'component-name',
@@ -205,7 +205,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -246,7 +246,7 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
             name: 'component-name',
@@ -304,7 +304,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -345,7 +345,7 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
             name: 'component-name',
@@ -403,7 +403,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -444,7 +444,7 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
             name: 'component-name',

@@ -79,7 +79,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -110,7 +110,7 @@ describe('DeploymentController v2', () => {
           id: 'dummy-id',
           moduleId: 'dummy-module-id',
           createdAt: expect.any(String),
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentsDeployments: [
             {
               id: expect.any(String),
@@ -145,7 +145,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -217,7 +217,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -261,7 +261,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -340,7 +340,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -387,7 +387,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -437,7 +437,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
