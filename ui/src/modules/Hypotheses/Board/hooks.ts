@@ -148,7 +148,7 @@ export const useModules = (): AddModuleProps => {
         const error = await e.json();
         dispatch(
           toogleNotification({
-            text: `[${error.status}] This module could not be tied.`,
+            text: `[${error.code}] ${error.message}`,
             status: 'error'
           })
         );
