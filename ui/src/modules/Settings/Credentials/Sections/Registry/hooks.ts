@@ -33,7 +33,6 @@ import {
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
-import { v4 as uuidv4 } from 'uuid';
 
 export const useRegistry = (): FetchProps => {
   const dispatch = useDispatch();
@@ -108,13 +107,13 @@ export const useRegistry = (): FetchProps => {
 
 export const useRegistryTestConnection = (): {
   testConnectionRegistry: Function;
-  response: string;
+  response: Response;
   error: ResponseError;
   status: FetchStatus;
 } => {
   const status = useFetchStatus();
   const test = useFetchData<Response>(testConnection);
-  const [response, setResponse] = useState<string>(null);
+  const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
   const testConnectionRegistry = useCallback(
@@ -124,7 +123,7 @@ export const useRegistryTestConnection = (): {
           status.pending();
           const res = await test(registry);
 
-          setResponse(uuidv4());
+          setResponse(res);
           status.resolved();
 
           return res;
