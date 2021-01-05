@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
@@ -51,7 +50,7 @@ class FindDeploymentsHistoryForCircleInteractorImplTest extends Specification {
 
         result.content.isEmpty()
         result.page == 0
-        result.size == 10
+        result.size == result.size
         result.totalPages == 1
         result.isLast
     }
@@ -104,7 +103,7 @@ class FindDeploymentsHistoryForCircleInteractorImplTest extends Specification {
 
         result.content.size() == 2
         result.page == 0
-        result.size == 10
+        result.size == result.size
         result.totalPages == 1
         result.isLast
 
