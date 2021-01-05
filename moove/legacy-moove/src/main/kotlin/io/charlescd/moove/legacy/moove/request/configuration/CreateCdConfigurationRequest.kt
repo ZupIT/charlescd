@@ -27,8 +27,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = CreateOctopipeCdConfigurationRequest::class, name = "OCTOPIPE")
 )
 abstract class CreateCdConfigurationRequest(
-    val type: CdTypeEnum,
-    open val authorId: String
+    val type: CdTypeEnum
 )
 
 enum class CdTypeEnum {

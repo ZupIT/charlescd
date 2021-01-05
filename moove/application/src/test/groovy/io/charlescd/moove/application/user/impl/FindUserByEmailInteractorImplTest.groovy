@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
 import io.charlescd.moove.domain.Permission
@@ -24,6 +25,7 @@ import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -34,8 +36,10 @@ class FindUserByEmailInteractorImplTest extends Specification {
 
     private UserRepository userRepository = Mock(UserRepository)
 
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
+
     void setup() {
-        findUserByEmailInteractor = new FindUserByEmailInteractorImpl(new UserService(userRepository))
+        findUserByEmailInteractor = new FindUserByEmailInteractorImpl(new UserService(userRepository, managementUserSecurityService))
     }
 
     def "should find an user by its email"() {
@@ -51,11 +55,75 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
                 [workspacePermission], false, LocalDateTime.now())
 
+        def authorization = TestUtils.authorization
+
         when:
-        def response = findUserByEmailInteractor.execute(base64Email)
+        def response = findUserByEmailInteractor.execute(base64Email, authorization)
 
         then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
         1 * userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+
+        assert response != null
+        assert response.id == user.id
+        assert response.name == user.name
+        assert response.createdAt == user.createdAt
+        assert response.photoUrl == user.photoUrl
+    }
+
+    def "should find an user by email when requester is root"() {
+        given:
+        def base64Email = "dXNlckB6dXAuY29tLmJy"
+
+        def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
+                [], true, LocalDateTime.now())
+
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+
+        def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+                [workspacePermission], false, LocalDateTime.now())
+
+        def authorization = TestUtils.authorization
+
+        when:
+        def response = findUserByEmailInteractor.execute(base64Email, authorization)
+
+        then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
+        1 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+
+        assert response != null
+        assert response.id == user.id
+        assert response.name == user.name
+        assert response.createdAt == user.createdAt
+        assert response.photoUrl == user.photoUrl
+    }
+
+    def "should return request user when requester is not root"() {
+        given:
+        def base64Email = "dXNlckB6dXAuY29tLmJy"
+
+        def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
+                [], false, LocalDateTime.now())
+
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+
+        def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+                [workspacePermission], false, LocalDateTime.now())
+
+        def authorization = TestUtils.authorization
+
+        when:
+        def response = findUserByEmailInteractor.execute(base64Email, authorization)
+
+        then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.user)
+        1 * this.userRepository.findByEmail(TestUtils.user.email) >> Optional.of(user)
 
         assert response != null
         assert response.id == user.id
@@ -71,10 +139,14 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
                 [], false, LocalDateTime.now())
 
+        def authorization = TestUtils.authorization
+
         when:
-        def response = findUserByEmailInteractor.execute(base64Email)
+        def response = findUserByEmailInteractor.execute(base64Email, authorization)
 
         then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
         1 * userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
 
         assert response != null

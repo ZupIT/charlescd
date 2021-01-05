@@ -115,8 +115,8 @@ export const useAddMember = (): AddMemberProps => {
   const { loading } = data;
 
   const addMembers = useCallback(
-    (cardId: string, authorId: string, memberIds: string[]) => {
-      addMembersToCard(cardId, authorId, memberIds);
+    (cardId: string, memberIds: string[]) => {
+      addMembersToCard(cardId, memberIds);
     },
     [addMembersToCard]
   );

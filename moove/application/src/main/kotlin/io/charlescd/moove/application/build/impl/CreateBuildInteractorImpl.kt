@@ -42,11 +42,12 @@ open class CreateBuildInteractorImpl @Inject constructor(
 ) : CreateBuildInteractor {
 
     @Transactional
-    override fun execute(request: CreateBuildRequest, workspaceId: String): BuildResponse {
+    override fun execute(request: CreateBuildRequest, workspaceId: String, authorization: String): BuildResponse {
+        val user = userService.findByAuthorizationToken(authorization)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val hypothesis = hypothesisService.find(request.hypothesisId)
-        val build = createBuildEntity(request, hypothesis, workspaceId)
+        val build = createBuildEntity(request, hypothesis, workspaceId, user)
         buildService.save(build)
         createReleaseCandidate(build, workspace)
         sendBuildInformationToVillager(build, workspace)
@@ -78,8 +79,7 @@ open class CreateBuildInteractorImpl @Inject constructor(
         )
     }
 
-    private fun createBuildEntity(request: CreateBuildRequest, hypothesis: Hypothesis, workspaceId: String): Build {
-        val user = userService.find(request.authorId)
+    private fun createBuildEntity(request: CreateBuildRequest, hypothesis: Hypothesis, workspaceId: String, user: User): Build {
 
         val buildId = UUID.randomUUID().toString()
 
@@ -100,7 +100,7 @@ open class CreateBuildInteractorImpl @Inject constructor(
         val features = findReadyToGoFeatures(hypothesis, request, buildId)
 
         if (features.isEmpty() || request.features.size != features.size) {
-            throw BusinessException.of(
+                throw BusinessException.of(
                 MooveErrorCode.SOME_OF_INFORMED_FEATURES_DOES_NOT_EXIST_OR_ARE_NOT_READY_TO_GO
             )
         }

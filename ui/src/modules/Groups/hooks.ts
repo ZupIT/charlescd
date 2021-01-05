@@ -16,13 +16,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'core/state/hooks';
-import {
-  FetchStatus,
-  FetchStatuses,
-  useFetch,
-  useFetchData,
-  useFetchStatus
-} from 'core/providers/base/hooks';
+import { FetchStatuses, useFetch } from 'core/providers/base/hooks';
 import { UserGroup } from './interfaces/UserGroups';
 import {
   findAllUserGroup,
@@ -37,8 +31,10 @@ import { UserGroupPagination } from './interfaces/UserGroupsPagination';
 import { listUserGroupsAction } from './state/actions';
 import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
-import { getProfileByKey } from 'core/utils/profile';
 import { toogleNotification } from 'core/components/Notification/state/actions';
+import { addParamUserGroup } from './helpers';
+import { useHistory } from 'react-router-dom';
+import { FormAction } from '.';
 
 export const useFindAllUserGroup = (): [
   Function,
@@ -96,38 +92,34 @@ export const useListUser = (): [Function, UserPagination] => {
 };
 
 export const useCreateUserGroup = (): {
-  createUserGroup: (name: string) => Promise<UserGroup>;
+  createUserGroup: Function;
+  loading: boolean;
   response: UserGroup;
-  status: FetchStatus;
 } => {
-  const dispatch = useDispatch();
-  const status = useFetchStatus();
-  const [response, setResponse] = useState<UserGroup>();
-  const save = useFetchData<UserGroup>(saveUserGroup);
+  const history = useHistory();
+  const [listUserGroups] = useFindAllUserGroup();
+  const [usersData, save] = useFetch<UserGroup>(saveUserGroup);
+  const { response, loading } = usersData;
 
-  const createUserGroup = async (name: string) => {
-    try {
-      status.pending();
-      const data = await save({ name, authorId: getProfileByKey('id') });
-      setResponse(data);
-      status.resolved();
+  const createUserGroup = useCallback(
+    (name: string) => {
+      save({ name });
+    },
+    [save]
+  );
 
-      return data;
-    } catch (e) {
-      const error = await e.json();
-
-      dispatch(
-        toogleNotification({
-          text: error?.message,
-          status: 'error'
-        })
-      );
-
-      status.rejected();
+  useEffect(() => {
+    if (response) {
+      listUserGroups();
+      addParamUserGroup(history, `${response?.id}~${FormAction.edit}`);
     }
-  };
+  }, [response, listUserGroups, history]);
 
-  return { createUserGroup, response, status };
+  return {
+    createUserGroup,
+    loading,
+    response
+  };
 };
 
 export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
@@ -138,7 +130,7 @@ export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
   const doUpdateUserGroup = useCallback(
     (id: string, name: string) => {
       setStatus('pending');
-      update(id, { name, authorId: getProfileByKey('id') });
+      update(id, { name });
     },
     [update]
   );

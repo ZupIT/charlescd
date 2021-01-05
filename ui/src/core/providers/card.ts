@@ -35,11 +35,8 @@ export interface Payload {
 
 export const findById = (id: string) => baseRequest(`${endpoint}/${id}`);
 
-export const addCardMembers = (
-  cardId: string,
-  authorId: string,
-  memberIds: string[]
-) => postRequest(`${endpoint}/${cardId}/members`, { authorId, memberIds });
+export const addCardMembers = (cardId: string, memberIds: string[]) =>
+  postRequest(`${endpoint}/${cardId}/members`, { memberIds });
 
 export const archiveById = (cardId: string) =>
   baseRequest(`${endpoint}/${cardId}/archive`, null, { method: 'PATCH' });

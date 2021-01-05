@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.repository
+package io.charlescd.moove.application.user
 
-import io.charlescd.moove.legacy.repository.entity.Component
-import java.util.*
-import org.springframework.data.jpa.repository.JpaRepository
+interface DeleteUserInteractor {
 
-interface ComponentRepository : JpaRepository<Component, String> {
-
-    fun findByModuleId(moduleId: String): List<Component>
-
-    fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Component>
+    fun execute(id: String, authorization: String)
 }
