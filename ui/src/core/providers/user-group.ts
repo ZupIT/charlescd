@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 import { baseRequest } from './base';
 
 const endpoint = '/moove/v2/user-groups';
@@ -37,9 +38,8 @@ const initialGroupUserFilter = {
 export const findAllUserGroup = (
   filter: UserGroupFilter = initialGroupUserFilter
 ) => {
-  const sizeFixed = 200;
   const params = new URLSearchParams({
-    size: `${sizeFixed}`,
+    size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name
   });
 
