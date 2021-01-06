@@ -15,10 +15,16 @@
  */
 
 import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
+import { ThemeScheme } from 'core/assets/themes';
+import { getTheme } from 'core/utils/themes';
 import CreateSegments from '..';
+import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
+
+const theme = getTheme() as ThemeScheme;
 
 const circle = {
   deployment: {
@@ -42,5 +48,60 @@ test('render CreateSegments default component', async () => {
     />
   );
 
-  expect(screen.getByText('Create manually')).toBeInTheDocument();
+  const ButtonGoBack = await screen.findByTestId('icon-arrow-left');
+  expect(ButtonGoBack).toBeInTheDocument();
+
+  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
+  expect(ButtonCreateManually).toBeInTheDocument();
+
+  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
+  expect(ButtonImportCSV).toBeInTheDocument();
+});
+
+test('render CreateSegments and try Create manually', async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id="123"
+      circle={circle as Circle}
+    />
+  );
+
+  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
+  expect(ButtonCreateManually).toBeInTheDocument();
+
+  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
+  expect(ButtonImportCSV).toBeInTheDocument();
+  
+  act(() => userEvent.click(ButtonCreateManually));
+
+  expect(ButtonCreateManually).toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
+  expect(ButtonImportCSV).not.toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
+});
+
+test('render CreateSegments and try Import CSV', async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id="123"
+      circle={circle as Circle}
+    />
+  );
+
+  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
+  expect(ButtonImportCSV).toBeInTheDocument();
+
+  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
+  expect(ButtonCreateManually).toBeInTheDocument();
+
+  act(() => userEvent.click(ButtonImportCSV));
+
+  waitFor(() => expect(ButtonImportCSV).toHaveStyle(`background-color: ${theme.radio.button.checked.background}`));
+  expect(ButtonCreateManually).not.toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
 });

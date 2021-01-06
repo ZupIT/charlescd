@@ -18,7 +18,6 @@ import React, { useState, useEffect } from 'react';
 import { generatePath, useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
-import { getProfileByKey } from 'core/utils/profile';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import routes from 'core/constants/routes';
@@ -77,9 +76,8 @@ const Menu = ({ items, onSearch, onSelect, isLoading }: Props) => {
   const openHypothesesModal = () => setToggleModal(true);
 
   const onSubmit = ({ name }: Record<string, string>) => {
-    const authorId = getProfileByKey('id');
     const description = '';
-    create({ name, authorId, description });
+    create({ name, description });
   };
 
   const renderModal = () =>

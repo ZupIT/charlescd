@@ -82,8 +82,8 @@ This installation is recommended for who has already setup your infrastructure d
 | circlematcher.image.pullPolicy               | [See documentation](https://kubernetes.io/docs/concepts/containers/images/) | -                                                 |
 | circlematcher.service.name                   | name of Circle Matcher service                                              | charlescd-circle-matcher                          |
 | circlematcher.service.type                   | type of Circle Matcher service                                              | ClusterIP                                         |
-| circlematcher.resources.limits.cpu           | max amount of cpu that container can use                                    | 256m                                              |
-| circlematcher.resources.limits.memory        | max memory to be used to run                                                | 256Mi                                             |
+| circlematcher.resources.limits.cpu           | max amount of cpu that container can use                                    | 300m                                              |
+| circlematcher.resources.limits.memory        | max memory to be used to run                                                | 400Mi                                             |
 | circlematcher.resources.requests.cpu         | minimum allocated amount of cpu that container can use                      | 128m                                              |
 | circlematcher.resources.requests.memory      | minimum allocated amount of memmory that container can use                  | 128Mi                                             |
 | keycloak.enabled                             | enable keycloak install                                                     | true                                              |
@@ -96,11 +96,19 @@ This installation is recommended for who has already setup your infrastructure d
 | postgresql.postgresqlPassword                | root password                                                               | firstpassword                                     |
 | redis.enabled                                | enables the installation of redis. (use only if using the circle-matcher)   | true                                              |
 | redis.password                               | password of redis                                                           | hb2Fj9MGKjBkZ6zV                                  |
-| nginx.enabled                                | enable nginx ingress (documentation)                                        | true                                              |
-| nginx.ui.enabled                             | enable nginx ingress to frontend                                            | true                                              |
-| nginx.moove.enabled                          | enable nginx ingress to moove                                               | true                                              |
-| nginx.octopipe.enabled                       | enable nginx ingress to octopipe                                            | true                                              |
-| nginx.keycloak.enabled                       | enable nginx ingress to keycloak                                            | true                                              |
+| envoy.enabled                                | enable envoy as our reverse proxy                                           | true                                              |
+| envoy.ui.enabled                             | enable envoy proxy to frontend                                              | true                                              |
+| envoy.moove.enabled                          | enable envoy proxy to moove                                                 | true                                              |
+| envoy.octopipe.enabled                       | enable envoy proxy to octopipe                                              | true                                              |
+| envoy.compass.enabled                        | enable envoy proxy to compass                                               | true                                              |
+| envoy.keycloak.enabled                       | enable envoy proxy to keycloak                                              | true                                              |
+| envoy.cors.enabled                           | enable cors on charles services                                             | true                                              |
+| envoy.idm.endpoint                           | host of your idm                                                            | charlescd-keycloak-http                           |
+| envoy.idm.port                               | port of your idm                                                             | 80                                                |
+| envoy.idm.path                               | path used to validate token                                                 | /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo        |
+| ingress.host                                 | host that will be listened by ingress                                       | charles.info.example                                           |
+| ingress.class                                | ingress controller class                                                    | nginx                                             |
+| ingress.controller.nginx.enabled             | enable nginx ingress controller as your default controller                  | true                                              |
 | octopipe.enabled                             | enables the installation of octopipe                                        | true                                              |
 | octopipe.envVars                             | used to config mongo connection                                             | ---                                               |
 | sidecarIstio.enabled                         | if you have istio installed and want to enable sidecar                      | true                                              |

@@ -38,9 +38,6 @@ data class CreateModuleRequest(
     @field:NotBlank
     val helmRepository: String,
 
-    @field:NotBlank
-    val authorId: String,
-
     @field:Valid
     @field:NotEmpty
     val components: List<ComponentRequest>

@@ -19,7 +19,6 @@ import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { getProfileByKey } from 'core/utils/profile';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ModuleForm } from '../interfaces/Module';
@@ -46,8 +45,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     loading: savingBuild
   } = useComposeBuild();
   const { createDeployment, response: deploy } = useCreateDeployment();
-  
-  const authorId = getProfileByKey('id');
   const form = useForm<ModuleForm>({
     defaultValues,
     mode: 'onChange',
@@ -78,11 +75,10 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     if (build) {
       createDeployment({
         buildId: build.id,
-        authorId,
         circleId
       });
     }
-  }, [createDeployment, build, authorId, circleId]);
+  }, [createDeployment, build, circleId]);
 
   const onSubmit = () => {
     const data = getValues();
@@ -90,7 +86,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
     composeBuild({
       modules,
-      authorId,
       releaseName: data.releaseName
     });
   };
