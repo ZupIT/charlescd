@@ -15,17 +15,37 @@
  */
 
 import { INestApplication } from '@nestjs/common'
-import { NestFactory } from '@nestjs/core'
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppConstants } from '../../../app/v2/core/constants'
 import { EntityNotFoundExceptionFilter } from '../../../app/v2/core/filters/entity-not-found-exception.filter'
 import { ConsoleLoggerService } from '../../../app/v2/core/logs/console'
+import { K8sClient } from '../../../app/v2/core/integrations/k8s/client'
+
+/**
+ * Since we are not running integration tests inside a Kubernetes cluster, the K8sClient
+ * class and some of the existing tests will always fail, and because of that, we are mo-
+ * cking this class for the entirety of the test context.
+ */
+const K8sClientStub = {
+  applyDeploymentCustomResource: async() => {
+    return Promise.resolve()
+  },
+
+  applyUndeploymentCustomResource: async() => {
+    return Promise.resolve()
+  },
+
+  applyRoutingCustomResource: async() => {
+    return Promise.resolve()
+  }
+}
 
 export class TestSetupUtils {
 
   public static async createApplication(module: TestingModuleBuilder): Promise<INestApplication> {
     try {
-      const app: INestApplication = await NestFactory.create(module, { logger: false })
+      const compiledModule = await module.overrideProvider(K8sClient).useValue(K8sClientStub).compile()
+      const app: INestApplication = compiledModule.createNestApplication()
       const consoleLoggerService: ConsoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
 
       app.useGlobalFilters(new EntityNotFoundExceptionFilter(consoleLoggerService))

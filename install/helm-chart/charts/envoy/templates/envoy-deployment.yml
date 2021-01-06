@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-proxy
+  labels:
+    app: envoy-proxy
+spec:
+  selector:
+    matchLabels:
+      app: envoy-proxy
+  replicas: 1
+  template: 
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false" 
+      labels:
+        app: envoy-proxy     
+    spec:
+      containers:
+        - name: envoy-proxy
+          image: envoyproxy/envoy-dev:latest
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "apt update && apt install libcurl4-openssl-dev -y"]
+          ports:
+          - containerPort: 80
+          env:
+            - name: ENVOY_UID
+              value: "0"
+          volumeMounts:
+            - name: lua-config
+              mountPath: /usr/local/share/lua/5.1/luajit-init.lua
+              subPath: luajit-init.lua
+            - name: lua-config
+              mountPath: /usr/local/share/lua/5.1/luajit-curl.lua
+              subPath: luajit-curl.lua
+            - name: envoy-config
+              mountPath: /etc/envoy/envoy.yaml
+              subPath: envoy.yaml
+      volumes:
+        - name: envoy-config
+          configMap:
+            name: confenvoy
+        - name: lua-config
+          configMap:
+            name: conflua

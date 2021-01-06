@@ -60,7 +60,7 @@ spec:
             - name: DATABASE_USER
               value: {{ .Values.butler.database.user}}
             - name: DATABASE_PASS
-              value: {{ .Values.butler.database.password}}
+              value: "{{ .Values.butler.database.password}}"
             - name: DATABASE_NAME
               value: {{ .Values.butler.database.name}}
             {{ if .Values.butler.database.ssl }}

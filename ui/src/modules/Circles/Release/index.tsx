@@ -16,7 +16,7 @@
 
 import React, { useState } from 'react';
 import Text from 'core/components/Text';
-import RadioGroup from 'core/components/RadioGroup';
+import Radio from 'core/components/Radio';
 import CreateRelease from './Create';
 import SearchRelease from './Search';
 import { radios } from './constants';
@@ -47,7 +47,7 @@ const Release = ({ id, onGoBack, onCreateRelease }: Props) => {
           You can create a release manually or search for existing releases.
         </Styled.Subtitle>
 
-        <RadioGroup
+        <Radio.Buttons
           name="type"
           items={radios}
           onChange={({ currentTarget }) => setType(currentTarget.value)}
