@@ -20,5 +20,5 @@ import io.charlescd.moove.application.user.response.SimpleUserResponse
 
 interface FindUserByEmailInteractor {
 
-    fun execute(email: String): SimpleUserResponse
+    fun execute(email: String, authorization: String): SimpleUserResponse
 }

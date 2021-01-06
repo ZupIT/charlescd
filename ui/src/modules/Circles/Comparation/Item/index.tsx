@@ -52,7 +52,11 @@ import {
   isDefaultCircle,
   pathCircleById,
   isUndeployable,
-  isBusy
+  isBusy,
+  getTooltipMessage,
+  circleCannotBeDeleted,
+  isDeploying,
+  isUndeploying
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -219,8 +223,13 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       </Can>
       <Can I="write" a="circles" passThrough>
         <Dropdown.Item
+          id="dropdown-item-delete-circle"
           icon="delete"
           name="Delete"
+          tooltip={getTooltipMessage(circle)}
+          deploying={isDeploying(circle?.deployment?.status)}
+          undeploying={isUndeploying(circle?.deployment?.status)}
+          isInactive={circleCannotBeDeleted(circle)}
           onClick={() => setAction('Delete')}
         />
       </Can>

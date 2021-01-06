@@ -25,6 +25,7 @@ import io.charlescd.moove.application.circle.CreateCircleInteractor
 import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.service.CircleMatcherService
 import javax.inject.Named
 import javax.transaction.Transactional
@@ -38,8 +39,9 @@ open class CreateCircleInteractorImpl(
 ) : CreateCircleInteractor {
 
     @Transactional
-    override fun execute(request: CreateCircleRequest, workspaceId: String): CircleResponse {
-        val circle = circleService.save(createCircle(request, workspaceId))
+    override fun execute(request: CreateCircleRequest, workspaceId: String, authorization: String): CircleResponse {
+        val user = userService.findByAuthorizationToken(authorization)
+        val circle = circleService.save(createCircle(request, workspaceId, user))
         createCircleOnCircleMatcher(workspaceId, circle)
         return CircleResponse.from(circle)
     }
@@ -51,9 +53,9 @@ open class CreateCircleInteractorImpl(
 
     private fun createCircle(
         request: CreateCircleRequest,
-        workspaceId: String
+        workspaceId: String,
+        author: User
     ): Circle {
-        val author = userService.find(request.authorId)
         return request.toDomain(author, workspaceId)
     }
 }

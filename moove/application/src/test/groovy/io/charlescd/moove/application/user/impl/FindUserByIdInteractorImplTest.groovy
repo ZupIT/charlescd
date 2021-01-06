@@ -27,6 +27,7 @@ import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -39,8 +40,10 @@ class FindUserByIdInteractorImplTest extends Specification {
 
     private KeycloakService keycloakService = Mock(KeycloakService)
 
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
+
     void setup() {
-        findUserByIdInteractor = new FindUserByIdInteractorImpl(new UserService(userRepository),keycloakService)
+        findUserByIdInteractor = new FindUserByIdInteractorImpl(new UserService(userRepository, managementUserSecurityService),keycloakService)
     }
 
     def "should find an user by its id"() {

@@ -25,6 +25,7 @@ import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -33,8 +34,12 @@ class FindAllUsersInteractorImpl @Inject constructor(
     private val userService: UserService
 ) : FindAllUsersInteractor {
 
-    override fun execute(name: String?, email: String?, pageRequest: PageRequest): ResourcePageResponse<SimpleUserResponse> {
-        return convert(userService.findAll(name, email, pageRequest))
+    override fun execute(name: String?, email: String?, authorization: String, pageRequest: PageRequest): ResourcePageResponse<SimpleUserResponse> {
+        val user = userService.findByAuthorizationToken(authorization)
+        if (user.root) {
+            return convert(userService.findAll(name, email, pageRequest))
+        }
+        throw ForbiddenException()
     }
 
     private fun convert(page: Page<User>): ResourcePageResponse<SimpleUserResponse> {
