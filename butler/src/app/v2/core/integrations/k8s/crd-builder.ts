@@ -41,12 +41,12 @@ export class CrdBuilder {
     }
   }
 
-  public static buildRoutingCrdManifest(cdConfigurationId: string, activeComponents: Component[]): CharlesRoutes {
+  public static buildRoutingCrdManifest(namespace: string, activeComponents: Component[]): CharlesRoutes {
     return {
       apiVersion: 'charlescd.io/v1',
       kind: 'CharlesRoutes',
       metadata: {
-        name: cdConfigurationId
+        name: `${namespace}-routes`
       },
       spec: {
         components: CrdBuilder.getRoutingCrdComponents(activeComponents)
