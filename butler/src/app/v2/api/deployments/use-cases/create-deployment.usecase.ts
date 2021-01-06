@@ -66,8 +66,8 @@ export class CreateDeploymentUseCase {
 
   private async newDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     return createDeploymentDto.defaultCircle ?
-      await this.createCircleDeployment(createDeploymentDto) :
-      await this.createDefaultDeployment(createDeploymentDto)
+      await this.createDefaultDeployment(createDeploymentDto) :
+      await this.createCircleDeployment(createDeploymentDto)
   }
 
   private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {

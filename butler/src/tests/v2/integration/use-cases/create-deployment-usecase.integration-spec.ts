@@ -26,8 +26,10 @@ import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { KubernetesManifest } from 'src/app/v2/core/integrations/interfaces/k8s-manifest.interface'
-import { defaultManifests } from '../../fixtures/manifests.fixture'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests, customManifests } from '../../fixtures/manifests.fixture'
+import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -68,8 +70,8 @@ describe('CreateDeploymentUsecase v2', () => {
 
   it('should only merge default circle components from the previous deployment entity of that circle', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -108,20 +110,20 @@ describe('CreateDeploymentUsecase v2', () => {
       '777765f8-bb29-49f7-bf2b-3ec956a71583',
       null,
       null,
-      manifests
+      customManifests('A', 'my-namespace', 'imageurl.com')
     )
     component1.running = false
     component1.id = expect.anything()
     component1.merged = false
     const component2 = new ComponentEntity(
-      'http://localhost:2222/helm',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       'v1',
       'https://repository.com/B:v1',
       'B',
       '1c29210c-e313-4447-80e3-db89b2359138',
       null,
       null,
-      manifests
+      customManifests('B', 'my-namespace', 'imageurl.com')
     )
     component2.running = false
     component2.id = expect.anything()
@@ -140,24 +142,24 @@ describe('CreateDeploymentUsecase v2', () => {
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          'http://localhost:8883/repos/charlescd-fake/helm-chart',
           'v1',
           'https://repository.com/A:v1',
           'A',
           'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
           null,
           null,
-          manifests
+          customManifests('A', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          'http://localhost:8883/repos/charlescd-fake/helm-chart',
           'v1',
           'https://repository.com/B:v1',
           'B',
           '1c29210c-e313-4447-80e3-db89b2359138',
           null,
           null,
-          manifests
+          customManifests('B', 'my-namespace', 'imageurl.com')
         )
       ],
       true
@@ -172,24 +174,24 @@ describe('CreateDeploymentUsecase v2', () => {
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          'http://localhost:8883/repos/charlescd-fake/helm-chart',
           'v1',
           'https://repository.com/C:v1',
           'C',
           '46b83994-bfae-4f1e-84cd-0d18b59735bc',
           null,
           null,
-          manifests
+          customManifests('C', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          'http://localhost:8883/repos/charlescd-fake/helm-chart',
           'v1',
           'https://repository.com/D:v1',
           'D',
           '5ff6c5f3-fca5-440a-aaf5-ab3c25fdf0f5',
           null,
           null,
-          manifests
+          customManifests('D', 'my-namespace', 'imageurl.com')
         )
       ],
       true
@@ -204,24 +206,24 @@ describe('CreateDeploymentUsecase v2', () => {
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          'http://localhost:8883/repos/charlescd-fake/helm-chart',
           'v1',
           'https://repository.com/E:v1',
           'E',
           '222cd8db-3767-45d5-a415-7cca09cccf91',
           null,
           null,
-          manifests
+          customManifests('E', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          'http://localhost:8883/repos/charlescd-fake/helm-chart',
           'v1',
           'https://repository.com/F:v1',
           'F',
           '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
           null,
           null,
-          manifests
+          customManifests('F', 'my-namespace', 'imageurl.com')
         )
       ],
       false
