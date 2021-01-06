@@ -19,7 +19,6 @@ import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import Card from 'core/components/Card';
-import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { getWorkspaceId } from 'core/utils/workspace';
@@ -30,11 +29,11 @@ import FormWebhook from './Form';
 interface Props {
   form: string;
   setForm: Function;
-  data: UserGroup[];
+  data?: string[];
 }
 
 const SectionWebhook = ({ form, setForm, data }: Props) => {
-  const [webhooks, setWebhooks] = useState(data);
+  const [webhooks, setWebhooks] = useState(null);
   const { remove, loadingRemove } = useWebhook();
 
   const handleClose = async (id: string) => {
@@ -44,8 +43,8 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
 
   const renderSection = () => (
     <Section
-      name="User group"
-      icon="users"
+      name="Webhook"
+      icon="webhook"
       showAction
       action={() => setForm(FORM_WEBHOOK)}
     >
@@ -53,7 +52,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
         map(webhooks, webhook => (
           <Card.Config
             key={webhook.name}
-            icon="users"
+            icon="webhook"
             description={webhook.name}
             isLoading={loadingRemove}
             onClose={() => handleClose(webhook?.id)}

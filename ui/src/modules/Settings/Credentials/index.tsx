@@ -157,6 +157,7 @@ const Credentials = ({ onClickHelp }: Props) => {
           getNewActions={getActions}
         />
       )}
+      <Section.Webhook form={form} setForm={setForm} />
     </TabPanel>
   );
 

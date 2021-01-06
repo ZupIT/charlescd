@@ -181,7 +181,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
     <Styled.Content>
       <Styled.Title>
         <Text.h2 weight="bold" color="light">
-          Add user group
+          Add Webhook
         </Text.h2>
         <Popover
           title="How does a user group work?"
