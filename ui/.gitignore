@@ -25,7 +25,6 @@
 .env
 .env.idm
 .env.production.local
-
 .eslintcache
 
 npm-debug.log*
