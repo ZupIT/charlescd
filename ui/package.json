@@ -38,9 +38,9 @@
       "react-app/jest"
     ],
     "rules": {
+      "array-callback-return": 0,
       "import/no-anonymous-default-export": "off",
-      "react/jsx-pascal-case": 0,
-      "array-callback-return": 0
+      "react/jsx-pascal-case": 0
     }
   },
   "jest": {
