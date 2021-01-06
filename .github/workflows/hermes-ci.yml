@@ -2,13 +2,13 @@ name: build hermes
 
 on:
   push:
-    branches: [hermes-workflows]
+    branches: [hermes-alpha]
     paths:
       - "hermes/**"
     tags:
       - "!*"
   pull_request:
-    branches: [hermes-workflows]
+    branches: [hermes-alpha]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - "hermes/**"
