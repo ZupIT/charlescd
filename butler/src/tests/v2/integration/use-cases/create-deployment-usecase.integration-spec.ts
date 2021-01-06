@@ -26,8 +26,7 @@ import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
-import { defaultManifests, customManifests } from '../../fixtures/manifests.fixture'
+import { customManifests } from '../../fixtures/manifests.fixture'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 
@@ -36,7 +35,6 @@ describe('CreateDeploymentUsecase v2', () => {
   let app: INestApplication
   let worker: PgBossWorker
   let manager: EntityManager
-  let manifests: KubernetesManifest[]
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -52,7 +50,6 @@ describe('CreateDeploymentUsecase v2', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
-    manifests = defaultManifests
   })
 
   afterAll(async() => {
