@@ -34,4 +34,8 @@ interface UserRepository {
     fun findByWorkspace(workspaceId: String, name: String?, email: String?, pageRequest: PageRequest): Page<User>
 
     fun save(user: User): User
+
+    fun delete(id: String)
+
+    fun update(user: User): User
 }

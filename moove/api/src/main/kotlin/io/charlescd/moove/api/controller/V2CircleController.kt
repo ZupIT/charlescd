@@ -56,7 +56,7 @@ class V2CircleController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam(name = "name", required = false) name: String?,
         @RequestParam(name = "active", required = false) active: Boolean?,
-        pageRequest: PageRequest
+        @Valid pageRequest: PageRequest
     ): ResourcePageResponse<CircleResponse> {
         return this.findAllCirclesInteractor.execute(name, active, workspaceId, pageRequest)
     }
@@ -87,9 +87,10 @@ class V2CircleController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createCircle(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody request: CreateCircleRequest
     ): CircleResponse {
-        return this.createCircleInteractor.execute(request, workspaceId)
+        return this.createCircleInteractor.execute(request, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Patch Circle")
@@ -118,19 +119,19 @@ class V2CircleController(
     @PostMapping("/csv", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createWithCsv(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name") name: String,
-        @RequestParam("authorId") authorId: String,
         @RequestParam("keyName") keyName: String,
         @RequestParam("file") file: MultipartFile
     ): CircleResponse {
         return this.createCircleWithCsvFileInteractor.execute(
             CreateCircleWithCsvRequest(
                 name,
-                authorId,
                 keyName,
                 file.inputStream
-            ), workspaceId
+            ), workspaceId,
+            authorization
         )
     }
 

@@ -17,36 +17,58 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
-import RadioGroup from 'core/components/RadioGroup';
+import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
 import { useGit } from './hooks';
 import { radios } from './constants';
-import { Git } from './interfaces';
+import { GitFormData } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
+import { buildTestConnectionPayload } from './helpers';
+import { testGitConnection } from 'core/providers/workspace';
+import { useTestConnection } from 'core/hooks/useTestConnection';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 
 const FormGit = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
   const [gitType, setGitType] = useState('');
-  const { register, handleSubmit } = useForm<Git>();
-  const profileId = getProfileByKey('id');
+  const {
+    response: testConnectionResponse,
+    loading: loadingConnectionResponse,
+    save: testConnection
+  } = useTestConnection(testGitConnection);
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { isValid }
+  } = useForm<GitFormData>({
+    mode: 'onChange'
+  });
 
   useEffect(() => {
-    if (responseAdd) onFinish();
+    if (responseAdd) {
+      onFinish();
+    }
   }, [onFinish, responseAdd]);
 
-  const onSubmit = (git: Git) => {
+  const onSubmit = (git: GitFormData) => {
     save({
       ...git,
-      authorId: profileId,
       credentials: {
         ...git.credentials,
         serviceProvider: gitType.toUpperCase()
       }
     });
+  };
+
+  const handleTestConnection = () => {
+    const data = getValues();
+
+    const payload = buildTestConnectionPayload(data, gitType);
+    testConnection(payload);
   };
 
   const renderForm = () => (
@@ -70,8 +92,26 @@ const FormGit = ({ onFinish }: Props) => {
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
         />
+        <ConnectionStatus
+          successMessage="Successful connection with git."
+          errorMessage={testConnectionResponse?.message}
+          status={testConnectionResponse?.status}
+        />
+        <Styled.TestConnectionButton
+          id="test-connection"
+          type="button"
+          onClick={handleTestConnection}
+          isLoading={loadingConnectionResponse}
+          isDisabled={!isValid}
+        >
+          Test connection
+        </Styled.TestConnectionButton>
       </Styled.Fields>
-      <Button.Default type="submit" isLoading={loadingSave || loadingAdd}>
+      <Button.Default
+        type="submit"
+        isDisabled={!isValid}
+        isLoading={loadingSave || loadingAdd}
+      >
         Save
       </Button.Default>
     </Styled.Form>
@@ -92,7 +132,7 @@ const FormGit = ({ onFinish }: Props) => {
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>
-      <RadioGroup
+      <Radio.Buttons
         name="git"
         items={radios}
         onChange={({ currentTarget }) => setGitType(currentTarget.value)}

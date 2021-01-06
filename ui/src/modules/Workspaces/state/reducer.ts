@@ -33,7 +33,6 @@ export const workspaceInitialState: WorkspaceState = {
     id: '',
     name: '',
     status: WORKSPACE_STATUS.COMPLETE,
-    authorId: '',
     createdAt: ''
   },
   status: 'idle'

@@ -16,8 +16,10 @@
 
 import { baseRequest, patchRequest } from './base';
 import { getWorkspaceId } from 'core/utils/workspace';
+import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 
-export const endpoint = '/moove/v2/workspaces';
+export const mooveEndpoint = '/moove/v2';
+export const endpoint = `${mooveEndpoint}/workspaces`;
 
 export interface Patch {
   op: string;
@@ -32,17 +34,23 @@ export interface Filter {
 
 export interface WorkspaceSave {
   name: string;
-  authorId: string;
 }
+
+export type GitConnectionTest = {
+  credentials: {
+    address: string;
+    accessToken: string;
+    serviceProvider: string;
+  };
+};
 
 const initialFilter = {
   name: ''
 };
 
 export const findAll = (filter: Filter = initialFilter) => {
-  const sizeFixed = 200;
   const params = new URLSearchParams({
-    size: `${sizeFixed}`,
+    size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name
   });
 
@@ -63,3 +71,8 @@ export const addConfig = (path: string, value: string) =>
 
 export const delConfig = (path: string) =>
   patchRequest(`${endpoint}/${getWorkspaceId()}`, 'remove', path);
+
+export const testGitConnection = (data: GitConnectionTest) =>
+  baseRequest(`${mooveEndpoint}/configurations/git/connection-status`, data, {
+    method: 'POST'
+  });

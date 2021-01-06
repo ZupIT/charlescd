@@ -27,9 +27,6 @@ data class CreateFeatureRequest(
     @field:NotBlank
     val branchName: String,
 
-    @field:NotBlank
-    val authorId: String,
-
     @field:NotNull
     @field:NotEmpty
     val modules: List<String>,

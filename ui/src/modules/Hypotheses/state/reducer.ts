@@ -17,6 +17,7 @@
 import filter from 'lodash/filter';
 import partition from 'lodash/partition';
 import map from 'lodash/map';
+import remove from 'lodash/remove';
 import { HypothesesState } from '../interfaces';
 import { HypothesesActionTypes, ACTION_TYPES } from './actions';
 
@@ -62,6 +63,31 @@ export const hypothesesReducer = (
 
         return card;
       });
+
+      return {
+        ...state,
+        columns: [
+          {
+            ...currentColumn,
+            cards: cards
+          },
+          ...otherColumns
+        ]
+      };
+    }
+    case ACTION_TYPES.removeCard: {
+      const board = partition(
+        state.columns,
+        column => column.id === action.columnId
+      );
+
+      const currentColumn = board[0][0];
+      const otherColumns = board[1];
+
+      const cards = remove(
+        currentColumn?.cards,
+        card => card.id === action.cardId
+      );
 
       return {
         ...state,

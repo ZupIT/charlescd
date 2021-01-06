@@ -24,10 +24,7 @@ import javax.validation.constraints.NotBlank
 
 data class CreateUserGroupRequest(
     @field:NotBlank
-    val name: String,
-
-    @field:NotBlank
-    val authorId: String
+    val name: String
 ) {
 
     fun toUserGroup(user: User): UserGroup {

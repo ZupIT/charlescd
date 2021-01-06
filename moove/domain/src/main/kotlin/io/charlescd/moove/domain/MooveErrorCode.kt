@@ -45,6 +45,7 @@ enum class MooveErrorCode(val key: String) {
     SOME_OF_INFORMED_FEATURES_DOES_NOT_EXIST_OR_ARE_NOT_READY_TO_GO("some.of.informed.features.does.not.exist.or.are.not.ready.to.go"),
     CIRCLE_DEPLOYMENT_ACTIVE("circle.deployment.active"),
     CANNOT_UPDATE_DEFAULT_CIRCLE("cannot.update.default.circle"),
+    CANNOT_DELETE_DEFAULT_CIRCLE("cannot.delete.default.circle"),
     COMPONENT_ALREADY_REGISTERED("component.already.registered"),
     CANNOT_CREATE_MODULES_IN_A_INCOMPLETE_WORKSPACE("cannot.create.modules.in.a.incomplete.workspace"),
     USER_GROUP_ALREADY_ASSOCIATED("user.group.already.associated"),
@@ -56,5 +57,7 @@ enum class MooveErrorCode(val key: String) {
     MODULE_MUST_HAVE_AT_LEAST_ONE_COMPONENT("module.must.have.at.least.one.component"),
     CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS("create.user.error.email.already.exists"),
     USER_PASSWORD_DOES_NOT_MATCH("user.password.does.not.match"),
-    CANNOT_RESET_YOUR_OWN_PASSWORD("cannot.reset.your.own.password")
+    CANNOT_RESET_YOUR_OWN_PASSWORD("cannot.reset.your.own.password"),
+    EXTERNAL_IDM_FORBIDDEN("external.idm.forbidden"),
+    UNEXPECTED_IDM_ERROR("unexpected.idm.error")
 }

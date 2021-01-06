@@ -20,18 +20,30 @@ export interface Credentials {
   serviceProvider: string;
 }
 
-export interface Git {
+export interface GitFormData {
   name?: string;
-  authorId?: string;
   credentials?: Credentials;
 }
 
 export interface Response {
   id: string;
-  git?: Git;
+  git?: GitFormData;
 }
 
 export interface PostResponse {
   id: string;
   name: string;
 }
+
+export type TestConnectionSuccess = {
+  status: string;
+};
+
+export type TestConnectionError = {
+  code: string;
+  message: string;
+};
+
+export type TestConnectionResponse =
+  | TestConnectionSuccess
+  | TestConnectionError;

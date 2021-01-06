@@ -18,6 +18,7 @@ package io.charlescd.villager.api.misc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import io.charlescd.villager.infrastructure.filter.RequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -38,8 +39,8 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return Response.status(checkStatus(exception))
-                    .entity(objectMapper.writeValueAsString(new ErrorRepresentation(exception.getMessage())))
+            return Response.status(checkStatus(exception), exception.getMessage())
+                    .entity(objectMapper.writeValueAsString(getErrorRepresentation(exception)))
                     .header("Content-Type", MediaType.APPLICATION_JSON)
                     .build();
         } catch (JsonProcessingException e) {
@@ -49,11 +50,19 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
         }
     }
 
-    private Response.Status checkStatus(Exception ex) {
-        if (ex instanceof IllegalArgumentException) {
-            return Response.Status.BAD_REQUEST;
+    private ErrorRepresentation getErrorRepresentation(Exception ex) {
+        if (ex instanceof ThirdPartyIntegrationException) {
+            return new ErrorRepresentation("ThirdPartyIntegrationException", ex.getMessage());
         } else {
-            return Response.Status.INTERNAL_SERVER_ERROR;
+            return new ErrorRepresentation(ex.getMessage());
+        }
+    }
+
+    private int checkStatus(Exception ex) {
+        if (ex instanceof IllegalArgumentException) {
+            return Response.Status.BAD_REQUEST.getStatusCode();
+        } else {
+            return Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         }
     }
 

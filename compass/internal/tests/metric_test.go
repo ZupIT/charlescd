@@ -364,20 +364,13 @@ func (s *SuiteMetric) TestResultQuery() {
 		WorkspaceID: uuid.New(),
 	}
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	s.DB.Create(&dataSource)
+	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
 	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
+		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
 		GroupBy:        []metricRepo.MetricGroupBy{},
@@ -438,21 +431,13 @@ func (s *SuiteMetric) TestQuery() {
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
+	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
 	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
+		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
 		GroupBy:        []metricRepo.MetricGroupBy{},

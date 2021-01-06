@@ -4,7 +4,6 @@ const workspaces = {
       id: 'efbf25e0-c4dc-46c5-9fe4-61eb24049ac7',
       name: 'Workspace 1',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -18,8 +17,6 @@ const workspaces = {
             id: 'c7e6dete-aa7a-4216-be1b-34eacd4c2915',
             name: 'User 1',
             email: 'user.1@zup.com.br',
-            photoUrl:
-              'https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png',
             createdAt: '2020-05-07 20:24:46'
           },
           createdAt: '2020-04-16T14:09:41.599193',
@@ -32,7 +29,6 @@ const workspaces = {
             id: '8b81e7a7-33f1-46cb-aedf-73222bf8769f',
             name: 'User 4',
             email: 'user.4@zup.com.br',
-            photoUrl: '',
             createdAt: '2020-05-13 21:50:28'
           },
           createdAt: '2020-04-16T01:10:29.123966',
@@ -45,7 +41,6 @@ const workspaces = {
             id: 'd3123d52-b59u-4ee9-9f8f-8bf42c00dd45',
             name: 'User 5',
             email: 'user.5@zup.com.br',
-            photoUrl: '',
             createdAt: '2020-05-13 18:02:03'
           },
           createdAt: '2020-04-15T20:49:47.048969',
@@ -54,14 +49,14 @@ const workspaces = {
               id: '13ea193b-f9d2-4wed-b1ce-471a7ae871c2',
               name: 'User 3',
               email: 'user.3@zup.com.br',
-              photoUrl: '',
+
               createdAt: '2020-05-19 17:48:47'
             },
             {
               id: 'a7c3e4b6-4be3-4d62-8140-e2d23214e03f',
               name: 'User 2',
               email: 'user.2@zup.com.br',
-              photoUrl: '',
+
               createdAt: '2020-04-30 17:10:52'
             }
           ]
@@ -73,7 +68,6 @@ const workspaces = {
       id: 'b53e07a4-8b0d-449d-985a-970a9a0e0576',
       name: 'Workspace 2',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -87,8 +81,6 @@ const workspaces = {
             id: 'c7e6dete-aa7a-4216-be1b-34eacd4c2915',
             name: 'User 1',
             email: 'user.1@zup.com.br',
-            photoUrl:
-              'https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png',
             createdAt: '2020-05-07 20:24:46'
           },
           createdAt: '2020-04-16T14:09:41.599193',
@@ -101,7 +93,6 @@ const workspaces = {
       id: '034d2225-d7b2-499e-96e2-53cac99ff405',
       name: 'Workspace 3',
       status: 'INCOMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -115,7 +106,6 @@ const workspaces = {
             id: 'd3123d52-b59u-4ee9-9f8f-8bf42c00dd45',
             name: 'User 5',
             email: 'user.5@zup.com.br',
-            photoUrl: '',
             createdAt: '2020-05-13 18:02:03'
           },
           createdAt: '2020-04-15T20:49:47.048969',
@@ -124,14 +114,14 @@ const workspaces = {
               id: '13ea193b-f9d2-4wed-b1ce-471a7ae871c2',
               name: 'User 3',
               email: 'user.3@zup.com.br',
-              photoUrl: '',
+
               createdAt: '2020-05-19 17:48:47'
             },
             {
               id: 'a7c3e4b6-4be3-4d62-8140-e2d23214e03f',
               name: 'User 2',
               email: 'user.2@zup.com.br',
-              photoUrl: '',
+
               createdAt: '2020-04-30 17:10:52'
             }
           ]
@@ -143,7 +133,6 @@ const workspaces = {
       id: 'd90fd814-5e33-43c6-ba2d-d9d04c5a5ec6',
       name: 'Workspace 4',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -156,7 +145,6 @@ const workspaces = {
       id: '2369847c-94f7-43c9-87c2-4f00c73290e7',
       name: 'Workspace 5',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -170,7 +158,6 @@ const workspaces = {
             id: '8b81e7a7-33f1-46cb-aedf-73222bf8769f',
             name: 'User 4',
             email: 'user.4@zup.com.br',
-            photoUrl: '',
             createdAt: '2020-05-13 21:50:28'
           },
           createdAt: '2020-04-16T01:10:29.123966',
@@ -183,8 +170,6 @@ const workspaces = {
             id: 'c7e6dete-aa7a-4216-be1b-34eacd4c2915',
             name: 'User 1',
             email: 'user.1@zup.com.br',
-            photoUrl:
-              'https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png',
             createdAt: '2020-05-07 20:24:46'
           },
           createdAt: '2020-04-16T13:29:13.880759',
@@ -193,7 +178,7 @@ const workspaces = {
               id: 'd3123d52-b59u-4ee9-9f8f-8bf42c00dd45',
               name: 'User 5',
               email: 'user.5@zup.com.br',
-              photoUrl: '',
+
               createdAt: '2020-05-13 18:02:03'
             }
           ]
@@ -212,7 +197,6 @@ const workspace = {
   id: 'd90fd814-5e22-43c6-ba2d-d9d04c3a5ec6',
   name: 'Workspace',
   status: 'COMPLETE',
-  authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
   gitConfiguration: null,
   registryConfiguration: null,
   cdConfiguration: null,
@@ -223,14 +207,12 @@ const workspace = {
 };
 
 const newWorkspace = {
-  name: 'New Workspace',
-  authorId: 'a7c3e4b6-2be6-4d22-8540-e2d6d5w4e03f'
+  name: 'New Workspace'
 };
 
 const updateWorkspaceName = {
   name: 'New Workspace Name',
-  status: 'COMPLETE',
-  authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f'
+  status: 'COMPLETE'
 };
 
 export default {
