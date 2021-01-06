@@ -35,10 +35,8 @@ const payload = {
 };
 
 const newUser = {
-  ...payload,
-  id: '123',
+  ...payload
 };
-
 
 test('create a new user', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(newUser));
