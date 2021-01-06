@@ -15,77 +15,52 @@
  */
 
 import styled from 'styled-components';
-import SelectComponent from 'core/components/Form/Select';
-import AsyncSelect from 'core/components/Form/Select/Async';
-import { fadeIn } from 'core/assets/style/animate';
-
-const Title = styled.div`
-  display: flex;
-
-  > :last-child {
-    margin-left: 10px;
-  }
-`;
-
-const Roles = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-
-  > * {
-    margin-bottom: 10px;
-  }
-
-  > :nth-child(odd) {
-    margin-left: 0px;
-  }
-`;
-
-const Description = styled.div`
-  margin: 20px 0;
-
-  > :first-child {
-    margin-bottom: 3px;
-  }
-`;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  animation: 0.3s ${fadeIn} linear;
   margin-top: 10px;
   margin-left: 40px;
 
-  > :last-child {
-    margin-top: 20px;
+  > :first-child {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    > :last-child {
+      margin-left: 10px;
+    }
   }
 `;
 
-const Select = styled(SelectComponent.Single)`
-  width: 271px;
-`;
+const Form = styled.form`
+  width: 310px;
 
-const SelectAsync = styled(AsyncSelect)`
-  width: 271px;
+  > :first-child {
+    margin-bottom: 20px;
+  }
 `;
 
 const Fields = styled.div`
-  margin-top: 19px;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
+  margin: 19px 0 20px 0;
 
-  > :last-child {
-    margin-left: 10px;
+  > * {
+    margin-top: 19px;
+  }
+`;
+
+const Actions = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    margin-top: 19px;
   }
 `;
 
 export default {
+  Form,
   Content,
-  Title,
-  Select,
-  SelectAsync,
   Fields,
-  Roles,
-  Description
+  Actions
 };

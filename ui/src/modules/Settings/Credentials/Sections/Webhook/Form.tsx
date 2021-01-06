@@ -14,195 +14,90 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import map from 'lodash/map';
-import isEmpty from 'lodash/isEmpty';
-import debounce from 'debounce-promise';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Text from 'core/components/Text';
-import Card from 'core/components/Card';
 import Button from 'core/components/Button';
+import Radio from 'core/components/Radio';
+import Form from 'core/components/Form';
+import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { Option } from 'core/components/Form/Select/interfaces';
-import CustomOption from 'core/components/Form/Select/CustomOptions';
-import { getWorkspaceId } from 'core/utils/workspace';
-import Loader from './Loader';
-import { useWebhook, useRole } from './hooks';
-import { UserGroup, Role } from './interfaces';
+import { Webhook } from './interfaces';
 import { Props } from '../interfaces';
-import { reduce } from './helpers';
+import { useWebhook } from './hooks';
+import { radios } from './constants';
 import Styled from './styled';
 
-const FormUserGroup = ({ onFinish }: Props) => {
+const FormWebhook = ({ onFinish }: Props) => {
+  const { responseAdd, save, loadingAdd } = useWebhook();
+  const [type, setType] = useState('');
   const {
-    responseSave,
-    responseAll,
-    save,
-    loadingSave,
-    loadingAdd,
-    loadingAll,
-    getAll,
-    findUserGroupByName
-  } = useWebhook();
-  const {
-    getAll: getAllRoles,
-    responseAll: rolesAll,
-    loadingAll: loadingRolesAll
-  } = useRole();
-  const { control, getValues, watch } = useForm<UserGroup>();
-  const watchedRoleId = watch('roleId');
-  const [isDisableAdd, setIsDisableAdd] = useState(true);
-  const [isDisableSave, setIsDisableSave] = useState(true);
-  const [form, setForm] = useState(false);
-  const [roleOptions, setRoleOptions] = useState(null);
-  const [group, setGroup] = useState(null);
+    register,
+    handleSubmit,
+    formState: { isValid }
+  } = useForm<Webhook>({ mode: 'onChange' });
 
   useEffect(() => {
-    const options = map(rolesAll as Role[], (role: Role) => ({
-      value: role.id,
-      label: role.name,
-      description: role.description
-    }));
+    if (responseAdd) onFinish();
+  }, [onFinish, responseAdd]);
 
-    setRoleOptions(options);
-  }, [rolesAll]);
-
-  useEffect(() => {
-    getAll();
-  }, [getAll]);
-
-  useEffect(() => {
-    if (responseSave) onFinish();
-  }, [onFinish, responseSave]);
-
-  useEffect(() => {
-    if (form) getAllRoles();
-  }, [getAllRoles, form]);
-
-  useEffect(() => {
-    setIsDisableSave(isEmpty(watchedRoleId));
-  }, [watchedRoleId]);
-
-  const onSelectGroup = (option: Option) => {
-    setIsDisableAdd(!option);
-    setGroup(option);
+  const onSubmit = ({ url }: Webhook) => {
+    save(url);
   };
-
-  const onRemove = () => {
-    setGroup(null);
-    setForm(false);
-    setIsDisableAdd(true);
-    setIsDisableSave(true);
-  };
-
-  const onSubmit = () => {
-    const { roleId } = getValues();
-    save(getWorkspaceId(), {
-      userGroupId: group.value,
-      roleId
-    });
-  };
-
-  const renderSelectedGroup = () => (
-    <Card.Config
-      icon="info"
-      description={group.label}
-      onClose={() => onRemove()}
-    />
-  );
-
-  const renderRoles = () =>
-    loadingRolesAll ? (
-      <Loader.Roles />
-    ) : (
-      <Styled.Roles>
-        <Styled.Select
-          control={control}
-          name="roleId"
-          customOption={CustomOption.Description}
-          options={roleOptions}
-          label="Choose a permission"
-          isDisabled={loadingAll}
-        />
-      </Styled.Roles>
-    );
 
   const renderForm = () => (
-    <>
-      {renderSelectedGroup()}
-      <Styled.Description>
+    <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+      <Text.h5 color="dark">
+        Webhooks allow external services to be notified when certain events
+        happen. When the specified events happen, we’ll send a POST request to
+        each of the URLs you provide. Consult our documentation for further
+        details.
+      </Text.h5>
+      <Styled.Fields>
+        <Form.Input
+          ref={register({ required: true })}
+          name="description"
+          label="Description"
+        />
+        <Form.Input
+          ref={register({ required: true })}
+          name="url"
+          label="Webhook URL"
+        />
+        <Form.Password
+          ref={register({ required: true })}
+          name="secret"
+          label="Secret"
+        />
         <Text.h5 color="dark">
-          Select permissions for the group selected above.
+          Witch events would you like to trigger this webhook?
         </Text.h5>
-        <Text.h5 color="dark" fontStyle="italic">
-          After saving it, you can combine another group of users with different
-          permissions.
-        </Text.h5>
-      </Styled.Description>
-      {renderRoles()}
-    </>
-  );
-
-  const loadUserGroups = debounce(
-    name =>
-      findUserGroupByName(name).then(
-        ({ content }: { content: UserGroup[] }) => {
-          return reduce(content);
-        }
-      ),
-    500
-  );
-
-  const renderFields = () => (
-    <Styled.Fields>
-      <Styled.SelectAsync
-        control={control}
-        name="userGroup"
-        customOption={CustomOption.Icon}
-        options={reduce(responseAll as UserGroup[])}
-        label="Select a user group"
-        isDisabled={loadingAll}
-        loadOptions={loadUserGroups}
-        onChange={group => onSelectGroup(group)}
-      />
-      <Button.Default
-        id="add"
-        isLoading={loadingAll}
-        isDisabled={isDisableAdd}
-        size="EXTRA_SMALL"
-        onClick={() => setForm(true)}
-      >
-        Add
-      </Button.Default>
-    </Styled.Fields>
+        <Radio.Buttons
+          name="type"
+          items={radios}
+          onChange={({ currentTarget }) => setType(currentTarget.value)}
+        />
+        <Styled.Actions>
+          <Button.Default type="button" isLoading={loadingAdd}>
+            Test Connection
+          </Button.Default>
+          <Button.Default
+            type="submit"
+            isDisabled={!isValid}
+            isLoading={loadingAdd}
+          >
+            Save
+          </Button.Default>
+        </Styled.Actions>
+      </Styled.Fields>
+    </Styled.Form>
   );
 
   return (
     <Styled.Content>
-      <Styled.Title>
-        <Text.h2 weight="bold" color="light">
-          Add Webhook
-        </Text.h2>
-        <Popover
-          title="How does a user group work?"
-          icon="info"
-          link={`${CHARLES_DOC}/reference/users-group`}
-          linkLabel="View documentation"
-          description="With the user group you have more control over the entire application. You can choose which accesses this group will have in this workspace. Consult the our documentation for further details."
-        />
-      </Styled.Title>
-      {form ? renderForm() : renderFields()}
-      <Button.Default
-        id="save"
-        type="submit"
-        onClick={onSubmit}
-        isDisabled={isDisableSave}
-        isLoading={loadingSave || loadingAdd}
-      >
-        Save
-      </Button.Default>
+      <Text.h2 color="light">Add Webhook</Text.h2>
+      {renderForm()}
     </Styled.Content>
   );
 };
 
-export default FormUserGroup;
+export default FormWebhook;

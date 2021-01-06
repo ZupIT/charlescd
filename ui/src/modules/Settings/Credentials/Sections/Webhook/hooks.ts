@@ -15,116 +15,51 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { create, detach, findByName, findAll } from 'core/providers/userGroup';
-import { findAll as findAllRoles } from 'core/providers/roles';
-import { addConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps, useFetchData } from 'core/providers/base/hooks';
+import { configPath } from 'core/providers/circleMatcher';
+import { addConfig, delConfig } from 'core/providers/workspace';
+import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
-import { UserGroup, GroupRoles, Role } from './interfaces';
 
 export const useWebhook = (): FetchProps => {
   const dispatch = useDispatch();
-  const [createData, createUserGroup] = useFetch<GroupRoles>(create);
-  const findUserGroupByName = useFetchData<{ content: UserGroup[] }>(
-    findByName
-  );
-  const [userGroupsData, getUserGroups] = useFetch<{ content: UserGroup[] }>(
-    findAll
-  );
-  const [addData] = useFetch(addConfig);
-  const [delData, detachGroup] = useFetch(detach);
-  const {
-    loading: loadingSave,
-    response: responseSave,
-    error: errorSave
-  } = createData;
-  const { loading: loadingAll, response, error } = userGroupsData;
-  const { loading: loadingAdd, response: responseAdd } = addData;
-  const {
-    loading: loadingRemove,
-    response: responseRemove,
-    error: errorRemove
-  } = delData;
+  const [addData, addCircleMatcher] = useFetch(addConfig);
+  const [removeData, delCircleMatcher] = useFetch(delConfig);
+  const { loading: loadingAdd, response: responseAdd, error } = addData;
+  const { response: responseRemove, error: errorRemove } = removeData;
 
   const save = useCallback(
-    (id: string, roleId: string) => {
-      createUserGroup(id, roleId);
+    (url: string) => {
+      addCircleMatcher(configPath, url);
     },
-    [createUserGroup]
+    [addCircleMatcher]
   );
-
-  useEffect(() => {
-    if (errorSave) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorSave.status}] User Group could not be saved.`,
-          status: 'error'
-        })
-      );
-    }
-  }, [errorSave, dispatch]);
-
-  const getAll = useCallback(() => {
-    getUserGroups();
-  }, [getUserGroups]);
 
   useEffect(() => {
     if (error) {
       dispatch(
         toogleNotification({
-          text: `[${error.status}] User Group could not be fetched.`,
+          text: `[${error.status}] Circle Matcher could not be saved.`,
           status: 'error'
         })
       );
     }
   }, [error, dispatch]);
 
-  const remove = useCallback(
-    (id: string, groupId: string) => {
-      detachGroup(id, groupId);
-    },
-    [detachGroup]
-  );
+  const remove = useCallback(() => {
+    delCircleMatcher(configPath);
+  }, [delCircleMatcher]);
 
   useEffect(() => {
     if (errorRemove) {
       dispatch(
         toogleNotification({
-          text: `[${errorRemove.status}] User Group could not be removed.`,
+          text: `[${errorRemove.status}] Circle Matcher could not be removed.`,
           status: 'error'
         })
       );
     }
   }, [errorRemove, dispatch]);
 
-  return {
-    getAll,
-    findUserGroupByName,
-    save,
-    remove,
-    responseAdd,
-    responseAll: response?.content,
-    responseSave,
-    responseRemove,
-    loadingAdd,
-    loadingAll,
-    loadingRemove,
-    loadingSave
-  };
-};
-
-export const useRole = (): FetchProps => {
-  const [rolesData, getRoles] = useFetch<{ content: Role[] }>(findAllRoles);
-  const { loading: loadingAll, response } = rolesData;
-
-  const getAll = useCallback(() => {
-    getRoles();
-  }, [getRoles]);
-
-  return {
-    getAll,
-    loadingAll,
-    responseAll: response?.content
-  };
+  return { responseAdd, responseRemove, loadingAdd, save, remove };
 };

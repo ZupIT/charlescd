@@ -15,3 +15,12 @@
  */
 
 export const FORM_WEBHOOK = 'webhook';
+
+export const radios = [
+  { icon: 'edit', name: 'Send me everything', value: 'everything' },
+  {
+    icon: 'search',
+    name: 'Let me select individual events',
+    value: 'individual'
+  }
+];

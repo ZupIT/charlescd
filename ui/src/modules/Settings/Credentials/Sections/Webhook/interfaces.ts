@@ -14,41 +14,15 @@
  * limitations under the License.
  */
 
-export interface Credentials {
-  address: string;
-  accessToken: string;
-  serviceProvider: string;
+export interface Webhook {
+  description: string;
+  url: string;
+  secret: string;
+  event: Event;
 }
 
-export interface Author {
-  id?: string;
-  name?: string;
-  email?: string;
-  createdAt?: string;
-}
-
-export interface Role {
-  id?: string;
-  name?: string;
-  value?: string;
-  description?: string;
-  createdAt?: string;
-}
-
-export interface UserGroup {
-  id?: string;
-  name?: string;
-  author?: Author;
-  roleId?: string;
-  createdAt?: string;
-}
-
-export interface GroupRoles {
-  userGroupId: string;
-  roleId?: string;
-}
-
-export interface PostResponse {
+export interface Event {
   id: string;
-  name: string;
+  value: string;
+  description: string;
 }
