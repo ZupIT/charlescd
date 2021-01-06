@@ -19,6 +19,7 @@ import { Profile, NewUser } from 'modules/Users/interfaces/User';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { buildParams } from 'core/utils/query';
+import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 
 const endpoint = '/moove/v2/users';
 const endpointWorkspaces = '/moove/v2/workspaces';
