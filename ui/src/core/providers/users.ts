@@ -50,9 +50,8 @@ export const findAllWorkspaceUsers = (
 
 export const findAllUsers = (filter: UserFilter = initialUserFilter) => {
   const defaultPage = 0;
-  const defaultSize = 100;
   const params = new URLSearchParams({
-    size: `${defaultSize}`,
+    size: `${DEFAULT_PAGE_SIZE}`,
     page: `${defaultPage}`
   });
 
@@ -64,7 +63,7 @@ export const findAllUsers = (filter: UserFilter = initialUserFilter) => {
 
 export const findAll = () => {
   const params = new URLSearchParams({
-    size: '100',
+    size: `${DEFAULT_PAGE_SIZE}`,
     page: '0',
     sort: 'createdAt,desc'
   });

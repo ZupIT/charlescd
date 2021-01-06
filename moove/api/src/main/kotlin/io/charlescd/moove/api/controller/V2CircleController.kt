@@ -59,7 +59,7 @@ class V2CircleController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam(name = "name", required = false) name: String?,
         @RequestParam(name = "active", required = false) active: Boolean?,
-        pageRequest: PageRequest
+        @Valid pageRequest: PageRequest
     ): ResourcePageResponse<CircleResponse> {
         return this.findAllCirclesInteractor.execute(name, active, workspaceId, pageRequest)
     }

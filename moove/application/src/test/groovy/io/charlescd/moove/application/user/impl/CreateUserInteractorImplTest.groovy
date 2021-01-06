@@ -23,6 +23,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -32,6 +33,7 @@ import spock.lang.Specification
 
 class CreateUserInteractorImplTest extends Specification {
 
+    private KeycloakService keycloakService
     private CreateUserInteractor createUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
@@ -60,6 +62,27 @@ class CreateUserInteractorImplTest extends Specification {
         userResponse.name == createUserRequest.name
         userResponse.photoUrl == createUserRequest.photoUrl
         notThrown()
+    }
+
+    def "when trying to create user should fail on keycloak"() {
+        given:
+        def authorizedUser = TestUtils.userRoot
+        def newUser = TestUtils.user
+        def createUserRequest = new CreateUserRequest(newUser.name, "123fakepassword", newUser.email, newUser.photoUrl, false)
+        def authorization = TestUtils.authorization
+
+        when:
+        createUserInteractor.execute(createUserRequest, authorization)
+
+        then:
+        1 * managementUserSecurityService.getUserEmail(authorization) >> authorizedUser.email.toLowerCase().trim()
+        1 * userRepository.findByEmail(authorizedUser.email) >> Optional.of(authorizedUser)
+        1 * userRepository.findByEmail(createUserRequest.email) >> Optional.empty()
+        1 * userRepository.save(_) >> _
+        1 * managementUserSecurityService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password) >> { throw new RuntimeException("Could not create user on keycloak.") }
+
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.UNEXPECTED_IDM_ERROR
     }
 
     def "when trying to create a user should trim and lowercase the email"() {

@@ -394,7 +394,12 @@ class JdbcDeploymentRepository(
         )?.toList()
             ?: emptyList()
 
-        return Page(result, pageRequest.page, pageRequest.size, totalItems)
+        return Page(
+            result,
+            pageRequest.page,
+            pageRequest.size,
+            totalItems
+        )
     }
 
     fun deploymentHistoryQuery() = StringBuilder(
