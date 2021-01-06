@@ -13,8 +13,10 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.transaction.annotation.Transactional
 
 @Named
+@Transactional
 class CreateUserInteractorImpl @Inject constructor(
     private val userService: UserService,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
@@ -33,11 +35,11 @@ class CreateUserInteractorImpl @Inject constructor(
     }
 
     private fun getUserFromToken(authorization: String): Optional<User> {
-        try {
+        return try {
             val user = userService.findByAuthorizationToken(authorization)
-            return Optional.of(user)
+            Optional.of(user)
         } catch (ex: NotFoundException) {
-            return Optional.empty()
+            Optional.empty()
         }
     }
 
@@ -68,10 +70,15 @@ class CreateUserInteractorImpl @Inject constructor(
 
     private fun saveUserOnKeycloak(user: User, password: String?) {
         if (password.isNullOrBlank()) throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER).withParameters("password")
-        this.userService.createUserOnKeycloak(
-            user.email,
-            user.name,
-            password
-        )
+
+        try {
+            this.userService.createUserOnKeycloak(
+                user.email,
+                user.name,
+                password
+            )
+        } catch (exception: Exception) {
+            throw BusinessException.of(MooveErrorCode.IDM_UNEXPECTED_ERROR)
+        }
     }
 }

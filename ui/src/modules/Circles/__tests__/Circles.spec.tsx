@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock/types';
+import Circles from '..';
+import { circlesResponse } from './fixtures';
 
-import javax.validation.constraints.Max
-import javax.validation.constraints.NotNull
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
-data class PageRequest(
-    val page: Int = 0,
-    @field:[NotNull Max(value = 50, message = "Size must be less than or equal to 50.")]
-    val size: Int = 50
-) {
-    fun offset() = page * size
-}
+test('render Circles', () => {
+  render(<Circles />);
+
+  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
+  expect(screen.getByText('Create circle')).toBeInTheDocument();
+  expect(screen.getByText('Active')).toBeInTheDocument();
+});
+
+
