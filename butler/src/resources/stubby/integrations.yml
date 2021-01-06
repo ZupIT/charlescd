@@ -140,7 +140,7 @@
 
 - request:
     method: GET
-    url: .*/repos/.*/.*/contents/component-name$
+    url: .*/repos/.*/.*/contents/([a-zA-Z\\-]+)$
     query:
       ref: master
 
@@ -167,8 +167,8 @@
           }
         },
         {
-          "name": "component-name.yaml",
-          "path": "helm-chart/component-name.yaml",
+          "name": "<% url.1 %>.yaml",
+          "path": "helm-chart/<% url.1 %>.yaml",
           "sha": "845fdfb7268757643309685e2a70fc5f887076ef",
           "size": 337,
           "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/helm-chart.yaml?ref=master",

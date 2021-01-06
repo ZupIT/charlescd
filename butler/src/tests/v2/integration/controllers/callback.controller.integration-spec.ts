@@ -36,7 +36,7 @@ import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
-import { defaultManifests } from '../../fixtures/manifests.fixture'
+import { defaultManifests, defaultManifestsJson } from '../../fixtures/manifests.fixture'
 
 let mock = express()
 
@@ -150,6 +150,7 @@ describe('CallbackController v2', () => {
             helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
@@ -249,6 +250,7 @@ describe('CallbackController v2', () => {
             helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
@@ -348,6 +350,7 @@ describe('CallbackController v2', () => {
             helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
@@ -447,6 +450,7 @@ describe('CallbackController v2', () => {
             helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,

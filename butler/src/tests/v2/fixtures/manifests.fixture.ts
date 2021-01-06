@@ -23,3 +23,29 @@ import { KubernetesManifest } from '../../../app/v2/core/integrations/interfaces
 const basePath = path.join(__dirname, '../../../', 'resources/helm-test-chart')
 
 export const defaultManifests: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'))
+
+export const defaultManifestsJson = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'), null, { json: true })
+
+export const customManifests = (appName: string, namespace: string, image: string): KubernetesManifest[] => {
+  const manifests = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'))
+  const service = manifests[0]
+  service.metadata.labels.app = appName
+  service.metadata.labels.service = appName
+  service.metadata.name = appName
+  service.metadata.namespace = namespace
+  service.spec.selector.app = appName
+
+  const deployment = manifests[1]
+  deployment.metadata.labels.app = appName
+  deployment.metadata.labels.version = appName
+  deployment.metadata.name = appName
+  deployment.metadata.namespace = namespace
+  deployment.spec.selector.matchLabels.app = appName
+  deployment.spec.selector.matchLabels.version = appName
+  deployment.spec.template.metadata.labels.app = appName
+  deployment.spec.template.metadata.labels.version = appName
+  deployment.spec.template.spec.containers[0].image = image
+  deployment.spec.template.spec.containers[0].name = appName
+
+  return [service, deployment]
+}
