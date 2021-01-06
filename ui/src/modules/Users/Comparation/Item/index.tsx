@@ -51,13 +51,8 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-<<<<<<< HEAD
-  const [loadingUpdate, updateProfile] = useUpdateProfile();
   const isAbleToReset = !isIDMEnabled() && loggedUserId !== user?.id;
-=======
   const { updateNameById, user: userUpdated, status } = useUpdateName();
-  const isAbleToReset = loggedUserId !== user?.id;
->>>>>>> f5817ee5abaccc17d33e77494c6c0a9f8a65cf62
 
   useEffect(() => {
     if (user) {
