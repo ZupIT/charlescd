@@ -38,13 +38,20 @@ spec:
     resource: charlesdeployments
   childResources:
   - apiVersion: v1
-    resource: pods
+    resource: services
     updateStrategy:
-      method: InPlace
+      method: Recreate
+  - apiVersion: apps/v1
+    resource: deployments
+    updateStrategy:
+      method: Recreate
   hooks:
     sync:
       webhook:
-        url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/deployment/hook"
+        url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/deployment/hook/reconcile"
+    finalize:
+      webhook:
+        url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/deployment/hook/finalize"
 ---
 apiVersion: metacontroller.k8s.io/v1alpha1
 kind: CompositeController
@@ -56,11 +63,11 @@ spec:
     apiVersion: charlescd.io/v1
     resource: charlesroutes
   childResources:
-  - apiVersion: networking.istio.io/v1
+  - apiVersion: networking.istio.io/v1beta1
     resource: virtualservices
     updateStrategy:
       method: InPlace
   hooks:
     sync:
       webhook:
-        url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/routes/hook"
+        url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/routes/hook/reconcile"
