@@ -119,7 +119,7 @@ test('useUpdateName hook trigger promise error', async () => {
   expect(result.current.status).toEqual('rejected');
 });
 
-test.only('should get data about user and their workspaces, which is saved in profile (local storage)', async () => {
+test('should get data about user and their workspaces, which is saved in profile (local storage)', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(userData));
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(workspacesData));
 
@@ -133,6 +133,20 @@ test.only('should get data about user and their workspaces, which is saved in pr
   });
 
   expect(response).toMatchObject(profileData);
+  expect(response).not.toBeUndefined();
 });
 
-// TODO: cenario de erro
+test('should throw an error', async () => {
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
+
+  const { result } = renderHook(() => useUser());
+  const { current } = result;
+
+  let response: Promise<User>;
+
+  await act(async () => {
+    response = await current.findByEmail(newUser.email);
+  });
+
+  expect(response).toBeUndefined();
+});
