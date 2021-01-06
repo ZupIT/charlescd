@@ -22,6 +22,7 @@ import { useGlobalState } from 'core/state/hooks';
 import { getAccessTokenDecoded, logout } from 'core/utils/auth';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
+import { isRoot } from 'core/utils/auth';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -35,7 +36,9 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
   useEffect(() => {
-    filterWorkspace(name);
+    if (isRoot()) {
+      filterWorkspace(name);
+    }
   }, [name, filterWorkspace]);
 
   useEffect(() => {

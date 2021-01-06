@@ -22,7 +22,6 @@ import { useDispatch } from 'core/state/hooks';
 import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
-import { isRoot } from 'core/utils/auth';
 
 export const useWorkspace = (): [Function, Function, boolean] => {
   const dispatch = useDispatch();
@@ -31,9 +30,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
 
   const filterWorkspace = useCallback(
     (name: string) => {
-      if (isRoot()) {
-        getWorkspace({ name });
-      }
+      getWorkspace({ name });
     },
     [getWorkspace]
   );
