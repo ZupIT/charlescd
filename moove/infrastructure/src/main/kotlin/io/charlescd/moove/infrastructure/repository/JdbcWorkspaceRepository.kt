@@ -117,7 +117,11 @@ class JdbcWorkspaceRepository(
             workspaceExtractor
         )
 
-        return Page(result?.toList() ?: emptyList(), pageRequest.page, pageRequest.size, executeCountQuery() ?: 0)
+        return Page(
+            result?.toList() ?: emptyList(),
+            pageRequest.page,
+            pageRequest.size,
+            executeCountQuery() ?: 0)
     }
 
     private fun createQueryStatement(
