@@ -22,9 +22,7 @@ import io.charlescd.circlematcher.infrastructure.Constants;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
 import java.util.Map;
-
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.slf4j.Logger;
@@ -38,6 +36,7 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
     private String toStrScript;
     private String toNumberScript;
     private String getPathScript;
+
     public ScriptManagerServiceImpl() {
         this.toStrScript =  ResourceUtils.getResourceAsString("js/toStr.js");
         this.toNumberScript = ResourceUtils.getResourceAsString("js/toNumber.js");
@@ -46,8 +45,8 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
 
     public Context scriptContext() {
         try {
-            Context context = Context.newBuilder("js").allowExperimentalOptions(true).option("js.nashorn-compat", "true")
-            .build();
+            Context context = Context.newBuilder("js").allowExperimentalOptions(true)
+                    .option("js.nashorn-compat", "true").build();
             this.evalJs(context, getPathScript);
             this.evalJs(context, toStrScript);
             this.evalJs(context, toNumberScript);
