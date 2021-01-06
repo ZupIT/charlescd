@@ -36,7 +36,12 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "import/no-anonymous-default-export": "off",
+      "react/jsx-pascal-case": 0,
+      "array-callback-return": 0
+    }
   },
   "jest": {
     "collectCoverageFrom": [

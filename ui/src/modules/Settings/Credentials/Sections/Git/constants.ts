@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { RadioButton } from 'core/components/Radio/Buttons';
+import { RadioButtonProps } from 'core/components/Radio/Buttons';
 
 export const FORM_GIT = 'git';
 
-export const radios: RadioButton[] = [
+export const radios: RadioButtonProps[] = [
   { icon: 'github', value: 'GitHub' },
   { icon: 'gitlab', value: 'GitLab' }
 ];

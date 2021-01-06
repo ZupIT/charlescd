@@ -73,25 +73,27 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     return errors?.modules?.[index]?.[name]?.message;
   };
 
-  const checkTagByName = async (
-    moduleId: string,
-    componentId: string,
-    name: string
-  ) => {
-    setValue(`${prefixName}.tag`, '');
-    const tag = await getComponentTag(moduleId, componentId, { name });
+  const checkTagByName = useCallback(
+    (
+      moduleId: string,
+      componentId: string,
+      name: string
+    ) =>
+      async () => {
+        setValue(`${prefixName}.tag`, '');
+        const tag = await getComponentTag(moduleId, componentId, { name });
 
-    setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
-    setIsEmptyTag(isEmpty(tag?.artifact));
-  };
+        setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
+        setIsEmptyTag(isEmpty(tag?.artifact));
+    }, [getComponentTag, prefixName, setValue]);
 
-  const onSearchTag = () => {
+  const onSearchTag = useCallback(() => {
     const componentId = getValues(`${prefixName}.component`);
     const moduleId = getValues(`${prefixName}.module`);
     const name = getValues(`${prefixName}.version`);
 
     checkTagByName(moduleId, componentId, name);
-  };
+  }, [checkTagByName, getValues, prefixName]);
 
   return (
     <Styled.Module.Wrapper>
@@ -136,7 +138,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
         <Styled.Module.Input
           name={`${prefixName}.version`}
           ref={register({ required: true })}
-          onChange={useCallback(debounce(onSearchTag, 300), [])}
+          onChange={useCallback(() => debounce(onSearchTag, 300), [onSearchTag])}
           isLoading={status.isPending}
           hasError={isEmptyTag}
           label="Version name"
