@@ -52,7 +52,11 @@ import {
   isDefaultCircle,
   pathCircleById,
   isUndeployable,
-  isBusy
+  isBusy,
+  getTooltipMessage,
+  circleCannotBeDeleted,
+  isDeploying,
+  isUndeploying
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -219,8 +223,13 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       </Can>
       <Can I="write" a="circles" passThrough>
         <Dropdown.Item
+          id="dropdown-item-delete-circle"
           icon="delete"
           name="Delete"
+          tooltip={getTooltipMessage(circle)}
+          deploying={isDeploying(circle?.deployment?.status)}
+          undeploying={isUndeploying(circle?.deployment?.status)}
+          isInactive={circleCannotBeDeleted(circle)}
           onClick={() => setAction('Delete')}
         />
       </Can>
@@ -235,26 +244,26 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       onContinue={() => handleDelete(circle?.deployment?.status)}
       onDismiss={() => setAction('Cancel')}
     >
-      When deleting this circle, users will be sent to Default and all metrics
-      in this circle will be lost. Do you wish to continue?
+      <Text.h4 color="light">
+        When deleting this circle, users will be sent to Default and all metrics
+        in this circle will be lost. Do you wish to continue?
+      </Text.h4>
     </Modal.Trigger>
   );
 
   const renderActions = () => (
     <Styled.Actions>
-      {circle?.deployment &&
-        !isBusy(circle?.deployment?.status) &&
-        isDefaultCircle(circle?.name) && (
-          <Can I="write" a="deploy" passThrough>
-            <LabeledIcon
-              icon="override"
-              marginContent="5px"
-              onClick={() => setActiveSection(SECTIONS.RELEASE)}
-            >
-              <Text.h5 color="dark">Override release</Text.h5>
-            </LabeledIcon>
-          </Can>
-        )}
+      {circle?.deployment && !isBusy(circle?.deployment?.status) && (
+        <Can I="write" a="deploy" passThrough>
+          <LabeledIcon
+            icon="override"
+            marginContent="5px"
+            onClick={() => setActiveSection(SECTIONS.RELEASE)}
+          >
+            <Text.h5 color="dark">Override release</Text.h5>
+          </LabeledIcon>
+        </Can>
+      )}
       {renderDropdown()}
     </Styled.Actions>
   );
@@ -278,6 +287,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         onClickCreate={() => setActiveSection(SECTIONS.RELEASE)}
       />
       <LayerMetricsGroups
+        circle={circle}
         circleId={id}
         onClickCreate={() => setActiveSection(SECTIONS.GROUP_METRICS)}
       />

@@ -26,7 +26,6 @@ import io.charlescd.moove.application.user.response.UserNewPasswordResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import java.util.*
 import javax.inject.Named
 import org.springframework.beans.factory.annotation.Value
@@ -34,7 +33,6 @@ import org.springframework.beans.factory.annotation.Value
 @Named
 class ResetUserPasswordInteractorImpl(
     private val passGenerator: UserPasswordGeneratorService,
-    private val keycloakService: KeycloakService,
     private val userService: UserService,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) : ResetUserPasswordInteractor {
@@ -43,8 +41,7 @@ class ResetUserPasswordInteractorImpl(
         if (internalIdmEnabled) {
             val userToResetPassword = userService.find(id.toString())
             validateUser(authorization, userToResetPassword)
-            val newPassword = generatePassword()
-            keycloakService.resetPassword(userToResetPassword.email, newPassword)
+            val newPassword = resetPassword(userToResetPassword.email)
             return UserNewPasswordResponse(newPassword)
         } else {
             throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_FORBIDDEN)
@@ -52,11 +49,21 @@ class ResetUserPasswordInteractorImpl(
     }
 
     private fun validateUser(authorization: String, userToResetPassword: User) {
-        val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
-        val registeredUser = userService.findByEmail(parsedEmail)
-        if (registeredUser.email == userToResetPassword.email) {
+        val tokenUser = userService.findByAuthorizationToken(authorization)
+
+        if (!tokenUser.root) {
+            throw BusinessException.of(MooveErrorCode.FORBIDDEN)
+        }
+
+        if (tokenUser.email == userToResetPassword.email) {
             throw BusinessException.of(MooveErrorCode.CANNOT_RESET_YOUR_OWN_PASSWORD)
         }
+    }
+
+    private fun resetPassword(email: String): String {
+        val newPassword = generatePassword()
+        userService.resetPassword(email, newPassword)
+        return newPassword
     }
 
     private fun generatePassword(): String {

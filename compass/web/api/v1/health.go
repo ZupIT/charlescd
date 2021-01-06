@@ -21,6 +21,7 @@ package v1
 import (
 	healthPKG "github.com/ZupIT/charlescd/compass/internal/health"
 	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -33,19 +34,18 @@ type HealthApi struct {
 func (v1 V1) NewHealthApi(healthMain healthPKG.UseCases) HealthApi {
 	apiPath := "/application-health"
 	healthApi := HealthApi{healthMain}
-	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components", api.HttpValidator(healthApi.components))
-	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components/health", api.HttpValidator(healthApi.componentsHealth))
+	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components", v1.HttpValidator(healthApi.components))
+	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components/health", v1.HttpValidator(healthApi.componentsHealth))
 	return healthApi
 }
 
-func (healthApi HealthApi) components(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (healthApi HealthApi) components(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceID uuid.UUID) {
 	projectionType := r.URL.Query().Get("projectionType")
 	metricType := r.URL.Query().Get("metricType")
-	workspaceID := r.Header.Get("x-workspace-id")
 	circleIDHeader := r.Header.Get("x-circle-id")
 	circleId := ps.ByName("circleId")
 
-	circles, err := healthApi.healthMain.Components(circleIDHeader, workspaceID, circleId, projectionType, metricType)
+	circles, err := healthApi.healthMain.Components(circleIDHeader, circleId, projectionType, metricType, workspaceID)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
@@ -54,12 +54,11 @@ func (healthApi HealthApi) components(w http.ResponseWriter, r *http.Request, ps
 	api.NewRestSuccess(w, http.StatusOK, circles)
 }
 
-func (healthApi HealthApi) componentsHealth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	workspaceID := r.Header.Get("x-workspace-id")
+func (healthApi HealthApi) componentsHealth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceID uuid.UUID) {
 	circleIDHeader := r.Header.Get("x-circle-id")
 	circleId := ps.ByName("circleId")
 
-	circles, err := healthApi.healthMain.ComponentsHealth(circleIDHeader, workspaceID, circleId)
+	circles, err := healthApi.healthMain.ComponentsHealth(circleIDHeader, circleId, workspaceID)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

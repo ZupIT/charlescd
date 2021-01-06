@@ -17,7 +17,6 @@
 import React, { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { useForm } from 'react-hook-form';
-import { getProfileByKey } from 'core/utils/profile';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import { useFindBuilds, useCreateDeployment } from '../hooks';
 import { getBuildOptions } from './helpers';
@@ -29,7 +28,6 @@ interface Props {
 }
 
 const SearchRelease = ({ circleId, onDeployed }: Props) => {
-  const authorId = getProfileByKey('id');
   const { control, handleSubmit, getValues } = useForm();
   const [lastTag, setLastTag] = useState('');
   const [buildOptions, setBuildOptions] = useState([]);
@@ -55,7 +53,7 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
 
   const onSubmit = () => {
     const { buildId } = getValues();
-    createDeployment({ authorId, circleId, buildId });
+    createDeployment({ circleId, buildId });
   };
 
   const onSearchChange = (value: string) => {

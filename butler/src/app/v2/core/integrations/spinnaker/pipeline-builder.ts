@@ -39,7 +39,7 @@ import {
 import { DeploymentTemplateUtils } from './utils/deployment-template.utils'
 import { UndeploymentTemplateUtils } from './utils/undeployment-template.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
-import { DeploymentUtils } from '../utils/deployment.utils'
+import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 export class SpinnakerPipelineBuilder {
@@ -86,7 +86,7 @@ export class SpinnakerPipelineBuilder {
       ...this.getDeploymentsEvaluationStage(deployment.components),
       ...this.getProxyDeploymentsEvaluationStage(deployment.components),
       ...this.getRollbackDeploymentsStage(deployment, activeComponents),
-      ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents),
+      ...this.getUnusedVersions(deployment, activeComponents),
       ...this.getFailureWebhookStage(deployment, configuration),
       ...this.getSuccessWebhookStage(deployment, configuration)
     ]
@@ -175,10 +175,18 @@ export class SpinnakerPipelineBuilder {
       []
   }
 
-  private getDeleteUnusedDeploymentsStage(deployment: Deployment, activeComponents: Component[]): Stage[] {
+  private getUnusedVersions(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    return deployment.defaultCircle ?
+      this.defaultUnusedVersions(deployment, activeComponents) :
+      this.circleUnusedVersions(deployment, activeComponents)
+  }
+
+
+  private defaultUnusedVersions(deployment: Deployment, activeComponents: Component[]): Stage[] {
     if (!deployment?.components) {
       return []
     }
+
     const stages: Stage[] = []
     const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
     deployment.components.forEach(component => {
@@ -188,6 +196,17 @@ export class SpinnakerPipelineBuilder {
       }
     })
     return stages
+  }
+
+  private circleUnusedVersions(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    if (!deployment?.components) {
+      return []
+    }
+
+    const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
+    return componentsToBeRemoved(deployment, activeComponents).map(component => {
+      return getDeleteUnusedStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId)
+    })
   }
 
   private getUndeploymentDeleteUnusedDeploymentsStage(deployment: Deployment): Stage[] {

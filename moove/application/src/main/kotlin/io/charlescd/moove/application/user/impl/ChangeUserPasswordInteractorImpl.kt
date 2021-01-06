@@ -21,7 +21,6 @@ import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.beans.factory.annotation.Value
@@ -29,15 +28,13 @@ import org.springframework.beans.factory.annotation.Value
 @Named
 class ChangeUserPasswordInteractorImpl @Inject constructor(
     private val userService: UserService,
-    private val keycloakService: KeycloakService,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) : ChangeUserPasswordInteractor {
 
     override fun execute(authorization: String, request: ChangeUserPasswordRequest) {
         if (internalIdmEnabled) {
-            val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
-            val user = userService.findByEmail(parsedEmail)
-            keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
+            val user = userService.findByAuthorizationToken(authorization)
+            userService.changePassword(user.email, request.oldPassword, request.newPassword)
         } else {
             throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_FORBIDDEN)
         }
