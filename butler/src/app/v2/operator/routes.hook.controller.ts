@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
 import { HookParams } from './params.interface'
-@Controller('deploymentsHook')
-export class DeploymentsHookController {
+@Controller('/')
+export class RoutesHookController {
 
   @Post('/v2/operator/routes/hook/reconcile')
   @HttpCode(200)
