@@ -74,7 +74,7 @@ export const useUser = (): {
 
           setUserProfileData({ ...userData, workspaces: workspacesData });
 
-          return userProfileData;
+          return { ...userData, workspaces: workspacesData };
         }
       } catch (e) {
         setError(e);

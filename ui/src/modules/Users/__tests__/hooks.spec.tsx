@@ -17,7 +17,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useCreateUser, useUpdateName } from '../hooks';
+import { useCreateUser, useUpdateName, useUser } from '../hooks';
 import { NewUser, User } from '../interfaces/User';
 
 beforeEach(() => {
@@ -37,6 +37,34 @@ const payload = {
 const newUser = {
   ...payload
 };
+
+const userData = {
+  ...payload,
+  "photoUrl": "", 
+  "createdAt": "12/12/2020"
+}
+
+const workspacesData = [
+  {
+      id: "123",
+      name: "Charles",
+      permissions: [
+          "deploy_write",
+          "modules_read",
+          "hypothesis_write",
+          "hypothesis_read",
+          "modules_write",
+          "circles_read",
+          "circles_write",
+          "maintenance_write"
+      ]
+  }
+]
+
+const profileData = {
+  ...userData,
+  workspaces: workspacesData
+}
 
 test('create a new user', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(newUser));
@@ -90,3 +118,21 @@ test('useUpdateName hook trigger promise error', async () => {
 
   expect(result.current.status).toEqual('rejected');
 });
+
+test.only('should get data about user and their workspaces, which is saved in profile (local storage)', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(userData));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(workspacesData));
+
+  const { result } = renderHook(() => useUser());
+  const { current } = result;
+
+  let response: Promise<User>;
+
+  await act(async () => {
+    response = await current.findByEmail(newUser.email);
+  });
+
+  expect(response).toMatchObject(profileData);
+});
+
+// TODO: cenario de erro
