@@ -133,6 +133,7 @@ export const useFetch = <T>(
       isLoginRequest
     );
     const data = await getResponse(response);
+    console.log(data);
     setLoading(false);
     return data;
   };
