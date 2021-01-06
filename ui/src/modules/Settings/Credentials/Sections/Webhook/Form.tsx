@@ -20,7 +20,6 @@ import Button from 'core/components/Button';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { Webhook } from './interfaces';
 import { Props } from '../interfaces';
 import { useWebhook } from './hooks';
@@ -76,6 +75,16 @@ const FormWebhook = ({ onFinish }: Props) => {
           items={radios}
           onChange={({ currentTarget }) => setType(currentTarget.value)}
         />
+        <Styled.Field>
+          <Form.Checkbox /> Deploy
+          <Text.h5 color="dark">Which events branch and tag created</Text.h5>
+        </Styled.Field>
+        <Styled.Field>
+          <Form.Checkbox /> Undeploy
+          <Text.h5 color="dark">
+            Check run is created, requested, requestered or completed
+          </Text.h5>
+        </Styled.Field>
         <Styled.Actions>
           <Button.Default type="button" isLoading={loadingAdd}>
             Test Connection

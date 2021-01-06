@@ -49,6 +49,8 @@ const Fields = styled.div`
   }
 `;
 
+const Field = styled.div``;
+
 const Actions = styled.div`
   display: flex;
   flex-direction: column;
@@ -62,5 +64,6 @@ export default {
   Form,
   Content,
   Fields,
+  Field,
   Actions
 };
