@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Radio from 'core/components/Radio';
+import Switch from 'core/components/Switch';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Webhook } from './interfaces';
@@ -28,7 +29,7 @@ import Styled from './styled';
 
 const FormWebhook = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingAdd } = useWebhook();
-  const [type, setType] = useState('');
+  const [type, setType] = useState<string>('');
   const {
     register,
     handleSubmit,
@@ -42,6 +43,21 @@ const FormWebhook = ({ onFinish }: Props) => {
   const onSubmit = ({ url }: Webhook) => {
     save(url);
   };
+
+  const renderOptions = () => (
+    <Fragment>
+      <Styled.Field>
+        <Switch label="Deploy" />
+        <Text.h5 color="dark">Which events branch and tag created</Text.h5>
+      </Styled.Field>
+      <Styled.Field>
+        <Switch label="Undeploy" />
+        <Text.h5 color="dark">
+          Check run is created, requested, requestered or completed
+        </Text.h5>
+      </Styled.Field>
+    </Fragment>
+  );
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
@@ -75,16 +91,7 @@ const FormWebhook = ({ onFinish }: Props) => {
           items={radios}
           onChange={({ currentTarget }) => setType(currentTarget.value)}
         />
-        <Styled.Field>
-          <Form.Checkbox /> Deploy
-          <Text.h5 color="dark">Which events branch and tag created</Text.h5>
-        </Styled.Field>
-        <Styled.Field>
-          <Form.Checkbox /> Undeploy
-          <Text.h5 color="dark">
-            Check run is created, requested, requestered or completed
-          </Text.h5>
-        </Styled.Field>
+        {type === 'individual' && renderOptions()}
         <Styled.Actions>
           <Button.Default type="button" isLoading={loadingAdd}>
             Test Connection

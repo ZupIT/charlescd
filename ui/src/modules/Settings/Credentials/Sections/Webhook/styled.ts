@@ -49,7 +49,12 @@ const Fields = styled.div`
   }
 `;
 
-const Field = styled.div``;
+const Field = styled.div`
+  > :last-child {
+    margin-top: 5px;
+    margin-left: 30px;
+  }
+`;
 
 const Actions = styled.div`
   display: flex;
