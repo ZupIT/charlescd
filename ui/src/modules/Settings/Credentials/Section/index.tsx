@@ -51,7 +51,7 @@ const Section = ({
       <ContentIcon icon={icon}>
         <Text.h2 color="light">{name}</Text.h2>
       </ContentIcon>
-      <Styled.Type>
+      <Styled.Type data-testid={`configuration-type-${type}`}>
         <Text.h5 color="dark">{type}</Text.h5>
       </Styled.Type>
       <Styled.Content>

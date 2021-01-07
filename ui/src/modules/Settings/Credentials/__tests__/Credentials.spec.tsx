@@ -205,3 +205,33 @@ test('click to copy to clipboard', async () => {
   expect(copyToClipboardSpy).toBeCalled();
 });
 
+test.only('should render Credentials items with the right type: Required or Optional', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+
+  const configurationItems = [
+    {name: 'Registry', type: 'Required'},
+    {name: 'CD Configuration', type: 'Required'},
+    {name: 'Circle Matcher', type: 'Required'},
+    {name: 'Datasources', type: 'Optional'},
+    {name: 'Metric Action', type: 'Optional'},
+    {name: 'Git', type: 'Optional'},
+    {name: 'User group', type: 'Optional'},
+  ];
+  
+  render(<Credentials />);
+
+  const types = await screen.findAllByTestId(/configuration-type.*/);
+  
+  types.forEach((type, index) => {
+    expect(type.textContent).toBe(configurationItems[index].type);
+  })
+});
