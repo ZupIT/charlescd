@@ -57,3 +57,11 @@ Object.assign(navigator, {
     writeText: () => undefined
   }
 });
+
+const intersectionObserverMock = () => ({
+  observe: () => '',
+  disconnect: () => ''
+});
+window.IntersectionObserver = jest
+  .fn()
+  .mockImplementation(intersectionObserverMock);

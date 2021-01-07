@@ -43,7 +43,7 @@ class FindDeploymentsHistoryForCircleInteractorImpl(
         return ResourcePageResponse.from(
             pagedDeploymentsHistory.content.map { DeploymentHistoryResponse.from(it, componentsMap.getValue(it.id)) }.sortedByDescending { it.createdAt },
             pagedDeploymentsHistory.pageNumber,
-            pagedDeploymentsHistory.pageSize,
+            pagedDeploymentsHistory.size(),
             pagedDeploymentsHistory.isLast(),
             pagedDeploymentsHistory.totalPages()
         )
