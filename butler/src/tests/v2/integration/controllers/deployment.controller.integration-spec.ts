@@ -350,16 +350,16 @@ describe('DeploymentController v2', () => {
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
       defaultCircle: false
     }
-    const errorMessages = [
+    const errorMessage = 
       'components could not be null or empty'
-    ]
+    
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual({ message: errorMessage, statusCode: 400 })
       })
   })
 
