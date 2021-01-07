@@ -53,7 +53,7 @@ test('render Credentials default component', async () => {
   expect(credentialsElement).toBeInTheDocument();
 });
 
-test('render Credentials items', async () => {
+test('should render Credentials items', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
@@ -68,12 +68,36 @@ test('render Credentials items', async () => {
   render(<Credentials />);
 
   await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
-  expect(screen.getByTestId('contentIcon-users')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-git')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-server')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-cd-configuration')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-circle-matcher')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
+  expect(screen.getByText('Registry')).toBeInTheDocument();
+  expect(screen.getByText('CD Configuration')).toBeInTheDocument();
+  expect(screen.getByText('Circle Matcher')).toBeInTheDocument();
+  expect(screen.getByText('Datasources')).toBeInTheDocument();
+  expect(screen.getByText('Metric Action')).toBeInTheDocument();
+  expect(screen.getByText('Git')).toBeInTheDocument();
+  expect(screen.getByText('User group')).toBeInTheDocument();
+});
+
+test('should render Credentials items in the right order', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+
+  const itemsRightOrder = ['Registry', 'CD Configuration', 'Circle Matcher', 'Datasources', 'Metric Action', 'Git', 'User group'];
+  
+  render(<Credentials />);
+
+  const items = await screen.findAllByTestId(/contentIcon-.*/);
+  const itemsFiltered = items.slice(1);
+  itemsFiltered.forEach((item, index) => {
+    expect(item.textContent).toBe(itemsRightOrder[index]); 
+  })
 });
 
 test('render User Group credentials', async () => {
@@ -180,3 +204,4 @@ test('click to copy to clipboard', async () => {
 
   expect(copyToClipboardSpy).toBeCalled();
 });
+
