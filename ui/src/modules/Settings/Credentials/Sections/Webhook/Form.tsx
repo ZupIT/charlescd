@@ -92,18 +92,13 @@ const FormWebhook = ({ onFinish }: Props) => {
           onChange={({ currentTarget }) => setType(currentTarget.value)}
         />
         {type === 'individual' && renderOptions()}
-        <Styled.Actions>
-          <Button.Default type="button" isLoading={loadingAdd}>
-            Test Connection
-          </Button.Default>
-          <Button.Default
-            type="submit"
-            isDisabled={!isValid}
-            isLoading={loadingAdd}
-          >
-            Save
-          </Button.Default>
-        </Styled.Actions>
+        <Button.Default
+          type="submit"
+          isDisabled={!isValid}
+          isLoading={loadingAdd}
+        >
+          Save
+        </Button.Default>
       </Styled.Fields>
     </Styled.Form>
   );
