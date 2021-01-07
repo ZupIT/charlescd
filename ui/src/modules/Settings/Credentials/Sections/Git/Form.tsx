@@ -48,7 +48,7 @@ const FormGit = ({ onFinish }: Props) => {
     mode: 'onChange',
     defaultValues: {
       credentials: {
-        address: '',
+        address: '.',
         accessToken: '',
         serviceProvider: ''
       }
