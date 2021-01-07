@@ -54,6 +54,7 @@ export class CreateUndeploymentUseCase {
   private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null): Promise<Execution> {
     this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id })
     const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.UNDEPLOYMENT, incomingCircleId })
+    await this.deploymentsRepository.update({ id: deployment.id }, { active: false })
     this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT_EXECUTION', { execution: execution.id })
     return execution
   }
