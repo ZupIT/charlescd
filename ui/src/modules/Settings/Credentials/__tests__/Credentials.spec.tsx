@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, fireEvent, wait, screen, act, waitFor } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
