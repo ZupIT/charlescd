@@ -29,12 +29,15 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { UndeploymentValidation } from '../../../../app/v2/api/deployments/pipes/undeployment-validation.pipe'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests } from '../../fixtures/manifests.fixture'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication
   let fixtureUtilsService: FixtureUtilsService
   let pipe: UndeploymentValidation
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -48,6 +51,7 @@ describe('DeploymentCleanupHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     pipe = app.get<UndeploymentValidation>(UndeploymentValidation)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
     TestSetupUtils.seApplicationConstants()
   })
 
@@ -82,7 +86,7 @@ describe('DeploymentCleanupHandler', () => {
       circle: circleId,
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -95,7 +99,7 @@ describe('DeploymentCleanupHandler', () => {
       defaultCircle: false
     }
 
-    const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, false, false)
+    const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manifests, manager, false, false)
     await expect(
       pipe.transform(deployment.id)
     ).rejects.toThrow(new BadRequestException('Cannot undeploy not active deployment'))
@@ -110,7 +114,7 @@ describe('DeploymentCleanupHandler', () => {
       circle: circleId,
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -123,13 +127,13 @@ describe('DeploymentCleanupHandler', () => {
       defaultCircle: false
     }
 
-    const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manager, true, false)
+    const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manifests, manager, true, false)
     expect(await pipe.transform(deployment.id)).toEqual(deployment.id)
   })
 
 })
 
-const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manager: any, status: boolean, running: boolean): Promise<DeploymentEntity> => {
+const createDeploymentAndExecution = async(params: any, fixtureUtilsService: FixtureUtilsService, manifests: KubernetesManifest[], manager: any, status: boolean, running: boolean): Promise<DeploymentEntity> => {
   const components = params.components.map((c: any) => {
     const component = new ComponentEntity(
       c.helmRepository,
@@ -138,7 +142,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      manifests
     )
     component.running = running
     return component

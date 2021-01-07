@@ -17,6 +17,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 import * as request from 'supertest'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
@@ -29,12 +30,14 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
+import { defaultManifests } from '../../fixtures/manifests.fixture'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -50,6 +53,7 @@ describe('DeploymentController v2', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
   })
 
   afterAll(async() => {
@@ -80,7 +84,7 @@ describe('DeploymentController v2', () => {
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -94,9 +98,9 @@ describe('DeploymentController v2', () => {
       defaultCircle: false
     }
 
-    const firstExecution = await createDeploymentAndExecution(params, cdConfiguration, manager)
-    const secondExecution = await createDeploymentAndExecution({ ...params, deploymentId: 'a33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
-    const thirdExecution = await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
+    const firstExecution = await createDeploymentAndExecution(params, cdConfiguration, manifests, manager)
+    const secondExecution = await createDeploymentAndExecution({ ...params, deploymentId: 'a33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manifests, manager)
+    const thirdExecution = await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manifests, manager)
 
     await request(app.getHttpServer())
       .get('/v2/executions').query({ active: false, size: 1, page: 0 })
@@ -174,7 +178,7 @@ describe('DeploymentController v2', () => {
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -190,7 +194,7 @@ describe('DeploymentController v2', () => {
       defaultCircle: false
     }
 
-    await createDeploymentAndExecution(params, cdConfiguration, manager)
+    await createDeploymentAndExecution(params, cdConfiguration, manifests, manager)
     const expectedBody = {
       createdAt: expect.any(String),
       deployment: {
@@ -232,7 +236,7 @@ describe('DeploymentController v2', () => {
   })
 })
 
-const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<Execution> => {
+const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manifests: KubernetesManifest[], manager: any) : Promise<Execution> => {
   const components = params.components.map((c: any) => {
     return new ComponentEntity(
       c.helmRepository,
@@ -241,7 +245,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      manifests
     )
   })
 

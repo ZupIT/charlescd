@@ -16,7 +16,6 @@
 
 import { Type } from 'class-transformer'
 import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
-import { flatten } from 'lodash'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
 import { CreateModuleDeploymentDto } from './create-module-request.dto'
@@ -87,33 +86,27 @@ export class CreateDeploymentRequestDto {
     this.defaultCircle = defaultCircle
   }
 
-  public toCircleEntity(): DeploymentEntity {
+  public toCircleEntity(newComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
       this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
-      this.getDeploymentComponents(),
+      newComponents,
       this.defaultCircle
     )
   }
 
-  public toDefaultEntity(activeComponents: ComponentEntity[]): DeploymentEntity {
+  public toDefaultEntity(activeComponents: ComponentEntity[], newComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
       this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
-      [ ...activeComponents, ...this.getDeploymentComponents()],
+      [ ...activeComponents, ...newComponents],
       this.defaultCircle
-    )
-  }
-
-  private getDeploymentComponents(): ComponentEntity[] {
-    return flatten(
-      this.modules.map(module => module.components.map(component => component.toEntity(module.helmRepository)))
     )
   }
 }
