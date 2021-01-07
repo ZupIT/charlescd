@@ -21,7 +21,9 @@ import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
 import { Input as InputComponent } from 'core/components/Form';
 import TextComponent from 'core/components/Text';
 import LayerComponent from 'core/components/Layer';
-import PopoverComponent from 'core/components/Popover';
+import PopoverComponent, {
+  Props as PopoverProps
+} from 'core/components/Popover';
 import Text from 'core/components/Text';
 import NumberInput from 'core/components/Form/Number';
 
@@ -101,7 +103,7 @@ const FieldPopover = styled.div`
   margin-bottom: 10px;
 `;
 
-const Popover = styled(PopoverComponent)`
+const Popover = styled(PopoverComponent)<PopoverProps>`
   margin-left: 10px;
 `;
 
