@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Optional } from '@nestjs/common'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
 import { ComponentUniqueProp } from '../validations/component-unique-by-name'
+import { ComponentIsNotNull } from '../validations/component-not-empty'
 import { CompositeFieldSize } from '../validations/composite-field-size'
 import { ImageTagValidation } from '../validations/image-tag-validation'
 import { CreateComponentRequestDto } from './create-component-request.dto'
@@ -27,7 +27,7 @@ export class CreateModuleDeploymentDto {
 
   @ApiProperty()
   @IsUUID()
-  @Optional()
+  @IsOptional()
   public moduleId: string
 
   @ApiProperty()
@@ -41,6 +41,7 @@ export class CreateModuleDeploymentDto {
   @Validate(ComponentUniqueProp, ['componentName'])
   @Validate(CompositeFieldSize)
   @Validate(ImageTagValidation)
+  @Validate(ComponentIsNotNull, { })
   public readonly components: CreateComponentRequestDto[]
 
   constructor(moduleId: string, helmRepository: string, components: CreateComponentRequestDto[]) {
