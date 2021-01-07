@@ -161,16 +161,13 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content>
-      <Text.h2 color="light">
-        Add Datasource
-        <Popover
-          title="Why we ask for Metrics Provider?"
-          icon="info"
-          link={`${CHARLES_DOC}/reference/metrics/register-metrics-provider`}
-          linkLabel="View documentation"
-          description="Adding the URL of our tool helps Charles to metrics generation since this can vary from workspace to another. Consult the our documentation for further details."
-        />
-      </Text.h2>
+      <Text.h2 color="light">Add Datasource</Text.h2>
+      <Text.h4 color="dark">
+        Adding the URL of our tool helps Charles to metrics generation since
+        this can vary from workspace to another. Consult the our{' '}
+        <Styled.DocumentationLink>documentation</Styled.DocumentationLink> for
+        further details.
+      </Text.h4>
       {renderForm()}
     </Styled.Content>
   );

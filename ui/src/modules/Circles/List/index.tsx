@@ -37,11 +37,11 @@ const CirclesList = () => {
   const { metrics: list } = useGlobalState<CircleState>(
     ({ circles }) => circles
   );
-  const { responseAll, getAll } = useDatasource()
+  const { responseAll, getAll } = useDatasource();
   const profileName = getProfileByKey('name');
 
   useEffect(() => {
-    getAll()
+    getAll();
   }, [getAll]);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ const CirclesList = () => {
 
   return (
     <Styled.Wrapper data-testid="metrics-list">
-      {!some((responseAll as Datasource[]), { healthy: true }) && !loading
+      {!some(responseAll as Datasource[], { healthy: true }) && !loading
         ? renderNoMetrics()
         : renderMetrics()}
     </Styled.Wrapper>

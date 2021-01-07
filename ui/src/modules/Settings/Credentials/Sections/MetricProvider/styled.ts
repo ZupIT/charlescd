@@ -88,6 +88,11 @@ const HealthWrapper = styled.div`
   justify-content: space-between;
 `;
 
+const DocumentationLink = styled.a`
+  text-decoration: underline;
+  color: ${({ theme }) => theme.text.link};
+`;
+
 export default {
   Form,
   Content,
@@ -96,5 +101,6 @@ export default {
   Select,
   TestConnectionButton,
   HealthWrapper,
-  HealthSwitch
+  HealthSwitch,
+  DocumentationLink
 };
