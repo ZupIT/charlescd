@@ -18,7 +18,6 @@ import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { Component } from '../interfaces'
 import { KubernetesManifest } from '../../../core/integrations/interfaces/k8s-manifest.interface'
-import { KubernetesObject } from '@kubernetes/client-node'
 
 @Entity('v2components')
 export class ComponentEntityV2 implements Component {
@@ -68,7 +67,7 @@ export class ComponentEntityV2 implements Component {
     componentId: string,
     hostValue: string | null,
     gatewayName: string | null,
-    manifests: KubernetesObject[],
+    manifests: KubernetesManifest[],
     merged = false
   ) {
     this.helmUrl = helmUrl

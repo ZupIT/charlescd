@@ -23,7 +23,7 @@ import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
 
 @Entity('v2deployments')
-export class  DeploymentEntityV2 implements Deployment {
+export class DeploymentEntityV2 implements Deployment {
 
   @PrimaryColumn({ name: 'id' })
   public id!: string
