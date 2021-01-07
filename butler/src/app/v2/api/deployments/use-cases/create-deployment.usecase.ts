@@ -52,9 +52,9 @@ export class CreateDeploymentUseCase {
       const execution = await this.createExecution(deployment, incomingCircleId, transactionManager)
       return { deployment, execution }
     })
+    await this.deploymentsRepository.update({ id: deployment.id }, { active: true }) // extract this update, here we can put the logic to make the deployment aditive or replace current active components, right now its just set current as active but possible bugs will happen as im not taking in account the activeComponents query to generate the routes manifest
     try {
       await this.k8sClient.applyDeploymentCustomResource(deployment)
-      await this.deploymentsRepository.update({ id: deployment.id }, { active: true })
     } catch (error) {
       this.consoleLoggerService.log('DEPLOYMENT_CRD_ERROR', { error: error })
     }
