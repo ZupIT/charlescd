@@ -42,7 +42,6 @@ export interface CardMovement {
 }
 
 export interface NewRelease {
-  authorId: string;
   features: string[];
   hypothesisId: string;
   tagName: string;

@@ -15,7 +15,6 @@
  */
 
 import { CreateCircleWithFilePayload } from './interfaces/Circle';
-import { getProfileByKey } from 'core/utils/profile';
 
 export const buildFormData = ({
   file,
@@ -23,7 +22,6 @@ export const buildFormData = ({
   name
 }: CreateCircleWithFilePayload) => {
   const payload = new FormData();
-  payload.append('authorId', getProfileByKey('id'));
   payload.append('name', name);
   file && payload.append('file', file);
   keyName && payload.append('keyName', keyName);

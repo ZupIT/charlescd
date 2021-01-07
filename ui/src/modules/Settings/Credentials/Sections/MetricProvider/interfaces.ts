@@ -26,7 +26,6 @@ export interface Provider {
 
 export interface MetricProvider {
   provider: string;
-  authorId?: string;
   url: string;
 }
 
