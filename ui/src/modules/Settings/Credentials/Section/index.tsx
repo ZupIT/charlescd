@@ -51,8 +51,10 @@ const Section = ({
       <ContentIcon icon={icon}>
         <Text.h2 color="light">{name}</Text.h2>
       </ContentIcon>
-      <Styled.Content>
+      <Styled.Type>
         <Text.h5 color="dark">{type}</Text.h5>
+      </Styled.Type>
+      <Styled.Content>
         {showAction && renderAction()}
         {children}
       </Styled.Content>
