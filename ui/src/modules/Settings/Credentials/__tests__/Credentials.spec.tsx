@@ -205,7 +205,7 @@ test('click to copy to clipboard', async () => {
   expect(copyToClipboardSpy).toBeCalled();
 });
 
-test.only('should render Credentials items with the right type: Required or Optional', async () => {
+test('should render Credentials items with the right type: Required or Optional', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
