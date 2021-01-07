@@ -8,6 +8,16 @@ import spock.lang.Specification
 
 class NodeValidationTest extends Specification {
 
+    def "Null Node is allowed"() {
+        given:
+        def node = null
+        when:
+        def validator = new NodeValidator()
+        def valid = validator.isValid(node, null)
+        then:
+        assert valid
+    }
+
     def "Validate simple RULE node type"() {
         given:
         def value = "user@zup.com.br"

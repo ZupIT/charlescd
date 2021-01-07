@@ -13,7 +13,7 @@ public class NodeValidator implements ConstraintValidator<NodeConstraint, Node> 
 
     @Override
     public boolean isValid(Node node, ConstraintValidatorContext constraintValidatorContext) {
-        if(node == null) {
+        if (node == null) {
             return true;
         }
         return validate(node);
