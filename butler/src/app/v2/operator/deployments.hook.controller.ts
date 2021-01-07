@@ -34,7 +34,13 @@ export class DeploymentsHookController {
     const deploymentNames = Object.keys(params.children['Deployment.apps/v1'])
 
     const allReady = deploymentNames.every(d => {
+      if (!deployment.active) {
+        return true
+      }
       const conditions = params.children['Deployment.apps/v1'][d].status.conditions
+      console.log({
+        conditionsssssssssssssssssssssss: conditions
+      })
       if (conditions.length === 0) {
         return false
       }
@@ -63,7 +69,6 @@ export class DeploymentsHookController {
     return { children: specs }
   }
 
-  // TODO maybe we dont implement the finalize hook yet, this will be useful only on the use case where the user is applying the manifests directly without using the butler api
   @Post('/v2/operator/deployment/hook/finalize')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -71,9 +76,10 @@ export class DeploymentsHookController {
     // console.log(JSON.stringify(params))
     await this.deploymentRepository.update({ id: params.parent.spec.deploymentId }, { active: false })
     const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration'] })
+    const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const finalized = true
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
-    // this.k8sClient.applyRoutingCustomResource(deployment.cdConfiguration.id, activeComponents)
+    await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
     // const specs = deployment.compiledSpec?? check this name with leandro
     const specs : Record<string, unknown>[] = []
 
