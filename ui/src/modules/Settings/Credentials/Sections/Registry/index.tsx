@@ -25,8 +25,6 @@ import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import { FetchStatuses } from 'core/providers/base/hooks';
 import Notification from 'core/components/Notification';
-import Text from 'core/components/Text';
-
 interface Props {
   form: string;
   setForm: Function;
@@ -81,7 +79,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_REGISTRY)}
       type="Required"
     >
-      {/* {data && !responseRemove && (
+      {data && !responseRemove && (
         <Fragment>
           <Card.Config
             icon="server"
@@ -93,7 +91,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
             {error && renderError()}
           </Card.Config>
         </Fragment>
-      )} */}
+      )}
     </Section>
   );
 
