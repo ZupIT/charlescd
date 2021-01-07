@@ -20,7 +20,7 @@
     "test:all:cov": "jest --runInBand --coverage --forceExit"
   },
   "dependencies": {
-    "@nestjs/common": "^7.4.2",
+    "@nestjs/common": "^7.6.5",
     "@nestjs/config": "^0.4.2",
     "@nestjs/core": "^7.4.2",
     "@nestjs/platform-express": "^7.4.2",
