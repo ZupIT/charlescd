@@ -377,15 +377,17 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
     }
 
     private fun findByParameters(parameters: Map<String, String>, pageRequest: PageRequest): Page<Build> {
-        val count = executeCountQuery(createCountQuery(parameters), parameters)
-
         val result = this.jdbcTemplate.query(
             createQueryStatement(parameters, pageRequest),
             parameters.values.toTypedArray(),
             buildExtractor
         )
 
-        return Page(result?.toList() ?: emptyList(), pageRequest.page, pageRequest.size, count ?: 0)
+        return Page(
+            result?.toList() ?: emptyList(),
+            pageRequest.page,
+            pageRequest.size,
+            executeCountQuery(createCountQuery(parameters), parameters) ?: 0)
     }
 
     private fun createInnerQueryStatement(

@@ -172,7 +172,7 @@ export const useDeleteCircle = (): [Function, string] => {
   return [delCircle, circleStatus];
 };
 
-export const useCirclesData = () => {
+export const useCirclesActive = () => {
   const getCirclesData = useFetchData<Pagination<Circle>>(
     findAllCirclesWithoutActive
   );
@@ -190,17 +190,19 @@ export const useCircles = (
   const { response, error, loading } = circlesData;
 
   const filterCircles = useCallback(
-    (name: string, status: string) => {
+    ({ name, status, page }) => {
       if (status === CIRCLE_STATUS.active) {
-        getCircles({ name, active: true });
+        getCircles({ name, page, active: true });
       } else if (status === CIRCLE_STATUS.inactives) {
-        getCircles({ name, active: false });
+        getCircles({ name, page, active: false });
       }
     },
     [getCircles]
   );
 
   useEffect(() => {
+    if (!response) return;
+
     if (!error && type === CIRCLE_TYPES.list) {
       dispatch(loadedCirclesAction(response));
     } else if (!error && type === CIRCLE_TYPES.metrics) {
