@@ -57,6 +57,7 @@ const SectionMetricAction = ({
       icon="action"
       showAction
       action={() => setForm(FORM_METRIC_ACTION)}
+      type="Optional"
     >
       {map(actions, action => (
         <Card.Config
