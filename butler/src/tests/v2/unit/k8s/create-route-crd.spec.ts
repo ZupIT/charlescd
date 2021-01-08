@@ -189,6 +189,6 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
   ]
 
   expect(
-    CrdBuilder.buildRoutingCrdManifest('cd-configuration-id', activeComponents)
+    CrdBuilder.buildRoutingCrdManifest('namespace', activeComponents)
   ).toEqual(expectedRouteCrd)
 })
