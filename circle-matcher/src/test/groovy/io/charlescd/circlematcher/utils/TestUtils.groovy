@@ -27,6 +27,10 @@ class TestUtils {
         new Node(NodeType.RULE, LogicalOperatorType.OR, null, content)
     }
 
+    static Node createClauseNode(List<Node> clauses) {
+        new Node(NodeType.CLAUSE, LogicalOperatorType.OR, clauses, null)
+    }
+
     static Content createContent(ArrayList values) {
         new Content("username", "EQUAL", values)
     }
