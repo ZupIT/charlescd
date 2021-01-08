@@ -39,6 +39,10 @@ const Checkbox = ({
     onChange && onChange(isChecked);
   };
 
+  const renderDescription = () => (
+    <Styled.Description color="dark">{description}</Styled.Description>
+  );
+
   return (
     <Fragment>
       <Styled.Checkbox data-testid={`checkbox-${label}`} className={className}>
@@ -52,9 +56,7 @@ const Checkbox = ({
         <Styled.Label color="light">{label}</Styled.Label>
       </Styled.Checkbox>
 
-      {description && (
-        <Styled.Description color="dark">{description}</Styled.Description>
-      )}
+      {description && renderDescription()}
     </Fragment>
   );
 };

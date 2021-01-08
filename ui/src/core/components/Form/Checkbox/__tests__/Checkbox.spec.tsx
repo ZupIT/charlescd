@@ -16,9 +16,9 @@
 
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { dark as checkboxTheme } from 'core/assets/themes/checkbox';
 import Checkbox from '..'
-import userEvent from '@testing-library/user-event';
 
 const props = {
   label: 'Deploy'
