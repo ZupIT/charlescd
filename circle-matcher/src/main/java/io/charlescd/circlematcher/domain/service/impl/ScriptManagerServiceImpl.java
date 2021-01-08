@@ -23,6 +23,8 @@ import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
 import java.util.Map;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Engine;
+import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.slf4j.Logger;
@@ -33,20 +35,21 @@ import org.springframework.stereotype.Service;
 public class ScriptManagerServiceImpl implements ScriptManagerService {
 
     private Logger logger = LoggerFactory.getLogger(ScriptManagerServiceImpl.class);
-    private String toStrScript;
-    private String toNumberScript;
-    private String getPathScript;
+    private Source toStrScript;
+    private Source toNumberScript;
+    private Source getPathScript;
+    private org.graalvm.polyglot.Engine engine;
 
-    public ScriptManagerServiceImpl() {
-        this.toStrScript =  ResourceUtils.getResourceAsString("js/toStr.js");
-        this.toNumberScript = ResourceUtils.getResourceAsString("js/toNumber.js");
-        this.getPathScript = ResourceUtils.getResourceAsString("js/getPath.js");
+    public ScriptManagerServiceImpl() throws Exception {
+        this.engine = Engine.create();
+        this.toStrScript = Source.create("js", ResourceUtils.getResourceAsString("js/toStr.js"));
+        this.toNumberScript = Source.create("js", ResourceUtils.getResourceAsString("js/toNumber.js"));
+        this.getPathScript = Source.create("js", ResourceUtils.getResourceAsString("js/getPath.js"));
     }
 
     public Context scriptContext() {
         try {
-            Context context = Context.newBuilder("js").allowExperimentalOptions(true)
-                    .option("js.nashorn-compat", "true").build();
+            Context context = Context.newBuilder("js").engine(this.engine).build();
             this.evalJs(context, getPathScript);
             this.evalJs(context, toStrScript);
             this.evalJs(context, toNumberScript);
@@ -76,6 +79,10 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
 
     public Object evalJs(Context context, String script) {
         return context.eval("js", script);
+    }
+
+    public Object evalJs(Context context, Source source) {
+        return context.eval(source);
     }
 
     public Value getResultVar(Context context) {
