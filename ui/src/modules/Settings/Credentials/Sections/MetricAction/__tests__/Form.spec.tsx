@@ -39,7 +39,7 @@ test('render add Metric Action form', async () => {
   expect(actionForm).toBeInTheDocument();
 });
 
-test('render add Metric Action form and add a action', async () => {
+test('render add Metric Action form and add an action', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(pluginsData)
   );
@@ -73,7 +73,7 @@ test('render add Metric Action form and add a action', async () => {
   expect(saveButton).toBeEnabled();
 });
 
-test('render add Metric Action form and add a action close card', async () => {
+test('render add Metric Action form and add an action close card', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(pluginsData)
   );
