@@ -41,7 +41,10 @@ export const circlesReducer = (
     case ACTION_TYPES.loadedCircles: {
       return {
         ...state,
-        list: action.payload
+        list: {
+          ...action.payload,
+          content: [...state.list.content, ...(action?.payload?.content ?? [])]
+        }
       };
     }
     case ACTION_TYPES.loadedCircle: {
@@ -68,6 +71,15 @@ export const circlesReducer = (
         list: {
           ...state.list,
           content
+        }
+      };
+    }
+    case ACTION_TYPES.resetContent: {
+      return {
+        ...state,
+        list: {
+          ...state.list,
+          content: []
         }
       };
     }
