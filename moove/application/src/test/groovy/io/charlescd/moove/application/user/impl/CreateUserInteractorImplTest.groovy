@@ -112,10 +112,9 @@ class CreateUserInteractorImplTest extends Specification {
         exception.errorCode == MooveErrorCode.CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS
     }
 
-    def "when trying to create user, if its not root and its not own user throw exception"(){
+    def "when trying to create user, if  notits root and its not own user throw exception"(){
         given:
         def userEmail =  TestUtils.email
-        def authorizedUser = TestUtils.user
         def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "newuser@teste.com", "https://www.photos.com/johndoe", false)
         def user = createUserRequest.toUser()
         def authorization = "Bearer "
@@ -125,7 +124,7 @@ class CreateUserInteractorImplTest extends Specification {
 
         then:
         0 * userRepository.findByEmail(user.email) >> Optional.empty()
-        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
+        1 * userRepository.findByEmail(userEmail) >> Optional.empty()
         1 * managementUserSecurityService.getUserEmail(authorization) >> userEmail.toLowerCase().trim()
         0 * userRepository.save(_) >> user
         0 * managementUserSecurityService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
