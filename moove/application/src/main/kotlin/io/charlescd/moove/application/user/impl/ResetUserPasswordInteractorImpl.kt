@@ -26,17 +26,40 @@ import io.charlescd.moove.application.user.response.UserNewPasswordResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import java.util.*
 import javax.inject.Named
 
 @Named
 class ResetUserPasswordInteractorImpl(
     private val passGenerator: UserPasswordGeneratorService,
-    private val keycloakService: KeycloakService,
     private val userService: UserService
 ) : ResetUserPasswordInteractor {
     override fun execute(authorization: String, id: UUID): UserNewPasswordResponse {
+        val userToResetPassword = userService.find(id.toString())
+        validateUser(authorization, userToResetPassword)
+        val newPassword = resetPassword(userToResetPassword.email)
+        return UserNewPasswordResponse(newPassword)
+    }
+
+    private fun validateUser(authorization: String, userToResetPassword: User) {
+        val tokenUser = userService.findByAuthorizationToken(authorization)
+
+        if (!tokenUser.root) {
+            throw BusinessException.of(MooveErrorCode.FORBIDDEN)
+        }
+
+        if (tokenUser.email == userToResetPassword.email) {
+            throw BusinessException.of(MooveErrorCode.CANNOT_RESET_YOUR_OWN_PASSWORD)
+        }
+    }
+
+    private fun resetPassword(email: String): String {
+        val newPassword = generatePassword()
+        userService.resetPassword(email, newPassword)
+        return newPassword
+    }
+
+    private fun generatePassword(): String {
         val userPasswordFormat = UserPasswordFormat(
             numberDigits = 2,
             numberLowerCase = 4,
@@ -44,18 +67,6 @@ class ResetUserPasswordInteractorImpl(
             numberSpecialChars = 2,
             passwordLength = 10
         )
-        val userToResetPassword = userService.find(id.toString())
-        validateUser(authorization, userToResetPassword)
-        val newPassword = passGenerator.create(userPasswordFormat)
-        keycloakService.resetPassword(userToResetPassword.email, newPassword)
-        return UserNewPasswordResponse(newPassword)
-    }
-
-    private fun validateUser(authorization: String, userToResetPassword: User) {
-        val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
-        val registeredUser = userService.findByEmail(parsedEmail)
-        if (registeredUser.email.equals(userToResetPassword.email)) {
-            throw BusinessException.of(MooveErrorCode.CANNOT_RESET_YOUR_OWN_PASSWORD)
-        }
+        return passGenerator.create(userPasswordFormat)
     }
 }
