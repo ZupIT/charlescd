@@ -14,7 +14,6 @@ import spock.lang.Specification
 
 class CreateUserInteractorImplTest extends Specification {
 
-    private KeycloakService keycloakService
     private CreateUserInteractor createUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
@@ -146,7 +145,7 @@ class CreateUserInteractorImplTest extends Specification {
         then:
         1 * userRepository.findByEmail(userEmail) >> Optional.empty()
         1 * userRepository.findByEmail(user.email) >> Optional.empty()
-        2 * managementUserSecurityService.getUserEmail(authorization) >> userEmail.toLowerCase().trim()
+        1 * managementUserSecurityService.getUserEmail(authorization) >> userEmail.toLowerCase().trim()
         1 * userRepository.save(_) >> user
         1 * managementUserSecurityService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
     }
