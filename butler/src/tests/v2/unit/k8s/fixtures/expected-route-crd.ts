@@ -20,7 +20,7 @@ export const expectedRouteCrd: CharlesRoutes = {
   apiVersion: 'charlescd.io/v1',
   kind: 'CharlesRoutes',
   metadata: {
-    name: 'cd-configuration-id'
+    name: 'namespace-routes'
   },
   spec: {
     components: [
