@@ -1,25 +1,62 @@
-import React, { ChangeEvent } from 'react';
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import React, { Fragment, useState } from 'react';
 import Styled from './styled';
 
-type Props = {
+interface Props {
+  label: string;
+  description?: string;
+  active?: boolean;
+  onChange?: (value: boolean) => void;
   className?: string;
-  checked?: boolean;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-};
+}
 
-const Checkbox = ({ className, checked, onChange }: Props) => (
-  <Styled.CheckboxContainer className={className}>
-    <Styled.HiddenCheckbox
-      defaultChecked={checked}
-      onChange={onChange}
-      data-testid="hidden-checkbox"
-    />
-    <Styled.Checkbox checked={checked} data-testid="checkbox-icon">
-      <Styled.Icon viewBox="0 0 24 24" data-testid="checkbox-icon-svg">
-        <polyline points="20 6 9 17 4 12" />
-      </Styled.Icon>
-    </Styled.Checkbox>
-  </Styled.CheckboxContainer>
-);
+const Checkbox = ({
+  label,
+  description,
+  active,
+  onChange,
+  className
+}: Props) => {
+  const [isChecked, setIsChecked] = useState(active);
+
+  const onCheck = () => {
+    setIsChecked(!isChecked);
+    onChange && onChange(isChecked);
+  };
+
+  return (
+    <Fragment>
+      <Styled.Checkbox data-testid={`checkbox-${label}`} className={className}>
+        <Styled.Input
+          data-testid={`checkbox-input-${label}`}
+          type="checkbox"
+          checked={isChecked}
+          onChange={onCheck}
+        />
+        <Styled.Toggle data-testid={`checkbox-toggle-${label}`} />
+        <Styled.Label color="light">{label}</Styled.Label>
+      </Styled.Checkbox>
+
+      {description && (
+        <Styled.Description color="dark">{description}</Styled.Description>
+      )}
+    </Fragment>
+  );
+};
 
 export default Checkbox;

@@ -92,6 +92,11 @@ const FormGit = ({ onFinish }: Props) => {
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
         />
+        <Form.Checkbox
+          label="Deploy"
+          description="Ser ou não ser, pode ser"
+          active
+        />
         <ConnectionStatus
           successMessage="Successful connection with git."
           errorMessage={testConnectionResponse?.message}
