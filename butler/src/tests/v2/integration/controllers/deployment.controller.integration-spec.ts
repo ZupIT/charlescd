@@ -27,6 +27,8 @@ import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -64,8 +66,8 @@ describe('DeploymentController v2', () => {
   })
   it('returns ok for valid params with existing cdConfiguration', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -79,7 +81,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -110,7 +112,7 @@ describe('DeploymentController v2', () => {
           id: 'dummy-id',
           moduleId: 'dummy-module-id',
           createdAt: expect.any(String),
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           componentsDeployments: [
             {
               id: expect.any(String),
@@ -145,7 +147,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -203,8 +205,8 @@ describe('DeploymentController v2', () => {
 
   it('create execution for the deployment', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -218,7 +220,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -247,8 +249,8 @@ describe('DeploymentController v2', () => {
 
   it('returns error for malformed payload', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -262,7 +264,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -326,8 +328,8 @@ describe('DeploymentController v2', () => {
 
   it('saves the host value / gateway name parameters correctly', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -341,7 +343,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -373,8 +375,8 @@ describe('DeploymentController v2', () => {
 
   it('validates size of componentName + buildImageTag concatenation', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -388,7 +390,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -424,8 +426,8 @@ describe('DeploymentController v2', () => {
 
   it('validates imageTag is equal to suplied tag on imageUrl', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -439,7 +441,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',

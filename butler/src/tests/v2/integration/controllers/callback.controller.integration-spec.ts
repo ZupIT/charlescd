@@ -35,6 +35,8 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { defaultManifests, defaultManifestsJson } from '../../fixtures/manifests.fixture'
 
 let mock = express()
 
@@ -44,6 +46,7 @@ describe('CallbackController v2', () => {
   let mockServer: Server
   let worker: PgBossWorker
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -59,6 +62,7 @@ describe('CallbackController v2', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
+    manifests = defaultManifests
   })
 
   afterAll(async() => {
@@ -103,7 +107,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -117,7 +121,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
@@ -143,9 +147,10 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
@@ -201,7 +206,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -215,7 +220,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
@@ -242,9 +247,10 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
@@ -300,7 +306,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -314,7 +320,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.active = true
     deploymentEntity.cdConfiguration = cdConfiguration
     const savedDeployment = await manager.save(deploymentEntity)
@@ -341,9 +347,10 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
@@ -399,7 +406,7 @@ describe('CallbackController v2', () => {
 
     const modulesDto = new CreateModuleDeploymentDto(
       '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
-      'http://helm-repo.com',
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
       [components]
     )
 
@@ -413,7 +420,7 @@ describe('CallbackController v2', () => {
       [modulesDto],
       false
     )
-    const deploymentEntity = deploymentDto.toCircleEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
     deploymentEntity.active = true
     deploymentEntity.cdConfiguration = cdConfiguration
     const savedDeployment = await manager.save(deploymentEntity)
@@ -440,9 +447,10 @@ describe('CallbackController v2', () => {
         callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
         components: [
           {
-            helmUrl: 'http://helm-repo.com',
+            helmUrl: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
             imageTag: 'build-image-tag',
             imageUrl: 'build-image-url.com',
+            manifests: defaultManifestsJson,
             name: 'component-name',
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
