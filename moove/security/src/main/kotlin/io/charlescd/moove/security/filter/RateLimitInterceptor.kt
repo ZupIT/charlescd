@@ -1,6 +1,10 @@
 package io.charlescd.moove.security.filter
 
+import io.charlescd.moove.security.SecurityConstraints
+import io.charlescd.moove.security.config.Constants
 import io.charlescd.moove.security.service.RateLimitService
+import io.charlescd.moove.security.utils.FileUtils
+import io.charlescd.moove.security.utils.FilterUtils
 import io.github.bucket4j.Bucket
 import io.github.bucket4j.ConsumptionProbe
 import javax.servlet.ServletResponse
@@ -11,6 +15,8 @@ import org.springframework.web.servlet.HandlerInterceptor
 
 class RateLimitInterceptor(private val rateLimitService: RateLimitService) : HandlerInterceptor {
 
+    private var constraints: SecurityConstraints = FileUtils.read(Constants.SECURITY_CONSTRAINTS_FILE)
+
     companion object {
         const val AUTHORIZATION = "Authorization"
         const val RATE_LIMIT_REMAINING = "X-Rate-Limit-Remaining"
@@ -19,6 +25,14 @@ class RateLimitInterceptor(private val rateLimitService: RateLimitService) : Han
 
     @Throws(Exception::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+
+        val path = request.requestURI
+        val method = request.method
+
+        if (FilterUtils.checkIfIsOpenPath(constraints, path, method)) {
+            return true
+        }
+
         val apiKey: String = request.getHeader(AUTHORIZATION)
         val tokenBucket: Bucket = rateLimitService.resolveBucket(apiKey)
         val probe: ConsumptionProbe = tokenBucket.tryConsumeAndReturnRemaining(1)
