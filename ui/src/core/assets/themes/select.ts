@@ -21,7 +21,9 @@ import {
   COLOR_BASTILLE,
   COLOR_WHITE,
   COLOR_BLACK_MARLIN,
-  COLOR_SANTAS_GREY
+  COLOR_SANTAS_GREY,
+  COLOR_PURPLE_HEART,
+  COLOR_LAVENDER_GREY
 } from '../colors';
 
 export const light = {};
@@ -45,6 +47,15 @@ export const dark = {
     border: COLOR_BASTILLE,
     hover: {
       background: COLOR_BLACK_MARLIN
+    }
+  },
+  checkbox: {
+    checked: {
+      background: COLOR_PURPLE_HEART
+    },
+    unchecked: {
+      background: COLOR_BASTILLE,
+      borderColor: COLOR_LAVENDER_GREY
     }
   }
 };
