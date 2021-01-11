@@ -41,7 +41,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   } = useRegistryTestConnection();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
   const [message, setMessage] = useState<ConnectionProps>(null);
   const {
     register,
@@ -59,14 +58,12 @@ const FormRegistry = ({ onFinish }: Props) => {
   useEffect(() => {
     if (status.isResolved && response) {
       setMessage({ type: 'success', message: 'Successful connection.' });
-      setIsDisabled(false);
     }
   }, [status.isResolved, response]);
 
   useEffect(() => {
     if (error) {
       setMessage({ type: 'error', message: error.message });
-      setIsDisabled(true);
     }
   }, [error]);
 
@@ -206,7 +203,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
-        isDisabled={isDisabled}
+        isDisabled={!isValid}
       >
         Save
       </Button.Default>
