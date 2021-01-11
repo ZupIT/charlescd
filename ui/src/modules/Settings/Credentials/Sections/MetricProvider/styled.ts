@@ -81,16 +81,17 @@ const HealthSwitch = styled(Switch)`
   i {
     width: 35px;
     height: 20px;
-  }
 
-  i::after {
-    width: 14px;
-    height: 14px;
-  }
+    ::after {
+      width: 14px;
+      height: 14px;
+      left: ${({ active }) => (active ? '5px' : '1px')};
+    }
 
-  i::before {
-    width: 31px;
-    height: 16px;
+    ::before {
+      width: 31px;
+      height: 16px;
+    }
   }
 
   span {

@@ -155,8 +155,13 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       <Text.h4 color="dark">
         Adding the URL of our tool helps Charles to metrics generation since
         this can vary from workspace to another. Consult the our{' '}
-        <Styled.DocumentationLink>documentation</Styled.DocumentationLink> for
-        further details.
+        <Styled.DocumentationLink
+          target="_blank"
+          href={`${CHARLES_DOC}/reference/metrics`}
+        >
+          documentation
+        </Styled.DocumentationLink>{' '}
+        for further details.
       </Text.h4>
       {renderForm()}
     </Styled.Content>
