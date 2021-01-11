@@ -14,60 +14,49 @@
  * limitations under the License.
  */
 
-import userEvent from '@testing-library/user-event';
-import { ThemeScheme } from 'core/assets/themes';
-import { getTheme } from 'core/utils/themes';
 import React from 'react';
-import { render, screen, fireEvent, wait, within } from 'unit-test/testUtils';
-import Checkbox from '..';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import { dark as checkboxTheme } from 'core/assets/themes/checkbox';
+import Checkbox from '..'
 
-const theme = getTheme() as ThemeScheme;
+const props = {
+  label: 'Deploy'
+}
 
-test('render default (unchecked) Checkbox', () => {
-  render(
-    <Checkbox />
-  );
+test('renders Checkbox default values', async () => {
+  render(<Checkbox {...props} />);
 
-  const checkboxIcon = screen.getByTestId('checkbox-icon');
-  const icon = screen.getByTestId('checkbox-icon-svg');
-  
-  expect(checkboxIcon).toHaveStyle('width: 10px')
-  expect(checkboxIcon).toHaveStyle('height: 10px')
-  expect(checkboxIcon).toHaveStyle(
-    `background: ${theme.checkbox.unchecked.background}`
-  )
-  expect(checkboxIcon).toHaveStyle(
-    `border: 1px solid ${theme.checkbox.unchecked.borderColor}`
-  )
-  expect(icon).toHaveStyle('visibility: hidden;')
+  const element = await screen.findByTestId(`checkbox-${props.label}`);
+
+  expect(element).toBeInTheDocument();
 });
 
-test('render checked Checkbox', () => {
-  render(
-    <Checkbox checked />
-  );
+test('renders Checkbox default values and checked', async () => {
+  render(<Checkbox {...props} active />);
 
-  const checkboxIcon = screen.getByTestId('checkbox-icon');
-  const icon = screen.getByTestId('checkbox-icon-svg');
-  
-  expect(checkboxIcon).toHaveStyle('width: 12px')
-  expect(checkboxIcon).toHaveStyle('height: 12px')
-  expect(checkboxIcon).toHaveStyle(
-    `background: ${theme.checkbox.checked.background}`
-  );
-  expect(checkboxIcon).toHaveStyle('border: none');
-  expect(icon).toHaveStyle('visibility: visible')
+  const element = await screen.findByTestId(`checkbox-${props.label}`);
+  const toggle = await screen.findByTestId(`checkbox-toggle-${props.label}`);
+
+  expect(element).toBeInTheDocument();
+  expect(toggle).toBeInTheDocument();
+  expect(toggle).toHaveStyle(`background-color: ${checkboxTheme.checked.background}`);
 });
 
-test('render checked and trigger onChange', () => {
-  const handleChangeFn = jest.fn();
+test('renders Checkbox default values and try toggle', async () => {
+  render(<Checkbox {...props} />);
 
-  render(
-    <Checkbox onChange={handleChangeFn} checked />
-  );
+  const element = await screen.findByTestId(`checkbox-${props.label}`);
+  const input = await screen.findByTestId(`checkbox-input-${props.label}`);
+  const toggle = await screen.findByTestId(`checkbox-toggle-${props.label}`);
 
-  const hiddenCheckbox = screen.getByTestId('hidden-checkbox');
-  userEvent.click(hiddenCheckbox);
+  expect(element).toBeInTheDocument();
+  expect(input).toBeInTheDocument();
+  expect(toggle).toBeInTheDocument();
 
-  expect(handleChangeFn).toHaveBeenCalled();
+  expect(toggle).not.toHaveStyle(`background-color: ${checkboxTheme.checked.background}`);
+  userEvent.click(input);
+  expect(toggle).toHaveStyle(`background-color: ${checkboxTheme.checked.background}`);
+  userEvent.click(input);
+  expect(toggle).not.toHaveStyle(`background-color: ${checkboxTheme.checked.background}`);
 });
