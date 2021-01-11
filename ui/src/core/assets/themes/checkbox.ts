@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_LAVENDER_GREY,
-  COLOR_PURPLE_HEART
-} from 'core/assets/colors';
+import { COLOR_GHOST_WHITE, COLOR_CHETWODE_BLUE } from 'core/assets/colors';
 
 export const light = {};
 
 export const dark = {
-  checked: {
-    background: COLOR_PURPLE_HEART
+  border: COLOR_CHETWODE_BLUE,
+  hover: {
+    background: COLOR_CHETWODE_BLUE
   },
-  unchecked: {
-    background: COLOR_BASTILLE,
-    borderColor: COLOR_LAVENDER_GREY
+  checked: {
+    border: COLOR_CHETWODE_BLUE,
+    background: COLOR_GHOST_WHITE,
+    mark: COLOR_CHETWODE_BLUE
   }
 };
