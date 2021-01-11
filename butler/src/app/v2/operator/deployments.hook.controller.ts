@@ -61,9 +61,12 @@ export class DeploymentsHookController {
     })
 
     if (!allReady) {
+      // update({ active: false })
       return { children: specs, resyncAfterSeconds: 5 }
     }
 
+    // rename active column to current
+    // create new healthy column to represent the state of the deployment on the cluster
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
     await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
     return { children: specs }
@@ -74,7 +77,6 @@ export class DeploymentsHookController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: Record<string, unknown>[], finalized: boolean, resyncAfterSeconds?: number }> {
     // console.log(JSON.stringify(params))
-    await this.deploymentRepository.update({ id: params.parent.spec.deploymentId }, { active: false })
     const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration'] })
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const finalized = true
