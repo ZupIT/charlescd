@@ -27,7 +27,6 @@ import selectEvent from 'react-select-event';
 (global as any).MutationObserver = MutationObserver;
 
 const mockOnFinish = jest.fn();
-
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
@@ -111,8 +110,6 @@ test('should submit AZURE form', async () => {
   const submitButton = screen.getByTestId('button-default-submit-registry');
 
   expect(testConnectionButton).not.toBeDisabled();
-  expect(submitButton).toBeDisabled();
-  await act(async () => userEvent.click(testConnectionButton));
   expect(submitButton).not.toBeDisabled();
 });
 
@@ -137,12 +134,11 @@ test('should have successful test connection with AZURE registry', async () => {
     userEvent.type(passwordField, '123mudar');
   });
 
-  expect(submitButton).toBeDisabled();
+  expect(submitButton).not.toBeDisabled();
 
   await act(async () => userEvent.click(testConnectionButton));
   const successMessage = await screen.findByText('Successful connection.');
   expect(successMessage).toBeInTheDocument();
-  expect(submitButton).not.toBeDisabled();
 });
 
 test('should have failed test connection with AZURE registry', async () => {
@@ -170,12 +166,11 @@ test('should have failed test connection with AZURE registry', async () => {
     userEvent.type(passwordField, '123mudar');
   });
 
-  expect(submitButton).toBeDisabled();
 
   await act(async () => userEvent.click(testConnectionButton));
   const errorMessage = await screen.findByText('invalid registry');
   expect(errorMessage).toBeInTheDocument();
-  expect(submitButton).toBeDisabled();
+  expect(submitButton).not.toBeDisabled();
 });
 
 
@@ -394,7 +389,6 @@ test('should enable submit button after fill AWS form', async () => {
   });
 
   expect(testConnectionButton).not.toBeDisabled();
-  await act(async () => userEvent.click(testConnectionButton));
   expect(submitButton).not.toBeDisabled();
 });
 
@@ -532,9 +526,8 @@ test('should submit Docker Hub form', async () => {
   const submitButton = screen.getByTestId('button-default-submit-registry');
 
   expect(testConnectionButton).not.toBeDisabled();
-  expect(submitButton).toBeDisabled();
-  await act(async () => userEvent.click(testConnectionButton));
   expect(submitButton).not.toBeDisabled();
+  await act(async () => userEvent.click(testConnectionButton));
 });
 
 test('should not submit Docker Hub form (missing registry url)', async () => {
@@ -579,7 +572,6 @@ test('should test connectivity with Docker Hub successful', async () => {
     userEvent.type(passwordField, '123mudar');
   });
 
-  expect(submitButton).toBeDisabled();
 
   await act(async () => userEvent.click(testConnectionButton));
   const successMessage = await screen.findByText('Successful connection.');
@@ -612,12 +604,11 @@ test('should test connectivity with Docker Hub error', async () => {
     userEvent.type(passwordField, '123mudar');
   });
 
-  expect(submitButton).toBeDisabled();
+  expect(submitButton).not.toBeDisabled();
 
   await act(async () => userEvent.click(testConnectionButton));
   const errorMessage = await screen.findByText('invalid registry');
   expect(errorMessage).toBeInTheDocument();
-  expect(submitButton).toBeDisabled();
 });
 
 test('should render Harbor form', async () => {
@@ -659,8 +650,6 @@ test('should submit Harbor form', async () => {
   const submitButton = screen.getByTestId('button-default-submit-registry');
 
   expect(testConnectionButton).not.toBeDisabled();
-  expect(submitButton).toBeDisabled();
-  await act(async () => userEvent.click(testConnectionButton));
   expect(submitButton).not.toBeDisabled();
 });
 
@@ -710,12 +699,11 @@ test('should test connection with Harbor (success)', async () => {
     userEvent.type(passwordField, '123mudar');
   });
 
-  expect(submitButton).toBeDisabled();
 
+  expect(submitButton).not.toBeDisabled();
   await act(async () => userEvent.click(testConnectionButton));
   const successMessage = await screen.findByText('Successful connection.');
   expect(successMessage).toBeInTheDocument();
-  expect(submitButton).not.toBeDisabled();
 });
 
 test('should test connection with Harbor (error)', async () => {
@@ -743,11 +731,10 @@ test('should test connection with Harbor (error)', async () => {
     userEvent.type(passwordField, '123mudar');
   });
 
-  expect(submitButton).toBeDisabled();
 
   await act(async () => userEvent.click(testConnectionButton));
   const errorMessage = await screen.findByText('invalid registry');
   expect(errorMessage).toBeInTheDocument();
-  expect(submitButton).toBeDisabled();
+  expect(submitButton).not.toBeDisabled();
 });
 
