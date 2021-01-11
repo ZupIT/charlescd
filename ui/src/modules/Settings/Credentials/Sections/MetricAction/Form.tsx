@@ -16,7 +16,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import Text from 'core/components/Text';
 import Card from 'core/components/Card';
 import { normalizeSelectOptions } from 'core/utils/select';
 import Button from 'core/components/Button';
