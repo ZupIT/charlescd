@@ -62,5 +62,4 @@ object FilterUtils {
     ): Boolean {
         return role.value.any { mth -> mth.equals(method, ignoreCase = true) }
     }
-
 }

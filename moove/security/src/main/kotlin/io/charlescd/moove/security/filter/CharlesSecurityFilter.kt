@@ -18,7 +18,6 @@ package io.charlescd.moove.security.filter
 
 import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.security.SecurityConstraints
@@ -35,10 +34,7 @@ import org.keycloak.representations.AccessToken
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.GenericFilterBean
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.Constructor
 
 @Component
 @Profile("!local")
