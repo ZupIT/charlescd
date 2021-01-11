@@ -16,9 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import Card from 'core/components/Card';
 import Button from 'core/components/Button';
-import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -63,10 +61,6 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     setPlugin(find(plugins as Plugin[], { id: option['value'] }));
   };
 
-  const onClose = () => {
-    setPlugin(null);
-  };
-
   const handleTestConnection = () => {
     const { data } = getValues();
 
@@ -78,11 +72,6 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const renderFields = () => (
     <>
-      <Card.Config
-        icon="prometheus"
-        description={plugin.name}
-        onClose={() => onClose()}
-      />
       {(plugin.inputParameters as PluginDatasource).health && (
         <Styled.HealthWrapper>
           <Styled.HealthSwitch
@@ -135,7 +124,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   );
 
   const renderSelect = () => (
-    <Select.Single
+    <Styled.Select
       control={control}
       name="url"
       label="Select a datasource plugin"
@@ -146,7 +135,8 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      {plugin ? renderFields() : renderSelect()}
+      {renderSelect()}
+      {plugin && renderFields()}
       <div>
         <Button.Default
           type="submit"
