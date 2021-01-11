@@ -161,6 +161,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
           You can choose which accesses this group will have in this workspace.
           Consult the our{' '}
           <Styled.DocumentationLink
+            target="_blank"
             href={`${CHARLES_DOC}/reference/users-group`}
           >
             documentation
