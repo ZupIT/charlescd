@@ -5,6 +5,7 @@
 /.pnp
 /.vscode
 /.idea
+.eslintcache
 .pnp.js
 
 
@@ -25,7 +26,6 @@
 .env
 .env.idm
 .env.production.local
-.eslintcache
 
 npm-debug.log*
 yarn-debug.log*

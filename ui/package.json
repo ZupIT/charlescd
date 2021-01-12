@@ -38,9 +38,7 @@
       "react-app/jest"
     ],
     "rules": {
-      "array-callback-return": 0,
-      "import/no-anonymous-default-export": "off",
-      "react/jsx-pascal-case": 0
+      "import/no-anonymous-default-export": "off"
     }
   },
   "jest": {
@@ -117,7 +115,6 @@
     "single-spa-react": "^3.0.1",
     "styled-components": "^5.0.1",
     "systemjs-webpack-interop": "^2.1.2",
-    "typescript": "^4.0.3",
-    "web-vitals": "^0.2.4"
+    "typescript": "^4.0.3"
   }
 }
