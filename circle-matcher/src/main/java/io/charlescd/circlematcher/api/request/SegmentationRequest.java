@@ -20,6 +20,7 @@ import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
 import io.charlescd.circlematcher.domain.validation.NodeConstraint;
+import io.charlescd.circlematcher.domain.validation.PercentageConstraint;
 import java.time.LocalDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -50,6 +51,7 @@ public abstract class SegmentationRequest {
     private Boolean isDefault;
 
     @Valid
+    @PercentageConstraint
     private Integer percentage;
 
     @NotNull
