@@ -47,30 +47,7 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     public DockerRegistryHttpApiV2Client(
             @ConfigProperty(name = "ignore-invalid-certificate", defaultValue = "false") Boolean ignoreSSL
     ) {
-        if (ignoreSSL) {
-            TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            }
-
-            };
-            try {
-                SSLContext sc = SSLContext.getInstance("SSL");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                this.customClientBuilder = ClientBuilder.newBuilder().sslContext(sc);
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
-                e.printStackTrace();
-            }
-        } else {
-            this.customClientBuilder = ClientBuilder.newBuilder();
-        }
+        this.customClientBuilder = this.createClientBuilder(ignoreSSL);
     }
 
     public void configureAuthentication(RegistryType type,
@@ -156,6 +133,36 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         builder.path("/v2/{organization}/{name}/manifests/{tagName}");
 
         return builder.build(organization, name, tagName).toString();
+    }
+
+    private TrustManager[] createTrustManager() {
+        return new TrustManager[]{new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }
+        };
+    }
+
+    private ClientBuilder createClientBuilder(Boolean ignoreSSL) {
+        ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+        if (ignoreSSL) {
+            try {
+                SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, createTrustManager(), new java.security.SecureRandom());
+                clientBuilder = ClientBuilder.newBuilder().sslContext(sslContext);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return clientBuilder;
     }
 
     @Override
