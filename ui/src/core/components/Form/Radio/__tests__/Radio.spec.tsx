@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-import Input from './Input';
-import Password from './Password';
-import SearchInput from './SearchInput';
-import Select from './Select';
-import InputAction from './InputAction';
-import InputTitle from './InputTitle';
-import InputGroup from './InputGroup';
-import InputPhoto from './InputPhoto';
-import Number from './Number';
-import Link from './Link';
-import Checkbox from './Checkbox';
-import Radio from './Radio';
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import Radio from '..'
 
-export { Input, Password, SearchInput, Select };
+const props = {
+  name: 'charles',
+  value: 'charles',
+  label: 'charles'
+}
 
-export default {
-  Input,
-  Password,
-  SearchInput,
-  Select,
-  InputAction,
-  InputTitle,
-  InputGroup,
-  InputPhoto,
-  Number,
-  Link,
-  Checkbox,
-  Radio
-};
+test('render Radio default', async () => {
+  render(<Radio { ...props } />);
+
+  const element = await screen.findByTestId(`radio-${props.value}`);
+  expect(element).toBeInTheDocument();
+});
