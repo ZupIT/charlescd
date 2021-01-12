@@ -5,13 +5,13 @@ name: build matcher-s3-sync
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'utils/matcher-s3-sync/**'
     tags:
       - '!*'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'utils/matcher-s3-sync/**'
