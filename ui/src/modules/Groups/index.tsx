@@ -17,12 +17,12 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
 import Page from 'core/components/Page';
 import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
 import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
+import { isRequired, maxLength } from 'core/utils/validations';
 import Menu from './Menu';
 import Tabs from './Tabs';
 import { addParamUserGroup, getSelectedUserGroups } from './helpers';
@@ -39,20 +39,21 @@ const UserGroups = () => {
   const history = useHistory();
   const [search, setSearch] = useState('');
   const [toggleModal, setToggleModal] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
   const [getUserGroups, loading] = useFindAllUserGroup();
   const { list } = useGlobalState(state => state.userGroups);
-  const { register, watch, handleSubmit } = useForm();
-  const watchName = watch('name');
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({
+    mode: 'onChange'
+  });
   const {
     createUserGroup,
     response: userGroupResponse,
     loading: loadingCreate
   } = useCreateUserGroup();
-
-  useEffect(() => {
-    setIsDisabled(isEmpty(watchName));
-  }, [watchName]);
 
   useEffect(() => {
     getUserGroups(search);
@@ -73,21 +74,24 @@ const UserGroups = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Modal.Title color="light">New user group</Styled.Modal.Title>
         <Styled.Modal.Input
-          name="name"
-          label="Type a name"
-          ref={register({ required: true })}
-        />
-        <Styled.Modal.Button
-          type="submit"
-          id="user-group"
-          isDisabled={isDisabled}
-          isLoading={loadingCreate}
-        >
-          Create user group
-        </Styled.Modal.Button>
-      </form>
-    </Modal.Default>
-  );
+            name="name"
+            label="Type a name"
+            error={errors?.name?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength()
+            })}
+          />
+          <Styled.Modal.Button
+            type="submit"
+            isDisabled={!isValid}
+            isLoading={loadingCreate}
+          >
+            Create user group
+          </Styled.Modal.Button>
+        </form>
+      </Modal.Default>
+    );
 
   return (
     <Page>
