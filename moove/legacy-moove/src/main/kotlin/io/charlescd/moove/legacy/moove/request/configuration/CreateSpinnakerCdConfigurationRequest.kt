@@ -26,17 +26,14 @@ import javax.validation.constraints.Size
 data class CreateSpinnakerCdConfigurationRequest(
     val configurationData: CreateSpinnakerCdConfigurationData,
     @field:Size(max = 64)
-    val name: String,
-    @field:Size(max = 36)
-    override val authorId: String
-) : @Valid CreateCdConfigurationRequest(CdTypeEnum.SPINNAKER, authorId) {
+    val name: String
+) : CreateCdConfigurationRequest(CdTypeEnum.SPINNAKER) {
 
     fun toDeployRequest(): CreateDeploySpinnakerCdConfigurationRequest {
         return CreateDeploySpinnakerCdConfigurationRequest(
             this.type,
             this.getDeployConfigurationData(),
-            this.name,
-            this.authorId
+            this.name
         )
     }
 

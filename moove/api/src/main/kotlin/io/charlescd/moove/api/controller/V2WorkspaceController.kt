@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v2/workspaces")
+
 class V2WorkspaceController(
     private val createWorkspaceInteractor: CreateWorkspaceInteractor,
     private val associateUserGroupInteractor: AssociateUserGroupToWorkspaceInteractor,
@@ -55,8 +56,11 @@ class V2WorkspaceController(
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createWorkspace(@Valid @RequestBody request: CreateWorkspaceRequest): WorkspaceResponse {
-        return createWorkspaceInteractor.execute(request)
+    fun createWorkspace(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @Valid @RequestBody request: CreateWorkspaceRequest
+    ): WorkspaceResponse {
+        return createWorkspaceInteractor.execute(request, authorization)
     }
 
     @ApiOperation(value = "Patch Workspace")

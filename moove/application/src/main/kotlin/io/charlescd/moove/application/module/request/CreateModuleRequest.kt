@@ -40,10 +40,6 @@ data class CreateModuleRequest(
     @field:Size(max = 2048)
     val helmRepository: String,
 
-    @field:NotBlank
-    @field:Size(max = 36)
-    val authorId: String,
-
     @field:Valid
     @field:NotEmpty
     val components: List<ComponentRequest>

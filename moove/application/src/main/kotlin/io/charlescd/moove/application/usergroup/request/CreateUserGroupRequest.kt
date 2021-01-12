@@ -26,10 +26,7 @@ import javax.validation.constraints.Size
 data class CreateUserGroupRequest(
     @field:NotBlank
     @field:Size(max = 64)
-    val name: String,
-
-    @field:NotBlank
-    val authorId: String
+    val name: String
 ) {
 
     fun toUserGroup(user: User): UserGroup {

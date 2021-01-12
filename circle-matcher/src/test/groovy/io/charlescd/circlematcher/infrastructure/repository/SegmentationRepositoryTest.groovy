@@ -78,6 +78,23 @@ class SegmentationRepositoryTest extends Specification {
         notThrown()
     }
 
+    def "FindByKey Not Found"() {
+        given:
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+
+        when:
+        def response = segmentationRepository.findByKey(composedKey)
+
+        then:
+        assert response.isEmpty()
+
+        1 * redisTemplate.opsForSet() >> setOperations
+        1 * setOperations.scan(_, _) >> cursor
+        1 * cursor.isClosed() >> false
+        1 * cursor.hasNext() >> false
+        1 * cursor.isClosed() >> true
+    }
+
     def "IsMember"() {
 
         given:

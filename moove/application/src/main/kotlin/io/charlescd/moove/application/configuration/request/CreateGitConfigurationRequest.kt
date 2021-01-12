@@ -28,9 +28,7 @@ data class CreateGitConfigurationRequest(
     @field:NotBlank
     @field:Size(max = 64)
     val name: String,
-    @field:NotBlank
-    @field:Size(max = 36)
-    val authorId: String,
+
     @field:Valid
     val credentials: GitCredentialsData
 ) {

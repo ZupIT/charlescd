@@ -27,10 +27,7 @@ data class CreateWorkspaceRequest(
     @field:NotNull
     @field:NotBlank
     @field:Size(min = 1, max = 64, message = "Name minimum size is 1 and maximum is 64.")
-    val name: String,
-    @field:NotNull
-    @field:NotBlank
-    val authorId: String
+    val name: String
 ) {
     fun toWorkspace(id: String, author: User) = Workspace(
         id = id,

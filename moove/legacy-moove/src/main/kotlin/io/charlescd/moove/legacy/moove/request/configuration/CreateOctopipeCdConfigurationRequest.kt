@@ -28,17 +28,14 @@ import javax.validation.constraints.Size
 data class CreateOctopipeCdConfigurationRequest(
     val configurationData: CreateOctopipeCdConfigurationData,
     @field:Size(max = 64)
-    val name: String,
-    @field:Size(max = 36)
-    override val authorId: String
-) : @Valid CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE, authorId) {
+    val name: String
+) : CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE) {
 
     fun toDeployRequest(): CreateDeployOctopipeCdConfigurationRequest {
         return CreateDeployOctopipeCdConfigurationRequest(
             this.type,
             this.getDeployConfigurationData(),
-            this.name,
-            this.authorId
+            this.name
         )
     }
 

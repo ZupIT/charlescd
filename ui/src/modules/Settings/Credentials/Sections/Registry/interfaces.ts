@@ -26,7 +26,6 @@ export interface Credentials {
 
 export interface Registry {
   name: string;
-  authorId: string;
   address: string;
   provider: string;
   accessKey?: string;

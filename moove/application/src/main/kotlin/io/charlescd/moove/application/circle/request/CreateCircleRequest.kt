@@ -36,9 +36,6 @@ class CreateCircleRequest(
     @field:Size(min = 1, max = 64, message = "Name minimum size is 1 and maximum is 64.")
     val name: String,
 
-    @field:NotBlank
-    val authorId: String,
-
     @field:Valid
     val rules: NodePart
 ) {
