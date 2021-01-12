@@ -22,26 +22,62 @@ import io.charlescd.villager.infrastructure.integration.registry.authentication.
 import io.charlescd.villager.infrastructure.integration.registry.authentication.DockerBearerAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @RequestScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
 
     private Client client;
     private String baseAddress;
+    private ClientBuilder customClientBuilder;
 
-    public DockerRegistryHttpApiV2Client() { }
+    public DockerRegistryHttpApiV2Client(
+            @ConfigProperty(name = "ignore-invalid-certificate", defaultValue = "false") Boolean ignoreSSL
+    ) {
+        if (ignoreSSL) {
+            TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+
+            };
+            try {
+                SSLContext sc = SSLContext.getInstance("SSL");
+                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                this.customClientBuilder = ClientBuilder.newBuilder().sslContext(sc);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.customClientBuilder = ClientBuilder.newBuilder();
+        }
+    }
 
     public void configureAuthentication(RegistryType type,
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config,
                                         String tagName) {
-        this.client = ClientBuilder.newClient();
+
+        this.client = this.customClientBuilder.build();
         this.baseAddress = config.address;
 
         switch (type) {
