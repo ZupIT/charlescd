@@ -31,7 +31,7 @@ jobs:
           ${{ runner.os }}-node-
 
     - name: Setup timezone
-      uses: zcong1993/setup-timezone@main
+      uses: zcong1993/setup-timezone@master
       with:
         timezone: America/Sao_Paulo
 
