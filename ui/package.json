@@ -104,6 +104,7 @@
     "react-dom": "^17.0.1",
     "react-hook-form": "^6.10.1",
     "react-infinite-scroll-component": "^5.0.5",
+    "react-intersection-observer": "^8.31.0",
     "react-popper": "^2.2.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "4.0.1",
