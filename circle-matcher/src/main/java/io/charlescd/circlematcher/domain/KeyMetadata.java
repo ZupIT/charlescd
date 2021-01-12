@@ -17,6 +17,7 @@
 package io.charlescd.circlematcher.domain;
 
 import java.time.LocalDateTime;
+import org.springframework.util.Assert;
 
 public class KeyMetadata {
 
@@ -94,6 +95,7 @@ public class KeyMetadata {
     }
 
     public int sumPercentage(Integer percentageToSum) {
+        Assert.isTrue(percentage < 100 && percentage > 0, "Percentage must be between 0 and 100");
         return this.percentage += percentageToSum;
     }
 

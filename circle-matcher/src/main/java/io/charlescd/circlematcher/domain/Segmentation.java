@@ -16,9 +16,8 @@
 
 package io.charlescd.circlematcher.domain;
 
-
-
 import java.time.LocalDateTime;
+import org.springframework.util.Assert;
 
 public class Segmentation {
 

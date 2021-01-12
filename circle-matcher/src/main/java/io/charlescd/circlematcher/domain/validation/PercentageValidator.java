@@ -15,6 +15,6 @@ public class PercentageValidator implements ConstraintValidator<PercentageConstr
         if (percentage == null) {
             return true;
         }
-        return percentage >=0 && percentage <=100;
+        return percentage >= 0 && percentage <= 100;
     }
 }
