@@ -37,8 +37,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     if (isRoot()) {
       filterWorkspace(name);
     }
-    console.log('[workspaces]', workspaces);
-  }, [name, filterWorkspace, workspaces]);
+  }, [name, filterWorkspace]);
 
   useEffect(() => {
     if (!email) logout();
