@@ -4,7 +4,7 @@ on:
   release:
     types:
       - released
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build_and_push_release_butler:
@@ -317,7 +317,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: master
+        ref: main
 
     - name: Get the version
       id: get_version
