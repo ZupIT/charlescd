@@ -95,9 +95,10 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/registry/validation")
     fun configurationValidation(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @Valid @RequestBody request: CreateRegistryConfigurationRequest
+        @Valid @RequestBody request: CreateRegistryConfigurationRequest,
+        @RequestHeader(value = "Authorization") authorization: String
     ) {
-        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request, authorization)
     }
 
     @ApiOperation(value = "Test Registry Connection")
