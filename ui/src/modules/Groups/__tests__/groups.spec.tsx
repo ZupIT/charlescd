@@ -15,34 +15,45 @@
  */
 
 import React from 'react';
-import { render, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
-import { FetchMock } from 'jest-fetch-mock/types';
-import UserGroups from '../index';
+import { render, screen, act } from 'unit-test/testUtils';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+import routes from 'core/constants/routes';
+import Groups from '../';
+import userEvent from '@testing-library/user-event';
 
-beforeEach(() => {
-  (fetch as FetchMock).resetMocks();
+test('render groups', async () => {
+  const history = createMemoryHistory();
+  history.push(routes.groups);
+
+  render(<Router history={history}><Groups /></Router>);
+
+  const UserGroupMenu = await screen.findByTestId('user-group-menu');
+
+  expect(UserGroupMenu).toBeInTheDocument();
 });
+
+test('render groups and open create modal', async () => {
+  let ModalCreateUserGroup;
+  const history = createMemoryHistory();
+  history.push(routes.groups);
+
+  render(<Router history={history}><Groups /></Router>);
+
+  const ButtonCreateUserGroup = await screen.findByText('Create user group');
+  expect(ButtonCreateUserGroup).toBeInTheDocument();
   
-test('render group user default page', async () => {
-    render(
-      <UserGroups />
-    );
+  await act(async () => userEvent.click(ButtonCreateUserGroup));
 
-    const menu = screen.getByTestId('users-groups-menu');
+  ModalCreateUserGroup = await screen.findByTestId('modal-default');
+  expect(ModalCreateUserGroup).toBeInTheDocument();
 
-    expect(menu).toBeInTheDocument();
-});
-  
-test('render create group user', async () => {
-    render(
-      <UserGroups />
-    );
-    const createGroup = screen.getByTestId('button-default-create-user-group');
-    
-    expect(createGroup).toBeInTheDocument();
-    fireEvent.click(createGroup);
-    
-    const createGroupModal = screen.getByTestId('modal-default');
+  const InputNameUserGroup = await screen.findByTestId('input-text-name');
+  await act(async () => userEvent.type(InputNameUserGroup, 'group'));
 
-    expect(createGroupModal).toBeInTheDocument();
+  const SubmitNewUserGroup = await screen.findByTestId('button-default-user-group');
+  await act(async () => userEvent.click(SubmitNewUserGroup));
+
+  ModalCreateUserGroup = screen.queryByTestId('modal-default');
+  expect(ModalCreateUserGroup).not.toBeInTheDocument();
 });
