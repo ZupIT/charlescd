@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock/types';
+import Circles from '..';
+import { circlesResponse } from './fixtures';
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
-    }
-  }, [options, clearValue]);
+test('render Circles', () => {
+  render(<Circles />);
 
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
+  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
+  expect(screen.getByText('Create circle')).toBeInTheDocument();
+  expect(screen.getByText('Active')).toBeInTheDocument();
+});
 
-export default SingleValue;
+

@@ -6,7 +6,7 @@ Villager is a tool that abstracts multiple cloud providers in order to provide a
 
 * Villager has a pluggable architecture that enables the integration with Container Registries of different cloud providers.
 * It abstracts every cloud provider API implementations.
-* Provides a unique API to search for tags, or listen to your registry to check if a given image is being uploaded.
+* Provides a unique API to search for tags, or listen to your registry to check if a given image has been uploaded.
 
 ## How to use
 
@@ -28,7 +28,7 @@ mvn compile quarkus:dev
 
 These commands will install all project dependencies, run two containers with a PostgreSQL database and a stub server and finally, start the application on port 8080.
 
-Villager provides a [Swagger API Documentation], and also an up to date [Postman Collection].
+Villager provides a [Swagger API Documentation], and an up to date [Postman Collection].
 
 ## Documentation
 
