@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import map from 'lodash/map';
+import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -23,36 +22,21 @@ import Menu from 'core/components/Menu';
 import Can from 'containers/Can';
 import { Link as LinkRouter } from 'react-router-dom';
 import routes from 'core/constants/routes';
-import { CirclePaginationItem } from '../interfaces/CirclesPagination';
 import { menuFilterItems, CIRCLE_MATCHER_TAB } from '../constants';
 import { CIRCLE_STATUS } from '../hooks';
-import MenuItem from './MenuItem';
-import Loader from './Loaders';
 import Styled from './styled';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import { addParam, isParamExists } from 'core/utils/path';
 
 interface Props {
-  items: CirclePaginationItem[];
   status: string;
   onSearch: (name: string) => void;
   onSelect: (selected: string) => void;
-  isLoading: boolean;
+  children: ReactNode;
 }
 
-const CirclesFilter = ({
-  items,
-  status,
-  onSearch,
-  onSelect,
-  isLoading
-}: Props) => {
+const CirclesFilter = ({ status, onSearch, onSelect, children }: Props) => {
   const history = useHistory();
-  const renderItems = () =>
-    map(items, ({ id, name }: CirclePaginationItem) => (
-      <MenuItem key={id} id={id} name={name} />
-    ));
-
   const circleStatus = status === CIRCLE_STATUS.active ? 'Active' : 'Inactive';
 
   const goToCircleComparison = (tab: string) => {
@@ -84,9 +68,7 @@ const CirclesFilter = ({
         </Styled.A>
       </Styled.Actions>
       <Styled.SearchInput resume onSearch={onSearch} />
-      <Styled.Content>
-        <Styled.List>{isLoading ? <Loader.List /> : renderItems()}</Styled.List>
-      </Styled.Content>
+      <Styled.Content>{children}</Styled.Content>
     </>
   );
 };
