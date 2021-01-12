@@ -57,10 +57,10 @@ const Checkmark = styled.span`
     content: '';
     position: absolute;
     display: none;
-    top: 3px;
-    left: 3px;
-    width: 14px;
-    height: 14px;
+    top: 4px;
+    left: 4px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
   }
 `;
