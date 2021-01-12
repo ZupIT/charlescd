@@ -21,10 +21,6 @@ import { fadeIn } from 'core/assets/style/animate';
 
 const Title = styled.div`
   display: flex;
-
-  > :last-child {
-    margin-left: 10px;
-  }
 `;
 
 const Roles = styled.div`
@@ -74,10 +70,11 @@ const Fields = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+`;
 
-  > :last-child {
-    margin-left: 10px;
-  }
+const DocumentationLink = styled.a`
+  color: ${({ theme }) => theme.text.link};
+  text-decoration: underline;
 `;
 
 export default {
@@ -87,5 +84,6 @@ export default {
   SelectAsync,
   Fields,
   Roles,
-  Description
+  Description,
+  DocumentationLink
 };
