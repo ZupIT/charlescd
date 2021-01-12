@@ -252,7 +252,7 @@ func (s *ActionSuite) TestValidateActionTooLongNickname() {
 
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "nickname", res[0].Field)
-	require.Equal(s.T(), "action nickname is limited to 100 characters maximum", res[0].Error)
+	require.Equal(s.T(), "action nickname is limited to 64 characters maximum", res[0].Error)
 }
 
 func (s *ActionSuite) TestValidateActionEmptyDescription() {
@@ -285,7 +285,7 @@ func (s *ActionSuite) TestValidateActionTooLongDescription() {
 
 	require.Len(s.T(), res, 1)
 	require.Equal(s.T(), "description", res[0].Field)
-	require.Equal(s.T(), "description is limited to 100 characters maximum", res[0].Error)
+	require.Equal(s.T(), "description is limited to 360 characters maximum", res[0].Error)
 }
 
 func (s *ActionSuite) TestValidateActionNilConfiguration() {

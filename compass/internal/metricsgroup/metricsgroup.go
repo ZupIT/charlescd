@@ -22,17 +22,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"io"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -69,8 +70,8 @@ func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
 
 	if strings.TrimSpace(metricsGroup.Name) == "" {
 		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("name is required").Error()})
-	} else if len(metricsGroup.Name) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("100 Maximum length in Name").Error()})
+	} else if len(metricsGroup.Name) > 64 {
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("64 Maximum length in Name").Error()})
 	}
 
 	if metricsGroup.CircleID == uuid.Nil {

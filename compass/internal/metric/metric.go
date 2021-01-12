@@ -22,10 +22,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
-	"io"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -81,12 +82,12 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 
 	}
 
-	if metric.Nickname != "" && len(metric.Nickname) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("100 Maximum length in Nickname").Error()})
+	if metric.Nickname != "" && len(metric.Nickname) > 64 {
+		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("64 Maximum length in Nickname").Error()})
 	}
 
-	if metric.Metric != "" && len(metric.Metric) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "metric", Error: errors.New("100 Maximum length in Metric").Error()})
+	if metric.Metric != "" && len(metric.Metric) > 64 {
+		ers = append(ers, util.ErrorUtil{Field: "metric", Error: errors.New("64 Maximum length in Metric").Error()})
 	}
 
 	return ers

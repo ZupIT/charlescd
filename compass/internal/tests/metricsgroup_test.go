@@ -112,7 +112,7 @@ func (s *SuiteMetricGroup) TestValidateNameLength() {
 	ers := s.repository.Validate(newMetricGroup)
 
 	require.Len(s.T(), ers, 1)
-	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "100 Maximum length in Name"}, ers[0])
+	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "64 Maximum length in Name"}, ers[0])
 }
 
 func (s *SuiteMetricGroup) TestValidateNilCircle() {
