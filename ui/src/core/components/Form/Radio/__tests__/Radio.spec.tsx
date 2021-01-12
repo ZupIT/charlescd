@@ -18,9 +18,15 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Radio from '..'
 
-test('render Radio', async () => {
-  render(<Radio />);
+const props = {
+  name: 'charles',
+  value: 'charles',
+  label: 'charles'
+}
 
-  const element = await screen.findByTestId('input-text-name');
+test('render Radio default', async () => {
+  render(<Radio { ...props } />);
+
+  const element = await screen.findByTestId(`radio-${props.value}`);
   expect(element).toBeInTheDocument();
 });
