@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from 'unit-test/testUtils';
 import Radio from '..'
 
 const props = {
