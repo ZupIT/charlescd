@@ -20,10 +20,10 @@ import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
-import { isNotBlank, maxValue, required } from 'core/utils/validation';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
+import { getProfileByKey } from 'core/utils/profile';
+import { isRequired, maxLength } from 'core/utils/validations';
 import routes from 'core/constants/routes';
 import { saveWorkspace } from 'core/utils/workspace';
 import { isRoot } from 'core/utils/auth';
@@ -48,11 +48,12 @@ const WorkspaceMenu = ({
   selectedWorkspace
 }: Props) => {
   const history = useHistory();
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { register, handleSubmit, watch, errors } = useForm({
-    mode: 'onChange'
-  });
-  const name = watch('name');
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({ mode: 'onChange' });
   const {
     save,
     response: saveWorkspaceResponse,
@@ -60,15 +61,9 @@ const WorkspaceMenu = ({
   } = useSaveWorkspace();
   const [toggleModal, setToggleModal] = useState(false);
 
-  useEffect(() => {
-    if (name !== null) {
-      setIsDisabled(name);
-    }
-  }, [name, setIsDisabled]);
-
   const renderWorkspaces = () =>
     isEmpty(items) ? (
-      <Text.h3 color="dark">No workspace found</Text.h3>
+      <Text.h3 color="dark">No workspace was found</Text.h3>
     ) : (
       map(items, ({ id, name, status }: Workspace) => (
         <MenuItem
@@ -105,21 +100,15 @@ const WorkspaceMenu = ({
           <Styled.Modal.Input
             name="name"
             label="Type a name"
+            error={errors?.name?.message}
             ref={register({
-              required: required(),
-              maxLength: maxValue(64),
-              validate: isNotBlank
+              required: isRequired(),
+              maxLength: maxLength()
             })}
           />
-          {!!errors.name && (
-            <Styled.FieldErrorWrapper>
-              <Icon name="error" color="error" />
-              <Text.h6 color="error">{errors.name.message}</Text.h6>
-            </Styled.FieldErrorWrapper>
-          )}
           <Styled.Modal.Button
             type="submit"
-            isDisabled={!isDisabled}
+            isDisabled={!isValid}
             isLoading={saveWorkspaceLoading}
           >
             Create workspace
@@ -145,9 +134,9 @@ const WorkspaceMenu = ({
       <Styled.Content>
         <Styled.SearchInput
           resume
-          maxLength={64}
           onSearch={onSearch}
           disabled={!isRoot()}
+          maxLength={64}
         />
         <Styled.List>
           {isLoading ? <Loader.List /> : renderWorkspaces()}

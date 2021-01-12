@@ -18,20 +18,20 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
-import { isNotBlank, maxValue, required } from 'core/utils/validation';
 import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
-import Icon from 'core/components/Icon';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
+import Icon from 'core/components/Icon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
+import { isRequired, maxLength } from 'core/utils/validations';
 import { isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
@@ -162,14 +162,13 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
                 name="name"
                 resume
                 ref={register({
-                  required: required(),
-                  maxLength: maxValue(64),
-                  validate: isNotBlank
+                  required: isRequired(),
+                  maxLength: maxLength()
                 })}
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
               />
-              {!!errors.name && (
+              {errors.name && (
                 <Styled.FieldErrorWrapper>
                   <Icon name="error" color="error" />
                   <Text.h6 color="error">{errors.name.message}</Text.h6>

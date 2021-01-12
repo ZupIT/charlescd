@@ -41,7 +41,7 @@ interface Props extends ListProps {
 
 const UserGroupList = ({ items, selectedItems, onSelect }: ListProps) =>
   isEmpty(items) ? (
-    <Text.h3 color="dark">No users Group found</Text.h3>
+    <Text.h3 color="dark">No User group was found</Text.h3>
   ) : (
     <>
       {map(items, item => (
@@ -59,8 +59,8 @@ const UserGroupList = ({ items, selectedItems, onSelect }: ListProps) =>
 const UserGroupMenu = ({ onSearch, onCreate, isLoading, ...rest }: Props) => {
   return (
     <>
-      <Styled.Actions>
-        <Styled.Button onClick={onCreate}>
+      <Styled.Actions data-testid={'users-groups-menu'}>
+        <Styled.Button onClick={onCreate} id="create-user-group">
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create user group</Text.h5>
           </LabeledIcon>
