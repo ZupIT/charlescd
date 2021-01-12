@@ -38,13 +38,13 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
 ) : CreateComposedBuildInteractor {
 
     @Transactional
-    override fun execute(request: CreateComposedBuildRequest, workspaceId: String): BuildResponse {
-        val build = createBuild(request, workspaceId)
+    override fun execute(request: CreateComposedBuildRequest, workspaceId: String, authorization: String): BuildResponse {
+        val user = userService.findByAuthorizationToken(authorization)
+        val build = createBuild(request, workspaceId, user)
         return BuildResponse.from(buildService.save(build))
     }
 
-    private fun createBuild(request: CreateComposedBuildRequest, workspaceId: String): Build {
-        val user = userService.find(request.authorId)
+    private fun createBuild(request: CreateComposedBuildRequest, workspaceId: String, user: User): Build {
 
         val modules = findModules(request)
 

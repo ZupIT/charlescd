@@ -88,3 +88,30 @@ export const getActiveMetricDescription = (activeMetricType: METRICS_TYPE) => {
     [METRICS_TYPE.REQUESTS_LATENCY_BY_CIRCLE]: 'Latency'
   }[activeMetricType];
 };
+
+export const getTooltipMessage = (circle: Circle): string => {
+  const cannotDeleteActiveCircleMessage =
+    'Active circle cannot be deleted,<br />you can undeploy first and then<br /> delete this circle.';
+  const cannotDeleteDefaultCircleMessage =
+    'Default circle is deployed to all<br /> users, so it cannot be deleted.';
+  const cannotDeleteInactiveDefaultCircleMessage =
+    'Default circle cannot be deleted.';
+  let tooltipMessage = '';
+
+  if (isDefaultCircle(circle?.name) && !hasDeploy(circle)) {
+    tooltipMessage = cannotDeleteInactiveDefaultCircleMessage;
+  } else if (isDefaultCircle(circle?.name) && hasDeploy(circle)) {
+    tooltipMessage = cannotDeleteDefaultCircleMessage;
+  } else {
+    tooltipMessage = cannotDeleteActiveCircleMessage;
+  }
+  return tooltipMessage;
+};
+
+export const circleCannotBeDeleted = (circle: Circle): boolean => {
+  if (isUndeployable(circle) || isDefaultCircle(circle?.name)) {
+    return true;
+  } else {
+    return false;
+  }
+};

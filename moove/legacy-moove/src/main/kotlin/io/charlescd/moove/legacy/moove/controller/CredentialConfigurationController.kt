@@ -46,9 +46,10 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/registry")
     fun createRegistryConfig(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody createRegistryConfigRequest: CreateRegistryConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId)
+        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Create CD Config")
@@ -62,9 +63,10 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/cd")
     fun createCdConfig(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody createCdConfigRequest: CreateCdConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId)
+        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Get configurations by Type")
@@ -93,9 +95,10 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/registry/validation")
     fun configurationValidation(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @Valid @RequestBody request: CreateRegistryConfigurationRequest
+        @Valid @RequestBody request: CreateRegistryConfigurationRequest,
+        @RequestHeader(value = "Authorization") authorization: String
     ) {
-        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request)
+        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request, authorization)
     }
 
     @ApiOperation(value = "Test Registry Connection")

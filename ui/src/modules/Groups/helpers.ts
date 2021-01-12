@@ -53,7 +53,7 @@ export const addParamUserGroup = (history: History, usergroupId: string) => {
   const query = getQueryStrings();
   query.append(paramName, usergroupId);
 
-  history.push({
+  history?.push({
     pathname: routes.groupsShow,
     search: query.toString()
   });

@@ -35,7 +35,6 @@ import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfig
 import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
 import io.charlescd.moove.legacy.moove.request.configuration.*
 import io.charlescd.moove.legacy.repository.CredentialConfigurationRepository
-import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User
@@ -46,10 +45,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class CredentialConfigurationService(
-    val credentialConfigurationRepository: CredentialConfigurationRepository,
-    val userRepository: UserRepository,
-    val deployApi: DeployApi,
-    val villagerApi: VillagerApi
+    private val credentialConfigurationRepository: CredentialConfigurationRepository,
+    private val userServiceLegacy: UserServiceLegacy,
+    private val deployApi: DeployApi,
+    private val villagerApi: VillagerApi
 ) {
 
     companion object {
@@ -60,13 +59,14 @@ class CredentialConfigurationService(
 
     fun createRegistryConfig(
         createRegistryConfigRequest: CreateRegistryConfigurationRequest,
-        workspaceId: String
+        workspaceId: String,
+        authorization: String
     ): CredentialConfigurationRepresentation {
 
-        val user: User = findUser(createRegistryConfigRequest.authorId)
+        val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
 
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
-            buildVillagerRegistryConfigurationRequest(createRegistryConfigRequest)
+            buildVillagerRegistryConfigurationRequest(createRegistryConfigRequest, user.id)
 
         val villagerResponse: CreateVillagerRegistryConfigurationResponse =
             villagerApi.createRegistryConfiguration(villagerRequest, workspaceId)
@@ -80,10 +80,11 @@ class CredentialConfigurationService(
 
     fun createCdConfig(
         createCdConfigRequest: CreateCdConfigurationRequest,
-        workspaceId: String
+        workspaceId: String,
+        authorization: String
     ): CredentialConfigurationRepresentation {
 
-        val user: User = findUser(createCdConfigRequest.authorId)
+        val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
 
         val deployRequest: CreateDeployCdConfigurationRequest =
             buildDeployCdConfigurationRequest(createCdConfigRequest)
@@ -121,10 +122,12 @@ class CredentialConfigurationService(
 
     fun testRegistryConfiguration(
         workspaceId: String,
-        request: CreateRegistryConfigurationRequest
+        request: CreateRegistryConfigurationRequest,
+        authorization: String
     ) {
+
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
-            buildVillagerRegistryConfigurationRequest(request)
+            buildVillagerRegistryConfigurationRequest(request, userServiceLegacy.findByAuthorizationToken(authorization).id)
 
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
@@ -179,15 +182,17 @@ class CredentialConfigurationService(
     }
 
     private fun buildVillagerRegistryConfigurationRequest(
-        createRegistryConfigRequest: CreateRegistryConfigurationRequest
+        createRegistryConfigRequest: CreateRegistryConfigurationRequest,
+        authorId: String
     ): CreateVillagerRegistryConfigurationRequest {
         urlValidation(createRegistryConfigRequest.address)
+
         return when (createRegistryConfigRequest) {
-            is CreateAzureRegistryConfigurationRequest -> buildAzureRegistryRequest(createRegistryConfigRequest)
-            is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest)
-            is CreateGCPRegistryConfigurationRequest -> buildGCPRegistryRequest(createRegistryConfigRequest)
-            is CreateDockerHubRegistryConfigurationRequest -> buildDockerHubRegistryRequest(createRegistryConfigRequest)
-            is CreateHarborRegistryConfigurationRequest -> buildHarborRegistryRequest(createRegistryConfigRequest)
+            is CreateAzureRegistryConfigurationRequest -> buildAzureRegistryRequest(createRegistryConfigRequest, authorId)
+            is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest, authorId)
+            is CreateGCPRegistryConfigurationRequest -> buildGCPRegistryRequest(createRegistryConfigRequest, authorId)
+            is CreateDockerHubRegistryConfigurationRequest -> buildDockerHubRegistryRequest(createRegistryConfigRequest, authorId)
+            is CreateHarborRegistryConfigurationRequest -> buildHarborRegistryRequest(createRegistryConfigRequest, authorId)
             else -> throw IllegalArgumentException("Provider type not supported")
         }
     }
@@ -198,7 +203,10 @@ class CredentialConfigurationService(
         return TestVillagerRegistryConnectionRequest(request.configurationId)
     }
 
-    private fun buildAWSRegistryRequest(createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
+    private fun buildAWSRegistryRequest(
+        createRegistryConfigRequest: CreateAWSRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
@@ -206,22 +214,28 @@ class CredentialConfigurationService(
             accessKey = createRegistryConfigRequest.accessKey,
             secretKey = createRegistryConfigRequest.secretKey,
             region = createRegistryConfigRequest.region,
-            authorId = createRegistryConfigRequest.authorId
+            authorId = authorId
         )
     }
 
-    private fun buildAzureRegistryRequest(createRegistryConfigRequest: CreateAzureRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
+    private fun buildAzureRegistryRequest(
+        createRegistryConfigRequest: CreateAzureRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
             provider = CreateVillagerRegistryConfigurationProvider.Azure,
             username = createRegistryConfigRequest.username,
             password = createRegistryConfigRequest.password,
-            authorId = createRegistryConfigRequest.authorId
+            authorId = authorId
         )
     }
 
-    private fun buildGCPRegistryRequest(createRegistryConfigRequest: CreateGCPRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
+    private fun buildGCPRegistryRequest(
+        createRegistryConfigRequest: CreateGCPRegistryConfigurationRequest,
+        authorId: String
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
@@ -229,12 +243,13 @@ class CredentialConfigurationService(
             organization = createRegistryConfigRequest.organization,
             jsonKey = createRegistryConfigRequest.jsonKey,
             username = "_json_key",
-            authorId = createRegistryConfigRequest.authorId
+            authorId = authorId
         )
     }
 
     private fun buildDockerHubRegistryRequest(
-        createRegistryConfigRequest: CreateDockerHubRegistryConfigurationRequest
+        createRegistryConfigRequest: CreateDockerHubRegistryConfigurationRequest,
+        authorId: String
     ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
@@ -243,12 +258,13 @@ class CredentialConfigurationService(
             organization = createRegistryConfigRequest.username,
             username = createRegistryConfigRequest.username,
             password = createRegistryConfigRequest.password,
-            authorId = createRegistryConfigRequest.authorId
+            authorId = authorId
         )
     }
 
     private fun buildHarborRegistryRequest(
-        createRegistryConfigRequest: CreateHarborRegistryConfigurationRequest
+        createRegistryConfigRequest: CreateHarborRegistryConfigurationRequest,
+        authorId: String
     ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
@@ -256,7 +272,7 @@ class CredentialConfigurationService(
             provider = CreateVillagerRegistryConfigurationProvider.HARBOR,
             username = createRegistryConfigRequest.username,
             password = createRegistryConfigRequest.password,
-            authorId = createRegistryConfigRequest.authorId
+            authorId = authorId
         )
     }
 
@@ -279,7 +295,7 @@ class CredentialConfigurationService(
             CredentialConfigurationRepresentation(
                 configuration.id,
                 configuration.name,
-                findUser(configuration.authorId).toSimpleRepresentation()
+                userServiceLegacy.findUser(configuration.authorId).toSimpleRepresentation()
             )
         }
     }
@@ -290,21 +306,17 @@ class CredentialConfigurationService(
                 CredentialConfigurationRepresentation(
                     configuration.id,
                     configuration.name,
-                    findUser(configuration.authorId).toSimpleRepresentation()
+                    userServiceLegacy.findUser(configuration.authorId).toSimpleRepresentation()
                 )
             }
     }
 
-    private fun findUser(id: String): User =
-        this.userRepository.findById(id)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
-
-    private fun CreateGitConfigurationRequest.toEntity(workspaceId: String): CredentialConfiguration {
+    private fun CreateGitConfigurationRequest.toEntity(workspaceId: String, author: User): CredentialConfiguration {
         return CredentialConfiguration(
             id = UUID.randomUUID().toString(),
             name = this.name,
             createdAt = LocalDateTime.now(),
-            author = findUser(this.authorId),
+            author = author,
             type = CredentialConfigurationType.GIT,
             workspaceId = workspaceId
         )
