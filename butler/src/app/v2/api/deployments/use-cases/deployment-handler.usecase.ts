@@ -18,11 +18,10 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
 import { In, Repository } from 'typeorm'
-import { CdConfigurationsRepository } from '../../../../v1/api/configurations/repository'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
-import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { CdConfigurationsRepository } from '../../configurations/repository'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
+import { IoCTokensConstants } from '../../../core/constants/ioc'
+import IEnvConfiguration from '../../../core/configuration/interfaces/env-configuration.interface'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
@@ -30,6 +29,7 @@ import { ExecutionTypeEnum } from '../enums'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { CdStrategyFactory } from '../../../core/integrations/cd-strategy-factory'
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
@@ -80,7 +80,7 @@ export class DeploymentHandlerUseCase {
     if (deployment.defaultCircle) {
       deployment.components = deployment.components.filter(c => !c.merged)
     }
-    const activeComponents = await this.componentsRepository.findActiveComponents()
+    const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
 
     try {
@@ -102,7 +102,7 @@ export class DeploymentHandlerUseCase {
 
   private async runUndeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
     this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
-    const activeComponents = await this.componentsRepository.findActiveComponents()
+    const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
 
     try {

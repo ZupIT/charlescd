@@ -26,9 +26,6 @@ data class CreateCardRequest(
     val description: String?,
 
     @field:NotBlank
-    val authorId: String,
-
-    @field:NotBlank
     val type: String,
 
     @field:NotNull
@@ -40,4 +37,8 @@ data class CreateCardRequest(
     val branchName: String = "",
 
     val modules: List<String> = emptyList()
-)
+) {
+    fun validate() {
+        BranchNameValidations().validateBranchName(branchName)
+    }
+}

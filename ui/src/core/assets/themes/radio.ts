@@ -18,18 +18,36 @@ import {
   COLOR_SANTAS_GREY,
   COLOR_BASTILLE,
   COLOR_PURPLE_HEART,
-  COLOR_WHITE
+  COLOR_WHITE,
+  COLOR_CHETWODE_BLUE,
+  COLOR_JAGUAR
 } from 'core/assets/colors';
 
 export const light = {};
 
 export const dark = {
-  checked: {
-    background: COLOR_PURPLE_HEART,
-    color: COLOR_WHITE
+  button: {
+    checked: {
+      background: COLOR_PURPLE_HEART,
+      color: COLOR_WHITE
+    },
+    unchecked: {
+      background: COLOR_BASTILLE,
+      color: COLOR_SANTAS_GREY
+    }
   },
-  unchecked: {
-    background: COLOR_BASTILLE,
-    color: COLOR_SANTAS_GREY
+  card: {
+    checked: {
+      background: COLOR_JAGUAR,
+      border: COLOR_CHETWODE_BLUE,
+      color: COLOR_WHITE,
+      checkmark: COLOR_CHETWODE_BLUE
+    },
+    unchecked: {
+      background: COLOR_BASTILLE,
+      border: COLOR_BASTILLE,
+      color: COLOR_SANTAS_GREY,
+      checkmark: COLOR_SANTAS_GREY
+    }
   }
 };

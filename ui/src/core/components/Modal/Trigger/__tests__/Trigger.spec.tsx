@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import Text from 'core/components/Text';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Modal from 'core/components/Modal';
@@ -27,7 +28,7 @@ test('render Trigger', () => {
       onDismiss={jest.fn()}
       onContinue={jest.fn()}
     >
-        Test
+      <Text.h4 color="light">Test</Text.h4>
     </Modal.Trigger>
   );
 
@@ -42,7 +43,7 @@ test('onDismiss button click', () => {
   const onDismiss = jest.fn();
   render(
     <Modal.Trigger title="Test" dismissLabel="dismiss" onDismiss={onDismiss}>
-        Test
+      <Text.h4 color="light">Test</Text.h4>
     </Modal.Trigger>
   );
   const button = screen.getByTestId('button-default-dismiss');
@@ -58,7 +59,7 @@ test('onContinue button click', () => {
       onDismiss={jest.fn()}
       onContinue={onContinue}
     >
-        Test
+      <Text.h4 color="light">Test</Text.h4>
     </Modal.Trigger>
   );
   const button = screen.getByTestId('button-default-continue');

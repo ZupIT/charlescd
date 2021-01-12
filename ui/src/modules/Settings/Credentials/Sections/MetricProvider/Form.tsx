@@ -117,10 +117,11 @@ const FormMetricProvider = ({ onFinish }: Props) => {
           />
         )
       )}
-
-      {!loadingConnectionResponse && testConnectionResponse && (
-        <ConnectionStatus message={testConnectionResponse} />
-      )}
+      <ConnectionStatus
+        successMessage="Successful connection with the metrics provider."
+        errorMessage={testConnectionResponse?.message}
+        status={testConnectionResponse?.status}
+      />
       <Styled.TestConnectionButton
         id="test-connection"
         type="button"
@@ -165,7 +166,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         <Popover
           title="Why we ask for Metrics Provider?"
           icon="info"
-          link={`${CHARLES_DOC}/reference/metrics`}
+          link={`${CHARLES_DOC}/reference/metrics/register-metrics-provider`}
           linkLabel="View documentation"
           description="Adding the URL of our tool helps Charles to metrics generation since this can vary from workspace to another. Consult the our documentation for further details."
         />

@@ -33,6 +33,12 @@ data class UpdateCardRequest(
 
     val branchName: String = "",
 
-    val modules: List<String> = emptyList()
+    val modules: List<String> = emptyList(),
 
-)
+    val branchDeletion: Boolean = true
+
+) {
+    fun validate() {
+        BranchNameValidations().validateBranchName(branchName)
+    }
+}

@@ -65,9 +65,15 @@ spec:
             - name: KEYCLOAK_SERVER_URL
               value: "{{ .Values.moove.keycloakHost}}"
             - name: KEYCLOAK_PUBLIC_CLIENT_ID
-              value: "charlescd-client"
+              value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
+            - name: RATELIMIT_CAPACITY
+              value: "4"
+            - name: RATELIMIT_TOKENS
+              value: "4"
+            - name: RATELIMIT_SECONDS
+              value: "1"
             - name: KEYCLOAK_CLIENT_SECRET
               value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
             - name: INTERNAL_IDM_ENABLED

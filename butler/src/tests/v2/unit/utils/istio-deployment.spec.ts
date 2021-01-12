@@ -1,6 +1,6 @@
 import { IstioDeploymentManifestsUtils } from '../../../../app/v2/core/integrations/utils/istio-deployment-manifests.utils'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
-import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { DeploymentComponent } from '../../../../app/v2/api/deployments/interfaces/deployment.interface'
 import { noRepeatedDefaultCircleDr } from './fixtures/deployment/no-repeated-default-circle-dr'
 import { noRepeatedCircleDr } from './fixtures/deployment/no-repeated-circle-dr'
