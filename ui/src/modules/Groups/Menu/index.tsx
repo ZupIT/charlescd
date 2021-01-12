@@ -68,7 +68,7 @@ const UserGroupMenu = ({ onSearch, onCreate, isLoading, ...rest }: Props) => {
       </Styled.Actions>
       <Styled.Content>
         <Styled.SearchInput resume onSearch={onSearch} maxLength={64} />
-        <Styled.List>
+        <Styled.List data-testid="user-group-menu">
           {isEmpty(rest.items) && isLoading ? (
             <Loader.List />
           ) : (

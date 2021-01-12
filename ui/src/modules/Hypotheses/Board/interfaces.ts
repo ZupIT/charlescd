@@ -42,7 +42,6 @@ export interface CardMovement {
 }
 
 export interface NewRelease {
-  authorId: string;
   features: string[];
   hypothesisId: string;
   tagName: string;
@@ -55,7 +54,7 @@ export interface Feature {
   name: string;
   branchName: string;
   branches?: string[];
-  author: Author;
+  author?: Author;
   modules: Module[];
 }
 
@@ -64,6 +63,7 @@ export interface Card {
   name: string;
   createdAt: string;
   labels: string[];
+  branches?: string[];
   modules?: string[];
   type: CardType;
   hypothesisId: string;
@@ -74,6 +74,7 @@ export interface Card {
   description?: string;
   column?: Column;
   author?: Author;
+  isProtected: boolean;
 }
 
 export interface Comment {

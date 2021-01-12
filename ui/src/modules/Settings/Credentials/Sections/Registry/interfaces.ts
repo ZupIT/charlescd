@@ -26,7 +26,6 @@ export interface Credentials {
 
 export interface Registry {
   name: string;
-  authorId: string;
   address: string;
   provider: string;
   accessKey?: string;
@@ -41,4 +40,9 @@ export interface Registry {
 export interface Response {
   id?: string;
   registry?: Registry;
+}
+
+export enum ConnectionStatusEnum {
+  FAILED = 'FAILED',
+  SUCCESS = 'SUCCESS'
 }

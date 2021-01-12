@@ -36,13 +36,13 @@ type MetricApi struct {
 func (v1 V1) NewMetricApi(metricMain metric.UseCases, metricGroupMain metricsgroup.UseCases) MetricApi {
 	apiPath := "/metrics-groups"
 	metricApi := MetricApi{metricMain, metricGroupMain}
-	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", api.HttpValidator(metricApi.createMetric))
-	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricApi.updateMetric))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricApi.deleteMetric))
+	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", v1.HttpValidator(metricApi.createMetric))
+	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), v1.HttpValidator(metricApi.updateMetric))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), v1.HttpValidator(metricApi.deleteMetric))
 	return metricApi
 }
 
-func (metricApi MetricApi) createMetric(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricApi MetricApi) createMetric(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("id")
 	metric, err := metricApi.metricMain.ParseMetric(r.Body)
 
@@ -73,7 +73,7 @@ func (metricApi MetricApi) createMetric(w http.ResponseWriter, r *http.Request, 
 	api.NewRestSuccess(w, http.StatusOK, createdMetric)
 }
 
-func (metricApi MetricApi) updateMetric(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricApi MetricApi) updateMetric(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	groupID := ps.ByName("id")
 	metricID := ps.ByName("metricId")
 	metric, err := metricApi.metricMain.ParseMetric(r.Body)
@@ -105,9 +105,9 @@ func (metricApi MetricApi) updateMetric(w http.ResponseWriter, r *http.Request, 
 	api.NewRestSuccess(w, http.StatusOK, updatedMetric)
 }
 
-func (metricApi MetricApi) deleteMetric(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (metricApi MetricApi) deleteMetric(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ uuid.UUID) {
 	id := ps.ByName("metricId")
-	err := metricApi.metricMain.RemoveMetric(string(id))
+	err := metricApi.metricMain.RemoveMetric(id)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

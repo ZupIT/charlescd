@@ -44,10 +44,20 @@ const ResultList = ({ isLoading, circles }: Props) => {
         <Styled.CardLeftLine />
         <Styled.CardContent>
           <div>
-            <Text.h5 color="light">{circle.name}</Text.h5>{' '}
+            <Text.h5
+              color="light"
+              data-testid={`circle-matcher-result-${circle.name}`}
+            >
+              {circle.name}
+            </Text.h5>
           </div>
           <div>
-            <Text.h5 color="dark">{circle.id}</Text.h5>
+            <Text.h5
+              color="dark"
+              data-testid={`circle-matcher-result-${circle.id}`}
+            >
+              {circle.id}
+            </Text.h5>
           </div>
           <div>
             <Styled.ButtonOutlineRounded

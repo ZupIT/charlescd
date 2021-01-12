@@ -38,7 +38,7 @@ public class GetDockerRegistryTagHandler implements RequestHandler<GetDockerRegi
     public GetDockerRegistryTagInput handle() {
         return GetDockerRegistryTagInput.builder()
                 .withWorkspaceId(workspaceId)
-                .withArtifactRepositoryConfigurationId(registryConfigurationId)
+                .withConfigurationId(registryConfigurationId)
                 .withArtifactName(componentName)
                 .withName(name)
                 .build();

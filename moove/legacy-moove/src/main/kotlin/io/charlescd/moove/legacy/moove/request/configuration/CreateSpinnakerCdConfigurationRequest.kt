@@ -23,16 +23,14 @@ import io.charlescd.moove.legacy.moove.api.request.CreateDeploySpinnakerCdConfig
 
 data class CreateSpinnakerCdConfigurationRequest(
     val configurationData: CreateSpinnakerCdConfigurationData,
-    val name: String,
-    override val authorId: String
-) : CreateCdConfigurationRequest(CdTypeEnum.SPINNAKER, authorId) {
+    val name: String
+) : CreateCdConfigurationRequest(CdTypeEnum.SPINNAKER) {
 
     fun toDeployRequest(): CreateDeploySpinnakerCdConfigurationRequest {
         return CreateDeploySpinnakerCdConfigurationRequest(
             this.type,
             this.getDeployConfigurationData(),
-            this.name,
-            this.authorId
+            this.name
         )
     }
 

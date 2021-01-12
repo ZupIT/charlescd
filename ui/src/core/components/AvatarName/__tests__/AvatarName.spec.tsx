@@ -23,25 +23,20 @@ const props = {
   profile: {
     name: 'Charles',
     email: 'charles@zup.com.br',
-    photoUrl: 'https://photo.png'
   }
 };
 
-test('render AvatarName', () => {
+test('render AvatarName with default props', () => {
   render(
     <AvatarName
-      src={props.profile.photoUrl}
       name={props.profile.name}
       size={props.size}
     />
   );
-  expect(screen.getByTestId(props.profile.name)).toBeInTheDocument();
-});
-
-test('render AvatarName without src and default props', () => {
-  render(
-    <AvatarName src={''} name={props.profile.name} />
-  );
+  
+  const avatarName = screen.getByTestId(props.profile.name);
   const nameInitial = screen.getByText('C');
+
+  expect(avatarName).toBeInTheDocument();
   expect(nameInitial).toBeInTheDocument();
 });

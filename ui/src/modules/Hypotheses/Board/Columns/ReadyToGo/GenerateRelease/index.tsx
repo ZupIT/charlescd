@@ -20,7 +20,6 @@ import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import Form from 'core/components/Form';
 import Button from 'core/components/Button';
-import { getProfileByKey } from 'core/utils/profile';
 import { useGenerateRelease } from 'modules/Hypotheses/Board/hooks';
 import { createReleaseName } from './helpers';
 import Styled from './styled';
@@ -50,7 +49,6 @@ const ModalGenerateRelease = ({ features, hypothesisId, onClose }: Props) => {
 
   const onSubmit = ({ tagName }: Record<string, string>) => {
     generate({
-      authorId: getProfileByKey('id'),
       features,
       hypothesisId,
       tagName: createReleaseName(tagName)

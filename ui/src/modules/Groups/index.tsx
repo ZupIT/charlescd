@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
@@ -73,12 +73,11 @@ const UserGroups = () => {
     createUserGroup(name);
   };
 
-  const renderModal = () =>
-    toggleModal && (
-      <Modal.Default onClose={() => setToggleModal(false)}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Styled.Modal.Title color="light">New user group</Styled.Modal.Title>
-          <Styled.Modal.Input
+  const renderModal = () => (
+    <Modal.Default onClose={() => setToggleModal(false)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Styled.Modal.Title color="light">New user group</Styled.Modal.Title>
+        <Styled.Modal.Input
             name="name"
             label="Type a name"
             ref={register({
@@ -93,20 +92,21 @@ const UserGroups = () => {
               <Text.h6 color="error">{errors.name.message}</Text.h6>
             </Styled.FieldErrorWrapper>
           )}
-          <Styled.Modal.Button
-            type="submit"
-            isDisabled={isDisabled}
-            isLoading={loadingCreate}
-          >
-            Create user group
-          </Styled.Modal.Button>
-        </form>
-      </Modal.Default>
-    );
+        <Styled.Modal.Button
+          type="submit"
+          id="user-group"
+          isDisabled={isDisabled}
+          isLoading={loadingCreate}
+        >
+          Create user group
+        </Styled.Modal.Button>
+      </form>
+    </Modal.Default>
+  );
 
   return (
     <Page>
-      {renderModal()}
+      {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
           items={list?.content}
@@ -119,18 +119,16 @@ const UserGroups = () => {
           onCreate={() => setToggleModal(true)}
         />
       </Page.Menu>
-      <Suspense fallback="">
-        <Switch>
-          <Route path={routes.groupsShow} component={Tabs} />
-          <Route path={routes.groups}>
-            <Page.Placeholder
-              icon="empty-groups"
-              title={`Hello, ${profileName}!`}
-              subtitle="Create user group using the side menu."
-            />
-          </Route>
-        </Switch>
-      </Suspense>
+      <Switch>
+        <Route path={routes.groupsShow} component={Tabs} />
+        <Route path={routes.groups}>
+          <Page.Placeholder
+            icon="empty-groups"
+            title={`Hello, ${profileName}!`}
+            subtitle="Create user group using the side menu."
+          />
+        </Route>
+      </Switch>
     </Page>
   );
 };

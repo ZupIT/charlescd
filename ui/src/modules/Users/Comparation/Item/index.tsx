@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { isNotBlank, maxValue, required } from 'core/utils/validation';
-import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
+import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
@@ -55,14 +55,24 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   });
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const [loadingUpdate, updateProfile] = useUpdateProfile();
+  const { updateNameById, user: userUpdated, status } = useUpdateName();
   const isAbleToReset = loggedUserId !== user?.id;
 
-  const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
+  useEffect(() => {
+    if (user) {
+      setCurrentUser(user);
+    } else if (email) {
+      findByEmail(email);
+    }
+  }, [user, email, findByEmail]);
 
   useEffect(() => {
-    if (user) setCurrentUser(user);
-  }, [user]);
+    if (userUpdated) {
+      setCurrentUser(userUpdated);
+    } else if (status === 'rejected') {
+      findByEmail(email);
+    }
+  }, [userUpdated, status, email, findByEmail]);
 
   useEffect(() => {
     onChange(delUserResponse);
@@ -71,19 +81,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     }
   });
 
-  useEffect(() => {
-    if (!loadingUpdate) {
-      findByEmail(email);
-    }
-  }, [loadingUpdate, email, findByEmail]);
-
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(currentUser.id, {
-      ...profile,
-      email: currentUser.email,
-      photoUrl: currentUser.photoUrl
-    });
+    updateNameById(currentUser.id, profile.name);
   };
 
   const handleDelete = (userId: string, userName: string) => {
@@ -99,8 +99,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       onContinue={() => handleDelete(currentUser.id, currentUser.name)}
       onDismiss={() => setAction('Cancel')}
     >
-      By deleting this user, his information will be also deleted. Do you wish
-      to continue?
+      <Text.h4 color="light">
+        By deleting this user, his information will be also deleted. Do you wish
+        to continue?
+      </Text.h4>
     </Modal.Trigger>
   );
 
@@ -148,12 +150,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       {action === 'Delete' && renderWarning()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
-          <Avatar
-            key={currentUser.photoUrl}
-            size="68px"
-            profile={currentUser}
-            onFinish={refresh}
-          />
+          <Avatar key={currentUser.id} size="68px" profile={currentUser} />
         </Styled.ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
@@ -180,7 +177,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
               )}
             </>
           ) : (
-            <Text.h2 color="light">currentUser.name</Text.h2>
+            <Text.h2 color="light">{currentUser.name}</Text.h2>
           )}
         </ContentIcon>
       </Styled.Layer>

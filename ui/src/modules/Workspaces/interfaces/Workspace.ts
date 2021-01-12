@@ -19,7 +19,6 @@ import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 export interface Workspace {
   id: string;
   name: string;
-  authorId: string;
   createdAt: string;
   status?: string;
   circleMatcherUrl?: string;

@@ -81,6 +81,29 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         notThrown(Exception)
     }
 
+    def "should throw an exception when circle is Default"() {
+        given:
+        def circleId = "292e18e0-da59-4540-ba44-e46a07de8d16"
+        def workspaceId = "c71ac012-9a7f-4f63-9c21-d9e1ec6ebbf5"
+        def authorId = "95bdd01a-6adc-4303-9193-836f1f76896e"
+
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
+
+        def author = getDummyUser(authorId)
+        def circle = getDummyCircle(circleId, author, nodePart, workspaceId, true)
+
+        when:
+        this.deleteCircleByIdInteractor.execute(circleId, workspaceId)
+
+        then:
+        1 * this.circleRepository.find(circleId, workspaceId) >> Optional.of(circle)
+
+        def exception = thrown(BusinessException)
+        assert exception.message == "cannot.delete.default.circle"
+    }
+
     def "should throw an exception when an active deployment exists"() {
         given:
         def circleId = "292e18e0-da59-4540-ba44-e46a07de8d16"

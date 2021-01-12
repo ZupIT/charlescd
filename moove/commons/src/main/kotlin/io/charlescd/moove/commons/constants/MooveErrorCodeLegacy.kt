@@ -17,7 +17,6 @@
 package io.charlescd.moove.commons.constants
 
 enum class MooveErrorCodeLegacy(val key: String) {
-    CIRCLE_DEPLOYMENT_ACTIVE("circle.deployment.active"),
     GIT_ERROR_BASE_NOT_FOUND("base.branch.not.found"),
     GIT_ERROR_HEAD_NOT_FOUND("head.branch.not.found"),
     GIT_ERROR_REPOSITORY_NOT_FOUND("repository.not.found"),
@@ -34,5 +33,13 @@ enum class MooveErrorCodeLegacy(val key: String) {
     DEPLOY_INVALID_BUILD("deploy.invalid.build"),
     INVALID_AUTHORIZATION("invalid.authorization"),
     WORKSPACE_GIT_CONFIGURATION_IS_MISSING("workspace.git.configuration.is.missing"),
-    METRIC_CONFIGURATION_IS_MISSING("metric.configuration.is.missing")
+    METRIC_CONFIGURATION_IS_MISSING("metric.configuration.is.missing"),
+    INVALID_REGISTRY_CONFIGURATION("invalid.registry.configuration"),
+    INVALID_REGISTRY_CONNECTION("invalid.registry.connection"),
+    REGISTRY_INTEGRATION_ERROR("registry.integration.error"),
+    VILLAGER_REGISTRY_INTEGRATION_ERROR("villager.registry.integration.error"),
+    REGISTRY_GENERAL_ERROR("registry.general.error"),
+    VILLAGER_INTERNAL_INTEGRATION_ERROR("villager.unexpected.error"),
+    VILLAGER_INTEGRATION_ERROR("villager.unexpected.error"),
+    VILLAGER_UNEXPECTED_ERROR("villager.unexpected.error")
 }
