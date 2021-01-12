@@ -22,7 +22,6 @@ import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
-import { getProfileByKey } from 'core/utils/profile';
 import { isRequired, maxLength } from 'core/utils/validations';
 import routes from 'core/constants/routes';
 import { saveWorkspace } from 'core/utils/workspace';
