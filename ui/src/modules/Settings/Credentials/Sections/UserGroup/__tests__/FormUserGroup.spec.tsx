@@ -15,59 +15,131 @@
  */
 
 import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
-import userEvent from '@testing-library/user-event';
-import { FetchMock } from 'jest-fetch-mock';
+import { render, screen, act, fireEvent, waitFor } from 'unit-test/testUtils';
+import { FetchMock, MockResponseInitFunction } from 'jest-fetch-mock';
 import selectEvent from 'react-select-event';
 import FormUserGroup from '../Form';
+import { Roles, UserGroups } from './fixtures';
 
-test('should select form user group', async () => {
-  // (fetch as FetchMock)
-  //   .mockResponse(JSON.stringify({
-  //     content: [
-  //       { id: '1', name: 'Maintainer' }
-  //     ]
-  //   }));
-
-  // render(
-  //   <FormUserGroup onFinish={jest.fn()} />
-  // );
-  
-  // const addButton = await screen.findByText('Add');
-  // expect(addButton).toBeInTheDocument();
-    
-  // const selectUserGroup = screen.getByText('Select a user group');
-  // await selectEvent.select(selectUserGroup, 'Maintainer');
-
-  // expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
 });
 
-test('should find a user group by name', async () => {
-  // (fetch as FetchMock)
-  //   .mockResponseOnce(JSON.stringify({
-  //     content: [
-  //       { id: '1', name: 'Maintainer' }
-  //     ]
-  //   }))
-  //   .mockResponseOnce(JSON.stringify({}))
-  //   .mockResponseOnce(JSON.stringify({
-  //     content: [
-  //       { id: '2', name: 'Developer' }
-  //     ]
-  //   }));
 
-  // const { container } = render(
-  //   <FormUserGroup onFinish={jest.fn()} />
-  // );
+test('If the user group response is not empty, it must be possible to choose an option in the select component.', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      content: UserGroups
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: Roles,
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: UserGroups
+    }));
+  render(
+    <FormUserGroup onFinish={jest.fn()} />
+  );
+
+
+  const selectUserGroup = await screen.findByText('Select a user group');
+  await act(async () => selectEvent.select(selectUserGroup, 'Maintainer'));
+
+  expect(screen.getByText('Select permissions for the group selected above.')).toBeInTheDocument();
+});
+
+test('After choose one valid user group should be possible to choose a permission', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      content: UserGroups
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: Roles,
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: UserGroups
+    }));
+  render(
+    <FormUserGroup onFinish={jest.fn()} />
+  );
+
+
+  const selectUserGroup = await screen.findByText('Select a user group');
+  await act(async () => selectEvent.select(selectUserGroup, 'Maintainer'));
+
+  expect(screen.getByText('Select permissions for the group selected above.')).toBeInTheDocument();
+
+  const selectPermissionUserGroup = await screen.findByText('Choose a permission');
+  await act(async () => selectEvent.select(selectPermissionUserGroup, 'Maintainer'));
+});
+
+
+test('Shows no options when UserGroups response is empty', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      content: []
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: Roles,
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: []
+    }));
+  render(
+    <FormUserGroup onFinish={jest.fn()} />
+  );
+
+  const selectUserGroup = await screen.findByText('Select a user group');
+  await act(async () => selectEvent.openMenu(selectUserGroup));
+
+  const selectOptions = await screen.findByText("No options");
+  expect(selectOptions).toBeInTheDocument();
+});
+
+test('onSubmit and onFinish should be called', async () => {
+
+  const mockSaveMethod = jest.fn();
+  const mockOnFinish = jest.fn();
+  const mockResponseSave: MockResponseInitFunction = async (req) => {
+
+    if (req.method === "POST") {
+      mockSaveMethod();
+      return new Promise(resolve => setTimeout(() => resolve({ body: JSON.stringify({response: true}) }), 100))
+    }
+    return null;
+  }
+
   
-  // const addButton = await screen.findByText('Add');
-  // expect(addButton).toBeInTheDocument();
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      content: UserGroups
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: Roles,
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: UserGroups
+    }))
+    .mockResponse(mockResponseSave);
+
   
-  // const selectInput = container.getElementsByTagName('input')[0];
-  // userEvent.type(selectInput, 'Dev');
+  render(
+    <FormUserGroup onFinish={mockOnFinish} />
+  );
 
-  // const selectUserGroup = await screen.findByText('Select a user group');
-  // await selectEvent.select(selectUserGroup, 'Developer');
+  const selectUserGroup = await screen.findByText('Select a user group');
+  await act(async () => selectEvent.select(selectUserGroup, 'Maintainer'));
 
-  // expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
+  expect(screen.getByText('Select permissions for the group selected above.')).toBeInTheDocument();
+
+  const selectPermissionUserGroup = await screen.findByText('Choose a permission');
+  await act(async () => selectEvent.select(selectPermissionUserGroup, 'Maintainer'));
+
+  const buttonSave = await screen.findByTestId("button-default-save")
+  fireEvent.click(buttonSave)
+
+  await waitFor(() => {
+    expect(mockSaveMethod).toBeCalled();
+    expect(mockOnFinish).toBeCalled();
+  })
 });
