@@ -5,13 +5,13 @@ name: build villager
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'villager/**'
     tags: 
       - '!*'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'villager/**'
