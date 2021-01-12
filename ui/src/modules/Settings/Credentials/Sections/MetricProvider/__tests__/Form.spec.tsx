@@ -40,7 +40,7 @@ test('render datasource input by datasource change', async () => {
   const finish = jest.fn();
   render(
     <Form onFinish={finish} />
-  ); 
+  );
 
   const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
   await act(async () => selectEvent.select(datasourcePlugin1, 'Prometheus'));
