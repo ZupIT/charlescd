@@ -20,7 +20,6 @@ package io.charlescd.moove.legacy.moove.request.configuration
 
 import io.charlescd.moove.legacy.moove.api.request.CreateDeploySpinnakerCdConfigurationData
 import io.charlescd.moove.legacy.moove.api.request.CreateDeploySpinnakerCdConfigurationRequest
-import javax.validation.Valid
 import javax.validation.constraints.Size
 
 data class CreateSpinnakerCdConfigurationRequest(

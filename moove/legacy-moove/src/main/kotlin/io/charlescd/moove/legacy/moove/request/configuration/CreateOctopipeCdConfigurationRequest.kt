@@ -22,7 +22,6 @@ import io.charlescd.moove.legacy.moove.api.request.CreateDeployOctopipeCdConfigu
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployOctopipeCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.api.request.GitProvidersEnum
 import io.charlescd.moove.legacy.moove.api.request.K8sClusterProvidersEnum
-import javax.validation.Valid
 import javax.validation.constraints.Size
 
 data class CreateOctopipeCdConfigurationRequest(
