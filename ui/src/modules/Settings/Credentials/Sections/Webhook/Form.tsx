@@ -14,48 +14,52 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import { useForm } from 'react-hook-form';
+import omit from 'lodash/omit';
 import Button from 'core/components/Button';
-import Radio from 'core/components/Radio';
-import Switch from 'core/components/Switch';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Webhook } from './interfaces';
 import { Props } from '../interfaces';
 import { useWebhook } from './hooks';
-import { radios } from './constants';
 import Styled from './styled';
 
 const FormWebhook = ({ onFinish }: Props) => {
-  const { responseAdd, save, loadingAdd } = useWebhook();
-  const [type, setType] = useState<string>('');
+  const { status, save } = useWebhook();
   const {
     register,
     handleSubmit,
+    watch,
     formState: { isValid }
   } = useForm<Webhook>({ mode: 'onChange' });
 
-  useEffect(() => {
-    if (responseAdd) onFinish();
-  }, [onFinish, responseAdd]);
+  const watchEvents = watch('eventType', '');
 
-  const onSubmit = ({ url }: Webhook) => {
-    save(url);
+  useEffect(() => {
+    if (status === 'resolved') onFinish();
+  }, [onFinish, status]);
+
+  const onSubmit = (webhook: Webhook) => {
+    save(omit(webhook, 'eventType'));
   };
 
   const renderOptions = () => (
     <Fragment>
-      <Styled.Field>
-        <Switch label="Deploy" />
-        <Text.h5 color="dark">Which events branch and tag created</Text.h5>
-      </Styled.Field>
-      <Styled.Field>
-        <Switch label="Undeploy" />
-        <Text.h5 color="dark">
-          Check run is created, requested, requestered or completed
-        </Text.h5>
-      </Styled.Field>
+      <Form.Checkbox
+        ref={register({ required: true })}
+        name="events"
+        label="Deploy"
+        value="DEPLOY"
+        description="Deploy started or finished"
+      />
+      <Form.Checkbox
+        ref={register({ required: true })}
+        name="events"
+        label="Undeploy"
+        value="UNDEPLOY"
+        description="Undeploy started or finished"
+      />
     </Fragment>
   );
 
@@ -80,22 +84,29 @@ const FormWebhook = ({ onFinish }: Props) => {
         />
         <Form.Password
           ref={register({ required: true })}
-          name="secret"
+          name="apiKey"
           label="Secret"
         />
         <Text.h5 color="dark">
           Witch events would you like to trigger this webhook?
         </Text.h5>
-        <Radio.Buttons
-          name="type"
-          items={radios}
-          onChange={({ currentTarget }) => setType(currentTarget.value)}
+        <Form.Radio
+          ref={register({ required: true })}
+          name="eventType"
+          value="everything"
+          label="Send me everything"
         />
-        {type === 'individual' && renderOptions()}
+        <Form.Radio
+          ref={register({ required: true })}
+          name="eventType"
+          value="individual"
+          label="Let me select individual events"
+        />
+        {watchEvents === 'individual' && renderOptions()}
         <Button.Default
           type="submit"
           isDisabled={!isValid}
-          isLoading={loadingAdd}
+          isLoading={status === 'pending'}
         >
           Save
         </Button.Default>

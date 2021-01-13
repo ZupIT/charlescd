@@ -22,19 +22,20 @@ import Card from 'core/components/Card';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { getWorkspaceId } from 'core/utils/workspace';
-import { useWebhook } from './hooks';
+import { useDelWebhook } from './hooks';
 import { FORM_WEBHOOK } from './constants';
 import FormWebhook from './Form';
+import { Webhook } from './interfaces';
 
 interface Props {
   form: string;
   setForm: Function;
-  data?: string[];
+  data?: Webhook[];
 }
 
 const SectionWebhook = ({ form, setForm, data }: Props) => {
-  const [webhooks, setWebhooks] = useState(null);
-  const { remove, loadingRemove } = useWebhook();
+  const [webhooks, setWebhooks] = useState<Webhook[]>(data);
+  const { remove, status } = useDelWebhook();
 
   const handleClose = async (id: string) => {
     await remove(getWorkspaceId(), id);
@@ -51,10 +52,10 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
       {webhooks &&
         map(webhooks, webhook => (
           <Card.Config
-            key={webhook.name}
+            key={webhook.description}
             icon="webhook"
-            description={webhook.name}
-            isLoading={loadingRemove}
+            description={webhook.description}
+            isLoading={status === 'pending'}
             onClose={() => handleClose(webhook?.id)}
           />
         ))}

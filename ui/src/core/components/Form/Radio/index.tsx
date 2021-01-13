@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Ref, useRef, useImperativeHandle } from 'react';
-import { ChangeInputEvent } from 'core/interfaces/InputEvents';
+import React, { Ref, useRef, forwardRef, useImperativeHandle } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
@@ -23,14 +22,10 @@ export interface Props {
   name: string;
   value: string;
   label: string;
-  onChange?: (event: ChangeInputEvent) => void;
 }
 
-const Radio = React.forwardRef(
-  (
-    { name, value, label, onChange, ...rest }: Props,
-    ref: Ref<HTMLInputElement>
-  ) => {
+const Radio = forwardRef(
+  ({ name, value, label, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
     const radioRef = useRef<HTMLInputElement>(null);
     const id = `radio-${value}`;
 
@@ -45,10 +40,9 @@ const Radio = React.forwardRef(
           type="radio"
           name={name}
           value={value}
-          onChange={onChange}
           {...rest}
         />
-        <Styled.Label value={value} htmlFor={id}>
+        <Styled.Label htmlFor={id}>
           <Text.h4 color="light">{label}</Text.h4>
         </Styled.Label>
         <Styled.Checkmark onClick={() => radioRef.current.click()} />

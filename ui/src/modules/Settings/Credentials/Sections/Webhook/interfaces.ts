@@ -15,10 +15,11 @@
  */
 
 export interface Webhook {
+  id?: string;
+  apiKey: string;
   description: string;
+  events: string[];
   url: string;
-  secret: string;
-  event: Event;
 }
 
 export interface Event {

@@ -14,52 +14,83 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
-import { configPath } from 'core/providers/circleMatcher';
-import { addConfig, delConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
-import { toogleNotification } from 'core/components/Notification/state/actions';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'core/state/hooks';
+import { saveConfig, delConfig } from 'core/providers/webhook';
+import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import { Webhook } from './interfaces';
 
-export const useWebhook = (): FetchProps => {
+interface SaveProps {
+  status: FetchStatuses;
+  save: Function;
+}
+
+interface DelProps {
+  status: FetchStatuses;
+  remove: Function;
+}
+
+export const useWebhook = (): SaveProps => {
   const dispatch = useDispatch();
-  const [addData, addCircleMatcher] = useFetch(addConfig);
-  const [removeData, delCircleMatcher] = useFetch(delConfig);
-  const { loading: loadingAdd, response: responseAdd, error } = addData;
-  const { response: responseRemove, error: errorRemove } = removeData;
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const create = useFetchData(saveConfig);
 
   const save = useCallback(
-    (url: string) => {
-      addCircleMatcher(configPath, url);
+    async (webhook: Webhook) => {
+      try {
+        setStatus('pending');
+        await create(webhook);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+        const error = await e.json();
+        dispatch(
+          toogleNotification({
+            text: `[${e.status}] ${error.message}`,
+            status: 'error'
+          })
+        );
+        return Promise.reject(error);
+      }
     },
-    [addCircleMatcher]
+    [create, dispatch]
   );
 
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `[${error.status}] Circle Matcher could not be saved.`,
-          status: 'error'
-        })
-      );
-    }
-  }, [error, dispatch]);
+  return {
+    status,
+    save
+  };
+};
 
-  const remove = useCallback(() => {
-    delCircleMatcher(configPath);
-  }, [delCircleMatcher]);
+export const useDelWebhook = (): DelProps => {
+  const dispatch = useDispatch();
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const removeConfig = useFetchData(delConfig);
 
-  useEffect(() => {
-    if (errorRemove) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorRemove.status}] Circle Matcher could not be removed.`,
-          status: 'error'
-        })
-      );
-    }
-  }, [errorRemove, dispatch]);
+  const remove = useCallback(
+    async (webhook: Webhook) => {
+      try {
+        setStatus('pending');
+        await removeConfig(webhook);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+        const error = await e.json();
+        dispatch(
+          toogleNotification({
+            text: `[${e.status}] ${error.message}`,
+            status: 'error'
+          })
+        );
+        return Promise.reject(error);
+      }
+    },
+    [removeConfig, dispatch]
+  );
 
-  return { responseAdd, responseRemove, loadingAdd, save, remove };
+  return {
+    status,
+    remove
+  };
 };
