@@ -38,24 +38,29 @@ class V2UserController(
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
     private val changeUserPasswordInteractor: ChangeUserPasswordInteractor,
+    private val deleteUserInteractor: DeleteUserInteractor,
     private val patchUserInteractor: PatchUserInteractor
 ) {
 
     @ApiOperation(value = "Find user by email")
     @GetMapping("/{email:.+}")
     @ResponseStatus(HttpStatus.OK)
-    fun findByEmail(@PathVariable email: String): UserResponse {
-        return findUserByEmailInteractor.execute(email)
+    fun findByEmail(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable email: String
+    ): UserResponse {
+        return findUserByEmailInteractor.execute(email, authorization)
     }
 
     @ApiOperation(value = "Find all users")
     @GetMapping
     fun findAll(
+        @RequestHeader(value = "Authorization") authorization: String,
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
         pageable: PageRequest
     ): ResourcePageResponse<UserResponse> {
-        return this.findAllUsersInteractor.execute(name, email, pageable)
+        return this.findAllUsersInteractor.execute(name, email, authorization, pageable)
     }
 
     @ApiOperation(value = "Reset password")
@@ -75,7 +80,10 @@ class V2UserController(
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody createUserRequest: CreateUserRequest, @RequestHeader(value = "Authorization") authorization: String): UserResponse {
+    fun create(
+        @Valid @RequestBody createUserRequest: CreateUserRequest,
+        @RequestHeader(value = "Authorization") authorization: String
+    ): UserResponse {
         return this.createUserInteractor.execute(createUserRequest, authorization)
     }
 
@@ -104,5 +112,16 @@ class V2UserController(
         @RequestBody @Valid request: ChangeUserPasswordRequest
     ) {
         this.changeUserPasswordInteractor.execute(authorization, request)
+    }
+
+    @ApiOperation(value = "Delete by id")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    // TODO: needs more discovery to finish implementation
+    fun delete(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable id: String
+    ) {
+        deleteUserInteractor.execute(id, authorization)
     }
 }

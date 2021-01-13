@@ -34,9 +34,6 @@ class CreateCircleRequest(
     @field:NotBlank
     val name: String,
 
-    @field:NotBlank
-    val authorId: String,
-
     @field:Valid
     val rules: NodePart
 ) {

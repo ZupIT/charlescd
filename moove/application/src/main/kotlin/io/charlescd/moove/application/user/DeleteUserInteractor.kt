@@ -14,25 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+package io.charlescd.moove.application.user
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
+interface DeleteUserInteractor {
 
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
-    }
-  }, [options, clearValue]);
-
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
-
-export default SingleValue;
+    fun execute(id: String, authorization: String)
+}

@@ -26,7 +26,6 @@ export interface Author {
 
 export interface Hypothesis {
   id: string;
-  authorId?: string;
   name: string;
   description: string;
   author: Author;

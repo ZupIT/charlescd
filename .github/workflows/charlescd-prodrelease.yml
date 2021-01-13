@@ -4,7 +4,7 @@ on:
   release:
     types:
       - released
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build_and_push_release_butler:
@@ -317,7 +317,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: master
+        ref: main
 
     - name: Get the version
       id: get_version
@@ -330,6 +330,11 @@ jobs:
         echo -e "\r\nappVersion: ${{ steps.get_version.outputs.VERSION }}\r\n" >> ./install/helm-chart/Chart.yaml &&
         cat ./install/helm-chart/Chart.yaml &&
         sed -i -E "s/(zupcharles\/.*:)(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml
+
+    - name: Update helm dependencies
+      uses: WyriHaximus/github-action-helm3@v1.0.0
+      with:
+        exec: helm dependency update ./install/helm-chart
 
     - name: Generate single file
       uses: WyriHaximus/github-action-helm3@v1.0.0

@@ -115,8 +115,8 @@ export const useAddMember = (): AddMemberProps => {
   const { loading } = data;
 
   const addMembers = useCallback(
-    (cardId: string, authorId: string, memberIds: string[]) => {
-      addMembersToCard(cardId, authorId, memberIds);
+    (cardId: string, memberIds: string[]) => {
+      addMembersToCard(cardId, memberIds);
     },
     [addMembersToCard]
   );
@@ -129,13 +129,13 @@ export const useAddMember = (): AddMemberProps => {
 
 interface AddModuleProps {
   status: FetchStatuses;
-  persistModules: (cardId: string, payload: CardPayload) => void;
+  persistModules: Function;
 }
 
 export const useModules = (): AddModuleProps => {
   const dispatch = useDispatch();
-  const [, , updateCard] = useFetch(updateById);
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const updateCard = useFetchData(updateById);
 
   const persistModules = useCallback(
     async (cardId: string, payload: CardPayload) => {
@@ -148,10 +148,11 @@ export const useModules = (): AddModuleProps => {
         const error = await e.json();
         dispatch(
           toogleNotification({
-            text: `[${error.status}] This module could not be tied.`,
+            text: `[${e.status}] ${error.message}`,
             status: 'error'
           })
         );
+        return Promise.reject(error);
       }
     },
     [updateCard, dispatch]
