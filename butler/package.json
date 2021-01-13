@@ -44,7 +44,7 @@
     "rxjs": "^6.5.5",
     "stack-trace": "0.0.10",
     "swagger-ui-express": "^4.1.4",
-    "typeorm": "^0.2.25",
+    "typeorm": "^0.2.30",
     "uuid": "8.3.0",
     "winston": "^3.2.1"
   },
