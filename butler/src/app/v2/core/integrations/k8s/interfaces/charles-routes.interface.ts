@@ -18,26 +18,18 @@ import { KubernetesManifest } from '../../interfaces/k8s-manifest.interface'
 
 export interface CharlesRoutes extends KubernetesManifest { // TODO extend KubernetesObject interface
 
-  spec: CharlesRouteSpec
+  spec: {
+    circles: CharlesCircle[]
+  }
 }
 
-export interface CharlesRouteSpec {
-
-  components: CharlesRouteComponent[]
-}
-
-export interface CharlesRouteComponent {
-
-  name: string
-
-  circles: CharlesComponentCircle[]
+export interface CharlesCircle {
+  id: string
+  default: boolean
+  components: CharlesComponentCircle[]
 }
 
 export interface CharlesComponentCircle {
-
-  id: string
-
+  name: string
   tag: string
-
-  default: boolean
 }

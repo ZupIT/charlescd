@@ -1,9 +1,9 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
-import { isEmpty } from 'lodash'
-import { CdConfigurationEntity } from '../api/configurations/entity'
+import { Body, Controller, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common'
+import { flatten, isEmpty } from 'lodash'
 import { CdConfigurationsRepository } from '../api/configurations/repository/cd-configurations.repository'
 import { ComponentsRepositoryV2 } from '../api/deployments/repository/component.repository'
 import { DeploymentRepositoryV2 } from '../api/deployments/repository/deployment.repository'
+import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../core/integrations/k8s/client'
 import { HookParams } from './params.interface'
 
@@ -20,12 +20,13 @@ export class DeploymentsHookController {
   @Post('/v2/operator/deployment/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: Record<string, unknown>[], resyncAfterSeconds?: number}> {
+  public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     // console.log(JSON.stringify(params.children))
-    const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration'] })
+    const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration', 'components'] })
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     // const specs = deployment.compiledSpec?? check this name with leandro
-    const specs = spec(deployment.cdConfiguration, deployment.circleId)
+    // const specs = spec(deployment.cdConfiguration, deployment.circleId)
+    const specs = flatten(deployment.components.map(c => c.manifests))
 
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
@@ -38,9 +39,6 @@ export class DeploymentsHookController {
         return true
       }
       const conditions = params.children['Deployment.apps/v1'][d].status.conditions
-      console.log({
-        conditionsssssssssssssssssssssss: conditions
-      })
       if (conditions.length === 0) {
         return false
       }
@@ -102,118 +100,5 @@ export class DeploymentsHookController {
       return { children: specs, finalized: finalized, resyncAfterSeconds: 2 }
     }
   }
-}
-const spec = (cdConfiguration: CdConfigurationEntity, circleId: string) : Record<string, unknown>[] => {
-  return [
-    {
-      'apiVersion': 'apps/v1',
-      'kind': 'Deployment',
-      'metadata': {
-        'name': `my-release-name-${circleId}`,
-        'namespace': 'default',
-        'labels': {
-          'app': `charlescd-ui-${circleId}`,
-          'version': `my-release-name-${circleId}`,
-          'component': 'front',
-          'tag': 'v1',
-          'circleId': circleId
-        }
-      },
-      'spec': {
-        'replicas': 1,
-        'selector': {
-          'matchLabels': {
-            'app': `charlescd-ui-${circleId}`,
-            'version': `my-release-name-${circleId}`,
-            'component': 'front',
-            'tag': 'v1',
-            'circleId': circleId
-          }
-        },
-        'template': {
-          'metadata': {
-            'annotations': {
-              'sidecar.istio.io/inject': 'true'
-            },
-            'labels': {
-              'app': `charlescd-ui-${circleId}`,
-              'version': `my-release-name-${circleId}`,
-              'component': 'front',
-              'tag': 'v1',
-              'circleId': circleId
-            }
-          },
-          'spec': {
-            'serviceAccountName': 'default',
-            'containers': [
-              {
-                'name': 'darwin-ui-new-web',
-                'image': 'hashicorp/http-echo',
-                'args': ['-text', 'hello world'],
-                'livenessProbe': {
-                  'failureThreshold': 3,
-                  'httpGet': {
-                    'path': '/',
-                    'port': 5678,
-                    'scheme': 'HTTP'
-                  },
-                  'initialDelaySeconds': 20,
-                  'periodSeconds': 20,
-                  'successThreshold': 1,
-                  'timeoutSeconds': 1
-                },
-                'readinessProbe': {
-                  'failureThreshold': 3,
-                  'httpGet': {
-                    'path': '/',
-                    'port': 5678,
-                    'scheme': 'HTTP'
-                  },
-                  'initialDelaySeconds': 20,
-                  'periodSeconds': 20,
-                  'successThreshold': 1,
-                  'timeoutSeconds': 1
-                },
-                'resources': {
-                  'limits': {
-                    'cpu': '512m',
-                    'memory': '512Mi'
-                  },
-                  'requests': {
-                    'cpu': '128m',
-                    'memory': '128Mi'
-                  }
-                }
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      'apiVersion': 'v1',
-      'kind': 'Service',
-      'metadata': {
-        'labels': {
-          'app': `charlescd-ui-${circleId}`,
-          'service': `charlescd-ui-${circleId}`
-        },
-        'name': `charlescd-ui-${circleId}`,
-        'namespace': 'default'
-      },
-      'spec': {
-        'ports': [
-          {
-            'name': 'http',
-            'port': 3000,
-            'targetPort': 3000
-          }
-        ],
-        'selector': {
-          'app': `charlescd-ui-${circleId}`
-        }
-      }
-    }
-  ]
 }
 

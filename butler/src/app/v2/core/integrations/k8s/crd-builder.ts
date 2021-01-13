@@ -18,9 +18,10 @@ import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CharlesDeployment, CharlesDeploymentComponent } from './interfaces/charles-deployment.interface'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import {
-  CharlesRouteComponent,
+  CharlesCircle,
   CharlesRoutes
 } from './interfaces/charles-routes.interface'
+import { uniqBy } from 'lodash'
 
 export class CrdBuilder {
 
@@ -49,7 +50,7 @@ export class CrdBuilder {
         name: `${namespace}-routes`
       },
       spec: {
-        components: CrdBuilder.getRoutingCrdComponents(activeComponents)
+        circles: CrdBuilder.getRoutingCrdComponents(activeComponents)
       }
     }
   }
@@ -62,18 +63,22 @@ export class CrdBuilder {
     }))
   }
 
-  private static getRoutingCrdComponents(activeComponents: Component[]): CharlesRouteComponent[] { // TODO create query with this logic
-    const charlesRouteComponents: CharlesRouteComponent[] = []
-    activeComponents.forEach(component => {
-      if (charlesRouteComponents.find(c => c.name === component.name)) {
-        return
+  private static getRoutingCrdComponents(activeComponents: Component[]): CharlesCircle[] {
+    const deployments = uniqBy(activeComponents.map(c => c.deployment), 'id')
+
+    return deployments.map(d => {
+      const deploymentComponents = activeComponents.filter(c => d.id === c.deployment.id)
+
+      return {
+        id: d.circleId,
+        default: d.defaultCircle,
+        components: deploymentComponents.map(c => {
+          return {
+            name: c.name,
+            tag: c.imageTag
+          }
+        })
       }
-      const activeByName = activeComponents.filter(c => c.name === component.name)
-      charlesRouteComponents.push({
-        name: component.name,
-        circles: activeByName.map(c => ({ id: c.deployment.circleId, tag: c.imageTag, default: c.deployment.defaultCircle }))
-      })
     })
-    return charlesRouteComponents
   }
 }

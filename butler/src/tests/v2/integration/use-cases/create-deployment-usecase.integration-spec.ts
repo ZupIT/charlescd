@@ -65,7 +65,7 @@ describe('CreateDeploymentUsecase v2', () => {
     await worker.pgBoss.clearStorage()
   })
 
-  it('should only merge default circle components from the previous deployment entity of that circle', async() => {
+  it.skip('should only merge default circle components from the previous deployment entity of that circle', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.OCTOPIPE,
       { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
