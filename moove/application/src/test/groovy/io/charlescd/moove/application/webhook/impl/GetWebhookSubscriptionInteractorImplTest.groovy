@@ -16,22 +16,28 @@
 
 package io.charlescd.moove.application.webhook.impl
 
+import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.GetWebhookSubscriptionInteractor
 import io.charlescd.moove.domain.SimpleWebhookSubscription
+import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 class GetWebhookSubscriptionInteractorImplTest extends Specification {
 
     private GetWebhookSubscriptionInteractor getWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
+    private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        getWebhookSubscriptionInteractor = new GetWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, managementUserSecurityService))
+        getWebhookSubscriptionInteractor = new GetWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
     }
 
     def "when trying to get subscription should do it successfully"() {
@@ -40,6 +46,7 @@ class GetWebhookSubscriptionInteractorImplTest extends Specification {
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
+        1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
 
         notThrown()
@@ -51,6 +58,7 @@ class GetWebhookSubscriptionInteractorImplTest extends Specification {
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
+        1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
 
         thrown(NotFoundException)
@@ -64,6 +72,11 @@ class GetWebhookSubscriptionInteractorImplTest extends Specification {
 
     private static String getAuthorEmail() {
         return "email@email.com"
+    }
+
+    private static User getAuthor() {
+        return new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "charlescd", authorEmail, "http://image.com.br/photo.png",
+                [], false, LocalDateTime.now())
     }
 
     private static String getAuthorization() {

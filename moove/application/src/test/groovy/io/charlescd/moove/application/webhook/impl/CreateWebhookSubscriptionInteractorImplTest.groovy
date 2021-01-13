@@ -16,10 +16,12 @@
 
 package io.charlescd.moove.application.webhook.impl
 
+import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.CreateWebhookSubscriptionInteractor
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
 import io.charlescd.moove.domain.WebhookSubscription
+import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
@@ -29,10 +31,11 @@ class CreateWebhookSubscriptionInteractorImplTest extends Specification {
 
     private CreateWebhookSubscriptionInteractor createWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
+    private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        createWebhookSubscriptionInteractor = new CreateWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, managementUserSecurityService))
+        createWebhookSubscriptionInteractor = new CreateWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
     }
 
     def "when trying to create subscription should do it successfully"() {
