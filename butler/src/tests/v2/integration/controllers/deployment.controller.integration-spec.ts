@@ -309,8 +309,8 @@ describe('DeploymentController v2', () => {
       defaultCircle: false
     }
     const errorMessages = [
-      'modules.0.components.2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:\\/]*[a-zA-Z0-9]$/ regular expression',
-      'modules.0.components.3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:\\/]*[a-zA-Z0-9]$/ regular expression',
+      'modules.0.components.2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      'modules.0.components.3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
       'modules.0.components.4.buildImageUrl must be shorter than or equal to 253 characters',
       'modules.0.Duplicated components with the property \'componentName\''
     ]
