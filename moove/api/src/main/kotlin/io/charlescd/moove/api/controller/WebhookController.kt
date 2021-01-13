@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v1/webhooks")
-class V2WebhookController(
+class WebhookController(
     private val createWebhookSubscriptionInteractor: CreateWebhookSubscriptionInteractor,
     private val updateWebhookSubscriptionInteractor: UpdateWebhookSubscriptionInteractor,
     private val getWebhookSubscriptionInteractor: GetWebhookSubscriptionInteractor,
