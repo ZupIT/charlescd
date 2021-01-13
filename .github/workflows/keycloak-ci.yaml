@@ -1,7 +1,7 @@
 name: Keycloak-ci
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - 'keycloak/**'
 
