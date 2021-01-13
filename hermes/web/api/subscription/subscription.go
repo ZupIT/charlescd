@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"hermes/internal/publisher"
 	"hermes/internal/subscription"
 	util2 "hermes/web/util"
 	"net/http"
@@ -105,5 +106,28 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 		}
 
 		util2.NewResponse(w, http.StatusOK, result)
+	}
+}
+
+func Publish(publisherMain publisher.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		request, err := publisherMain.ParseMessage(r.Body)
+		if err != nil {
+			util2.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		//if err := subscriptionMain.Validate(request); len(err.GetErrors()) > 0 {
+		//	util2.NewResponse(w, http.StatusBadRequest, err)
+		//	return
+		//}
+
+		createdSubscription, err := publisherMain.Publish(request)
+		if err != nil {
+			util2.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		util2.NewResponse(w, http.StatusCreated, createdSubscription)
 	}
 }

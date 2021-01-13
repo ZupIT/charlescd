@@ -19,6 +19,7 @@ var initialValues = map[string]string{
 	"DB_SSL":              "disable",
 	"DB_PORT":             "5432",
 	"ENCRYPTION_KEY":      "maycon",
+	"AMQP_URL": "amqp://guest:guest@localhost:5672/",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {

@@ -21,15 +21,15 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
 			},
 		},
-		"Events": string(events),
+		"Events":    string(events),
 		"CreatedBy": createdBy,
 	}
 
 }
 
 func FindOneQuery(subscriptionId string) string {
-	return fmt.Sprintf(`SELECT external_id, url, description, PGP_SYM_DECRYPT(api_key, '%s'), events
+	return fmt.Sprintf(`SELECT external_id, url, description, events
 	FROM SUBSCRIPTIONS
 	WHERE  id = '%s'
-	AND deleted_at IS NULL`, configuration.GetConfiguration("ENCRYPTION_KEY"), subscriptionId)
+	AND deleted_at IS NULL`, subscriptionId)
 }

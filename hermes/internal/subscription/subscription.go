@@ -111,11 +111,21 @@ func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
 	result := Response{}
 
 	subsQuery := main.db.Raw(FindOneQuery(subscriptionId.String())).Row()
-	subsErr := subsQuery.Scan(&result.ExternalId, &result.Url, &result.Description, &result.ApiKey, &result.Events)
+	subsErr := subsQuery.Scan(&result.ExternalId, &result.Url, &result.Description, &result.Events)
 	if subsErr != nil {
 		return Response{}, errors.NewError("Find Subscription error", subsErr.Error()).
 			WithOperations("FindById.QuerySubscription")
 	}
 
 	return result, nil
+}
+
+func (main Main) FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.Error) {
+	var res []Response
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ?", externalId.String())
+	if q.Error != nil {
+		return []Response{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
+			WithOperations("FindAllByExternalId.QuerySubscription")
+	}
+	return res, nil
 }

@@ -2,7 +2,9 @@ package api
 
 import (
 	"github.com/gorilla/mux"
+	"hermes/internal/publisher"
 	"hermes/internal/subscription"
+	"hermes/internal/subscriptionexecution"
 	"log"
 	"net/http"
 	"time"
@@ -10,12 +12,16 @@ import (
 
 type Api struct {
 	// Dependencies
-	subscriptionMain subscription.UseCases
+	subscriptionMain      subscription.UseCases
+	subscriptionExecution subscriptionexecution.UseCases
+	publisherMain         publisher.UseCases
 }
 
-func NewApi(subscriptionMain subscription.UseCases) *mux.Router {
+func NewApi(subscriptionMain subscription.UseCases, subscriptionExecution subscriptionexecution.UseCases, publisherMain publisher.UseCases) *mux.Router {
 	api := Api{
-		subscriptionMain: subscriptionMain,
+		subscriptionMain:      subscriptionMain,
+		subscriptionExecution: subscriptionExecution,
+		publisherMain: publisherMain,
 	}
 	router := mux.NewRouter()
 	s := router.PathPrefix("/api").Subrouter()

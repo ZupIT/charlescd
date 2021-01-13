@@ -15,6 +15,7 @@ type UseCases interface {
 	Update(subscriptionId uuid.UUID,subscription []byte) (UpdateResponse, errors.Error)
 	Delete(subscriptionId uuid.UUID, author string) errors.Error
 	FindById(subscriptionId uuid.UUID) (Response, errors.Error)
+	FindAllByExternalId(subscriptionId uuid.UUID) ([]Response, errors.Error)
 }
 type Main struct {
 	db         *gorm.DB
