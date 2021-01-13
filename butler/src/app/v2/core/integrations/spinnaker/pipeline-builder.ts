@@ -133,11 +133,11 @@ export class SpinnakerPipelineBuilder {
     const proxyStages: Stage[] = []
     deployment.components.forEach(component => {
       const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
-      proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++))
       proxyStages.push(activeByName.length > 1 ?
         getUndeploymentVirtualServiceStage(component, deployment, activeByName, this.currentStageId++) :
         getUndeploymentEmptyVirtualServiceStage(component, deployment, this.currentStageId++)
       )
+      proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++))
     })
     return proxyStages
   }
