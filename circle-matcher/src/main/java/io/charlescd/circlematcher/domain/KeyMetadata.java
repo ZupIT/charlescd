@@ -91,11 +91,18 @@ public class KeyMetadata {
     }
 
     public void setPercentage(Integer percentage) {
+        this.validatePercentage(percentage, "Percentage must be between 0 and 100");
         this.percentage = percentage;
     }
 
+    private void validatePercentage(Integer percentage, String message) {
+        if (percentage != null) {
+            Assert.isTrue(percentage <= 100 && percentage >= 0, message);
+        }
+    }
+
     public int sumPercentage(Integer percentageToSum) {
-        Assert.isTrue(percentageToSum + percentage <= 100 && percentage >= 0, "Percentage must be between 0 and 100");
+        this.validatePercentage(this.percentage + percentageToSum, "Sum of percentage of circles exceeded 100 or is lower than 0");
         return this.percentage += percentageToSum;
     }
 

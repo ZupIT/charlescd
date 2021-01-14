@@ -37,6 +37,9 @@ public class Circle {
     }
 
     public static Circle from(KeyMetadata keyMetadata) {
+        if (keyMetadata == null) {
+            throw new IllegalArgumentException("Keymetadata must not be null");
+        }
         return new Circle(
                 keyMetadata.getCircleId(),
                 keyMetadata.getName()
