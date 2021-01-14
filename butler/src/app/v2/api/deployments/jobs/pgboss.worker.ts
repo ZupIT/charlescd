@@ -59,28 +59,28 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   }
 
   public async onModuleInit(): Promise<void> {
-    if (process.env.NODE_ENV !== 'test') {
-      this.consoleLoggerService.log('Starting pgboss')
-      await this.pgBoss.start()
-      this.pgBoss.on('error', (error) => {
-        this.consoleLoggerService.log('pg-boss error', error)
-      })
+    // if (process.env.NODE_ENV !== 'test') {
+    //   this.consoleLoggerService.log('Starting pgboss')
+    //   await this.pgBoss.start()
+    //   this.pgBoss.on('error', (error) => {
+    //     this.consoleLoggerService.log('pg-boss error', error)
+    //   })
 
-      await this.pgBoss.subscribe(QueueNames.DEPLOYMENT, async(job: JobWithDoneCallback<Execution, unknown>) => {
-        await this.deploymentHandler.run(job)
-      })
+    //   await this.pgBoss.subscribe(QueueNames.DEPLOYMENT, async(job: JobWithDoneCallback<Execution, unknown>) => {
+    //     await this.deploymentHandler.run(job)
+    //   })
 
-      await this.pgBoss.schedule(QueueNames.CLEANUP, '* * * * *', {}, {})
-      await this.pgBoss.subscribe(QueueNames.CLEANUP, async(job: JobWithDoneCallback<unknown, unknown>) => {
-        await this.deploymentCleanupHandler.run(job)
-      })
-    }
+    //   await this.pgBoss.schedule(QueueNames.CLEANUP, '* * * * *', {}, {})
+    //   await this.pgBoss.subscribe(QueueNames.CLEANUP, async(job: JobWithDoneCallback<unknown, unknown>) => {
+    //     await this.deploymentCleanupHandler.run(job)
+    //   })
+    // }
   }
 
   public async onModuleDestroy(): Promise<void> {
-    if (process.env.NODE_ENV !== 'test') {
-      this.consoleLoggerService.log('Shutting down onModuleDestroy')
-      return await this.pgBoss.stop()
-    }
+    // if (process.env.NODE_ENV !== 'test') {
+    //   this.consoleLoggerService.log('Shutting down onModuleDestroy')
+    //   return await this.pgBoss.stop()
+    // }
   }
 }
