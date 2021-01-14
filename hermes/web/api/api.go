@@ -14,6 +14,6 @@ func (api *Api) newV1Api(s *mux.Router) {
 		r.HandleFunc(fmt.Sprintf("%s/{subscriptionId}", path), subscription.Update(api.subscriptionMain)).Methods("PATCH")
 		r.HandleFunc(fmt.Sprintf("%s/{subscriptionId}", path), subscription.Delete(api.subscriptionMain)).Methods("DELETE")
 		r.HandleFunc(fmt.Sprintf("%s/{subscriptionId}", path), subscription.FindById(api.subscriptionMain)).Methods("GET")
-		r.HandleFunc(fmt.Sprintf("%s/publish", path), subscription.Publish(api.publisherMain)).Methods("POST")
+		r.HandleFunc(fmt.Sprintf("%s/publish", path), subscription.Publish(api.publisherMain, api.subscriptionMain)).Methods("POST")
 	}
 }

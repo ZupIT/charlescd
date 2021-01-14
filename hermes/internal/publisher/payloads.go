@@ -11,5 +11,11 @@ type Request struct {
 	Details    json.RawMessage `json:"details"`
 }
 
+type MessageRequest struct {
+	Request
+	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+}
+
+
 type SaveResponse struct {
 }

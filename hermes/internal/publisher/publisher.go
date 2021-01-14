@@ -20,7 +20,7 @@ func (main Main) ParseMessage(message io.ReadCloser) (Request, errors.Error) {
 func (main Main) Validate(message Request) errors.ErrorList {
 	return nil
 }
-func (main Main) Publish(message Request) (SaveResponse, errors.Error) {
+func (main Main) Publish(message Request, subscriptionIds []uuid.UUID) (SaveResponse, errors.Error) {
 	conn := NewConnection("my-producer", "my-exchange", "queue-1")
 	if err := conn.Connect(); err != nil {
 		panic(err)
@@ -29,7 +29,16 @@ func (main Main) Publish(message Request) (SaveResponse, errors.Error) {
 		panic(err)
 	}
 
-	byteM, err := util.GetBytes(message)
+	var msgList []MessageRequest
+	for _, s := range subscriptionIds {
+		m := MessageRequest{
+			Request:        message,
+			SubscriptionId: s,
+		}
+		msgList = append(msgList, m)
+	}
+
+	byteM, err := util.GetBytes(msgList)
 	if err != nil {
 		return SaveResponse{}, errors.NewError("Parse error", err.Error()).
 			WithOperations("Parse.ParseDecode")

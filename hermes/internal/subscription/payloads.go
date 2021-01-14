@@ -17,7 +17,7 @@ type Request struct {
 }
 
 type UpdateRequest struct {
-	Events         json.RawMessage `json:"events"`
+	Events json.RawMessage `json:"events"`
 }
 
 type SaveResponse struct {
@@ -29,6 +29,14 @@ type UpdateResponse struct {
 }
 
 type Response struct {
+	ExternalId  uuid.UUID       `json:"externalId"`
+	Url         string          `json:"url"`
+	Description string          `json:"description"`
+	Events      json.RawMessage `json:"events"`
+}
+
+type ExternalIdResponse struct {
+	Id          uuid.UUID       `json:"id"`
 	ExternalId  uuid.UUID       `json:"externalId"`
 	Url         string          `json:"url"`
 	Description string          `json:"description"`

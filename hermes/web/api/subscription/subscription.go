@@ -109,7 +109,7 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 	}
 }
 
-func Publish(publisherMain publisher.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func Publish(publisherMain publisher.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := publisherMain.ParseMessage(r.Body)
 		if err != nil {
@@ -122,7 +122,18 @@ func Publish(publisherMain publisher.UseCases) func(w http.ResponseWriter, r *ht
 		//	return
 		//}
 
-		createdSubscription, err := publisherMain.Publish(request)
+		subscriptions, err := subscriptionMain.FindAllByExternalId(request.ExternalId)
+		if err != nil {
+			util2.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		var ids []uuid.UUID
+		for _, s := range subscriptions {
+			ids = append(ids, s.Id)
+		}
+
+		createdSubscription, err := publisherMain.Publish(request, ids)
 		if err != nil {
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return
