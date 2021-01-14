@@ -21,11 +21,8 @@ export class DeploymentsHookController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    // console.log(JSON.stringify(params.children))
     const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration', 'components'] })
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
-    // const specs = deployment.compiledSpec?? check this name with leandro
-    // const specs = spec(deployment.cdConfiguration, deployment.circleId)
     const specs = flatten(deployment.components.map(c => c.manifests))
 
     if (isEmpty(params.children['Deployment.apps/v1'])) {
@@ -59,7 +56,12 @@ export class DeploymentsHookController {
     })
 
     if (!allReady) {
-      // update({ active: false })
+      // TODO implement logic to manage the following flow
+      // circle_id = 123, components = [a,b,c] is running
+      // new deployment on same circle
+      // circle_id = 123, components = [a,b,d]
+      // we cannot remove c on the first reconcile loop or we will have downtime on the circle
+      // there will be a few reconcile loops that will contain [a,b,c,d] until [a,b,d] are ready
       return { children: specs, resyncAfterSeconds: 5 }
     }
 
@@ -73,15 +75,12 @@ export class DeploymentsHookController {
   @Post('/v2/operator/deployment/hook/finalize')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: Record<string, unknown>[], finalized: boolean, resyncAfterSeconds?: number }> {
-    // console.log(JSON.stringify(params))
+  public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: [], finalized: boolean, resyncAfterSeconds?: number }> {
     const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration'] })
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const finalized = true
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
     await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
-    // const specs = deployment.compiledSpec?? check this name with leandro
-    const specs : Record<string, unknown>[] = []
 
     // we cant trust that everything went well instantly, we need to keep returning finalized = true until we are sure there are no more routes to this deployment
     // const currentRoutes = this.k8sClient.getRoutingResource()
@@ -94,10 +93,10 @@ export class DeploymentsHookController {
     // if finalized = true metacontroller wont try to call this hook for this resource anymore, if finalize = false we return a resyncAfterSeconds to signal
     // in how much time metacontroller will call this same hook
     if (finalized) {
-      return { children: specs, finalized: finalized }
+      return { children: [], finalized: finalized }
     }
     else {
-      return { children: specs, finalized: finalized, resyncAfterSeconds: 2 }
+      return { children: [], finalized: finalized, resyncAfterSeconds: 2 }
     }
   }
 }
