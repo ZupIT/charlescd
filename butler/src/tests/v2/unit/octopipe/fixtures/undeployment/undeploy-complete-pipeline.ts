@@ -58,27 +58,7 @@ export const completeOctopipeUndeploymentRequest: OctopipeUndeploymentRequest = 
     }
   ],
   proxyDeployments: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'A',
-        subsets: [
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: 'default-circle-id'
-            },
-            name: 'default-circle-id'
-          }
-        ]
-      }
-    },
+
     {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'VirtualService',
@@ -121,15 +101,15 @@ export const completeOctopipeUndeploymentRequest: OctopipeUndeploymentRequest = 
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
       metadata: {
-        name: 'B',
+        name: 'A',
         namespace: 'sandbox'
       },
       spec: {
-        host: 'B',
+        host: 'A',
         subsets: [
           {
             labels: {
-              component: 'B',
+              component: 'A',
               tag: 'v0',
               circleId: 'default-circle-id'
             },
@@ -175,7 +155,28 @@ export const completeOctopipeUndeploymentRequest: OctopipeUndeploymentRequest = 
           }
         ]
       }
-    }
+    },
+    {
+      apiVersion: 'networking.istio.io/v1alpha3',
+      kind: 'DestinationRule',
+      metadata: {
+        name: 'B',
+        namespace: 'sandbox'
+      },
+      spec: {
+        host: 'B',
+        subsets: [
+          {
+            labels: {
+              component: 'B',
+              tag: 'v0',
+              circleId: 'default-circle-id'
+            },
+            name: 'default-circle-id'
+          }
+        ]
+      }
+    },
   ],
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null

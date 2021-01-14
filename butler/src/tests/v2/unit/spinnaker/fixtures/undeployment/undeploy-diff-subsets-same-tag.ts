@@ -202,10 +202,6 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       ],
       skipExpressionEvaluation: false,
       source: 'text',
-      stageEnabled: {
-        expression: '${ #stage(\'Undeploy Destination Rules A\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
       trafficManagement: {
         enabled: false,
         options: {
@@ -266,6 +262,10 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       name: 'Undeploy Destination Rules A',
       refId: '2',
       requisiteStageRefIds: ['1'],
+      stageEnabled: {
+        expression: '${ #stage(\'Undeploy Virtual Service A\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
       skipExpressionEvaluation: false,
       source: 'text',
       trafficManagement: {
@@ -332,10 +332,6 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       ],
       skipExpressionEvaluation: false,
       source: 'text',
-      stageEnabled: {
-        expression: '${ #stage(\'Undeploy Destination Rules B\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
       trafficManagement: {
         enabled: false,
         options: {
@@ -379,6 +375,10 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       },
       name: 'Undeploy Destination Rules B',
       refId: '4',
+      stageEnabled: {
+        expression: '${ #stage(\'Undeploy Virtual Service B\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
       requisiteStageRefIds: ['3'],
       skipExpressionEvaluation: false,
       source: 'text',
@@ -403,7 +403,7 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       variables: [
         {
           key: 'proxyUndeploymentsResult',
-          value: '${#stage(\'Undeploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Undeploy Virtual Service B\').status.toString() == \'SUCCEEDED\'}'
+          value: '${#stage(\'Undeploy Destination Rules A\').status.toString() == \'SUCCEEDED\' && #stage(\'Undeploy Destination Rules B\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
