@@ -62,7 +62,7 @@ test('should render registry successful', async () => {
   render(<SectionRegistry form={form} setForm={setForm} data={data} />);
 
   const errorText = screen.queryByTestId('log-error');
-  await waitFor(() => expect(errorText).not.toBeInTheDocument());
+  expect(errorText).not.toBeInTheDocument();
 });
 
 test('should remove/cancel registry', async () => {
@@ -78,6 +78,6 @@ test('should remove/cancel registry', async () => {
   expect(cancelIcon).toBeInTheDocument();
   userEvent.click(cancelIcon);
 
-  cancelIcon = screen.queryByTestId('icon-cancel');
-  waitFor(() => expect(cancelIcon).not.toBeInTheDocument());
+  cancelIcon = await screen.findByTestId('icon-cancel');
+  expect(cancelIcon).not.toBeInTheDocument();
 });
