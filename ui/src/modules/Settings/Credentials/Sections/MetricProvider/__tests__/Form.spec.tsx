@@ -48,15 +48,6 @@ test('render datasource input by datasource change', async () => {
   expect(screen.getByText('Datasource health')).toBeInTheDocument();
   expect(screen.getByText('Datasource name')).toBeInTheDocument();
   expect(screen.getByText('Url')).toBeInTheDocument();
-
-  fireEvent.click(screen.getByTestId('icon-cancel'))
-
-  const datasourcePlugin2 = screen.getByText('Select a datasource plugin');
-  await act(async () => selectEvent.select(datasourcePlugin2, 'Google Analytics'));
-
-  expect(screen.getByText('Datasource name')).toBeInTheDocument();
-  expect(screen.getByText('View ID')).toBeInTheDocument();
-  expect(screen.getByText('Service Account')).toBeInTheDocument();
 })
 
 test('render button test connection', async () => {
