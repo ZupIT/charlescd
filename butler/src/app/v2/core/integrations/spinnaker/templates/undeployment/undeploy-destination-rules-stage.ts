@@ -42,6 +42,10 @@ export const getUndeploymentDestinationRulesStage = (
   requisiteStageRefIds: [`${stageId - 1}`],
   skipExpressionEvaluation: false,
   source: 'text',
+  stageEnabled: {
+    expression: '${ #stage(\'' + `Undeploy Virtual Service ${component.name}` + '\').status.toString() == \'SUCCEEDED\'}',
+    type: 'expression'
+  },
   trafficManagement: {
     enabled: false,
     options: {
