@@ -34,7 +34,7 @@ export class DeploymentsController {
   ) { }
 
   @Post('/')
-  @UsePipes(SimultaneousDeploymentValidationPipe)
+  // @UsePipes(SimultaneousDeploymentValidationPipe)
   @UsePipes(CdConfigurationExistencePipe)
   @UsePipes(DeploymentUniquenessPipe)
   @UsePipes(new ValidationPipe({ transform: true }))
