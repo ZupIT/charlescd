@@ -20,6 +20,7 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.infrastructure.service.client.*
 import io.charlescd.moove.infrastructure.service.client.request.*
+import io.charlescd.moove.infrastructure.service.client.response.HermesHealthCheckSubscriptionResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
 import org.springframework.stereotype.Service
 
@@ -43,6 +44,10 @@ class HermesClientService(private val hermesClient: HermesClient) : HermesServic
 
     override fun deleteSubscription(authorEmail: String, id: String) {
         hermesClient.deleteSubscription(authorEmail, id)
+    }
+
+    override fun healthCheckSubscription(authorEmail: String, id: String): HealthCheckWebhookSubscription {
+        return buildHealthCheckWebhookSubscription(hermesClient.healthCheckSubscription(authorEmail, id))
     }
 
     override fun getSubscriptionHistory() {
@@ -75,6 +80,13 @@ class HermesClientService(private val hermesClient: HermesClient) : HermesServic
             description = subscription.description,
             workspaceId = subscription.externalId,
             events = subscription.events
+        )
+    }
+
+    private fun buildHealthCheckWebhookSubscription(healthCheck: HermesHealthCheckSubscriptionResponse): HealthCheckWebhookSubscription {
+        return HealthCheckWebhookSubscription(
+            status = healthCheck.status,
+            details = healthCheck.details
         )
     }
 }

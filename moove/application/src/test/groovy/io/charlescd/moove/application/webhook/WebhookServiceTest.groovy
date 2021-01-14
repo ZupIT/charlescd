@@ -18,6 +18,7 @@ package io.charlescd.moove.application.webhook
 
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
+import io.charlescd.moove.domain.HealthCheckWebhookSubscription
 import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
@@ -89,6 +90,7 @@ class WebhookServiceTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        1 * hermesService.updateSubscription(authorEmail, subscriptionId, events) >> simpleWebhookSubscription
 
         notThrown()
     }
@@ -101,6 +103,7 @@ class WebhookServiceTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        0 * hermesService.updateSubscription(authorEmail, subscriptionId, events) >> simpleWebhookSubscription
 
         thrown(NotFoundException)
     }
@@ -113,11 +116,12 @@ class WebhookServiceTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        1 * hermesService.deleteSubscription(authorEmail, subscriptionId)
 
         notThrown()
     }
 
-    def "when delete webhook subscription and workspaceId is wrong, should not update and throw NotFoundException"() {
+    def "when delete webhook subscription and workspaceId is wrong, should not delete and throw NotFoundException"() {
         when:
         this.webhookService.deleteSubscription("workspaceIdOther", authorization, subscriptionId)
 
@@ -125,6 +129,33 @@ class WebhookServiceTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        0 * hermesService.deleteSubscription(authorEmail, subscriptionId)
+
+        thrown(NotFoundException)
+    }
+
+    def "when check webhook subscription health should not throw"() {
+        when:
+        this.webhookService.healthCheckSubscription(workspaceId, authorization, subscriptionId)
+
+        then:
+        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
+        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
+        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        1 * hermesService.healthCheckSubscription(authorEmail, subscriptionId) >> healthCheckWebhookSubscription
+
+        notThrown()
+    }
+
+    def "when check webhook subscription health and workspaceId is wrong, should not update and throw NotFoundException"() {
+        when:
+        this.webhookService.deleteSubscription("workspaceIdOther", authorization, subscriptionId)
+
+        then:
+        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
+        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
+        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        0 * hermesService.healthCheckSubscription(authorEmail, subscriptionId) >> healthCheckWebhookSubscription
 
         thrown(NotFoundException)
     }
@@ -159,5 +190,9 @@ class WebhookServiceTest extends Specification {
     private static SimpleWebhookSubscription getSimpleWebhookSubscription() {
         return new SimpleWebhookSubscription('https://mywebhook.com.br', workspaceId,
                 'My Webhook', events)
+    }
+
+    private static HealthCheckWebhookSubscription getHealthCheckWebhookSubscription() {
+        return new HealthCheckWebhookSubscription(500, "Unexpected error")
     }
 }

@@ -72,4 +72,15 @@ interface HermesClient {
         @RequestHeader("x-author") authorEmail: String,
         @PathVariable("id") id: String
     )
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["/subscriptions/{id}/health-check"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun healthCheckSubscription(
+        @RequestHeader("x-author") authorEmail: String,
+        @PathVariable("id") id: String
+    ): HermesHealthCheckSubscriptionResponse
 }

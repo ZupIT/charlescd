@@ -30,6 +30,8 @@ interface HermesService {
 
     fun deleteSubscription(authorEmail: String, id: String)
 
+    fun healthCheckSubscription(authorEmail: String, id: String): HealthCheckWebhookSubscription
+
     fun getSubscriptionHistory() // TODO Implement
 
     fun publishSubscription() // TODO Implement

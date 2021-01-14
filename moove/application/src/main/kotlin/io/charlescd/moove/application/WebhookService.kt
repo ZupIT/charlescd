@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.application
 
+import io.charlescd.moove.domain.HealthCheckWebhookSubscription
 import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
@@ -49,6 +50,12 @@ class WebhookService(private val hermesService: HermesService, private val userS
         val author = getAuthor(authorization)
         validateSubscription(workspaceId, author, id)
         hermesService.deleteSubscription(author.email, id)
+    }
+
+    fun healthCheckSubscription(workspaceId: String, authorization: String, id: String): HealthCheckWebhookSubscription {
+        val author = getAuthor(authorization)
+        validateSubscription(workspaceId, author, id)
+        return hermesService.healthCheckSubscription(author.email, id)
     }
 
     private fun getAuthor(authorization: String): User {

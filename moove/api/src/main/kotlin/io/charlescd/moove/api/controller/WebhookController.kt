@@ -82,4 +82,15 @@ class WebhookController(
     ) {
         deleteWebhookSubscriptionInteractor.execute(workspaceId, id, authorization)
     }
+
+    @ApiOperation(value = "Health check from a subscription webhook")
+    @DeleteMapping("/{id}/health-check")
+    @ResponseStatus(HttpStatus.OK)
+    fun healthCheck(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("id") id: String
+    ) {
+        deleteWebhookSubscriptionInteractor.execute(workspaceId, id, authorization)
+    }
 }
