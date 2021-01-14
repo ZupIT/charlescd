@@ -738,3 +738,81 @@ test('should test connection with Harbor (error)', async () => {
   expect(submitButton).not.toBeDisabled();
 });
 
+test('should clean test connection message after change form', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({ }));
+
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Harbor');
+  
+  const registryField = await screen.findByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  let submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+
+  await act(async () => userEvent.click(testConnectionButton));
+
+  const successMessage = await screen.findByText('Successful connection.');
+
+  expect(successMessage).toBeInTheDocument();
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudaragain');
+  });
+  expect(successMessage).not.toBeInTheDocument();
+});
+
+test('should clean test connection message after change form', async () => {
+  const error = {
+    status: '404',
+    message: 'invalid registry'
+  };
+  (fetch as FetchMock).mockRejectedValueOnce(new Response(JSON.stringify(error)));
+
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  const registryLabel = screen.getByText('Choose which one you want to add:');
+  selectEvent.select(registryLabel, 'Harbor');
+  
+  const registryField = await screen.findByText('Type a name for Registry');
+  const registryURLField = screen.getByText('Enter the registry url');
+  const usernameField = screen.getByText('Enter the username');
+  const passwordField = screen.getByText('Enter the password');
+  const testConnectionButton = screen.getByText('Test connection');
+  let submitButton = screen.getByTestId('button-default-submit-registry');
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudar');
+  });
+
+
+  await act(async () => userEvent.click(testConnectionButton));
+
+  const errorMessage = await screen.findByText('invalid registry');
+  expect(errorMessage).toBeInTheDocument();
+
+  await act(async () => {
+    userEvent.type(registryField, 'fake-name');
+    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(usernameField, 'fake username');
+    userEvent.type(passwordField, '123mudaragain');
+  });
+  expect(errorMessage).not.toBeInTheDocument();
+});
+

@@ -61,9 +61,7 @@ const FormRegistry = ({ onFinish }: Props) => {
 
   useEffect(() => {
     if (message && message.type) {
-      if (isEqual(form, messageForm)) {
-        return;
-      } else {
+      if (!isEqual(form, messageForm)) {
         setMessage(null);
       }
     }
