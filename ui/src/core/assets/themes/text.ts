@@ -21,7 +21,8 @@ import {
   COLOR_LAVENDER_GREY,
   COLOR_DODGER_BLUE,
   COLOR_MOUNTAIN_MEADOW,
-  COLOR_SUNFLOWER
+  COLOR_SUNFLOWER,
+  COLOR_VIOLET_BLUE
 } from '../colors';
 
 export const light = {};
@@ -34,5 +35,6 @@ export const dark = {
   primary: COLOR_DODGER_BLUE,
   success: COLOR_MOUNTAIN_MEADOW,
   warning: COLOR_SUNFLOWER,
-  stable: COLOR_GHOST_WHITE
+  stable: COLOR_GHOST_WHITE,
+  link: COLOR_VIOLET_BLUE
 } as Record<string, string>;
