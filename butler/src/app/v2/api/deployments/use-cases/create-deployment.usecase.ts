@@ -17,7 +17,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { flatten } from 'lodash'
-import { EntityManager, getConnection, Repository } from 'typeorm'
+import { EntityManager, getConnection, Repository, UpdateResult } from 'typeorm'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
@@ -54,11 +54,11 @@ export class CreateDeploymentUseCase {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: createDeploymentDto.deploymentId, incomingCircleId })
     const { deployment, execution } = await getConnection().transaction(async transactionManager => {
       const deploymentEntity = await this.newDeployment(createDeploymentDto)
+      await this.deactivateCurrentCircle(createDeploymentDto.circle.headerValue, transactionManager)
       const deployment = await transactionManager.save(deploymentEntity)
       const execution = await this.createExecution(deployment, incomingCircleId, transactionManager)
       return { deployment, execution }
     })
-    await this.deploymentsRepository.update({ id: deployment.id }, { active: true }) // extract this update, here we can put the logic to make the deployment aditive or replace current active components, right now its just set current as active but possible bugs will happen as im not taking in account the activeComponents query to generate the routes manifest
     try {
       await this.k8sClient.applyDeploymentCustomResource(deployment)
     } catch (error) {
@@ -80,8 +80,16 @@ export class CreateDeploymentUseCase {
     const cdConfig = createDeploymentDto.cdConfiguration.configurationData as IDefaultConfig
     const components = await this.getDeploymentComponents(cdConfig, createDeploymentDto.circle.headerValue, createDeploymentDto.modules)
     const deployment = createDeploymentDto.toCircleEntity(components)
+    deployment.active = true
     this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT')
     return deployment
+  }
+
+  private async deactivateCurrentCircle(circleId: string, transactionManager: EntityManager): Promise<UpdateResult | undefined> {
+    // here we can put the logic to make the deployment aditive or replace current active components, right now its just set current as active but possible
+    // bugs will happen as Im not taking in account the activeComponents query to generate the routes manifest
+
+    return await transactionManager.update(DeploymentEntity, { circleId: circleId }, { active: false })
   }
 
   private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
@@ -98,7 +106,7 @@ export class CreateDeploymentUseCase {
     const cdConfig = createDeploymentDto.cdConfiguration.configurationData as IDefaultConfig
     const components = await this.getDeploymentComponents(cdConfig, createDeploymentDto.circle.headerValue, createDeploymentDto.modules)
     const deployment = createDeploymentDto.toDefaultEntity(unchangedComponents, components)
-
+    deployment.active = true
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
   }
@@ -106,7 +114,7 @@ export class CreateDeploymentUseCase {
   private async getDeploymentComponents(config: IDefaultConfig, circleId: string, modules: CreateModuleDeploymentDto[]): Promise<ComponentEntity[]> {
     this.consoleLoggerService.log('START:CREATE_MANIFESTS')
     const components =
-      await Promise.all(modules.map(async module => 
+      await Promise.all(modules.map(async module =>
         Promise.all(module.components.map(async component => {
           const manifests = await this.getManifestsFor(config, circleId, module.helmRepository, component)
           return component.toEntity(module.helmRepository, manifests)
@@ -116,9 +124,9 @@ export class CreateDeploymentUseCase {
     return flatten(components)
   }
 
-  private async getManifestsFor(cdConfig: IDefaultConfig, 
-    circleId: string, 
-    repoUrl: string, 
+  private async getManifestsFor(cdConfig: IDefaultConfig,
+    circleId: string,
+    repoUrl: string,
     component: CreateComponentRequestDto
   ): Promise<KubernetesManifest[]> {
     const repoConfig = this.getRepoConfig(cdConfig, repoUrl)
