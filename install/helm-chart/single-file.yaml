@@ -1,4 +1,25 @@
 ---
+# Source: Charles-CD/charts/ingress-nginx/templates/controller-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    helm.sh/chart: ingress-nginx-3.15.2
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: charlescd-ingress-nginx
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -1947,27 +1968,6 @@ data:
     "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
     exit $exit_status
 ---
-# Source: Charles-CD/charts/ingress-nginx/templates/controller-serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    helm.sh/chart: ingress-nginx-3.15.2
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: charlescd
-    app.kubernetes.io/version: "0.41.2"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: controller
-  name: charlescd-ingress-nginx
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
----
 # Source: Charles-CD/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -2048,7 +2048,6 @@ rules:
   - ""
   resources:
   - namespaces
-  - configmaps
   - events
   - replicationcontrollers
   - serviceaccounts
@@ -2062,6 +2061,7 @@ rules:
   - pods
   - services
   - secrets
+  - configmaps
   verbs:
   - create
   - delete
@@ -4021,54 +4021,6 @@ webhooks:
         name: charlescd-ingress-nginx-controller-admission
         path: /networking/v1beta1/ingresses
 ---
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: charlescd-ingress-nginx-admission
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  labels:
-    helm.sh/chart: ingress-nginx-3.15.2
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: charlescd
-    app.kubernetes.io/version: "0.41.2"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: admission-webhook
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: charlescd-ingress-nginx-admission
-subjects:
-  - kind: ServiceAccount
-    name: charlescd-ingress-nginx-admission
-    namespace: charles
----
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name:  charlescd-ingress-nginx-admission
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  labels:
-    helm.sh/chart: ingress-nginx-3.15.2
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: charlescd
-    app.kubernetes.io/version: "0.41.2"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: admission-webhook
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: charlescd-ingress-nginx-admission
-subjects:
-  - kind: ServiceAccount
-    name: charlescd-ingress-nginx-admission
-    namespace: charles
----
 # Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -4093,9 +4045,9 @@ rules:
       - get
       - update
 ---
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRoleBinding
 metadata:
   name:  charlescd-ingress-nginx-admission
   annotations:
@@ -4108,14 +4060,14 @@ metadata:
     app.kubernetes.io/version: "0.41.2"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: admission-webhook
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - get
-      - create
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: charlescd-ingress-nginx-admission
+subjects:
+  - kind: ServiceAccount
+    name: charlescd-ingress-nginx-admission
+    namespace: charles
 ---
 # Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
 apiVersion: batch/v1
@@ -4212,6 +4164,54 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 2000
+---
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name:  charlescd-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.15.2
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create
+---
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: charlescd-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.15.2
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: charlescd-ingress-nginx-admission
+subjects:
+  - kind: ServiceAccount
+    name: charlescd-ingress-nginx-admission
+    namespace: charles
 ---
 # Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
 apiVersion: v1
