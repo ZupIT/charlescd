@@ -193,14 +193,14 @@ func (main Main) GetMetrics(dataSourceID string) (datasource.MetricList, errors.
 	}
 
 	getList, lookupErr := plugin.Lookup("GetMetrics")
-	if err != nil {
+	if lookupErr != nil {
 		return datasource.MetricList{}, errors.NewError("Lookup error", lookupErr.Error()).
 			WithOperations("GetMetrics.Lookup")
 	}
 
 	configurationData, _ := json.Marshal(dataSourceResult.Data)
 	list, getListErr := getList.(func(configurationData []byte) (datasource.MetricList, error))(configurationData)
-	if err != nil {
+	if getListErr != nil {
 		return datasource.MetricList{}, errors.NewError("GetList error", getListErr.Error()).
 			WithOperations("GetMetrics.getList")
 	}
@@ -215,14 +215,14 @@ func (main Main) TestConnection(pluginSrc string, datasourceData json.RawMessage
 	}
 
 	testConnection, lookupError := plugin.Lookup("TestConnection")
-	if err != nil {
+	if lookupError != nil {
 		return errors.NewError("Test Conn error", lookupError.Error()).
 			WithOperations("TestConnection.Lookup")
 	}
 
 	configurationData, _ := json.Marshal(datasourceData)
 	testConnError := testConnection.(func(configurationData []byte) error)(configurationData)
-	if err != nil {
+	if testConnError != nil {
 		return errors.NewError("Test Conn error", testConnError.Error()).
 			WithOperations("TestConnection.Marshal")
 	}

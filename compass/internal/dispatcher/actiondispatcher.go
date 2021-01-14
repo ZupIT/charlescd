@@ -88,12 +88,20 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 		return
 	}
 
-	act, _ := dispatcher.actionRepo.FindActionById(groupAction.ActionID.String())
+	act, err := dispatcher.actionRepo.FindActionById(groupAction.ActionID.String())
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": err.WithOperations("executeAction.FindActionByID"),
+		}).Errorln()
+		return
+	}
+
 	actionPlugin, err := dispatcher.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", act.Type, act.Type))
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": err.WithOperations("executeAction.GetPluginBySrc"),
 		}).Errorln()
+
 		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error().Detail)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
@@ -104,12 +112,13 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 	}
 
 	exec, lookupErr := actionPlugin.Lookup("Do")
-	if err != nil {
+	if lookupErr != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": errors.NewError("Execute dispatch error", lookupErr.Error()).
 				WithOperations("executeAction.getInterval"),
 		}).Errorln()
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error().Detail)
+
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), lookupErr.Error())
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": err.WithOperations("executeAction.Lookup.SetExecutionFailed"),
@@ -124,6 +133,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 			"err": errors.NewError("Execute dispatch error", result.Error()).
 				WithOperations("executeAction.exec"),
 		}).Errorln()
+
 		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), result.Error())
 		if err != nil {
 			logrus.WithFields(logrus.Fields{

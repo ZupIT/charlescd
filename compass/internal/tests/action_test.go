@@ -20,7 +20,6 @@ package tests
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -363,8 +362,11 @@ func (s *ActionSuite) TestValidateActionPluginNotFound() {
 	res := s.repository.ValidateAction(act)
 
 	require.Len(s.T(), res.GetErrors(), 1)
-	require.Equal(s.T(), "type", res.GetErrors()[0].Error().Meta["field"])
-	require.Equal(s.T(), "action type is invalid", res.GetErrors()[0].Error().Detail)
+	require.Equal(s.T(), "type", res.GetErrors()[0].ErrorWithOperations().Meta["field"])
+	require.NotEmpty(s.T(), res.GetErrors()[0].ErrorWithOperations().Detail)
+	require.Equal(s.T(), "Invalid data", res.GetErrors()[0].ErrorWithOperations().Title)
+	require.Len(s.T(), res.GetErrors()[0].ErrorWithOperations().Operations, 1)
+	require.Equal(s.T(), "validateActionConfig.GetPluginBySrc", res.GetErrors()[0].ErrorWithOperations().Operations[0])
 }
 
 func (s *ActionSuite) TestValidateActionPluginLookupError() {
@@ -374,8 +376,11 @@ func (s *ActionSuite) TestValidateActionPluginLookupError() {
 	res := s.repository.ValidateAction(act)
 
 	require.Len(s.T(), res.GetErrors(), 1)
-	require.Equal(s.T(), "type", res.GetErrors()[0].Error().Meta["field"])
-	require.Equal(s.T(), "action type is invalid", res.GetErrors()[0].Error().Detail)
+	require.Equal(s.T(), "type", res.GetErrors()[0].ErrorWithOperations().Meta["field"])
+	require.NotEmpty(s.T(), res.GetErrors()[0].ErrorWithOperations().Detail)
+	require.Equal(s.T(), "Invalid data", res.GetErrors()[0].ErrorWithOperations().Title)
+	require.Len(s.T(), res.GetErrors()[0].ErrorWithOperations().Operations, 1)
+	require.Equal(s.T(), "validateActionConfig.Lookup", res.GetErrors()[0].ErrorWithOperations().Operations[0])
 }
 
 func (s *ActionSuite) TestValidateActionInvalidConfig() {
@@ -385,9 +390,11 @@ func (s *ActionSuite) TestValidateActionInvalidConfig() {
 	res := s.repository.ValidateAction(act)
 
 	require.Len(s.T(), res.GetErrors(), 1)
-	fmt.Println(res.GetErrors()[0])
-	require.Equal(s.T(), "configuration", res.GetErrors()[0].Error().Meta["field"])
-	require.Equal(s.T(), "invalid config", res.GetErrors()[0].Error().Detail)
+	require.Equal(s.T(), "type", res.GetErrors()[0].ErrorWithOperations().Meta["field"])
+	require.NotEmpty(s.T(), res.GetErrors()[0].ErrorWithOperations().Detail)
+	require.Equal(s.T(), "Invalid data", res.GetErrors()[0].ErrorWithOperations().Title)
+	require.Len(s.T(), res.GetErrors()[0].ErrorWithOperations().Operations, 1)
+	require.Equal(s.T(), "validateActionConfig.pluginErrs", res.GetErrors()[0].ErrorWithOperations().Operations[0])
 }
 
 func (s *ActionSuite) TestValidateActionOk() {

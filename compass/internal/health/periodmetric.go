@@ -52,7 +52,7 @@ func (main Main) getQueryPeriod(query string, period, interval datasourcePKG.Per
 	}
 
 	getQuery, lookupErr := plugin.Lookup("Query")
-	if err != nil {
+	if lookupErr != nil {
 		return nil, errors.NewError("Get error", lookupErr.Error()).
 			WithOperations("getQueryPeriod.Lookup")
 	}
@@ -66,8 +66,9 @@ func (main Main) getQueryPeriod(query string, period, interval datasourcePKG.Per
 		RangePeriod: period,
 		Interval:    interval,
 	})
+
 	if getQueryErr != nil {
-		return nil, errors.NewError("Get error", lookupErr.Error()).
+		return nil, errors.NewError("Get error", getQueryErr.Error()).
 			WithOperations("getQueryPeriod.getQuery")
 	}
 
@@ -120,7 +121,7 @@ func (main Main) Components(circleIDHeader, circleId, projectionType, metricType
 
 	var components []DeploymentInCircle
 	jsonErr := json.Unmarshal(body, &components)
-	if err != nil {
+	if jsonErr != nil {
 		return ComponentMetricRepresentation{}, errors.NewError("Get error", jsonErr.Error()).
 			WithOperations("Components.Unmarshal")
 	}

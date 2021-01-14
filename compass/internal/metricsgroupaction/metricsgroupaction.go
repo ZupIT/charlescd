@@ -173,7 +173,7 @@ func (main Main) validateExecutionConfig(actionType string, executionConfigurati
 	}
 
 	pluginErrs, lookupErr := plugin.Lookup("ValidateExecutionConfiguration")
-	if err != nil {
+	if lookupErr != nil {
 		err := errors.NewError("Validate error", lookupErr.Error()).
 			WithMeta("field", "action").
 			WithOperations("validateExecutionConfig.Lookup")

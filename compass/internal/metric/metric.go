@@ -20,11 +20,11 @@ package metric
 
 import (
 	"encoding/json"
+	goErrors "errors"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
-	goErrors "errors"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"io"
 
 	"github.com/google/uuid"
@@ -280,7 +280,7 @@ func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 	}
 
 	getQuery, lookupErr := plugin.Lookup("Result")
-	if err != nil {
+	if lookupErr != nil {
 		return 0, errors.NewError("Result error", lookupErr.Error()).
 			WithOperations("ResultQuery.Lookup")
 	}
@@ -302,7 +302,7 @@ func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 		Filters:                 metric.Filters,
 	})
 
-	if err != nil {
+	if castError != nil {
 		return 0, errors.NewError("Result error", castError.Error()).
 			WithOperations("ResultQuery.getQuery")
 	}
@@ -322,7 +322,7 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 	}
 
 	getQuery, lookupErr := plugin.Lookup("Query")
-	if err != nil {
+	if lookupErr != nil {
 		return nil, errors.NewError("Query error", lookupErr.Error()).
 			WithOperations("ResultQuery.Lookup")
 	}
@@ -338,7 +338,7 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 		})
 	}
 
-	queryResult, castErr :=  getQuery.(func(request datasource.QueryRequest) ([]datasource.Value, error))(datasource.QueryRequest{
+	queryResult, castErr := getQuery.(func(request datasource.QueryRequest) ([]datasource.Value, error))(datasource.QueryRequest{
 		ResultRequest: datasource.ResultRequest{
 			DatasourceConfiguration: dataSourceConfigurationData,
 			Query:                   query,
@@ -348,7 +348,7 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 		Interval:    interval,
 	})
 
-	if err != nil {
+	if castErr != nil {
 		return nil, errors.NewError("Query error", castErr.Error()).
 			WithOperations("ResultQuery.getQuery")
 	}

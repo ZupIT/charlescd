@@ -163,7 +163,7 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	}
 
 	pluginErrs, lookupErr := plugin.Lookup("ValidateActionConfiguration")
-	if err != nil {
+	if lookupErr != nil {
 		err := errors.NewError("Invalid data", lookupErr.Error()).
 			WithMeta("field", "type").
 			WithOperations("validateActionConfig.Lookup")

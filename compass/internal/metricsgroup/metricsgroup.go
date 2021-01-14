@@ -285,7 +285,7 @@ func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation,
 			WithOperations("ListAllByCircle.Find")
 	}
 
-	for idx, _ := range metricsGroups {
+	for idx := range metricsGroups {
 		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
 			return []MetricsGroupRepresentation{}, err.WithOperations("ListAllByCircle.ListGroupActionExecutionResumeByGroup")

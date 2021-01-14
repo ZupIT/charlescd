@@ -63,7 +63,7 @@ func (main Main) getResultQuery(query string, workspaceID uuid.UUID) (float64, e
 	}
 
 	getQuery, lookupErr := plugin.Lookup("Result")
-	if err != nil {
+	if lookupErr != nil {
 		return 0, errors.NewError("Get error", lookupErr.Error()).
 			WithOperations("getResultQuery.Lookup")
 	}
@@ -99,7 +99,7 @@ func (main Main) getComponentsErrorPercentage(circleIDHeader, circleId string, w
 
 	var components []DeploymentInCircle
 	jsonErr := json.Unmarshal(body, &components)
-	if err != nil {
+	if jsonErr != nil {
 		return nil, errors.NewError("Get error", jsonErr.Error()).
 			WithOperations("getComponentsErrorPercentage.Unmarshal")
 	}
@@ -131,7 +131,7 @@ func (main Main) getComponentsLatency(circleIDHeader, circleId string, workspace
 
 	var components []DeploymentInCircle
 	jsonErr := json.Unmarshal(body, &components)
-	if err != nil {
+	if jsonErr != nil {
 		return nil, errors.NewError("Get error", jsonErr.Error()).
 			WithOperations("getComponentsLatency.Unmarshal")
 	}
