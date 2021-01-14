@@ -54,7 +54,7 @@ export interface Feature {
   name: string;
   branchName: string;
   branches?: string[];
-  author: Author;
+  author?: Author;
   modules: Module[];
 }
 
