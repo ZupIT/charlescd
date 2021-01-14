@@ -69,9 +69,7 @@ export const getUndeploymentEmptyVirtualServiceStage = (
   },
   name: `Undeploy Virtual Service ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: [
-    `${stageId - 1}`
-  ],
+  requisiteStageRefIds: [],
   skipExpressionEvaluation: false,
   source: 'text',
   stageEnabled: {

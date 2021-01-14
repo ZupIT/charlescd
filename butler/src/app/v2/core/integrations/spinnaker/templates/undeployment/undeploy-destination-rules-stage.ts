@@ -39,7 +39,7 @@ export const getUndeploymentDestinationRulesStage = (
   },
   name: `Undeploy Destination Rules ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: [],
+  requisiteStageRefIds: [`${stageId - 1}`],
   skipExpressionEvaluation: false,
   source: 'text',
   trafficManagement: {
