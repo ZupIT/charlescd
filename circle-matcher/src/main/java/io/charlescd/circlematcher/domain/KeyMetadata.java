@@ -102,7 +102,9 @@ public class KeyMetadata {
     }
 
     public int sumPercentage(Integer percentageToSum) {
-        this.validatePercentage(this.percentage + percentageToSum, "Sum of percentage of circles exceeded 100 or is lower than 0");
+        this.validatePercentage(
+                this.percentage + percentageToSum, "Sum of percentage of circles exceeded 100 or is lower than 0"
+        );
         return this.percentage += percentageToSum;
     }
 
