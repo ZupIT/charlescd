@@ -47,7 +47,7 @@ const mockGetTags = JSON.stringify(
   ]
 );
 
-test.only('form should be valid', async () => {
+test('form should be valid', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(mockGetModules)
     .mockResponseOnce(mockGetTags)

@@ -59,7 +59,7 @@ test('render datasource input by datasource change', async () => {
   expect(screen.getByText('Service Account')).toBeInTheDocument();
 })
 
-test.only('render button test connection', async () => {
+test('render button test connection', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify(Plugins))
     .mockResponseOnce(JSON.stringify({
