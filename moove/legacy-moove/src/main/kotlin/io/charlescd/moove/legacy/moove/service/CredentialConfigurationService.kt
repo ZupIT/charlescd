@@ -45,10 +45,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class CredentialConfigurationService(
-    val credentialConfigurationRepository: CredentialConfigurationRepository,
-    val userServiceLegacy: UserServiceLegacy,
-    val deployApi: DeployApi,
-    val villagerApi: VillagerApi
+    private val credentialConfigurationRepository: CredentialConfigurationRepository,
+    private val userServiceLegacy: UserServiceLegacy,
+    private val deployApi: DeployApi,
+    private val villagerApi: VillagerApi
 ) {
 
     companion object {
@@ -122,11 +122,12 @@ class CredentialConfigurationService(
 
     fun testRegistryConfiguration(
         workspaceId: String,
-        request: CreateRegistryConfigurationRequest
+        request: CreateRegistryConfigurationRequest,
+        authorization: String
     ) {
 
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
-            buildVillagerRegistryConfigurationRequest(request, "")
+            buildVillagerRegistryConfigurationRequest(request, userServiceLegacy.findByAuthorizationToken(authorization).id)
 
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)

@@ -95,10 +95,9 @@ class CredentialConfigurationControllerUnitTest extends Specification {
         def request = new CreateGCPRegistryConfigurationRequest("GCP", "https://gcp.com.io", "charlescd", "{}")
 
         when:
-        controller.configurationValidation(workspaceId, request)
+        controller.configurationValidation(workspaceId, request, authorization)
 
         then:
-        1 * service.testRegistryConfiguration(workspaceId, request)
         notThrown()
     }
 
