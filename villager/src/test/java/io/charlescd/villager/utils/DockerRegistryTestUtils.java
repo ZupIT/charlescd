@@ -2,8 +2,15 @@ package io.charlescd.villager.utils;
 
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import io.charlescd.villager.interactor.registry.*;
-
+import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
+import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
+import io.charlescd.villager.interactor.registry.HarborDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.TestDockerRegistryConnectionInput;
 import java.time.LocalDateTime;
 
 public class DockerRegistryTestUtils {
@@ -14,7 +21,8 @@ public class DockerRegistryTestUtils {
     private static final String ARTIFACT_NAME = "charles_cd";
     private static final String TAG_NAME = "test";
 
-    public static DockerRegistryConfigurationEntity generateDockerRegistryConfigurationEntity(RegistryType registryType) {
+    public static DockerRegistryConfigurationEntity generateDockerRegistryConfigurationEntity(
+            RegistryType registryType) {
         var entity = new DockerRegistryConfigurationEntity();
         entity.id = ID_DEFAULT_VALUE;
         entity.name = "Testing";
@@ -26,7 +34,8 @@ public class DockerRegistryTestUtils {
         return entity;
     }
 
-    public static TestDockerRegistryConnectionInput generateTestDockerRegistryConnectionInput(RegistryType registryType) {
+    public static TestDockerRegistryConnectionInput generateTestDockerRegistryConnectionInput(
+            RegistryType registryType) {
         return TestDockerRegistryConnectionInput.builder()
                 .withWorkspaceId(ID_DEFAULT_VALUE)
                 .withRegistryConfigurationId(ID_DEFAULT_VALUE)
@@ -34,7 +43,8 @@ public class DockerRegistryTestUtils {
                 .build();
     }
 
-    public static DockerRegistryConfigurationInput generateDockerRegistryConfigurationInput(RegistryType registryType) {
+    public static DockerRegistryConfigurationInput generateDockerRegistryConfigurationInput(
+            RegistryType registryType) {
         return DockerRegistryConfigurationInput.builder()
                 .withWorkspaceId(ID_DEFAULT_VALUE)
                 .withName(STRING_DEFAULT_VALUE)
@@ -112,7 +122,8 @@ public class DockerRegistryTestUtils {
         return registryAuth;
     }
 
-    private static DockerRegistryConfigurationEntity.DockerRegistryConnectionData getConnectionData(RegistryType registryType) {
+    private static DockerRegistryConfigurationEntity.DockerRegistryConnectionData getConnectionData(
+            RegistryType registryType) {
 
         DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData;
 
@@ -157,7 +168,7 @@ public class DockerRegistryTestUtils {
                                 STRING_DEFAULT_VALUE);
                 break;
             default:
-              connectionData = null;
+                connectionData = null;
 
 
         }
