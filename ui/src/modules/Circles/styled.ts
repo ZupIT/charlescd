@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
+import { RefObject } from 'react';
 import styled from 'styled-components';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import Page from 'core/components/Page';
 import IconComponent from 'core/components/Icon';
+import LoaderMenuComponent from './Menu/Loaders';
+
+type ListProps = {
+  ref: RefObject<HTMLElement>;
+};
 
 const Wrapper = styled.div`
   display: flex;
@@ -57,10 +63,16 @@ const Icon = styled(IconComponent)`
   cursor: pointer;
 `;
 
-const List = styled.ul`
-  padding: 0;
+const List = styled.ul<ListProps>`
+  display: flex;
+  flex-direction: column;
   margin: 0;
+  padding: 0;
   list-style-type: none;
+
+  > * {
+    padding: 0 16px;
+  }
 `;
 
 const ListItem = styled.li`
@@ -70,6 +82,10 @@ const ListItem = styled.li`
 
 const Link = styled.a`
   text-decoration: none;
+`;
+
+const LoaderMenu = styled(LoaderMenuComponent.List)`
+  margin-left: 16px;
 `;
 
 export default {
@@ -82,5 +98,6 @@ export default {
   List,
   ListItem,
   Link,
-  Wrapper
+  Wrapper,
+  LoaderMenu
 };

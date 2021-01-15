@@ -54,9 +54,7 @@ func Update(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 			return
 		}
 
-		request.SubscriptionId = subscriptionId
-
-		createdSubscription, err := subscriptionMain.Update(request)
+		createdSubscription, err := subscriptionMain.Update(subscriptionId, request)
 		if err != nil {
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -87,7 +85,7 @@ func Delete(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 			return
 		}
 
-		util2.NewResponse(w, http.StatusOK, nil)
+		util2.NewResponse(w, http.StatusNoContent, nil)
 	}
 }
 

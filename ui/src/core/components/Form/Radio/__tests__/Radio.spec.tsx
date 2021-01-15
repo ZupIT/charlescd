@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import Radio from '..'
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
+const props = {
+  name: 'charles',
+  value: 'charles',
+  label: 'charles'
+}
 
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
-    }
-  }, [options, clearValue]);
+test('render Radio default', async () => {
+  render(<Radio { ...props } />);
 
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
-
-export default SingleValue;
+  const element = await screen.findByTestId(`radio-${props.value}`);
+  expect(element).toBeInTheDocument();
+});

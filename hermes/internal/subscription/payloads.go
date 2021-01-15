@@ -1,26 +1,23 @@
 package subscription
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
 	"hermes/util"
-	"time"
 )
 
 type Request struct {
 	util.BaseModel
-	ExternalId  uuid.UUID   `json:"externalId"`
-	Url         string      `json:"url"`
-	Description string      `json:"description"`
-	ApiKey      string      `json:"apiKey"`
-	Events      []uuid.UUID `json:"events"`
-	CreatedBy   string      `json:"createdBy"`
-	DeletedBy   string      `json:"-"`
-	DeletedAt   *time.Time  `json:"-"`
+	ExternalId  uuid.UUID       `json:"externalId"`
+	Url         string          `json:"url"`
+	Description string          `json:"description"`
+	ApiKey      string          `json:"apiKey"`
+	Events      json.RawMessage `json:"events"`
+	CreatedBy   string          `json:"createdBy"`
 }
 
 type UpdateRequest struct {
-	SubscriptionId uuid.UUID   `json:"subscriptionId"`
-	Events         []uuid.UUID `json:"events"`
+	Events         json.RawMessage `json:"events"`
 }
 
 type SaveResponse struct {
@@ -28,13 +25,13 @@ type SaveResponse struct {
 }
 
 type UpdateResponse struct {
-	Events []uuid.UUID `json:"events"`
+	Events json.RawMessage `json:"events"`
 }
 
 type Response struct {
-	ExternalId  uuid.UUID `json:"externalId"`
-	Url         string    `json:"url"`
-	Description string    `json:"description"`
-	ApiKey      string    `json:"apiKey"`
-	Events      []string  `json:"events"`
+	ExternalId  uuid.UUID       `json:"externalId"`
+	Url         string          `json:"url"`
+	Description string          `json:"description"`
+	ApiKey      string          `json:"apiKey"`
+	Events      json.RawMessage `json:"events"`
 }

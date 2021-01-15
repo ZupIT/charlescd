@@ -16,8 +16,8 @@
 
 import React from 'react';
 import { components, OptionTypeBase, OptionProps } from 'react-select';
+import Checkbox from '../Checkbox';
 import Styled from './styled';
-import Checkbox from 'core/components/Form/Checkbox';
 
 const CheckOption = (props: OptionProps<OptionTypeBase>) => {
   const { label } = props.data;

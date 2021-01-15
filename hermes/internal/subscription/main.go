@@ -9,10 +9,10 @@ import (
 
 type UseCases interface {
 	ParseSubscription(subscription io.ReadCloser) (Request, errors.Error)
-	ParseUpdate(subscription io.ReadCloser) (UpdateRequest, errors.Error)
+	ParseUpdate(subscription io.ReadCloser) ([]byte, errors.Error)
 	Validate(subscription Request) errors.ErrorList
 	Save(subscription Request) (SaveResponse, errors.Error)
-	Update(subscription UpdateRequest) (UpdateResponse, errors.Error)
+	Update(subscriptionId uuid.UUID,subscription []byte) (UpdateResponse, errors.Error)
 	Delete(subscriptionId uuid.UUID, author string) errors.Error
 	FindById(subscriptionId uuid.UUID) (Response, errors.Error)
 }

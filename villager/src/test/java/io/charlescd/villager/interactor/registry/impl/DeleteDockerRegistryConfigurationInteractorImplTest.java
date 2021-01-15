@@ -5,7 +5,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
