@@ -26,10 +26,12 @@ const v1Endpoint = '/moove/users';
 export interface UserFilter {
   name?: string;
   email?: string;
+  page?: number;
 }
 
 const initialUserFilter = {
-  email: ''
+  email: '',
+  page: 0
 };
 
 export const findAllWorkspaceUsers = (
@@ -48,10 +50,9 @@ export const findAllWorkspaceUsers = (
 };
 
 export const findAllUsers = (filter: UserFilter = initialUserFilter) => {
-  const defaultPage = 0;
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
-    page: `${defaultPage}`
+    page: `${filter.page ?? 0}`
   });
 
   if (filter?.name) params.append('name', filter?.name);

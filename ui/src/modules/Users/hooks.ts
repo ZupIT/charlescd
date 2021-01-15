@@ -231,8 +231,8 @@ export const useUsers = (): [Function, Function, boolean] => {
   const { response, error, loading } = usersData;
 
   const getAll = useCallback(
-    (name: string) => {
-      getUsers({ name });
+    (name: string, page: number) => {
+      getUsers({ name, page });
     },
     [getUsers]
   );
