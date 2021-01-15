@@ -22,10 +22,16 @@ import javax.validation.constraints.NotEmpty
 
 data class CreateWebhookSubscriptionRequest(
     @field:NotBlank
+    @field:Size(max = 256)
+    @field:Pattern(regexp = "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:\\/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$")
     val url: String,
+    
     val apiKey: String,
+    
     @field:NotBlank
+    @field:Size(min=4, max = 255)
     val description: String,
+    
     @field:NotEmpty
     val events: List<String>
 ) {
