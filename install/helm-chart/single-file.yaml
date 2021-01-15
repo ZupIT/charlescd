@@ -2048,7 +2048,6 @@ rules:
   - ""
   resources:
   - namespaces
-  - configmaps
   - events
   - replicationcontrollers
   - serviceaccounts
@@ -2062,6 +2061,7 @@ rules:
   - pods
   - services
   - secrets
+  - configmaps
   verbs:
   - create
   - delete
@@ -2919,7 +2919,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.4.8
+          image: zupcharles/charlescd-butler:0.4.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3001,7 +3001,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.4.8
+          image: zupcharles/charlescd-circle-matcher:0.4.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3075,7 +3075,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.4.8
+          image: zupcharles/charlescd-compass:0.4.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3184,7 +3184,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.4.8
+          image: zupcharles/charlescd-moove:0.4.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3273,7 +3273,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.4.8
+          image: zupcharles/charlescd-ui:0.4.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3351,7 +3351,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.4.8
+          image: zupcharles/charlescd-villager:0.4.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -4070,22 +4070,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 2000
 ---
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-ingress-nginx-admission
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  labels:
-    helm.sh/chart: ingress-nginx-3.15.2
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: charlescd
-    app.kubernetes.io/version: "0.41.2"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: admission-webhook
----
 # Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -4109,30 +4093,6 @@ rules:
     verbs:
       - get
       - create
----
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: charlescd-ingress-nginx-admission
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  labels:
-    helm.sh/chart: ingress-nginx-3.15.2
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: charlescd
-    app.kubernetes.io/version: "0.41.2"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: admission-webhook
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: charlescd-ingress-nginx-admission
-subjects:
-  - kind: ServiceAccount
-    name: charlescd-ingress-nginx-admission
-    namespace: charles
 ---
 # Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -4228,3 +4188,43 @@ rules:
     verbs:
       - get
       - update
+---
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.15.2
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+---
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: charlescd-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.15.2
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: charlescd-ingress-nginx-admission
+subjects:
+  - kind: ServiceAccount
+    name: charlescd-ingress-nginx-admission
+    namespace: charles
