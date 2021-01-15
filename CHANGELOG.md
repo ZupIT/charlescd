@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.4.8 (14/01/2021)
+- [#788](https://github.com/ZupIT/charlescd/pull/788) Feature registry connection (Azure, dockerhub, GCP, Harbor and AWS)
+- [#791](https://github.com/ZupIT/charlescd/pull/791) Default Radio component
+- [#782](https://github.com/ZupIT/charlescd/pull/782) User group improvements
+- [#762](https://github.com/ZupIT/charlescd/pull/762) Update typescript and jest dependencies
+- [#793](https://github.com/ZupIT/charlescd/pull/793) Stale bot
+- [#795](https://github.com/ZupIT/charlescd/pull/795) Fixing Timezone action
+- [#783](https://github.com/ZupIT/charlescd/pull/783) Datasource improvements
+- [#771](https://github.com/ZupIT/charlescd/pull/771) Bump axios from 0.19.2 to 0.21.1 in /utils/matcher-s3-sync
+- [#759](https://github.com/ZupIT/charlescd/pull/759) Bump ini from 1.3.5 to 1.3.8 in /utils/matcher-s3-sync
+- [#758](https://github.com/ZupIT/charlescd/pull/758) Bump ini from 1.3.5 to 1.3.8 in /ui
+- [#794](https://github.com/ZupIT/charlescd/pull/794) Changing master to main
+- [#792](https://github.com/ZupIT/charlescd/pull/792) Changing master to main
+- [#789](https://github.com/ZupIT/charlescd/pull/789) Fix moove public paths
+- [#695](https://github.com/ZupIT/charlescd/pull/695) Git branch name validations
+- [#787](https://github.com/ZupIT/charlescd/pull/787) Hotfix: registry connection test.
+- [#780](https://github.com/ZupIT/charlescd/pull/780) Checkbox - New core/component 
+- [#738](https://github.com/ZupIT/charlescd/pull/738) Payload validation
+- [#774](https://github.com/ZupIT/charlescd/pull/774) Butler operator manifests
+- [#704](https://github.com/ZupIT/charlescd/pull/704) Adding Transactional to create user
+- [#719](https://github.com/ZupIT/charlescd/pull/719) Adding Infinite scroll at Circle Page
+- [#766](https://github.com/ZupIT/charlescd/pull/766) Butler k8s tests
+- [#768](https://github.com/ZupIT/charlescd/pull/768) CI Update of charts and changelog
+
+---
+
 ## 0.4.7 (21/12/2020)
 - [#769](https://github.com/ZupIT/charlescd/pull/769) Fixing rate limit variables at moove chart
 - [#767](https://github.com/ZupIT/charlescd/pull/767) Hotfix: fixing moove chart and updating circle matcher readme
@@ -476,7 +502,3 @@
 ---
 
 ## v0.2.9 (03/06/2020)
-
----
-
-## v0.2.8 (03/06/2020)

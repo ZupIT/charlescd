@@ -48,6 +48,7 @@ const SectionGit = ({ form, setForm, data }: Props) => {
       icon="git"
       showAction={isAction}
       action={() => setForm(FORM_GIT)}
+      type="Optional"
     >
       {data && !responseRemove && (
         <Card.Config
