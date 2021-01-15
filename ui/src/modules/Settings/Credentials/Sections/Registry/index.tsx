@@ -25,7 +25,6 @@ import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import { FetchStatuses } from 'core/providers/base/hooks';
 import Notification from 'core/components/Notification';
-
 interface Props {
   form: string;
   setForm: Function;
@@ -82,6 +81,7 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
       icon="server"
       showAction={isAction}
       action={() => setForm(FORM_REGISTRY)}
+      type="Required"
     >
       {data && !responseRemove && (
         <Fragment>
