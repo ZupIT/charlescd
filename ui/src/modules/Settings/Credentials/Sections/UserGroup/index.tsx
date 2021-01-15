@@ -48,6 +48,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
       icon="users"
       showAction
       action={() => setForm(FORM_USER_GROUP)}
+      type="Optional"
     >
       {userGroups &&
         map(userGroups, userGroup => (
