@@ -23,6 +23,7 @@ import io.charlescd.moove.legacy.moove.request.configuration.CdTypeEnum
 data class CreateDeployOctopipeCdConfigurationRequest(
     val type: CdTypeEnum,
     val configurationData: CreateDeployOctopipeCdConfigurationData,
+    val authorId: String,
     val name: String
 ) : CreateDeployCdConfigurationRequest()
 
