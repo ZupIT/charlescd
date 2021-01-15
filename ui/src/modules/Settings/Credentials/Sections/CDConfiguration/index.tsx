@@ -48,6 +48,7 @@ const SectionCDConfiguration = ({ form, setForm, data }: Props) => {
       icon="cd-configuration"
       showAction={isAction}
       action={() => setForm(FORM_CD_CONFIGURATION)}
+      type="Required"
     >
       {data && !responseRemove && (
         <Card.Config
