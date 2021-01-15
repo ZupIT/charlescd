@@ -52,7 +52,7 @@ const Input = styled(ComponentInput)`
 `;
 
 const Select = styled(SelectComponent.Single)`
-  margin-bottom: 20px;
+  margin-top: 20px;
   width: 271px;
 `;
 
@@ -78,14 +78,36 @@ const TestConnectionButton = styled(Button.Default)`
 const HealthSwitch = styled(Switch)`
   justify-content: start;
 
+  i {
+    width: 35px;
+    height: 20px;
+
+    ::after {
+      width: 14px;
+      height: 14px;
+      left: ${({ active }) => (active ? '5px' : '1px')};
+    }
+
+    ::before {
+      width: 31px;
+      height: 16px;
+    }
+  }
+
   span {
     margin-left: 5px;
+    margin-right: 15px;
   }
 `;
 
 const HealthWrapper = styled.div`
+  margin-top: 20px;
   display: flex;
-  justify-content: space-between;
+`;
+
+const DocumentationLink = styled.a`
+  text-decoration: underline;
+  color: ${({ theme }) => theme.text.link};
 `;
 
 export default {
@@ -96,5 +118,6 @@ export default {
   Select,
   TestConnectionButton,
   HealthWrapper,
-  HealthSwitch
+  HealthSwitch,
+  DocumentationLink
 };
