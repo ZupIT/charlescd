@@ -59,10 +59,17 @@ const Form = styled.div`
   }
 `;
 
+const Type = styled.div`
+  margin-left: 43px;
+  margin-top: 6px;
+  margin-bottom: 9px;
+`;
+
 export default {
   Actions,
   Wrapper,
   Content,
   Layer,
-  Form
+  Form,
+  Type
 };
