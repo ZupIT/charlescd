@@ -20,7 +20,6 @@ package metricsgroup
 
 import (
 	"encoding/json"
-	// "errors"
 
 	"io"
 	"regexp"

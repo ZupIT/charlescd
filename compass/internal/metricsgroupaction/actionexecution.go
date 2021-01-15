@@ -117,7 +117,7 @@ func (main Main) SetExecutionSuccess(actionExecutionID string, executionLog stri
 	result := main.db.Save(&execution)
 	if result.Error != nil {
 		return ActionsExecutions{}, errors.NewError("Set error", result.Error.Error()).
-			WithOperations("SetExecutionSuccess.validateActionCanFinish")
+			WithOperations("SetExecutionSuccess.save")
 	}
 
 	return execution, nil
