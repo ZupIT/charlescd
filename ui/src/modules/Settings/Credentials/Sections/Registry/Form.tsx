@@ -123,7 +123,7 @@ const FormRegistry = ({ onFinish }: Props) => {
               name="accessKey"
               label="Enter the access key"
             />
-            <Form.Input
+            <Form.Password
               ref={register({ required: true })}
               name="secretKey"
               label="Enter the secret key"
