@@ -375,7 +375,7 @@ test('should enable submit button after fill AWS form', async () => {
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
   const submitButton = screen.getByTestId("button-default-submit-registry");
@@ -405,7 +405,7 @@ test('should not enable submit button after partially filled AWS form (missing n
   
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
   const submitButton = screen.getByTestId("button-default-submit-registry");
@@ -435,7 +435,7 @@ test('should test AWS registry connection successful', async () => {
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
 
@@ -470,7 +470,7 @@ test('should test AWS registry connection error', async () => {
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
 
