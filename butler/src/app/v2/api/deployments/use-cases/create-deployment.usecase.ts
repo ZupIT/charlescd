@@ -54,7 +54,8 @@ export class CreateDeploymentUseCase {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: createDeploymentDto.deploymentId, incomingCircleId })
     const { deployment, execution } = await getConnection().transaction(async transactionManager => {
       const deploymentEntity = await this.newDeployment(createDeploymentDto)
-      await this.deactivateCurrentCircle(createDeploymentDto.circle.headerValue, transactionManager)
+      const previousDeployment = await this.deactivateCurrentCircle(createDeploymentDto.circle.headerValue, transactionManager)
+      deploymentEntity.previousDeploymentId = previousDeployment
       const deployment = await transactionManager.save(deploymentEntity)
       const execution = await this.createExecution(deployment, incomingCircleId, transactionManager)
       return { deployment, execution }
@@ -85,11 +86,22 @@ export class CreateDeploymentUseCase {
     return deployment
   }
 
-  private async deactivateCurrentCircle(circleId: string, transactionManager: EntityManager): Promise<UpdateResult | undefined> {
+  private async deactivateCurrentCircle(circleId: string, transactionManager: EntityManager): Promise<string | null> {
     // here we can put the logic to make the deployment aditive or replace current active components, right now its just set current as active but possible
     // bugs will happen as Im not taking in account the activeComponents query to generate the routes manifest
+    const updatedDeployment = await transactionManager
+      .createQueryBuilder(DeploymentEntity, 'd')
+      .update()
+      .set({ active: false })
+      .where('circle_id = :circleId', { circleId: circleId })
+      .where('active = true')
+      .returning('id')
+      .execute()
 
-    return await transactionManager.update(DeploymentEntity, { circleId: circleId }, { active: false })
+    if (updatedDeployment.raw.length === 0) {
+      return null
+    }
+    return updatedDeployment.raw[0].id
   }
 
   private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
