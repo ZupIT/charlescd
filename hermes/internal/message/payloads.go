@@ -1,4 +1,4 @@
-package subscriptionexecution
+package message
 
 import (
 	"encoding/json"

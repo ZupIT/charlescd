@@ -3,9 +3,10 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"hermes/internal/configuration"
+	"hermes/internal/message"
+	"hermes/internal/messageexecutionhistory"
 	"hermes/internal/publisher"
 	"hermes/internal/subscription"
-	"hermes/internal/subscriptionexecution"
 	"hermes/web/api"
 	"log"
 )
@@ -19,9 +20,10 @@ func main() {
 	}
 
 	subscriptionMain := subscription.NewMain(db)
-	subscriptionExecution := subscriptionexecution.NewMain(db)
+	messageMain := message.NewMain(db)
+	messageExecutionMain := messageexecutionhistory.NewMain(db)
 	publisherMain := publisher.NewMain(db)
 
-	router := api.NewApi(subscriptionMain, subscriptionExecution, publisherMain)
+	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, publisherMain)
 	api.Start(router)
 }
