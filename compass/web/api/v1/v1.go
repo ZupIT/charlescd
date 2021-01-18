@@ -36,7 +36,6 @@ import (
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
 	"github.com/google/uuid"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -147,23 +146,9 @@ func extractToken(authorization string) (AuthToken, error) {
 	}
 
 	splitToken := strings.Split(rToken, "Bearer ")
-	pkey, fileErr := ioutil.ReadFile(fmt.Sprintf("./pkey.txt"))
-	if fileErr != nil {
-		return AuthToken{}, fileErr
-	}
 
-	key, keyErr := jwt.ParseRSAPublicKeyFromPEM(pkey)
-	if keyErr != nil {
-		return AuthToken{}, fmt.Errorf("error parsing RSA public key: %v\n", keyErr)
-	}
-
-	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return key, nil
-	})
-	if err != nil {
+	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, nil)
+	if token == nil {
 		return AuthToken{}, fmt.Errorf("error parsing token: %v", err)
 	}
 
