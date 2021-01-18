@@ -87,7 +87,7 @@ class CredentialConfigurationService(
         val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
 
         val deployRequest: CreateDeployCdConfigurationRequest =
-            buildDeployCdConfigurationRequest(createCdConfigRequest)
+            buildDeployCdConfigurationRequest(createCdConfigRequest, user)
         val deployResponse: CreateDeployCdConfigurationResponse =
             deployApi.createCdConfiguration(deployRequest, workspaceId)
 
@@ -277,12 +277,13 @@ class CredentialConfigurationService(
     }
 
     private fun buildDeployCdConfigurationRequest(
-        createCdConfigRequest: CreateCdConfigurationRequest
+        createCdConfigRequest: CreateCdConfigurationRequest,
+        user: User
     ): CreateDeployCdConfigurationRequest {
 
         return when (createCdConfigRequest) {
-            is CreateSpinnakerCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
-            is CreateOctopipeCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
+            is CreateSpinnakerCdConfigurationRequest -> createCdConfigRequest.toDeployRequest(user)
+            is CreateOctopipeCdConfigurationRequest -> createCdConfigRequest.toDeployRequest(user)
             else -> throw IllegalArgumentException("Invalid cd configuration type")
         }
     }
