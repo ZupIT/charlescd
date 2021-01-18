@@ -20,6 +20,7 @@ package io.charlescd.moove.legacy.moove.request.configuration
 
 import io.charlescd.moove.legacy.moove.api.request.CreateDeploySpinnakerCdConfigurationData
 import io.charlescd.moove.legacy.moove.api.request.CreateDeploySpinnakerCdConfigurationRequest
+import io.charlescd.moove.legacy.repository.entity.User
 import javax.validation.constraints.Size
 
 data class CreateSpinnakerCdConfigurationRequest(
@@ -28,10 +29,11 @@ data class CreateSpinnakerCdConfigurationRequest(
     val name: String
 ) : CreateCdConfigurationRequest(CdTypeEnum.SPINNAKER) {
 
-    fun toDeployRequest(): CreateDeploySpinnakerCdConfigurationRequest {
+    fun toDeployRequest(user: User): CreateDeploySpinnakerCdConfigurationRequest {
         return CreateDeploySpinnakerCdConfigurationRequest(
             this.type,
             this.getDeployConfigurationData(),
+            user.id,
             this.name
         )
     }
