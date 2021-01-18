@@ -24,8 +24,7 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
 data class CreateGitConfigurationRequest(
-    @field:NotBlank
-    val name: String,
+    val name: String = "Git Configuration",
 
     @field:Valid
     val credentials: GitCredentialsData
