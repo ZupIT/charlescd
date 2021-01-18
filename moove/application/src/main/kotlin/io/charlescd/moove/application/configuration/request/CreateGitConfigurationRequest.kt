@@ -21,7 +21,6 @@ import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 
 data class CreateGitConfigurationRequest(
     val name: String = "Git Configuration",
