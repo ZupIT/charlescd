@@ -26,7 +26,7 @@ public interface ScriptManagerService {
 
     Context scriptContext();
 
-    boolean isMatch(Node node, Map<String, Object> data) throws ScriptException;
+    boolean isMatch(Node node, Map<String, Object> data);
 
     Value evalJsWithResult(Context context, String script, Map<String, Object> input) throws ScriptException;
 

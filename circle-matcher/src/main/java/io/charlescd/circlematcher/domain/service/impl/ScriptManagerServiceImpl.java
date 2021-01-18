@@ -22,8 +22,10 @@ import io.charlescd.circlematcher.infrastructure.Constants;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
 import java.util.Map;
+
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
+import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
@@ -40,7 +42,7 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
     private Source getPathScript;
     private org.graalvm.polyglot.Engine engine;
 
-    public ScriptManagerServiceImpl() throws Exception {
+    public ScriptManagerServiceImpl() {
         this.engine = Engine.create();
         this.toStrScript = Source.create("js", ResourceUtils.getResourceAsString("js/toStr.js"));
         this.toNumberScript = Source.create("js", ResourceUtils.getResourceAsString("js/toNumber.js"));
@@ -48,16 +50,11 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
     }
 
     public Context scriptContext() {
-        try {
-            Context context = Context.newBuilder("js").engine(this.engine).build();
-            this.evalJs(context, getPathScript);
-            this.evalJs(context, toStrScript);
-            this.evalJs(context, toNumberScript);
-            return context;
-        } catch (Exception ex) {
-            this.logger.error("Could not evaluate expression", ex);
-            throw ex;
-        }
+        Context context = Context.newBuilder("js").engine(this.engine).build();
+        this.evalJs(context, getPathScript);
+        this.evalJs(context, toStrScript);
+        this.evalJs(context, toNumberScript);
+        return context;
     }
 
     public boolean isMatch(Node node, Map<String, Object> data) {
@@ -65,7 +62,7 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
             var exp = node.expression();
             var result = evalJsWithResult(context, exp, data);
             return result.asBoolean();
-        } catch (Exception ex) {
+        } catch (PolyglotException ex) {
             logger.error("Error executing script", ex);
             return false;
         }
@@ -90,7 +87,6 @@ public class ScriptManagerServiceImpl implements ScriptManagerService {
     }
 
     public Value getVar(Context context, String key) {
-
         return context.getBindings("js").getMember(key);
     }
 
