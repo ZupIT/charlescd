@@ -36,10 +36,5 @@ type Response struct {
 }
 
 type ExternalIdResponse struct {
-	Id          uuid.UUID       `json:"id"`
-	ExternalId  uuid.UUID       `json:"externalId"`
-	Url         string          `json:"url"`
-	Description string          `json:"description"`
-	ApiKey      string          `json:"apiKey"`
-	Events      json.RawMessage `json:"events"`
+	Id uuid.UUID `json:"id"`
 }

@@ -7,15 +7,14 @@ import (
 
 type Request struct {
 	ExternalId uuid.UUID       `json:"externalId"`
-	Type       string          `json:"type"`
-	Details    json.RawMessage `json:"details"`
+	EventType  string          `json:"eventType"`
+	Event      json.RawMessage `json:"event"`
 }
 
 type MessageRequest struct {
 	Request
-	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+	SubscriptionId uuid.UUID `json:"subscriptionId"`
 }
-
 
 type SaveResponse struct {
 }

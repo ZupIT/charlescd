@@ -122,7 +122,7 @@ func Publish(publisherMain publisher.UseCases, subscriptionMain subscription.Use
 		//	return
 		//}
 
-		subscriptions, err := subscriptionMain.FindAllByExternalId(request.ExternalId)
+		subscriptions, err := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
 		if err != nil {
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return
