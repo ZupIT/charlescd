@@ -1,34 +1,36 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
 import { HookParams } from './params.interface'
-import { DeploymentRepositoryV2 } from '../api/deployments/repository/deployment.repository'
-import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
-import { Component } from '../api/deployments/interfaces'
-import { DeploymentUtils } from '../core/integrations/utils/deployment.utils'
-import { IstioDeploymentManifestsUtils } from '../core/integrations/utils/istio-deployment-manifests.utils'
-import { ComponentsRepositoryV2 } from '../api/deployments/repository'
+import { HookReconcileResponseDto } from './hook-reconcile-response.dto'
+import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
 
 @Controller('/')
 export class RoutesHookController {
 
   constructor(
-    private readonly deploymentRepository: DeploymentRepositoryV2,
-    private readonly componentsRepository: ComponentsRepositoryV2
-  ) {}
+    private readonly createRoutesUseCase: CreateRoutesManifestsUseCase
+  ) { }
 
   @Post('/v2/operator/routes/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async reconcile(@Body() params: HookParams): Promise<{ status?: unknown, children: KubernetesManifest[] | [] }> {
-    const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration', 'components'] })
-    const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
-
-    const proxySpecs: KubernetesManifest[] = []
-    deployment.components.forEach(component => {
-      const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
-      proxySpecs.push(IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeByName))
-      proxySpecs.push(IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName))
-    })
-
+  public async reconcile(@Body() params: HookParams): Promise<HookReconcileResponseDto> {
+    const proxySpecs = await this.createRoutesUseCase.execute(params)
     return { children: proxySpecs }
   }
 }
