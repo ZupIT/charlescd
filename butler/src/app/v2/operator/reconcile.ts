@@ -5,13 +5,14 @@ import { HookParams, SpecMetadata, SpecStatus } from './params.interface'
 
 
 export class Reconcile {
-  public concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]) : { children: KubernetesManifest[], resyncAfterSeconds: number } {
+  public concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]) : KubernetesManifest[] {
     const rawSpecs = previousDeployment.components.flatMap(c => c.manifests)
     const previousSpecs = this.addMetadata(rawSpecs, previousDeployment)
-    const uniqSpecs = uniqWith(previousSpecs, (a, b) => a.metadata?.name === b.metadata?.name)
-    return { children: specs.concat(uniqSpecs), resyncAfterSeconds: 5 }
-
+    const allSpecs = specs.concat(previousSpecs)
+    const uniqByNameAndKind = uniqWith(allSpecs, (a, b) => a.metadata?.name === b.metadata?.name && a.kind === b.kind)
+    return uniqByNameAndKind
   }
+
   public addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2) : KubernetesManifest[] {
     return spec.map((s: KubernetesManifest) => {
       if (s.metadata?.labels) {
