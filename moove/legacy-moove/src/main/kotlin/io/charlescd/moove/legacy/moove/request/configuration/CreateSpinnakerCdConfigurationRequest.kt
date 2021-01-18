@@ -20,8 +20,8 @@ package io.charlescd.moove.legacy.moove.request.configuration
 
 import io.charlescd.moove.legacy.moove.api.request.CreateDeploySpinnakerCdConfigurationData
 import io.charlescd.moove.legacy.moove.api.request.CreateDeploySpinnakerCdConfigurationRequest
-import javax.validation.constraints.Size
 import io.charlescd.moove.legacy.repository.entity.User
+import javax.validation.constraints.Size
 
 data class CreateSpinnakerCdConfigurationRequest(
     val configurationData: CreateSpinnakerCdConfigurationData,
