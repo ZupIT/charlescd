@@ -14,27 +14,11 @@
  * limitations under the License.
  */
 
-import React, { memo } from 'react';
-import Text from 'core/components/Text';
-import Styled from './styled';
+import { UserGroupPaginationItem } from '../../interfaces/UserGroupsPagination';
 
-interface Props {
-  id: string;
-  name: string;
-  isActive: boolean;
-  onSelect: (id: string) => void;
-}
-
-const MenuItem = ({ id, name, onSelect, isActive }: Props) => (
-  <Styled.Link
-    onClick={() => onSelect(id)}
-    isActive={isActive}
-    data-testid={`group-menu-item-${id}`}
-  >
-    <Styled.ListItem icon="users" marginContent="8px">
-      <Text.h4 color="light">{name}</Text.h4>
-    </Styled.ListItem>
-  </Styled.Link>
-);
-
-export default memo(MenuItem);
+export const UserGroupItem: UserGroupPaginationItem[] = [
+  {
+    id: '1',
+    name: 'user',
+    users: []
+  }];

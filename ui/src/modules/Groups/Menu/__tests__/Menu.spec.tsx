@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { render, screen, waitFor } from 'unit-test/testUtils';
+import { UserGroupItem } from './fixtures';
 import { FetchMock } from 'jest-fetch-mock/types';
 import userEvent from '@testing-library/user-event';
 import Menu from '../index';
@@ -37,4 +38,21 @@ test('render Menu users groups default', async () => {
 
   expect(menu).toBeInTheDocument();
   expect(emptyItems).toBeInTheDocument();
+});
+
+test('render Menu items', async () => {
+  render(
+    <Menu 
+      onSearch={jest.fn()}
+      onCreate={jest.fn()}
+      onSelect={jest.fn()}
+      isLoading={false}
+      selectedItems={null}
+      items={UserGroupItem}
+    />
+  );
+
+  const menuItem = screen.getByTestId('group-menu-item-1');
+  expect(menuItem).toBeInTheDocument();
+
 });
