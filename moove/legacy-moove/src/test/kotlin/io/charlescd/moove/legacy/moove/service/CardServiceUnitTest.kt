@@ -421,8 +421,6 @@ class CardServiceUnitTest {
     fun `should delete a action card and branch`() {
         val card = buildActionCard()
 
-        val gitConfigurationId = module1.workspace.gitConfigurationId!!
-
         every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
         every { cardRepository.deleteLabelsRelationship(any()) } answers {}
         every { cardRepository.deleteMembersRelationship(any()) } answers {}

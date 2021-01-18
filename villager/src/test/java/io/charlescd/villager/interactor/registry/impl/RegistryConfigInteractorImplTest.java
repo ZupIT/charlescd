@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.service.RegistryService;
 import io.charlescd.villager.utils.DockerRegistryTestUtils;
 import org.junit.jupiter.api.Test;
@@ -16,50 +15,50 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
-
 @ExtendWith(MockitoExtension.class)
-public class TestRegistryConfigInteractorImplTest {
+public class RegistryConfigInteractorImplTest {
+
+    private static final String ID_DEFAULT_VALUE = "1a3d413d-2255-4a1b-94ba-82e7366e4342";
 
     @Mock
     private RegistryService registryService;
 
     @Test
-    public void testGCPRegistryConfigIsOK() {
+    public void testGCPRegistryConnectionIsOK() {
 
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        DockerRegistryConfigurationInput input = DockerRegistryTestUtils
-                .generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         interactor.execute(input);
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
 
     }
 
-    @Test
-    public void testGCPRegistryConfigIsInvalid() {
+    @Test()
+    public void testGCPRegistryConnectionIsInvalid() throws IllegalArgumentException {
 
         var registryType = RegistryType.GCP;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         doThrow(new IllegalArgumentException("Invalid registry")).when(registryService)
                 .testRegistryConnectivityConfig(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         try {
             interactor.execute(input);
@@ -68,61 +67,7 @@ public class TestRegistryConfigInteractorImplTest {
         }
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
-
-        verify(registryService, times(1))
-                .testRegistryConnectivityConfig(entity);
-
-        assertThrows(IllegalArgumentException.class, () -> registryService.testRegistryConnectivityConfig(entity));
-
-    }
-    
-    @Test
-    public void testAzureRegistryConfigIsOK() {
-
-        var registryType = RegistryType.AZURE;
-        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        DockerRegistryConfigurationInput input = DockerRegistryTestUtils
-                .generateDockerRegistryConfigurationInput(registryType);
-
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
-
-        var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
-
-        interactor.execute(input);
-
-        verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
-
-        verify(registryService, times(1))
-                .testRegistryConnectivityConfig(entity);
-
-    }
-
-    @Test
-    public void testAzureRegistryConfigIsInvalid() {
-
-        var registryType = RegistryType.AZURE;
-        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(registryType);
-
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
-
-        doThrow(new IllegalArgumentException("Invalid registry")).when(registryService)
-                .testRegistryConnectivityConfig(entity);
-
-        var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
-
-        try {
-            interactor.execute(input);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
@@ -132,42 +77,41 @@ public class TestRegistryConfigInteractorImplTest {
     }
 
     @Test
-    public void testHarborRegistryConfigIsOK() {
+    public void testHarborRegistryConnectionIsOK() {
 
         var registryType = RegistryType.HARBOR;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        DockerRegistryConfigurationInput input = DockerRegistryTestUtils
-                .generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         interactor.execute(input);
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
 
     }
 
-    @Test
-    public void testHarborRegistryConfigIsInvalid() {
+    @Test()
+    public void testHarborRegistryConnectionIsInvalid() throws IllegalArgumentException {
 
         var registryType = RegistryType.HARBOR;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         doThrow(new IllegalArgumentException("Invalid registry")).when(registryService)
                 .testRegistryConnectivityConfig(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         try {
             interactor.execute(input);
@@ -176,7 +120,7 @@ public class TestRegistryConfigInteractorImplTest {
         }
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
@@ -186,42 +130,41 @@ public class TestRegistryConfigInteractorImplTest {
     }
 
     @Test
-    public void testDockerHubRegistryConfigIsOK() {
+    public void testAzureRegistryConnectionIsOK() {
 
-        var registryType = RegistryType.DOCKER_HUB;
+        var registryType = RegistryType.AZURE;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        DockerRegistryConfigurationInput input = DockerRegistryTestUtils
-                .generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         interactor.execute(input);
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
 
     }
 
-    @Test
-    public void testDockerHubRegistryConfigIsInvalid() {
+    @Test()
+    public void testAzureRegistryConnectionIsInvalid() throws IllegalArgumentException {
 
-        var registryType = RegistryType.DOCKER_HUB;
+        var registryType = RegistryType.AZURE;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         doThrow(new IllegalArgumentException("Invalid registry")).when(registryService)
                 .testRegistryConnectivityConfig(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         try {
             interactor.execute(input);
@@ -230,7 +173,7 @@ public class TestRegistryConfigInteractorImplTest {
         }
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
@@ -240,42 +183,41 @@ public class TestRegistryConfigInteractorImplTest {
     }
 
     @Test
-    public void testAWSRegistryConfigIsOK() {
+    public void testDockerHubRegistryConnectionIsOK() {
 
-        var registryType = RegistryType.AWS;
+        var registryType = RegistryType.DOCKER_HUB;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        DockerRegistryConfigurationInput input = DockerRegistryTestUtils
-                .generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         interactor.execute(input);
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
 
     }
 
-    @Test
-    public void testAWSRegistryConfigIsInvalid() {
+    @Test()
+    public void testDockerHubRegistryConnectionIsInvalid() throws IllegalArgumentException {
 
-        var registryType = RegistryType.AWS;
+        var registryType = RegistryType.DOCKER_HUB;
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
-        var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInput(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
 
-        when(registryService.fromDockerRegistryConfigurationInput(input)).thenReturn(entity);
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
 
         doThrow(new IllegalArgumentException("Invalid registry")).when(registryService)
                 .testRegistryConnectivityConfig(entity);
 
         var interactor =
-                new TestRegistryConfigInteractorImpl(registryService);
+                new TestRegistryConnectivityInteractorImpl(registryService);
 
         try {
             interactor.execute(input);
@@ -284,7 +226,7 @@ public class TestRegistryConfigInteractorImplTest {
         }
 
         verify(registryService, times(1))
-                .fromDockerRegistryConfigurationInput(input);
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
 
         verify(registryService, times(1))
                 .testRegistryConnectivityConfig(entity);
@@ -292,4 +234,58 @@ public class TestRegistryConfigInteractorImplTest {
         assertThrows(IllegalArgumentException.class, () -> registryService.testRegistryConnectivityConfig(entity));
 
     }
+
+    @Test
+    public void testAWSRegistryConnectionIsOK() {
+
+        var registryType = RegistryType.AWS;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
+
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
+
+        var interactor =
+                new TestRegistryConnectivityInteractorImpl(registryService);
+
+        interactor.execute(input);
+
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+
+        verify(registryService, times(1))
+                .testRegistryConnectivityConfig(entity);
+
+    }
+
+    @Test()
+    public void testAWSRegistryConnectionIsInvalid() throws IllegalArgumentException {
+
+        var registryType = RegistryType.AWS;
+        var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(registryType);
+        var input = DockerRegistryTestUtils.generateTestDockerRegistryConnectionInput(registryType);
+
+        when(registryService.getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE)).thenReturn(entity);
+
+        doThrow(new IllegalArgumentException("Invalid registry")).when(registryService)
+                .testRegistryConnectivityConfig(entity);
+
+        var interactor =
+                new TestRegistryConnectivityInteractorImpl(registryService);
+
+        try {
+            interactor.execute(input);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        verify(registryService, times(1))
+                .getRegistryConfigurationEntity(ID_DEFAULT_VALUE, ID_DEFAULT_VALUE);
+
+        verify(registryService, times(1))
+                .testRegistryConnectivityConfig(entity);
+
+        assertThrows(IllegalArgumentException.class, () -> registryService.testRegistryConnectivityConfig(entity));
+
+    }
+
 }

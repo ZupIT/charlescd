@@ -22,6 +22,7 @@ import io.charlescd.moove.legacy.moove.api.request.CreateDeployOctopipeCdConfigu
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployOctopipeCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.api.request.GitProvidersEnum
 import io.charlescd.moove.legacy.moove.api.request.K8sClusterProvidersEnum
+import io.charlescd.moove.legacy.repository.entity.User
 import javax.validation.constraints.Size
 
 data class CreateOctopipeCdConfigurationRequest(
@@ -30,10 +31,11 @@ data class CreateOctopipeCdConfigurationRequest(
     val name: String
 ) : CreateCdConfigurationRequest(CdTypeEnum.OCTOPIPE) {
 
-    fun toDeployRequest(): CreateDeployOctopipeCdConfigurationRequest {
+    fun toDeployRequest(user: User): CreateDeployOctopipeCdConfigurationRequest {
         return CreateDeployOctopipeCdConfigurationRequest(
             this.type,
             this.getDeployConfigurationData(),
+            user.id,
             this.name
         )
     }
