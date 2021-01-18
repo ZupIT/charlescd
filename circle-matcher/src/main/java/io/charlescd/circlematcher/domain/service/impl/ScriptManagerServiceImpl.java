@@ -22,7 +22,6 @@ import io.charlescd.circlematcher.infrastructure.Constants;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
 import java.util.Map;
-
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.PolyglotException;
