@@ -37,4 +37,8 @@ data class CreateCardRequest(
     val branchName: String = "",
 
     val modules: List<String> = emptyList()
-)
+) {
+    fun validate() {
+        BranchNameValidations().validateBranchName(branchName)
+    }
+}

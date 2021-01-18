@@ -17,20 +17,11 @@
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import SelectSingle from '../Single/Select';
-import Select from '../Select';
 
 test('render select component', () => {
   const options = [{ value: 'apple', label: 'apple' }];
 
   render(<SelectSingle options={options} />);
-
-  expect(screen.getByTestId('react-select')).toBeInTheDocument();
-});
-
-test('render select component', () => {
-  const options = [{ value: 'apple', label: 'apple' }];
-
-  render(<Select options={options} />);
 
   expect(screen.getByTestId('react-select')).toBeInTheDocument();
 });
