@@ -33,13 +33,13 @@ export interface User extends Base {
   id: string;
   workspaces?: Workspace[];
   createdAt?: string;
-  isRoot?: boolean;
+  root?: boolean;
   photoUrl?: string;
 }
 
 export interface NewUser extends Base {
   password: string;
-  isRoot?: boolean;
+  root?: boolean;
 }
 
 export interface Profile extends Base {

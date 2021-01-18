@@ -28,53 +28,37 @@ import {
   resetPasswordById,
   patchProfileById,
   findUserByEmail,
-  findWorkspacesByUserId,
   createNewUser,
-  deleteUserById
+  deleteUserById,
+  findWorkspacesByUserId
 } from 'core/providers/users';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import {
-  User,
-  NewUser,
-  NewPassword,
-  Workspace,
-  Profile
-} from './interfaces/User';
+import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
 import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
   user: User;
-  workspaces: Workspace[];
-  userProfileData: User;
   error: ResponseError;
 } => {
   const dispatch = useDispatch();
   const getUserByEmail = useFetchData<User>(findUserByEmail);
-  const getWorkspacesByUserId = useFetchData<Workspace[]>(
-    findWorkspacesByUserId
-  );
   const [user, setUser] = useState<User>(null);
-  const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
-  const [userProfileData, setUserProfileData] = useState<Profile>(null);
   const [error, setError] = useState<ResponseError>(null);
 
   const findByEmail = useCallback(
     async (email: Pick<User, 'email'>) => {
       try {
         if (email) {
-          const userData = await getUserByEmail(email);
-          setUser(userData);
+          console.log('[HEREEE]');
+          const res = await getUserByEmail(email);
+          console.log('[userData]', res);
+          setUser(res);
 
-          const workspacesData = await getWorkspacesByUserId(userData.id);
-          setWorkspaces(workspacesData);
-
-          setUserProfileData({ ...userData, workspaces: workspacesData });
-
-          return { ...userData, workspaces: workspacesData };
+          return res;
         }
       } catch (e) {
         setError(e);
@@ -89,14 +73,55 @@ export const useUser = (): {
         }
       }
     },
-    [dispatch, getUserByEmail, getWorkspacesByUserId]
+    [dispatch, getUserByEmail]
   );
 
   return {
     findByEmail,
     user,
+    error
+  };
+};
+
+export const useWorkspacesByUser = (): {
+  findWorkspacesByUser: Function;
+  workspaces: Workspace[];
+  error: ResponseError;
+} => {
+  const dispatch = useDispatch();
+  const getWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
+  const [error, setError] = useState<ResponseError>(null);
+
+  const findWorkspacesByUser = useCallback(
+    async (id: Pick<User, 'id'>) => {
+      try {
+        if (id) {
+          const res = await getWorkspacesByUser(id);
+          console.log('[workspacesData]', res);
+          setWorkspaces(res);
+
+          return res;
+        }
+      } catch (e) {
+        setError(e);
+        // TODO remover?
+        if (!isIDMAuthFlow()) {
+          dispatch(
+            toogleNotification({
+              text: `Error when trying to fetch workspaces for current user`,
+              status: 'error'
+            })
+          );
+        }
+      }
+    },
+    [dispatch, getWorkspacesByUser]
+  );
+
+  return {
+    findWorkspacesByUser,
     workspaces,
-    userProfileData,
     error
   };
 };
