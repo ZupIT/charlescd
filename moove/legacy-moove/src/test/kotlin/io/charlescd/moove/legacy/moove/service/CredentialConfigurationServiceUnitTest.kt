@@ -93,7 +93,6 @@ class CredentialConfigurationServiceUnitTest {
         val incomingRequestConfigData =
             CreateSpinnakerCdConfigurationData("account", "git-account", "namespace", "http://my-spinnaker.com")
         val incomingRequest = CreateSpinnakerCdConfigurationRequest(incomingRequestConfigData, "name")
-        val deployRequest = incomingRequest.toDeployRequest()
         val deployResponse = CreateDeployCdConfigurationResponse("id", "name", "authorId", "workspaceId", createdAt)
         val workspaceId = "workspaceId"
         val user = User(
@@ -104,6 +103,7 @@ class CredentialConfigurationServiceUnitTest {
             isRoot = false,
             createdAt = LocalDateTime.now()
         )
+        val deployRequest = incomingRequest.toDeployRequest(user)
         val expectedResponse = CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
 
         every {
@@ -133,17 +133,9 @@ class CredentialConfigurationServiceUnitTest {
             namespace = "cluster-namespace"
         )
         val incomingRequest = CreateOctopipeCdConfigurationRequest(incomingRequestConfigData, "name")
-        val deployRequest = incomingRequest.toDeployRequest()
+        val deployRequest = incomingRequest.toDeployRequest(user)
         val deployResponse = CreateDeployCdConfigurationResponse("id", "name", "authorId", "workspaceId", createdAt)
         val workspaceId = "workspaceId"
-        val user = User(
-            name = "userName",
-            id = "authorId",
-            email = "user@email.com.br",
-            photoUrl = "www.google.com.br",
-            isRoot = false,
-            createdAt = LocalDateTime.now()
-        )
         val expectedResponse = CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
 
         every {
