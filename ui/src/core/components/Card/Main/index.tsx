@@ -45,7 +45,7 @@ const Main = (props: Props) => {
       <Card.Body>
         <Styled.Title color="light">{title}</Styled.Title>
         <Styled.Description color="light">{description}</Styled.Description>
-        {children}
+        {children && <Styled.Content>{children}</Styled.Content>}
       </Card.Body>
     </Styled.Card>
   );

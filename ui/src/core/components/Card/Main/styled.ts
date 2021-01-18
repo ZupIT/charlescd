@@ -31,15 +31,16 @@ const Description = styled(Text.h5)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  margin-top: 10px;
+`;
+
+const Content = styled.div`
+  margin-top: 10px;
 `;
 
 const Card = styled(CardBase)<Partial<Props>>`
   background-color: ${({ theme, color }) => theme.card.main[color]};
   width: ${({ width }) => width && width};
-
-  > * {
-    margin-top: 10px;
-  }
 
   :hover {
     ${Title}, ${Description} {
@@ -52,5 +53,6 @@ const Card = styled(CardBase)<Partial<Props>>`
 export default {
   Card,
   Title,
-  Description
+  Description,
+  Content
 };

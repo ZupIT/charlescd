@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-import { COLOR_MOUNTAIN_MEADOW, COLOR_BASTILLE } from 'core/assets/colors';
+import {
+  COLOR_MOUNTAIN_MEADOW,
+  COLOR_BASTILLE,
+  COLOR_RED_ORANGE
+} from 'core/assets/colors';
 
 export const light = {};
 
 export const dark = {
   light: COLOR_MOUNTAIN_MEADOW,
-  dark: COLOR_BASTILLE
+  dark: COLOR_BASTILLE,
+  error: COLOR_RED_ORANGE
 } as Record<string, string>;
