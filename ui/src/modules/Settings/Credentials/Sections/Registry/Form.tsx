@@ -32,6 +32,14 @@ import CustomOption from 'core/components/Form/Select/CustomOption';
 import { Option } from 'core/components/Form/Select/interfaces';
 import isEqual from 'lodash/isEqual';
 
+const registryPlaceholder: Option = {
+  AZURE: 'example.azurecr.io',
+  AWS: 'account_id.dkr.ecr.region.amazonaws.com',
+  GCP: 'gcr.io',
+  DOCKER_HUB: 'registry.hub.docker.com',
+  HARBOR: 'harbor.exampleapi.com'
+};
+
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
   const {
@@ -41,23 +49,43 @@ const FormRegistry = ({ onFinish }: Props) => {
     status
   } = useRegistryTestConnection();
   const [registryType, setRegistryType] = useState('');
+  const [registryName, setRegistryName] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const [message, setMessage] = useState<ConnectionProps>(null);
   const [messageForm, setMessageForm] = useState<Registry>();
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const {
     register,
     handleSubmit,
     reset,
     control,
     getValues,
+    setValue,
     watch,
     formState: { isValid }
-  } = useForm<Registry>({ mode: 'onChange' });
+  } = useForm<Registry>({
+    mode: 'onChange',
+    defaultValues: {
+      address: 'https://',
+      name: '',
+      provider: null,
+      jsonKey: ''
+    }
+  });
+
   const form = watch();
+  const { address: addressListener } = form;
 
   useEffect(() => {
     if (responseAdd) onFinish();
   }, [onFinish, responseAdd]);
+
+  useEffect(() => {
+    if (registryType === 'DOCKER_HUB') {
+      register('address');
+      setValue('address', 'https://registry.hub.docker.com');
+    }
+  }, [registryType, setValue, register]);
 
   useEffect(() => {
     if (message && message.type) {
@@ -81,10 +109,19 @@ const FormRegistry = ({ onFinish }: Props) => {
     }
   }, [error, getValues]);
 
+  useEffect(() => {
+    if (addressListener === 'https://' || addressListener === 'http://') {
+      return setShowPlaceholder(true);
+    } else {
+      setShowPlaceholder(false);
+    }
+  }, [addressListener]);
+
   const onChange = (option: Option) => {
     reset();
     setMessage(null);
     setRegistryType(option.value);
+    setRegistryName(option.label);
   };
 
   const onClick = () => {
@@ -188,7 +225,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Text.h5 color="dark">
-        Fill in the fields below with your information:
+        Fill in the fields below with your {registryName} information:
       </Text.h5>
       <Styled.Fields>
         <Form.Input
@@ -196,11 +233,35 @@ const FormRegistry = ({ onFinish }: Props) => {
           name="name"
           label="Type a name for Registry"
         />
-        <Form.Input
-          ref={register({ required: true })}
-          name="address"
-          label="Enter the registry url"
-        />
+        {registryType !== 'DOCKER_HUB' && (
+          <>
+            <Form.Input
+              ref={register({
+                required: true,
+                validate: {
+                  methodValidate: (value: string) => {
+                    if (value === 'https://' || value === 'http://') {
+                      return false;
+                    } else if (
+                      value.includes('https://') ||
+                      value.includes('http://')
+                    ) {
+                      return true;
+                    }
+                    return false;
+                  }
+                }
+              })}
+              name="address"
+              label="Enter the registry url"
+            />
+            {showPlaceholder && (
+              <Styled.StyledInputPlaceholder color="light">
+                {registryPlaceholder[registryType]}
+              </Styled.StyledInputPlaceholder>
+            )}
+          </>
+        )}
         {handleFields()}
         {message && <ConnectionStatus {...message} />}
         <Button.Default
@@ -224,6 +285,16 @@ const FormRegistry = ({ onFinish }: Props) => {
     </Styled.Form>
   );
 
+  const returnRegistryIcon = () => {
+    if (registryType) {
+      const registryChoose = options.filter(
+        item => item.value === registryType
+      );
+      return registryChoose[0].icon;
+    }
+    return null;
+  };
+
   return (
     <Styled.Content>
       <Styled.Title color="light">
@@ -239,6 +310,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       <Styled.Select
         placeholder="Choose which one you want to add:"
         customOption={CustomOption.Icon}
+        icon={returnRegistryIcon()}
         options={options}
         onChange={option => onChange(option as Option)}
       />
