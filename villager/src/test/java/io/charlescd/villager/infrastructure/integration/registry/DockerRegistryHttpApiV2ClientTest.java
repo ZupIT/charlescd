@@ -13,7 +13,7 @@ class DockerRegistryHttpApiV2ClientTest {
 
     @BeforeEach
     void setUp() {
-        dockerRegistry = new DockerRegistryHttpApiV2Client();
+        dockerRegistry = new DockerRegistryHttpApiV2Client(false);
     }
 
     @Test

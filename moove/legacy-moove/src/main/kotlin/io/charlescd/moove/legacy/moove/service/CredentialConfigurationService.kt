@@ -45,10 +45,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class CredentialConfigurationService(
-    val credentialConfigurationRepository: CredentialConfigurationRepository,
-    val userServiceLegacy: UserServiceLegacy,
-    val deployApi: DeployApi,
-    val villagerApi: VillagerApi
+    private val credentialConfigurationRepository: CredentialConfigurationRepository,
+    private val userServiceLegacy: UserServiceLegacy,
+    private val deployApi: DeployApi,
+    private val villagerApi: VillagerApi
 ) {
 
     companion object {
@@ -87,7 +87,7 @@ class CredentialConfigurationService(
         val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
 
         val deployRequest: CreateDeployCdConfigurationRequest =
-            buildDeployCdConfigurationRequest(createCdConfigRequest)
+            buildDeployCdConfigurationRequest(createCdConfigRequest, user)
         val deployResponse: CreateDeployCdConfigurationResponse =
             deployApi.createCdConfiguration(deployRequest, workspaceId)
 
@@ -122,11 +122,12 @@ class CredentialConfigurationService(
 
     fun testRegistryConfiguration(
         workspaceId: String,
-        request: CreateRegistryConfigurationRequest
+        request: CreateRegistryConfigurationRequest,
+        authorization: String
     ) {
 
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
-            buildVillagerRegistryConfigurationRequest(request, "")
+            buildVillagerRegistryConfigurationRequest(request, userServiceLegacy.findByAuthorizationToken(authorization).id)
 
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)
@@ -276,12 +277,13 @@ class CredentialConfigurationService(
     }
 
     private fun buildDeployCdConfigurationRequest(
-        createCdConfigRequest: CreateCdConfigurationRequest
+        createCdConfigRequest: CreateCdConfigurationRequest,
+        user: User
     ): CreateDeployCdConfigurationRequest {
 
         return when (createCdConfigRequest) {
-            is CreateSpinnakerCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
-            is CreateOctopipeCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
+            is CreateSpinnakerCdConfigurationRequest -> createCdConfigRequest.toDeployRequest(user)
+            is CreateOctopipeCdConfigurationRequest -> createCdConfigRequest.toDeployRequest(user)
             else -> throw IllegalArgumentException("Invalid cd configuration type")
         }
     }

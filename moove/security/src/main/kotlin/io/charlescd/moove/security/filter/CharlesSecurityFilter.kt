@@ -18,12 +18,12 @@ package io.charlescd.moove.security.filter
 
 import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.security.SecurityConstraints
 import io.charlescd.moove.security.config.Constants
 import io.charlescd.moove.security.utils.FileUtils
+import io.charlescd.moove.security.utils.FilterUtils
 import javax.servlet.FilterChain
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
@@ -34,20 +34,13 @@ import org.keycloak.representations.AccessToken
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.GenericFilterBean
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.Constructor
 
 @Component
 @Profile("!local")
 class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterBean() {
 
-    private lateinit var constraints: SecurityConstraints
-
-    init {
-        constraints = read(Constants.SECURITY_CONSTRAINTS_FILE)
-    }
+    private var constraints: SecurityConstraints = FileUtils.read(Constants.SECURITY_CONSTRAINTS_FILE)
 
     companion object {
         const val X_WORKSPACE_ID = "X-Workspace-Id"
@@ -84,11 +77,11 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
     }
 
     private fun doAuthorization(workspaceId: String?, authorization: String?, path: String, method: String) {
-        if (checkIfIsOpenPath(constraints, path, method)) {
+        if (FilterUtils.checkIfIsOpenPath(constraints, path, method)) {
             return
         }
 
-        if (checkIfIsManagementPath(constraints, path, method) && authorization != null) {
+        if (FilterUtils.checkIfIsManagementPath(constraints, path, method) && authorization != null) {
             return
         }
 
@@ -103,67 +96,10 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
         val workspace = user.workspaces.firstOrNull { it.id == workspaceId }
 
         workspace?.let {
-            if (!isValidConstraintPath(constraints, path, workspace, method)) {
+            if (!FilterUtils.isValidConstraintPath(constraints, path, workspace, method)) {
                 throw BusinessException.of(MooveErrorCode.FORBIDDEN)
             }
         } ?: throw BusinessException.of(MooveErrorCode.FORBIDDEN)
-    }
-
-    private fun isValidConstraintPath(
-        constraints: SecurityConstraints,
-        path: String,
-        workspace: WorkspacePermissions,
-        method: String
-    ): Boolean {
-        return constraints.constraints.filter {
-            AntPathMatcher().match(it.pattern, path)
-        }.any {
-            it.roles.any { role ->
-                checkIfContainsRole(workspace, role) && checkIfContainsMethod(role, method)
-            }
-        }
-    }
-
-    private fun checkIfContainsMethod(
-        role: Map.Entry<String, List<String>>,
-        method: String
-    ): Boolean {
-        return role.value.any { mth -> mth.toLowerCase() == method.toLowerCase() }
-    }
-
-    private fun checkIfContainsRole(
-        workspace: WorkspacePermissions,
-        permission: Map.Entry<String, List<String>>
-    ): Boolean {
-        return workspace.permissions.any { workspacePermission -> permission.key == workspacePermission.name }
-    }
-
-    private fun checkIfIsManagementPath(
-        constraints: SecurityConstraints,
-        path: String,
-        method: String
-    ): Boolean {
-        return constraints.managementConstraints.filter {
-            AntPathMatcher().match(it.pattern, path)
-        }.any {
-            it.methods.any { mth ->
-                mth.toLowerCase() == method.toLowerCase()
-            }
-        }
-    }
-
-    private fun checkIfIsOpenPath(
-        constraints: SecurityConstraints,
-        path: String,
-        method: String
-    ): Boolean {
-        return constraints.publicConstraints.filter {
-            AntPathMatcher().match(it.pattern, path)
-        }.any {
-            it.methods.any { mth ->
-                mth.toLowerCase() == method.toLowerCase()
-            }
-        }
     }
 
     private fun getEmailFromAccessToken(authorization: String?): String? {
@@ -171,12 +107,5 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
             val token = authorization.substringAfter("Bearer").trim()
             return TokenVerifier.create(token, AccessToken::class.java).token.email
         }
-    }
-
-    private fun read(name: String): SecurityConstraints {
-        return FileUtils.loadYamlFromFile(
-            name,
-            Yaml(Constructor(SecurityConstraints::class.java))
-        )
     }
 }

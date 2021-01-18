@@ -17,10 +17,19 @@
 package io.charlescd.moove.security.utils
 
 import io.charlescd.moove.security.InvalidYamlException
+import io.charlescd.moove.security.SecurityConstraints
 import java.net.URL
 import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.Constructor
 
 object FileUtils {
+    fun read(name: String): SecurityConstraints {
+        return loadYamlFromFile(
+            name,
+            Yaml(Constructor(SecurityConstraints::class.java))
+        )
+    }
+
     fun loadFromFile(fileName: String) =
         this.javaClass.classLoader.getResource(fileName) ?: throw IllegalStateException("File not found: $fileName")
 

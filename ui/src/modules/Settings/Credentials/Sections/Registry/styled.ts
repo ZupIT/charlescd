@@ -60,7 +60,6 @@ type status = {
 const Message = styled.div<status>`
   margin-top: 25px;
   display: flex;
-
   span {
     margin-left: 10px;
     color: ${({ status }) => darkTheme.message[status]};
