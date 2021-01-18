@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-import { dark as darkRelease } from './release';
-import { dark as darkCircle } from './circle';
-import { dark as darkConfig } from './config';
-import { dark as darkExpand } from './expand';
-import { dark as darkRole } from './role';
-import { dark as darkBoard } from './board';
-import { dark as darkMessage } from './message';
-import { dark as darkMain } from './main';
+import { COLOR_MOUNTAIN_MEADOW, COLOR_BASTILLE } from 'core/assets/colors';
 
-const light = {};
+export const light = {};
 
-const dark = {
-  release: darkRelease,
-  circle: darkCircle,
-  config: darkConfig,
-  expand: darkExpand,
-  role: darkRole,
-  board: darkBoard,
-  message: darkMessage,
-  main: darkMain
-};
-
-export { dark, light };
+export const dark = {
+  light: COLOR_MOUNTAIN_MEADOW,
+  dark: COLOR_BASTILLE
+} as Record<string, string>;

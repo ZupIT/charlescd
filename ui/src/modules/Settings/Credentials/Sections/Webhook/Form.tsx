@@ -40,7 +40,12 @@ const FormWebhook = ({ onFinish }: Props) => {
     if (status === 'resolved') onFinish();
   }, [onFinish, status]);
 
+  const setAllEvents = (webhook: Webhook) => {
+    webhook.events = ['DEPLOY', 'UNDEPLOY'];
+  };
+
   const onSubmit = (webhook: Webhook) => {
+    watchEvents === 'everything' && setAllEvents(webhook);
     save(omit(webhook, 'eventType'));
   };
 

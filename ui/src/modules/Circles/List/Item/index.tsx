@@ -26,6 +26,7 @@ import { getTroubleComponentsAmount } from './helpers';
 import { addParam } from 'core/utils/path';
 import { CirclePaginationItem } from 'modules/Circles/interfaces/CirclesPagination';
 import routes from 'core/constants/routes';
+import { dateFrom } from 'core/utils/date';
 import Styled from './styled';
 import { isDefaultCircle } from 'modules/Circles/Comparation/Item/helpers';
 
@@ -64,7 +65,13 @@ const CirclesListItem = ({ id, name, deployment }: CirclePaginationItem) => {
     <Styled.Wrapper
       onClick={() => addParam('circle', routes.circlesComparation, history, id)}
     >
-      <Card.Circle key={id} circle={name} deployedAt={deployment?.deployedAt}>
+      <Card.Circle
+        key={id}
+        icon="circles"
+        iconColor="success"
+        title={name}
+        description={`Deployed at ${dateFrom(deployment?.deployedAt)}`}
+      >
         {circleHealthData && renderStatus()}
         <Styled.ReleaseWrapper>
           <Card.Release

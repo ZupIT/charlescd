@@ -16,31 +16,37 @@
 
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'core/state/hooks';
-import { saveConfig, delConfig } from 'core/providers/webhook';
+import {
+  saveConfig,
+  delConfig,
+  getConfig,
+  editConfig
+} from 'core/providers/webhook';
 import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Webhook } from './interfaces';
 
-interface SaveProps {
+interface Props {
   status: FetchStatuses;
   save: Function;
-}
-
-interface DelProps {
-  status: FetchStatuses;
   remove: Function;
+  list: Function;
+  edit: Function;
 }
 
-export const useWebhook = (): SaveProps => {
+export const useWebhook = (): Props => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState<FetchStatuses>('idle');
-  const create = useFetchData(saveConfig);
+  const saving = useFetchData(saveConfig);
+  const removing = useFetchData(delConfig);
+  const listing = useFetchData(getConfig);
+  const editing = useFetchData(editConfig);
 
   const save = useCallback(
     async (webhook: Webhook) => {
       try {
         setStatus('pending');
-        await create(webhook);
+        await saving(webhook);
         setStatus('resolved');
       } catch (e) {
         setStatus('rejected');
@@ -54,25 +60,35 @@ export const useWebhook = (): SaveProps => {
         return Promise.reject(error);
       }
     },
-    [create, dispatch]
+    [saving, dispatch]
   );
 
-  return {
-    status,
-    save
-  };
-};
-
-export const useDelWebhook = (): DelProps => {
-  const dispatch = useDispatch();
-  const [status, setStatus] = useState<FetchStatuses>('idle');
-  const removeConfig = useFetchData(delConfig);
-
   const remove = useCallback(
+    async (id: string) => {
+      try {
+        setStatus('pending');
+        await removing(id);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+        const error = await e.json();
+        dispatch(
+          toogleNotification({
+            text: `[${e.status}] ${error.message}`,
+            status: 'error'
+          })
+        );
+        return Promise.reject(error);
+      }
+    },
+    [removing, dispatch]
+  );
+
+  const list = useCallback(
     async (webhook: Webhook) => {
       try {
         setStatus('pending');
-        await removeConfig(webhook);
+        await listing(webhook);
         setStatus('resolved');
       } catch (e) {
         setStatus('rejected');
@@ -86,11 +102,35 @@ export const useDelWebhook = (): DelProps => {
         return Promise.reject(error);
       }
     },
-    [removeConfig, dispatch]
+    [listing, dispatch]
+  );
+
+  const edit = useCallback(
+    async (webhook: Webhook) => {
+      try {
+        setStatus('pending');
+        await editing(webhook);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+        const error = await e.json();
+        dispatch(
+          toogleNotification({
+            text: `[${e.status}] ${error.message}`,
+            status: 'error'
+          })
+        );
+        return Promise.reject(error);
+      }
+    },
+    [editing, dispatch]
   );
 
   return {
     status,
-    remove
+    save,
+    remove,
+    list,
+    edit
   };
 };

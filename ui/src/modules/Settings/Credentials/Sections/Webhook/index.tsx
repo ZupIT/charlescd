@@ -19,13 +19,14 @@ import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import Card from 'core/components/Card';
+import Dropdown from 'core/components/Dropdown';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { getWorkspaceId } from 'core/utils/workspace';
-import { useDelWebhook } from './hooks';
+import { useWebhook } from './hooks';
 import { FORM_WEBHOOK } from './constants';
 import FormWebhook from './Form';
 import { Webhook } from './interfaces';
+import Icon from 'core/components/Icon';
 
 interface Props {
   form: string;
@@ -35,12 +36,29 @@ interface Props {
 
 const SectionWebhook = ({ form, setForm, data }: Props) => {
   const [webhooks, setWebhooks] = useState<Webhook[]>(data);
-  const { remove, status } = useDelWebhook();
+  const { remove, status } = useWebhook();
 
   const handleClose = async (id: string) => {
-    await remove(getWorkspaceId(), id);
+    await remove(id);
     setWebhooks(filter(webhooks, item => item.id !== id));
   };
+
+  const renderAction = () => (
+    <Dropdown color="light">
+      <Dropdown.Item
+        icon="edit"
+        name="Edit"
+        onClick={() => console.log('edit')}
+      />
+      <Dropdown.Item
+        icon="delete"
+        name="Delete"
+        onClick={() => console.log('delete')}
+      />
+    </Dropdown>
+  );
+
+  const renderHeader = () => <Icon name="webhook" color="dark" size="15px" />;
 
   const renderSection = () => (
     <Section
@@ -51,13 +69,20 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
     >
       {webhooks &&
         map(webhooks, webhook => (
-          <Card.Config
-            key={webhook.description}
-            icon="webhook"
-            description={webhook.description}
-            isLoading={status === 'pending'}
-            onClose={() => handleClose(webhook?.id)}
-          />
+          <Card.Main
+            key={webhook.id}
+            title={webhook.description}
+            description={webhook.url}
+            header={renderHeader()}
+            action={renderAction()}
+          >
+            <Card.Main
+              width="237px"
+              title="200"
+              description={webhook.description}
+              color="light"
+            />
+          </Card.Main>
         ))}
     </Section>
   );
