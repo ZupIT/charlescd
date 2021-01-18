@@ -25,8 +25,9 @@ import (
 )
 
 type UseCases interface {
-	ParseMessage(subscription io.ReadCloser) (Request, errors.Error)
-	Save(message Request) (ExecutionResponse, errors.Error)
+	ParsePayload(request io.ReadCloser) (PayloadRequest, errors.Error)
+	ParseMessage(request io.ReadCloser) (Request, errors.Error)
+	Save(messagesRequest []Request) (ExecutionResponse, errors.Error)
 }
 
 type Main struct {

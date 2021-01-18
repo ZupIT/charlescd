@@ -22,7 +22,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"hermes/internal/publisher"
+	"hermes/internal/message"
 	"hermes/internal/subscription"
 	util2 "hermes/web/util"
 	"net/http"
@@ -127,18 +127,13 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 	}
 }
 
-func Publish(publisherMain publisher.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		request, err := publisherMain.ParseMessage(r.Body)
+		request, err := messageMain.ParsePayload(r.Body)
 		if err != nil {
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
-
-		//if err := subscriptionMain.Validate(request); len(err.GetErrors()) > 0 {
-		//	util2.NewResponse(w, http.StatusBadRequest, err)
-		//	return
-		//}
 
 		subscriptions, err := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
 		if err != nil {
@@ -146,12 +141,17 @@ func Publish(publisherMain publisher.UseCases, subscriptionMain subscription.Use
 			return
 		}
 
-		var ids []uuid.UUID
+		var messages []message.Request
 		for _, s := range subscriptions {
-			ids = append(ids, s.Id)
+			msg := message.Request{
+				SubscriptionId: s.Id,
+				EventType:      request.EventType,
+				Event:          request.Event,
+			}
+			messages = append(messages, msg)
 		}
 
-		createdSubscription, err := publisherMain.Publish(request, ids)
+		createdSubscription, err := messageMain.Save(messages)
 		if err != nil {
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return

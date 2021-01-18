@@ -25,12 +25,16 @@ import (
 
 type Request struct {
 	SubscriptionId uuid.UUID       `json:"subscriptionId"`
-	ExecutionLog   string          `json:"executionLog"`
 	EventType      string          `json:"eventType"`
 	Event          json.RawMessage `json:"event"`
-	Status         string          `json:"status"`
+}
+
+type PayloadRequest struct {
+	ExternalId uuid.UUID       `json:"externalId"`
+	EventType  string          `json:"eventType"`
+	Event      json.RawMessage `json:"event"`
 }
 
 type ExecutionResponse struct {
-	Id uuid.UUID `json:"id"`
+	EventType string `json:"eventType"`
 }

@@ -33,32 +33,46 @@ type Message struct {
 	Event          string    `json:"event" gorm:"type:jsonb"`
 }
 
-func (main Main) ParseMessage(subscription io.ReadCloser) (Request, errors.Error) {
+func (main Main) ParsePayload(request io.ReadCloser) (PayloadRequest, errors.Error) {
+	var payload *PayloadRequest
+	err := json.NewDecoder(request).Decode(&payload)
+	if err != nil {
+		return PayloadRequest{}, errors.NewError("Parse error", err.Error()).
+			WithOperations("ParsePayload.ParseDecode")
+	}
+	return *payload, nil
+}
+
+func (main Main) ParseMessage(request io.ReadCloser) (Request, errors.Error) {
 	var msg *Request
-	err := json.NewDecoder(subscription).Decode(&msg)
+	err := json.NewDecoder(request).Decode(&msg)
 	if err != nil {
 		return Request{}, errors.NewError("Parse error", err.Error()).
-			WithOperations("Parse.ParseDecode")
+			WithOperations("ParseMessage.ParseDecode")
 	}
 	return *msg, nil
 }
 
-func (main Main) Save(message Request) (ExecutionResponse, errors.Error) {
+func (main Main) Save(messagesRequest []Request) (ExecutionResponse, errors.Error) {
 	id := uuid.New()
-	execution := Message{
-		BaseModel: util.BaseModel{
-			ID: id,
-		},
-		SubscriptionId: message.SubscriptionId,
-		EventType:      message.EventType,
-		Event:          string(message.Event),
+
+	var messages []Message
+	for _, r := range messagesRequest {
+		msg := Message{
+			BaseModel:      util.BaseModel{ID: id},
+			SubscriptionId: r.SubscriptionId,
+			EventType:      r.EventType,
+			Event:          string(r.Event),
+		}
+
+		messages = append(messages, msg)
 	}
 
-	result := main.db.Model(&Message{}).Create(&execution)
+	result := main.db.Model(&Message{}).Create(&messages)
 	if result.Error != nil {
 		return ExecutionResponse{}, errors.NewError("Save Message error", result.Error.Error()).
 			WithOperations("Save.Result")
 	}
 
-	return ExecutionResponse{execution.ID}, nil
+	return ExecutionResponse{messages[0].Event}, nil
 }
