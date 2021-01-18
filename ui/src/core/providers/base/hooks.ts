@@ -48,6 +48,7 @@ export interface FetchProps {
   loadingUpdate?: boolean;
   loadingTest?: boolean;
   loading?: boolean;
+  test?: Function;
   errorTest?: unknown;
   getAll?: Function;
   findUserGroupByName?: Function;
@@ -55,7 +56,6 @@ export interface FetchProps {
   save?: Function;
   update?: Function;
   remove?: Function;
-  test?: Function;
 }
 
 const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
