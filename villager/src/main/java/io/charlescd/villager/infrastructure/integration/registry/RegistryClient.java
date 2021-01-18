@@ -30,6 +30,9 @@ public interface RegistryClient extends Closeable {
     Optional<Response> getImage(String name, String tagName,
                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
 
+    Optional<Response> getV2Path(
+                                DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
+
     void closeQuietly();
 
 }

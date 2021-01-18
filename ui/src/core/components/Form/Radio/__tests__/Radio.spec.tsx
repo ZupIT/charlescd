@@ -14,42 +14,19 @@
  * limitations under the License.
  */
 
-export interface Credentials {
-  address: string;
-  accessToken: string;
-  serviceProvider: string;
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import Radio from '..'
+
+const props = {
+  name: 'charles',
+  value: 'charles',
+  label: 'charles'
 }
 
-export interface Author {
-  id?: string;
-  name?: string;
-  email?: string;
-  createdAt?: string;
-}
+test('render Radio default', async () => {
+  render(<Radio { ...props } />);
 
-export interface Role {
-  id?: string;
-  name?: string;
-  value?: string;
-  description?: string;
-  createdAt?: string;
-  permissions?: unknown;
-}
-
-export interface UserGroup {
-  id?: string;
-  name?: string;
-  author?: Author;
-  roleId?: string;
-  createdAt?: string;
-}
-
-export interface GroupRoles {
-  userGroupId: string;
-  roleId?: string;
-}
-
-export interface PostResponse {
-  id: string;
-  name: string;
-}
+  const element = await screen.findByTestId(`radio-${props.value}`);
+  expect(element).toBeInTheDocument();
+});

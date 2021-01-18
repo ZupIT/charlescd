@@ -43,24 +43,20 @@ public class RegistryServiceImpl implements RegistryService {
     private static final String ARTIFACT_NAME = "charles_cd";
     private static final String NAME = "test";
 
-    private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
-    private RegistryClient registryClient;
+    private final DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
+    private final RegistryClient registryClient;
 
     @Inject
-    public RegistryServiceImpl(
-            DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository,
+    public RegistryServiceImpl(DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository,
             RegistryClient registryClient) {
         this.dockerRegistryConfigurationRepository = dockerRegistryConfigurationRepository;
         this.registryClient = registryClient;
     }
 
-    public DockerRegistryConfigurationEntity getRegistryConfigurationEntity(
-            String workspaceId, String registryConfigurationId) {
-        var entity =
-                this.dockerRegistryConfigurationRepository.findById(registryConfigurationId)
-                        .orElseThrow(
-                                () -> new ResourceNotFoundException(
-                                        ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
+    public DockerRegistryConfigurationEntity getRegistryConfigurationEntity(String workspaceId,
+            String registryConfigurationId) {
+        var entity = this.dockerRegistryConfigurationRepository.findById(registryConfigurationId).orElseThrow(
+                () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
         if (!entity.workspaceId.equals(workspaceId)) {
             throw new IllegalAccessResourceException(
@@ -70,26 +66,38 @@ public class RegistryServiceImpl implements RegistryService {
         return entity;
     }
 
-    public Optional<Response> getDockerRegistryTag(
-            DockerRegistryConfigurationEntity entity, String artifactName, String name) {
+    public Optional<Response> getDockerRegistryTag(DockerRegistryConfigurationEntity entity, String artifactName,
+            String name) {
         try {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, artifactName);
 
             return this.registryClient.getImage(artifactName, name, entity.connectionData);
-        } catch (IllegalArgumentException exception) {
-            throw exception;
-        } catch (Exception ex) {
-            throw new ThirdPartyIntegrationException(ex.getMessage());
+        } catch (RuntimeException ex) {
+            throw new ThirdPartyIntegrationException(ex.getMessage(), ex);
+        } finally {
+            this.registryClient.closeQuietly();
+        }
+    }
+
+    private Optional<Response> getV2Support(DockerRegistryConfigurationEntity entity) {
+        try {
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData, ARTIFACT_NAME);
+
+            return this.registryClient.getV2Path(entity.connectionData);
+        } catch (RuntimeException ex) {
+            throw new ThirdPartyIntegrationException(ex.getMessage(), ex);
         } finally {
             this.registryClient.closeQuietly();
         }
     }
 
     public void testRegistryConnectivityConfig(DockerRegistryConfigurationEntity entity) {
-
-        var response =
-                getDockerRegistryTag(entity, ARTIFACT_NAME, NAME);
-
+        Optional<Response> response;
+        if (entity.type == RegistryType.DOCKER_HUB || entity.type == RegistryType.GCP) {
+            response = getDockerRegistryTag(entity, ARTIFACT_NAME, NAME);
+        } else {
+            response = getV2Support(entity);
+        }
         validateResponse(entity.type, response);
     }
 
@@ -110,46 +118,31 @@ public class RegistryServiceImpl implements RegistryService {
         switch (input.getRegistryType()) {
             case AWS:
                 var awsRegistryAuth = ((AWSDockerRegistryAuth) input.getAuth());
-                connectionData =
-                        new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData(
-                                input.getAddress(),
-                                awsRegistryAuth.getAccessKey(),
-                                awsRegistryAuth.getSecretKey(),
-                                awsRegistryAuth.getRegion());
+                connectionData = new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData(
+                        input.getAddress(), awsRegistryAuth.getAccessKey(), awsRegistryAuth.getSecretKey(),
+                        awsRegistryAuth.getRegion());
                 break;
             case AZURE:
                 var azureRegistryAuth = ((AzureDockerRegistryAuth) input.getAuth());
-                connectionData =
-                        new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData(
-                                input.getAddress(),
-                                azureRegistryAuth.getUsername(),
-                                azureRegistryAuth.getPassword());
+                connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData(
+                        input.getAddress(), azureRegistryAuth.getUsername(), azureRegistryAuth.getPassword());
                 break;
             case GCP:
                 var gcpRegistryAuth = ((GCPDockerRegistryAuth) input.getAuth());
-                connectionData =
-                        new DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData(
-                                input.getAddress(),
-                                gcpRegistryAuth.getOrganization(),
-                                gcpRegistryAuth.getUsername(),
-                                gcpRegistryAuth.getJsonKey());
+                connectionData = new DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData(
+                        input.getAddress(), gcpRegistryAuth.getOrganization(), gcpRegistryAuth.getUsername(),
+                        gcpRegistryAuth.getJsonKey());
                 break;
             case DOCKER_HUB:
                 var dockerHubRegistryAuth = ((DockerHubDockerRegistryAuth) input.getAuth());
-                connectionData =
-                        new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(
-                                input.getAddress(),
-                                dockerHubRegistryAuth.getOrganization(),
-                                dockerHubRegistryAuth.getUsername(),
-                                dockerHubRegistryAuth.getPassword());
+                connectionData = new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(
+                        input.getAddress(), dockerHubRegistryAuth.getOrganization(),
+                        dockerHubRegistryAuth.getUsername(), dockerHubRegistryAuth.getPassword());
                 break;
             case HARBOR:
                 var harborRegistryAuth = ((HarborDockerRegistryAuth) input.getAuth());
-                connectionData =
-                        new DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData(
-                                input.getAddress(),
-                                harborRegistryAuth.getUsername(),
-                                harborRegistryAuth.getPassword());
+                connectionData = new DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData(
+                        input.getAddress(), harborRegistryAuth.getUsername(), harborRegistryAuth.getPassword());
                 break;
             default:
                 throw new IllegalStateException("Registry type not supported!");
@@ -158,46 +151,37 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private void validateResponse(RegistryType type, Optional<Response> response) {
-        if (Objects.isNull(response)) {
+        if (Objects.isNull(response) || response.isEmpty()) {
             throw new ThirdPartyIntegrationException("Registry service not respond.");
         }
 
         switch (type) {
             case AWS:
-                //TODO: Implement
-                throw new IllegalStateException("Registry type not implemented yet!");
-                //break;
             case GCP:
-                validateGCPResponse(response);
-                break;
             case AZURE:
-                //TODO: Implement
-                throw new IllegalStateException("Registry type not implemented yet!");
-                //break;
             case DOCKER_HUB:
-                //TODO: Implement
-                throw new IllegalStateException("Registry type not implemented yet!");
-                //break;
             case HARBOR:
-                //TODO: Implement
-                throw new IllegalStateException("Registry type not implemented yet!");
-                //break;
+                validateGenericV2ApiResponse(response, type);
+                break;
             default:
                 throw new IllegalStateException("Registry type not supported!");
 
         }
     }
 
-    private void validateGCPResponse(Optional<Response> response) {
+    private boolean isNotFoundImageError(int status, RegistryType type) {
+        return status == HttpStatus.SC_NOT_FOUND && (type == RegistryType.DOCKER_HUB || type == RegistryType.GCP);
+    }
+
+    public void validateGenericV2ApiResponse(Optional<Response> response, RegistryType type) {
         int status = response.get().getStatus();
 
         if (status == HttpStatus.SC_UNAUTHORIZED || status == HttpStatus.SC_FORBIDDEN) {
             throw new IllegalArgumentException("Invalid registry config");
         }
-
-        if (!isSuccessfullyHttpStatus(status) && status != HttpStatus.SC_NOT_FOUND) {
+        if (!isSuccessfullyHttpStatus(status) && !isNotFoundImageError(status, type)) {
             throw new ThirdPartyIntegrationException(
-                    "GCP integration error: " + response.get().getStatusInfo().getReasonPhrase());
+                    type + "integration error: " + response.get().getStatusInfo().getReasonPhrase());
         }
     }
 
