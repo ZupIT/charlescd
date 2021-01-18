@@ -21,6 +21,8 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"hermes/internal/configuration"
+	"hermes/internal/message"
+	"hermes/internal/messageexecutionhistory"
 	"hermes/internal/subscription"
 	"hermes/web/api"
 	"log"
@@ -35,7 +37,9 @@ func main() {
 	}
 
 	subscriptionMain := subscription.NewMain(db)
+	messageMain := message.NewMain(db)
+	messageExecutionMain := messageexecutionhistory.NewMain(db)
 
-	router := api.NewApi(subscriptionMain)
+	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain)
 	api.Start(router)
 }
