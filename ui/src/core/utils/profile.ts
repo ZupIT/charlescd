@@ -37,6 +37,5 @@ export const clearProfile = () => localStorage.removeItem(profileKey);
 
 export const saveProfile = (profile: User) => {
   const profileBase64 = btoa(JSON.stringify(profile));
-  console.log('[profileBase64]', profileBase64);
   localStorage.setItem(profileKey, profileBase64);
 };

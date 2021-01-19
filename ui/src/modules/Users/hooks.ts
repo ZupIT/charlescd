@@ -53,9 +53,7 @@ export const useUser = (): {
     async (email: Pick<User, 'email'>) => {
       try {
         if (email) {
-          console.log('[HEREEE]');
           const res = await getUserByEmail(email);
-          console.log('[userData]', res);
           setUser(res);
 
           return res;
@@ -98,7 +96,6 @@ export const useWorkspacesByUser = (): {
       try {
         if (id) {
           const res = await getWorkspacesByUser(id);
-          console.log('[workspacesData]', res);
           setWorkspaces(res);
 
           return res;
