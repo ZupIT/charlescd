@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 beforeAll(() => {
-  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br', isRoot: true });
+  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br', root: true });
 });
 
 const props = {
@@ -56,7 +56,7 @@ test('should open a user and successfully update the name', async () => {
 
   const InputNameWrapper = await screen.findByTestId('input-wrapper-name');
   expect(InputNameWrapper).toBeInTheDocument();
-  act(() => userEvent.click(InputNameWrapper));
+  await act(async () => userEvent.click(InputNameWrapper));
 
   const InputName = await screen.findByTestId('input-text-name');
   expect(InputName).toBeInTheDocument();
@@ -64,7 +64,7 @@ test('should open a user and successfully update the name', async () => {
 
   const ButtonSubmit = await screen.findByTestId('button-default-submit');
   expect(ButtonSubmit).toBeInTheDocument();
-  act(() => userEvent.click(ButtonSubmit));
+  await act(async () => userEvent.click(ButtonSubmit));
 });
 
 test('render Modal.Trigger on UsersComparationItem component', async () => {
