@@ -55,8 +55,6 @@ export class DeploymentsHookController {
       return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
 
-    // rename active column to current
-    // create new healthy column to represent the state of the deployment on the cluster
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
     await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
     return { children: specs }
