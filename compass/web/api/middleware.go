@@ -20,7 +20,6 @@ package api
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -120,24 +119,8 @@ func extractToken(authorization string) (AuthToken, errors.Error) {
 	}
 
 	splitToken := strings.Split(rToken, "Bearer ")
-	pkey, fileErr := ioutil.ReadFile(fmt.Sprintf("./pkey.txt"))
-	if fileErr != nil {
-		return AuthToken{}, errors.NewError("Extract token error", fileErr.Error()).
-			WithOperations("extractToken.ReadFile")
-	}
 
-	key, keyErr := jwt.ParseRSAPublicKeyFromPEM(pkey)
-	if keyErr != nil {
-		return AuthToken{}, errors.NewError("Extract token error", fmt.Sprintf("Error parsing RSA public key: %s", keyErr.Error())).
-			WithOperations("extractToken.ParseRSAPublicKeyFromPEM")
-	}
-
-	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-		return key, nil
-	})
+	token, _, err := new(jwt.Parser).ParseUnverified(splitToken[1], &AuthToken{})
 	if err != nil {
 		return AuthToken{}, errors.NewError("Extract token error", fmt.Sprintf("Error parsing token: %s", err.Error())).
 			WithOperations("extractToken.ParseWithClaims")
@@ -148,8 +131,11 @@ func extractToken(authorization string) (AuthToken, errors.Error) {
 
 func (api Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
 	user, err := api.mooveMain.FindUserByEmail(email)
-	if err != nil || user == (moove.User{}) {
+	if err != nil {
 		return false, err.WithOperations("authorizeUser.FindUserByEmail")
+	} else if user == (moove.User{}) {
+		return false, errors.NewError("Find error", "invalid user").
+			WithOperations("authorizeUser.FindUserByEmail")
 	} else if user.IsRoot {
 		return true, nil
 	}
