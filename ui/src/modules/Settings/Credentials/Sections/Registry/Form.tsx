@@ -20,17 +20,19 @@ import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { useRegistry, useRegistryTestConnection } from './hooks';
+import { useRegistry } from './hooks';
 import { options } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
-import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 import CustomOption from 'core/components/Form/Select/CustomOption';
 import { Option } from 'core/components/Form/Select/interfaces';
 import isEqual from 'lodash/isEqual';
+import { useTestConnection } from 'core/hooks/useTestConnection';
+import { testRegistryConnection } from 'core/providers/registry';
 
 const registryPlaceholder: Option = {
   AZURE: 'example.azurecr.io',
@@ -42,18 +44,17 @@ const registryPlaceholder: Option = {
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
-  const {
-    testConnectionRegistry,
-    response,
-    error,
-    status
-  } = useRegistryTestConnection();
   const [registryType, setRegistryType] = useState('');
   const [registryName, setRegistryName] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const [message, setMessage] = useState<ConnectionProps>(null);
-  const [messageForm, setMessageForm] = useState<Registry>();
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
+  const [lastTestedForm, setLastTestedForm] = useState<Registry>();
+  const {
+    response: testConnectionResponse,
+    loading: loadingConnectionResponse,
+    save: testConnection,
+    reset: resetTestConnection
+  } = useTestConnection(testRegistryConnection);
   const {
     register,
     handleSubmit,
@@ -88,26 +89,12 @@ const FormRegistry = ({ onFinish }: Props) => {
   }, [registryType, setValue, register]);
 
   useEffect(() => {
-    if (message && message.type) {
-      if (!isEqual(form, messageForm)) {
-        setMessage(null);
+    if (testConnectionResponse && testConnectionResponse.message) {
+      if (!isEqual(form, lastTestedForm)) {
+        resetTestConnection();
       }
     }
-  }, [form, messageForm, message]);
-
-  useEffect(() => {
-    if (status.isResolved && response) {
-      setMessageForm(getValues());
-      setMessage({ type: 'success', message: 'Successful connection.' });
-    }
-  }, [status.isResolved, response, getValues]);
-
-  useEffect(() => {
-    if (error) {
-      setMessageForm(getValues());
-      setMessage({ type: 'error', message: error.message });
-    }
-  }, [error, getValues]);
+  }, [form, testConnectionResponse, resetTestConnection, lastTestedForm]);
 
   useEffect(() => {
     setShowPlaceholder(['https://', 'http://'].includes(addressListener));
@@ -115,7 +102,6 @@ const FormRegistry = ({ onFinish }: Props) => {
 
   const onChange = (option: Option) => {
     reset();
-    setMessage(null);
     setRegistryType(option.value);
     setRegistryName(option.label);
   };
@@ -125,7 +111,8 @@ const FormRegistry = ({ onFinish }: Props) => {
       ...getValues(),
       provider: registryType
     };
-    testConnectionRegistry(registry);
+    setLastTestedForm(getValues());
+    testConnection(registry);
   };
 
   const onSubmit = (registry: Registry) => {
@@ -259,13 +246,17 @@ const FormRegistry = ({ onFinish }: Props) => {
           </>
         )}
         {handleFields()}
-        {message && <ConnectionStatus {...message} />}
+        <ConnectionStatus
+          successMessage={`Successful connection with ${registryName}.`}
+          errorMessage={testConnectionResponse?.message}
+          status={testConnectionResponse?.status}
+        />
         <Button.Default
           type="button"
           id="test-connection"
           onClick={onClick}
           isDisabled={!isValid}
-          isLoading={status.isPending}
+          isLoading={loadingConnectionResponse}
         >
           Test connection
         </Button.Default>

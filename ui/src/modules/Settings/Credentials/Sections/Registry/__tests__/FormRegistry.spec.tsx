@@ -137,7 +137,7 @@ test('should have successful test connection with AZURE registry', async () => {
   expect(submitButton).not.toBeDisabled();
 
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Azure.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -259,7 +259,7 @@ test('should enable submit button after fill GCP form', async () => {
   const testConnectionButton = screen.getByText('Test connection');
   await act(async () => userEvent.click(testConnectionButton));
 
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with GCP.');
   expect(successMessage).toBeInTheDocument();
   expect(submitButton).not.toBeDisabled();
 });
@@ -287,7 +287,7 @@ test('should test connectivity with GCR successful', async () => {
   const testConnectionButton = screen.getByText('Test connection');
   await act(async () => userEvent.click(testConnectionButton));
 
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with GCP.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -448,7 +448,7 @@ test('should test AWS registry connection successful', async () => {
   });
 
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = screen.getByText('Successful connection.');
+  const successMessage = screen.getByText('Successful connection with AWS.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -548,7 +548,7 @@ test('should test connectivity with Docker Hub successful', async () => {
 
 
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Docker Hub.');
   expect(successMessage).toBeInTheDocument();
   expect(submitButton).not.toBeDisabled();
 });
@@ -674,7 +674,7 @@ test('should test connection with Harbor (success)', async () => {
 
   expect(submitButton).not.toBeDisabled();
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Harbor.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -735,7 +735,7 @@ test('should clean test connection message after change form', async () => {
 
   await act(async () => userEvent.click(testConnectionButton));
 
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Harbor.');
 
   expect(successMessage).toBeInTheDocument();
   await act(async () => {
