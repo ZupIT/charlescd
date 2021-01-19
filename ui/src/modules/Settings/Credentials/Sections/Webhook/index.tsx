@@ -39,27 +39,23 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
   const [webhook, setWebhook] = useState<Webhook>();
   const { remove } = useWebhook();
 
-  const handleRemove = async (id: string) => {
+  const onDelete = async (id: string) => {
     await remove(id);
     setWebhooks(filter(webhooks, item => item.id !== id));
   };
 
-  const handleAction = (webhook: Webhook) => {
+  const onEdit = (webhook: Webhook) => {
     setWebhook(webhook);
     setForm(FORM_WEBHOOK);
   };
 
   const renderAction = (webhook: Webhook) => (
     <Dropdown color="light">
-      <Dropdown.Item
-        icon="edit"
-        name="Edit"
-        onClick={() => handleAction(webhook)}
-      />
+      <Dropdown.Item icon="edit" name="Edit" onClick={() => onEdit(webhook)} />
       <Dropdown.Item
         icon="delete"
         name="Delete"
-        onClick={() => handleRemove(webhook.id)}
+        onClick={() => onDelete(webhook.id)}
       />
     </Dropdown>
   );

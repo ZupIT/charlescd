@@ -16,13 +16,18 @@
 
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import CardDefault from '..';
+import CardMain from '..';
+
+const props = {
+  title: 'Title',
+  description: 'Description'
+}
 
 test('render CardMessage component with nodes', () => {
   render(
-    <CardDefault title="deployed" description="tag-rc-1" />
+    <CardMain { ...props } />
   );
 
-  expect(screen.getByText('Deployed')).toBeInTheDocument();
-  expect(screen.getByText('tag-rc-1')).toBeInTheDocument();
+  expect(screen.getByText(props.title)).toBeInTheDocument();
+  expect(screen.getByText(props.description)).toBeInTheDocument();
 });
