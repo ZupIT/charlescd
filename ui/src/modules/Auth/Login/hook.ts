@@ -86,7 +86,7 @@ export const useLogin = (): {
 
       setStatus('resolved');
     }
-  }, [loadWorkspacesResponse, user]);
+  }, [user, loadWorkspacesResponse]);
 
   const doLogin = useCallback(
     async (email: string, password: string) => {
@@ -108,7 +108,7 @@ export const useLogin = (): {
         setStatus('rejected');
       }
     },
-    [getSession, getCircleId, findByEmail]
+    [getSession, getCircleId, findByEmail, findWorkspacesByUser, loadWorkspaces]
   );
 
   return {
