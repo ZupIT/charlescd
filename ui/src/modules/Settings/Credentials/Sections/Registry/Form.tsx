@@ -110,11 +110,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   }, [error, getValues]);
 
   useEffect(() => {
-    if (addressListener === 'https://' || addressListener === 'http://') {
-      return setShowPlaceholder(true);
-    } else {
-      setShowPlaceholder(false);
-    }
+    setShowPlaceholder(['https://', 'http://'].includes(addressListener));
   }, [addressListener]);
 
   const onChange = (option: Option) => {
@@ -256,9 +252,9 @@ const FormRegistry = ({ onFinish }: Props) => {
               label="Enter the registry url"
             />
             {showPlaceholder && (
-              <Styled.StyledInputPlaceholder color="light">
+              <Styled.Placeholder color="light">
                 {registryPlaceholder[registryType]}
-              </Styled.StyledInputPlaceholder>
+              </Styled.Placeholder>
             )}
           </>
         )}
@@ -285,7 +281,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     </Styled.Form>
   );
 
-  const returnRegistryIcon = () => {
+  const renderRegistryIcon = () => {
     if (registryType) {
       const registryChoose = options.filter(
         item => item.value === registryType
@@ -310,7 +306,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       <Styled.Select
         placeholder="Choose which one you want to add:"
         customOption={CustomOption.Icon}
-        icon={returnRegistryIcon()}
+        icon={renderRegistryIcon()}
         options={options}
         onChange={option => onChange(option as Option)}
       />

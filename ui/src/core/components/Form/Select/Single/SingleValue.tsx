@@ -23,10 +23,10 @@ const SingleValue = ({
   children,
   ...props
 }: SingleValueProps<OptionTypeBase>) => (
-  <Styled.StyledSingleValue {...props}>
+  <Styled.SingleValue {...props}>
     {props.selectProps?.icon && <Icon name={props.selectProps.icon} />}
     {children}
-  </Styled.StyledSingleValue>
+  </Styled.SingleValue>
 );
 
 export default SingleValue;

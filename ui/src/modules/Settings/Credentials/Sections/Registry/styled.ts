@@ -75,7 +75,7 @@ const Select = styled(SelectSingle)`
   width: 271px;
 `;
 
-const StyledInputPlaceholder = styled(TextComponent.h4)`
+const Placeholder = styled(TextComponent.h4)`
   pointer-events: none;
   margin-top: -21px;
   margin-left: 45px;
@@ -91,5 +91,5 @@ export default {
   Fields,
   Message,
   Select,
-  StyledInputPlaceholder
+  Placeholder
 };

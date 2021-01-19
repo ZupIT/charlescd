@@ -6,7 +6,7 @@ const IconSelect = styled(Icon)`
   margin-right: 10px;
 `;
 
-const StyledSingleValue = styled(components.SingleValue)`
+const SingleValue = styled(components.SingleValue)`
   display: flex;
   align-items: center;
   > i {
@@ -16,5 +16,5 @@ const StyledSingleValue = styled(components.SingleValue)`
 
 export default {
   IconSelect,
-  StyledSingleValue
+  SingleValue
 };
