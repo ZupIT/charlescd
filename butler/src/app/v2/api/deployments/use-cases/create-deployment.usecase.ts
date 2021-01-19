@@ -93,8 +93,8 @@ export class CreateDeploymentUseCase {
       .createQueryBuilder(DeploymentEntity, 'd')
       .update()
       .set({ current: false })
-      .where('circle_id = :circleId', { circleId: circleId })
-      .where('current = true')
+      .andWhere('circle_id = :circleId', { circleId: circleId })
+      .andWhere('current = true')
       .returning('id')
       .execute()
 
