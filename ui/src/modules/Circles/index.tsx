@@ -39,7 +39,6 @@ const Circles = () => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState<string>(CIRCLE_STATUS.active);
   const [name, setName] = useState('');
-  // const [message, setMessage] = useState('');
   const profileName = getProfileByKey('name');
   const query = getQueryStrings();
   const circles = query.getAll('circle');
