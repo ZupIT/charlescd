@@ -86,7 +86,7 @@ export const useLogin = (): {
 
       setStatus('resolved');
     }
-  }, [loadWorkspacesResponse]);
+  }, [loadWorkspacesResponse, user]);
 
   const doLogin = useCallback(
     async (email: string, password: string) => {
