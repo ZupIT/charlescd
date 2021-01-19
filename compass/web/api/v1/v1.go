@@ -147,8 +147,8 @@ func extractToken(authorization string) (AuthToken, error) {
 
 	splitToken := strings.Split(rToken, "Bearer ")
 
-	token, err := jwt.ParseWithClaims(splitToken[1], &AuthToken{}, nil)
-	if token == nil {
+	token, _, err := new(jwt.Parser).ParseUnverified(splitToken[1], &AuthToken{})
+	if err != nil {
 		return AuthToken{}, fmt.Errorf("error parsing token: %v", err)
 	}
 
