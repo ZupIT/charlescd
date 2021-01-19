@@ -27,7 +27,7 @@ import (
 type UseCases interface {
 	ParsePayload(request io.ReadCloser) (PayloadRequest, errors.Error)
 	ParseMessage(request io.ReadCloser) (Request, errors.Error)
-	Save(messagesRequest []Request) (ExecutionResponse, errors.Error)
+	Save(messagesRequest []Request) ([]ExecutionResponse, errors.Error)
 }
 
 type Main struct {

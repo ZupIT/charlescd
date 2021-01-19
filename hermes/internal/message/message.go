@@ -53,26 +53,25 @@ func (main Main) ParseMessage(request io.ReadCloser) (Request, errors.Error) {
 	return *msg, nil
 }
 
-func (main Main) Save(messagesRequest []Request) (ExecutionResponse, errors.Error) {
-	id := uuid.New()
-
+func (main Main) Save(messagesRequest []Request) ([]ExecutionResponse, errors.Error) {
+	var response []ExecutionResponse
 	var messages []Message
+
 	for _, r := range messagesRequest {
 		msg := Message{
-			BaseModel:      util.BaseModel{ID: id},
+			BaseModel:      util.BaseModel{ID: uuid.New()},
 			SubscriptionId: r.SubscriptionId,
 			EventType:      r.EventType,
 			Event:          string(r.Event),
 		}
-
 		messages = append(messages, msg)
 	}
 
-	result := main.db.Model(&Message{}).Create(&messages)
+	result := main.db.Model(&Message{}).Create(&messages).Scan(&response)
 	if result.Error != nil {
-		return ExecutionResponse{}, errors.NewError("Save Message error", result.Error.Error()).
+		return []ExecutionResponse{}, errors.NewError("Save Message error", result.Error.Error()).
 			WithOperations("Save.Result")
 	}
 
-	return ExecutionResponse{messages[0].Event}, nil
+	return response, nil
 }

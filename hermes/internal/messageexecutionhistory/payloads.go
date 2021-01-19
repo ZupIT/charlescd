@@ -19,15 +19,14 @@
 package messageexecutionhistory
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
-	"time"
 )
 
 type Request struct {
-	ExecutionId  uuid.UUID `json:"executionId"`
-	ExecutionLog string    `json:"executionLog"`
-	Status       string    `json:"status"`
-	LoggedAt     time.Time `json:"-"`
+	ExecutionId uuid.UUID       `json:"executionId"`
+	EventType   string          `json:"eventType"`
+	Event       json.RawMessage `json:"event"`
 }
 
 type Response struct {

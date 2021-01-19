@@ -22,7 +22,6 @@ func (main Main) Validate(message Request) errors.ErrorList {
 	return nil
 }
 func (main Main) Publish(message Request, subscriptionIds []uuid.UUID) (SaveResponse, errors.Error) {
-	//main.db.Create()
 
 	response, e, done := PublishMessage(message, subscriptionIds)
 	if done {

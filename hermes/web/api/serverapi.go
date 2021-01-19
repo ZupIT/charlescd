@@ -44,6 +44,7 @@ func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases
 		executionMain:    executionMain,
 		publisherMain:    publisherMain,
 	}
+
 	router := mux.NewRouter()
 	s := router.PathPrefix("/api").Subrouter()
 

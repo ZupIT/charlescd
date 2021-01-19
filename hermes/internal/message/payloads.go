@@ -36,5 +36,7 @@ type PayloadRequest struct {
 }
 
 type ExecutionResponse struct {
-	EventType string `json:"eventType"`
+	Id        uuid.UUID       `json:"id"`
+	EventType string          `json:"eventType"`
+	Event     json.RawMessage `json:"event"`
 }

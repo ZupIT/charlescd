@@ -23,6 +23,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"hermes/internal/message"
+	"hermes/internal/messageexecutionhistory"
 	"hermes/internal/subscription"
 	util2 "hermes/web/util"
 	"net/http"
@@ -127,7 +128,7 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 	}
 }
 
-func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func Publish(messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := messageMain.ParsePayload(r.Body)
 		if err != nil {
@@ -141,22 +142,48 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
-		var messages []message.Request
-		for _, s := range subscriptions {
-			msg := message.Request{
-				SubscriptionId: s.Id,
-				EventType:      request.EventType,
-				Event:          request.Event,
-			}
-			messages = append(messages, msg)
-		}
+		requestMessages := subscriptionToMessageRequest(subscriptions, request)
 
-		createdSubscription, err := messageMain.Save(messages)
+		createdMessages, err := messageMain.Save(requestMessages)
 		if err != nil {
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		util2.NewResponse(w, http.StatusCreated, createdSubscription)
+		requestExecutions := messageToExecutionRequest(createdMessages, request)
+
+		publishedMessages, err := executionMain.Save(requestExecutions)
+		if err != nil {
+			util2.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		util2.NewResponse(w, http.StatusCreated, publishedMessages)
 	}
+}
+
+func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdResponse, request message.PayloadRequest) []message.Request {
+	var messages []message.Request
+	for _, s := range subscriptions {
+		msg := message.Request{
+			SubscriptionId: s.Id,
+			EventType:      request.EventType,
+			Event:          request.Event,
+		}
+		messages = append(messages, msg)
+	}
+	return messages
+}
+
+func messageToExecutionRequest(createdMessages []message.ExecutionResponse, request message.PayloadRequest) []messageexecutionhistory.Request {
+	var requests []messageexecutionhistory.Request
+	for _, m := range createdMessages {
+		msg := messageexecutionhistory.Request{
+			ExecutionId: m.Id,
+			EventType:   request.EventType,
+			Event:       request.Event,
+		}
+		requests = append(requests, msg)
+	}
+	return requests
 }

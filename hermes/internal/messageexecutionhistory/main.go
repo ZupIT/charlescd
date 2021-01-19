@@ -24,7 +24,7 @@ import (
 )
 
 type UseCases interface {
-	Save(execution Request) (Response, errors.Error)
+	Save(executionsRequest []Request) (Response, errors.Error)
 }
 
 type Main struct {
