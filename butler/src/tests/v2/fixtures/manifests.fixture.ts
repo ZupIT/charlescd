@@ -1,14 +1,14 @@
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an 'AS IS' BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -49,3 +49,66 @@ export const customManifests = (appName: string, namespace: string, image: strin
 
   return [service, deployment]
 }
+
+export const routesManifests: KubernetesManifest[] = [
+  {
+    apiVersion: 'networking.istio.io/v1alpha3',
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'hello-kubernetes',
+      namespace: 'namespace',
+    },
+    spec: {
+      host: 'hello-kubernetes',
+      subsets: [
+        {
+          labels: {
+            component: 'hello-kubernetes',
+            tag: 'build-image-tag',
+            circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+          },
+          name: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+        },
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: 'networking.istio.io/v1alpha3',
+    kind: 'VirtualService',
+    metadata: {
+      name: 'hello-kubernetes',
+      namespace: 'namespace',
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'hello-kubernetes',
+      ],
+      http: [
+        {
+          route: [
+            {
+              destination: {
+                host: 'hello-kubernetes',
+                subset: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  },
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+  } as KubernetesManifest,
+]

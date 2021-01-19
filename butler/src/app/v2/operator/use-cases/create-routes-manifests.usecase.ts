@@ -42,11 +42,7 @@ export class CreateRoutesManifestsUseCase {
       const deployment = await this.retriveDeploymentFor(hookParams.parent.spec.deploymentId)
       const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
 
-      const proxySpecs: KubernetesManifest[] = []
-      deployment.components.forEach(component => {
-        const manifests = this.createProxyManifestsFor(deployment, component, activeComponents)
-        manifests.forEach(m => proxySpecs.push(m))
-      })
+      const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
 
       this.consoleLoggerService.log('FINISH:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
       return proxySpecs
@@ -66,7 +62,16 @@ export class CreateRoutesManifestsUseCase {
     return deployment
   }
 
-  private createProxyManifestsFor(deployment: DeploymentEntityV2, 
+  private createProxySpecsFor(deployment: DeploymentEntityV2, activeComponents: Component[]): KubernetesManifest[] {
+    const proxySpecs: KubernetesManifest[] = []
+    deployment.components.forEach(component => {
+      const manifests = this.createIstioProxiesManifestsFor(deployment, component, activeComponents)
+      manifests.forEach(m => proxySpecs.push(m))
+    })
+    return proxySpecs
+  }
+
+  private createIstioProxiesManifestsFor(deployment: DeploymentEntityV2, 
     newComponent: Component, 
     activeComponents: Component[]
   ): [KubernetesManifest, KubernetesManifest] {
