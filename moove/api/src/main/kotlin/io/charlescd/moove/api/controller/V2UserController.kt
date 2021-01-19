@@ -38,7 +38,6 @@ class V2UserController(
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
     private val changeUserPasswordInteractor: ChangeUserPasswordInteractor,
-    private val deleteUserInteractor: DeleteUserInteractor,
     private val patchUserInteractor: PatchUserInteractor
 ) {
 
