@@ -54,8 +54,8 @@ export class DeploymentEntityV2 implements Deployment {
   public previousDeploymentId!: string | null
 
 
-  @Column({ name: 'active' })
-  public active!: boolean
+  @Column({ name: 'current' })
+  public current!: boolean
 
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]

@@ -23,7 +23,11 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
   public async findActiveComponents(): Promise<DeploymentEntityV2[]> {
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.active = true')
+      .where('deployment.current = true')
       .getMany()
+  }
+
+  public async findWithComponentsAndConfig(deploymentId: string): Promise<DeploymentEntityV2> {
+    return this.findOneOrFail({ id: deploymentId }, { relations: ['cdConfiguration', 'components'] })
   }
 }

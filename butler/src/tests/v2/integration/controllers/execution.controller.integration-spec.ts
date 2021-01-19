@@ -103,7 +103,7 @@ describe('DeploymentController v2', () => {
     const thirdExecution = await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manifests, manager)
 
     await request(app.getHttpServer())
-      .get('/v2/executions').query({ active: false, size: 1, page: 0 })
+      .get('/v2/executions').query({ current: false, size: 1, page: 0 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
@@ -118,7 +118,7 @@ describe('DeploymentController v2', () => {
     // testing pagination
     await request(app.getHttpServer())
       .get('/v2/executions')
-      .query({ active: false, size: 1, page: 1 })
+      .query({ current: false, size: 1, page: 1 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
@@ -133,7 +133,7 @@ describe('DeploymentController v2', () => {
     // testing pagination
     await request(app.getHttpServer())
       .get('/v2/executions')
-      .query({ active: false, size: 1, page: 2 })
+      .query({ current: false, size: 1, page: 2 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
@@ -156,7 +156,7 @@ describe('DeploymentController v2', () => {
       statusCode: 400
     }
     await request(app.getHttpServer())
-      .get('/v2/executions').query({ active: false, size: 0, page: -1 })
+      .get('/v2/executions').query({ current: false, size: 0, page: -1 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(response => {
         expect(response.body).toEqual(errorMessages)
@@ -198,7 +198,7 @@ describe('DeploymentController v2', () => {
     const expectedBody = {
       createdAt: expect.any(String),
       deployment: {
-        active: false,
+        current: false,
         author_id: '580a7726-a274-4fc3-9ec1-44e3563d58af',
         callback_url: 'http://localhost:8883/deploy/notifications/deployment',
         cd_configuration_id: expect.any(String),
@@ -227,7 +227,7 @@ describe('DeploymentController v2', () => {
     }
 
     await request(app.getHttpServer())
-      .get('/v2/executions').query({ active: false, size: 1, page: 0 })
+      .get('/v2/executions').query({ current: false, size: 1, page: 0 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {

@@ -23,7 +23,7 @@ export class DeploymentsHookController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     const reconcile = new Reconcile()
-    const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration', 'components'] })
+    const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const rawSpecs = deployment.components.flatMap(c => c.manifests)
     const specs = reconcile.addMetadata(rawSpecs, deployment)
@@ -39,9 +39,9 @@ export class DeploymentsHookController {
       if (previousDeploymentId === null) {
         return { children: specs, resyncAfterSeconds: 5 }
       }
-      const previousDeployment = await this.deploymentRepository.findOneOrFail({ id: previousDeploymentId }, { relations: ['components'] })
-      const s = reconcile.concatWithPrevious(previousDeployment, specs)
-      return { children: s, resyncAfterSeconds: 5 }
+      const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
+      const currentAndPrevious = reconcile.concatWithPrevious(previousDeployment, specs)
+      return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
     const allReady = reconcile.checkConditions(currentDeploymentSpecs)
     if (allReady === false) {
@@ -50,9 +50,9 @@ export class DeploymentsHookController {
       if (previousDeploymentId === null) {
         return { children: specs, resyncAfterSeconds: 5 }
       }
-      const previousDeployment = await this.deploymentRepository.findOneOrFail({ id: previousDeploymentId }, { relations: ['components'] })
-      const s = reconcile.concatWithPrevious(previousDeployment, specs)
-      return { children: s, resyncAfterSeconds: 5 }
+      const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
+      const currentAndPrevious = reconcile.concatWithPrevious(previousDeployment, specs)
+      return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
 
     // rename active column to current
@@ -66,7 +66,7 @@ export class DeploymentsHookController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: [], finalized: boolean, resyncAfterSeconds?: number }> {
-    const deployment = await this.deploymentRepository.findOneOrFail({ id: params.parent.spec.deploymentId }, { relations: ['cdConfiguration'] })
+    const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const finalized = true
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)

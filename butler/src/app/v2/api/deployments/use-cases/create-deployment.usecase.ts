@@ -81,7 +81,7 @@ export class CreateDeploymentUseCase {
     const cdConfig = createDeploymentDto.cdConfiguration.configurationData as IDefaultConfig
     const components = await this.getDeploymentComponents(cdConfig, createDeploymentDto.circle.headerValue, createDeploymentDto.modules)
     const deployment = createDeploymentDto.toCircleEntity(components)
-    deployment.active = true
+    deployment.current = true
     this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT')
     return deployment
   }
@@ -92,9 +92,9 @@ export class CreateDeploymentUseCase {
     const updatedDeployment = await transactionManager
       .createQueryBuilder(DeploymentEntity, 'd')
       .update()
-      .set({ active: false })
+      .set({ current: false })
       .where('circle_id = :circleId', { circleId: circleId })
-      .where('active = true')
+      .where('current = true')
       .returning('id')
       .execute()
 
@@ -118,7 +118,7 @@ export class CreateDeploymentUseCase {
     const cdConfig = createDeploymentDto.cdConfiguration.configurationData as IDefaultConfig
     const components = await this.getDeploymentComponents(cdConfig, createDeploymentDto.circle.headerValue, createDeploymentDto.modules)
     const deployment = createDeploymentDto.toDefaultEntity(unchangedComponents, components)
-    deployment.active = true
+    deployment.current = true
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
   }
