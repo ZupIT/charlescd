@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.5.0 (19/01/2021)
+- [#813](https://github.com/ZupIT/charlescd/pull/813) Compass token bug hotfix
+- [#811](https://github.com/ZupIT/charlescd/pull/811) Fix: link menu size
+- [#808](https://github.com/ZupIT/charlescd/pull/808) CI Update of charts and changelog
+- [#806](https://github.com/ZupIT/charlescd/pull/806) Change aws secret key text field to password field
+
+---
+
+## 0.4.9 (15/01/2021)
+- [#807](https://github.com/ZupIT/charlescd/pull/807) Added configmaps to octopipe
+- [#772](https://github.com/ZupIT/charlescd/pull/772) CI Update of charts and changelog
+- [#805](https://github.com/ZupIT/charlescd/pull/805) Hotfix: adding authorId when creating cd configuration.
+- [#798](https://github.com/ZupIT/charlescd/pull/798)  UI improvement in workspace configuration screen
+- [#801](https://github.com/ZupIT/charlescd/pull/801) Moove webhook crud apis
+
+---
+
 ## 0.4.8 (14/01/2021)
 - [#788](https://github.com/ZupIT/charlescd/pull/788) Feature registry connection (Azure, dockerhub, GCP, Harbor and AWS)
 - [#791](https://github.com/ZupIT/charlescd/pull/791) Default Radio component
@@ -494,11 +511,3 @@
 ---
 
 ## 0.2.11 (09/06/2020)
-
----
-
-## v0.2.10 (03/06/2020)
-
----
-
-## v0.2.9 (03/06/2020)
