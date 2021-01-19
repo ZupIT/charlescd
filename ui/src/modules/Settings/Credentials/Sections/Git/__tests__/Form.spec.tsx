@@ -48,7 +48,6 @@ test('should test a git connection', async () => {
     userEvent.click(testConnectionButton)
   })
   const connectionMessageElement = await screen.findByText('Successful connection with git.');
-  // expect(connectionMessageElement).toBeInTheDocument();
 });
 
 
