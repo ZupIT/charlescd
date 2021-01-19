@@ -30,6 +30,7 @@ interface Props {
   label: string;
   description?: string;
   active?: boolean;
+  defaultChecked?: boolean;
   onChange?: (value: boolean) => void;
   className?: string;
 }
@@ -42,6 +43,7 @@ const Checkbox = forwardRef(
       label,
       description,
       active,
+      defaultChecked,
       onChange,
       className,
       ...rest
@@ -73,6 +75,7 @@ const Checkbox = forwardRef(
             value={value}
             checked={isChecked}
             onChange={onCheck}
+            defaultChecked={defaultChecked}
             {...rest}
           />
           <Styled.Toggle data-testid={`checkbox-toggle-${label}`} />

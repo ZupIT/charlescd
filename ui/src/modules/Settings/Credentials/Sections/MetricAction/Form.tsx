@@ -27,7 +27,7 @@ import Styled from './styled';
 import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
 
-const FormAddAction = ({ onFinish }: Props) => {
+const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   const [loadingPlugins, setLoadingPlugins] = useState(true);
   const [showConfigAction, setShowConfigAction] = useState(false);
   const [isDefault, setIsDefault] = useState(true);

@@ -66,7 +66,7 @@ const Credentials = ({ onClickHelp }: Props) => {
       id: '123',
       apiKey: '456',
       description: 'ifdouglas',
-      events: ['DEPLOY', 'UNDEPLOY'],
+      events: ['DEPLOY'],
       url: 'https://ifdouglas.com'
     }
   ];

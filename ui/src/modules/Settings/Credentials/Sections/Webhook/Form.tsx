@@ -17,15 +17,18 @@
 import React, { useEffect, Fragment } from 'react';
 import { useForm } from 'react-hook-form';
 import omit from 'lodash/omit';
+import size from 'lodash/size';
+import includes from 'lodash/includes';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Webhook } from './interfaces';
 import { Props } from '../interfaces';
+import { EVENTS } from './constants';
 import { useWebhook } from './hooks';
 import Styled from './styled';
 
-const FormWebhook = ({ onFinish }: Props) => {
+const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
   const { status, save } = useWebhook();
   const {
     register,
@@ -34,18 +37,17 @@ const FormWebhook = ({ onFinish }: Props) => {
     formState: { isValid }
   } = useForm<Webhook>({ mode: 'onChange' });
 
-  const watchEvents = watch('eventType', '');
+  const watchEventType = watch('eventType');
 
   useEffect(() => {
     if (status === 'resolved') onFinish();
   }, [onFinish, status]);
 
-  const setAllEvents = (webhook: Webhook) => {
-    webhook.events = ['DEPLOY', 'UNDEPLOY'];
-  };
-
   const onSubmit = (webhook: Webhook) => {
-    watchEvents === 'everything' && setAllEvents(webhook);
+    if (watchEventType === 'everything') {
+      webhook.events = EVENTS;
+    }
+
     save(omit(webhook, 'eventType'));
   };
 
@@ -56,6 +58,7 @@ const FormWebhook = ({ onFinish }: Props) => {
         name="events"
         label="Deploy"
         value="DEPLOY"
+        defaultChecked={includes(data?.events, 'DEPLOY')}
         description="Deploy started or finished"
       />
       <Form.Checkbox
@@ -63,6 +66,7 @@ const FormWebhook = ({ onFinish }: Props) => {
         name="events"
         label="Undeploy"
         value="UNDEPLOY"
+        defaultChecked={includes(data?.events, 'UNDEPLOY')}
         description="Undeploy started or finished"
       />
     </Fragment>
@@ -81,16 +85,19 @@ const FormWebhook = ({ onFinish }: Props) => {
           ref={register({ required: true })}
           name="description"
           label="Description"
+          defaultValue={data?.description}
         />
         <Form.Input
           ref={register({ required: true })}
           name="url"
           label="Webhook URL"
+          defaultValue={data?.url}
         />
         <Form.Password
           ref={register({ required: true })}
           name="apiKey"
           label="Secret"
+          defaultValue={data?.apiKey}
         />
         <Text.h5 color="dark">
           Witch events would you like to trigger this webhook?
@@ -100,14 +107,16 @@ const FormWebhook = ({ onFinish }: Props) => {
           name="eventType"
           value="everything"
           label="Send me everything"
+          defaultChecked={size(data?.events) == size(EVENTS)}
         />
         <Form.Radio
           ref={register({ required: true })}
           name="eventType"
           value="individual"
           label="Let me select individual events"
+          defaultChecked={size(data?.events) < size(EVENTS)}
         />
-        {watchEvents === 'individual' && renderOptions()}
+        {watchEventType === 'individual' && renderOptions()}
         <Button.Default
           type="submit"
           isDisabled={!isValid}

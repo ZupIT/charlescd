@@ -31,7 +31,7 @@ import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
 import CustomOption from 'core/components/Form/Select/CustomOption';
 import { Option } from 'core/components/Form/Select/interfaces';
 
-const FormRegistry = ({ onFinish }: Props) => {
+const FormRegistry = ({ onFinish }: Props<Registry>) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
   const { testConnection, response, error, status } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');

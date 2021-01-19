@@ -30,7 +30,7 @@ import { Props } from '../interfaces';
 import { useCDConfiguration } from './hooks';
 import Styled from './styled';
 
-const FormCDConfiguration = ({ onFinish }: Props) => {
+const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
   const { responseAdd, save, loadingAdd, loadingSave } = useCDConfiguration();
   const { control, register, handleSubmit } = useForm<CDConfiguration>();
   const [configType, setConfigType] = useState('');

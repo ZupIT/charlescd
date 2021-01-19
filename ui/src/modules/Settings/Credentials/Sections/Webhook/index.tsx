@@ -36,24 +36,30 @@ interface Props {
 
 const SectionWebhook = ({ form, setForm, data }: Props) => {
   const [webhooks, setWebhooks] = useState<Webhook[]>(data);
+  const [webhook, setWebhook] = useState<Webhook>();
   const { remove, status } = useWebhook();
 
-  const handleClose = async (id: string) => {
+  const handleRemove = async (id: string) => {
     await remove(id);
     setWebhooks(filter(webhooks, item => item.id !== id));
   };
 
-  const renderAction = () => (
+  const handleAction = (webhook: Webhook) => {
+    setWebhook(webhook);
+    setForm(FORM_WEBHOOK);
+  };
+
+  const renderAction = (webhook: Webhook) => (
     <Dropdown color="light">
       <Dropdown.Item
         icon="edit"
         name="Edit"
-        onClick={() => console.log('edit')}
+        onClick={() => handleAction(webhook)}
       />
       <Dropdown.Item
         icon="delete"
         name="Delete"
-        onClick={() => console.log('delete')}
+        onClick={() => handleRemove(webhook.id)}
       />
     </Dropdown>
   );
@@ -74,13 +80,13 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
             title={webhook.description}
             description={webhook.url}
             header={renderHeader()}
-            action={renderAction()}
+            action={renderAction(webhook)}
           >
             <Card.Main
               width="237px"
               title="200"
               description={webhook.description}
-              color="light"
+              color="error"
             />
           </Card.Main>
         ))}
@@ -90,7 +96,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_WEBHOOK) && (
       <Layer action={() => setForm(null)}>
-        <FormWebhook onFinish={() => setForm(null)} />
+        <FormWebhook onFinish={() => setForm(null)} data={webhook} />
       </Layer>
     );
 

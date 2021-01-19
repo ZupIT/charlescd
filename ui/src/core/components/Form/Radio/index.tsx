@@ -22,10 +22,14 @@ export interface Props {
   name: string;
   value: string;
   label: string;
+  defaultChecked?: boolean;
 }
 
 const Radio = forwardRef(
-  ({ name, value, label, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
+  (
+    { name, value, label, defaultChecked, ...rest }: Props,
+    ref: Ref<HTMLInputElement>
+  ) => {
     const radioRef = useRef<HTMLInputElement>(null);
     const id = `radio-${value}`;
 
@@ -38,6 +42,7 @@ const Radio = forwardRef(
           data-testid={id}
           ref={radioRef}
           type="radio"
+          defaultChecked={defaultChecked}
           name={name}
           value={value}
           {...rest}

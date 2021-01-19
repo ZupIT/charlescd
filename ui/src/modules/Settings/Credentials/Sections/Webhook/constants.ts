@@ -24,3 +24,5 @@ export const radios = [
     value: 'individual'
   }
 ];
+
+export const EVENTS = ['DEPLOY', 'UNDEPLOY'];
