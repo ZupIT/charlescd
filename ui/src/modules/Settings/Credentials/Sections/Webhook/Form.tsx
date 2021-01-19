@@ -107,7 +107,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           name="eventType"
           value="everything"
           label="Send me everything"
-          defaultChecked={size(data?.events) == size(EVENTS)}
+          defaultChecked={size(data?.events) === size(EVENTS)}
         />
         <Form.Radio
           ref={register({ required: true })}

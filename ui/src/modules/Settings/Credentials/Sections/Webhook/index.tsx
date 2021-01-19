@@ -37,7 +37,7 @@ interface Props {
 const SectionWebhook = ({ form, setForm, data }: Props) => {
   const [webhooks, setWebhooks] = useState<Webhook[]>(data);
   const [webhook, setWebhook] = useState<Webhook>();
-  const { remove, status } = useWebhook();
+  const { remove } = useWebhook();
 
   const handleRemove = async (id: string) => {
     await remove(id);
