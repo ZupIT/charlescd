@@ -66,7 +66,7 @@ const Credentials = ({ onClickHelp }: Props) => {
       id: '123',
       apiKey: '456',
       description: 'ifdouglas',
-      events: ['DEPLOY'],
+      events: ['DEPLOY', 'UNDEPLOY'],
       url: 'https://ifdouglas.com'
     }
   ];
@@ -129,16 +129,6 @@ const Credentials = ({ onClickHelp }: Props) => {
       actions={renderActions()}
     >
       {isEmpty(form) && renderContent()}
-      <Section.UserGroup
-        form={form}
-        setForm={setForm}
-        data={workspace.userGroups}
-      />
-      <Section.Git
-        form={form}
-        setForm={setForm}
-        data={workspace.gitConfiguration}
-      />
       <Section.Registry
         form={form}
         setForm={setForm}
@@ -169,6 +159,16 @@ const Credentials = ({ onClickHelp }: Props) => {
         />
       )}
       <Section.Webhook form={form} setForm={setForm} data={webhooks} />
+      <Section.Git
+        form={form}
+        setForm={setForm}
+        data={workspace.gitConfiguration}
+      />
+      <Section.UserGroup
+        form={form}
+        setForm={setForm}
+        data={workspace.userGroups}
+      />
     </TabPanel>
   );
 
