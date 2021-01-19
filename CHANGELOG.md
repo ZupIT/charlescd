@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.9 (15/01/2021)
+- [#807](https://github.com/ZupIT/charlescd/pull/807) Added configmaps to octopipe
+- [#772](https://github.com/ZupIT/charlescd/pull/772) CI Update of charts and changelog
+- [#805](https://github.com/ZupIT/charlescd/pull/805) Hotfix: adding authorId when creating cd configuration.
+- [#798](https://github.com/ZupIT/charlescd/pull/798)  UI improvement in workspace configuration screen
+- [#801](https://github.com/ZupIT/charlescd/pull/801) Moove webhook crud apis
+
+---
+
 ## 0.4.8 (14/01/2021)
 - [#788](https://github.com/ZupIT/charlescd/pull/788) Feature registry connection (Azure, dockerhub, GCP, Harbor and AWS)
 - [#791](https://github.com/ZupIT/charlescd/pull/791) Default Radio component
@@ -498,7 +507,3 @@
 ---
 
 ## v0.2.10 (03/06/2020)
-
----
-
-## v0.2.9 (03/06/2020)
