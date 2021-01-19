@@ -17,12 +17,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { login, circleMatcher } from 'core/providers/auth';
-import { isRoot, saveSessionData } from 'core/utils/auth';
+import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
 import { useUser, useWorkspacesByUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
 import { useWorkspaces } from 'modules/Settings/hooks';
-import { Workspace } from 'modules/Users/interfaces/User';
 
 interface CircleMatcherResponse {
   circles: {
