@@ -351,8 +351,8 @@ test('should render Registry form without AWS secret input', async () => {
     render(<FormRegistry onFinish={mockOnFinish}/>);
   
     const registryLabel = screen.getByText('Choose which one you want to add:');
-    selectEvent.select(registryLabel, 'AWS');
-    
+    await act(() => selectEvent.select(registryLabel, 'AWS'));
+        
     const text = screen.queryByText('Enter the access key');
     expect(text).not.toBeInTheDocument();
 });
