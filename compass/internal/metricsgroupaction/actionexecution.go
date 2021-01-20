@@ -19,10 +19,8 @@
 package metricsgroupaction
 
 import (
-	"errors"
-	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"time"
 )
@@ -43,24 +41,24 @@ type ActionsExecutions struct {
 	FinishedAt    *time.Time `json:"finishedAt"`
 }
 
-func (main Main) findExecutionById(actionExecutionID string) (ActionsExecutions, error) {
+func (main Main) findExecutionById(actionExecutionID string) (ActionsExecutions, errors.Error) {
 	var execution ActionsExecutions
 	result := main.db.Where("id = ?", actionExecutionID).Find(&execution)
 
 	if result.Error != nil {
-		logger.Error(util.FindActionExecutionError, "FindActionExecution", result.Error, actionExecutionID)
-		return ActionsExecutions{}, result.Error
+		return ActionsExecutions{}, errors.NewError("Find error", result.Error.Error()).
+			WithOperations("findExecutionById.Find")
 	}
 
 	return execution, nil
 }
 
-func (main Main) CreateNewExecution(groupActionID string) (ActionsExecutions, error) {
+func (main Main) CreateNewExecution(groupActionID string) (ActionsExecutions, errors.Error) {
 	timeNow := time.Now()
 	parsedID, err := uuid.Parse(groupActionID)
 	if err != nil {
-		logger.Error(util.CreateActionExecutionError, "CreateActionExecution", err, fmt.Sprintf("GroupActionID = %s", groupActionID))
-		return ActionsExecutions{}, err
+		return ActionsExecutions{}, errors.NewError("Create error", err.Error()).
+			WithOperations("CreateNewExecution.Parse")
 	}
 
 	execution := ActionsExecutions{
@@ -71,23 +69,21 @@ func (main Main) CreateNewExecution(groupActionID string) (ActionsExecutions, er
 
 	db := main.db.Create(&execution)
 	if db.Error != nil {
-		logger.Error(util.CreateActionExecutionError, "CreateActionExecution", db.Error, nil)
-		return ActionsExecutions{}, db.Error
+		return ActionsExecutions{}, errors.NewError("Create error", db.Error.Error()).
+			WithOperations("CreateNewExecution.Create")
 	}
 	return execution, nil
 }
 
-func (main Main) SetExecutionFailed(actionExecutionID string, executionLog string) (ActionsExecutions, error) {
+func (main Main) SetExecutionFailed(actionExecutionID string, executionLog string) (ActionsExecutions, errors.Error) {
 	execution, err := main.findExecutionById(actionExecutionID)
 	if err != nil {
-		logger.Error(util.SetExecutionFailedErrorFinding, "SetActionExecutionFailed", err, nil)
-		return ActionsExecutions{}, err
+		return ActionsExecutions{}, err.WithOperations("SetExecutionFailed.findExecutionById")
 	}
 
 	if !validateActionCanFinish(execution) {
-		err = errors.New("cannot change status of a not in_execution action")
-		logger.Error(util.ExecutionNotInExecution, "SetActionExecutionFailed", err, fmt.Sprintf("%+v", execution))
-		return ActionsExecutions{}, err
+		return ActionsExecutions{}, errors.NewError("Set error", "cannot change status of a not in_execution action").
+			WithOperations("SetExecutionFailed.validateActionCanFinish")
 	}
 
 	timeNow := time.Now()
@@ -96,24 +92,22 @@ func (main Main) SetExecutionFailed(actionExecutionID string, executionLog strin
 	execution.ExecutionLog = executionLog
 	result := main.db.Save(&execution)
 	if result.Error != nil {
-		logger.Error(util.SetExecutionFailedError, "SetActionExecutionFailed", err, fmt.Sprintf("%+v", execution))
-		return ActionsExecutions{}, result.Error
+		return ActionsExecutions{}, errors.NewError("Set error", result.Error.Error()).
+			WithOperations("SetExecutionFailed.Save")
 	}
 
 	return execution, nil
 }
 
-func (main Main) SetExecutionSuccess(actionExecutionID string, executionLog string) (ActionsExecutions, error) {
+func (main Main) SetExecutionSuccess(actionExecutionID string, executionLog string) (ActionsExecutions, errors.Error) {
 	execution, err := main.findExecutionById(actionExecutionID)
 	if err != nil {
-		logger.Error(util.SetExecutionSuccessErrorFinding, "SetActionExecutionSuccess", err, nil)
-		return ActionsExecutions{}, err
+		return ActionsExecutions{}, err.WithOperations("SetExecutionSuccess.findExecutionById")
 	}
 
 	if !validateActionCanFinish(execution) {
-		err = errors.New("cannot change status of a not in_execution action")
-		logger.Error(util.ExecutionNotInExecution, "SetActionExecutionSuccess", err, fmt.Sprintf("%+v", execution))
-		return ActionsExecutions{}, err
+		return ActionsExecutions{}, errors.NewError("Set error", "cannot change status of a not in_execution action").
+			WithOperations("SetExecutionSuccess.validateActionCanFinish")
 	}
 
 	execution.Status = executionSuccess
@@ -122,8 +116,8 @@ func (main Main) SetExecutionSuccess(actionExecutionID string, executionLog stri
 	execution.ExecutionLog = executionLog
 	result := main.db.Save(&execution)
 	if result.Error != nil {
-		logger.Error(util.SetExecutionSuccessError, "SetActionExecutionSuccess", err, fmt.Sprintf("%+v", execution))
-		return ActionsExecutions{}, err
+		return ActionsExecutions{}, errors.NewError("Set error", result.Error.Error()).
+			WithOperations("SetExecutionSuccess.save")
 	}
 
 	return execution, nil
@@ -133,13 +127,13 @@ func validateActionCanFinish(execution ActionsExecutions) bool {
 	return execution.Status == inExecution
 }
 
-func (main Main) getNumberOfActionExecutions(groupActionID uuid.UUID) (int64, error) {
+func (main Main) getNumberOfActionExecutions(groupActionID uuid.UUID) (int64, errors.Error) {
 	var count int64
 	result := main.db.Table("actions_executions").Where("group_action_id = ?", groupActionID).Count(&count)
 
 	if result.Error != nil {
-		logger.Error(util.CountNumberOfExecutionsError, "getNumberOfActionExecutions", result.Error, fmt.Sprintf("GroupAction: %s", groupActionID))
-		return 0, result.Error
+		return 0, errors.NewError("Get error", result.Error.Error()).
+			WithOperations("getNumberOfActionExecutions.Count")
 	}
 
 	return count, nil

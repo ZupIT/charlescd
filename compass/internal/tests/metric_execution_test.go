@@ -20,6 +20,10 @@ package tests
 
 import (
 	"encoding/json"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
@@ -27,9 +31,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	"os"
-	"testing"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -53,7 +54,7 @@ func (s *SuiteMetricExecution) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	s.DB.LogMode(dbLog)
 
@@ -115,10 +116,10 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 	}
 
 	metric1Created, err := s.repository.SaveMetric(metric1)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	metric2Created, err := s.repository.SaveMetric(metric2)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	expectedExecutions := []metric.MetricExecution{
 		{
@@ -134,7 +135,7 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 	}
 
 	metricExecutions, err := s.repository.FindAllMetricExecutions()
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	for index, execution := range metricExecutions {
 		expectedExecutions[index].BaseModel = execution.BaseModel
@@ -174,10 +175,10 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 	}
 
 	metricCreated, err := s.repository.SaveMetric(metric1)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	executions, err := s.repository.FindAllMetricExecutions()
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	require.Equal(s.T(), metric.MetricExecution{
 		BaseModel: executions[0].BaseModel,
@@ -194,10 +195,10 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 	}
 
 	_, err = s.repository.UpdateMetricExecution(updateExecution)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	newExecutions, err := s.repository.FindAllMetricExecutions()
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	require.Equal(s.T(), metric.MetricExecution{
 		BaseModel: newExecutions[0].BaseModel,
@@ -239,10 +240,10 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecutionError() {
 	}
 
 	metricCreated, err := s.repository.SaveMetric(metric1)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	executions, err := s.repository.FindAllMetricExecutions()
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	require.Equal(s.T(), metric.MetricExecution{
 		BaseModel: executions[0].BaseModel,
@@ -260,13 +261,13 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecutionError() {
 
 	s.DB.Close()
 	_, err = s.repository.UpdateMetricExecution(updateExecution)
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricExecution) TestFindAllMetricExecutionError() {
 	s.DB.Close()
 	_, err := s.repository.FindAllMetricExecutions()
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s SuiteMetricExecution) TestValidateIfMetricsReached() {

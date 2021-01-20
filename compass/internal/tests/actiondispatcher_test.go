@@ -20,6 +20,10 @@ package tests
 
 import (
 	"encoding/json"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -28,9 +32,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"os"
-	"testing"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -145,7 +146,7 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	}
 
 	_, err := s.metricsGroupActionMain.SaveGroupAction(actiongroup)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	time.Sleep(2 * time.Second)
 	stopChan <- true
@@ -218,7 +219,7 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 	}
 
 	_, err := s.metricsGroupActionMain.SaveGroupAction(actiongroup)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	time.Sleep(2 * time.Second)
 	stopChan <- true
