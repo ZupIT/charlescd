@@ -128,7 +128,6 @@ test('should get data about a user (which is saved in profile of local storage)'
   });
 
   expect(response).toMatchObject(user);
-  expect(response).not.toBeUndefined();
 });
 
 test('should throw an error in useUser', async () => {
@@ -159,7 +158,6 @@ test('should get workspaces of a user (which is saved in profile of local storag
   });
 
   expect(response).toMatchObject(workspaces);
-  expect(response).not.toBeUndefined();
 });
 
 test('should throw an error in userWorkspacesByUser', async () => {
