@@ -30,23 +30,37 @@ import { buildTestConnectionPayload } from './helpers';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
+import isEqual from 'lodash/isEqual';
 
 const FormGit = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
   const [gitType, setGitType] = useState('');
+  const [lastTestedForm, setLastTestedForm] = useState<GitFormData>();
   const {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
-    save: testConnection
+    save: testConnection,
+    reset: resetTestConnection
   } = useTestConnection(testGitConnection);
   const {
     register,
     handleSubmit,
     getValues,
-    formState: { isValid }
+    formState: { isValid },
+    watch
   } = useForm<GitFormData>({
     mode: 'onChange'
   });
+
+  const form = watch();
+
+  useEffect(() => {
+    if (testConnectionResponse && testConnectionResponse.message) {
+      if (!isEqual(form, lastTestedForm)) {
+        resetTestConnection();
+      }
+    }
+  }, [form, testConnectionResponse, resetTestConnection, lastTestedForm]);
 
   useEffect(() => {
     if (responseAdd) {
@@ -66,7 +80,7 @@ const FormGit = ({ onFinish }: Props) => {
 
   const handleTestConnection = () => {
     const data = getValues();
-
+    setLastTestedForm(data);
     const payload = buildTestConnectionPayload(data, gitType);
     testConnection(payload);
   };

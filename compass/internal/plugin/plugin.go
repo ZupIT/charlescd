@@ -20,11 +20,9 @@ package plugin
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"io/ioutil"
 	"path/filepath"
 	"plugin"
@@ -48,27 +46,27 @@ type Plugin struct {
 	InputParameters InputParameters `json:"inputParameters"`
 }
 
-func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, error) {
+func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, errors.Error) {
 	var plugins []Plugin
 	pluginsDir := configuration.GetConfiguration("PLUGINS_DIR")
 	ps, err := ioutil.ReadDir(fmt.Sprintf("%s/%s", pluginsDir, categoryName))
 	if err != nil {
-		logger.Error(util.FindPluginError, "FindAll", err, plugins)
-		return []Plugin{}, err
+		return []Plugin{}, errors.NewError("Get error", err.Error()).
+			WithOperations("getPluginsDirectoriesByCategory.ReadDir")
 	}
 
 	for _, p := range ps {
 		readme, err := ioutil.ReadFile(fmt.Sprintf("%s/%s/%s/readme.json", pluginsDir, categoryName, p.Name()))
 		if err != nil {
-			logger.Error(util.FindPluginError, "FindAll", errors.New("invalid plugin"), plugins)
-			return []Plugin{}, err
+			return []Plugin{}, errors.NewError("Read error", err.Error()).
+				WithOperations("getPluginsDirectoriesByCategory.ReadFile")
 		}
 
 		newPlugin := Plugin{}
 		err = json.Unmarshal(readme, &newPlugin)
 		if err != nil {
-			logger.Error(util.FindPluginError, "FindAll", err, plugins)
-			return []Plugin{}, err
+			return []Plugin{}, errors.NewError("Read error", err.Error()).
+				WithOperations("getPluginsDirectoriesByCategory.Unmarshall")
 		}
 
 		newPlugin.Src = fmt.Sprintf("%s/%s/%s", categoryName, p.Name(), p.Name())
@@ -76,10 +74,10 @@ func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, error) {
 		plugins = append(plugins, newPlugin)
 	}
 
-	return plugins, err
+	return plugins, nil
 }
 
-func (main Main) FindAll(category string) ([]Plugin, error) {
+func (main Main) FindAll(category string) ([]Plugin, errors.Error) {
 	if category != "" {
 		return getPluginsDirectoriesByCategory(category)
 	}
@@ -89,8 +87,8 @@ func (main Main) FindAll(category string) ([]Plugin, error) {
 
 	categories, err := ioutil.ReadDir(pluginsDir)
 	if err != nil {
-		logger.Error(util.FindPluginError, "FindAllActions", err, plugins)
-		return []Plugin{}, err
+		return []Plugin{}, errors.NewError("Find error", err.Error()).
+			WithOperations("FindAll.ReadDir")
 	}
 
 	for _, category := range categories {
@@ -107,7 +105,13 @@ func (main Main) FindAll(category string) ([]Plugin, error) {
 	return plugins, nil
 }
 
-func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, error) {
+func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, errors.Error) {
 	pluginsDir := configuration.GetConfiguration("PLUGINS_DIR")
-	return plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
+	p, err := plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
+	if err != nil {
+		return nil, errors.NewError("Get error", err.Error()).
+			WithOperations("GetPluginBySrc.Open")
+	}
+
+	return p, nil
 }
