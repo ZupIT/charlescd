@@ -28,10 +28,10 @@ import { Webhook } from './interfaces';
 
 interface Props {
   status: FetchStatuses;
-  save: Function;
-  remove: Function;
+  save: (webhook: Webhook) => Promise<never>;
+  remove: (id: string) => Promise<never>;
   list: Function;
-  edit: Function;
+  edit: (webhook: Partial<Webhook>) => Promise<never>;
 }
 
 export const useWebhook = (): Props => {
