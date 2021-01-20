@@ -16,21 +16,14 @@
  *
  */
 
-package plugin
+package util
 
 import (
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
-	"plugin"
+	"encoding/json"
+	"net/http"
 )
 
-type UseCases interface {
-	FindAll(category string) ([]Plugin, errors.Error)
-	GetPluginBySrc(id string) (*plugin.Plugin, errors.Error)
-}
-
-type Main struct {
-}
-
-func NewMain() UseCases {
-	return Main{}
+func NewResponse(w http.ResponseWriter, status int, data interface{}) {
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
 }

@@ -16,21 +16,25 @@
  *
  */
 
-package plugin
+package circle
 
 import (
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
-	"plugin"
+	"net/http"
+
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/web/api/util"
+	"github.com/gorilla/mux"
 )
 
-type UseCases interface {
-	FindAll(category string) ([]Plugin, errors.Error)
-	GetPluginBySrc(id string) (*plugin.Plugin, errors.Error)
-}
+func ListMetricGroupInCircle(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := mux.Vars(r)["circleID"]
+		list, err := metricsgroupMain.ListAllByCircle(id)
+		if err != nil {
+			util.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
 
-type Main struct {
-}
-
-func NewMain() UseCases {
-	return Main{}
+		util.NewResponse(w, http.StatusOK, list)
+	}
 }
