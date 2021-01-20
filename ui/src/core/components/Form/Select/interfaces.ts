@@ -45,4 +45,5 @@ export interface Props {
   label?: string;
   hasError?: boolean;
   defaultOptions?: Option[];
+  icon?: string;
 }

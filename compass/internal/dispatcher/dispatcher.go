@@ -19,16 +19,16 @@
 package dispatcher
 
 import (
+	"sync"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
-	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"log"
-	"sync"
-	"time"
+	"github.com/sirupsen/logrus"
 )
 
 type UseCases interface {
@@ -52,17 +52,18 @@ func NewDispatcher(metric metric.UseCases) UseCases {
 }
 
 func (dispatcher *Dispatcher) dispatch() {
-	logger.Info("Starting metrics dispatcher", time.Now())
+
 	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
-		logger.Panic("Cannot find active metric executions", "Dispatch", err, nil)
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot start dispatch", "Cannot find active metric executions").
+				WithOperations("dispatch.FindAllMetricExecutions"),
+		}).Errorln()
 	}
 
 	for _, execution := range metricExecutions {
 		go dispatcher.getMetricResult(execution)
 	}
-
-	logger.Info("Finishing metrics dispatcher", time.Now())
 }
 
 func compareResultWithMetricThreshold(result float64, threshold float64, condition string) bool {
@@ -97,7 +98,10 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
-		logger.Error(util.ResultByGroupMetricError, "getMetricResult", err, currentMetric)
+		logrus.WithFields(logrus.Fields{
+			"err": err.WithOperations("getMetricResult.ResultQuery"),
+		}).Errorln()
+
 		execution.Status = metric.MetricError
 		dispatcher.metric.UpdateMetricExecution(execution)
 		return
@@ -122,7 +126,10 @@ func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
 func (dispatcher *Dispatcher) Start(stopChan chan bool) error {
 	interval, err := dispatcher.getInterval()
 	if err != nil {
-		log.Fatalln(err)
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot start dispatch", "Get sync interval failed").
+				WithOperations("Start.getInterval"),
+		}).Errorln()
 		return err
 	}
 
