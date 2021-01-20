@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import Form from '../Form';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
@@ -23,41 +23,9 @@ import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 
-test('render Metrics Provider default component', async () => {
-  const finish = jest.fn();
-  render(
-    <Form onFinish={finish} />
-  );
-
-  expect(screen.getByTestId('react-select')).toBeInTheDocument();
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
 });
-
-test('render datasource input by datasource change', async () => {
-  jest.spyOn(MetricProviderHooks, 'usePlugins').mockImplementation(() => ({
-    getAll: jest.fn,
-    response: Plugins
-  }));
-  const finish = jest.fn();
-  render(
-    <Form onFinish={finish} />
-  );
-
-  const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
-  await act(async () => selectEvent.select(datasourcePlugin1, 'Prometheus'));
-
-  expect(screen.getByText('Datasource health')).toBeInTheDocument();
-  expect(screen.getByText('Datasource name')).toBeInTheDocument();
-  expect(screen.getByText('Url')).toBeInTheDocument();
-
-  fireEvent.click(screen.getByTestId('icon-cancel'))
-
-  const datasourcePlugin2 = screen.getByText('Select a datasource plugin');
-  await act(async () => selectEvent.select(datasourcePlugin2, 'Google Analytics'));
-
-  expect(screen.getByText('Datasource name')).toBeInTheDocument();
-  expect(screen.getByText('View ID')).toBeInTheDocument();
-  expect(screen.getByText('Service Account')).toBeInTheDocument();
-})
 
 test('render button test connection', async () => {
   (fetch as FetchMock)
@@ -89,3 +57,37 @@ test('render button test connection', async () => {
   const status = await screen.findByTestId("connection-success");
   expect(status).toBeInTheDocument();
 });
+
+test('render Metrics Provider default component', async () => {
+  const finish = jest.fn();
+  render(
+    <Form onFinish={finish} />
+  );
+
+  expect(screen.getByTestId('react-select')).toBeInTheDocument();
+});
+
+test('render datasource input by datasource change', async () => {
+  jest.spyOn(MetricProviderHooks, 'usePlugins').mockImplementation(() => ({
+    getAll: jest.fn,
+    response: Plugins
+  }));
+  const finish = jest.fn();
+  render(
+    <Form onFinish={finish} />
+  );
+
+  const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
+  await act(async () => selectEvent.select(datasourcePlugin1, 'Prometheus'));
+
+  expect(screen.getByText('Datasource health')).toBeInTheDocument();
+  expect(screen.getByText('Datasource name')).toBeInTheDocument();
+  expect(screen.getByText('Url')).toBeInTheDocument();
+
+  const datasourcePlugin2 = screen.getByText('Select a datasource plugin');
+  await act(async () => selectEvent.select(datasourcePlugin2, 'Google Analytics'));
+
+  expect(screen.getByText('Datasource name')).toBeInTheDocument();
+  expect(screen.getByText('View ID')).toBeInTheDocument();
+  expect(screen.getByText('Service Account')).toBeInTheDocument();
+})
