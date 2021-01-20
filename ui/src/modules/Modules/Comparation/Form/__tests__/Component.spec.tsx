@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from "react";
-import { render, waitFor } from "@testing-library/react";
+import { act, render, waitFor, screen } from "@testing-library/react";
 import Component from "../Component";
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
@@ -76,7 +76,7 @@ jest.mock('containers/Can', () => {
 });
 
 
-test("Test component for edit mode render", async () => {
+test("component for edit mode render", async () => {
   const { container } = render(
     <AllTheProviders>
       <Component
@@ -92,7 +92,7 @@ test("Test component for edit mode render", async () => {
   await waitFor(() => expect(container.innerHTML).toMatch("Edit component"));
 });
 
-test("Test component for create mode render", async () => {
+test("component for create mode render", async () => {
   const { container } = render(
     <AllTheProviders>
       <Component
@@ -122,9 +122,11 @@ test("component for show advanced options", async () => {
   );
 
   const componentButton: any = container.querySelector("span");
+  const advancedOptions = screen.getByTestId('button-default-save-edit-module');
   expect(container.innerHTML).toMatch("Show");
-  userEvent.click(componentButton);
-  await waitFor(() => expect(container.innerHTML).toMatch("Hide"))
+  act(() => userEvent.click(componentButton));
+
+  expect(advancedOptions).toBeInTheDocument();
 });
 
 test("component to not render more options", async () => {
@@ -147,7 +149,7 @@ test("component to not render more options", async () => {
   await waitFor(() => expect(componentHostValue.value).not.toEqual(""));
 });
 
-test("component to not render more options", async () => {
+test("component to not render more option", async () => {
   const { container } = render(
     <AllTheProviders>
       <Component
