@@ -31,18 +31,8 @@ export class DeploymentsHookController {
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
     }
-
     const currentDeploymentSpecs = reconcile.specsByDeployment(params, deployment.id)
-    if (currentDeploymentSpecs === []) {
-      const previousDeploymentId = deployment.previousDeploymentId
 
-      if (previousDeploymentId === null) {
-        return { children: specs, resyncAfterSeconds: 5 }
-      }
-      const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = reconcile.concatWithPrevious(previousDeployment, specs)
-      return { children: currentAndPrevious, resyncAfterSeconds: 5 }
-    }
     const allReady = reconcile.checkConditions(currentDeploymentSpecs)
     if (allReady === false) {
       const previousDeploymentId = deployment.previousDeploymentId
