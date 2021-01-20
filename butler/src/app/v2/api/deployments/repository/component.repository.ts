@@ -25,7 +25,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.active = true')
+      .where('deployment.current = true')
       .andWhere('deployment.cd_configuration_id = :cdConfigurationId', { cdConfigurationId })
       .getMany()
   }
@@ -34,7 +34,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.active = true')
+      .where('deployment.current = true')
       .andWhere('deployment.default_circle is true')
       .andWhere('deployment.circle_id = :defaultCircleId', { defaultCircleId })
       .getMany()

@@ -17,4 +17,6 @@ COPY . $APP_PATH
 RUN npm ci
 RUN npm run build
 
+ENV NODE_OPTIONS --enable-source-maps
+
 ENTRYPOINT node dist/main.js
