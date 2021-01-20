@@ -2,13 +2,13 @@ name: build moove
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'moove/**'
     tags: 
       - '!*'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'moove/**'
