@@ -35,11 +35,19 @@ test('render add Metric Action form', async () => {
 
   render(<FormAddAction onFinish={handleOnFinish}/>);
 
-  const actionForm = await screen.findByTestId('add-action-form');
+  const actionForm = await screen.findByText('Add Metric Action');
   expect(actionForm).toBeInTheDocument();
+
+  const actionInformationPart1 = screen.getByText(/You can create an action and add a trigger to perform an automatic task. Consult our/);
+  const actionInformationPart2 = screen.getByText(/documentation/);
+  const actionInformationPart3 = screen.getByText(/for further details./);
+
+  expect(actionInformationPart1).toBeInTheDocument();
+  expect(actionInformationPart2).toBeInTheDocument();
+  expect(actionInformationPart3).toBeInTheDocument();
 });
 
-test('render add Metric Action form and add a action', async () => {
+test('render add Metric Action form and add an action', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(pluginsData)
   );
@@ -73,7 +81,7 @@ test('render add Metric Action form and add a action', async () => {
   expect(saveButton).toBeEnabled();
 });
 
-test('render add Metric Action form and add a action close card', async () => {
+test('render add Metric Action form and add an action close card', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(pluginsData)
   );
@@ -101,4 +109,18 @@ test('render add Metric Action form and add a action close card', async () => {
   const actionForm = screen.getByTestId('add-action-form');
 
   expect(actionForm).toBeInTheDocument();
+});
+
+test('should click a link to documentation about metric action', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(pluginsData)
+  );
+
+  const handleOnFinish = jest.fn();
+  const url = 'https://docs.charlescd.io/reference/metrics/metrics-actions';
+
+  render(<FormAddAction onFinish={handleOnFinish}/>);
+
+  const linkToDocumentation = await screen.findByText('documentation');
+  expect(linkToDocumentation.closest('a')).toHaveAttribute('href', url);
 });
