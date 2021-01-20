@@ -102,7 +102,7 @@ export const useWorkspacesByUser = (): {
         }
       } catch (e) {
         setError(e);
-        // TODO remover?
+
         if (!isIDMAuthFlow()) {
           dispatch(
             toogleNotification({
