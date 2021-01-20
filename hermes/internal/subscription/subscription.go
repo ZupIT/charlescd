@@ -69,11 +69,13 @@ func (main Main) Validate(subscription Request) errors.ErrorList {
 
 func (main Main) ParseSubscription(subscription io.ReadCloser) (Request, errors.Error) {
 	var newSubs *Request
+
 	err := json.NewDecoder(subscription).Decode(&newSubs)
 	if err != nil {
 		return Request{}, errors.NewError("Parse error", err.Error()).
 			WithOperations("Parse.ParseDecode")
 	}
+
 	return *newSubs, nil
 }
 
@@ -83,6 +85,7 @@ func (main Main) ParseUpdate(subscription io.ReadCloser) ([]byte, errors.Error) 
 		return []byte(""), errors.NewError("Parse error", err.Error()).
 			WithOperations("ParseUpdate.ParseDecode")
 	}
+
 	return body, nil
 }
 
@@ -126,14 +129,25 @@ func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
 }
 
 func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
-	result := Response{}
+	res := Response{}
 
-	subsQuery := main.db.Raw(FindOneQuery(subscriptionId.String())).Row()
-	subsErr := subsQuery.Scan(&result.ExternalId, &result.Url, &result.Description, &result.ApiKey, &result.Events)
-	if subsErr != nil {
-		return Response{}, errors.NewError("Find Subscription error", subsErr.Error()).
+	q := main.db.Model(&Subscription{}).First(&res, "id = ? AND deleted_at IS NULL", subscriptionId.String())
+	if q.Error != nil {
+		return Response{}, errors.NewError("Find Subscription error", q.Error.Error()).
 			WithOperations("FindById.QuerySubscription")
 	}
 
-	return result, nil
+	return res, nil
+}
+
+func (main Main) FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error) {
+	var res []ExternalIdResponse
+
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND events = ? AND deleted_at IS NULL", externalId.String(), map[string]interface{}{"event": event})
+	if q.Error != nil {
+		return []ExternalIdResponse{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
+			WithOperations("FindAllByExternalIdAndEvent.QuerySubscription")
+	}
+
+	return res, nil
 }
