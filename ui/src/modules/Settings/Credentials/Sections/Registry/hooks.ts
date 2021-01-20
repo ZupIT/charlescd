@@ -18,7 +18,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   create,
   configPath,
-  testConnection,
+  testRegistryConnection,
   validateConnection
 } from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
@@ -112,7 +112,7 @@ export const useRegistryTestConnection = (): {
   status: FetchStatus;
 } => {
   const status = useFetchStatus();
-  const test = useFetchData<Response>(testConnection);
+  const test = useFetchData<Response>(testRegistryConnection);
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
