@@ -28,7 +28,7 @@ import Icon from 'core/components/Icon';
 import Styled from './styled';
 
 export interface Props {
-  icon: string;
+  icon?: string;
   iconColor?: string;
   title: string;
   description: string;
@@ -41,7 +41,7 @@ export interface Props {
 const CardCircle = forwardRef(
   (
     {
-      icon,
+      icon = 'circle',
       iconColor = 'light',
       title,
       description,
