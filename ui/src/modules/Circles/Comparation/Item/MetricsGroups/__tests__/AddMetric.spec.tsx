@@ -42,8 +42,11 @@ test('render Add Metric default value', async () => {
   const addMetricElement = await screen.findByTestId('add-metric');
   expect(addMetricElement).toBeInTheDocument();
 
-  const nicknameLabelElement = await screen.findByTestId('label-text-nickname');
+  const nicknameLabelElement = screen.getByText('Type a nickname for the metric');
   expect(nicknameLabelElement).toBeInTheDocument();
+
+  const datasourceLabelElement = screen.getByText('Select a datasource');
+  expect(datasourceLabelElement).toBeInTheDocument();
 
   userEvent.click(goBackButton);
   expect(handleGoBack).toBeCalledTimes(1);

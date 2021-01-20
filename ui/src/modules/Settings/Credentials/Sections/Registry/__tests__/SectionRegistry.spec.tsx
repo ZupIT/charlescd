@@ -33,9 +33,9 @@ test('should render form', async () => {
 
   const textElement = await screen.findByText('Add Registry');
   expect(textElement).toBeInTheDocument();
-});
+}); 
 
-test('render registry with error', async () => {
+test('should render registry with error', async () => {
   const error = {
     status: '404',
     message: 'invalid registry'
@@ -52,7 +52,7 @@ test('render registry with error', async () => {
   expect(errorText).toBeInTheDocument();
 });
 
-test('render registry successful', async () => {
+test('should render registry successful', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
 
   const form = '';
@@ -62,7 +62,7 @@ test('render registry successful', async () => {
   render(<SectionRegistry form={form} setForm={setForm} data={data} />);
 
   const errorText = screen.queryByTestId('log-error');
-  waitFor(() => expect(errorText).not.toBeInTheDocument());
+  expect(errorText).not.toBeInTheDocument();
 });
 
 test('should remove/cancel registry', async () => {
@@ -73,11 +73,11 @@ test('should remove/cancel registry', async () => {
   const data = {"id": "1234", "name": "charles-cd" };
 
   render(<SectionRegistry form={form} setForm={setForm} data={data} />);
-  
+
   let cancelIcon = await screen.findByTestId('icon-cancel');
   expect(cancelIcon).toBeInTheDocument();
-  await act(async () => userEvent.click(cancelIcon));
+  userEvent.click(cancelIcon);
 
-  cancelIcon = screen.queryByTestId('icon-cancel');
-  waitFor(() => expect(cancelIcon).not.toBeInTheDocument());
+  cancelIcon = await screen.findByTestId('icon-cancel');
+  expect(cancelIcon).not.toBeInTheDocument();
 });
