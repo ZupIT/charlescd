@@ -118,16 +118,6 @@ const Credentials = ({ onClickHelp }: Props) => {
       actions={renderActions()}
     >
       {isEmpty(form) && renderContent()}
-      <Section.UserGroup
-        form={form}
-        setForm={setForm}
-        data={workspace.userGroups}
-      />
-      <Section.Git
-        form={form}
-        setForm={setForm}
-        data={workspace.gitConfiguration}
-      />
       <Section.Registry
         form={form}
         setForm={setForm}
@@ -157,6 +147,16 @@ const Credentials = ({ onClickHelp }: Props) => {
           getNewActions={getActions}
         />
       )}
+      <Section.Git
+        form={form}
+        setForm={setForm}
+        data={workspace.gitConfiguration}
+      />
+      <Section.UserGroup
+        form={form}
+        setForm={setForm}
+        data={workspace.userGroups}
+      />
     </TabPanel>
   );
 
