@@ -102,7 +102,7 @@ describe('DeploymentCleanupHandler', () => {
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manifests, manager, false, false)
     await expect(
       pipe.transform(deployment.id)
-    ).rejects.toThrow(new BadRequestException('Cannot undeploy not active deployment'))
+    ).rejects.toThrow(new BadRequestException('Cannot undeploy not current deployment'))
   })
 
   it('allows undeployment of active deployment', async() => {
@@ -168,9 +168,9 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
     params.defaultCircle
   ))
 
-  deployment.active = status
+  deployment.current = status
 
-  await manager.update(DeploymentEntity, { id: deployment.id }, { active: status })
+  await manager.update(DeploymentEntity, { id: deployment.id }, { current: status })
 
   await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.SUCCEEDED))
 

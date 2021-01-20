@@ -161,8 +161,9 @@ describe('CallbackController v2', () => {
           }
         ],
         createdAt: expect.anything(),
+        previousDeploymentId: null,
         priority: 0,
-        active: true,
+        current: true,
         defaultCircle: false
       },
       type: 'DEPLOYMENT',
@@ -261,8 +262,9 @@ describe('CallbackController v2', () => {
           }
         ],
         createdAt: expect.anything(),
+        previousDeploymentId: null,
         priority: 0,
-        active: false,
+        current: false,
         defaultCircle: false
       },
       type: 'DEPLOYMENT',
@@ -321,7 +323,7 @@ describe('CallbackController v2', () => {
       false
     )
     const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
-    deploymentEntity.active = true
+    deploymentEntity.current = true
     deploymentEntity.cdConfiguration = cdConfiguration
     const savedDeployment = await manager.save(deploymentEntity)
     const executionEntity = new Execution(
@@ -361,8 +363,9 @@ describe('CallbackController v2', () => {
           }
         ],
         createdAt: expect.anything(),
+        previousDeploymentId: null,
         priority: 0,
-        active: false,
+        current: false,
         defaultCircle: false
       },
       type: 'UNDEPLOYMENT',
@@ -421,7 +424,7 @@ describe('CallbackController v2', () => {
       false
     )
     const deploymentEntity = deploymentDto.toCircleEntity([components.toEntity(modulesDto.helmRepository, manifests)])
-    deploymentEntity.active = true
+    deploymentEntity.current = true
     deploymentEntity.cdConfiguration = cdConfiguration
     const savedDeployment = await manager.save(deploymentEntity)
     const executionEntity = new Execution(
@@ -461,8 +464,9 @@ describe('CallbackController v2', () => {
           }
         ],
         createdAt: expect.anything(),
+        previousDeploymentId: null,
         priority: 0,
-        active: true,
+        current: true,
         defaultCircle: false
       },
       type: 'UNDEPLOYMENT',

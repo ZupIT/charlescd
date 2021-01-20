@@ -40,11 +40,11 @@ spec:
   - apiVersion: v1
     resource: services
     updateStrategy:
-      method: Recreate
+      method: InPlace
   - apiVersion: apps/v1
     resource: deployments
     updateStrategy:
-      method: Recreate
+      method: InPlace
   hooks:
     sync:
       webhook:

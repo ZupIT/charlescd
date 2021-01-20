@@ -80,6 +80,7 @@ describe('Deployment CRD client apply method', () => {
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    Object.assign(expectedManifest.metadata, { labels: { deployment_id: deployment.id } })
     await k8sClient.applyDeploymentCustomResource(deployment)
     expect(readSpy).toHaveBeenCalledWith(expectedManifest)
   })
@@ -93,6 +94,7 @@ describe('Deployment CRD client apply method', () => {
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    Object.assign(expectedManifest.metadata, { labels: { deployment_id: deployment.id } })
     await k8sClient.applyDeploymentCustomResource(deployment)
     expect(patchSpy).toHaveBeenCalledWith(
       expectedManifest,
@@ -114,6 +116,7 @@ describe('Deployment CRD client apply method', () => {
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    Object.assign(expectedManifest.metadata, { labels: { deployment_id: deployment.id } })
     await k8sClient.applyDeploymentCustomResource(deployment)
     expect(createSpy).toHaveBeenCalledWith(expectedManifest)
     expect(patchSpy).not.toHaveBeenCalled()

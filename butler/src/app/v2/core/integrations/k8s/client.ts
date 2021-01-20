@@ -38,6 +38,9 @@ export class K8sClient {
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
     this.consoleLoggerService.log('GET:CHARLES_DEPLOYMENT_MANIFEST', { deploymentManifest })
+
+    Object.assign(deploymentManifest.metadata, { labels: { deployment_id: deployment.id } })
+
     try {
       await this.readResource(deploymentManifest)
       await this.patchResource(deploymentManifest)

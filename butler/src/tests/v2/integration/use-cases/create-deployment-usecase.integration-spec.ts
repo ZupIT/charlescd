@@ -161,7 +161,7 @@ describe('CreateDeploymentUsecase v2', () => {
       ],
       true
     )
-    sameCircleActiveDeployment.active = true
+    sameCircleActiveDeployment.current = true
 
     const diffCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       'd63ef13f-6138-41ca-ac64-6f5c25eb89f2',
@@ -193,7 +193,7 @@ describe('CreateDeploymentUsecase v2', () => {
       ],
       true
     )
-    diffCircleActiveDeployment.active = true
+    diffCircleActiveDeployment.current = true
 
     const normalCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       '2ba59bb7-842a-43e7-b2c8-85f35d62781b',
@@ -225,7 +225,7 @@ describe('CreateDeploymentUsecase v2', () => {
       ],
       false
     )
-    normalCircleActiveDeployment.active = true
+    normalCircleActiveDeployment.current = true
 
     await manager.save(sameCircleActiveDeployment)
     await manager.save(diffCircleActiveDeployment)

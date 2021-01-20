@@ -41,7 +41,7 @@ export class ExecutionRepository extends Repository<Execution> {
     }
   }
 
-  public async listExecutionsAndRelations(active: boolean, pageSize = 20, page = 0): Promise<[Execution[], number]> {
+  public async listExecutionsAndRelations(current: boolean, pageSize = 20, page = 0): Promise<[Execution[], number]> {
     const baseQuery = this.createQueryBuilder('e')
       .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at, count (*) over() as total_executions')
       .leftJoin(DeploymentEntity, 'd', 'd.id = e.deployment_id')
@@ -52,7 +52,7 @@ export class ExecutionRepository extends Repository<Execution> {
          'author_id', d.author_id,
          'callback_url', d.callback_url,
          'circle_id', d.circle_id,
-         'active', d.active,
+         'current', d.current,
          'cd_configuration_id', d.cd_configuration_id,
          'created_at', d.created_at,
          'components', json_agg(
@@ -68,7 +68,7 @@ export class ExecutionRepository extends Repository<Execution> {
          )) AS deployment
       `)
       .groupBy('e.id, d.id')
-      .andWhere('d.active = :active', { active: active })
+      .andWhere('d.current = :current', { current: current })
       .orderBy({ 'e.created_at': 'DESC', 'e.id': 'DESC' })
       .limit(pageSize)
       .offset(pageSize * (page))

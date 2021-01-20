@@ -1,34 +1,74 @@
 export interface HookParams {
   controller: Record<string, unknown>
   parent: {
-    apiVersion: 'zupit.com/v1'
+    apiVersion: 'charlescd.io/v1'
     kind: 'CharlesDeployment'
     metadata: Record<string, unknown>
     spec: {
       circleId: string
       deploymentId: string
-      components: { chat: string, name: string, tag: string }[]
+      components: { chart: string, name: string, tag: string }[]
     }
   }
   children: {
     'Deployment.apps/v1': DeploymentSpec,
-    'Service.v1': Record<string, unknown>
+    'Service.v1': ServiceSpec
   }
   finalizing: boolean
 }
 
-interface DeploymentSpec {
+export interface SpecMetadata {
+  creationTimestamp: string
+  generation?: number // only on deployment
+  name: string
+  namespace: string
+  ownerReferences: unknown[]
+  resourceVersion: string
+  uid: string
+  labels: {
+    app: string
+    circle_id: string
+    deployment_id: string
+    'controller-uid': string
+    version?: string // only on deployment
+    service?: string // only on service
+  }
+}
+
+export interface SpecStatus {
+  availableReplicas: number
+  conditions: {
+    lastTransitionTime: string
+    lastUpdateTime: string
+    message: string
+    reason: string
+    status: 'True' | 'False' // TODO: check if this can be other values
+    type: 'Progressing' | 'Available'  // TODO: check if this can be other values
+  }[]
+  observedGeneration: number
+  readyReplicas: number
+  replicas: number
+  updatedReplicas: number
+}
+
+export interface DeploymentSpec {
   [key: string]: {
+    apiVersion: string
+    kind: string
+    metadata: SpecMetadata
+    status: SpecStatus
+    spec: unknown
+  }
+}
+
+export interface ServiceSpec {
+  [key: string]: {
+    apiVersion: string
+    kind: string
+    metadata: SpecMetadata
+    spec: unknown
     status: {
-      availableReplicas: number
-      conditions: {
-        lastTransitionTime: string
-        lastUpdateTime: string
-        message: string
-        reason: string
-        status: 'True' | 'False' // TODO: check if this can be other values
-        type: 'Progressing' | 'Available'  // TODO: check if this can be other values
-      }[]
+      loadBalancer?: Record<string, unknown>
     }
   }
 }
