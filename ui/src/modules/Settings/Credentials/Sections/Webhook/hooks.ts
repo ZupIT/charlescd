@@ -28,10 +28,10 @@ import { Webhook } from './interfaces';
 
 interface Props {
   status: FetchStatuses;
-  save: (webhook: Webhook) => Promise<never>;
-  remove: (id: string) => Promise<never>;
+  save: (webhook: Webhook) => Promise<unknown>;
+  remove: (id: string) => Promise<unknown>;
   list: Function;
-  edit: (webhook: Partial<Webhook>) => Promise<never>;
+  edit: (webhook: Partial<Webhook>) => Promise<unknown>;
 }
 
 export const useWebhook = (): Props => {
@@ -46,8 +46,9 @@ export const useWebhook = (): Props => {
     async (webhook: Webhook) => {
       try {
         setStatus('pending');
-        await saving(webhook);
+        const response = await saving(webhook);
         setStatus('resolved');
+        return response;
       } catch (e) {
         setStatus('rejected');
         const error = await e.json();
@@ -67,8 +68,9 @@ export const useWebhook = (): Props => {
     async (id: string) => {
       try {
         setStatus('pending');
-        await removing(id);
+        const response = await removing(id);
         setStatus('resolved');
+        return response;
       } catch (e) {
         setStatus('rejected');
         const error = await e.json();
@@ -88,8 +90,9 @@ export const useWebhook = (): Props => {
     async (webhook: Webhook) => {
       try {
         setStatus('pending');
-        await listing(webhook);
+        const response = await listing(webhook);
         setStatus('resolved');
+        return response;
       } catch (e) {
         setStatus('rejected');
         const error = await e.json();
@@ -106,11 +109,12 @@ export const useWebhook = (): Props => {
   );
 
   const edit = useCallback(
-    async (webhook: Webhook) => {
+    async (webhook: Partial<Webhook>) => {
       try {
         setStatus('pending');
-        await editing(webhook);
+        const response = await editing(webhook);
         setStatus('resolved');
+        return response;
       } catch (e) {
         setStatus('rejected');
         const error = await e.json();
