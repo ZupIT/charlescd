@@ -15,7 +15,3 @@ start:
 				$(GORUN) $(CMD_PATH)
 build: 
 				$(GOBUILD) -o $(DIST_PATH)/$(BINARY_NAME) $(CMD_PATH)
-local-tests:
-				$(GOTEST) ./...
-tests:
-				$(GOTEST) ./...
