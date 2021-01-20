@@ -31,9 +31,6 @@ data class CreateComposedBuildRequest(
     @field:NotBlank
     val releaseName: String,
 
-    @field:NotBlank
-    val authorId: String,
-
     @field:Valid
     @field:NotEmpty
     val modules: List<ModuleRequest>

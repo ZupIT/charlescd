@@ -28,9 +28,18 @@ export interface Props {
   action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   showAction: boolean;
   children?: ReactNode;
+  type?: string;
 }
 
-const Section = ({ id, children, name, icon, action, showAction }: Props) => {
+const Section = ({
+  id,
+  children,
+  name,
+  icon,
+  action,
+  showAction,
+  type
+}: Props) => {
   const renderAction = () => (
     <Button.Rounded name="add" icon="add" color="dark" onClick={action}>
       {`Add ${name}`}
@@ -42,6 +51,9 @@ const Section = ({ id, children, name, icon, action, showAction }: Props) => {
       <ContentIcon icon={icon}>
         <Text.h2 color="light">{name}</Text.h2>
       </ContentIcon>
+      <Styled.Type data-testid={`configuration-type-${type}`}>
+        <Text.h5 color="dark">{type}</Text.h5>
+      </Styled.Type>
       <Styled.Content>
         {showAction && renderAction()}
         {children}

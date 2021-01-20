@@ -23,7 +23,6 @@ import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -32,13 +31,12 @@ import org.springframework.beans.factory.annotation.Value
 @Named
 class PatchUserInteractorImpl @Inject constructor(
     private val userService: UserService,
-    private val keycloakService: KeycloakService,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) : PatchUserInteractor {
 
     override fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse {
         if (internalIdmEnabled) {
-            val authenticatedUser = userService.findByEmail(keycloakService.getEmailByAccessToken(authorization))
+            val authenticatedUser = userService.findByAuthorizationToken(authorization)
             if (authenticatedUser.root) {
                 patchUserRequest.validate()
                 return UserResponse.from(updateUser(patchUserRequest, userService.find(id.toString())))

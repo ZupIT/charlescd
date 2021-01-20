@@ -38,7 +38,6 @@ const UserGroups = () => {
   const profileName = getProfileByKey('name');
   const history = useHistory();
   const [search, setSearch] = useState('');
-  const [listUserGroups] = useFindAllUserGroup();
   const [toggleModal, setToggleModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [getUserGroups, loading] = useFindAllUserGroup();
@@ -47,8 +46,8 @@ const UserGroups = () => {
   const watchName = watch('name');
   const {
     createUserGroup,
-    response: responseUserGroup,
-    status
+    response: userGroupResponse,
+    loading: loadingCreate
   } = useCreateUserGroup();
 
   useEffect(() => {
@@ -60,12 +59,10 @@ const UserGroups = () => {
   }, [search, getUserGroups]);
 
   useEffect(() => {
-    if (responseUserGroup) {
+    if (userGroupResponse) {
       setToggleModal(false);
-      listUserGroups();
-      addParamUserGroup(history, `${responseUserGroup?.id}~${FormAction.edit}`);
     }
-  }, [responseUserGroup, listUserGroups, history]);
+  }, [userGroupResponse]);
 
   const onSubmit = ({ name }: Record<string, string>) => {
     createUserGroup(name);
@@ -84,7 +81,7 @@ const UserGroups = () => {
           type="submit"
           id="user-group"
           isDisabled={isDisabled}
-          isLoading={status.isPending}
+          isLoading={loadingCreate}
         >
           Create user group
         </Styled.Modal.Button>

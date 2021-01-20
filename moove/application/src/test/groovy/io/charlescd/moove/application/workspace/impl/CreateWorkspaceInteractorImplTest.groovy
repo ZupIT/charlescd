@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.workspace.impl
 
 import io.charlescd.moove.application.CircleService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.CreateWorkspaceInteractor
@@ -29,6 +30,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -40,43 +42,44 @@ class CreateWorkspaceInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        createWorkspaceInteractor = new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository),
+        createWorkspaceInteractor =
+                new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository))
     }
 
     def 'when user does not exist, should throw exception'() {
         given:
-        def authorId = "4e806b2a-557b-45c5-91be-1e1db909bef6"
-        def createWorkspaceRequest = new CreateWorkspaceRequest("Workspace name", authorId)
+        def email = TestUtils.email
+        def authorization = TestUtils.authorization
+        def createWorkspaceRequest = new CreateWorkspaceRequest("Workspace name")
 
         when:
-        createWorkspaceInteractor.execute(createWorkspaceRequest)
+        createWorkspaceInteractor.execute(createWorkspaceRequest, authorization)
 
         then:
-        1 * userRepository.findById(authorId) >> Optional.empty()
+        1 * managementUserSecurityService.getUserEmail(authorization) >> email
+        1 * userRepository.findByEmail(email) >> Optional.empty()
         0 * workspaceRepository.save(_)
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
-        ex.id == authorId
     }
 
     def 'should create workspace successfully'() {
         given:
-        def workspaceName = "Workspace name"
-        def author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
-        def createWorkspaceRequest = new CreateWorkspaceRequest(workspaceName, author.id)
-        def expectedWorkspace = new Workspace(UUID.randomUUID().toString(), workspaceName, author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
-
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
+        def expectedWorkspace = TestUtils.workspace
+        def createWorkspaceRequest = new CreateWorkspaceRequest(expectedWorkspace.name)
         when:
-        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest)
+        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest, authorization)
 
         then:
-        1 * userRepository.findById(author.id) >> Optional.of(author)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * workspaceRepository.save(_) >> { arguments ->
             def workspace = arguments[0]
             assert workspace instanceof Workspace
@@ -85,10 +88,9 @@ class CreateWorkspaceInteractorImplTest extends Specification {
             assert workspace.author.id == expectedWorkspace.author.id
             assert workspace.author.name == expectedWorkspace.author.name
             assert workspace.author.photoUrl == expectedWorkspace.author.photoUrl
-            assert workspace.author.createdAt == expectedWorkspace.author.createdAt
             assert workspace.author.email == expectedWorkspace.author.email
             assert workspace.author.workspaces == expectedWorkspace.author.workspaces
-            assert workspace.status == expectedWorkspace.status
+            assert workspace.status == WorkspaceStatusEnum.INCOMPLETE
 
             expectedWorkspace
         }
@@ -97,7 +99,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
             assert circle instanceof Circle
 
             assert circle.name == "Default"
-            assert circle.defaultCircle == true
+            assert circle.defaultCircle
             assert circle.workspaceId == expectedWorkspace.id
         }
 
@@ -107,7 +109,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         workspaceResponse.createdAt == expectedWorkspace.createdAt
         workspaceResponse.authorId == expectedWorkspace.author.id
         workspaceResponse.cdConfiguration == null
-        workspaceResponse.circleMatcherUrl == null
+        workspaceResponse.circleMatcherUrl == expectedWorkspace.circleMatcherUrl
         workspaceResponse.gitConfiguration == null
         workspaceResponse.registryConfiguration == null
     }

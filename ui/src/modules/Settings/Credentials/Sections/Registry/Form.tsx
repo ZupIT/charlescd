@@ -20,74 +20,104 @@ import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
-import { useRegistry, useRegistryTest } from './hooks';
+import { useRegistry } from './hooks';
 import { options } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
-import ConnectionStatus, { Props as ConnectionProps } from './ConnectionStatus';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 import CustomOption from 'core/components/Form/Select/CustomOption';
 import { Option } from 'core/components/Form/Select/interfaces';
+import isEqual from 'lodash/isEqual';
+import { useTestConnection } from 'core/hooks/useTestConnection';
+import { testRegistryConnection } from 'core/providers/registry';
+
+const registryPlaceholder: Option = {
+  AZURE: 'example.azurecr.io',
+  AWS: 'account_id.dkr.ecr.region.amazonaws.com',
+  GCP: 'gcr.io',
+  DOCKER_HUB: 'registry.hub.docker.com',
+  HARBOR: 'harbor.exampleapi.com'
+};
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
-  const { testConnection, response, error, status } = useRegistryTest();
   const [registryType, setRegistryType] = useState('');
+  const [registryName, setRegistryName] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [message, setMessage] = useState<ConnectionProps>(null);
-  const profileId = getProfileByKey('id');
-  const isGCP = registryType === 'GCP';
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
+  const [lastTestedForm, setLastTestedForm] = useState<Registry>();
+  const {
+    response: testConnectionResponse,
+    loading: loadingConnectionResponse,
+    save: testConnection,
+    reset: resetTestConnection
+  } = useTestConnection(testRegistryConnection);
   const {
     register,
     handleSubmit,
     reset,
-    getValues,
     control,
+    getValues,
+    setValue,
+    watch,
     formState: { isValid }
-  } = useForm<Registry>({ mode: 'onChange' });
+  } = useForm<Registry>({
+    mode: 'onChange',
+    defaultValues: {
+      address: 'https://',
+      name: '',
+      provider: null,
+      jsonKey: ''
+    }
+  });
+
+  const form = watch();
+  const { address: addressListener } = form;
 
   useEffect(() => {
     if (responseAdd) onFinish();
   }, [onFinish, responseAdd]);
 
   useEffect(() => {
-    if (response) {
-      setMessage({ type: 'success', message: 'Successful connection.' });
-      setIsDisabled(false);
+    if (registryType === 'DOCKER_HUB') {
+      register('address');
+      setValue('address', 'https://registry.hub.docker.com');
     }
-  }, [response]);
+  }, [registryType, setValue, register]);
 
   useEffect(() => {
-    if (error) {
-      setMessage({ type: 'error', message: error.message });
-      setIsDisabled(true);
+    if (testConnectionResponse && testConnectionResponse.message) {
+      if (!isEqual(form, lastTestedForm)) {
+        resetTestConnection();
+      }
     }
-  }, [error]);
+  }, [form, testConnectionResponse, resetTestConnection, lastTestedForm]);
+
+  useEffect(() => {
+    setShowPlaceholder(['https://', 'http://'].includes(addressListener));
+  }, [addressListener]);
 
   const onChange = (option: Option) => {
     reset();
-    setMessage(null);
     setRegistryType(option.value);
+    setRegistryName(option.label);
   };
 
   const onClick = () => {
     const registry = {
       ...getValues(),
-      authorId: profileId,
       provider: registryType
     };
-
+    setLastTestedForm(getValues());
     testConnection(registry);
   };
 
   const onSubmit = (registry: Registry) => {
     save({
       ...registry,
-      authorId: profileId,
       provider: registryType
     });
   };
@@ -113,7 +143,7 @@ const FormRegistry = ({ onFinish }: Props) => {
               name="accessKey"
               label="Enter the access key"
             />
-            <Form.Input
+            <Form.Password
               ref={register({ required: true })}
               name="secretKey"
               label="Enter the secret key"
@@ -143,16 +173,6 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
-        {message && <ConnectionStatus {...message} />}
-        <Button.Default
-          type="button"
-          id="test-connection"
-          onClick={onClick}
-          isDisabled={!isValid}
-          isLoading={status.isPending}
-        >
-          Test connection
-        </Button.Default>
       </>
     );
   };
@@ -188,7 +208,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Text.h5 color="dark">
-        Fill in the fields below with your information:
+        Fill in the fields below with your {registryName} information:
       </Text.h5>
       <Styled.Fields>
         <Form.Input
@@ -196,23 +216,71 @@ const FormRegistry = ({ onFinish }: Props) => {
           name="name"
           label="Type a name for Registry"
         />
-        <Form.Input
-          ref={register({ required: true })}
-          name="address"
-          label="Enter the registry url"
-        />
+        {registryType !== 'DOCKER_HUB' && (
+          <>
+            <Form.Input
+              ref={register({
+                required: true,
+                validate: {
+                  methodValidate: (value: string) => {
+                    if (value === 'https://' || value === 'http://') {
+                      return false;
+                    } else if (
+                      value.includes('https://') ||
+                      value.includes('http://')
+                    ) {
+                      return true;
+                    }
+                    return false;
+                  }
+                }
+              })}
+              name="address"
+              label="Enter the registry url"
+            />
+            {showPlaceholder && (
+              <Styled.Placeholder color="light">
+                {registryPlaceholder[registryType]}
+              </Styled.Placeholder>
+            )}
+          </>
+        )}
         {handleFields()}
+        <ConnectionStatus
+          successMessage={`Successful connection with ${registryName}.`}
+          errorMessage={testConnectionResponse?.message}
+          status={testConnectionResponse?.status}
+        />
+        <Button.Default
+          type="button"
+          id="test-connection"
+          onClick={onClick}
+          isDisabled={!isValid}
+          isLoading={loadingConnectionResponse}
+        >
+          Test connection
+        </Button.Default>
       </Styled.Fields>
       <Button.Default
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
-        isDisabled={isGCP ? isDisabled : !isValid}
+        isDisabled={!isValid}
       >
         Save
       </Button.Default>
     </Styled.Form>
   );
+
+  const renderRegistryIcon = () => {
+    if (registryType) {
+      const registryChoose = options.filter(
+        item => item.value === registryType
+      );
+      return registryChoose[0].icon;
+    }
+    return null;
+  };
 
   return (
     <Styled.Content>
@@ -229,6 +297,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       <Styled.Select
         placeholder="Choose which one you want to add:"
         customOption={CustomOption.Icon}
+        icon={renderRegistryIcon()}
         options={options}
         onChange={option => onChange(option as Option)}
       />

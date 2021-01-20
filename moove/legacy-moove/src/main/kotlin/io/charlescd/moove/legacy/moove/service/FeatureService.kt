@@ -25,10 +25,8 @@ import io.charlescd.moove.legacy.moove.request.feature.CreateFeatureRequest
 import io.charlescd.moove.legacy.moove.request.feature.UpdateFeatureRequest
 import io.charlescd.moove.legacy.repository.FeatureRepository
 import io.charlescd.moove.legacy.repository.ModuleRepository
-import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.Feature
 import io.charlescd.moove.legacy.repository.entity.Module
-import io.charlescd.moove.legacy.repository.entity.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
@@ -39,12 +37,13 @@ import org.springframework.stereotype.Service
 @Service
 class FeatureService(
     private val featureRepository: FeatureRepository,
-    private val userRepository: UserRepository,
-    private val moduleRepository: ModuleRepository
+    private val moduleRepository: ModuleRepository,
+    private val userServiceLegacy: UserServiceLegacy
 ) {
 
-    fun create(createFeatureRequest: CreateFeatureRequest, workspaceId: String): FeatureRepresentation {
-        return createFeatureRequest.toEntity(workspaceId)
+    fun create(createFeatureRequest: CreateFeatureRequest, workspaceId: String, authorization: String): FeatureRepresentation {
+        val user = userServiceLegacy.findByAuthorizationToken(authorization)
+        return createFeatureRequest.toEntity(workspaceId, user.id)
             .let { this.featureRepository.save(it) }.toRepresentation()
     }
 
@@ -75,14 +74,6 @@ class FeatureService(
             .let { this.featureRepository.delete(it) }
     }
 
-    private fun findUsers(users: List<String>): List<User> =
-        this.userRepository.findAllById(users)
-            .takeIf { users.size == it.size }
-            ?: throw NotFoundExceptionLegacy(
-                "users",
-                users.joinToString(", ")
-            )
-
     private fun findModules(modules: List<String>): List<Module> =
         this.moduleRepository.findAllById(modules)
             .takeIf { modules.size == it.size }
@@ -102,13 +93,13 @@ class FeatureService(
             workspaceId = it.workspaceId
         )
 
-    private fun CreateFeatureRequest.toEntity(workspaceId: String): Feature {
+    private fun CreateFeatureRequest.toEntity(workspaceId: String, authorId: String): Feature {
         return Feature(
             id = UUID.randomUUID().toString(),
             name = this.name,
             branchName = this.branchName,
             modules = findModules(this.modules),
-            author = findUsers(listOf(this.authorId)).first(),
+            author = userServiceLegacy.findUsers(listOf(authorId)).first(),
             createdAt = LocalDateTime.now(),
             workspaceId = workspaceId
         )

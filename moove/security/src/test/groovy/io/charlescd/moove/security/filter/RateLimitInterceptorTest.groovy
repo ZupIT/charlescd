@@ -43,6 +43,26 @@ class RateLimitInterceptorTest extends Specification {
         assert res
     }
 
+    def "should execute the request without authorization cause its an open path"() {
+        given:
+        def request = new MockHttpServletRequest()
+        request.setRequestURI("/api/ellipse/123456789")
+        request.setMethod(HttpMethod.POST.name())
+
+        def response = new MockHttpServletResponse()
+
+        when:
+        def res = rateLimitInterceptor.preHandle(request, response, _)
+
+        then:
+        0 * rateLimitService.resolveBucket(any())
+        0 * tokenBucket.tryConsumeAndReturnRemaining(1)
+        0 * probe.isConsumed()
+
+        notThrown()
+        assert res
+    }
+
     def "should not execute the request because the limit was exceeded"() {
         given:
         def request = new MockHttpServletRequest()
