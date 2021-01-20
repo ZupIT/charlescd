@@ -72,10 +72,8 @@ test('to edit webhook', async () => {
   await waitFor(() => expect(result.current.status).toBe('resolved'));
 });
 
-test('to list webhook', async () => {
-  const webhook: Partial<Webhook> = {
-    events: ['DEPLOY', 'UNDEPLOY']
-  };
+test('to get an webhook', async () => {
+  const id = '123';
 
   (fetch as FetchMock).mockResponse(JSON.stringify({}));
 
@@ -84,7 +82,7 @@ test('to list webhook', async () => {
   expect(result.current.status).toBe('idle')
 
   await act(async () => {
-    await result.current.edit(webhook);
+    await result.current.list(id);
   });
 
   await waitFor(() => expect(result.current.status).toBe('resolved'));

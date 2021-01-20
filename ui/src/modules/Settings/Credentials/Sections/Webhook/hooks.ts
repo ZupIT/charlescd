@@ -30,8 +30,8 @@ interface Props {
   status: FetchStatuses;
   save: (webhook: Webhook) => Promise<unknown>;
   remove: (id: string) => Promise<unknown>;
-  list: Function;
-  edit: (webhook: Partial<Webhook>) => Promise<unknown>;
+  list: (id: string) => Promise<unknown>;
+  edit: (id: string, webhook: Partial<Webhook>) => Promise<unknown>;
 }
 
 export const useWebhook = (): Props => {
@@ -87,13 +87,14 @@ export const useWebhook = (): Props => {
   );
 
   const list = useCallback(
-    async (webhook: Webhook) => {
+    async (id: string) => {
       try {
         setStatus('pending');
-        const response = await listing(webhook);
+        const response = await listing(id);
         setStatus('resolved');
         return response;
       } catch (e) {
+        console.log('e', e);
         setStatus('rejected');
         const error = await e.json();
         dispatch(
@@ -109,10 +110,10 @@ export const useWebhook = (): Props => {
   );
 
   const edit = useCallback(
-    async (webhook: Partial<Webhook>) => {
+    async (id: string, webhook: Partial<Webhook>) => {
       try {
         setStatus('pending');
-        const response = await editing(webhook);
+        const response = await editing(id, webhook);
         setStatus('resolved');
         return response;
       } catch (e) {
