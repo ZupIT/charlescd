@@ -94,7 +94,7 @@ func (main Main) getComponentStatus(thresholdValue, metricValue float64) string 
 func (main Main) getComponentsErrorPercentage(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]CircleComponentHealthRepresentation, errors.Error) {
 	body, err := main.mooveMain.GetMooveComponents(circleIDHeader, circleId, workspaceID)
 	if err != nil {
-		return nil, err.WithOperations("getResultQuery.Lookup")
+		return nil, err.WithOperations("getComponentsErrorPercentage.GetMooveComponents")
 	}
 
 	var components []DeploymentInCircle
