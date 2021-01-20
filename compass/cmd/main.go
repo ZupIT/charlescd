@@ -19,6 +19,15 @@
 package main
 
 import (
+	"log"
+	"time"
+
+	"github.com/casbin/casbin/v2"
+
+	utils "github.com/ZupIT/charlescd/compass/internal/util"
+
+	"strconv"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -29,22 +38,18 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
-	"log"
-	"strconv"
-	"time"
-
-	utils "github.com/ZupIT/charlescd/compass/internal/util"
-	v1 "github.com/ZupIT/charlescd/compass/web/api/v1"
+	"github.com/sirupsen/logrus"
 
 	"github.com/joho/godotenv"
-
-	"github.com/casbin/casbin/v2"
 )
 
 func main() {
 	godotenv.Load()
+
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	db, err := configuration.GetDBConnection("migrations")
 	if err != nil {
@@ -86,16 +91,20 @@ func main() {
 	go metricDispatcher.Start(stopChan)
 	go actionDispatcher.Start(stopChan)
 
-	v1Api := v1.NewV1(mooveMain, enforcer, lmt)
-	v1Api.NewPluginApi(pluginMain)
-	v1Api.NewMetricsGroupApi(metricsgroupMain)
-	v1Api.NewMetricApi(metricMain, metricsgroupMain)
-	v1Api.NewDataSourceApi(datasourceMain)
-	v1Api.NewCircleApi(metricsgroupMain)
-	v1Api.NewActionApi(actionMain)
-	v1Api.NewHealthApi(healthMain)
-	v1Api.NewMetricsGroupActionApi(metricsGroupActionMain)
-	v1Api.Start()
+	router := api.NewApi(
+		enforcer,
+		lmt,
+		pluginMain,
+		datasourceMain,
+		metricMain,
+		actionMain,
+		metricsGroupActionMain,
+		metricsgroupMain,
+		mooveMain,
+		healthMain,
+	)
+
+	api.Start(router)
 }
 
 func configureRequestLimiter() *limiter.Limiter {

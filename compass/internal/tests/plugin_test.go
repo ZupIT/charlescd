@@ -19,9 +19,10 @@
 package tests
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"os"
 	"testing"
+
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -114,7 +115,7 @@ func (s *SuitePlugins) TestFindAll() {
 	os.Setenv("PLUGINS_DIR", "../../dist")
 	plugins, err := s.repository.FindAll("datasource")
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	for i, p := range plugins {
 		require.Equal(s.T(), expectedPlugins[i], p)
 	}
@@ -124,7 +125,7 @@ func (s *SuitePlugins) TestFindAllFull() {
 	os.Setenv("PLUGINS_DIR", "../../dist")
 	res, err := s.repository.FindAll("")
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotEmpty(s.T(), res)
 }
 
@@ -132,5 +133,5 @@ func (s *SuitePlugins) TestFindAllNoSuchDirectory() {
 	os.Setenv("PLUGINS_DIR", "./dist")
 
 	_, err := s.repository.FindAll("")
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }

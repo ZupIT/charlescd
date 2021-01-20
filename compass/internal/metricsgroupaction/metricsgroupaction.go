@@ -20,11 +20,10 @@ package metricsgroupaction
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"io"
 	"sort"
@@ -69,13 +68,13 @@ const groupActionQuery = `
 					WHERE mga.metrics_group_id = ? 
 					AND mga.deleted_at IS NULL`
 
-func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, error) {
+func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, errors.Error) {
 	var mgAct MetricsGroupAction
 
 	err := json.NewDecoder(metricsGroupAction).Decode(&mgAct)
 	if err != nil {
-		logger.Error(util.GeneralParseError, "ParseAction", err, mgAct)
-		return MetricsGroupAction{}, err
+		return MetricsGroupAction{}, errors.NewError("Parse error", err.Error()).
+			WithOperations("ParseGroupAction.Decode")
 	}
 
 	mgAct.Nickname = strings.TrimSpace(mgAct.Nickname)
@@ -83,159 +82,172 @@ func (main Main) ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGrou
 	return mgAct, nil
 }
 
-func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) []util.ErrorUtil {
-	ers := make([]util.ErrorUtil, 0)
+func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) errors.ErrorList {
+	ers := errors.NewErrorList()
 	needConfigValidation := true
 
 	if strings.TrimSpace(metricsGroupAction.Nickname) == "" {
-		ers = append(ers, util.ErrorUtil{
-			Field: "nickname",
-			Error: errors.New("action nickname is required").Error(),
-		})
+		err := errors.NewError("Validate error", "action nickname is required").
+			WithMeta("field", "nickname").
+			WithOperations("ValidateGroupAction.NicknameTrimSpace")
+		ers.Append(err)
 	} else if len(metricsGroupAction.Nickname) > 100 {
-		ers = append(ers, util.ErrorUtil{
-			Field: "nickname",
-			Error: errors.New("nickname is limited to 100 characters maximum").Error(),
-		})
+		err := errors.NewError("Validate error", "nickname is limited to 100 characters maximum").
+			WithMeta("field", "nickname").
+			WithOperations("ValidateGroupAction.NicknameLen")
+		ers.Append(err)
 	}
 
 	if metricsGroupAction.ExecutionParameters == nil || len(metricsGroupAction.ExecutionParameters) == 0 {
 		needConfigValidation = false
-		ers = append(ers, util.ErrorUtil{
-			Field: "executionParameters",
-			Error: errors.New("execution parameters is required").Error(),
-		})
+		err := errors.NewError("Validate error", "execution parameters is required").
+			WithMeta("field", "executionParameters").
+			WithOperations("ValidateGroupAction.ExecutionParametersIsNil")
+		ers.Append(err)
 	}
 
 	if metricsGroupAction.MetricsGroupID == uuid.Nil {
-		ers = append(ers, util.ErrorUtil{
-			Field: "metricGroup",
-			Error: errors.New("metric group id is required").Error(),
-		})
+		err := errors.NewError("Validate error", "metric group id is required").
+			WithMeta("field", "metricGroup").
+			WithOperations("ValidateGroupAction.MetricGroupIsNil")
+		ers.Append(err)
 	}
 
 	var act action.Response
 	if metricsGroupAction.ActionID == uuid.Nil {
 		needConfigValidation = false
-		ers = append(ers, util.ErrorUtil{
-			Field: "action",
-			Error: errors.New("action id is required").Error(),
-		})
+		err := errors.NewError("Validate error", "action id is required").
+			WithMeta("field", "action").
+			WithOperations("ValidateGroupAction.ActionIsNil")
+		ers.Append(err)
 	} else {
-		var err error
+		var err errors.Error
 		act, err = main.actionRepo.FindActionByIdAndWorkspace(metricsGroupAction.ActionID, workspaceID)
 		if err != nil || act.Type == "" {
 			needConfigValidation = false
-			logger.Error("error finding action", "ValidateGroupAction", err, metricsGroupAction.ActionID.String())
-			ers = append(ers, util.ErrorUtil{
-				Field: "action",
-				Error: errors.New("action is invalid").Error(),
-			})
+			err := errors.NewError("Validate error", "action is invalid").
+				WithMeta("field", "action").
+				WithOperations("ValidateGroupAction.FindActionByIdAndWorkspace")
+			ers.Append(err)
 		}
 	}
 
-	ers = append(ers, main.validateJobConfiguration(metricsGroupAction.ActionsConfiguration)...)
+	ers.Append(main.validateJobConfiguration(metricsGroupAction.ActionsConfiguration).GetErrors()...)
 
 	if needConfigValidation {
-		ers = append(ers, main.validateExecutionConfig(act.Type, metricsGroupAction.ExecutionParameters)...)
+		ers.Append(main.validateExecutionConfig(act.Type, metricsGroupAction.ExecutionParameters).GetErrors()...)
 	}
 
 	return ers
 }
 
-func (main Main) validateJobConfiguration(configuration ActionsConfiguration) []util.ErrorUtil {
-	errs := make([]util.ErrorUtil, 0)
+func (main Main) validateJobConfiguration(configuration ActionsConfiguration) errors.ErrorList {
+	ers := errors.NewErrorList()
 
 	if configuration.NumberOfCycles < 0 {
-		errs = append(errs, util.ErrorUtil{Field: "configuration.NumberOfCycles", Error: "the number of cycle needs an positive integer"})
+		err := errors.NewError("Validate error", "the number of cycle needs an positive integer").
+			WithMeta("field", "configuration.NumberOfCycles").
+			WithOperations("validateJobConfiguration.NumberOfCyclesLen")
+		ers.Append(err)
 	}
 
 	if configuration.Repeatable == false && configuration.NumberOfCycles == 0 {
-		errs = append(errs, util.ErrorUtil{Field: "configuration.Repeatable", Error: "a not repeatable action needs a defined number of cycles"})
+		err := errors.NewError("Validate error", "a not repeatable action needs a defined number of cycles").
+			WithMeta("field", "configuration.Repeatable").
+			WithOperations("validateJobConfiguration.RepeatableLen")
+		ers.Append(err)
 	}
 
-	return errs
+	return ers
 }
 
-func (main Main) validateExecutionConfig(actionType string, executionConfiguration json.RawMessage) []util.ErrorUtil {
-	ers := make([]util.ErrorUtil, 0)
+func (main Main) validateExecutionConfig(actionType string, executionConfiguration json.RawMessage) errors.ErrorList {
+	ers := errors.NewErrorList()
 
 	plugin, err := main.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", actionType, actionType))
 	if err != nil {
-		logger.Error("error finding plugin", "ValidateExecutionConfig", err, actionType)
-		return []util.ErrorUtil{{Field: "action", Error: errors.New("action is invalid").Error()}}
+		err := err.WithMeta("field", "action").
+			WithOperations("validateExecutionConfig.GetPluginBySrc")
+		ers.Append(err)
+		return ers
 	}
 
-	pluginErrs, err := plugin.Lookup("ValidateExecutionConfiguration")
-	if err != nil {
-		logger.Error("error looking up for plugin", "ValidateExecutionConfig", err, fmt.Sprintf("%+v", plugin))
-		return []util.ErrorUtil{{Field: "action", Error: errors.New("action is invalid").Error()}}
+	pluginErrs, lookupErr := plugin.Lookup("ValidateExecutionConfiguration")
+	if lookupErr != nil {
+		err := errors.NewError("Validate error", lookupErr.Error()).
+			WithMeta("field", "action").
+			WithOperations("validateExecutionConfig.Lookup")
+		ers.Append(err)
+		return ers
 	}
 
 	configErs := pluginErrs.(func(executionConfig []byte) []error)(executionConfiguration)
 	if len(configErs) > 0 {
-		for _, err := range configErs {
-			ers = append(ers, util.ErrorUtil{Field: "executionParameters", Error: err.Error()})
+		for _, configErr := range configErs {
+			err := errors.NewError("Validate error", configErr.Error()).
+				WithMeta("field", "executionParameters").
+				WithOperations("validateExecutionConfig.pluginErrs")
+			ers.Append(err)
 		}
 	}
 
 	return ers
 }
 
-func (main Main) SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
+func (main Main) SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error) {
 	db := main.db.Create(&metricsGroupAction)
 	if db.Error != nil {
-		logger.Error(util.SaveActionError, "SaveAction", db.Error, metricsGroupAction)
-		return MetricsGroupAction{}, db.Error
+		return MetricsGroupAction{}, errors.NewError("Save error", db.Error.Error()).
+			WithOperations("SaveGroupAction.Create")
 	}
 
 	return metricsGroupAction, nil
 }
 
-func (main Main) UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
+func (main Main) UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error) {
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
-		logger.Error(util.UpdateActionError, "UpdateAction", err, fmt.Sprintf("Id: %s", id))
-		return MetricsGroupAction{}, err
+		return MetricsGroupAction{}, errors.NewError("Update error", err.Error()).
+			WithOperations("UpdateGroupAction.Parse")
 	}
 
 	metricsGroupAction.BaseModel.ID = parsedId
 	db := main.db.Save(&metricsGroupAction)
 	if db.Error != nil {
-		logger.Error(util.UpdateActionError, "UpdateAction", db.Error, metricsGroupAction)
-		return MetricsGroupAction{}, db.Error
+		return MetricsGroupAction{}, errors.NewError("Update error", db.Error.Error()).
+			WithOperations("UpdateGroupAction.Save")
 	}
 
 	return metricsGroupAction, nil
 }
 
-func (main Main) FindGroupActionById(id string) (MetricsGroupAction, error) {
+func (main Main) FindGroupActionById(id string) (MetricsGroupAction, errors.Error) {
 	metricsGroupAction := MetricsGroupAction{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroupAction)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
-		return MetricsGroupAction{}, db.Error
+		return MetricsGroupAction{}, errors.NewError("Find error", db.Error.Error()).
+			WithOperations("FindGroupActionById.First")
 	}
 
 	return metricsGroupAction, nil
 }
 
-func (main Main) DeleteGroupAction(id string) error {
+func (main Main) DeleteGroupAction(id string) errors.Error {
 	db := main.db.Model(&MetricsGroupAction{}).Where("id = ?", id).Delete(&MetricsGroupAction{})
 	if db.Error != nil {
-		logger.Error(util.DeleteActionError, "DeleteAction", db.Error, "Id = "+id)
-		return db.Error
+		return errors.NewError("Delete error", db.Error.Error()).
+			WithOperations("DeleteGroupAction.Delete")
 	}
 
 	return nil
 }
 
-func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, error) {
+func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, errors.Error) {
 	var executions []GroupActionExecutionStatusResume
 	result := main.db.Raw(groupActionQuery, groupID).Find(&executions)
 	if result.Error != nil {
-		logger.Error(util.ListGroupActionExecutionStatusError, "ListGroupActionExecutionResumeByGroup", result.Error, groupID)
-		return nil, result.Error
+		return nil, errors.NewError("List error", result.Error.Error()).
+			WithOperations("ListGroupActionExecutionResumeByGroup.Find")
 	}
 
 	sort.Slice(executions, func(i, j int) bool {
@@ -254,7 +266,6 @@ func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupA
 func (main Main) ValidateActionCanBeExecuted(metricsGroupAction MetricsGroupAction) bool {
 	count, err := main.getNumberOfActionExecutions(metricsGroupAction.ID)
 	if err != nil {
-		logger.Error(util.ActionExecutionValidateError, "ValidateActionCanBeExecuted", err, fmt.Sprintf("%+v", metricsGroupAction))
 		return false
 	}
 
