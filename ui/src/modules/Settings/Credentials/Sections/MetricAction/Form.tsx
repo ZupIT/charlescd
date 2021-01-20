@@ -16,9 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import Text from 'core/components/Text';
 import Card from 'core/components/Card';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { normalizeSelectOptions } from 'core/utils/select';
 import Button from 'core/components/Button';
 import { usePlugins, useCreateAction } from './hooks';
@@ -148,16 +146,18 @@ const FormAddAction = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content data-testid="add-action-form">
-      <Text.h2 color="light" weight="bold">
-        Add Action config
-        <Popover
-          title="What is a action?"
-          icon="info"
-          link={`${CHARLES_DOC}/reference/metrics/metrics-actions`}
-          linkLabel="View documentation"
-          description="You can create an action and add a trigger to perform an automatic task."
-        />
-      </Text.h2>
+      <Styled.Title color="light">Add Metric Action</Styled.Title>
+      <Styled.Info color="dark">
+        You can create an action and add a trigger to perform an automatic task.
+        Consult our{' '}
+        <Styled.Link
+          href="https://docs.charlescd.io/reference/metrics/metrics-actions"
+          target="_blank"
+        >
+          documentation
+        </Styled.Link>{' '}
+        for further details.
+      </Styled.Info>
       <FormProvider {...formMethods}>
         <Styled.Form
           onSubmit={handleSubmit(onSubmit)}
