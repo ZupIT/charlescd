@@ -285,7 +285,6 @@ func (s *Suite) TestConnection() {
 	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
 	require.Nil(s.T(), err)
-	require.Nil(s.T(), err)
 }
 
 func (s *Suite) TestConnectionPluginDirError() {
