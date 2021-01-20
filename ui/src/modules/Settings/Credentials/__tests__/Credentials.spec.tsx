@@ -89,7 +89,16 @@ test('should render Credentials items in the right order', async () => {
     status: 'resolved'
   }));
 
-  const itemsRightOrder = ['Registry', 'CD Configuration', 'Circle Matcher', 'Datasources', 'Metric Action', 'Git', 'User group'];
+  const itemsRightOrder = [
+    'Registry',
+    'CD Configuration',
+    'Circle Matcher',
+    'Datasources',
+    'Metric Action',
+    'Git',
+    'Webhook',
+    'User group'
+  ];
   
   render(<Credentials />);
 
@@ -194,8 +203,8 @@ test('click to copy to clipboard', async () => {
 
   render(<Credentials />);
 
-  const dropdownElement = await screen.findByTestId('icon-vertical-dots');
-  userEvent.click(dropdownElement);
+  const dropdownElement = await screen.findAllByTestId('icon-vertical-dots');
+  userEvent.click(dropdownElement[0]);
   const copyIDElement = screen.getByText('Copy ID');
   
   expect(copyIDElement).toBeInTheDocument();
@@ -224,6 +233,7 @@ test('should render Credentials items with the right type: Required or Optional'
     {name: 'Datasources', type: 'Optional'},
     {name: 'Metric Action', type: 'Optional'},
     {name: 'Git', type: 'Optional'},
+    {name: 'Webhook', type: 'Optional'},
     {name: 'User group', type: 'Optional'},
   ];
   

@@ -66,6 +66,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
     <Section
       name="Webhook"
       icon="webhook"
+      type="Optional"
       showAction
       action={() => setForm(FORM_WEBHOOK)}
     >

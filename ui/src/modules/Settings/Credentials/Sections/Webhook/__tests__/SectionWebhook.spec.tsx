@@ -63,10 +63,10 @@ test('should remove/cancel webhook', async () => {
 
   render(<SectionWebhook form={form} setForm={setForm} data={data} />);
   
-  let cancelIcon = await screen.findByTestId('icon-cancel');
-  expect(cancelIcon).toBeInTheDocument();
-  await act(async () => userEvent.click(cancelIcon));
+  let iconVerticalDots = await screen.findByTestId('icon-vertical-dots');
+  expect(iconVerticalDots).toBeInTheDocument();
+  await act(async () => userEvent.click(iconVerticalDots));
 
-  cancelIcon = screen.queryByTestId('icon-cancel');
-  waitFor(() => expect(cancelIcon).not.toBeInTheDocument());
+  let iconDelete = screen.queryByTestId('icon-delete');
+  waitFor(() => expect(iconDelete).toBeInTheDocument());
 });
