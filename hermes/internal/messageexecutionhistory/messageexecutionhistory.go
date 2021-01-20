@@ -21,6 +21,7 @@ package messageexecutionhistory
 import (
 	"github.com/google/uuid"
 	"hermes/pkg/errors"
+	"hermes/util"
 	"time"
 )
 
@@ -35,6 +36,15 @@ type MessagesExecutionHistory struct {
 func (main Main) Save(executionsRequest []Request) (Response, errors.Error) {
 	var executions []MessagesExecutionHistory
 
+	conn := NewConnection("my-producer", "my-exchange", "queue-1")
+	if err := conn.Connect(); err != nil {
+		panic(err)
+	}
+	if err := conn.BindQueue(); err != nil {
+		panic(err)
+	}
+
+	//var msgList []MessageRequest
 	for _, r := range executionsRequest {
 		exec := MessagesExecutionHistory{
 			ID:           uuid.New(),
@@ -45,6 +55,26 @@ func (main Main) Save(executionsRequest []Request) (Response, errors.Error) {
 		}
 		executions = append(executions, exec)
 	}
+	byteM, err := util.GetBytes(executions)
+	if err != nil {
+		return Response{}, errors.NewError("Parse error", err.Error()).
+			WithOperations("Save.GetBytes")
+	}
+	m := Message{
+		Queue:         conn.Queues,
+		ReplyTo:       "",
+		ContentType:   "text/plain",
+		CorrelationID: uuid.New().String(),
+		Priority:      0,
+		Body: MessageBody{
+			Data: byteM,
+			Type: "",
+		},
+	}
+	if err := conn.Publish(m); err != nil {
+		panic(err)
+	}
+
 
 	result := main.db.Model(&MessagesExecutionHistory{}).Create(&executions)
 	if result.Error != nil {
