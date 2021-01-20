@@ -19,7 +19,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"hermes/pkg/errors"
 	"hermes/web/util"
@@ -48,8 +47,6 @@ func ValidatorMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Content-type", "application/json")
 		workspaceID := r.Header.Get("x-workspace-id")
 		ers := util.NewApiErrors()
-
-		fmt.Println(r.RequestURI)
 
 		if getWhiteList(r.RequestURI) == "" && workspaceID == "" {
 			ers.ToApiErrors(

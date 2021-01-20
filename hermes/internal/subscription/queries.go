@@ -44,10 +44,3 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 	}
 
 }
-
-func FindOneQuery(subscriptionId string) string {
-	return fmt.Sprintf(`SELECT external_id, url, description, events
-	FROM SUBSCRIPTIONS
-	WHERE  id = '%s'
-	AND deleted_at IS NULL`, subscriptionId)
-}
