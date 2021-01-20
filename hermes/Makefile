@@ -1,7 +1,6 @@
 GOCMD=go
 GORUN=$(GOCMD) run
 GOBUILD=$(GOCMD) build
-GOBUILDPLUGIN=$(GOCMD) build -buildmode=plugin
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
