@@ -22,6 +22,7 @@ import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repos
 import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
 import { cdConfigurationFixture, deployComponentsFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import { routesManifests } from '../../fixtures/manifests.fixture'
+import { HookParams } from '../../../../app/v2/operator/params.interface'
 
 describe('Hook Routes Manifest Creation', () => {
 
@@ -30,21 +31,14 @@ describe('Hook Routes Manifest Creation', () => {
   const cdConfigurationsRepository = new CdConfigurationsRepository()
   const consoleLoggerService = new ConsoleLoggerService()
 
+  let hookParams: HookParams
+
   beforeEach(() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
     jest.spyOn(cdConfigurationsRepository, 'findDecrypted').mockImplementation(async() => cdConfigurationFixture)
     jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
-  })
 
-  it('generate route manifest correctly', async() => {
-    const routeUseCase = new CreateRoutesManifestsUseCase(
-      deploymentRepository,
-      componentsRepository,
-      cdConfigurationsRepository,
-      consoleLoggerService
-    )
-
-    const manifests = await routeUseCase.execute({
+    hookParams = {
       controller: {},
       parent: {
         apiVersion: 'zupit.com/v1',
@@ -55,7 +49,7 @@ describe('Hook Routes Manifest Creation', () => {
           deploymentId: 'b46fd548-0082-4021-ba80-a50703c44a3a',
           components: [
             {
-              chat: 'my-chart',
+              chart: 'my-chart',
               name: 'my-component',
               tag: 'my-tag'
             }
@@ -67,8 +61,33 @@ describe('Hook Routes Manifest Creation', () => {
         'Service.v1': {}
       },
       finalizing: true
-    })
+    }
+  })
+
+  it('generate route manifest correctly', async() => {
+    const routeUseCase = new CreateRoutesManifestsUseCase(
+      deploymentRepository,
+      componentsRepository,
+      cdConfigurationsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = await routeUseCase.execute(hookParams)
 
     expect(manifests).toEqual(routesManifests)
+  })
+
+  it('throws exception when manifests generation fail', async() => {
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => { throw new Error('Error') })
+    const routeUseCase = new CreateRoutesManifestsUseCase(
+      deploymentRepository,
+      componentsRepository,
+      cdConfigurationsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = routeUseCase.execute(hookParams)
+
+    await expect(manifests).rejects.toThrowError()
   })
 })

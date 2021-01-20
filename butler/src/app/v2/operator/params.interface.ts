@@ -7,7 +7,7 @@ export interface HookParams {
     spec: {
       circleId: string
       deploymentId: string
-      components: { chat: string, name: string, tag: string }[]
+      components: { chart: string, name: string, tag: string }[]
     }
   }
   children: {
