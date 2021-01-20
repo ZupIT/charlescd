@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+package io.charlescd.moove.application.webhook.response
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
-
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
+data class CreateWebhookSubscriptionResponse(
+    val id: String
+) {
+    companion object {
+        fun from(id: String) = CreateWebhookSubscriptionResponse(
+            id = id
+        )
     }
-  }, [options, clearValue]);
-
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
-
-export default SingleValue;
+}

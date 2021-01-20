@@ -1,29 +1,43 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package subscription
 
 import (
 	"encoding/json"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"hermes/pkg/errors"
 	"hermes/util"
 	"io"
+	"io/ioutil"
 	"time"
 )
 
 type Subscription struct {
 	util.BaseModel
-	ExternalId  uuid.UUID  `json:"externalId"`
-	Url         string     `json:"url"`
-	Description string     `json:"description"`
-	ApiKey      []byte     `json:"apiKey" gorm:"type:bytea"`
-	CreatedBy   string     `json:"createdBy"`
-	DeletedBy   string     `json:"-"`
-	DeletedAt   *time.Time `json:"-"`
-}
-
-type SubscriptionConfigurationEvents struct {
-	SubscriptionId uuid.UUID `json:"subscriptionId"`
-	EventId        uuid.UUID `json:"eventId"`
+	ExternalId  uuid.UUID       `json:"externalId"`
+	Url         string          `json:"url"`
+	Description string          `json:"description"`
+	ApiKey      []byte          `json:"apiKey" gorm:"type:bytea"`
+	Events      json.RawMessage `json:"events" gorm:"type:jsonb"`
+	CreatedBy   string          `json:"createdBy"`
+	DeletedBy   string          `json:"-"`
+	DeletedAt   *time.Time      `json:"-"`
 }
 
 func (main Main) Validate(subscription Request) errors.ErrorList {
@@ -55,78 +69,53 @@ func (main Main) Validate(subscription Request) errors.ErrorList {
 
 func (main Main) ParseSubscription(subscription io.ReadCloser) (Request, errors.Error) {
 	var newSubs *Request
+
 	err := json.NewDecoder(subscription).Decode(&newSubs)
 	if err != nil {
 		return Request{}, errors.NewError("Parse error", err.Error()).
 			WithOperations("Parse.ParseDecode")
 	}
+
 	return *newSubs, nil
 }
 
-func (main Main) ParseUpdate(subscription io.ReadCloser) (UpdateRequest, errors.Error) {
-	var newSubs *UpdateRequest
-	err := json.NewDecoder(subscription).Decode(&newSubs)
+func (main Main) ParseUpdate(subscription io.ReadCloser) ([]byte, errors.Error) {
+	body, err := ioutil.ReadAll(subscription)
 	if err != nil {
-		return UpdateRequest{}, errors.NewError("Parse error", err.Error()).
+		return []byte(""), errors.NewError("Parse error", err.Error()).
 			WithOperations("ParseUpdate.ParseDecode")
 	}
-	return *newSubs, nil
+
+	return body, nil
 }
 
 func (main Main) Save(request Request) (SaveResponse, errors.Error) {
 	id := uuid.New()
 	var response = SaveResponse{}
 
-	err := main.db.Transaction(func(tx *gorm.DB) error {
+	insert := main.db.Model(Subscription{}).Create(InsertMap(id, request.ExternalId, request.Url, request.Description, request.ApiKey, request.CreatedBy, request.Events)).Scan(&response)
+	if insert.Error != nil {
+		return SaveResponse{}, errors.NewError("Save Subscription error", insert.Error.Error()).
+			WithOperations("Save.Insert")
+	}
 
-		insert := tx.Model(Subscription{}).Create(InsertMap(id, request.ExternalId, request.Url, request.Description, request.ApiKey, request.CreatedBy))
-		if insert.Error != nil {
-			return insert.Error
-		}
-
-		_, err := main.saveSubscriptionEvents(request.Events, id, tx)
-		if err != nil {
-			return err
-		}
-
-		query := insert.Model(&Subscription{}).Where("id = ?", id).Find(&response)
-		if query.Error != nil {
-			return query.Error
-		}
-
-		return nil
-	})
-	if err != nil {
-		return SaveResponse{}, errors.NewError("Save Subscription error", err.Error()).
-			WithOperations("Save.Transaction")
+	query := insert.Model(&Subscription{}).Where("id = ?", id).Find(&response)
+	if query.Error != nil {
+		return SaveResponse{}, errors.NewError("Save Subscription error", insert.Error.Error()).
+			WithOperations("Save.Query")
 	}
 
 	return response, nil
 }
 
-func (main Main) Update(request UpdateRequest) (UpdateResponse, errors.Error) {
-	err := main.db.Transaction(func(tx *gorm.DB) error {
-
-		deleteExec := tx.Where("subscription_id = ?", request.SubscriptionId).Delete(&SubscriptionConfigurationEvents{})
-		if deleteExec.Error != nil {
-			return deleteExec.Error
-		}
-
-		if len(request.Events) != 0 {
-			_, err := main.saveSubscriptionEvents(request.Events, request.SubscriptionId, tx)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
-	if err != nil {
-		return UpdateResponse{}, errors.NewError("Update Subscription error", err.Error()).
+func (main Main) Update(subscriptionId uuid.UUID, request []byte) (UpdateResponse, errors.Error) {
+	update := main.db.Model(&Subscription{}).Where("id = ?", subscriptionId).Update("events", &request)
+	if update.Error != nil {
+		return UpdateResponse{}, errors.NewError("Update Subscription error", update.Error.Error()).
 			WithOperations("Update.UpdateSubscription")
 	}
 
-	return UpdateResponse{Events: request.Events}, nil
+	return UpdateResponse{Events: request}, nil
 }
 
 func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
@@ -139,20 +128,26 @@ func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
 	return nil
 }
 
-func (main Main) saveSubscriptionEvents(events []uuid.UUID, subscriptionId uuid.UUID, tx *gorm.DB) ([]SubscriptionConfigurationEvents, error) {
-	configEvents := make([]SubscriptionConfigurationEvents, 0)
+func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
+	res := Response{}
 
-	for _, event := range events {
-		configEvents = append(configEvents, SubscriptionConfigurationEvents{
-			SubscriptionId: subscriptionId,
-			EventId:        event,
-		})
+	q := main.db.Model(&Subscription{}).First(&res, "id = ? AND deleted_at IS NULL", subscriptionId.String())
+	if q.Error != nil {
+		return Response{}, errors.NewError("Find Subscription error", q.Error.Error()).
+			WithOperations("FindById.QuerySubscription")
 	}
 
-	save := tx.Create(&configEvents)
-	if save.Error != nil {
-		return []SubscriptionConfigurationEvents{}, save.Error
+	return res, nil
+}
+
+func (main Main) FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error) {
+	var res []ExternalIdResponse
+
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND events = ? AND deleted_at IS NULL", externalId.String(), map[string]interface{}{"event": event})
+	if q.Error != nil {
+		return []ExternalIdResponse{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
+			WithOperations("FindAllByExternalIdAndEvent.QuerySubscription")
 	}
 
-	return configEvents, nil
+	return res, nil
 }

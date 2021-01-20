@@ -33,6 +33,7 @@ export interface Role {
   value?: string;
   description?: string;
   createdAt?: string;
+  permissions?: unknown;
 }
 
 export interface UserGroup {

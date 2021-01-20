@@ -25,6 +25,7 @@ import InputPhoto from './InputPhoto';
 import Number from './Number';
 import Link from './Link';
 import Checkbox from './Checkbox';
+import Radio from './Radio';
 
 export { Input, Password, SearchInput, Select };
 
@@ -39,5 +40,6 @@ export default {
   InputPhoto,
   Number,
   Link,
-  Checkbox
+  Checkbox,
+  Radio
 };

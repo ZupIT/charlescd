@@ -16,11 +16,13 @@
 
 package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import java.util.Arrays;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Response;
 
 public final class DockerBearerAuthenticator implements ClientRequestFilter {
 
@@ -31,12 +33,8 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
     private final String authUrl;
     private final String service;
 
-    public DockerBearerAuthenticator(String organization,
-                                     String username,
-                                     String password,
-                                     String imageName,
-                                     String authUrl,
-                                     String service) {
+    public DockerBearerAuthenticator(String organization, String username, String password, String imageName,
+                                     String authUrl, String service) {
         this.organization = organization;
         this.username = username;
         this.password = password;
@@ -45,32 +43,29 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
         this.service = service;
     }
 
-    public String dockerBearerAuthorization() {
+    public String getBearerAuthorization() {
         String url = createAuthUrl();
-
         Client client = ClientBuilder.newClient();
-
         client.register(new CommonBasicAuthenticator(this.username, this.password));
 
-        DockerBasicAuthResponse response = client.target(url).request().get().readEntity(DockerBasicAuthResponse.class);
+        Response response = client.target(url).request().get();
 
-        return String.format("Bearer %s", response.getToken());
+        if (response.getStatus() == 200) {
+            DockerBasicAuthResponse basicResponse = response.readEntity(DockerBasicAuthResponse.class);
+            return String.format("Bearer %s", basicResponse.getToken());
+        }
+
+        throw new ThirdPartyIntegrationException("Docker hub credentials invalid.");
+
     }
 
     @Override
     public void filter(ClientRequestContext clientRequestContext) {
-        clientRequestContext.getHeaders().put("Authorization", Arrays.asList(dockerBearerAuthorization()));
+        clientRequestContext.getHeaders().put("Authorization", Arrays.asList(getBearerAuthorization()));
     }
 
     public String createAuthUrl() {
-        return new StringBuilder(authUrl)
-                .append("?service=")
-                .append(service)
-                .append("&scope=repository:")
-                .append(organization)
-                .append("/")
-                .append(imageName)
-                .append(":pull")
-                .toString();
+        return new StringBuilder(authUrl).append("?service=").append(service).append("&scope=repository:")
+                .append(organization).append("/").append(imageName).append(":pull").toString();
     }
 }
