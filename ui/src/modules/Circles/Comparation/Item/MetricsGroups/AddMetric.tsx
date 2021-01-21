@@ -169,7 +169,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               <Styled.Select
                 control={control}
                 name="dataSourceId"
-                label="Select a data source"
+                label="Select a datasource"
                 options={providerOptions}
                 rules={{ required: true }}
                 defaultValue={getSelectDefaultValue(

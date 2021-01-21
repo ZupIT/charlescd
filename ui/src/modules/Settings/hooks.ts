@@ -81,7 +81,7 @@ export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {
   const [workspaces, getWorkspaces] = useFetch<WorkspacePagination>(findAll);
   const { response, error } = workspaces;
 
-  const filerWorkspace = useCallback(
+  const filterWorkspace = useCallback(
     (name: string) => {
       getWorkspaces({ name });
     },
@@ -94,7 +94,7 @@ export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {
     }
   }, [dispatch, response, error]);
 
-  return [filerWorkspace, getWorkspaces, response];
+  return [filterWorkspace, getWorkspaces, response];
 };
 
 export default useWorkspace;
