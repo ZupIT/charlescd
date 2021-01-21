@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { isBusy, isDeploying, isUndeploying } from "../helpers"
+import { isBusy, isDeploying, isUndeploying, circleCannotBeDeleted } from "../helpers"
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
+import { Circle } from 'modules/Circles/interfaces/Circle';
 
 test("Test isBusy deploying", () => {
   const busy = isBusy(DEPLOYMENT_STATUS.deploying);
@@ -51,4 +52,30 @@ test("Test isDeploying undeploying", () => {
   const deploying = isUndeploying(DEPLOYMENT_STATUS.undeploying);
 
   expect(deploying).toBeTruthy();
+});
+
+test("Test circleCannotBeDeleted", () => {
+  const circle: Circle = {
+    id: '123',
+    name: 'Circle',
+    author: null,
+    createdAt: '2021-01-01',
+    rules: null,
+    deployment: {
+      id: '456',
+      status: DEPLOYMENT_STATUS.deployed,
+      tag: '',
+      deployedAt: '2021-01-01',
+      artifacts: [{
+        id: '789',
+        artifact: 'artifact',
+        version: '1',
+        componentName: 'component',
+        moduleName: 'module'
+      }]
+    }
+  }
+
+  const isCant = circleCannotBeDeleted(circle);
+  expect(isCant).toBeTruthy();
 });
