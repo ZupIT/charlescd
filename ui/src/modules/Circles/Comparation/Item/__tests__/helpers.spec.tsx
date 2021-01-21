@@ -14,9 +14,35 @@
  * limitations under the License.
  */
 
-import { isBusy, isDeploying, isUndeploying, circleCannotBeDeleted } from "../helpers"
+import {
+  isBusy, isDeploying, isUndeploying,
+  circleCannotBeDeleted, hasDeploy, pathCircleById
+} from "../helpers"
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
-import { Circle } from 'modules/Circles/interfaces/Circle';
+import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
+
+const circle: Circle = {
+  id: '123',
+  name: 'Circle',
+  author: null,
+  createdAt: '2021-01-01',
+  rules: null,
+  deployment: null
+}
+
+const deployment: Deployment = {
+  id: '456',
+  status: DEPLOYMENT_STATUS.deployed,
+  tag: '',
+  deployedAt: '2021-01-01',
+  artifacts: [{
+    id: '789',
+    artifact: 'artifact',
+    version: '1',
+    componentName: 'component',
+    moduleName: 'module'
+  }]
+}
 
 test("Test isBusy deploying", () => {
   const busy = isBusy(DEPLOYMENT_STATUS.deploying);
@@ -55,41 +81,25 @@ test("Test isDeploying undeploying", () => {
 });
 
 test("Test if circleCannotBeDeleted could be truthy", () => {
-  const circle: Circle = {
-    id: '123',
-    name: 'Circle',
-    author: null,
-    createdAt: '2021-01-01',
-    rules: null,
-    deployment: {
-      id: '456',
-      status: DEPLOYMENT_STATUS.deployed,
-      tag: '',
-      deployedAt: '2021-01-01',
-      artifacts: [{
-        id: '789',
-        artifact: 'artifact',
-        version: '1',
-        componentName: 'component',
-        moduleName: 'module'
-      }]
-    }
-  }
+  const isCant = circleCannotBeDeleted({ ...circle, deployment });
 
-  const isCant = circleCannotBeDeleted(circle);
   expect(isCant).toBeTruthy();
 });
 
 test("Test if circleCannotBeDeleted could be falsy", () => {
-  const circle: Circle = {
-    id: '123',
-    name: 'Circle',
-    author: null,
-    createdAt: '2021-01-01',
-    rules: null,
-    deployment: null
-  }
-
   const isCant = circleCannotBeDeleted(circle);
+
   expect(isCant).toBeFalsy();
+});
+
+test("Test hasDeploy", () => {
+  const has = hasDeploy({ ...circle, deployment });
+
+  expect(has).toBeTruthy();
+});
+
+test("Test pathCircleById", () => {
+  const path = pathCircleById(circle.id);
+
+  expect(path).toBe('http://localhost/?circle=123');
 });
