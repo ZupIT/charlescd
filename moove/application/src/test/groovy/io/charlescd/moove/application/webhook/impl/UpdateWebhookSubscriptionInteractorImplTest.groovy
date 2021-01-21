@@ -38,12 +38,12 @@ class UpdateWebhookSubscriptionInteractorImplTest extends Specification {
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        updateWebhookSubscriptionInteractor = new UpdateWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
+        updateWebhookSubscriptionInteractor = new UpdateWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to update subscription should do it successfully"() {
         when:
-        updateWebhookSubscriptionInteractor.execute(workspaceId, subscriptionId, authorization, updateWebhookSubscriptionRequest())
+        updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId, updateWebhookSubscriptionRequest())
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -55,7 +55,7 @@ class UpdateWebhookSubscriptionInteractorImplTest extends Specification {
 
     def "when trying to update subscription and is wrong workspace should throw not found exception"() {
         when:
-        updateWebhookSubscriptionInteractor.execute("workspaceIdOther", subscriptionId, authorization, updateWebhookSubscriptionRequest())
+        updateWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId, updateWebhookSubscriptionRequest())
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail

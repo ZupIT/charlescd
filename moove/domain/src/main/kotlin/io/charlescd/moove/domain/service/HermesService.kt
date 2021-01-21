@@ -32,7 +32,7 @@ interface HermesService {
 
     fun healthCheckSubscription(authorEmail: String, id: String): HealthCheckWebhookSubscription
 
-    fun getSubscriptionHistory() // TODO Implement
+    fun notifySubscriptionEvent(webhookEvent: WebhookEvent)
 
-    fun publishSubscription() // TODO Implement
+    fun getSubscriptionHistory() // TODO Implement
 }

@@ -18,8 +18,9 @@ package io.charlescd.moove.infrastructure.service
 
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.infrastructure.service.client.HermesClient
-import io.charlescd.moove.infrastructure.service.client.request.HermesSubscriptionCreateRequest
-import io.charlescd.moove.infrastructure.service.client.request.HermesSubscriptionUpdateRequest
+import io.charlescd.moove.infrastructure.service.client.HermesPublisherClient
+import io.charlescd.moove.infrastructure.service.client.request.HermesCreateSubscriptionRequest
+import io.charlescd.moove.infrastructure.service.client.request.HermesUpdateSubscriptionRequest
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionCreateResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
 import spock.lang.Specification
@@ -28,14 +29,15 @@ class HermesClientServiceTest extends Specification {
 
     private HermesClientService hermesService
     private HermesClient hermesClient = Mock(HermesClient)
+    private HermesPublisherClient hermesPublisherClient = Mock(HermesPublisherClient)
 
     def setup() {
-        hermesService = new HermesClientService(hermesClient)
+        hermesService = new HermesClientService(hermesClient, hermesPublisherClient)
     }
 
     def 'when creating a subscription, should do it successfully'() {
         given:
-        def request = new HermesSubscriptionCreateRequest('https://mywebhook.com.br', 'secret', 'workspaceId',
+        def request = new HermesCreateSubscriptionRequest('https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
         def subscription = new WebhookSubscription('https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
@@ -61,7 +63,7 @@ class HermesClientServiceTest extends Specification {
 
     def 'when update a subscription, should do it successfully'() {
         given:
-        def request = new HermesSubscriptionUpdateRequest(events)
+        def request = new HermesUpdateSubscriptionRequest(events)
 
         when:
         hermesService.updateSubscription(authorEmail, "subscriptionId", events)

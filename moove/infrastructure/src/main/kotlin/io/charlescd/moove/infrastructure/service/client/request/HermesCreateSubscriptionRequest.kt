@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.webhook
+package io.charlescd.moove.infrastructure.service.client.request
 
-import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
-
-interface GetWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscriptionResponse
-}
+data class HermesCreateSubscriptionRequest(
+    val url: String,
+    val apiKey: String,
+    val externalId: String,
+    val description: String,
+    val events: List<String>
+)

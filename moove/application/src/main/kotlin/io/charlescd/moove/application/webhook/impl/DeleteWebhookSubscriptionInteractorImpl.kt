@@ -18,14 +18,28 @@ package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.DeleteWebhookSubscriptionInteractor
+import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
 class DeleteWebhookSubscriptionInteractorImpl @Inject constructor(
-    private val webhookService: WebhookService
+    private val webhookService: WebhookService,
+    private val hermesService: HermesService
 ) : DeleteWebhookSubscriptionInteractor {
-    override fun execute(workspaceId: String, id: String, authorization: String) {
-        val webhookSubscription = webhookService.deleteSubscription(workspaceId, authorization, id)
+    override fun execute(workspaceId: String, authorization: String, id: String) {
+        deleteSubscription(workspaceId, authorization, id)
+    }
+
+    private fun deleteSubscription(workspaceId: String, authorization: String, id: String) {
+        val author = webhookService.getAuthor(authorization)
+        validateSubscription(workspaceId, author, id)
+        hermesService.deleteSubscription(author.email, id)
+    }
+
+    private fun validateSubscription(workspaceId: String, author: User, id: String) {
+        val subscription = hermesService.getSubscription(author.email, id)
+        webhookService.validateWorkspace(workspaceId, id, author, subscription)
     }
 }

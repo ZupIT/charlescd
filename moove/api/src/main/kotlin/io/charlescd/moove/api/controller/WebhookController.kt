@@ -16,10 +16,7 @@
 
 package io.charlescd.moove.api.controller
 
-import io.charlescd.moove.application.webhook.CreateWebhookSubscriptionInteractor
-import io.charlescd.moove.application.webhook.DeleteWebhookSubscriptionInteractor
-import io.charlescd.moove.application.webhook.GetWebhookSubscriptionInteractor
-import io.charlescd.moove.application.webhook.UpdateWebhookSubscriptionInteractor
+import io.charlescd.moove.application.webhook.*
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
@@ -35,7 +32,8 @@ class WebhookController(
     private val createWebhookSubscriptionInteractor: CreateWebhookSubscriptionInteractor,
     private val updateWebhookSubscriptionInteractor: UpdateWebhookSubscriptionInteractor,
     private val getWebhookSubscriptionInteractor: GetWebhookSubscriptionInteractor,
-    private val deleteWebhookSubscriptionInteractor: DeleteWebhookSubscriptionInteractor
+    private val deleteWebhookSubscriptionInteractor: DeleteWebhookSubscriptionInteractor,
+    private val healthCheckWebhookSubscriptionInteractor: HealthCheckWebhookSubscriptionInteractor
 ) {
 
     @ApiOperation(value = "Create a subscribe webhook")
@@ -57,7 +55,7 @@ class WebhookController(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String
     ): SimpleWebhookSubscriptionResponse {
-        return getWebhookSubscriptionInteractor.execute(workspaceId, id, authorization)
+        return getWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
     }
 
     @ApiOperation(value = "Update a subscription webhook")
@@ -69,7 +67,7 @@ class WebhookController(
         @PathVariable("id") id: String,
         @Valid @RequestBody request: UpdateWebhookSubscriptionRequest
     ): SimpleWebhookSubscriptionResponse {
-        return updateWebhookSubscriptionInteractor.execute(workspaceId, id, authorization, request)
+        return updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, request)
     }
 
     @ApiOperation(value = "Delete a subscription webhook")
@@ -80,7 +78,7 @@ class WebhookController(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String
     ) {
-        deleteWebhookSubscriptionInteractor.execute(workspaceId, id, authorization)
+        deleteWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
     }
 
     @ApiOperation(value = "Health check from a subscription webhook")
@@ -91,6 +89,6 @@ class WebhookController(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String
     ) {
-        deleteWebhookSubscriptionInteractor.execute(workspaceId, id, authorization)
+        healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
     }
 }

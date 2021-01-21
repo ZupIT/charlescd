@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.webhook
+package io.charlescd.moove.domain
 
-import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
-
-interface GetWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscriptionResponse
+enum class WebhookEventTypeEnum {
+    DEPLOY,
+    UNDEPLOY
 }

@@ -16,7 +16,9 @@
 
 package io.charlescd.moove.infrastructure.service
 
+import com.google.gson.Gson
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.infrastructure.service.client.*
 import io.charlescd.moove.infrastructure.service.client.request.*
@@ -25,7 +27,7 @@ import io.charlescd.moove.infrastructure.service.client.response.HermesSubscript
 import org.springframework.stereotype.Service
 
 @Service
-class HermesClientService(private val hermesClient: HermesClient) : HermesService {
+class HermesClientService(private val hermesClient: HermesClient, private val hermesPublisherClient: HermesPublisherClient) : HermesService {
     override fun subscribe(authorEmail: String, webhookSubscription: WebhookSubscription): String {
         val request = buildHermesSubscriptionCreateRequest(webhookSubscription)
         return hermesClient.subscribe(authorEmail, request).id
@@ -50,16 +52,23 @@ class HermesClientService(private val hermesClient: HermesClient) : HermesServic
         return buildHealthCheckWebhookSubscription(hermesClient.healthCheckSubscription(authorEmail, id))
     }
 
+    override fun notifySubscriptionEvent(webhookEvent: WebhookEvent) {
+        hermesPublisherClient.notifyEvent(buildHermesSubscriptionEventPublishRequest(webhookEvent))
+    }
+
+    private fun buildHermesSubscriptionEventPublishRequest(webhookEvent: WebhookEvent): HermesPublishSubscriptionEventRequest {
+        return when (webhookEvent) {
+            is WebhookDeploymentEventType -> buildHermesPublishSubscriptionEventRequest(webhookEvent)
+            else -> (throw NotFoundException("WebhookEventTypeEnum", webhookEvent.toString()))
+        }
+    }
+
     override fun getSubscriptionHistory() {
         TODO("Not yet implemented")
     }
 
-    override fun publishSubscription() {
-        TODO("Not yet implemented")
-    }
-
-    private fun buildHermesSubscriptionCreateRequest(webhookSubscription: WebhookSubscription): HermesSubscriptionCreateRequest {
-        return HermesSubscriptionCreateRequest(
+    private fun buildHermesSubscriptionCreateRequest(webhookSubscription: WebhookSubscription): HermesCreateSubscriptionRequest {
+        return HermesCreateSubscriptionRequest(
             url = webhookSubscription.url,
             description = webhookSubscription.description,
             apiKey = webhookSubscription.apiKey,
@@ -68,8 +77,8 @@ class HermesClientService(private val hermesClient: HermesClient) : HermesServic
         )
     }
 
-    private fun buildHermesSubscriptionUpdateRequest(events: List<String>): HermesSubscriptionUpdateRequest {
-        return HermesSubscriptionUpdateRequest(
+    private fun buildHermesSubscriptionUpdateRequest(events: List<String>): HermesUpdateSubscriptionRequest {
+        return HermesUpdateSubscriptionRequest(
             events = events
         )
     }
@@ -87,6 +96,14 @@ class HermesClientService(private val hermesClient: HermesClient) : HermesServic
         return HealthCheckWebhookSubscription(
             status = healthCheck.status,
             details = healthCheck.details
+        )
+    }
+
+    private fun buildHermesPublishSubscriptionEventRequest(webhookDeploymentEvent: WebhookDeploymentEventType): HermesPublishSubscriptionEventRequest {
+        return HermesPublishSubscriptionEventRequest(
+            eventType = webhookDeploymentEvent.eventType,
+            externalId = webhookDeploymentEvent.externalId,
+            event = Gson().toJson(webhookDeploymentEvent.event)
         )
     }
 }

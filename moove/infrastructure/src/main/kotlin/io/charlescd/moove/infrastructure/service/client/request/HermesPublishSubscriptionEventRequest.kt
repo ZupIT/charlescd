@@ -16,6 +16,16 @@
 
 package io.charlescd.moove.infrastructure.service.client.request
 
-data class HermesSubscriptionUpdateRequest(
-    val events: List<String>
+import io.charlescd.moove.domain.WebhookEventTypeEnum
+import javax.validation.constraints.NotBlank
+
+data class HermesPublishSubscriptionEventRequest(
+    @field:NotBlank
+    val eventType: WebhookEventTypeEnum,
+
+    @field:NotBlank
+    val externalId: String,
+
+    @field:NotBlank
+    val event: String
 )
