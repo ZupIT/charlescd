@@ -40,7 +40,7 @@ export class CreateRoutesManifestsUseCase {
     try {
       this.consoleLoggerService.log('START:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE', { hookParams })
       const deployment = await this.retriveDeploymentFor(hookParams.parent.spec.deploymentId)
-      const activeComponents = await this.componentsRepository.findActiveComponents('b46fd548-0082-4021-ba80-a50703c44a3a')
+      const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
 
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
 
