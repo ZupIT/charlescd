@@ -54,7 +54,7 @@ test("Test isDeploying undeploying", () => {
   expect(deploying).toBeTruthy();
 });
 
-test("Test circleCannotBeDeleted", () => {
+test("Test if circleCannotBeDeleted could be truthy", () => {
   const circle: Circle = {
     id: '123',
     name: 'Circle',
@@ -78,4 +78,18 @@ test("Test circleCannotBeDeleted", () => {
 
   const isCant = circleCannotBeDeleted(circle);
   expect(isCant).toBeTruthy();
+});
+
+test("Test if circleCannotBeDeleted could be falsy", () => {
+  const circle: Circle = {
+    id: '123',
+    name: 'Circle',
+    author: null,
+    createdAt: '2021-01-01',
+    rules: null,
+    deployment: null
+  }
+
+  const isCant = circleCannotBeDeleted(circle);
+  expect(isCant).toBeFalsy();
 });
