@@ -100,8 +100,8 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       onDismiss={() => setAction('Cancel')}
     >
       <Text.h4 color="light">
-        By deleting this user, his information will be also deleted. Do you wish
-        to continue?
+        By deleting this user, all related information will also be deleted. Do
+        you wish to continue?
       </Text.h4>
     </Modal.Trigger>
   );

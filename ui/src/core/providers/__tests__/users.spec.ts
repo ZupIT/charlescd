@@ -15,7 +15,7 @@
  */
 
 import { FetchMock } from 'jest-fetch-mock';
-import { createNewUser, patchProfileById, changePassword } from '../users';
+import { createNewUser, patchProfileById, changePassword, findWorkspacesByUserId, findUserByEmail } from '../users';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -67,4 +67,40 @@ test('update a user password provider request', async () => {
   const data = await response.json();
 
   expect(data).toEqual({ message: 'password updated' });
+});
+
+test('should get workspaces of some user', async () => {
+  const user = {
+    id: '123',
+    name: 'name',
+    email: 'charles@zup.com.br',
+    password: '123457'
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ status: 200 })
+  );
+
+  const response = await findWorkspacesByUserId(user.id)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ status: 200});
+});
+
+test('should find a user by email', async () => {
+  const user = {
+    id: '123',
+    name: 'name',
+    email: 'charles@zup.com.br',
+    password: '123457'
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ status: 200 })
+  );
+
+  const response = await findUserByEmail(user.email)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ status: 200});
 });

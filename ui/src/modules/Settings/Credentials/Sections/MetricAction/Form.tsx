@@ -147,7 +147,7 @@ const FormAddAction = ({ onFinish }: Props) => {
   return (
     <Styled.Content data-testid="add-action-form">
       <Styled.Title color="light">Add Metric Action</Styled.Title>
-      <Styled.Info color="dark">
+      <Styled.Info color="dark" data-testid="text-metric-action">
         You can create an action and add a trigger to perform an automatic task.
         Consult our{' '}
         <Styled.Link
