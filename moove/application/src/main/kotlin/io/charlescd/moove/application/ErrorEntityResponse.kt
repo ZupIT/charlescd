@@ -26,13 +26,9 @@ data class ErrorEntityResponse(
     val title: String,
     val details: String,
     val status: String,
-    val source: Source,
+    val source: Map<String, String>,
     val meta: String
 ) {
 
 }
 
-data class Source(
-    val parameter: String,
-    val pointer: String
-)

@@ -23,14 +23,9 @@ import feign.Response
 import feign.codec.Encoder
 import feign.codec.ErrorDecoder
 import feign.form.FormEncoder
-import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ClientException
-import io.charlescd.moove.domain.exceptions.Source
 import java.io.IOException
 import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
 import java.nio.charset.StandardCharsets
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectFactory
@@ -96,7 +91,7 @@ class MatcherEncoderConfiguration(
         val title: String? = null,
         val details: String? = null,
         val status: String? = null,
-        val source: Source? = null,
+        val source: Map<String, String >? = null,
         val meta: String? = null
     )
 }
