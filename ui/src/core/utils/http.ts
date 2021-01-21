@@ -14,23 +14,6 @@
  * limitations under the License.
  */
 
-export interface Webhook {
-  id?: string;
-  url: string;
-  apiKey: string;
-  description: string;
-  events: string[];
-  externalId?: string;
-  lastDelivery?: Delivery;
-}
+import inRange from 'lodash/inRange';
 
-interface Delivery {
-  status: number;
-  details: string;
-}
-
-export interface Event {
-  id: string;
-  value: string;
-  description: string;
-}
+export const isErrorCode = (httpCode: number) => inRange(httpCode, 400, 599);

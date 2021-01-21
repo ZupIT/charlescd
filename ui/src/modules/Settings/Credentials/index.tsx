@@ -33,7 +33,6 @@ import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { useDatasource } from './Sections/MetricProvider/hooks';
 import { Datasource } from './Sections/MetricProvider/interfaces';
-import { Webhook } from './Sections/Webhook/interfaces';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
@@ -60,16 +59,6 @@ const Credentials = ({ onClickHelp }: Props) => {
   const handleSaveClick = ({ name }: Record<string, string>) => {
     updateWorkspace(name);
   };
-
-  const webhooks: Webhook[] = [
-    {
-      id: '123',
-      apiKey: '456',
-      description: 'ifdouglas',
-      events: ['DEPLOY', 'UNDEPLOY'],
-      url: 'https://ifdouglas.com'
-    }
-  ];
 
   const getActions = () => getActionData();
 
@@ -163,7 +152,11 @@ const Credentials = ({ onClickHelp }: Props) => {
         setForm={setForm}
         data={workspace.gitConfiguration}
       />
-      <Section.Webhook form={form} setForm={setForm} data={webhooks} />
+      <Section.Webhook
+        form={form}
+        setForm={setForm}
+        data={workspace.webhookConfiguration}
+      />
       <Section.UserGroup
         form={form}
         setForm={setForm}

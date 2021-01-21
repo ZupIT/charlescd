@@ -23,7 +23,7 @@ import {
 export const light = {};
 
 export const dark = {
-  light: COLOR_MOUNTAIN_MEADOW,
+  success: COLOR_MOUNTAIN_MEADOW,
   dark: COLOR_BASTILLE,
   error: COLOR_RED_ORANGE
 } as Record<string, string>;

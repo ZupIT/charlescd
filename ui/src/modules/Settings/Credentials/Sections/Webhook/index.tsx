@@ -20,13 +20,14 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import Card from 'core/components/Card';
 import Dropdown from 'core/components/Dropdown';
+import Icon from 'core/components/Icon';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
+import { isErrorCode } from 'core/utils/http';
 import { useWebhook } from './hooks';
 import { FORM_WEBHOOK } from './constants';
 import FormWebhook from './Form';
 import { Webhook } from './interfaces';
-import Icon from 'core/components/Icon';
 
 interface Props {
   form: string;
@@ -81,9 +82,11 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
           >
             <Card.Main
               width="237px"
-              title="200"
-              description={webhook.description}
-              color="error"
+              title={`${webhook.lastDelivery.status}`}
+              description={webhook.lastDelivery.details}
+              color={
+                isErrorCode(webhook.lastDelivery.status) ? 'error' : 'success'
+              }
             />
           </Card.Main>
         ))}
