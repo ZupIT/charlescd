@@ -87,6 +87,7 @@ export class SpinnakerPipelineBuilder {
       ...this.getProxyDeploymentsEvaluationStage(deployment.components),
       ...this.getRollbackDeploymentsStage(deployment, activeComponents),
       ...this.getUnusedVersions(deployment, activeComponents),
+      ...this.getProxyUnusedStages(deployment, activeComponents),
       ...this.getFailureWebhookStage(deployment, configuration),
       ...this.getSuccessWebhookStage(deployment, configuration)
     ]
@@ -134,6 +135,27 @@ export class SpinnakerPipelineBuilder {
     deployment.components.forEach(component => {
       const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
       proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++))
+      proxyStages.push(activeByName.length > 1 ?
+        getUndeploymentVirtualServiceStage(component, deployment, activeByName, this.currentStageId++) :
+        getUndeploymentEmptyVirtualServiceStage(component, deployment, this.currentStageId++)
+      )
+    })
+    return proxyStages
+  }
+
+  private getProxyUnusedStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    if (!deployment?.components) {
+      return []
+    }
+
+    if (deployment.defaultCircle) {
+      return []
+    }
+    const proxyStages: Stage[] = []
+    const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
+    componentsToBeRemoved(deployment, activeComponents).forEach(component => {
+      const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
+      proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++, evalStageId))
       proxyStages.push(activeByName.length > 1 ?
         getUndeploymentVirtualServiceStage(component, deployment, activeByName, this.currentStageId++) :
         getUndeploymentEmptyVirtualServiceStage(component, deployment, this.currentStageId++)
