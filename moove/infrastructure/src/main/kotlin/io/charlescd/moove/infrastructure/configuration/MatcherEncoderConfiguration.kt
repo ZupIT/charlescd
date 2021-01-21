@@ -41,7 +41,7 @@ class MatcherEncoderConfiguration {
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
-            logger.info("Response as string", responseMessage)
+            logger.info("Response as object $responseMessage")
             return ClientException(responseMessage.id!!, responseMessage.links!!, responseMessage.title!!, responseMessage.details!!,responseMessage.status!!,responseMessage.source!!, responseMessage.meta!!)
         }
 
@@ -51,7 +51,7 @@ class MatcherEncoderConfiguration {
                 responseAsString = response?.body()?.let {
                     StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
                 }
-                logger.info("Response as string", responseAsString)
+                logger.info("Response as object $responseAsString")
                 return responseAsString?.let {
                     getResponseAsObject(it)
                 } ?: ErrorResponse()
