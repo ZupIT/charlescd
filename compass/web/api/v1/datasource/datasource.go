@@ -63,7 +63,7 @@ func TestConnection(datasourceMain datasource.UseCases) func(w http.ResponseWrit
 		}
 
 		testConnErr := datasourceMain.TestConnection(newTestConnection.PluginSrc, newTestConnection.Data)
-		if err != nil {
+		if testConnErr != nil {
 			util.NewResponse(w, http.StatusInternalServerError, testConnErr)
 			return
 		}
