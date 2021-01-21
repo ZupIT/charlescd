@@ -11,6 +11,7 @@ coverage:
           - moove
           - butler
           - ui
+          - hermes
     patch:
       default:
         target: 80%
@@ -22,6 +23,7 @@ coverage:
           - moove
           - butler
           - ui
+          - hermes
       
 flags:
   villager:
@@ -47,6 +49,10 @@ flags:
   ui:
     paths:
       - ui/
+    carryforward: true
+  hermes:
+    paths:
+      - hermes/
     carryforward: true
 
 ignore:
