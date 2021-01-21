@@ -24,7 +24,6 @@ COPY --from=builder /app/compass/out/compass .
 COPY --from=builder /app/compass/migrations /migrations
 COPY --from=builder /app/compass/auth.conf .
 COPY --from=builder /app/compass/policy.csv .
-COPY --from=builder /app/compass/pkey.txt .
 
 EXPOSE 8080
 

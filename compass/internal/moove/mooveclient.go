@@ -19,22 +19,21 @@
 package moove
 
 import (
-	"errors"
 	"fmt"
-	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"io/ioutil"
 	"net/http"
 	"os"
 )
 
-func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]byte, error) {
+func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]byte, errors.Error) {
 	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleId)
 
 	request, err := http.NewRequest(http.MethodGet, mooveUrl, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewError("Get error", err.Error()).
+			WithOperations("GetMooveComponents.NewRequest")
 	}
 
 	request.Header.Add("x-workspace-id", workspaceID.String())
@@ -43,13 +42,14 @@ func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspa
 
 	response, err := api.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewError("Get error", err.Error()).
+			WithOperations("GetMooveComponents.Do")
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		logger.Error(util.QueryGetPluginError, "GetMooveComponents", errors.New("internal server error"), response)
-		return nil, errors.New("internal server error")
+		return nil, errors.NewError("Get error", "Moove internal server error").
+			WithOperations("GetMooveComponents.NewRequest")
 	}
 
 	resultBody, err := ioutil.ReadAll(response.Body)

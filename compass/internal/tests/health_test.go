@@ -21,15 +21,16 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/health"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
@@ -86,7 +87,7 @@ func TestInitHealth(t *testing.T) {
 func (s SuiteHealth) TestComponentsHealthDataSourceError() {
 	_, err := s.repository.ComponentsHealth("", uuid.New().String(), uuid.New())
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
@@ -104,7 +105,7 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
 
 	_, err := s.repository.ComponentsHealth("", circleId, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
@@ -114,7 +115,7 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
 	s.DB.Exec(dataSourceInsert)
 
 	_, err := s.repository.ComponentsHealth("", circleId, dataSourceStruct.WorkspaceID)
-	s.NoError(err)
+	s.Nil(err)
 }
 
 func (s SuiteHealth) TestComponentsError() {
@@ -125,7 +126,7 @@ func (s SuiteHealth) TestComponentsError() {
 
 	_, err := s.repository.Components("", circleId, projectionType, metricType, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsMetricTypeErrorByCircle() {
@@ -136,7 +137,7 @@ func (s SuiteHealth) TestComponentsMetricTypeErrorByCircle() {
 
 	_, err := s.repository.Components("", circleId, projectionType, metricType, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsMetricTypeLatencyByCircleError() {
@@ -147,7 +148,7 @@ func (s SuiteHealth) TestComponentsMetricTypeLatencyByCircleError() {
 
 	_, err := s.repository.Components("", circleId, projectionType, metricType, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsMetricTypeDefaultError() {
@@ -157,7 +158,7 @@ func (s SuiteHealth) TestComponentsMetricTypeDefaultError() {
 
 	_, err := s.repository.Components("", circleId, projectionType, "", workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponents() {
@@ -173,5 +174,5 @@ func (s SuiteHealth) TestComponents() {
 
 	_, err := s.repository.Components(circleIdHeader, circleId, projectionType, metricType, dataSourceStruct.WorkspaceID)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 }

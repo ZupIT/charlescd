@@ -53,6 +53,7 @@ const MetricProvider = ({ form, setForm, data, getNewDatasources }: Props) => {
       icon="metrics"
       showAction
       action={() => setForm(FORM_METRIC_PROVIDER)}
+      type="Optional"
     >
       {map(datasources, datasource => (
         <Card.Config
