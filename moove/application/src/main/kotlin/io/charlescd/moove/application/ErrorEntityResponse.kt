@@ -21,13 +21,13 @@ import io.charlescd.moove.domain.MooveErrorCode
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ErrorEntityResponse(
-    val id: String,
-    val links: List<String>,
-    val title: String,
-    val details: String,
-    val status: String,
-    val source: Map<String, String>,
-    val meta: String
+    val id: String?,
+    val links: List<String>?,
+    val title: String?,
+    val details: String?,
+    val status: String?,
+    val source: Map<String, String>?,
+    val meta: String?
 ) {
 
 }

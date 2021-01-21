@@ -61,7 +61,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     fun clientExceptions(ex: ClientException): ErrorEntityResponse {
-        this.logger.error(ex.message, ex)
+        this.logger.error(ex.details, ex)
         return ErrorEntityResponse(ex.id, ex.links, ex.title ,ex.details, ex.status, ex.source, ex.meta)
     }
 

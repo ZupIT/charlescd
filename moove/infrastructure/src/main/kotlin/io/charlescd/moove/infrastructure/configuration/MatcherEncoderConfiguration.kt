@@ -42,7 +42,7 @@ class MatcherEncoderConfiguration {
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
             logger.info("Response as object $responseMessage")
-            return ClientException(responseMessage.id!!, responseMessage.links!!, responseMessage.title!!, responseMessage.details!!,responseMessage.status!!,responseMessage.source!!, responseMessage.meta!!)
+            return ClientException(responseMessage.id, responseMessage.links, responseMessage.title, responseMessage.details,responseMessage.status,responseMessage.source, responseMessage.meta)
         }
 
         private fun extractMessageFromResponse(response: Response?): ErrorResponse {
