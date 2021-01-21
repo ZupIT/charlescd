@@ -28,7 +28,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
   const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
   const { response, error, loading } = workspacesData;
 
-  const filerWorkspace = useCallback(
+  const filterWorkspace = useCallback(
     (name: string) => {
       getWorkspace({ name });
     },
@@ -43,7 +43,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [filerWorkspace, getWorkspace, loading];
+  return [filterWorkspace, getWorkspace, loading];
 };
 
 export const useSaveWorkspace = (): {
