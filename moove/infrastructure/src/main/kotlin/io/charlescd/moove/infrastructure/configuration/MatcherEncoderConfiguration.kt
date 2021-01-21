@@ -18,11 +18,8 @@ package io.charlescd.moove.infrastructure.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import feign.Logger
 import feign.Response
-import feign.codec.Encoder
 import feign.codec.ErrorDecoder
-import feign.form.FormEncoder
 import io.charlescd.moove.domain.exceptions.ClientException
 import java.io.IOException
 import java.lang.Exception
@@ -30,34 +27,19 @@ import java.nio.charset.StandardCharsets
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.cloud.openfeign.support.SpringEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
 import org.springframework.util.StreamUtils
 
 @Configuration
-class MatcherEncoderConfiguration(
-    val messageConverters: ObjectFactory<HttpMessageConverters>
-) {
+class MatcherEncoderConfiguration {
 
     @Bean
-    fun feignLogger(): Logger.Level {
-        return Logger.Level.FULL
+    fun matcherErrorDecoder(): ErrorDecoder {
+        return MatcherErrorDecoder()
     }
 
-    @Bean
-    @Scope("prototype")
-    fun feignFormEncoder(): Encoder {
-        return FormEncoder(SpringEncoder(messageConverters))
-    }
-
-    @Bean
-    fun errorDecoder(): ErrorDecoder {
-        return CustomErrorDecoder()
-    }
-
-    class CustomErrorDecoder : ErrorDecoder {
+    class MatcherErrorDecoder : ErrorDecoder {
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
