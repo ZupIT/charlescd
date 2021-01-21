@@ -1,0 +1,1 @@
+ mvn clean install -Djfr.unsupported.vm=true && mvn spring-boot:run -Dspring-boot.run.profiles=local
