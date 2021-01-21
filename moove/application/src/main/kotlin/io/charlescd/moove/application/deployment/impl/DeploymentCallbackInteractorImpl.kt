@@ -87,7 +87,7 @@ open class DeploymentCallbackInteractorImpl(
         if (callbackRequest.isDeployEvent() || deployment.deployedAt != null) {
             return WebhookEventTypeEnum.DEPLOY
         }
-        return WebhookEventTypeEnum.UNDEPLOY // TODO: Verificar com cabelinho
+        return WebhookEventTypeEnum.UNDEPLOY
     }
 
     private fun getWebhookEventStatus(callbackRequest: DeploymentCallbackRequest): WebhookEventStatusEnum {
@@ -124,7 +124,8 @@ open class DeploymentCallbackInteractorImpl(
     }
 
     private fun getTimeExecutionEvent(): Int {
-        // TODO implementar
+        // TODO deploy deployed-created
+        //Não existe esse cara para undeploy
         return 0
     }
 
@@ -161,10 +162,10 @@ open class DeploymentCallbackInteractorImpl(
     private fun getDeploymentDateEvent(deployment: Deployment, webhookEventType: WebhookEventTypeEnum): LocalDateTime? {
         if (webhookEventType == WebhookEventTypeEnum.DEPLOY) {
             if (deployment.deployedAt != null) {
-                return deployment.deployedAt!!
+                return deployment.deployedAt
             }
             return deployment.createdAt
         }
-        return deployment.undeployedAt // TODO verificar qdo null
+        return deployment.undeployedAt //TODO: pode ser null tbm verificar
     }
 }

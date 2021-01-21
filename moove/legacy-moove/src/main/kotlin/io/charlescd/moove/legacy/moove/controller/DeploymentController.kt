@@ -67,7 +67,7 @@ class DeploymentController(private val deploymentService: DeploymentServiceLegac
         @RequestHeader("x-workspace-id") workspaceId: String,
         @PathVariable("id") id: String
     ) {
-        return this.deploymentService.undeploy(id, workspaceId)
+        return this.deploymentService.undeploy(id, workspaceId) //TODO: inicio undeploy (data inicio = localdate.now)
     }
 
     @ApiOperation(value = "Undeploy V1")
