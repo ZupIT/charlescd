@@ -26,6 +26,7 @@ import feign.form.FormEncoder
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ClientException
+import io.charlescd.moove.domain.exceptions.Source
 import java.io.IOException
 import java.lang.Exception
 import java.lang.IllegalArgumentException
@@ -39,7 +40,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Scope
 import org.springframework.util.StreamUtils
-import javax.xml.transform.Source
 
 @Configuration
 class MatcherEncoderConfiguration(
@@ -66,7 +66,7 @@ class MatcherEncoderConfiguration(
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
-            return ClientException(responseMessage)
+            return ClientException(responseMessage.id!!, responseMessage.links!!, responseMessage.title!!, responseMessage.details!!,responseMessage.status!!,responseMessage.source!!, responseMessage.meta!!)
         }
 
         private fun extractMessageFromResponse(response: Response?): ErrorResponse {
@@ -77,23 +77,26 @@ class MatcherEncoderConfiguration(
                 }
                 return responseAsString?.let {
                     getResponseAsObject(it)
-                }?: ErrorResponse()
+                } ?: ErrorResponse()
             } catch (ex: IOException) {
                 logger.error(ex.message, ex)
                 return ErrorResponse()
             }
         }
+
         private fun getResponseAsObject(message: String): ErrorResponse {
             return jacksonObjectMapper().readValue(message, ErrorResponse::class.java)
         }
     }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class ErrorResponse(
         val id: String? = null,
-        val links: List<String>?= null,
-        val title: String?= null,
-        val details: String?= null,
-        val status: String?= null,
-        val source: Source?= null,
-        val meta: String?= null
+        val links: List<String>? = null,
+        val title: String? = null,
+        val details: String? = null,
+        val status: String? = null,
+        val source: Source? = null,
+        val meta: String? = null
     )
+}

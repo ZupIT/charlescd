@@ -26,7 +26,7 @@ public class DefaultErrorResponse {
     public List<String> links;
     public String title;
     public String details;
-    public String code;
+    public String status;
     public Source source;
     public String meta;
     public DefaultErrorResponse(
@@ -34,14 +34,14 @@ public class DefaultErrorResponse {
             List<String> links,
             String title,
             String details,
-            String code,
+            String status,
             Source source,
             String meta
     ) {
         this.links = links;
         this.title = title;
         this.details = details;
-        this.code = code;
+        this.status = status;
         this.source = source;
         this.meta = meta;
         this.id = id;
@@ -80,11 +80,11 @@ public class DefaultErrorResponse {
     }
 
     public String getCode() {
-        return code;
+        return status;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCode(String status) {
+        this.status = status;
     }
 
     public Source getSource() {

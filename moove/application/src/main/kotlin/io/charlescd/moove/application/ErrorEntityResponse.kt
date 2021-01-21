@@ -18,7 +18,6 @@ package io.charlescd.moove.application
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.charlescd.moove.domain.MooveErrorCode
-import javax.xml.transform.Source
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ErrorEntityResponse(
@@ -32,3 +31,8 @@ data class ErrorEntityResponse(
 ) {
 
 }
+
+data class Source(
+    val parameter: String,
+    val pointer: String
+)

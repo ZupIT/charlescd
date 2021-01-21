@@ -16,11 +16,13 @@
 
 package io.charlescd.moove.api
 
+import io.charlescd.moove.application.ErrorEntityResponse
 import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
 import io.charlescd.moove.commons.exceptions.*
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.ClientException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import java.lang.IllegalArgumentException
@@ -53,6 +55,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
+    }
+
+    @ExceptionHandler(ClientException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    fun clientExceptions(ex: ClientException): ErrorEntityResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorEntityResponse(ex.id, ex.links, ex.title ,ex.details, ex.status, ex.source, ex.meta)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

@@ -56,8 +56,13 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public DefaultErrorResponse handleConstraintsValidation(MethodArgumentNotValidException exception) {
         logger.error("BAD REQUEST ERROR - ", exception);
+        String message = "Invalid request body."+processFieldErrors(exception.getFieldErrors());
+        return ExceptionUtils.createBadRequestError(message, getSourceFields(exception.getFieldErrors()) );
+    }
 
-        return ExceptionUtils.createBadRequestError(exception.getMessage(), exception.getStackTrace()[0].getMethodName());
+    private String getSourceFields(List<FieldError> fieldErrors) {
+        return fieldErrors.stream()
+                .map(field -> String.format("%s/%s", "segmentation", field.getField())).collect(joining("\n"));
     }
 
     private String processFieldErrors(List<FieldError> fieldErrors) {

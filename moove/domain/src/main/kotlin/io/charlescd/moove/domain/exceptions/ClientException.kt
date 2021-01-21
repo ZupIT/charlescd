@@ -18,11 +18,19 @@
 
 package io.charlescd.moove.domain.exceptions
 
-class ClientException : RuntimeException {
 
-    private val errorEntityResponse: Any
+data class ClientException(
+    val id:String,
+    val links:List<String>,
+    val title:String,
+    val details:String,
+    val status:String,
+    val source: Source,
+    val meta: String
+): RuntimeException() {
 
-    public constructor(errorEntityResponse: Any) : super() {
-        this.errorEntityResponse = errorEntityResponse
-    }
 }
+data class Source(
+    val parameter: String,
+    val pointer: String
+)
