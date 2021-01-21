@@ -25,8 +25,6 @@ import java.io.IOException
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
@@ -43,6 +41,7 @@ class MatcherEncoderConfiguration {
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
+            logger.info("Response as string", responseMessage)
             return ClientException(responseMessage.id!!, responseMessage.links!!, responseMessage.title!!, responseMessage.details!!,responseMessage.status!!,responseMessage.source!!, responseMessage.meta!!)
         }
 
@@ -52,9 +51,11 @@ class MatcherEncoderConfiguration {
                 responseAsString = response?.body()?.let {
                     StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
                 }
+                logger.info("Response as string", responseAsString)
                 return responseAsString?.let {
                     getResponseAsObject(it)
                 } ?: ErrorResponse()
+
             } catch (ex: IOException) {
                 logger.error(ex.message, ex)
                 return ErrorResponse()
