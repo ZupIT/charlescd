@@ -23,6 +23,7 @@ import fetch, { FetchMock } from 'jest-fetch-mock';
 import storageMock from 'unit-test/local-storage';
 import { mockCookie } from './unit-test/cookie';
 import 'mutationobserver-shim';
+import MockIntersectionObserver from 'unit-test/MockIntersectionObserver';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -62,10 +63,4 @@ Object.assign(navigator, {
   }
 });
 
-const intersectionObserverMock = () => ({
-  observe: () => '',
-  disconnect: () => ''
-});
-window.IntersectionObserver = jest
-  .fn()
-  .mockImplementation(intersectionObserverMock);
+window.IntersectionObserver = MockIntersectionObserver;
