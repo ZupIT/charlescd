@@ -131,7 +131,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           deploy
         </Styled.Submit>
-        {console.log(watchFields, isEmptyFields, !isEmpty(errors), isEmptyFields || !isEmpty(errors))}
       </Styled.Form>
     </FormProvider>
   );
