@@ -20,7 +20,6 @@ import filter from 'lodash/filter';
 import xor from 'lodash/xor';
 import isEmpty from 'lodash/isEmpty';
 import lowerCase from 'lodash/lowerCase';
-import kebabCase from 'lodash/kebabCase';
 import includes from 'lodash/includes';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
@@ -49,6 +48,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
   const { persistModules, status } = useModules();
   const [modulesFiltered, filterModules] = useState<ModuleProps[]>(allModules);
   const [moduleIds, setModuleIds] = useState<string[]>();
+  const [moduleId, setModuleId] = useState<string>();
   const { register, errors, handleSubmit, setValue, watch } = useForm({
     mode: 'onBlur'
   });
@@ -78,21 +78,24 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     );
   };
 
+  const toggleModule = (id: string) => {
+    const toggledModuleIds = xor(moduleIds, [id]);
+    setModuleIds(toggledModuleIds);
+    setModuleId(id);
+    if (isEmpty(toggledModuleIds)) setValue('branchName', '');
+  };
+
   const onSubmit = () => {
     persistModules(card.id, {
-      branchName: kebabCase(branchName),
+      branchName,
       description: card.description,
       labels: [],
       modules: moduleIds,
       name: card.name,
       type: isEmpty(moduleIds) ? CARD_TYPE_ACTION : CARD_TYPE_FEATURE
+    }).catch(() => {
+      toggleModule(moduleId);
     });
-  };
-
-  const toggleModule = (id: string) => {
-    const toggledModuleIds = xor(moduleIds, [id]);
-    setModuleIds(toggledModuleIds);
-    if (isEmpty(toggledModuleIds)) setValue('branchName', '');
   };
 
   const renderModule = ({ id, name }: ModuleProps) => (

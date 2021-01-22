@@ -21,10 +21,12 @@ import { ConnectorConfiguration } from './connector-configuration.interface'
 export interface CdConnector {
 
   createDeployment(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     deployment: Deployment, activeComponents: Component[], configuration: ConnectorConfiguration
   ): Promise<ConnectorResult | ConnectorResultError>
 
   createUndeployment(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     deployment: Deployment, activeComponents: Component[], configuration: ConnectorConfiguration
   ): Promise<ConnectorResult | ConnectorResultError>
 }

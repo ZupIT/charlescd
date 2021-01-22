@@ -6,9 +6,9 @@
 ### Legal
 As you contribute, keep in mind that the code, docs and other materials submitted to open source projects are usually considered licensed under the same terms as the rest of the work.
 
-CharlesCD is licensed over [ASL - Apache License](https://github.com/ZupIT/charlescd/blob/master/LICENSE), version 2, so new files must have the ASL version 2 header, please check [here](https://www.apache.org/licenses/LICENSE-2.0).
+CharlesCD is licensed over [ASL - Apache License](https://github.com/ZupIT/charlescd/blob/main/LICENSE), version 2, so new files must have the ASL version 2 header, please check [here](https://www.apache.org/licenses/LICENSE-2.0).
 
-All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org). When committing use the ```-s ``` option to include the Signed-off-by line at the end of the commit log message. At root of this repository it was included the DCO text verbatim in the [dco.txt](https://github.com/ZupIT/charlescd/blob/master/dco.txt) file.
+All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org). When committing use the ```-s ``` option to include the Signed-off-by line at the end of the commit log message. At root of this repository it was included the DCO text verbatim in the [dco.txt](https://github.com/ZupIT/charlescd/blob/main/dco.txt) file.
 
 ### Tests aren’t optional
 We strongly encourage you write tests before the implementation:
@@ -22,7 +22,7 @@ If your collaboration changes the way you use some CharlesCD functionality, it w
 All submissions need to be reviewed before being merged.
 
 ### Continuous Integration
-To ensure that CharlesCD is always stable, all submissions must go through our CI pipeline. This is part of the process of making changes and includes everyone, even CharlesCD core team members. CharlesCD CI is based on GitHub Actions, so you be able to execute it on your own fork too. All pushes or pull requests to master branch will be checked. It is a good way to get some feedback before get back your changes to original CharlesCD repo.
+To ensure that CharlesCD is always stable, all submissions must go through our CI pipeline. This is part of the process of making changes and includes everyone, even CharlesCD core team members. CharlesCD CI is based on GitHub Actions, so you be able to execute it on your own fork too. All pushes or pull requests to main branch will be checked. It is a good way to get some feedback before get back your changes to original CharlesCD repo.
 
 To enable GitHub Actions on your repo, after fork CharlesCD repo, just go to ’Actions’ tab (on your own fork) and push the big green button. That’s it!
 
@@ -66,7 +66,7 @@ CharlesCD has many modules. The environment settings are different between them.
 4. Ensure the PR description clearly describes the problem and solution, including the issue number.
 
 ### Writing a new feature?
-1. Make sure your branch is based on master.
+1. Make sure your branch is based on main.
 2. We recommend follow [Our step-by-step making changes suggestion](#our-step-by-step-making-changes-suggestion).
 3. Update the documentation if applicable.
 4. Open a new GitHub pull request with the new code.

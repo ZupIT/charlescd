@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+import Icon from 'core/components/Icon';
+import React from 'react';
+import { SingleValueProps, OptionTypeBase } from 'react-select';
+import Styled from './styled';
 
 const SingleValue = ({
   children,
   ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
-
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
-    }
-  }, [options, clearValue]);
-
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
+}: SingleValueProps<OptionTypeBase>) => (
+  <Styled.SingleValue {...props}>
+    {props.selectProps?.icon && <Icon name={props.selectProps.icon} />}
+    {children}
+  </Styled.SingleValue>
+);
 
 export default SingleValue;
