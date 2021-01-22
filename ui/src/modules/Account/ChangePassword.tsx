@@ -17,7 +17,6 @@
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
-import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
 import { isRequired, maxLength } from 'core/utils/validations';
 import { validationResolver } from 'core/components/CheckPassword';
