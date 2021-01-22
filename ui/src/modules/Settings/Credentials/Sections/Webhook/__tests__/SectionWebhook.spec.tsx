@@ -30,7 +30,11 @@ const data: Webhook[] = [{
   url: 'https://charlescd.io/webhook',
   apiKey: '456',
   description: 'Deploy',
-  events: ['DEPLOY']
+  events: ['DEPLOY'],
+  lastDelivery: {
+    status: 200,
+    details: 'Service available'
+  }
 }];
 
 test('should render form', async () => {

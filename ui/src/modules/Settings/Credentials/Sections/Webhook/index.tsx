@@ -82,10 +82,10 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
           >
             <Card.Main
               width="237px"
-              title={`${webhook.lastDelivery.status}`}
-              description={webhook.lastDelivery.details}
+              title={`${webhook.lastDelivery?.status}`}
+              description={webhook.lastDelivery?.details}
               color={
-                isErrorCode(webhook.lastDelivery.status) ? 'error' : 'success'
+                isErrorCode(webhook.lastDelivery?.status) ? 'error' : 'success'
               }
             />
           </Card.Main>
