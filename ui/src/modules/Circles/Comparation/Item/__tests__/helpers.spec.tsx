@@ -16,7 +16,8 @@
 
 import {
   isBusy, isDeploying, isUndeploying,
-  circleCannotBeDeleted, hasDeploy, pathCircleById
+  circleCannotBeDeleted, hasDeploy, pathCircleById,
+  isUndeployable
 } from "../helpers"
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
@@ -98,8 +99,14 @@ test("Test hasDeploy", () => {
   expect(has).toBeTruthy();
 });
 
-test("Test pathCircleById", () => {
-  const path = pathCircleById(circle.id);
+test("Test isUndeployable could deploy", () => {
+  const is = isUndeployable(circle);
 
-  expect(path).toBe('http://localhost/?circle=123');
+  expect(is).toBeFalsy();
+});
+
+test("Test isUndeployable could deploy", () => {
+  const is = isUndeployable({ ...circle, deployment });
+
+  expect(is).toBeTruthy();
 });
