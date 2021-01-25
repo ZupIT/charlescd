@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
@@ -74,17 +74,16 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   };
 
   const checkTagByName = useCallback(
-    (
+    async (
       moduleId: string,
       componentId: string,
       name: string
-    ) =>
-      async () => {
-        setValue(`${prefixName}.tag`, '');
-        const tag = await getComponentTag(moduleId, componentId, { name });
+    ) => {
+      setValue(`${prefixName}.tag`, '');
+      const tag = await getComponentTag(moduleId, componentId, { name });
 
-        setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
-        setIsEmptyTag(isEmpty(tag?.artifact));
+      setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
+      setIsEmptyTag(isEmpty(tag?.artifact));
     }, [getComponentTag, prefixName, setValue]);
 
   const onSearchTag = useCallback(() => {
@@ -94,6 +93,8 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
 
     checkTagByName(moduleId, componentId, name);
   }, [checkTagByName, getValues, prefixName]);
+
+  const debouncedSearch = useRef(debounce(() => onSearchTag(), 500)).current;
 
   return (
     <Styled.Module.Wrapper>
@@ -138,7 +139,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
         <Styled.Module.Input
           name={`${prefixName}.version`}
           ref={register({ required: true })}
-          onChange={useCallback(() => debounce(onSearchTag, 300), [onSearchTag])}
+          onChange={debouncedSearch}
           isLoading={status.isPending}
           hasError={isEmptyTag}
           label="Version name"

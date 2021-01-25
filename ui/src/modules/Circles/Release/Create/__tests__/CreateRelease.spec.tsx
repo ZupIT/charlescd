@@ -21,8 +21,6 @@ import selectEvent from 'react-select-event';
 import { FetchMock } from 'jest-fetch-mock';
 import CreateRelease from '../index';
 
-jest.mock('lodash/debounce', () => jest.fn(fn => fn));
-
 const mockGetModules = JSON.stringify({
   content: [
     {
@@ -56,21 +54,22 @@ test('form should be valid', async () => {
   render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-  
+
   const nameInput = screen.getByTestId('input-text-releaseName');
   await act(() => userEvent.type(nameInput, 'release-name'));
-  
+
   const moduleLabel = screen.getByText('Select a module');
-  await act(async() => selectEvent.select(moduleLabel, 'module-1'));
+  await act(async () => selectEvent.select(moduleLabel, 'module-1'));
 
   const componentLabel = screen.getByText('Select a component');
-  await act(async() => selectEvent.select(componentLabel, 'component-1'));
+  await act(async () => selectEvent.select(componentLabel, 'component-1'));
 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
   await act(() => userEvent.type(versionInput, 'image-1.0.0'));
 
-  await waitFor(() => 
-    expect(screen.getByTestId('button-default-submit')).not.toBeDisabled()
+  await waitFor(() =>
+    expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
+    { timeout: 500 }
   );
 });
 
@@ -82,18 +81,18 @@ test('form should be invalid when version name not found', async () => {
   render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-  
+
   const nameInput = screen.getByTestId('input-text-releaseName');
-  fireEvent.change(nameInput, { target: { value: 'release-name' }});
-  
+  fireEvent.change(nameInput, { target: { value: 'release-name' } });
+
   const moduleLabel = screen.getByText('Select a module');
-  await act(async() => selectEvent.select(moduleLabel, 'module-1'));
+  await act(async () => selectEvent.select(moduleLabel, 'module-1'));
 
   const componentLabel = screen.getByText('Select a component');
-  await act(async() => selectEvent.select(componentLabel, 'component-1'));
+  await act(async () => selectEvent.select(componentLabel, 'component-1'));
 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
-  fireEvent.change(versionInput, { target: { value: 'version-1' }});
+  fireEvent.change(versionInput, { target: { value: 'version-1' } });
 
   const submit = await screen.findByTestId('button-default-submit');
 
