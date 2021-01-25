@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
@@ -94,7 +94,10 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     checkTagByName(moduleId, componentId, name);
   }, [checkTagByName, getValues, prefixName]);
 
-  const debouncedSearch = useRef(debounce(() => onSearchTag(), 500)).current;
+  const debouncedOnChange = useMemo(
+    () => debounce(onSearchTag, 300),
+    [onSearchTag],
+  );
 
   return (
     <Styled.Module.Wrapper>
@@ -139,7 +142,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
         <Styled.Module.Input
           name={`${prefixName}.version`}
           ref={register({ required: true })}
-          onChange={debouncedSearch}
+          onChange={debouncedOnChange}
           isLoading={status.isPending}
           hasError={isEmptyTag}
           label="Version name"
