@@ -18,7 +18,7 @@ import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import { useForm } from 'react-hook-form';
-import { isRequired, maxLength } from 'core/utils/validations';
+import { isRequired } from 'core/utils/validations';
 import { validationResolver } from 'core/components/CheckPassword';
 import { useChangePassword } from './hooks/useChangePassword';
 import Styled from './styled';
@@ -27,7 +27,7 @@ type Props = {
   onSubmit?: () => void;
 };
 
-type FormData = {
+type FormState = {
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
@@ -41,8 +41,8 @@ const ChangePassword = ({ onSubmit }: Props) => {
     errors,
     formState,
     getValues
-  } = useForm<FormData>({
-    mode: 'onBlur',
+  } = useForm<FormState>({
+    mode: 'onChange',
     resolver: validationResolver
   });
   const newPassword = watch('newPassword') as string;
@@ -71,8 +71,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         name="oldPassword"
         error={errors?.oldPassword?.message}
         ref={register({
-          required: isRequired(),
-          maxLength: maxLength(100)
+          required: isRequired()
         })}
       />
       <Styled.Modal.Info color="dark">
@@ -84,8 +83,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         name="newPassword"
         error={errors?.newPassword?.message}
         ref={register({
-          required: isRequired(),
-          maxLength: maxLength(100)
+          required: isRequired()
         })}
       />
       <Styled.Password
@@ -93,8 +91,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         name="confirmPassword"
         error={errors?.confirmPassword?.message}
         ref={register({
-          required: isRequired(),
-          maxLength: maxLength(100)
+          required: isRequired()
         })}
       />
       <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
