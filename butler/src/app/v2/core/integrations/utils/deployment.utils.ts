@@ -59,6 +59,14 @@ export const componentsToBeRemoved = (deployment: Deployment, activeComponents: 
   })
 }
 
+export const unusedComponentProxy = (deployment: Deployment, activeComponents: Component[]): DeploymentComponent[] => {
+  if (componentsToBeRemoved(deployment, activeComponents).length === 0) {
+    return []
+  }
+  const sameCircleComponents = activeComponents.filter(c => c.deployment.circleId === deployment.circleId)
+  return sameCircleComponents.filter(c => !updatedComponents(deployment.components, c))
+}
+
 const removedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
   return !deploymentComponents?.some(dc => isSameName(dc, activeComponent))
 }

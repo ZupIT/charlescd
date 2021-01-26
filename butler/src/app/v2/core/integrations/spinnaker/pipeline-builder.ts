@@ -39,7 +39,7 @@ import {
 import { DeploymentTemplateUtils } from './utils/deployment-template.utils'
 import { UndeploymentTemplateUtils } from './utils/undeployment-template.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
-import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
+import { componentsToBeRemoved, DeploymentUtils, unusedComponentProxy } from '../utils/deployment.utils'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 export class SpinnakerPipelineBuilder {
@@ -151,9 +151,15 @@ export class SpinnakerPipelineBuilder {
     if (deployment.defaultCircle) {
       return []
     }
+    const unusedComponentsProxies = unusedComponentProxy(deployment, activeComponents)
+
+    if (unusedComponentsProxies.length === 0) {
+      return []
+    }
     const proxyStages: Stage[] = []
     const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
-    componentsToBeRemoved(deployment, activeComponents).forEach(component => {
+
+    unusedComponentsProxies.forEach(component => {
       const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
       proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++, evalStageId))
       proxyStages.push(activeByName.length > 1 ?
@@ -161,6 +167,7 @@ export class SpinnakerPipelineBuilder {
         getUndeploymentEmptyVirtualServiceStage(component, deployment, this.currentStageId++)
       )
     })
+
     return proxyStages
   }
 

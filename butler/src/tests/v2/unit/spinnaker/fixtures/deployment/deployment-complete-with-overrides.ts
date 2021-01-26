@@ -500,7 +500,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        exact: 'circle-id'
+                        'exact': 'circle-id'
                       }
                     }
                   }
@@ -691,7 +691,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        exact: 'circle-id'
+                        'exact': 'circle-id'
                       }
                     }
                   }
@@ -882,7 +882,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        exact: 'circle-id'
+                        'exact': 'circle-id'
                       }
                     }
                   }
@@ -960,7 +960,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
-      failOnFailedExpressions: true,
+      'failOnFailedExpressions': true,
       failPipeline: false,
       name: 'Evaluate deployments',
       refId: '13',
@@ -970,15 +970,15 @@ export const completeWithOverrides : SpinnakerPipeline = {
         '6'
       ],
       type: 'evaluateVariables',
-      variables: [
+      'variables': [
         {
-          key: 'deploymentResult',
-          value: '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy B v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy C v2\').status.toString() == \'SUCCEEDED\'}'
+          'key': 'deploymentResult',
+          'value': '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy B v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy C v2\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
     {
-      failOnFailedExpressions: true,
+      'failOnFailedExpressions': true,
       name: 'Evaluate proxy deployments',
       refId: '14',
       requisiteStageRefIds: [
@@ -987,10 +987,10 @@ export const completeWithOverrides : SpinnakerPipeline = {
         '12'
       ],
       type: 'evaluateVariables',
-      variables: [
+      'variables': [
         {
-          key: 'proxyDeploymentsResult',
-          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
+          'key': 'proxyDeploymentsResult',
+          'value': '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
@@ -1001,39 +1001,39 @@ export const completeWithOverrides : SpinnakerPipeline = {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       failPipeline: false,
-      kinds: [
+      'kinds': [
         'deployment'
       ],
-      labelSelectors: {
-        selectors: [
+      'labelSelectors': {
+        'selectors': [
           {
-            key: 'component',
+            'key': 'component',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'A'
             ]
           },
           {
-            key: 'tag',
+            'key': 'tag',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'v2'
             ]
           },
           {
-            key: 'circleId',
+            'key': 'circleId',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'circle-id'
             ]
           }
         ]
       },
-      location: 'sandbox',
-      mode: 'label',
+      'location': 'sandbox',
+      'mode': 'label',
       name: 'Delete Deployment A v2',
       options: {
-        cascading: true
+        'cascading': true
       },
       refId: '15',
       requisiteStageRefIds: [
@@ -1052,39 +1052,39 @@ export const completeWithOverrides : SpinnakerPipeline = {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       failPipeline: false,
-      kinds: [
+      'kinds': [
         'deployment'
       ],
-      labelSelectors: {
-        selectors: [
+      'labelSelectors': {
+        'selectors': [
           {
-            key: 'component',
+            'key': 'component',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'B'
             ]
           },
           {
-            key: 'tag',
+            'key': 'tag',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'v2'
             ]
           },
           {
-            key: 'circleId',
+            'key': 'circleId',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'circle-id'
             ]
           }
         ]
       },
-      location: 'sandbox',
-      mode: 'label',
+      'location': 'sandbox',
+      'mode': 'label',
       name: 'Delete Deployment B v2',
       options: {
-        cascading: true
+        'cascading': true
       },
       refId: '16',
       requisiteStageRefIds: [
@@ -1103,40 +1103,40 @@ export const completeWithOverrides : SpinnakerPipeline = {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       failPipeline: false,
-      kinds: [
+      'kinds': [
         'deployment'
       ],
-      labelSelectors: {
-        selectors: [
+      'labelSelectors': {
+        'selectors': [
           {
-            key: 'component',
+            'key': 'component',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'A'
             ]
           },
           {
-            key: 'tag',
+            'key': 'tag',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'v1'
             ]
           },
           {
-            key: 'circleId',
+            'key': 'circleId',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'circle-id'
             ]
           }
         ]
       },
-      location: 'sandbox',
-      mode: 'label',
+      'location': 'sandbox',
+      'mode': 'label',
       name: 'Delete Unused Deployment A v1',
-      nameStage: 'Delete Deployments',
+      'nameStage': 'Delete Deployments',
       options: {
-        cascading: true
+        'cascading': true
       },
       refId: '17',
       requisiteStageRefIds: [
@@ -1155,40 +1155,40 @@ export const completeWithOverrides : SpinnakerPipeline = {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       failPipeline: false,
-      kinds: [
+      'kinds': [
         'deployment'
       ],
-      labelSelectors: {
-        selectors: [
+      'labelSelectors': {
+        'selectors': [
           {
-            key: 'component',
+            'key': 'component',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'B'
             ]
           },
           {
-            key: 'tag',
+            'key': 'tag',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'v1'
             ]
           },
           {
-            key: 'circleId',
+            'key': 'circleId',
             kind: 'EQUALS',
-            values: [
+            'values': [
               'circle-id'
             ]
           }
         ]
       },
-      location: 'sandbox',
-      mode: 'label',
+      'location': 'sandbox',
+      'mode': 'label',
       name: 'Delete Unused Deployment B v1',
-      nameStage: 'Delete Deployments',
+      'nameStage': 'Delete Deployments',
       options: {
-        cascading: true
+        'cascading': true
       },
       refId: '18',
       requisiteStageRefIds: [
@@ -1201,19 +1201,136 @@ export const completeWithOverrides : SpinnakerPipeline = {
       type: 'deleteManifest'
     },
     {
+      account: 'default',
+      cloudProvider: 'kubernetes',
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
-      customHeaders: {
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'DestinationRule',
+          metadata: {
+            name: 'C',
+            namespace: 'sandbox'
+          },
+          spec: {
+            host: 'C',
+            subsets: [
+              {
+                labels: {
+                  component: 'C',
+                  tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Destination Rules C',
+      refId: '19',
+      requisiteStageRefIds: [
+        '14'
+      ],
+      skipExpressionEvaluation: false,
+      source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
+    },
+    {
+      account: 'default',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'VirtualService',
+          metadata: {
+            name: 'C',
+            namespace: 'sandbox'
+          },
+          spec: {
+            gateways: [],
+            hosts: [
+              'C'
+            ],
+            http: [
+              {
+                route: [
+                  {
+                    destination: {
+                      host: 'C',
+                      subset: 'default-circle-id'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'default-circle-id'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'default-circle-id'
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Virtual Service C',
+      refId: '20',
+      requisiteStageRefIds: [
+        '19'
+      ],
+      skipExpressionEvaluation: false,
+      source: 'text',
+      stageEnabled: {
+        expression: '${ #stage(\'Undeploy Destination Rules C\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
+    },
+    {
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      'customHeaders': {
         'x-circle-id': 'Default'
       },
       failPipeline: false,
-      method: 'POST',
+      'method': 'POST',
       name: 'Trigger Failure Webhook',
-      payload: {
+      'payload': {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '19',
+      refId: '21',
       requisiteStageRefIds: [
         '13',
         '14'
@@ -1222,24 +1339,24 @@ export const completeWithOverrides : SpinnakerPipeline = {
         expression: '${ !deploymentResult || !proxyDeploymentsResult }',
         type: 'expression'
       },
-      statusUrlResolution: 'getMethod',
+      'statusUrlResolution': 'getMethod',
       type: 'webhook',
-      url: 'http://localhost:8883/butler/v2/executions/execution-id/notify'
+      'url': 'http://localhost:8883/butler/v2/executions/execution-id/notify'
     },
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
-      customHeaders: {
+      'customHeaders': {
         'x-circle-id': 'Default'
       },
       failPipeline: false,
-      method: 'POST',
+      'method': 'POST',
       name: 'Trigger Success Webhook',
-      payload: {
+      'payload': {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '20',
+      refId: '22',
       requisiteStageRefIds: [
         '13',
         '14'
@@ -1248,9 +1365,9 @@ export const completeWithOverrides : SpinnakerPipeline = {
         expression: '${ deploymentResult && proxyDeploymentsResult }',
         type: 'expression'
       },
-      statusUrlResolution: 'getMethod',
+      'statusUrlResolution': 'getMethod',
       type: 'webhook',
-      url: 'http://localhost:8883/butler/v2/executions/execution-id/notify'
+      'url': 'http://localhost:8883/butler/v2/executions/execution-id/notify'
     }
   ]
 }
