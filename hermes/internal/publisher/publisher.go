@@ -1,24 +1,18 @@
 package publisher
 
-import (
-	"encoding/json"
-	"hermes/pkg/errors"
-	"io"
-)
-
-func (main Main) ParseMessage(message io.ReadCloser) (Request, errors.Error) {
-	var r *Request
-	err := json.NewDecoder(message).Decode(&r)
-	if err != nil {
-		return Request{}, errors.NewError("Parse error", err.Error()).
-			WithOperations("Parse.ParseDecode")
-	}
-	return *r, nil
-}
-
-func (main Main) Validate(message Request) errors.ErrorList {
-	return nil
-}
+//func (main Main) ParseMessage(message io.ReadCloser) (Request, errors.Error) {
+//	var r *Request
+//	err := json.NewDecoder(message).Decode(&r)
+//	if err != nil {
+//		return Request{}, errors.NewError("Parse error", err.Error()).
+//			WithOperations("Parse.ParseDecode")
+//	}
+//	return *r, nil
+//}
+//
+//func (main Main) Validate(message Request) errors.ErrorList {
+//	return nil
+//}
 //func (main Main) Publish(message Request, subscriptionIds []uuid.UUID) (SaveResponse, errors.Error) {
 //
 //	response, e, done := PublishMessage(message, subscriptionIds)

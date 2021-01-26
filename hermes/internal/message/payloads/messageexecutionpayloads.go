@@ -16,21 +16,19 @@
  *
  */
 
-package messageexecutionhistory
+package payloads
 
 import (
-	"gorm.io/gorm"
-	"hermes/pkg/errors"
+	"encoding/json"
+	"github.com/google/uuid"
 )
 
-type UseCases interface {
-	Save(executionsRequest []Request) (Response, errors.Error)
+type ExecutionRequest struct {
+	ExecutionId uuid.UUID       `json:"executionId"`
+	EventType   string          `json:"eventType"`
+	Event       json.RawMessage `json:"event"`
 }
 
-type Main struct {
-	db *gorm.DB
-}
-
-func NewMain(db *gorm.DB) UseCases {
-	return Main{db}
+type Response struct {
+	Id uuid.UUID `json:"id"`
 }

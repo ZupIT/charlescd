@@ -16,7 +16,7 @@
  *
  */
 
-package message
+package payloads
 
 import (
 	"encoding/json"
@@ -35,7 +35,7 @@ type PayloadRequest struct {
 	Event      json.RawMessage `json:"event"`
 }
 
-type ExecutionResponse struct {
+type MessageResponse struct {
 	Id        uuid.UUID       `json:"id"`
 	EventType string          `json:"eventType"`
 	Event     json.RawMessage `json:"event"`

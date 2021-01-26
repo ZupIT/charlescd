@@ -2,7 +2,6 @@ package publisher
 
 import (
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"hermes/pkg/errors"
 	"io"
 )
@@ -12,10 +11,10 @@ type UseCases interface {
 	Validate(message Request) errors.ErrorList
 	Publish(message Request, subscriptionIds []uuid.UUID) (SaveResponse, errors.Error)
 }
-type Main struct {
-	db         *gorm.DB
-}
-
-func NewMain(db *gorm.DB) UseCases {
-	return Main{db}
-}
+//type Main struct {
+//	db         *gorm.DB
+//}
+//
+//func NewMain(db *gorm.DB) UseCases {
+//	return Main{db}
+//}

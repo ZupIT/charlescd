@@ -16,18 +16,16 @@
  *
  */
 
-package message
+package messageexecutionhistory
 
 import (
 	"gorm.io/gorm"
+	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
-	"io"
 )
 
 type UseCases interface {
-	ParsePayload(request io.ReadCloser) (PayloadRequest, errors.Error)
-	ParseMessage(request io.ReadCloser) (Request, errors.Error)
-	Save(messagesRequest []Request) ([]ExecutionResponse, errors.Error)
+	Save(executionsRequest payloads.ExecutionRequest) (payloads.Response, errors.Error)
 }
 
 type Main struct {

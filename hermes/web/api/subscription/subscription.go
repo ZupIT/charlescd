@@ -22,8 +22,9 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"hermes/internal/message"
-	"hermes/internal/messageexecutionhistory"
+	message2 "hermes/internal/message/message"
+	"hermes/internal/message/messageexecutionhistory"
+	"hermes/internal/message/payloads"
 	"hermes/internal/subscription"
 	util2 "hermes/web/util"
 	"net/http"
@@ -128,7 +129,7 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 	}
 }
 
-func Publish(messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func Publish(messageMain message2.UseCases, executionMain messageexecutionhistory.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := messageMain.ParsePayload(r.Body)
 		if err != nil {
@@ -144,28 +145,20 @@ func Publish(messageMain message.UseCases, executionMain messageexecutionhistory
 
 		requestMessages := subscriptionToMessageRequest(subscriptions, request)
 
-		createdMessages, err := messageMain.Save(requestMessages)
+		createdMessages, err := messageMain.Publish(requestMessages)
 		if err != nil {
 			util2.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		requestExecutions := messageToExecutionRequest(createdMessages, request)
-
-		publishedMessages, err := executionMain.Save(requestExecutions)
-		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
-			return
-		}
-
-		util2.NewResponse(w, http.StatusCreated, publishedMessages)
+		util2.NewResponse(w, http.StatusCreated, createdMessages)
 	}
 }
 
-func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdResponse, request message.PayloadRequest) []message.Request {
-	var messages []message.Request
+func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdResponse, request payloads.PayloadRequest) []payloads.Request {
+	var messages []payloads.Request
 	for _, s := range subscriptions {
-		msg := message.Request{
+		msg := payloads.Request{
 			SubscriptionId: s.Id,
 			EventType:      request.EventType,
 			Event:          request.Event,
@@ -175,15 +168,15 @@ func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdRespons
 	return messages
 }
 
-func messageToExecutionRequest(createdMessages []message.ExecutionResponse, request message.PayloadRequest) []messageexecutionhistory.Request {
-	var requests []messageexecutionhistory.Request
-	for _, m := range createdMessages {
-		msg := messageexecutionhistory.Request{
-			ExecutionId: m.Id,
-			EventType:   request.EventType,
-			Event:       request.Event,
-		}
-		requests = append(requests, msg)
-	}
-	return requests
-}
+//func messageToExecutionRequest(createdMessages []payloads.ExecutionResponse, request payloads.PayloadRequest) []payloads.ExecutionRequest {
+//	var requests []payloads.ExecutionRequest
+//	for _, m := range createdMessages {
+//		msg := payloads.ExecutionRequest{
+//			ExecutionId: m.Id,
+//			EventType:   request.EventType,
+//			Event:       request.Event,
+//		}
+//		requests = append(requests, msg)
+//	}
+//	return requests
+//}
