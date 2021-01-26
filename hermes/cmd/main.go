@@ -41,10 +41,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	subscriptionMain := subscription.NewMain(db)
 	messageMain := message.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
 
-	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain)
+	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)
 }

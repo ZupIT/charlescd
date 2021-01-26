@@ -16,7 +16,7 @@
  *
  */
 
-package util
+package restutil
 
 import (
 	"encoding/json"

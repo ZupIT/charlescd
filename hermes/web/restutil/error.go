@@ -16,7 +16,7 @@
  *
  */
 
-package util
+package restutil
 
 import "hermes/pkg/errors"
 

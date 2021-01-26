@@ -19,7 +19,10 @@
 package api
 
 import (
+	"database/sql"
+	"encoding/json"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"hermes/internal/message"
 	"hermes/internal/messageexecutionhistory"
 	"hermes/internal/subscription"
@@ -35,18 +38,25 @@ type Api struct {
 	executionMain    messageexecutionhistory.UseCases
 }
 
-func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases, executionMain messageexecutionhistory.UseCases) *mux.Router {
+type Readiness struct {
+	Database     string
+	MessageQueue string
+}
+
+func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, db *sql.DB) *mux.Router {
 	api := Api{
 		subscriptionMain: subscriptionMain,
 		messageMain:      messageMain,
 		executionMain:    executionMain,
 	}
 	router := mux.NewRouter()
+	api.health(router)
+	api.readiness(router, db)
+
 	s := router.PathPrefix("/api").Subrouter()
 
-	router.Use(LoggingMiddleware)
-	router.Use(ValidatorMiddleware)
-	api.health(router)
+	s.Use(LoggingMiddleware)
+	s.Use(ValidatorMiddleware)
 	api.newV1Api(s)
 
 	return router
@@ -55,6 +65,29 @@ func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases
 func (api *Api) health(r *mux.Router) {
 	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(":)"))
+		return
+	})
+}
+
+func (api *Api) readiness(r *mux.Router, db *sql.DB) {
+	r.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		ready := Readiness{
+			Database:     "ALIVE",
+			MessageQueue: "ALIVE",
+		}
+
+		if db.Ping() != nil {
+			ready.Database = "FAILED"
+		}
+
+		response, err := json.Marshal(ready)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"err": err,
+			}).Warnln()
+		}
+
+		w.Write(response)
 		return
 	})
 }

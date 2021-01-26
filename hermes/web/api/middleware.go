@@ -21,7 +21,7 @@ package api
 import (
 	"github.com/sirupsen/logrus"
 	"hermes/pkg/errors"
-	"hermes/web/util"
+	"hermes/web/restutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -46,7 +46,7 @@ func ValidatorMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-type", "application/json")
 		workspaceID := r.Header.Get("x-workspace-id")
-		ers := util.NewApiErrors()
+		ers := restutil.NewApiErrors()
 
 		if getWhiteList(r.RequestURI) == "" && workspaceID == "" {
 			ers.ToApiErrors(
@@ -55,7 +55,7 @@ func ValidatorMiddleware(next http.Handler) http.Handler {
 				errors.NewError("Invalid request", "WorkspaceId is required").WithOperations("ValidatorMiddleware"),
 			)
 
-			util.NewResponse(w, http.StatusForbidden, ers)
+			restutil.NewResponse(w, http.StatusForbidden, ers)
 			return
 		}
 
