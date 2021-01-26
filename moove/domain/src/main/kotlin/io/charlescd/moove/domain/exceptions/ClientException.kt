@@ -26,7 +26,7 @@ data class ClientException(
     val details:String?,
     val status:String?,
     val source: Map<String, String>?,
-    val meta: String?
+    val meta: Map<String, String>?
 ): RuntimeException() {
 
 }

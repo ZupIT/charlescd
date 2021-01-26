@@ -42,7 +42,7 @@ public class ErrorHandler {
     public DefaultErrorResponse handleBusinessException(BusinessException exception) {
         logger.error("BAD REQUEST ERROR - ", exception.getErrorCode());
 
-        return ExceptionUtils.createBadRequestError(exception.getErrorCode().getKey(), exception.getSource());
+        return ExceptionUtils.createBusinessExceptionError(exception.getErrorCode().getKey(), exception.getTitle(),     exception.getSource(), exception);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

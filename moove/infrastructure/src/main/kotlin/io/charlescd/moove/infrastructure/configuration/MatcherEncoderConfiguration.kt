@@ -21,6 +21,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.domain.exceptions.ClientException
+import org.apache.http.util.ExceptionUtils
 import java.io.IOException
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
@@ -28,6 +29,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
+import java.time.LocalDateTime
+import java.util.*
 
 @Configuration
 class MatcherEncoderConfiguration {
@@ -54,12 +57,29 @@ class MatcherEncoderConfiguration {
                 logger.info("Response as object $responseAsString")
                 return responseAsString?.let {
                     getResponseAsObject(it)
-                } ?: ErrorResponse()
+                } ?: createErrorResponse("No response body")
 
             } catch (ex: IOException) {
                 logger.error(ex.message, ex)
-                return ErrorResponse()
+                return createErrorResponse("Error reading response", ex)
             }
+        }
+
+        private fun createErrorResponse(title: String, exception: Exception? = null): ErrorResponse {
+            return ErrorResponse(UUID.randomUUID().toString(), emptyList(), title, details = exception?.message, status = "500", source = emptyMap(),
+                meta = this.getMetaInfo(exception)
+            )
+        }
+
+        private fun getMetaInfo(exception: Exception?): Map<String,String>? {
+            var metaInfo = mutableMapOf<String,String>()
+
+            exception?.let{
+                metaInfo.put("stacktrace", it.cause.toString())
+            }
+            metaInfo.put("data", LocalDateTime.now().toString())
+            metaInfo.put("component", "moove")
+            return metaInfo
         }
 
         private fun getResponseAsObject(message: String): ErrorResponse {
@@ -75,6 +95,6 @@ class MatcherEncoderConfiguration {
         val details: String? = null,
         val status: String? = null,
         val source: Map<String, String >? = null,
-        val meta: String? = null
+        val meta: Map<String, String >? = null
     )
 }

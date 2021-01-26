@@ -1,7 +1,9 @@
 package io.charlescd.circlematcher.handler;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class ExceptionUtils {
 
@@ -14,7 +16,7 @@ public class ExceptionUtils {
                 "404",
                 source
                 ,
-                "matcher"
+                getMetaInfo()
        );
     }
 
@@ -26,7 +28,18 @@ public class ExceptionUtils {
                 message,
                 "400",
                 source,
-                "matcher"
+                getMetaInfo()
+        );
+    }
+    public static DefaultErrorResponse createBusinessExceptionError(String message, String title, String sourceString, Exception exception) {
+        Source source = new Source(sourceString);
+        return new DefaultErrorResponse( UUID.randomUUID().toString(),
+                new ArrayList<String>(),
+                title,
+                message,
+                "400",
+                source,
+                getMetaInfo()
         );
     }
 
@@ -38,7 +51,13 @@ public class ExceptionUtils {
                 message,
                 "500",
                 source,
-                "matcher"
+                getMetaInfo()
         );
+    }
+    private static Map<String, String> getMetaInfo() {
+        Map<String, String> metaInfo = new HashMap<String,String>();
+        metaInfo.put("timestamp", LocalDateTime.now().toString());
+        metaInfo.put("component", "circle-matcher");
+        return metaInfo;
     }
 }

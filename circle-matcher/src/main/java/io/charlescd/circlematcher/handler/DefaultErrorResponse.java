@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 
 import java.util.List;
+import java.util.Map;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultErrorResponse {
     private  String id;
@@ -28,7 +30,7 @@ public class DefaultErrorResponse {
     public String details;
     public String status;
     public Source source;
-    public String meta;
+    public Map<String, String> meta;
     public DefaultErrorResponse(
             String id,
             List<String> links,
@@ -36,7 +38,7 @@ public class DefaultErrorResponse {
             String details,
             String status,
             Source source,
-            String meta
+            Map<String, String> meta
     ) {
         this.links = links;
         this.title = title;
@@ -79,14 +81,6 @@ public class DefaultErrorResponse {
         this.details = details;
     }
 
-    public String getCode() {
-        return status;
-    }
-
-    public void setCode(String status) {
-        this.status = status;
-    }
-
     public Source getSource() {
         return source;
     }
@@ -95,11 +89,11 @@ public class DefaultErrorResponse {
         this.source = source;
     }
 
-    public String getMeta() {
+    public Map<String, String> getMeta() {
         return meta;
     }
 
-    public void setMeta(String meta) {
+    public void setMeta(Map<String, String> meta) {
         this.meta = meta;
     }
 
