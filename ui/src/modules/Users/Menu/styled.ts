@@ -18,7 +18,9 @@ import styled from 'styled-components';
 import LabeledIcon from 'core/components/LabeledIcon';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import IconComponent from 'core/components/Icon';
+import ButtonComponent from 'core/components/Button';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
+import Text from 'core/components/Text';
 
 const SearchInput = styled(SearchInputComponent)`
   margin: 15px 0;
@@ -44,6 +46,7 @@ const Content = styled.div`
   overflow-y: auto;
 `;
 
+// TODO remove?
 const List = styled.ul`
   display: flex;
   flex-direction: column;
@@ -62,11 +65,22 @@ const ListItem = styled(LabeledIcon)`
   display: flex;
 `;
 
+const Item = styled(Text.h4)`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 230px;
+`;
+
+// TODO remove isactive?
 interface LinkProps {
   isActive: boolean;
 }
 
 const Link = styled('button')<LinkProps>`
+  width: 100%;
+  display: block;
+  padding: 0 16px;
   background: none;
   border: none;
   text-decoration: none;
@@ -78,13 +92,23 @@ const A = styled.a`
   text-decoration: none;
 `;
 
+const Button = styled(ButtonComponent.Default)`
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  height: auto;
+`;
+
 export default {
   A,
   Actions,
+  Button,
   Content,
   Icon,
   Link,
   List,
   ListItem,
+  Item,
   SearchInput
 };

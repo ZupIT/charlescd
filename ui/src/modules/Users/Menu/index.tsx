@@ -42,11 +42,11 @@ const UserMenu = ({ onSearch, children }: Props) => {
   return (
     <>
       <Styled.Actions>
-        <Styled.Link onClick={() => toggleUser('create')} isActive={false}>
+        <Styled.Button onClick={() => toggleUser('create')}>
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create user</Text.h5>
           </LabeledIcon>
-        </Styled.Link>
+        </Styled.Button>
       </Styled.Actions>
       <Styled.SearchInput resume onSearch={onSearch} />
       <Styled.Content>{children}</Styled.Content>
