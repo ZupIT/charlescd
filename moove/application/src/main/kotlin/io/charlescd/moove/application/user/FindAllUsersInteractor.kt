@@ -19,10 +19,10 @@
 package io.charlescd.moove.application.user
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.user.response.UserResponse
+import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.domain.PageRequest
 
 interface FindAllUsersInteractor {
 
-    fun execute(name: String?, email: String?, authorization: String, pageRequest: PageRequest): ResourcePageResponse<UserResponse>
+    fun execute(name: String?, email: String?, authorization: String, pageRequest: PageRequest): ResourcePageResponse<SimpleUserResponse>
 }
