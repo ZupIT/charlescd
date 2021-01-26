@@ -339,7 +339,7 @@ class JdbcCircleRepository(
                 """
         )
 
-        if(isPercentage != null && isPercentage)  statement.append("AND MATCHER_TYPE= 'PERCENTAGE'")
+        if (isPercentage != null && isPercentage) statement.append("AND MATCHER_TYPE= 'PERCENTAGE'")
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
         statement.appendln("AND circles.workspace_id = ?")
         statement.appendln("ORDER BY circles.name")
