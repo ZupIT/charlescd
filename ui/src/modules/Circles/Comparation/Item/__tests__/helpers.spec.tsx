@@ -88,6 +88,12 @@ test("Test if circleCannotBeDeleted could be truthy", () => {
 });
 
 test("Test if circleCannotBeDeleted could be falsy", () => {
+  const isCant = circleCannotBeDeleted({ ...circle, name: 'Default'});
+
+  expect(isCant).toBeTruthy();
+});
+
+test("Test if circleCannotBeDeleted could be falsy", () => {
   const isCant = circleCannotBeDeleted(circle);
 
   expect(isCant).toBeFalsy();
