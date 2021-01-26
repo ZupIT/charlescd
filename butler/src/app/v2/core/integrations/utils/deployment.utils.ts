@@ -64,7 +64,8 @@ export const unusedComponentProxy = (deployment: Deployment, activeComponents: C
     return []
   }
   const sameCircleComponents = activeComponents.filter(c => c.deployment.circleId === deployment.circleId)
-  return sameCircleComponents.filter(c => !updatedComponents(deployment.components, c))
+
+  return sameCircleComponents.filter(c => !deployment.components?.map(dc => dc.name).includes(c.name))
 }
 
 const removedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {
