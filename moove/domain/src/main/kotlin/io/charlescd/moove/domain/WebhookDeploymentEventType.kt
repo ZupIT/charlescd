@@ -57,7 +57,6 @@ data class WebhookDeploymentReleaseEvent(
 )
 
 data class WebhookDeploymentModuleEvent(
-    val id: String,
     val name: String,
     val components: List<WebhookDeploymentComponentEvent>
 )

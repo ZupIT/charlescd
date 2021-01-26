@@ -27,7 +27,10 @@ import java.time.temporal.ChronoUnit
 import javax.inject.Named
 
 @Named
-class WebhookEventService(private val hermesService: HermesService, private val buildRepository: BuildRepository) {
+class WebhookEventService(
+    private val hermesService: HermesService,
+    private val buildRepository: BuildRepository
+) {
 
     fun notifyDeploymentEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment) {
         hermesService.notifySubscriptionEvent(
@@ -83,7 +86,7 @@ class WebhookEventService(private val hermesService: HermesService, private val 
         return WebhookDeploymentReleaseEvent(
             tag = build.tag,
             features = build.features.map { getFeatureEvent(it) },
-            modules = emptyList() // TODO VERIFICAR COMO PEGAR ESSA INFORMACAO
+            modules = build.modules().map { getModuleEvent(it) }
         )
     }
 
@@ -99,6 +102,20 @@ class WebhookEventService(private val hermesService: HermesService, private val 
         return WebhookDeploymentFeatureEvent(
             name = feature.name,
             branchName = feature.branchName
+        )
+    }
+
+    private fun getModuleEvent(module: ModuleSnapshot): WebhookDeploymentModuleEvent {
+        return WebhookDeploymentModuleEvent(
+            name = module.name,
+            components = module.components.map { getComponentsEvent(it) }
+        )
+    }
+
+    private fun getComponentsEvent(component: ComponentSnapshot): WebhookDeploymentComponentEvent {
+        return WebhookDeploymentComponentEvent(
+            id = component.id,
+            name = component.name
         )
     }
 

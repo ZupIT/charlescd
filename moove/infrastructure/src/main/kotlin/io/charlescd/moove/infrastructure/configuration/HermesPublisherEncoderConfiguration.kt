@@ -63,7 +63,7 @@ class HermesPublisherEncoderConfiguration(
 
     @Bean
     fun hermesPublisherRetryer(): Retryer {
-        return Retryer.Default(5, 30, 5) // TODO: Verificar se é assim e colocar em properties
+        return Retryer.Default(5, 30, 5) // TODO: Colocar em properties???
     }
 
     class CustomErrorDecoder : ErrorDecoder {
