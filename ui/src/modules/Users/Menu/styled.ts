@@ -42,7 +42,7 @@ const Icon = styled(IconComponent)`
 `;
 
 const Content = styled.div`
-  height: calc(100vh - 200px);
+  height: calc(-200px + 100vh);
   overflow-y: auto;
 `;
 
@@ -80,6 +80,7 @@ interface LinkProps {
 const Link = styled('button')<LinkProps>`
   width: 100%;
   display: block;
+  padding: 0 16px;
   background: none;
   border: none;
   text-decoration: none;
