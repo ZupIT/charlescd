@@ -49,3 +49,66 @@ export const customManifests = (appName: string, namespace: string, image: strin
 
   return [service, deployment]
 }
+
+export const routesManifests: KubernetesManifest[] = [
+  {
+    apiVersion: 'networking.istio.io/v1alpha3',
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'hello-kubernetes',
+      namespace: 'namespace',
+    },
+    spec: {
+      host: 'hello-kubernetes',
+      subsets: [
+        {
+          labels: {
+            component: 'hello-kubernetes',
+            tag: 'build-image-tag',
+            circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+          },
+          name: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+        },
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: 'networking.istio.io/v1alpha3',
+    kind: 'VirtualService',
+    metadata: {
+      name: 'hello-kubernetes',
+      namespace: 'namespace',
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'hello-kubernetes',
+      ],
+      http: [
+        {
+          route: [
+            {
+              destination: {
+                host: 'hello-kubernetes',
+                subset: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  },
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+  } as KubernetesManifest,
+]
