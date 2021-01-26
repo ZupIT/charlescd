@@ -17,7 +17,7 @@
 import {
   isBusy, isDeploying, isUndeploying,
   circleCannotBeDeleted, hasDeploy, pathCircleById,
-  isUndeployable
+  isUndeployable, isDefaultCircle, getTooltipMessage
 } from "../helpers"
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
@@ -105,14 +105,50 @@ test("Test hasDeploy", () => {
   expect(has).toBeTruthy();
 });
 
-test("Test isUndeployable could deploy", () => {
+test("Test isUndeployable could not be undeploy", () => {
   const is = isUndeployable(circle);
 
   expect(is).toBeFalsy();
 });
 
-test("Test isUndeployable could deploy", () => {
+test("Test isUndeployable could be undeploy", () => {
   const is = isUndeployable({ ...circle, deployment });
 
   expect(is).toBeTruthy();
+});
+
+test("Test pathCircleById is true", () => {
+  const circlePath = pathCircleById(circle.id);
+
+  expect(circlePath).toBe(`http://localhost/?circle=${circle.id}`);
+});
+
+test("Test isDefaultCircle is true", () => {
+  const is = isDefaultCircle('Default');
+
+  expect(is).toBeTruthy();
+});
+
+test("Test isDefaultCircle is false", () => {
+  const is = isDefaultCircle('Circle');
+
+  expect(is).toBeFalsy();
+});
+
+test("Test getTooltipMessage to cannotDeleteActiveCircleMessage", () => {
+  const tooltipMessage = getTooltipMessage(circle);
+
+  expect(tooltipMessage).toBe('Active circle cannot be deleted,<br />you can undeploy first and then<br /> delete this circle.');
+});
+
+test("Test getTooltipMessage", () => {
+  const tooltipMessage = getTooltipMessage({ ...circle, name: 'Default', deployment });
+
+  expect(tooltipMessage).toBe('Default circle is deployed to all<br /> users, so it cannot be deleted.');
+});
+
+test("Test getTooltipMessage", () => {
+  const tooltipMessage = getTooltipMessage({ ...circle, name: 'Default' });
+
+  expect(tooltipMessage).toBe('Default circle cannot be deleted.');
 });
