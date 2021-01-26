@@ -125,7 +125,13 @@ export class CreateDeploymentUseCase {
       circleId: circleId
     }
     // TODO: utilizar aqui a interface Manifest e obter de um factory
-    return this.helmManifest.generate(manifestConfig)
+    try {
+      this.consoleLoggerService.log('START:GENERATE_MANIFESTS')
+      return this.helmManifest.generate(manifestConfig)
+    }catch(err) {
+      this.consoleLoggerService.error('ERROR:GENERATE_MANIFESTS', err)
+      throw err
+    }
   }
 
   private getRepoConfig(cdConfig: IDefaultConfig, repoUrl: string): RepoConfig {
