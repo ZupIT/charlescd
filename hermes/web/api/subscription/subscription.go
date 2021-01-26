@@ -22,11 +22,11 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	message2 "hermes/internal/message/message"
+	"hermes/internal/message/message"
 	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/message/payloads"
 	"hermes/internal/subscription"
-	util2 "hermes/web/util"
+	"hermes/web/restutil"
 	"net/http"
 )
 
@@ -34,29 +34,29 @@ func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := subscriptionMain.ParseSubscription(r.Body)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
 		author := r.Header.Get("x-author")
 		if author == "" {
-			util2.NewResponse(w, http.StatusInternalServerError, errors.New("author is required"))
+			restutil.NewResponse(w, http.StatusInternalServerError, errors.New("author is required"))
 			return
 		}
 		request.CreatedBy = author
 
 		if err := subscriptionMain.Validate(request); len(err.GetErrors()) > 0 {
-			util2.NewResponse(w, http.StatusBadRequest, err)
+			restutil.NewResponse(w, http.StatusBadRequest, err)
 			return
 		}
 
 		createdSubscription, err := subscriptionMain.Save(request)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		util2.NewResponse(w, http.StatusCreated, createdSubscription)
+		restutil.NewResponse(w, http.StatusCreated, createdSubscription)
 	}
 }
 
@@ -64,24 +64,24 @@ func Update(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := subscriptionMain.ParseUpdate(r.Body)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
 		params := mux.Vars(r)
 		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
 		}
 
 		createdSubscription, err := subscriptionMain.Update(subscriptionId, request)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		util2.NewResponse(w, http.StatusOK, createdSubscription)
+		restutil.NewResponse(w, http.StatusOK, createdSubscription)
 	}
 }
 
@@ -90,23 +90,23 @@ func Delete(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 		params := mux.Vars(r)
 		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
 		}
 
 		author := r.Header.Get("x-author")
 		if author == "" {
-			util2.NewResponse(w, http.StatusInternalServerError, errors.New("author is required"))
+			restutil.NewResponse(w, http.StatusInternalServerError, errors.New("author is required"))
 			return
 		}
 
 		err := subscriptionMain.Delete(subscriptionId, author)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		util2.NewResponse(w, http.StatusNoContent, nil)
+		restutil.NewResponse(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -115,31 +115,31 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 		params := mux.Vars(r)
 		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
 		}
 
 		result, err := subscriptionMain.FindById(subscriptionId)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		util2.NewResponse(w, http.StatusOK, result)
+		restutil.NewResponse(w, http.StatusOK, result)
 	}
 }
 
-func Publish(messageMain message2.UseCases, executionMain messageexecutionhistory.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func Publish(messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := messageMain.ParsePayload(r.Body)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
 		subscriptions, err := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
@@ -147,11 +147,11 @@ func Publish(messageMain message2.UseCases, executionMain messageexecutionhistor
 
 		createdMessages, err := messageMain.Publish(requestMessages)
 		if err != nil {
-			util2.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		util2.NewResponse(w, http.StatusCreated, createdMessages)
+		restutil.NewResponse(w, http.StatusCreated, createdMessages)
 	}
 }
 

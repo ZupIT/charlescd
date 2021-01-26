@@ -35,7 +35,6 @@ import { Workspace } from 'modules/Users/interfaces/User';
 import { ExpandClick } from './Types';
 import MenuItems from './MenuItems';
 import Styled from './styled';
-import { useWorkspaces } from 'modules/Settings/hooks';
 import ReactTooltip from 'react-tooltip';
 import { goTo } from 'core/utils/routes';
 import { isMicrofrontend } from 'App';
@@ -48,7 +47,6 @@ interface Props {
 
 const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   const [workspace, setWorkspace] = useState<Workspace>();
-  const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
   const pathname = navigate.location.pathname;
@@ -59,14 +57,8 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
     includes(pathname, routes.groups);
 
   useEffect(() => {
-    isRoot() && loadWorkspaces();
-  }, [loadWorkspaces]);
-
-  useEffect(() => {
-    isRoot()
-      ? setWorkspaces(loadWorkspacesResponse?.content)
-      : setWorkspaces(getProfileByKey('workspaces'));
-  }, [loadWorkspacesResponse]);
+    setWorkspaces(getProfileByKey('workspaces'));
+  }, []);
 
   useEffect(() => {
     setWorkspace(find(workspaces, ['id', getWorkspaceId()]));

@@ -21,11 +21,11 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
-	"hermes/queueprotocol"
 	"hermes/internal/configuration"
-	message2 "hermes/internal/message/message"
+	"hermes/internal/message/message"
 	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/subscription"
+	"hermes/queueprotocol"
 	"hermes/web/api"
 	"log"
 	"os"
@@ -44,15 +44,18 @@ func main() {
 		log.Fatal(err)
 	}
 
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	goChan := make(chan os.Signal, 1)
 	amqpClient := queueprotocol.NewClient("fila1", "fila1", "amqp://guest:guest@localhost:5672/", logrus.New(), goChan)
 
 	subscriptionMain := subscription.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
-	messageMain := message2.NewMain(db, amqpClient, messageExecutionMain)
+	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
 
-	//publisherMain := publisher.NewMain(db)
-
-	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain)
+	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)
 }
