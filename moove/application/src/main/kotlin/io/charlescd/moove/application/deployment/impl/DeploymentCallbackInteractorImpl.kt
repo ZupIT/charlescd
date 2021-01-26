@@ -16,13 +16,12 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.DeploymentService
+import io.charlescd.moove.application.WebhookEventService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
 import io.charlescd.moove.domain.*
-import io.charlescd.moove.domain.service.HermesService
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.transaction.Transactional
@@ -30,8 +29,7 @@ import javax.transaction.Transactional
 @Named
 open class DeploymentCallbackInteractorImpl(
     private val deploymentService: DeploymentService,
-    private val hermesService: HermesService,
-    private val buildService: BuildService
+    private val webhookEventService: WebhookEventService
 ) :
     DeploymentCallbackInteractor {
 
@@ -42,7 +40,6 @@ open class DeploymentCallbackInteractorImpl(
             updateStatusOfPreviousDeployment(deployment.circle.id)
         }
         deploymentService.update(deployment)
-
         notifyEvent(request, deployment)
     }
 
@@ -78,16 +75,14 @@ open class DeploymentCallbackInteractorImpl(
         val webhookEventType = getWebhookEventType(request, deployment)
         val webhookEventStatus = getWebhookEventStatus(request)
         val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, webhookEventType, webhookEventStatus)
-
-        hermesService.notifySubscriptionEvent(
-            buildWebhookDeploymentEventType(simpleWebhookEvent, deployment))
+        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
     }
 
     private fun getWebhookEventType(callbackRequest: DeploymentCallbackRequest, deployment: Deployment): WebhookEventTypeEnum {
         if (callbackRequest.isDeployEvent() || deployment.deployedAt != null) {
-            return WebhookEventTypeEnum.DEPLOY
+            return WebhookEventTypeEnum.FINISH_DEPLOY
         }
-        return WebhookEventTypeEnum.UNDEPLOY
+        return WebhookEventTypeEnum.FINISH_DEPLOY
     }
 
     private fun getWebhookEventStatus(callbackRequest: DeploymentCallbackRequest): WebhookEventStatusEnum {
@@ -99,73 +94,5 @@ open class DeploymentCallbackInteractorImpl(
             return WebhookEventStatusEnum.FAIL
         }
         return WebhookEventStatusEnum.TIMEOUT
-    }
-
-    private fun buildWebhookDeploymentEventType(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment): WebhookDeploymentEventType {
-        return WebhookDeploymentEventType(
-            simpleWebhookEvent.workspaceId,
-            simpleWebhookEvent.eventType,
-            simpleWebhookEvent.eventStatus,
-            buildWebhookDeploymentEvent(deployment, simpleWebhookEvent)
-        )
-    }
-
-    private fun buildWebhookDeploymentEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): WebhookDeploymentEvent {
-        return WebhookDeploymentEvent(
-            workspaceId = deployment.workspaceId,
-            type = simpleWebhookEvent.eventType,
-            status = simpleWebhookEvent.eventStatus,
-            date = getDeploymentDateEvent(deployment, simpleWebhookEvent.eventType),
-            timeExecution = getTimeExecutionEvent(),
-            author = getAuthorEvent(deployment),
-            circle = getCircleEvent(deployment),
-            release = getReleaseEvent(deployment)
-        )
-    }
-
-    private fun getTimeExecutionEvent(): Int {
-        // TODO deploy deployed-created
-        //Não existe esse cara para undeploy
-        return 0
-    }
-
-    private fun getAuthorEvent(deployment: Deployment): WebhookDeploymentAuthorEvent {
-        return WebhookDeploymentAuthorEvent(
-            deployment.author.email,
-            deployment.author.name
-        )
-    }
-
-    private fun getCircleEvent(deployment: Deployment): WebhookDeploymentCircleEvent {
-        return WebhookDeploymentCircleEvent(
-            deployment.circle.id,
-            deployment.circle.name
-        )
-    }
-
-    private fun getReleaseEvent(deployment: Deployment): WebhookDeploymentReleaseEvent {
-        val build = buildService.find(deployment.buildId)
-        return WebhookDeploymentReleaseEvent(
-            tag = build.tag,
-            features = build.features.map { getFeatureEvent(it) }, // TODO verificar list
-            modules = emptyList() // TODO VERIFICAR COMO PEGAR ESSA INFORMACAO
-        )
-    }
-
-    private fun getFeatureEvent(feature: FeatureSnapshot): WebhookDeploymentFeatureEvent {
-        return WebhookDeploymentFeatureEvent(
-            name = feature.name,
-            branchName = feature.branchName
-        )
-    }
-
-    private fun getDeploymentDateEvent(deployment: Deployment, webhookEventType: WebhookEventTypeEnum): LocalDateTime? {
-        if (webhookEventType == WebhookEventTypeEnum.DEPLOY) {
-            if (deployment.deployedAt != null) {
-                return deployment.deployedAt
-            }
-            return deployment.createdAt
-        }
-        return deployment.undeployedAt //TODO: pode ser null tbm verificar
     }
 }

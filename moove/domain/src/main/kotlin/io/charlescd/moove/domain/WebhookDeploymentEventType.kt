@@ -35,7 +35,7 @@ data class WebhookDeploymentEvent(
     val date: LocalDateTime?,
     val workspaceId: String,
     val author: WebhookDeploymentAuthorEvent,
-    val timeExecution: Int,
+    val timeExecution: Long?,
     val circle: WebhookDeploymentCircleEvent,
     val release: WebhookDeploymentReleaseEvent
 )

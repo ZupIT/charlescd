@@ -16,8 +16,8 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.DeploymentService
+import io.charlescd.moove.application.WebhookEventService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
@@ -39,7 +39,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
     private BuildRepository buildRepository = Mock(BuildRepository)
 
     void setup() {
-        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(new DeploymentService(deploymentRepository), hermesService, new BuildService(buildRepository))
+        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(new DeploymentService(deploymentRepository), new WebhookEventService(hermesService, buildRepository))
     }
 
     def "when deployment does not exists should throw an exception"() {
@@ -51,6 +51,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         then:
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.empty()
+
+        0 * this.hermesService.notifySubscriptionEvent(_)
 
         def exception = thrown(NotFoundException)
         assert exception.resourceName == "deployment"
@@ -79,6 +81,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         1 * this.deploymentRepository.updateStatus(previousDeployment.id, DeploymentStatusEnum.NOT_DEPLOYED)
 
         1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
 
         1 * this.deploymentRepository.update(_) >> { arguments ->
             def deployment = arguments[0]
@@ -118,6 +122,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
 
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
         1 * this.deploymentRepository.update(_) >> { arguments ->
             def deployment = arguments[0]
 
@@ -155,6 +161,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOY_FAILED))
 
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
         1 * this.deploymentRepository.update(_) >> { arguments ->
             def deployment = arguments[0]
 
@@ -174,7 +182,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
 
 
-        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), LocalDateTime.now(), DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
 
         when:
@@ -187,7 +195,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         0 * this.deploymentRepository.updateStatus(_ as String, _ as DeploymentStatusEnum)
 
-        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.NOT_DEPLOYED))
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
 
         1 * this.deploymentRepository.update(_) >> { arguments ->
             def deployment = arguments[0]
@@ -222,6 +232,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         0 * this.deploymentRepository.updateStatus(_ as String, _ as DeploymentStatusEnum)
 
         1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
 
         1 * this.deploymentRepository.update(_) >> { arguments ->
             def deployment = arguments[0]

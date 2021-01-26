@@ -55,6 +55,14 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         }
     }
 
+    fun findByIdAndWorkspace(id: String, workspaceId: String): Deployment {
+        return this.deploymentRepository.find(
+            id, workspaceId
+        ).orElseThrow {
+            NotFoundException("deployment", id)
+        }
+    }
+
     fun findLastActive(circleId: String): Deployment? {
         return this.deploymentRepository.findActiveByCircleId(
             circleId

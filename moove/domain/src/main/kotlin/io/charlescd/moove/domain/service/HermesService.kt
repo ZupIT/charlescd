@@ -34,5 +34,5 @@ interface HermesService {
 
     fun notifySubscriptionEvent(webhookEvent: WebhookEvent)
 
-    fun getSubscriptionHistory() // TODO Implement
+    fun getSubscriptionHistory() // TODO("Not yet implemented")
 }

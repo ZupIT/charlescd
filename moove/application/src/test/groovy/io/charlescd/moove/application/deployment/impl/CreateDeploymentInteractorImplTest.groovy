@@ -24,6 +24,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.DeployService
+import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
@@ -40,6 +41,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
+    private HermesService hermesService = Mock(HermesService)
 
     def setup() {
         this.createDeploymentInteractor = new CreateDeploymentInteractorImpl(
@@ -48,7 +50,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository),
                 deployService,
-                new WorkspaceService(workspaceRepository, userRepository))
+                new WorkspaceService(workspaceRepository, userRepository),
+                new WebhookEventService(hermesService, buildRepository))
     }
 
     def 'when build does not exist, should throw exception'() {
@@ -66,6 +69,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(buildId, workspaceId) >> Optional.empty()
         0 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        0 * hermesService.notifySubscriptionEvent(_)
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "build"
@@ -76,9 +80,10 @@ class CreateDeploymentInteractorImplTest extends Specification {
         given:
         def author = TestUtils.user
         def circleId = TestUtils.circle.id
+        def circle = TestUtils.circle
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
-        def build = getDummyBuild( BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
+        def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
         def workspace = TestUtils.workspace
@@ -88,8 +93,11 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * circleRepository.findById(circleId) >> Optional.of(circle)
+        1 * hermesService.notifySubscriptionEvent(_)
 
         def ex = thrown(BusinessException)
         ex.errorCode == MooveErrorCode.DEPLOY_INVALID_BUILD
@@ -151,9 +159,6 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
-        def activeDeployment = getDeployment(DeploymentStatusEnum.DEPLOYED, LocalDateTime.now().plusDays(1), null, false)
-        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, null, null, false)
-
         def workspace = TestUtils.workspace
 
         when:
@@ -165,6 +170,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
+        1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, false, _) >> { arguments ->
             def deploymentArgument = arguments[0]
@@ -214,10 +221,12 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
+        1 * hermesService.notifySubscriptionEvent(_)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, true, _) >> { arguments ->
@@ -261,18 +270,19 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
         def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
-        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, null, null, true)
 
         def workspace = TestUtils.workspace
         when:
         def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
+        1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, true, _) >> { arguments ->
             def deploymentArgument = arguments[0]
@@ -315,19 +325,19 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
-        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, LocalDateTime.now().plusDays(1), LocalDateTime.now(), false)
-
         def workspace = TestUtils.workspace
 
         when:
         def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
         then:
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
+        1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, false, _) >> { arguments ->
             def deploymentArgument = arguments[0]
@@ -360,6 +370,34 @@ class CreateDeploymentInteractorImplTest extends Specification {
         deploymentResponse.circle.rules == build.deployments[0].circle.rules
         deploymentResponse.buildId == build.id
         deploymentResponse.deployedAt == null
+    }
+
+    def 'when deploy has error should throw exception and notify'() {
+        given:
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
+        def author = TestUtils.user
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def workspace = TestUtils.workspace
+
+        when:
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization,)
+
+        then:
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
+        1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
+        1 * hermesService.notifySubscriptionEvent(_)
+        1 * deploymentRepository.save(_) >> _
+        1 * deployService.deploy(_, _, false, _) >> {
+            throw new RuntimeException("Error")
+        }
+
+        thrown(RuntimeException)
     }
 
     private static Build getDummyBuild(BuildStatusEnum buildStatusEnum,
