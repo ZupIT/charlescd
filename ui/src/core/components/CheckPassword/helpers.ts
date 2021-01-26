@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+export const DEFAULT_MAX_LENGTH = 100;
+
 export const checkPoints = [
   {
     name: 'Uppercase',
@@ -37,7 +39,8 @@ export const checkPoints = [
   },
   {
     name: 'Minimum 10 and max of 100 characters',
-    rule: (pass = '') => pass?.length >= 10 && pass?.length <= 100,
+    rule: (pass = '') =>
+      pass?.length >= 10 && pass?.length <= DEFAULT_MAX_LENGTH,
     message: 'Must be between 10 and 100 characters'
   },
   {
