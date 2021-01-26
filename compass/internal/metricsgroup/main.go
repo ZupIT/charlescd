@@ -19,32 +19,33 @@
 package metricsgroup
 
 import (
+	"io"
+
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"io"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	PeriodValidate(currentPeriod string) (datasourcePKG.Period, error)
-	Parse(metricsGroup io.ReadCloser) (MetricsGroup, error)
-	FindAll() ([]MetricsGroup, error)
-	ResumeByCircle(circleId string) ([]MetricGroupResume, error)
-	Save(metricsGroup MetricsGroup) (MetricsGroup, error)
-	FindById(id string) (MetricsGroup, error)
-	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
-	UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
-	Remove(id string) error
-	QueryByGroupID(id string, period, interval datasourcePKG.Period) ([]datasourcePKG.MetricValues, error)
-	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
-	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
-	ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, error)
-	Validate(metricsGroup MetricsGroup) []util.ErrorUtil
+	PeriodValidate(currentPeriod string) (datasourcePKG.Period, errors.Error)
+	Parse(metricsGroup io.ReadCloser) (MetricsGroup, errors.Error)
+	FindAll() ([]MetricsGroup, errors.Error)
+	ResumeByCircle(circleId string) ([]MetricGroupResume, errors.Error)
+	Save(metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
+	FindById(id string) (MetricsGroup, errors.Error)
+	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
+	UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
+	Remove(id string) errors.Error
+	QueryByGroupID(id string, period, interval datasourcePKG.Period) ([]datasourcePKG.MetricValues, errors.Error)
+	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, errors.Error)
+	ResultByID(id string) ([]datasourcePKG.MetricResult, errors.Error)
+	ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, errors.Error)
+	Validate(metricsGroup MetricsGroup) errors.ErrorList
 }
 
 type Main struct {
