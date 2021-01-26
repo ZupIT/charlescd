@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
-import * as dateUtils from 'core/utils/date';
-import CardCircle from '../';
+import {
+  COLOR_MOUNTAIN_MEADOW,
+  COLOR_BASTILLE,
+  COLOR_RED_ORANGE
+} from 'core/assets/colors';
 
-test('render CardCircle with children', () => {
-  jest.spyOn(dateUtils, 'dateFrom').mockImplementation(value => value);
+export const light = {};
 
-  render(
-    <CardCircle title="woman" description="2020">
-      content
-    </CardCircle>
-  );
-
-  expect(screen.getByText(/2020/)).toBeInTheDocument();
-  expect(screen.getByText('woman')).toBeInTheDocument();
-  expect(screen.getByText('content')).toBeInTheDocument();
-});
+export const dark = {
+  success: COLOR_MOUNTAIN_MEADOW,
+  dark: COLOR_BASTILLE,
+  error: COLOR_RED_ORANGE
+} as Record<string, string>;

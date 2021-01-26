@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
-import * as dateUtils from 'core/utils/date';
-import CardCircle from '../';
+export const FORM_WEBHOOK = 'webhook';
 
-test('render CardCircle with children', () => {
-  jest.spyOn(dateUtils, 'dateFrom').mockImplementation(value => value);
+export const radios = [
+  { icon: '', name: 'Send me everything', value: 'everything' },
+  {
+    icon: '',
+    name: 'Let me select individual events',
+    value: 'individual'
+  }
+];
 
-  render(
-    <CardCircle title="woman" description="2020">
-      content
-    </CardCircle>
-  );
-
-  expect(screen.getByText(/2020/)).toBeInTheDocument();
-  expect(screen.getByText('woman')).toBeInTheDocument();
-  expect(screen.getByText('content')).toBeInTheDocument();
-});
+export const EVENTS = ['DEPLOY', 'UNDEPLOY'];

@@ -38,7 +38,39 @@ export const useWorkspace = (): [Workspace, Function, Function, Function] => {
       try {
         dispatch(statusWorkspaceAction('pending'));
         const response = await getWorkspaceById({ id });
-        dispatch(loadedWorkspaceAction(response));
+
+        // TODO: remove mock
+        const mock: Workspace = {
+          ...response,
+          webhookConfiguration: [
+            {
+              id: 'Webhook 1',
+              url: 'http://webhook.com.br',
+              apiKey: '1qwerty-yuiop-asdf-ghjkl',
+              externalId: '1qw34-5611-9000-sdf7',
+              description: 'Meu webhook 1',
+              lastDelivery: {
+                status: 200,
+                details: 'Service available'
+              },
+              events: ['DEPLOY', 'UNDEPLOY']
+            },
+            {
+              id: 'Webhook 2',
+              url: 'http://webhook.com.br',
+              apiKey: '2qwerty-yuiop-asdf-ghjkl',
+              externalId: '2qw34-5611-9000-sdf7',
+              description: 'Meu webhook 2',
+              lastDelivery: {
+                status: 503,
+                details: 'Service unavailable'
+              },
+              events: ['DEPLOY', 'UNDEPLOY']
+            }
+          ]
+        };
+
+        dispatch(loadedWorkspaceAction(mock));
         dispatch(statusWorkspaceAction('resolved'));
         setWorkspace(response);
       } catch (error) {
