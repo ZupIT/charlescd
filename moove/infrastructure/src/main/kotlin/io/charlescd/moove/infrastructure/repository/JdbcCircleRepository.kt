@@ -312,7 +312,7 @@ class JdbcCircleRepository(
         }
     }
 
-    private fun createActiveCircleQuery(name: String?): StringBuilder {
+    private fun createActiveCircleQuery(name: String?, isPercentage: Boolean? = null): StringBuilder {
         val statement = StringBuilder(
             """
                     SELECT circles.id                  AS circle_id,
@@ -339,6 +339,7 @@ class JdbcCircleRepository(
                 """
         )
 
+        if(isPercentage != null && isPercentage)  statement.append("AND MATCHER_TYPE= 'PERCENTAGE'")
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
         statement.appendln("AND circles.workspace_id = ?")
         statement.appendln("ORDER BY circles.name")
@@ -346,7 +347,7 @@ class JdbcCircleRepository(
         return statement
     }
 
-    private fun createInactiveCircleQuery(name: String?): StringBuilder {
+    private fun createInactiveCircleQuery(name: String?, isPercentage: Boolean? = null): StringBuilder {
         val statement = StringBuilder(
             """
                     SELECT circles.id                  AS circle_id,
@@ -380,6 +381,7 @@ class JdbcCircleRepository(
                 """
         )
 
+        if (isPercentage != null && isPercentage) statement.append("AND MATCHER_TYPE= 'PERCENTAGE'")
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
         statement.appendln("AND circles.workspace_id = ?")
         statement.appendln("ORDER BY circles.name")
@@ -596,10 +598,10 @@ class JdbcCircleRepository(
     override fun findCirclesPercentage(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest?): Page<Circle> {
         val count = executeCountQueryPercentage(name, active, workspaceId)
         val statement = when (active) {
-            true -> createActiveCircleQuery(name)
-            else -> createInactiveCircleQuery(name)
+            true -> createActiveCircleQuery(name, true)
+            else -> createInactiveCircleQuery(name, true)
         }
-        statement.append("AND MATCHER_TYPE= 'PERCENTAGE'")
+
         val result = this.jdbcTemplate.query(
             statement.toString(),
             createParametersArray(name, active, workspaceId),
