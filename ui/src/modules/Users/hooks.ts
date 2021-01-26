@@ -230,7 +230,7 @@ export const useUsers = (): [Function, Function, boolean] => {
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response, error, loading } = usersData;
 
-  const getAll = useCallback(
+  const filterUsers = useCallback(
     (name: string, page: number) => {
       getUsers({ name, page });
     },
@@ -245,7 +245,7 @@ export const useUsers = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [getAll, getUsers, loading];
+  return [filterUsers, getUsers, loading];
 };
 
 export default useUsers;

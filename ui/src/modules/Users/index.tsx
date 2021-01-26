@@ -36,7 +36,7 @@ const CreateUser = lazy(() => import('./Create'));
 
 const Users = () => {
   const profileName = getProfileByKey('name');
-  const [getAll, , loading] = useUsers();
+  const [filterUsers, , loading] = useUsers();
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const { list } = useGlobalState(({ users }) => users);
@@ -47,15 +47,15 @@ const Users = () => {
   useEffect(() => {
     const page = 0;
     dispatch(resetContentAction());
-    getAll({ name, page });
+    filterUsers(name, page);
 
     if (message === 'Deleted' || message === 'Created') {
-      getAll({ name, page });
+      filterUsers(name, page);
     }
-  }, [name, message, getAll, dispatch]);
+  }, [name, message, filterUsers, dispatch]);
 
   const loadMore = (page: number) => {
-    getAll({ name, page });
+    filterUsers(name, page);
   };
 
   const renderPlaceholder = () => (

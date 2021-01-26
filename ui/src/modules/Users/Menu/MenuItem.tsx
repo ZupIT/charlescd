@@ -32,20 +32,21 @@ const MenuItem = ({ id, name, email }: Props) => {
   const history = useHistory();
   const query = useQueryStrings();
 
-  const isActive = (id: string) => query.getAll('user').includes(id);
+  const isActive = () => query.getAll('user').includes(id);
 
-  const toggleUser = (id: string) =>
-    isActive(id)
+  const toggleUser = () =>
+    isActive()
       ? delParam('user', routes.usersComparation, history, id)
       : addParam('user', routes.usersComparation, history, id);
 
+  // TODO remove isActive?
   return (
     <Styled.Link
-      onClick={() => toggleUser(email)}
-      isActive={isActive(email)}
+      onClick={() => toggleUser()}
+      isActive={isActive()}
       data-testid={`menu-users-${id}`}
     >
-      <Styled.ListItem icon="user">
+      <Styled.ListItem icon="user" isActive={isActive()}>
         <Text.h4 color="light">{name}</Text.h4>
       </Styled.ListItem>
     </Styled.Link>

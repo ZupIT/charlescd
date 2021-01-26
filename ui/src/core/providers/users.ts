@@ -24,13 +24,14 @@ const endpointWorkspaces = '/moove/v2/workspaces/users';
 const v1Endpoint = '/moove/users';
 
 export interface UserFilter {
+  id?: string;
   name?: string;
   email?: string;
   page?: number;
 }
 
 const initialUserFilter = {
-  email: '',
+  name: '',
   page: 0
 };
 
