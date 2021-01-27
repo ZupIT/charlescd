@@ -17,6 +17,6 @@
 package io.charlescd.moove.infrastructure.service.client.response
 
 data class HermesHealthCheckSubscriptionResponse(
-    val status: Int,
+    val status: Long,
     val details: String
 )

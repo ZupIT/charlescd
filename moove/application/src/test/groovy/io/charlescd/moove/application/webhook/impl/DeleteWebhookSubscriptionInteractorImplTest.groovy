@@ -19,8 +19,8 @@ package io.charlescd.moove.application.webhook.impl
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.DeleteWebhookSubscriptionInteractor
-import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
@@ -47,7 +47,7 @@ class DeleteWebhookSubscriptionInteractorImplTest extends Specification {
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
         1 * this.hermesService.deleteSubscription(authorEmail, subscriptionId)
         notThrown()
     }
@@ -59,7 +59,7 @@ class DeleteWebhookSubscriptionInteractorImplTest extends Specification {
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
+        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
         0 * this.hermesService.deleteSubscription(authorEmail, subscriptionId)
         thrown(NotFoundException)
     }
@@ -91,8 +91,8 @@ class DeleteWebhookSubscriptionInteractorImplTest extends Specification {
         return "subscriptionId"
     }
 
-    private static SimpleWebhookSubscription getSimpleWebhookSubscription() {
-        return new SimpleWebhookSubscription('https://mywebhook.com.br', 'workspaceId',
-                'My Webhook', events)
+    private static WebhookSubscription getWebhookSubscription() {
+        return new WebhookSubscription("subscriptionId", "https://mywebhook.com.br", "apiKey","workspaceId",
+                "My Webhook", events)
     }
 }

@@ -28,20 +28,25 @@ import org.springframework.stereotype.Service
 
 @Service
 class HermesClientService(private val hermesClient: HermesClient, private val hermesPublisherClient: HermesPublisherClient) : HermesService {
-    override fun subscribe(authorEmail: String, webhookSubscription: WebhookSubscription): String {
-        val request = buildHermesSubscriptionCreateRequest(webhookSubscription)
+    override fun subscribe(authorEmail: String, simpleWebhookSubscription: SimpleWebhookSubscription): String {
+        val request = buildHermesSubscriptionCreateRequest(simpleWebhookSubscription)
         return hermesClient.subscribe(authorEmail, request).id
     }
 
-    override fun getSubscription(authorEmail: String, id: String): SimpleWebhookSubscription {
+    override fun getSubscription(authorEmail: String, id: String): WebhookSubscription {
         val subscription = hermesClient.getSubscription(authorEmail, id)
-        return buildSimpleWebhookSubscription(subscription)
+        return buildWebhookSubscription(subscription)
     }
 
-    override fun updateSubscription(authorEmail: String, id: String, events: List<String>): SimpleWebhookSubscription {
+    override fun getSubscriptinsByExternalId(authorEmail: String, externalId: String): List<WebhookSubscription> {
+        val subscriptions = hermesClient.getSubscriptionsByExternalId(authorEmail, externalId)
+        return subscriptions.map { buildWebhookSubscription(it) }
+    }
+
+    override fun updateSubscription(authorEmail: String, id: String, events: List<String>): WebhookSubscription {
         val request = buildHermesSubscriptionUpdateRequest(events)
         val subscription = hermesClient.updateSubscription(authorEmail, id, request)
-        return buildSimpleWebhookSubscription(subscription)
+        return buildWebhookSubscription(subscription)
     }
 
     override fun deleteSubscription(authorEmail: String, id: String) {
@@ -67,13 +72,13 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         TODO("Not yet implemented")
     }
 
-    private fun buildHermesSubscriptionCreateRequest(webhookSubscription: WebhookSubscription): HermesCreateSubscriptionRequest {
+    private fun buildHermesSubscriptionCreateRequest(simpleWebhookSubscription: SimpleWebhookSubscription): HermesCreateSubscriptionRequest {
         return HermesCreateSubscriptionRequest(
-            url = webhookSubscription.url,
-            description = webhookSubscription.description,
-            apiKey = webhookSubscription.apiKey,
-            externalId = webhookSubscription.workspaceId,
-            events = webhookSubscription.events
+            url = simpleWebhookSubscription.url,
+            description = simpleWebhookSubscription.description,
+            apiKey = simpleWebhookSubscription.apiKey,
+            externalId = simpleWebhookSubscription.workspaceId,
+            events = simpleWebhookSubscription.events
         )
     }
 
@@ -83,8 +88,10 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         )
     }
 
-    private fun buildSimpleWebhookSubscription(subscription: HermesSubscriptionResponse): SimpleWebhookSubscription {
-        return SimpleWebhookSubscription(
+    private fun buildWebhookSubscription(subscription: HermesSubscriptionResponse): WebhookSubscription {
+        return WebhookSubscription(
+            id = subscription.id,
+            apiKey = subscription.apiKey,
             url = subscription.url,
             description = subscription.description,
             workspaceId = subscription.externalId,

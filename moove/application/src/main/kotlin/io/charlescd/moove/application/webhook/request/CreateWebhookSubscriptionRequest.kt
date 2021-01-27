@@ -16,7 +16,7 @@
 
 package io.charlescd.moove.application.webhook.request
 
-import io.charlescd.moove.domain.WebhookSubscription
+import io.charlescd.moove.domain.SimpleWebhookSubscription
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Pattern
@@ -37,7 +37,7 @@ data class CreateWebhookSubscriptionRequest(
     @field:NotEmpty
     val events: List<String>
 ) {
-    fun toWebhookSubscription(workspaceId: String) = WebhookSubscription(
+    fun toSimpleWebhookSubscription(workspaceId: String) = SimpleWebhookSubscription(
         description = description,
         url = url,
         apiKey = apiKey,

@@ -83,4 +83,15 @@ interface HermesClient {
         @RequestHeader("x-author") authorEmail: String,
         @PathVariable("id") id: String
     ): HermesHealthCheckSubscriptionResponse
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["/subscriptions/external-id/{externalId}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun getSubscriptionsByExternalId(
+        @RequestHeader("x-author") authorEmail: String,
+        @PathVariable("externalId") externalId: String
+    ): List<HermesSubscriptionResponse>
 }

@@ -42,7 +42,7 @@ class HermesClientServiceTest extends Specification {
         given:
         def request = new HermesCreateSubscriptionRequest('https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
-        def subscription = new WebhookSubscription('https://mywebhook.com.br', 'secret', 'workspaceId',
+        def subscription = new SimpleWebhookSubscription('https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
         def response = new HermesSubscriptionCreateResponse("subscriptionId")
 
@@ -123,20 +123,18 @@ class HermesClientServiceTest extends Specification {
 
     }
 
-
     private static String getAuthorEmail() {
         return "email@email.com"
     }
 
     private static HermesSubscriptionResponse getHermesSubscriptionResponse() {
-        return new HermesSubscriptionResponse('https://mywebhook.com.br', 'secret', 'workspaceId',
+        return new HermesSubscriptionResponse("subscriptionId",'https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
     }
 
     private static HermesHealthCheckSubscriptionResponse getHermesHealthCheckSubscriptionResponse() {
         return new HermesHealthCheckSubscriptionResponse(200, "OK!")
     }
-
 
     private static List<String> getEvents() {
         def events = new ArrayList()

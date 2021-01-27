@@ -16,16 +16,18 @@
 
 package io.charlescd.moove.application.webhook.response
 
-import io.charlescd.moove.domain.SimpleWebhookSubscription
+import io.charlescd.moove.domain.WebhookSubscription
 
-data class SimpleWebhookSubscriptionResponse(
+data class WebhookSubscriptionResponse(
+    val id: String,
     val url: String,
     val workspaceId: String,
     val description: String,
     val events: List<String>
 ) {
     companion object {
-        fun from(webhookSubscription: SimpleWebhookSubscription) = SimpleWebhookSubscriptionResponse(
+        fun from(webhookSubscription: WebhookSubscription) = WebhookSubscriptionResponse(
+            id = webhookSubscription.id,
             url = webhookSubscription.url,
             description = webhookSubscription.description,
             workspaceId = webhookSubscription.workspaceId,

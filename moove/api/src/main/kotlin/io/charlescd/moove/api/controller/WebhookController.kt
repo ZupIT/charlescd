@@ -20,7 +20,7 @@ import io.charlescd.moove.application.webhook.*
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
-import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
+import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
 import org.springframework.http.HttpStatus
@@ -54,7 +54,7 @@ class WebhookController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String
-    ): SimpleWebhookSubscriptionResponse {
+    ): WebhookSubscriptionResponse {
         return getWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
     }
 
@@ -66,7 +66,7 @@ class WebhookController(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String,
         @Valid @RequestBody request: UpdateWebhookSubscriptionRequest
-    ): SimpleWebhookSubscriptionResponse {
+    ): WebhookSubscriptionResponse {
         return updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, request)
     }
 

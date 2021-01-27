@@ -19,7 +19,7 @@ package io.charlescd.moove.application.webhook.response
 import io.charlescd.moove.domain.HealthCheckWebhookSubscription
 
 data class HealthCheckWebhookSubscriptionResponse(
-    val status: Int,
+    val status: Long,
     val details: String
 ) {
     companion object {
