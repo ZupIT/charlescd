@@ -282,3 +282,33 @@ compass:
     requests:
       cpu: 64m
       memory: 64Mi
+
+hermes:
+  enabled: true
+  name: "charlescd-hermes"
+  database:
+    name: hermes
+    host: charlescd-postgresql
+    port: 5432
+    user: hermes
+    password: aGVybWVz
+  replicaCount: 1
+  image:
+    name: zupcharles/charlescd-hermes:0.5.0
+    pullPolicy: Always
+  service:
+    name: charlescd-hermes
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 8080
+  resources:
+    limits:
+      cpu: 128m
+      memory: 128Mi
+    requests:
+      cpu: 64m
+      memory: 64Mi
+
+rabbitmq:
+  enabled: true
