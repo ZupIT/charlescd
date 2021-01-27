@@ -16,11 +16,6 @@
 
 import styled from 'styled-components';
 
-interface LabelProps {
-  icon?: string;
-  value: string;
-}
-
 const Radio = styled.div`
   display: flex;
   flex-direction: row;
@@ -28,7 +23,7 @@ const Radio = styled.div`
   position: relative;
 `;
 
-const Label = styled.label<LabelProps>`
+const Label = styled.label`
   padding: 10px 13px 10px 30px;
   display: flex;
   flex-direction: column;
