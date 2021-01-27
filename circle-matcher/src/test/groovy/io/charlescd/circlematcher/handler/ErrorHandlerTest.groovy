@@ -68,7 +68,7 @@ class ErrorHandlerTest extends Specification {
         assert response.title == 'Error creating segmentation'
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
-        assert response.source.pointer = "segmentation/workspaceId"
+        assert response.source.pointer == "segmentation/workspaceId"
     }
 
 }
