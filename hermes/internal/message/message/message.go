@@ -55,53 +55,56 @@ func (main Main) ParseMessage(request io.ReadCloser) (payloads.Request, errors.E
 }
 
 func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error) {
-	var resList []payloads.MessageResponse
+	var msgList []Message
+	var response []payloads.MessageResponse
 
 	for _, r := range messagesRequest {
-		var response payloads.MessageResponse
-
 		msg := Message{
 			BaseModel:      util.BaseModel{ID: uuid.New()},
 			SubscriptionId: r.SubscriptionId,
 			EventType:      r.EventType,
 			Event:          string(r.Event),
 		}
-
-		result := main.db.Model(&Message{}).Create(&msg).Scan(&response)
-		if result.Error != nil {
-			return []payloads.MessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
-				WithOperations("Save.Result")
-		}
-
-		pushMsg, err := json.Marshal(response)
-		if err != nil {
-			return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
-				WithOperations("Save.Marshal")
-		}
-
-		err = main.amqpClient.Push(pushMsg)
-		if err != nil {
-			return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
-				WithOperations("Save.Push")
-		}
-
-		convertedMsg := requestToResponse(response)
-		_, execErr := main.executionMain.Save(convertedMsg)
-		if execErr != nil {
-			return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
-				WithOperations("Save.Execution")
-		}
-
-		resList = append(resList, response)
+		msgList = append(msgList, msg)
 	}
 
-	return resList, nil
+	result := main.db.Model(&Message{}).Create(&msgList).Scan(&response)
+	if result.Error != nil {
+		return []payloads.MessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
+			WithOperations("Save.Result")
+	}
+
+	//pushMsg, err := json.Marshal(response)
+	//if err != nil {
+	//	return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
+	//		WithOperations("Save.Marshal")
+	//}
+	//
+	//err = main.amqpClient.Push(pushMsg)
+	//if err != nil {
+	//	return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
+	//		WithOperations("Save.Push")
+	//}
+	//
+	//convertedMsg := requestToResponse(response)
+	//_, execErr := main.executionMain.Save(convertedMsg)
+	//if execErr != nil {
+	//	return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
+	//		WithOperations("Save.Execution")
+	//}
+
+	return response, nil
 }
 
-func requestToResponse (response payloads.MessageResponse) payloads.ExecutionRequest {
-	return payloads.ExecutionRequest{
-		ExecutionId: response.Id,
-		EventType:   response.EventType,
-		Event:       response.Event,
+func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error) {
+	var response []payloads.MessageResponse
+
+	query := main.db.Raw(FindAllNotEnqueuedQuery).Scan(&response)
+	if query.Error != nil {
+		return []payloads.MessageResponse{}, errors.NewError("FindAllNotEnqueued Message error", query.Error.Error()).
+			WithOperations("FindAllNotEnqueued.Query")
 	}
+
+	return response, nil
 }
+
