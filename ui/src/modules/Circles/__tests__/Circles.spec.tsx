@@ -18,7 +18,6 @@ import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import Circles from '..';
-import { circlesResponse } from './fixtures';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();

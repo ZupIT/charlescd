@@ -79,7 +79,7 @@ test('render Registry form with AZURE values', async () => {
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Azure');
 
-  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  const fillInfoText = await screen.findByText('Fill in the fields below with your Azure information:');
   expect(fillInfoText).toBeInTheDocument();
 
   const text = screen.getByText('Enter the username');
@@ -137,7 +137,7 @@ test('should have successful test connection with AZURE registry', async () => {
   expect(submitButton).not.toBeDisabled();
 
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Azure.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -182,7 +182,7 @@ test('should render Registry with GCP form', async () => {
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'GCP');
 
-  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  const fillInfoText = await screen.findByText('Fill in the fields below with your GCP information:');
   expect(fillInfoText).toBeInTheDocument();
   
   const projectIdInput = screen.getByText('Enter the project id');
@@ -259,7 +259,7 @@ test('should enable submit button after fill GCP form', async () => {
   const testConnectionButton = screen.getByText('Test connection');
   await act(async () => userEvent.click(testConnectionButton));
 
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with GCP.');
   expect(successMessage).toBeInTheDocument();
   expect(submitButton).not.toBeDisabled();
 });
@@ -287,7 +287,7 @@ test('should test connectivity with GCR successful', async () => {
   const testConnectionButton = screen.getByText('Test connection');
   await act(async () => userEvent.click(testConnectionButton));
 
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with GCP.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -330,7 +330,7 @@ test('should render Registry form with AWS values', async () => {
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'AWS');
 
-  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  const fillInfoText = await screen.findByText('Fill in the fields below with your AWS information:');
   expect(fillInfoText).toBeInTheDocument();
   
   const text = screen.getByText('Enter the region');
@@ -375,7 +375,7 @@ test('should enable submit button after fill AWS form', async () => {
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
   const submitButton = screen.getByTestId("button-default-submit-registry");
@@ -405,7 +405,7 @@ test('should not enable submit button after partially filled AWS form (missing n
   
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
   const submitButton = screen.getByTestId("button-default-submit-registry");
@@ -435,7 +435,7 @@ test('should test AWS registry connection successful', async () => {
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
 
@@ -448,7 +448,7 @@ test('should test AWS registry connection successful', async () => {
   });
 
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = screen.getByText('Successful connection.');
+  const successMessage = screen.getByText('Successful connection with AWS.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -470,7 +470,7 @@ test('should test AWS registry connection error', async () => {
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
-  const inputAwsSecretKey = screen.getByTestId("input-text-secretKey");
+  const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
   const inputAwsRegion = screen.getByTestId("input-text-region");
   const testConnectionButton = screen.getByText('Test connection');
 
@@ -494,11 +494,10 @@ test('should render Registry form with Docker Hub form', async () => {
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Docker Hub');
 
-  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  const fillInfoText = await screen.findByText('Fill in the fields below with your Docker Hub information:');
   expect(fillInfoText).toBeInTheDocument();
   
   const registryField = screen.getByText('Type a name for Registry');
-  const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
   const submitButton = screen.getByTestId('button-default-submit-registry');
@@ -511,13 +510,11 @@ test('should submit Docker Hub form', async () => {
   selectEvent.select(registryLabel, 'Docker Hub');
   
   const registryField = await screen.findByText('Type a name for Registry');
-  const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar!');
   });
@@ -530,27 +527,6 @@ test('should submit Docker Hub form', async () => {
   await act(async () => userEvent.click(testConnectionButton));
 });
 
-test('should not submit Docker Hub form (missing registry url)', async () => {
-  render(<FormRegistry onFinish={mockOnFinish}/>);
-
-  const registryLabel = screen.getByText('Choose which one you want to add:');
-  selectEvent.select(registryLabel, 'Docker Hub');
-  
-  const registryField = await screen.findByText('Type a name for Registry');
-  const usernameField = screen.getByText('Enter the username');
-  const passwordField = screen.getByText('Enter the password');
-  const submitButton = screen.getByTestId('button-default-submit-registry');
-
-  await act(async () => {
-    userEvent.type(registryField, 'fake-name');
-    userEvent.type(usernameField, 'fake username');
-    userEvent.type(passwordField, '123mudar');
-  });
-
-  await waitFor(() => expect(screen.getByText('Test connection')).toBeDisabled());
-  expect(submitButton).toBeDisabled();
-});
-
 test('should test connectivity with Docker Hub successful', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify({ }));
   render(<FormRegistry onFinish={mockOnFinish}/>);
@@ -559,7 +535,6 @@ test('should test connectivity with Docker Hub successful', async () => {
   selectEvent.select(registryLabel, 'Docker Hub');
   
   const registryField = await screen.findByText('Type a name for Registry');
-  const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
   const testConnectionButton = screen.getByText('Test connection');
@@ -567,14 +542,13 @@ test('should test connectivity with Docker Hub successful', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
 
 
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Docker Hub.');
   expect(successMessage).toBeInTheDocument();
   expect(submitButton).not.toBeDisabled();
 });
@@ -591,7 +565,6 @@ test('should test connectivity with Docker Hub error', async () => {
   selectEvent.select(registryLabel, 'Docker Hub');
   
   const registryField = await screen.findByText('Type a name for Registry');
-  const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
   const testConnectionButton = screen.getByText('Test connection');
@@ -599,7 +572,6 @@ test('should test connectivity with Docker Hub error', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
@@ -619,7 +591,7 @@ test('should render Harbor form', async () => {
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Harbor');
 
-  const fillInfoText = await screen.findByText('Fill in the fields below with your information:');
+  const fillInfoText = await screen.findByText('Fill in the fields below with your Harbor information:');
   expect(fillInfoText).toBeInTheDocument();
 
   const input = await screen.findByText('Enter the username');
@@ -702,7 +674,7 @@ test('should test connection with Harbor (success)', async () => {
 
   expect(submitButton).not.toBeDisabled();
   await act(async () => userEvent.click(testConnectionButton));
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Harbor.');
   expect(successMessage).toBeInTheDocument();
 });
 
@@ -763,7 +735,7 @@ test('should clean test connection message after change form', async () => {
 
   await act(async () => userEvent.click(testConnectionButton));
 
-  const successMessage = await screen.findByText('Successful connection.');
+  const successMessage = await screen.findByText('Successful connection with Harbor.');
 
   expect(successMessage).toBeInTheDocument();
   await act(async () => {

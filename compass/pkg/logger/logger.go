@@ -19,9 +19,10 @@
 package logger
 
 import (
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 func Info(msg string, data interface{}) {
@@ -29,8 +30,9 @@ func Info(msg string, data interface{}) {
 		return
 	}
 
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.WithFields(logrus.Fields{
-		"Data": data,
+		"data": data,
 	}).Infoln(msg)
 }
 
@@ -40,9 +42,8 @@ func Error(msg string, functionName string, err error, data interface{}) {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Error":        err,
-		"FunctionName": functionName,
-		"Data":         data,
+		"level": "error",
+		"err":   err,
 	}).WithTime(time.Now()).Errorln(msg)
 }
 func Panic(msg string, functionName string, err error, data interface{}) {
@@ -51,6 +52,7 @@ func Panic(msg string, functionName string, err error, data interface{}) {
 	}
 
 	logrus.WithFields(logrus.Fields{
+		"level":        "fatal",
 		"Error":        err,
 		"FunctionName": functionName,
 		"Data":         data,

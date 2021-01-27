@@ -20,6 +20,8 @@ import { dark as darkConfig } from './config';
 import { dark as darkExpand } from './expand';
 import { dark as darkRole } from './role';
 import { dark as darkBoard } from './board';
+import { dark as darkMessage } from './message';
+import { dark as darkMain } from './main';
 
 const light = {};
 
@@ -29,7 +31,9 @@ const dark = {
   config: darkConfig,
   expand: darkExpand,
   role: darkRole,
-  board: darkBoard
+  board: darkBoard,
+  message: darkMessage,
+  main: darkMain
 };
 
 export { dark, light };
