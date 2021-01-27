@@ -141,13 +141,13 @@ test("Test getTooltipMessage to cannotDeleteActiveCircleMessage", () => {
   expect(tooltipMessage).toBe('Active circle cannot be deleted,<br />you can undeploy first and then<br /> delete this circle.');
 });
 
-test("Test getTooltipMessage", () => {
+test("Test getTooltipMessage to cannotDeleteDefaultCircleMessage", () => {
   const tooltipMessage = getTooltipMessage({ ...circle, name: 'Default', deployment });
 
   expect(tooltipMessage).toBe('Default circle is deployed to all<br /> users, so it cannot be deleted.');
 });
 
-test("Test getTooltipMessage", () => {
+test("Test getTooltipMessage to cannotDeleteInactiveDefaultCircleMessage", () => {
   const tooltipMessage = getTooltipMessage({ ...circle, name: 'Default' });
 
   expect(tooltipMessage).toBe('Default circle cannot be deleted.');

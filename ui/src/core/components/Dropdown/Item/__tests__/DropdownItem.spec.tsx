@@ -21,15 +21,16 @@ import DropdownItem from '../';
 import { Props as ActionProps } from '../';
 import {COLOR_COMET} from 'core/assets/colors';
 
+const onClick = jest.fn();
+
 const action: ActionProps = {
   icon: 'delete',
   name: 'Delete',
-  onClick: () => jest.fn(),
   tooltip: 'Tooltip here!'
 };
 
 test('should render an Inactive Item, on hover show a tooltip and be disabled', async () => {
-  render(<DropdownItem {...action} isInactive />);
+  render(<DropdownItem {...action} onClick={onClick} isInactive />);
 
   const deleteButton = screen.getByTestId('dropdown-item-delete-Delete');
   expect(deleteButton).toBeInTheDocument();
@@ -40,10 +41,13 @@ test('should render an Inactive Item, on hover show a tooltip and be disabled', 
   
   const tooltipText = screen.getByText('Tooltip here!');
   expect(tooltipText).toBeInTheDocument();
+
+  userEvent.click(deleteButton);
+  expect(onClick).not.toBeCalled();
 });
 
 test('should render an Active Item, on hover not show a tooltip and not be disabled', async () => {
-  render(<DropdownItem {...action} />);
+  render(<DropdownItem {...action} onClick={onClick} />);
 
   const deleteButton = screen.getByTestId('dropdown-item-delete-Delete');
   expect(deleteButton).toBeInTheDocument();
@@ -54,4 +58,7 @@ test('should render an Active Item, on hover not show a tooltip and not be disab
 
   const tooltipText = screen.queryByText('Tooltip here!');
   expect(tooltipText).not.toBeInTheDocument();
+
+  userEvent.click(deleteButton);
+  expect(onClick).toBeCalled();
 });
