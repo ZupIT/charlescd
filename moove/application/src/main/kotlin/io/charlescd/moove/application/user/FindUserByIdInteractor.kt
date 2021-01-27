@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+package io.charlescd.moove.application.user
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
+import io.charlescd.moove.application.user.response.UserResponse
+import java.util.UUID
 
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
-    }
-  }, [options, clearValue]);
+interface FindUserByIdInteractor {
 
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
-
-export default SingleValue;
+    fun execute(authorization: String, id: UUID): UserResponse
+}

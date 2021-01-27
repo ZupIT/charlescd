@@ -22,11 +22,12 @@ import io.charlescd.circlematcher.infrastructure.Constants;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
 import java.util.Map;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Engine;
+import org.graalvm.polyglot.PolyglotException;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,65 +35,61 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScriptManagerServiceImpl implements ScriptManagerService {
 
-    private ScriptEngine scriptEngine;
-    private String getPathScript;
-    private String toStrScript;
-    private String toNumberScript;
-
     private Logger logger = LoggerFactory.getLogger(ScriptManagerServiceImpl.class);
+    private Source toStrScript;
+    private Source toNumberScript;
+    private Source getPathScript;
+    private org.graalvm.polyglot.Engine engine;
 
     public ScriptManagerServiceImpl() {
-        this.toStrScript = ResourceUtils.getResourceAsString("js/toStr.js");
-        this.toNumberScript = ResourceUtils.getResourceAsString("js/toNumber.js");
-        this.getPathScript = ResourceUtils.getResourceAsString("js/getPath.js");
-        this.scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+        this.engine = Engine.create();
+        this.toStrScript = Source.create("js", ResourceUtils.getResourceAsString("js/toStr.js"));
+        this.toNumberScript = Source.create("js", ResourceUtils.getResourceAsString("js/toNumber.js"));
+        this.getPathScript = Source.create("js", ResourceUtils.getResourceAsString("js/getPath.js"));
     }
 
-    public ScriptContext scriptContext() {
-        var bindings = this.scriptEngine.createBindings();
-        var context = new SimpleScriptContext();
-        context.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
-
-        try {
-            evalJs(context, this.getPathScript);
-            evalJs(context, this.toStrScript);
-            evalJs(context, this.toNumberScript);
-        } catch (Exception ex) {
-            this.logger.error("Could not evaluate expression", ex);
-        }
-
+    public Context scriptContext() {
+        Context context = Context.newBuilder("js").engine(this.engine).build();
+        this.evalJs(context, getPathScript);
+        this.evalJs(context, toStrScript);
+        this.evalJs(context, toNumberScript);
         return context;
     }
 
     public boolean isMatch(Node node, Map<String, Object> data) {
-        try {
-            var context = scriptContext();
+        try (Context context = scriptContext()) {
             var exp = node.expression();
-            evalJsWithResult(context, exp, data);
-            return getResultVar(context);
-        } catch (ScriptException ex) {
+            var result = evalJsWithResult(context, exp, data);
+            return result.asBoolean();
+        } catch (PolyglotException ex) {
+            logger.error("Error executing script", ex);
             return false;
         }
     }
 
-    public Object evalJsWithResult(ScriptContext scriptContext, String script, Object input) throws ScriptException {
-        putVar(scriptContext, Constants.INPUT_VARIABLE, input);
-        return this.scriptEngine.eval(OpUtils.evalExpression(script), scriptContext);
+    public Value evalJsWithResult(Context context, String script, Map<String, Object> input) {
+        putVar(context, Constants.INPUT_VARIABLE, ProxyObject.fromMap(input));
+        this.evalJs(context, OpUtils.evalExpression(script));
+        return this.getResultVar(context);
     }
 
-    public Object evalJs(ScriptContext context, String script) throws ScriptException {
-        return this.scriptEngine.eval(script, context);
+    public Object evalJs(Context context, String script) {
+        return context.eval("js", script);
     }
 
-    public <T> T getResultVar(ScriptContext context) {
-        return (T) context.getBindings(ScriptContext.ENGINE_SCOPE).get(Constants.RESULT_VARIABLE);
+    public Object evalJs(Context context, Source source) {
+        return context.eval(source);
     }
 
-    public <T> T getVar(ScriptContext context, String key) {
-        return (T) context.getBindings(ScriptContext.ENGINE_SCOPE).get(key);
+    public Value getResultVar(Context context) {
+        return context.getBindings("js").getMember(Constants.RESULT_VARIABLE);
     }
 
-    private void putVar(ScriptContext scriptContext, String key, Object value) {
-        scriptContext.getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
+    public Value getVar(Context context, String key) {
+        return context.getBindings("js").getMember(key);
+    }
+
+    private void putVar(Context context, String key, Object value) {
+        context.getBindings("js").putMember(key, value);
     }
 }
