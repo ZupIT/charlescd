@@ -293,6 +293,13 @@ hermes:
     user: hermes
     password: aGVybWVz
   replicaCount: 1
+  envVars:
+    - name: DB_SSL
+      value: "disable"
+  secretEnvVars:
+    - name: ENCRYPTION_KEY
+      secretName: "hermes-aes256-key"
+      secretKey: "encryption-key"
   image:
     name: zupcharles/charlescd-hermes:0.5.0
     pullPolicy: Always
@@ -309,6 +316,3 @@ hermes:
     requests:
       cpu: 64m
       memory: 64Mi
-
-rabbitmq:
-  enabled: true

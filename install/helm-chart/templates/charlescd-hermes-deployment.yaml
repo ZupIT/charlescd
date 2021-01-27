@@ -52,6 +52,27 @@ spec:
             timeoutSeconds: 1   
           imagePullPolicy: {{ .Values.hermes.image.pullPolicy }}
           env:
+          - name: DB_USER
+            value: "{{ .Values.hermes.database.user }}"
+          - name: DB_PASSWORD
+            value: "{{ .Values.hermes.database.password }}"
+          - name: DB_HOST
+            value: "{{ .Values.hermes.database.host }}"
+          - name: DB_NAME
+            value: "{{ .Values.hermes.database.name }}"
+          - name: DB_PORT
+            value: "{{ .Values.hermes.database.port }}"
+          {{ range $i, $var := .Values.hermes.envVars -}}
+          - name: {{ $var.name | upper}}
+            value: {{ $var.value | quote}}
+          {{ end }}
+          {{ range $i, $var := .Values.hermes.secretEnvVars -}}
+          - name: {{ $var.name | upper }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $var.secretName }}
+                key: {{ $var.secretKey }}
+          {{ end }}
           resources:
 {{ toYaml .Values.hermes.resources | indent 12 }}
     {{- with .Values.hermes.nodeSelector }}

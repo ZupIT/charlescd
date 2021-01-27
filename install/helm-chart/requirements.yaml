@@ -20,4 +20,3 @@ dependencies:
   condition: nginx_ingress_controller.enabled
 - name: rabbitmq
   version: "3.8.11"
-  condition: rabbitmq.enabled
