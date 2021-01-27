@@ -122,8 +122,8 @@ describe('CreateDeploymentUsecase v2', () => {
     component2.merged = true
 
     const expectedDeploymentComponents = [
-      component2,
-      component1
+      component1,
+      component2
     ]
 
     const sameCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
