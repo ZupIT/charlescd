@@ -1,7 +1,7 @@
 package io.charlescd.circlematcher.domain.exception;
 
 public enum MatcherErrorCode {
-    CANNOT_UPDATE_DEFAULT_SEGMENTATION("Camnot update default segmentation"),
+    CANNOT_UPDATE_DEFAULT_SEGMENTATION("Cannot update default segmentation"),
     DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE("Default segmentation already registered in workspace");
 
     private String  key;
