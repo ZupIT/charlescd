@@ -47,9 +47,7 @@ const Users = () => {
   useEffect(() => {
     const page = 0;
     dispatch(resetContentAction());
-    filterUsers(name, page);
-
-    if (message === 'Deleted' || message === 'Created') {
+    if (message === '') {
       filterUsers(name, page);
     }
   }, [name, message, filterUsers, dispatch]);
