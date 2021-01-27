@@ -7,7 +7,6 @@ rules:
   - ""
   resources:
   - namespaces
-  - configmaps
   - events
   - replicationcontrollers
   - serviceaccounts
@@ -21,6 +20,7 @@ rules:
   - pods
   - services
   - secrets
+  - configmaps
   verbs:
   - create
   - delete

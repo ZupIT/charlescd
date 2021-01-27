@@ -16,16 +16,22 @@
 
 package io.charlescd.circlematcher.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.infrastructure.Constants;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node {
 
+    @NotNull
     private NodeType type;
     private LogicalOperatorType logicalOperator;
+    @Valid
     private List<Node> clauses;
+    @Valid
     private Content content;
 
     public Node() {
@@ -82,4 +88,31 @@ public class Node {
         stringBuilder.setLength(stringBuilder.length() - logicalOperatorLength);
     }
 
+    @JsonIgnore
+    public boolean isValidRuleType() {
+        return this.getType() == NodeType.RULE
+                && this.getContent() != null
+                && (this.getClauses() == null || this.getClauses().isEmpty());
+    }
+
+    @JsonIgnore
+    public boolean isValidClauseType() {
+        return this.getType() == NodeType.CLAUSE
+                && this.getContent() == null
+                && this.getLogicalOperator() != null
+                && this.getClauses() != null
+                && this.getClauses().size() > 0;
+    }
+
+    @JsonIgnore
+    public boolean isDecomposable() {
+        return NodeType.CLAUSE == type
+                && LogicalOperatorType.OR == logicalOperator;
+    }
+
+    @JsonIgnore
+    public boolean isConvertibleToKv() {
+        return isValidRuleType()
+                && Condition.EQUAL.name().equals(content.getCondition());
+    }
 }
