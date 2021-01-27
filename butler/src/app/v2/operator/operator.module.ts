@@ -8,6 +8,7 @@ import { K8sClient } from '../core/integrations/k8s/client'
 import { LogsModule } from '../core/logs/logs.module'
 import { DeploymentsHookController } from './deployments.hook.controller'
 import { RoutesHookController } from './routes.hook.controller'
+import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { RoutesHookController } from './routes.hook.controller'
     RoutesHookController
   ],
   providers: [
-    K8sClient
+    K8sClient,
+    CreateRoutesManifestsUseCase
   ]
 })
 export class OperatorModule {
