@@ -177,6 +177,44 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         notThrown()
     }
 
+    def "when deployment exists and callback is timeout should update status of current and do not update previous deployment"() {
+        given:
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.TIMED_OUT)
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
+                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+
+        def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        0 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED) >> Optional.of(previousDeployment)
+
+        0 * this.deploymentRepository.updateStatus(previousDeployment.id, DeploymentStatusEnum.NOT_DEPLOYED)
+
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOY_FAILED))
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.deploymentRepository.update(_) >> { arguments ->
+            def deployment = arguments[0]
+
+            assert deployment instanceof Deployment
+            assert deployment.id == currentDeployment.id
+            assert deployment.status == DeploymentStatusEnum.DEPLOY_FAILED
+            assert deployment.circle.id == circle.id
+
+            return deployment
+        }
+
+        notThrown()
+    }
+
     def "when deployment exists and callback is undeployed should update status of current and do not update previous deployment"() {
         given:
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
