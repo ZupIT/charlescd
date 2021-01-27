@@ -29,7 +29,7 @@ import { useWebhook } from './hooks';
 import Styled from './styled';
 
 const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
-  const { status, save } = useWebhook();
+  const { status, save, edit } = useWebhook();
   const {
     register,
     handleSubmit,
@@ -48,7 +48,13 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
       webhook.events = EVENTS;
     }
 
-    save(omit(webhook, 'eventType'));
+    const payload = omit(webhook, 'eventType');
+
+    if (webhook.id) {
+      edit(webhook.id, payload);
+    } else {
+      save(payload);
+    }
   };
 
   const renderOptions = () => (
