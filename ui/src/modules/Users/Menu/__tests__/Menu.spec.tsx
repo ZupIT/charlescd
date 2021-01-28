@@ -15,31 +15,18 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
-import Menu from '..';
-
-const props = {
-  isLoading: false,
-  items: [
-    {
-      id: '123',
-      name: 'name',
-      email: 'charles@zup.com.br',
-      applications: [{
-        id: '456',
-        name: '',
-        menbersCount: 10
-      }],
-      createdAt: '01/01/2020 00:01'
-    }
-  ],
-  onSearch: jest.fn()
-}
+import { render, screen } from 'unit-test/testUtils';
+import Menu from '../';
 
 test('render Menu default', async () => {
-  const { getByTestId } = render(
-    <Menu {...props} />
-  );
+  const onSearch = jest.fn();
+  const props = {
+    children: 'button'
+  };
 
-  expect(getByTestId('menu-users-charles@zup.com.br')).toBeInTheDocument();
+  render(<Menu onSearch={onSearch} children={props.children} />);
+
+  expect(screen.getByTestId('icon-plus-circle')).toBeInTheDocument();
+  expect(screen.getByText('Create user')).toBeInTheDocument();
+  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
 });
