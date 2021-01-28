@@ -72,7 +72,7 @@ class V2UserController(
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
         @Valid pageable: PageRequest
-    ): ResourcePageResponse<UserResponse> {
+    ): ResourcePageResponse<SimpleUserResponse> {
         return this.findAllUsersInteractor.execute(name, email, authorization, pageable)
     }
 
