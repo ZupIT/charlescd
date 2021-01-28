@@ -44,7 +44,7 @@ const MenuItem = ({ id, name, email }: Props) => {
     <Styled.Link
       onClick={() => toggleUser()}
       isActive={isActive()}
-      data-testid={`menu-users-${id}`}
+      data-testid={`menu-users-${email}`}
     >
       <Styled.ListItem icon="user" isActive={isActive()}>
         <Text.h4 color="light">{name}</Text.h4>
