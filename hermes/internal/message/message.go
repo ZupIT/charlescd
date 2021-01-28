@@ -30,6 +30,7 @@ type Message struct {
 	util.BaseModel
 	SubscriptionId uuid.UUID `json:"subscriptionId"`
 	EventType      string    `json:"eventType"`
+	LastStatus     string    `json:"lastStatus"`
 	Event          string    `json:"event" gorm:"type:jsonb"`
 }
 

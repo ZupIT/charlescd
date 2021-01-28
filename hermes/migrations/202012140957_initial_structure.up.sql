@@ -19,6 +19,7 @@ CREATE TABLE MESSAGES
     id              varchar(36) PRIMARY KEY,
     subscription_id varchar(36)                         NOT NULL,
     event_type      varchar(50),
+    last_status     varchar(50),
     event           jsonb                               NOT NULL,
     created_at      timestamp default clock_timestamp() NOT NULL,
     CONSTRAINT FK_subscription_id_messages_executions FOREIGN KEY (subscription_id) REFERENCES SUBSCRIPTIONS (ID)
