@@ -46,19 +46,6 @@ const Content = styled.div`
   overflow-y: auto;
 `;
 
-// TODO remove?
-const List = styled.ul`
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-
-  > * {
-    padding: 0 16px;
-  }
-`;
-
 const ListItem = styled(LabeledIcon)`
   padding: 15px 0px;
   cursor: pointer;
