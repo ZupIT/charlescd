@@ -136,8 +136,9 @@ func (c *Client) changeConnection(connection *amqp.Connection, channel *amqp.Cha
 
 func (c *Client) Push(data []byte) error {
 	if !c.isConnected {
-		return errors.New("failed to push push: not connected")
+		return errors.New("failed to push : not connected")
 	}
+	fmt.Println("Push")
 	for {
 		err := c.UnsafePush(data)
 		if err != nil {
@@ -152,8 +153,10 @@ func (c *Client) Push(data []byte) error {
 				return nil
 			}
 		case <-time.After(reconnectDelay):
+			return errors.New("no push confirmation received")
 		}
 	}
+
 }
 
 // UnsafePush will push to the queue without checking for

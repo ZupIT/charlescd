@@ -2,7 +2,10 @@ package dispatcher
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
 	"time"
@@ -39,12 +42,19 @@ func (main *Main) dispatch() {
 		}).Errorln()
 	}
 
+	fmt.Println("dispatch")
+
 	for _, msg := range messages {
 		go main.sendMessage(msg)
 	}
 }
 
 func (main *Main) sendMessage(message payloads.MessageResponse) {
+	defer main.mux.Unlock()
+	main.mux.Lock()
+
+
+	fmt.Println("sendMessage")
 	pushMsg, err := json.Marshal(message)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -55,9 +65,21 @@ func (main *Main) sendMessage(message payloads.MessageResponse) {
 
 	err = main.amqpClient.Push(pushMsg)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("ParseMessageError", "Could not parse message").
-				WithOperations("sendMessage.Marshal"),
-		}).Errorln()
+		data := messageexecutionhistory.MessagesExecutionsHistory{
+			ID:           uuid.New(),
+			ExecutionId:  message.Id,
+			ExecutionLog: "",
+			Status:       "ENQUEUD_FAILED",
+			LoggedAt:     time.Now(),
+		}
+
+		retry := main.db.Table("messages_executions_histories").Create(&data)
+		if retry.Error != nil {
+			logrus.WithFields(logrus.Fields{
+				"err": errors.NewError("Push message error", "Could not save message execution").
+					WithOperations("sendMessage.Push.Retry"),
+			}).Errorln()
+		}
 	}
+
 }

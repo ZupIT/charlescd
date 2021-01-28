@@ -22,6 +22,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"hermes/internal/configuration"
+	"hermes/internal/message/dispatcher"
 	"hermes/internal/message/message"
 	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/subscription"
@@ -55,6 +56,10 @@ func main() {
 	subscriptionMain := subscription.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
+	messagePublisher := dispatcher.NewMain(db,amqpClient,messageMain,messageExecutionMain)
+
+	stopChan := make(chan bool, 0)
+	go messagePublisher.Start(stopChan)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)
