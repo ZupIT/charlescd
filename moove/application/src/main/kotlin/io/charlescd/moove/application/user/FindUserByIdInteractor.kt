@@ -14,37 +14,12 @@
  * limitations under the License.
  */
 
-export interface Workspace {
-  id: string;
-  name?: string;
-  permissions?: string[];
-}
+package io.charlescd.moove.application.user
 
-interface Base {
-  name: string;
-  email: string;
-}
+import io.charlescd.moove.application.user.response.UserResponse
+import java.util.UUID
 
-export interface NewPassword {
-  newPassword: string;
-}
+interface FindUserByIdInteractor {
 
-export interface User extends Base {
-  id: string;
-  workspaces?: Workspace[];
-  createdAt?: string;
-  root?: boolean;
-  photoUrl?: string;
-}
-
-export interface NewUser extends Base {
-  password: string;
-  root?: boolean;
-}
-
-export interface Profile extends Base {
-  id: string;
-  photoUrl?: string;
-  workspaces?: Workspace[];
-  createdAt?: string;
+    fun execute(authorization: String, id: UUID): UserResponse
 }

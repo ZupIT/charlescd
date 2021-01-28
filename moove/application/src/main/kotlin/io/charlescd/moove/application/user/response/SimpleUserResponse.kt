@@ -25,6 +25,7 @@ data class SimpleUserResponse(
     val name: String,
     val email: String,
     val photoUrl: String?,
+    val isRoot: Boolean,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime
 ) {
@@ -35,6 +36,7 @@ data class SimpleUserResponse(
                 name = user.name,
                 email = user.email,
                 photoUrl = user.photoUrl,
+                isRoot = user.root,
                 createdAt = user.createdAt
             )
         }
