@@ -94,7 +94,7 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) er
 func (manager Manager) runV2unusedProxyDeployments(v2Pipeline V2DeploymentPipeline) error {
 	log.WithFields(log.Fields{"function": "runV2unusedProxyDeployments", "unusedProxyDeployments": v2Pipeline.UnusedProxyDeployments}).Info("START:RUN_V2_UNUSED_PROXY_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
-	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
+	for _, proxyDeployment := range v2Pipeline.UnusedDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
 		errs.Go(func() error {
