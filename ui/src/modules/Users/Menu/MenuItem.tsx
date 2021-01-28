@@ -39,7 +39,6 @@ const MenuItem = ({ id, name, email }: Props) => {
       ? delParam('user', routes.usersComparation, history, id)
       : addParam('user', routes.usersComparation, history, id);
 
-  // TODO remove isActive?
   return (
     <Styled.Link
       onClick={() => toggleUser()}
