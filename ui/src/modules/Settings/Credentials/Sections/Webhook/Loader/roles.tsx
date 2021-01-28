@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
-import * as dateUtils from 'core/utils/date';
-import CardCircle from '../';
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-test('render CardCircle with children', () => {
-  jest.spyOn(dateUtils, 'dateFrom').mockImplementation(value => value);
+const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={4}
+    width={279}
+    height={60}
+    viewBox="0 0 279 60"
+    backgroundColor="#3a393c"
+    foregroundColor="#2c2b2e"
+  >
+    <rect x="0" y="0" rx="4" ry="4" width="269" height="40" />
+  </ContentLoader>
+);
 
-  render(
-    <CardCircle title="woman" description="2020">
-      content
-    </CardCircle>
-  );
-
-  expect(screen.getByText(/2020/)).toBeInTheDocument();
-  expect(screen.getByText('woman')).toBeInTheDocument();
-  expect(screen.getByText('content')).toBeInTheDocument();
-});
+export default Loader;

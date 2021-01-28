@@ -32,7 +32,7 @@ import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
 import isEqual from 'lodash/isEqual';
 
-const FormGit = ({ onFinish }: Props) => {
+const FormGit = ({ onFinish }: Props<GitFormData>) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
   const [gitType, setGitType] = useState('');
   const [lastTestedForm, setLastTestedForm] = useState<GitFormData>();

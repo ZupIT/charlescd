@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
-import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
-import { Webhook } from 'modules/Settings/Credentials/Sections/Webhook/interfaces';
-
-export interface Workspace {
-  id: string;
-  name: string;
-  status?: string;
-  createdAt: string;
-  circleMatcherUrl?: string;
-  gitConfiguration?: Configuration;
-  userGroups?: UserGroup[];
-  cdConfiguration?: Configuration;
-  metricConfiguration?: MetricConfiguration;
-  registryConfiguration?: Configuration;
-  webhookConfiguration?: Webhook[];
+export interface Webhook {
+  id?: string;
+  url: string;
+  apiKey: string;
+  description: string;
+  events: string[];
+  externalId?: string;
+  lastDelivery?: Delivery;
 }
 
-export interface Configuration {
+interface Delivery {
+  status: number;
+  details: string;
+}
+
+export interface Event {
   id: string;
-  name: string;
+  value: string;
+  description: string;
 }

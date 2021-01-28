@@ -32,7 +32,7 @@ import { Props } from '../interfaces';
 import { reduce } from './helpers';
 import Styled from './styled';
 
-const FormUserGroup = ({ onFinish }: Props) => {
+const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
   const {
     responseSave,
     responseAll,

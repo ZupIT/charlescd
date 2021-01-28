@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
-import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 import { Webhook } from 'modules/Settings/Credentials/Sections/Webhook/interfaces';
+import { postRequest, patchRequest, baseRequest, deleteRequest } from './base';
 
-export interface Workspace {
-  id: string;
-  name: string;
-  status?: string;
-  createdAt: string;
-  circleMatcherUrl?: string;
-  gitConfiguration?: Configuration;
-  userGroups?: UserGroup[];
-  cdConfiguration?: Configuration;
-  metricConfiguration?: MetricConfiguration;
-  registryConfiguration?: Configuration;
-  webhookConfiguration?: Webhook[];
-}
+export const mooveEndpoint = '/moove/v1';
+export const endpoint = `${mooveEndpoint}/webhooks`;
 
-export interface Configuration {
-  id: string;
-  name: string;
-}
+export const saveConfig = (webhook: Webhook) => postRequest(endpoint, webhook);
+
+export const getConfig = (id: string) => baseRequest(`${endpoint}/${id}`);
+
+export const editConfig = (id: string, value: string) =>
+  patchRequest(`${endpoint}/${id}`, 'replace', '', value);
+
+export const delConfig = (id: string) => deleteRequest(`${endpoint}/${id}`);

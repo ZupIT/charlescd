@@ -152,6 +152,11 @@ const Credentials = ({ onClickHelp }: Props) => {
         setForm={setForm}
         data={workspace.gitConfiguration}
       />
+      <Section.Webhook
+        form={form}
+        setForm={setForm}
+        data={workspace.webhookConfiguration}
+      />
       <Section.UserGroup
         form={form}
         setForm={setForm}

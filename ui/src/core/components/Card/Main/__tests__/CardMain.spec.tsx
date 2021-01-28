@@ -16,19 +16,18 @@
 
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import * as dateUtils from 'core/utils/date';
-import CardCircle from '../';
+import CardMain from '..';
 
-test('render CardCircle with children', () => {
-  jest.spyOn(dateUtils, 'dateFrom').mockImplementation(value => value);
+const props = {
+  title: 'Title',
+  description: 'Description'
+}
 
+test('render CardMessage component with nodes', () => {
   render(
-    <CardCircle title="woman" description="2020">
-      content
-    </CardCircle>
+    <CardMain { ...props } />
   );
 
-  expect(screen.getByText(/2020/)).toBeInTheDocument();
-  expect(screen.getByText('woman')).toBeInTheDocument();
-  expect(screen.getByText('content')).toBeInTheDocument();
+  expect(screen.getByText(props.title)).toBeInTheDocument();
+  expect(screen.getByText(props.description)).toBeInTheDocument();
 });
