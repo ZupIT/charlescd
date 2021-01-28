@@ -32,9 +32,16 @@ interface HermesService {
 
     fun deleteSubscription(authorEmail: String, id: String)
 
-    fun healthCheckSubscription(authorEmail: String, id: String): HealthCheckWebhookSubscription
+    fun healthCheckSubscription(authorEmail: String, id: String): WebhookSubscriptionHealthCheck
 
     fun notifySubscriptionEvent(webhookEvent: WebhookEvent)
 
-    fun getSubscriptionHistory() // TODO("Not yet implemented")
+    fun getSubscriptionEventHistory(
+        authorEmail: String,
+        id: String,
+        eventType: String?,
+        eventStatus: String?,
+        eventField: String?,
+        eventValue: String?
+    ): List<WebhookSubscriptionEventHistory>
 }

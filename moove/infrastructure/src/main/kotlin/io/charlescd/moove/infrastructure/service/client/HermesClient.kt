@@ -94,4 +94,19 @@ interface HermesClient {
         @RequestHeader("x-author") authorEmail: String,
         @PathVariable("externalId") externalId: String
     ): List<HermesSubscriptionResponse>
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["/subscriptions/{id}/history"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun getSubscriptionEventsHistory(
+        @RequestHeader("x-author") authorEmail: String,
+        @PathVariable("externalId") externalId: String,
+        @RequestParam(value = "eventType", required = false) eventType: String?,
+        @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
+        @RequestParam(value = "eventField", required = false) eventField: String?,
+        @RequestParam(value = "eventValue", required = false) eventValue: String?
+    ): List<HermesSubscriptionEventHistoryResponse>
 }

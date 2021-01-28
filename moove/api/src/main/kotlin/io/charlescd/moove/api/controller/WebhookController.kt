@@ -91,4 +91,19 @@ class WebhookController(
     ) {
         healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
     }
+
+    @ApiOperation(value = "Webhook event history")
+    @DeleteMapping("/{id}/history")
+    @ResponseStatus(HttpStatus.OK)
+    fun getSubscriptionEventHistory(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("id") id: String,
+        @RequestParam(value = "eventType", required = false) eventType: String?,
+        @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
+        @RequestParam(value = "eventField", required = false) eventField: String?,
+        @RequestParam(value = "eventValue", required = false) eventValue: String?
+    ) {
+        healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
+    }
 }
