@@ -78,7 +78,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
   unusedDeployments: [],
   proxyDeployments: [
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: 'A',
@@ -107,7 +107,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: 'A',
@@ -207,7 +207,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: 'B',
@@ -236,7 +236,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: 'B',
@@ -336,7 +336,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: 'C',
@@ -365,7 +365,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: 'C',

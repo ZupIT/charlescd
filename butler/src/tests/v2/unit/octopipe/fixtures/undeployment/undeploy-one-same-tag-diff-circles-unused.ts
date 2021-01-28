@@ -59,7 +59,7 @@ export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRe
   ],
   proxyDeployments: [
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: 'A',
@@ -80,7 +80,7 @@ export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRe
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: 'A',
@@ -118,7 +118,7 @@ export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRe
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: 'B',
@@ -139,7 +139,7 @@ export const undeployOneSameTagDiffCirclesUnusedOctopipe: OctopipeUndeploymentRe
       }
     },
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: 'B',

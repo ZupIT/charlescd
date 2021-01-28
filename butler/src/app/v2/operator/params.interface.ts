@@ -1,3 +1,27 @@
+export interface RouteHookParams {
+  controller: Record<string, unknown>
+  parent: {
+    apiVersion: 'charlescd.io/v1'
+    kind: 'CharlesRoutes'
+    metadata: Record<string, unknown>
+    spec: {
+      circles: {
+        components: {
+          name: string
+          tag: string
+        }[]
+        default: boolean
+        id: string
+      }[]
+    }
+  }
+  children: {
+    'VirtualService.networking.istio.io/v1beta1': Record<string, unknown>,
+    'DestinationRule.networking.istio.io/v1beta1': Record<string, unknown>
+  }
+  finalizing: boolean
+}
+
 export interface HookParams {
   controller: Record<string, unknown>
   parent: {

@@ -25,7 +25,7 @@ const IstioUndeploymentManifestsUtils = {
 
   getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
@@ -41,7 +41,7 @@ const IstioUndeploymentManifestsUtils = {
 
   getEmptyVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent): K8sManifest => {
     return {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: component.name,
@@ -76,7 +76,7 @@ const IstioUndeploymentManifestsUtils = {
 
   getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
     return {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: component.name,

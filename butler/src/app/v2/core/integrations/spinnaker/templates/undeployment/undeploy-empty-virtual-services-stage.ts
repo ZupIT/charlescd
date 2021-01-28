@@ -32,7 +32,7 @@ export const getUndeploymentEmptyVirtualServiceStage = (
   failPipeline: false,
   manifests: [
     {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: component.name,

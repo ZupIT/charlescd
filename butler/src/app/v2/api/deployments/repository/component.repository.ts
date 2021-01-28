@@ -27,6 +27,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.current = true')
       .andWhere('deployment.cd_configuration_id = :cdConfigurationId', { cdConfigurationId })
+      .orderBy('deployment.created_at', 'DESC')
       .getMany()
   }
 
@@ -37,6 +38,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .where('deployment.current = true')
       .andWhere('deployment.default_circle is true')
       .andWhere('deployment.circle_id = :defaultCircleId', { defaultCircleId })
+      .orderBy('deployment.created_at', 'DESC')
       .getMany()
   }
 
@@ -46,6 +48,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .leftJoin('v2executions', 'e', 'e.deployment_id = d.id')
       .where('d.circle_id = :circleId', { circleId })
       .andWhere('e.status = :status', { status: DeploymentStatusEnum.CREATED })
+      .orderBy('d.created_at', 'DESC')
       .getMany()
   }
 
@@ -56,6 +59,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .where('d.circle_id = :circleId', { circleId })
       .andWhere('d.default_circle is true')
       .andWhere('e.status = :status', { status: DeploymentStatusEnum.CREATED })
+      .orderBy('d.created_at', 'DESC')
       .getMany()
   }
 }

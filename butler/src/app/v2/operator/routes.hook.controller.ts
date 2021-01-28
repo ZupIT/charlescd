@@ -15,7 +15,7 @@
  */
 
 import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
-import { HookParams } from './params.interface'
+import { RouteHookParams } from './params.interface'
 import { HookReconcileResponseDto } from './hook-reconcile-response.dto'
 import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
 
@@ -29,8 +29,9 @@ export class RoutesHookController {
   @Post('/v2/operator/routes/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async reconcile(@Body() params: HookParams): Promise<HookReconcileResponseDto> {
+  public async reconcile(@Body() params: RouteHookParams): Promise<unknown> {
     const proxySpecs = await this.createRoutesUseCase.execute(params)
+    console.log({ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: { children: JSON.stringify(proxySpecs) } })
     return { children: proxySpecs }
   }
 }

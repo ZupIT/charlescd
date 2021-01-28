@@ -400,9 +400,9 @@ describe('DeploymentHandler', () => {
         expect.objectContaining({
           helmUrl: 'http://localhost:2222/helm',
           imageTag: 'v1',
-          imageUrl: 'https://repository.com/C:v1',
-          name: 'C',
-          componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+          imageUrl: 'https://repository.com/D:v1',
+          name: 'D',
+          componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
           hostValue: null,
           gatewayName: null,
           running: false
@@ -410,13 +410,13 @@ describe('DeploymentHandler', () => {
         expect.objectContaining({
           helmUrl: 'http://localhost:2222/helm',
           imageTag: 'v1',
-          imageUrl: 'https://repository.com/D:v1',
-          name: 'D',
-          componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+          imageUrl: 'https://repository.com/C:v1',
+          name: 'C',
+          componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
           hostValue: null,
           gatewayName: null,
           running: false
-        })
+        }),
       ],
       expect.anything()
     )
@@ -529,9 +529,9 @@ describe('DeploymentHandler', () => {
         expect.objectContaining({
           helmUrl: 'http://localhost:2222/helm',
           imageTag: 'v1',
-          imageUrl: 'https://repository.com/C:v1',
-          name: 'C',
-          componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+          imageUrl: 'https://repository.com/D:v1',
+          name: 'D',
+          componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
           hostValue: null,
           gatewayName: null,
           running: false
@@ -539,13 +539,14 @@ describe('DeploymentHandler', () => {
         expect.objectContaining({
           helmUrl: 'http://localhost:2222/helm',
           imageTag: 'v1',
-          imageUrl: 'https://repository.com/D:v1',
-          name: 'D',
-          componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+          imageUrl: 'https://repository.com/C:v1',
+          name: 'C',
+          componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
           hostValue: null,
           gatewayName: null,
           running: false
-        })
+        }),
+
       ],
       expect.anything()
     )

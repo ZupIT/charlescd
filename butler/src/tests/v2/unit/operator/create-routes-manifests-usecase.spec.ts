@@ -22,7 +22,7 @@ import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repos
 import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
 import { cdConfigurationFixture, deployComponentsFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import { routesManifests } from '../../fixtures/manifests.fixture'
-import { HookParams } from '../../../../app/v2/operator/params.interface'
+import { RouteHookParams } from '../../../../app/v2/operator/params.interface'
 
 describe('Hook Routes Manifest Creation', () => {
 
@@ -31,7 +31,7 @@ describe('Hook Routes Manifest Creation', () => {
   const cdConfigurationsRepository = new CdConfigurationsRepository()
   const consoleLoggerService = new ConsoleLoggerService()
 
-  let hookParams: HookParams
+  let hookParams: RouteHookParams
 
   beforeEach(() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
@@ -41,24 +41,27 @@ describe('Hook Routes Manifest Creation', () => {
     hookParams = {
       controller: {},
       parent: {
-        apiVersion: 'zupit.com/v1',
-        kind: 'CharlesDeployment',
+        apiVersion: 'charlescd.io/v1',
+        kind: 'CharlesRoutes',
         metadata: {},
         spec: {
-          circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-          deploymentId: 'b46fd548-0082-4021-ba80-a50703c44a3a',
-          components: [
+          circles: [
             {
-              chart: 'my-chart',
-              name: 'my-component',
-              tag: 'my-tag'
+              components: [
+                {
+                  name: 'my-component',
+                  tag: 'my-tag'
+                }
+              ],
+              id: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              default: false
             }
           ]
         }
       },
       children: {
-        'Deployment.apps/v1': {},
-        'Service.v1': {}
+        'VirtualService.networking.istio.io/v1beta1': {},
+        'DestinationRule.networking.istio.io/v1beta1': {}
       },
       finalizing: true
     }

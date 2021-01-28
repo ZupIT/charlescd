@@ -152,7 +152,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       failPipeline: false,
       manifests: [
         {
-          apiVersion: 'networking.istio.io/v1alpha3',
+          apiVersion: 'networking.istio.io/v1beta1',
           kind: 'DestinationRule',
           metadata: {
             name: 'A',
@@ -220,7 +220,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       failPipeline: false,
       manifests: [
         {
-          apiVersion: 'networking.istio.io/v1alpha3',
+          apiVersion: 'networking.istio.io/v1beta1',
           kind: 'VirtualService',
           metadata: {
             name: 'A',

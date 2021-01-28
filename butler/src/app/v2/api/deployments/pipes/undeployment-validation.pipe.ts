@@ -37,17 +37,17 @@ export class UndeploymentValidation implements PipeTransform {
       throw new BadRequestException('Cannot undeploy not current deployment')
     }
 
-    const circleId = deployment.circleId
-    const runningComponents = deployment.defaultCircle ?
-      await this.componentsRepository.findDefaultCircleCreatedExecution(circleId) :
-      await this.componentsRepository.findCircleCreatedExecution(circleId)
+    // const circleId = deployment.circleId
+    // const runningComponents = deployment.defaultCircle ?
+    //   await this.componentsRepository.findDefaultCircleCreatedExecution(circleId) :
+    //   await this.componentsRepository.findCircleCreatedExecution(circleId)
 
-    if (runningComponents && runningComponents.length > 0) {
-      const componentIds = runningComponents.map( c => c.id)
-      const components = await this.componentsRepository.findByIds(componentIds, { relations: ['deployment', 'deployment.executions'] })
-      const executionIds = uniq(flatMap(components, c => c.deployment.executions.map(e => e.id)))
-      throw new BadRequestException(`Simultaneous undeployments are not allowed for a given circle. The following executions are not finished: ${executionIds}`)
-    }
+    // if (runningComponents && runningComponents.length > 0) {
+    //   const componentIds = runningComponents.map( c => c.id)
+    //   const components = await this.componentsRepository.findByIds(componentIds, { relations: ['deployment', 'deployment.executions'] })
+    //   const executionIds = uniq(flatMap(components, c => c.deployment.executions.map(e => e.id)))
+    //   throw new BadRequestException(`Simultaneous undeployments are not allowed for a given circle. The following executions are not finished: ${executionIds}`)
+    // }
 
     return deploymentId
   }

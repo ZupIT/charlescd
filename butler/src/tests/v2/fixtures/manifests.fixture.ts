@@ -52,7 +52,7 @@ export const customManifests = (appName: string, namespace: string, image: strin
 
 export const routesManifests: KubernetesManifest[] = [
   {
-    apiVersion: 'networking.istio.io/v1alpha3',
+    apiVersion: 'networking.istio.io/v1beta1',
     kind: 'DestinationRule',
     metadata: {
       name: 'hello-kubernetes',
@@ -73,7 +73,7 @@ export const routesManifests: KubernetesManifest[] = [
     },
   } as KubernetesManifest,
   {
-    apiVersion: 'networking.istio.io/v1alpha3',
+    apiVersion: 'networking.istio.io/v1beta1',
     kind: 'VirtualService',
     metadata: {
       name: 'hello-kubernetes',
