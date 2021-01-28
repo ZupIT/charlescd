@@ -16,35 +16,40 @@
 
 package io.charlescd.moove.application.user.impl
 
-import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
+import io.charlescd.moove.application.user.FindUserByIdInteractor
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class FindUserByEmailInteractorImplTest extends Specification {
+class FindUserByIdInteractorImplTest extends Specification {
 
-    private FindUserByEmailInteractor findUserByEmailInteractor
+    private FindUserByIdInteractor findUserByIdInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
+
+    private KeycloakService keycloakService = Mock(KeycloakService)
 
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
-        findUserByEmailInteractor = new FindUserByEmailInteractorImpl(new UserService(userRepository, managementUserSecurityService))
+        findUserByIdInteractor = new FindUserByIdInteractorImpl(new UserService(userRepository, managementUserSecurityService),keycloakService)
     }
 
-    def "should find an user by its email"() {
+    def "should find an user by its id"() {
         given:
-        def base64Email = "dXNlckB6dXAuY29tLmJy"
+        def id = UUID.randomUUID()
+        def authorization = "authorization"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
                 [], false, LocalDateTime.now())
@@ -52,29 +57,33 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
-        def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+        def user = new User(id.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
                 [workspacePermission], false, LocalDateTime.now())
 
-        def authorization = TestUtils.authorization
-
         when:
-        def response = findUserByEmailInteractor.execute(base64Email, authorization)
+        def response = findUserByIdInteractor.execute(authorization,id)
 
         then:
-        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
-        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
+        1 * userRepository.findById(id.toString()) >> Optional.of(user)
         1 * userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+        1 * keycloakService.getEmailByAccessToken(authorization) >> user.getEmail()
 
         assert response != null
         assert response.id == user.id
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
+        assert response.workspaces.size() == 1
+        assert response.workspaces[0].id == workspacePermission.id
+        assert response.workspaces[0].name == workspacePermission.name
+        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
+        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
-    def "should find an user by email when requester is root"() {
+    def "should find an user by its id, because the authorization its root"() {
         given:
-        def base64Email = "dXNlckB6dXAuY29tLmJy"
+        def id = UUID.randomUUID()
+        def authorization = "authorization"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
                 [], true, LocalDateTime.now())
@@ -82,29 +91,33 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
-        def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+        def user = new User(id.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
                 [workspacePermission], false, LocalDateTime.now())
 
-        def authorization = TestUtils.authorization
-
         when:
-        def response = findUserByEmailInteractor.execute(base64Email, authorization)
+        def response = findUserByIdInteractor.execute(authorization,id)
 
         then:
-        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
-        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
-        1 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+        1 * userRepository.findById(id.toString()) >> Optional.of(user)
+        1 * userRepository.findByEmail("zup@zup.com.br") >> Optional.of(author)
+        1 * keycloakService.getEmailByAccessToken(authorization) >> author.getEmail()
 
         assert response != null
         assert response.id == user.id
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
+        assert response.workspaces.size() == 1
+        assert response.workspaces[0].id == workspacePermission.id
+        assert response.workspaces[0].name == workspacePermission.name
+        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
+        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
-    def "should return request user when requester is not root"() {
+    def "should raise exception because  because the authorization isn't root, or the owner of the data"() {
         given:
-        def base64Email = "dXNlckB6dXAuY29tLmJy"
+        def id = UUID.randomUUID()
+        def authorization = "authorization"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
                 [], false, LocalDateTime.now())
@@ -112,47 +125,19 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
-        def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+        def user = new User(id.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
                 [workspacePermission], false, LocalDateTime.now())
 
-        def authorization = TestUtils.authorization
-
         when:
-        def response = findUserByEmailInteractor.execute(base64Email, authorization)
+        def response = findUserByIdInteractor.execute(authorization,id)
 
         then:
-        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
-        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.user)
-        1 * this.userRepository.findByEmail(TestUtils.user.email) >> Optional.of(user)
+        1 * userRepository.findById(id.toString()) >> Optional.of(user)
+        1 * userRepository.findByEmail("zup@zup.com.br") >> Optional.of(author)
+        1 * keycloakService.getEmailByAccessToken(authorization) >> author.getEmail()
 
-        assert response != null
-        assert response.id == user.id
-        assert response.name == user.name
-        assert response.createdAt == user.createdAt
-        assert response.photoUrl == user.photoUrl
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.FORBIDDEN
     }
 
-    def "should return an user with an empty workspace when no workspaces where found"() {
-        given:
-        def base64Email = "dXNlckB6dXAuY29tLmJy"
-
-        def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
-
-        def authorization = TestUtils.authorization
-
-        when:
-        def response = findUserByEmailInteractor.execute(base64Email, authorization)
-
-        then:
-        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
-        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
-        1 * userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
-
-        assert response != null
-        assert response.id == user.id
-        assert response.name == user.name
-        assert response.createdAt == user.createdAt
-        assert response.photoUrl == user.photoUrl
-    }
 }

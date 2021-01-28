@@ -32,7 +32,7 @@ type AccessToken = {
   id?: string;
   name?: string;
   email?: string;
-  isRoot?: boolean;
+  root?: boolean;
   workspaces?: {
     id: string;
     roles: string[];
@@ -66,7 +66,7 @@ export const getAccessTokenDecoded = (): AccessToken => {
 };
 
 export const isRoot = () => {
-  const isRoot = getProfileByKey('isRoot');
+  const isRoot = getProfileByKey('root');
   return isRoot || false;
 };
 

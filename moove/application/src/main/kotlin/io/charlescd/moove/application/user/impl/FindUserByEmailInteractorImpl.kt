@@ -18,14 +18,14 @@ package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
-import io.charlescd.moove.application.user.response.UserResponse
+import io.charlescd.moove.application.user.response.SimpleUserResponse
 import java.util.*
 import javax.inject.Named
 
 @Named
 class FindUserByEmailInteractorImpl(private val userService: UserService) : FindUserByEmailInteractor {
 
-    override fun execute(email: String, authorization: String): UserResponse {
+    override fun execute(email: String, authorization: String): SimpleUserResponse {
         val user = userService.findByAuthorizationToken(authorization)
         if (user.root) {
             return getUser(String(Base64.getDecoder().decode(email)).toLowerCase().trim())
@@ -33,8 +33,8 @@ class FindUserByEmailInteractorImpl(private val userService: UserService) : Find
         return getUser(user.email)
     }
 
-    private fun getUser(email: String): UserResponse {
-        return UserResponse.from(
+    private fun getUser(email: String): SimpleUserResponse {
+        return SimpleUserResponse.from(
             userService.findByEmail(email)
         )
     }
