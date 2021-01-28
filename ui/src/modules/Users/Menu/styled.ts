@@ -58,8 +58,6 @@ const Item = styled(Text.h4)`
   text-overflow: ellipsis;
   width: 230px;
 `;
-
-// TODO remove isactive?
 interface LinkProps {
   isActive: boolean;
 }
@@ -94,7 +92,6 @@ export default {
   Content,
   Icon,
   Link,
-  List,
   ListItem,
   Item,
   SearchInput
