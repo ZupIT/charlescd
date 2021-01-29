@@ -37,11 +37,11 @@ export enum FormAction {
 const UserGroups = () => {
   const profileName = getProfileByKey('name');
   const history = useHistory();
-  const [search, setSearch] = useState('');
+  // const [search, setSearch] = useState('');
   const [toggleModal, setToggleModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [getUserGroups, loading] = useFindAllUserGroup();
-  const { list } = useGlobalState(state => state.userGroups);
+  // const [getUserGroups, loading] = useFindAllUserGroup();
+  // const { list } = useGlobalState(({ userGroups }) => userGroups);
   const { register, watch, handleSubmit } = useForm();
   const watchName = watch('name');
   const {
@@ -54,9 +54,9 @@ const UserGroups = () => {
     setIsDisabled(isEmpty(watchName));
   }, [watchName]);
 
-  useEffect(() => {
-    getUserGroups(search);
-  }, [search, getUserGroups]);
+  // useEffect(() => {
+  //   getUserGroups(search);
+  // }, [search, getUserGroups]);
 
   useEffect(() => {
     if (userGroupResponse) {
@@ -94,13 +94,10 @@ const UserGroups = () => {
       {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
-          items={list?.content}
-          isLoading={loading}
           selectedItems={getSelectedUserGroups()}
           onSelect={id =>
             addParamUserGroup(history, `${id}~${FormAction.view}`)
           }
-          onSearch={setSearch}
           onCreate={() => setToggleModal(true)}
         />
       </Page.Menu>

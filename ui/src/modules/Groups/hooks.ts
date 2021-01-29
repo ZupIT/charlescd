@@ -48,8 +48,8 @@ export const useFindAllUserGroup = (): [
   const { response, loading } = userGroupData;
 
   const loadUserGroupList = useCallback(
-    (name: string) => {
-      getUserGroups({ name });
+    (name: string, page: string) => {
+      getUserGroups({ name, page });
     },
     [getUserGroups]
   );

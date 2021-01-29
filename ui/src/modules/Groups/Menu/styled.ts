@@ -22,6 +22,7 @@ import ButtonComponent from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
+import LoaderMenuComponent from './Loaders';
 
 const SearchInput = styled(SearchInputComponent)`
   margin: 15px 0;
@@ -98,6 +99,10 @@ const ButtonModal = styled(ButtonComponent.Default)`
   margin-top: 20px;
 `;
 
+const Loader = styled(LoaderMenuComponent.List)`
+  margin-left: 16px;
+`;
+
 export default {
   SearchInput,
   List,
@@ -107,6 +112,7 @@ export default {
   Icon,
   Link,
   Button,
+  Loader,
   Modal: {
     Input: ModalInput,
     Title: ModalTitle,
