@@ -51,7 +51,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 new CircleService(circleRepository),
                 deployService,
                 new WorkspaceService(workspaceRepository, userRepository),
-                new WebhookEventService(hermesService, buildRepository))
+                new WebhookEventService(hermesService, new BuildService(buildRepository)))
     }
 
     def 'when build does not exist, should throw exception'() {

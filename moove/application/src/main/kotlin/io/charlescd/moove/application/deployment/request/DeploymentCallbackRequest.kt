@@ -27,8 +27,6 @@ data class DeploymentCallbackRequest(
 
     fun isDeployEvent() = listOf(DeploymentRequestStatus.SUCCEEDED, DeploymentRequestStatus.FAILED).contains(this.deploymentStatus)
 
-    fun isUndeployEvent() = listOf(DeploymentRequestStatus.UNDEPLOYED, DeploymentRequestStatus.UNDEPLOYED).contains(this.deploymentStatus)
-
     fun isEventStatusSuccessful() = listOf(DeploymentRequestStatus.SUCCEEDED, DeploymentRequestStatus.UNDEPLOYED).contains(this.deploymentStatus)
 
     fun isEventStatusFailure() = listOf(DeploymentRequestStatus.FAILED, DeploymentRequestStatus.UNDEPLOY_FAILED).contains(this.deploymentStatus)

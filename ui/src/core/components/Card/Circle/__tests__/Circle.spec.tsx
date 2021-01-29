@@ -23,7 +23,7 @@ test('render CardCircle with children', () => {
   jest.spyOn(dateUtils, 'dateFrom').mockImplementation(value => value);
 
   render(
-    <CardCircle circle="woman" deployedAt="2020">
+    <CardCircle title="woman" description="2020">
       content
     </CardCircle>
   );

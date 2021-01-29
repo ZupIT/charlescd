@@ -19,8 +19,6 @@
 package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.*
-import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.domain.service.HermesService
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -29,7 +27,7 @@ import javax.inject.Named
 @Named
 class WebhookEventService(
     private val hermesService: HermesService,
-    private val buildRepository: BuildRepository
+    private val buildService: BuildService
 ) {
 
     fun notifyDeploymentEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment) {
@@ -82,20 +80,12 @@ class WebhookEventService(
     }
 
     private fun getReleaseEvent(deployment: Deployment): WebhookDeploymentReleaseEvent {
-        val build = getBuild(deployment.buildId)
+        val build = buildService.find(deployment.buildId)
         return WebhookDeploymentReleaseEvent(
             tag = build.tag,
             features = build.features.map { getFeatureEvent(it) },
             modules = build.modules().map { getModuleEvent(it) }
         )
-    }
-
-    private fun getBuild(id: String): Build {
-        return this.buildRepository.findById(
-            id
-        ).orElseThrow {
-            NotFoundException("build", id)
-        }
     }
 
     private fun getFeatureEvent(feature: FeatureSnapshot): WebhookDeploymentFeatureEvent {

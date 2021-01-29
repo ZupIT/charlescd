@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package subscription
 
 import (
@@ -21,15 +39,8 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
 			},
 		},
-		"Events": string(events),
+		"Events":    string(events),
 		"CreatedBy": createdBy,
 	}
 
-}
-
-func FindOneQuery(subscriptionId string) string {
-	return fmt.Sprintf(`SELECT external_id, url, description, PGP_SYM_DECRYPT(api_key, '%s'), events
-	FROM SUBSCRIPTIONS
-	WHERE  id = '%s'
-	AND deleted_at IS NULL`, configuration.GetConfiguration("ENCRYPTION_KEY"), subscriptionId)
 }

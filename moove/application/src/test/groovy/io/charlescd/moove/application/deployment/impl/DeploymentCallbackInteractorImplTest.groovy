@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.WebhookEventService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
@@ -39,7 +40,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
     private BuildRepository buildRepository = Mock(BuildRepository)
 
     void setup() {
-        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(new DeploymentService(deploymentRepository), new WebhookEventService(hermesService, buildRepository))
+        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(new DeploymentService(deploymentRepository), new WebhookEventService(hermesService, new BuildService(buildRepository)))
     }
 
     def "when deployment does not exists should throw an exception"() {

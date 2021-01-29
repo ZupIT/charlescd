@@ -42,8 +42,8 @@ const Item = styled.button<Partial<Props>>`
     margin-left: 5px;
   }
 
-  ${({ isInactive, deploying, undeploying }) =>
-    (isInactive || deploying || undeploying) &&
+  ${({ isInactive }) =>
+    isInactive &&
     css`
       ${Icon}, ${Text} {
         color: ${({ theme }) => theme.dropdown.disabled.color};

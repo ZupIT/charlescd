@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package configuration
 
 import (
@@ -5,21 +23,13 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	postgresmigrate "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
 )
-
-var initialValues = map[string]string{
-	"DB_USER":             "charlescd_hermes",
-	"DB_PASSWORD":         "charlescd_hermes",
-	"DB_HOST":             "localhost",
-	"DB_NAME":             "charlescd_hermes",
-	"DB_SSL":              "disable",
-	"DB_PORT":             "5432",
-	"ENCRYPTION_KEY":      "maycon",
-}
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
@@ -59,8 +69,23 @@ func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
 func GetConfiguration(configuration string) string {
 	env := os.Getenv(configuration)
 	if env == "" {
-		return initialValues[configuration]
+		logrus.WithFields(logrus.Fields{
+			"err": fmt.Sprintf("%s key not found in the .env file", configuration),
+		}).Warnln()
+		return env
 	}
 
 	return env
+}
+
+func CheckEnvValues() {
+	myEnv, _ := godotenv.Read()
+
+	for value, _ := range myEnv {
+		if myEnv[value] == "" {
+			logrus.WithFields(logrus.Fields{
+				"err": fmt.Sprintf("%s key not found in the .env file", value),
+			}).Warnln()
+		}
+	}
 }

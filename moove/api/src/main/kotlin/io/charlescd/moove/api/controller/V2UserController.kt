@@ -21,7 +21,9 @@ import io.charlescd.moove.application.user.*
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.application.user.request.PatchUserRequest
+import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.application.user.response.UserResponse
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
+    private val findUserByIdInteractor: FindUserByIdInteractor,
     private val findAllUsersInteractor: FindAllUsersInteractor,
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
@@ -47,8 +50,18 @@ class V2UserController(
     fun findByEmail(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable email: String
-    ): UserResponse {
+    ): SimpleUserResponse {
         return findUserByEmailInteractor.execute(email, authorization)
+    }
+
+    @ApiOperation(value = "Find user workspaces")
+    @GetMapping("/{id}/workspaces")
+    @ResponseStatus(HttpStatus.OK)
+    fun findWorkspacesByUserId(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("id") id: UUID
+    ): List<SimpleWorkspaceResponse> {
+        return findUserByIdInteractor.execute(authorization, id).workspaces
     }
 
     @ApiOperation(value = "Find all users")
@@ -58,7 +71,7 @@ class V2UserController(
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
         pageable: PageRequest
-    ): ResourcePageResponse<UserResponse> {
+    ): ResourcePageResponse<SimpleUserResponse> {
         return this.findAllUsersInteractor.execute(name, email, authorization, pageable)
     }
 

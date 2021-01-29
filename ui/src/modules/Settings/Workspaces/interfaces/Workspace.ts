@@ -16,6 +16,7 @@
 
 import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
 import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
+import { Webhook } from 'modules/Settings/Credentials/Sections/Webhook/interfaces';
 
 export interface Workspace {
   id: string;
@@ -28,6 +29,7 @@ export interface Workspace {
   cdConfiguration?: Configuration;
   metricConfiguration?: MetricConfiguration;
   registryConfiguration?: Configuration;
+  webhookConfiguration?: Webhook[];
 }
 
 export interface Configuration {

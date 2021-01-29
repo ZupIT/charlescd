@@ -13,3 +13,5 @@ labelPRBasedOnFilePath:
     - ui/**/*
   villager:
     - villager/**/*
+  hermes:
+    - hermes/**/*

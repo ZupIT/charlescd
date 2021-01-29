@@ -75,11 +75,11 @@ const Switch = styled.label`
   -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-direction: row;
 
   > :last-child {
-    margin-left: 3px;
+    margin-left: 5px;
   }
 
   :active {

@@ -46,7 +46,7 @@ class UndeployInteractorImplTest extends Specification {
                 new DeploymentService(deploymentRepository),
                 new UserService(userRepository, managementUserSecurityService),
                 deployService,
-                new WebhookEventService(hermesService, buildRepository))
+                new WebhookEventService(hermesService, new BuildService(buildRepository)))
     }
 
     def 'when deploy does not exist, should throw exception'() {

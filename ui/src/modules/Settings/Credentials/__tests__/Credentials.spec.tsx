@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, fireEvent, wait, screen, act, waitFor } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
@@ -53,7 +53,7 @@ test('render Credentials default component', async () => {
   expect(credentialsElement).toBeInTheDocument();
 });
 
-test('render Credentials items', async () => {
+test('should render Credentials items', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
@@ -68,12 +68,45 @@ test('render Credentials items', async () => {
   render(<Credentials />);
 
   await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
-  expect(screen.getByTestId('contentIcon-users')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-git')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-server')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-cd-configuration')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-circle-matcher')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
+  expect(screen.getByText('Registry')).toBeInTheDocument();
+  expect(screen.getByText('CD Configuration')).toBeInTheDocument();
+  expect(screen.getByText('Circle Matcher')).toBeInTheDocument();
+  expect(screen.getByText('Datasources')).toBeInTheDocument();
+  expect(screen.getByText('Metric Action')).toBeInTheDocument();
+  expect(screen.getByText('Git')).toBeInTheDocument();
+  expect(screen.getByText('User group')).toBeInTheDocument();
+});
+
+test('should render Credentials items in the right order', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+
+  const itemsRightOrder = [
+    'Registry',
+    'CD Configuration',
+    'Circle Matcher',
+    'Datasources',
+    'Metric Action',
+    'Git',
+    'Webhook',
+    'User group'
+  ];
+  
+  render(<Credentials />);
+
+  const items = await screen.findAllByTestId(/contentIcon-.*/);
+  const itemsFiltered = items.slice(1);
+  itemsFiltered.forEach((item, index) => {
+    expect(item.textContent).toBe(itemsRightOrder[index]); 
+  })
 });
 
 test('render User Group credentials', async () => {
@@ -170,8 +203,8 @@ test('click to copy to clipboard', async () => {
 
   render(<Credentials />);
 
-  const dropdownElement = await screen.findByTestId('icon-vertical-dots');
-  userEvent.click(dropdownElement);
+  const dropdownElement = await screen.findAllByTestId('icon-vertical-dots');
+  userEvent.click(dropdownElement[0]);
   const copyIDElement = screen.getByText('Copy ID');
   
   expect(copyIDElement).toBeInTheDocument();
@@ -179,4 +212,36 @@ test('click to copy to clipboard', async () => {
   act(() => userEvent.click(copyIDElement));
 
   expect(copyToClipboardSpy).toBeCalled();
+});
+
+test('should render Credentials items with the right type: Required or Optional', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+
+  const configurationItems = [
+    {name: 'Registry', type: 'Required'},
+    {name: 'CD Configuration', type: 'Required'},
+    {name: 'Circle Matcher', type: 'Required'},
+    {name: 'Datasources', type: 'Optional'},
+    {name: 'Metric Action', type: 'Optional'},
+    {name: 'Git', type: 'Optional'},
+    {name: 'Webhook', type: 'Optional'},
+    {name: 'User group', type: 'Optional'},
+  ];
+  
+  render(<Credentials />);
+
+  const types = await screen.findAllByTestId(/configuration-type.*/);
+  
+  types.forEach((type, index) => {
+    expect(type.textContent).toBe(configurationItems[index].type);
+  })
 });
