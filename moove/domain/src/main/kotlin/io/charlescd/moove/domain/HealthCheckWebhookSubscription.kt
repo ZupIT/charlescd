@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client.request
+package io.charlescd.moove.domain
 
-data class HermesSubscriptionUpdateRequest(
-    val events: List<String>
+data class HealthCheckWebhookSubscription(
+    val status: Int,
+    val details: String
 )

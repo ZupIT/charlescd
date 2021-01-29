@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.moove.api.request
+package io.charlescd.moove.application.deployment
 
-data class UndeployRequestV1(
-    val authorId: String,
-    val deploymentId: String
-)
+interface UndeployInteractor {
+
+    fun execute(workspaceId: String, authorization: String, id: String)
+}

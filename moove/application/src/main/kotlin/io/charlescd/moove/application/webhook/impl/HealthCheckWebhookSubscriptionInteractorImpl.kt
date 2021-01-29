@@ -17,29 +17,29 @@
 package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.WebhookService
-import io.charlescd.moove.application.webhook.UpdateWebhookSubscriptionInteractor
-import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
-import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
-import io.charlescd.moove.domain.SimpleWebhookSubscription
+import io.charlescd.moove.application.webhook.HealthCheckWebhookSubscriptionInteractor
+import io.charlescd.moove.application.webhook.response.HealthCheckWebhookSubscriptionResponse
+import io.charlescd.moove.domain.HealthCheckWebhookSubscription
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
-class UpdateWebhookSubscriptionInteractorImpl @Inject constructor(
+class HealthCheckWebhookSubscriptionInteractorImpl @Inject constructor(
     private val webhookService: WebhookService,
     private val hermesService: HermesService
-) : UpdateWebhookSubscriptionInteractor {
-    override fun execute(workspaceId: String, authorization: String, id: String, request: UpdateWebhookSubscriptionRequest): SimpleWebhookSubscriptionResponse {
-        val webhookSubscription = updateSubscription(workspaceId, authorization, id, request.events)
-        return SimpleWebhookSubscriptionResponse.from(webhookSubscription)
+) : HealthCheckWebhookSubscriptionInteractor {
+
+    override fun execute(workspaceId: String, authorization: String, id: String): HealthCheckWebhookSubscriptionResponse {
+        val healthCheckWebhookSubscription = healthCheckSubscription(workspaceId, authorization, id)
+        return HealthCheckWebhookSubscriptionResponse.from(healthCheckWebhookSubscription)
     }
 
-    private fun updateSubscription(workspaceId: String, authorization: String, id: String, events: List<String>): SimpleWebhookSubscription {
+    private fun healthCheckSubscription(workspaceId: String, authorization: String, id: String): HealthCheckWebhookSubscription {
         val author = webhookService.getAuthor(authorization)
         validateSubscription(workspaceId, author, id)
-        return hermesService.updateSubscription(author.email, id, events)
+        return hermesService.healthCheckSubscription(author.email, id)
     }
 
     private fun validateSubscription(workspaceId: String, author: User, id: String) {

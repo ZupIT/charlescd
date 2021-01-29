@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.webhook
+package io.charlescd.moove.application.webhook.response
 
-import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
+import io.charlescd.moove.domain.HealthCheckWebhookSubscription
 
-interface GetWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscriptionResponse
+data class HealthCheckWebhookSubscriptionResponse(
+    val status: Int,
+    val details: String
+) {
+    companion object {
+        fun from(healthCheckWebhookSubscription: HealthCheckWebhookSubscription) = HealthCheckWebhookSubscriptionResponse(
+            status = healthCheckWebhookSubscription.status,
+            details = healthCheckWebhookSubscription.details
+        )
+    }
 }

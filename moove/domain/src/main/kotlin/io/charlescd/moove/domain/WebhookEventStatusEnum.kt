@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client.request
+package io.charlescd.moove.domain
 
-data class HermesSubscriptionCreateRequest(
-    val url: String,
-    val apiKey: String,
-    val externalId: String,
-    val description: String,
-    val events: List<String>
-)
+enum class WebhookEventStatusEnum {
+    SUCCESS,
+    FAIL,
+    TIMEOUT
+}

@@ -18,55 +18,24 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.domain.SimpleWebhookSubscription
-import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.WebhookSubscription
+import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Named
 
 @Named
-class WebhookService(private val hermesService: HermesService, private val userService: UserService) {
+class WebhookService(private val userService: UserService) {
 
-    fun subscribe(authorization: String, webhookSubscription: WebhookSubscription): String {
-        return hermesService.subscribe(getAuthorEmail(authorization), webhookSubscription)
-    }
-
-    fun getSubscription(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscription {
-        val author = getAuthor(authorization)
-        val subscription = hermesService.getSubscription(author.email, id)
-        validateWorkspace(workspaceId, id, author, subscription)
-        return subscription
-    }
-
-    fun updateSubscription(workspaceId: String, authorization: String, id: String, events: List<String>): SimpleWebhookSubscription {
-        val author = getAuthor(authorization)
-        validateSubscription(workspaceId, author, id)
-        return hermesService.updateSubscription(author.email, id, events)
-    }
-
-    fun deleteSubscription(workspaceId: String, authorization: String, id: String) {
-        val author = getAuthor(authorization)
-        validateSubscription(workspaceId, author, id)
-        hermesService.deleteSubscription(author.email, id)
-    }
-
-    private fun getAuthor(authorization: String): User {
+    fun getAuthor(authorization: String): User {
         return userService.findByAuthorizationToken(authorization)
     }
 
-    private fun getAuthorEmail(authorization: String): String {
+    fun getAuthorEmail(authorization: String): String {
         return userService.getEmailFromToken(authorization)
     }
 
-    private fun validateWorkspace(workspaceId: String, id: String, author: User, subscription: SimpleWebhookSubscription) {
+    fun validateWorkspace(workspaceId: String, id: String, author: User, subscription: SimpleWebhookSubscription) {
         if (!author.root && subscription.workspaceId != workspaceId) {
             throw NotFoundException("subscription", id)
         }
-    }
-
-    private fun validateSubscription(workspaceId: String, author: User, id: String) {
-        val subscription = hermesService.getSubscription(author.email, id)
-        validateWorkspace(workspaceId, id, author, subscription)
     }
 }

@@ -36,7 +36,8 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     private val userService: UserService,
     private val circleService: CircleService,
     private val deployService: DeployService,
-    private val workspaceService: WorkspaceService
+    private val workspaceService: WorkspaceService,
+    private val webhookEventService: WebhookEventService
 ) : CreateDeploymentInteractor {
 
     @Transactional
@@ -45,13 +46,13 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val user = userService.findByAuthorizationToken(authorization)
-
+        val deployment = createDeployment(request, workspaceId, user)
         if (build.canBeDeployed()) {
-            val deployment = createDeployment(request, workspaceId, user)
             deploymentService.save(deployment)
-            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
+            deploy(deployment, build, workspace)
             return DeploymentResponse.from(deployment, build)
         } else {
+            notifyEvent(WebhookEventStatusEnum.FAIL, deployment)
             throw BusinessException.of(MooveErrorCode.DEPLOY_INVALID_BUILD).withParameters(build.id)
         }
     }
@@ -68,5 +69,20 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val user = user
         val circle = circleService.find(request.circleId)
         return request.toDeployment(workspaceId, user, circle)
+    }
+
+    private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment) {
+        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.START_DEPLOY, status)
+        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
+    }
+
+    private fun deploy(deployment: Deployment, build: Build, workspace: Workspace) {
+        try {
+            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
+            notifyEvent(WebhookEventStatusEnum.SUCCESS, deployment)
+        } catch (ex: Exception) {
+            notifyEvent(WebhookEventStatusEnum.FAIL, deployment)
+            throw ex
+        }
     }
 }

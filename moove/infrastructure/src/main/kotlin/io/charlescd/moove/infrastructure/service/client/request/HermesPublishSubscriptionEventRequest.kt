@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.moove.api.request
+package io.charlescd.moove.infrastructure.service.client.request
 
-data class UndeployRequest(
-    val authorId: String
+import io.charlescd.moove.domain.WebhookEventTypeEnum
+import javax.validation.constraints.NotBlank
+
+data class HermesPublishSubscriptionEventRequest(
+    @field:NotBlank
+    val eventType: WebhookEventTypeEnum,
+
+    @field:NotBlank
+    val externalId: String,
+
+    @field:NotBlank
+    val event: String
 )

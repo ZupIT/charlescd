@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.webhook
+package io.charlescd.moove.domain
 
-import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
+abstract class WebhookEvent(
+    open val externalId: String,
+    open val eventType: WebhookEventTypeEnum,
+    open val eventStatus: WebhookEventStatusEnum
+)
 
-interface GetWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscriptionResponse
-}
+data class SimpleWebhookEvent(
+    val workspaceId: String,
+    val eventType: WebhookEventTypeEnum,
+    val eventStatus: WebhookEventStatusEnum
+)
