@@ -47,6 +47,7 @@ const CircleMatcher = ({ form, setForm, data }: Props) => {
       icon="circle-matcher"
       showAction={isAction}
       action={() => setForm(FORM_CIRCLE_MATCHER)}
+      type="Required"
     >
       {data && !responseRemove && (
         <Card.Config

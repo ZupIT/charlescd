@@ -15,10 +15,9 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import userEvent from '@testing-library/user-event';
-import selectEvent from 'react-select-event';
 import FormGit from '../Form';
 
 test('should test a git connection', async () => {
@@ -31,17 +30,19 @@ test('should test a git connection', async () => {
   
   const githubButton = screen.getByTestId('radio-group-git-item-GitHub');
 
-  userEvent.click(githubButton);
+  await act(async() => {
+    userEvent.click(githubButton);
+  
+  });
 
-  userEvent.type(screen.getByTestId('input-text-name'), 'github');
-  userEvent.type(screen.getByTestId('input-text-credentials.address'), 'github.com');
-  userEvent.type(screen.getByTestId('input-text-credentials.accessToken'), '123');
+  await act(async() => {
+    userEvent.type(screen.getByTestId('input-text-credentials.accessToken'), '123');
+    userEvent.type(screen.getByTestId('input-text-name'), 'github');
+  })
 
   const testConnectionButton = screen.getByTestId('button-default-test-connection');
-  userEvent.click(testConnectionButton);
-
+  await act(async() => {
+    userEvent.click(testConnectionButton)
+  })
   const connectionMessageElement = await screen.findByText('Successful connection with git.');
-  expect(connectionMessageElement).toBeInTheDocument();
 });
-
-
