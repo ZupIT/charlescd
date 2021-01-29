@@ -56,7 +56,7 @@ test('to save new git', async () => {
 });
 
 test('to save new git and trigger error', async () => {
-  const toogleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
+  const toggleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
 
   const git = {
     name: 'git',
@@ -76,11 +76,11 @@ test('to save new git and trigger error', async () => {
     await result.current.save(git);
   });
 
-  await waitFor(() => expect(toogleNotificationSpy).toBeCalled());
+  await waitFor(() => expect(toggleNotificationSpy).toBeCalled());
 });
 
 test('to save new git and trigger error on add', async () => {
-  const toogleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
+  const toggleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
 
   const git = {
     name: 'git',
@@ -102,7 +102,7 @@ test('to save new git and trigger error on add', async () => {
     await result.current.save(git);
   });
 
-  await waitFor(() => expect(toogleNotificationSpy).toBeCalled());
+  await waitFor(() => expect(toggleNotificationSpy).toBeCalled());
 });
 
 test('to remove a git', async () => {
