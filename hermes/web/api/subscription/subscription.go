@@ -23,7 +23,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"hermes/internal/message/message"
-	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/message/payloads"
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
@@ -129,7 +128,7 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 	}
 }
 
-func Publish(messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := messageMain.ParsePayload(r.Body)
 		if err != nil {
@@ -167,16 +166,3 @@ func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdRespons
 	}
 	return messages
 }
-
-//func messageToExecutionRequest(createdMessages []payloads.ExecutionResponse, request payloads.PayloadRequest) []payloads.ExecutionRequest {
-//	var requests []payloads.ExecutionRequest
-//	for _, m := range createdMessages {
-//		msg := payloads.ExecutionRequest{
-//			ExecutionId: m.Id,
-//			EventType:   request.EventType,
-//			Event:       request.Event,
-//		}
-//		requests = append(requests, msg)
-//	}
-//	return requests
-//}

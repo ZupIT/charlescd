@@ -45,16 +45,6 @@ func (main Main) ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, e
 	return *payload, nil
 }
 
-func (main Main) ParseMessage(request io.ReadCloser) (payloads.Request, errors.Error) {
-	var msg *payloads.Request
-	err := json.NewDecoder(request).Decode(&msg)
-	if err != nil {
-		return payloads.Request{}, errors.NewError("Parse error", err.Error()).
-			WithOperations("ParseMessage.ParseDecode")
-	}
-	return *msg, nil
-}
-
 func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error) {
 	var msgList []Message
 	var response []payloads.MessageResponse

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
@@ -87,19 +88,27 @@ func (main *Main) updateMessageStatus(message payloads.MessageResponse, status s
 		LoggedAt:     time.Now(),
 	}
 
-	retryExec := main.db.Table("messages_executions_histories").Create(&data)
-	if retryExec.Error != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Push message error", "Could not save not enqueued execution").
-				WithOperations("sendMessage.Push.RetryExec"),
-		}).Errorln()
-	}
+	main.db.Transaction(func(tx *gorm.DB) error {
+		retryExec := tx.Table("messages_executions_histories").Create(&data)
+		if retryExec.Error != nil {
+			logrus.WithFields(logrus.Fields{
+				"err": errors.NewError("Push message error", "Could not save not enqueued execution").
+					WithOperations("sendMessage.Push.RetryExec"),
+			}).Errorln()
 
-	retryMsg := main.db.Table("messages").Where("id = ?", message.Id).Update("last_status", status)
-	if retryMsg.Error != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Push message error", "Could not update not enqueued message").
-				WithOperations("sendMessage.Push.RetryMsg"),
-		}).Errorln()
-	}
+			return retryExec.Error
+		}
+
+		retryMsg := tx.Table("messages").Where("id = ?", message.Id).Update("last_status", status)
+		if retryMsg.Error != nil {
+			logrus.WithFields(logrus.Fields{
+				"err": errors.NewError("Push message error", "Could not update not enqueued message").
+					WithOperations("sendMessage.Push.RetryMsg"),
+			}).Errorln()
+
+			return retryMsg.Error
+		}
+
+		return nil
+	})
 }
