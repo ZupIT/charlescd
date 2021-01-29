@@ -21,22 +21,16 @@ import DropdownItem from '../';
 import { Props as ActionProps } from '../';
 import {COLOR_COMET} from 'core/assets/colors';
 
+const onClick = jest.fn();
+
 const action: ActionProps = {
   icon: 'delete',
   name: 'Delete',
-  onClick: () => jest.fn(),
   tooltip: 'Tooltip here!'
 };
 
-
 test('should render an Inactive Item, on hover show a tooltip and be disabled', async () => {
-  render(<DropdownItem 
-            name={action.name}
-            icon={action.icon}
-            onClick={action.onClick}
-            tooltip={action.tooltip}
-            isInactive={true}
-        />);
+  render(<DropdownItem {...action} onClick={onClick} isInactive />);
 
   const deleteButton = screen.getByTestId('dropdown-item-delete-Delete');
   expect(deleteButton).toBeInTheDocument();
@@ -47,16 +41,13 @@ test('should render an Inactive Item, on hover show a tooltip and be disabled', 
   
   const tooltipText = screen.getByText('Tooltip here!');
   expect(tooltipText).toBeInTheDocument();
+
+  userEvent.click(deleteButton);
+  expect(onClick).not.toBeCalled();
 });
 
 test('should render an Active Item, on hover not show a tooltip and not be disabled', async () => {
-    render(<DropdownItem 
-      name={action.name}
-      icon={action.icon}
-      onClick={action.onClick}
-      tooltip={action.tooltip}
-      isInactive={false}
-  />);
+  render(<DropdownItem {...action} onClick={onClick} />);
 
   const deleteButton = screen.getByTestId('dropdown-item-delete-Delete');
   expect(deleteButton).toBeInTheDocument();
@@ -67,40 +58,7 @@ test('should render an Active Item, on hover not show a tooltip and not be disab
 
   const tooltipText = screen.queryByText('Tooltip here!');
   expect(tooltipText).not.toBeInTheDocument();
-});
 
-test('should disable delete button when circle is deploying', async () => {
-  render(<DropdownItem 
-    name={action.name}
-    icon={action.icon}
-    deploying={true}
-    undeploying={false}
-  />);
-
-  const deleteButton = screen.getByTestId('dropdown-item-delete-Delete');
-  expect(deleteButton).toBeInTheDocument();
-  
-  const deleteButtonText = await screen.findByText('Delete');
-  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
-
-  const deleteButtonIcon = await screen.findByTestId('icon-delete');
-  expect(deleteButtonIcon).toHaveStyle(`color: ${COLOR_COMET}`);
-});
-
-test('should disable delete button when circle is undeploying', async () => {
-  render(<DropdownItem 
-    name={action.name}
-    icon={action.icon}
-    deploying={false}
-    undeploying={true}
-  />);
-
-  const deleteButton = screen.getByTestId('dropdown-item-delete-Delete');
-  expect(deleteButton).toBeInTheDocument();
-  
-  const deleteButtonText = await screen.findByText('Delete');
-  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_COMET}`);
-
-  const deleteButtonIcon = await screen.findByTestId('icon-delete');
-  expect(deleteButtonIcon).toHaveStyle(`color: ${COLOR_COMET}`);
+  userEvent.click(deleteButton);
+  expect(onClick).toBeCalled();
 });

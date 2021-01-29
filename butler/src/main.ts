@@ -31,6 +31,7 @@ import { ConsoleLoggerService } from './app/v2/core/logs/console'
 import {
   OctopipeEKSConfigurationDataSchema,
   OctopipeGenericConfigurationDataSchema,
+  OctopipeDefaultConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
 } from './app/v2/core/validations/schemas'
 import { Request, Response, Router } from 'express'
@@ -54,6 +55,7 @@ async function bootstrap() {
   registerSchema(SpinnakerConfigurationDataSchema)
   registerSchema(OctopipeEKSConfigurationDataSchema)
   registerSchema(OctopipeGenericConfigurationDataSchema)
+  registerSchema(OctopipeDefaultConfigurationDataSchema)
 
   const appModule: DynamicModule = await AppModule.forRootAsync()
   const app: INestApplication = await NestFactory.create(appModule)

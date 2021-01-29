@@ -19,7 +19,7 @@ import { render, screen, act } from 'unit-test/testUtils';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
-import Groups from '../';
+import Groups from '..';
 import userEvent from '@testing-library/user-event';
 
 test('render groups', async () => {

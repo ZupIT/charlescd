@@ -29,14 +29,15 @@ import {
   patchProfileById,
   findUserByEmail,
   createNewUser,
-  deleteUserById
+  deleteUserById,
+  findWorkspacesByUserId
 } from 'core/providers/users';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, NewUser, NewPassword } from './interfaces/User';
-import { isIDMEnabled } from 'core/utils/auth';
+import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
+import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
@@ -53,7 +54,6 @@ export const useUser = (): {
       try {
         if (email) {
           const res = await getUserByEmail(email);
-
           setUser(res);
 
           return res;
@@ -61,7 +61,7 @@ export const useUser = (): {
       } catch (e) {
         setError(e);
 
-        if (!isIDMEnabled()) {
+        if (!isIDMAuthFlow()) {
           dispatch(
             toogleNotification({
               text: `Error when trying to fetch the user info for ${email}`,
@@ -77,6 +77,48 @@ export const useUser = (): {
   return {
     findByEmail,
     user,
+    error
+  };
+};
+
+export const useWorkspacesByUser = (): {
+  findWorkspacesByUser: Function;
+  workspaces: Workspace[];
+  error: ResponseError;
+} => {
+  const dispatch = useDispatch();
+  const getWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
+  const [error, setError] = useState<ResponseError>(null);
+
+  const findWorkspacesByUser = useCallback(
+    async (id: Pick<User, 'id'>) => {
+      try {
+        if (id) {
+          const res = await getWorkspacesByUser(id);
+          setWorkspaces(res);
+
+          return res;
+        }
+      } catch (e) {
+        setError(e);
+
+        if (!isIDMAuthFlow()) {
+          dispatch(
+            toogleNotification({
+              text: `Error when trying to fetch workspaces for current user`,
+              status: 'error'
+            })
+          );
+        }
+      }
+    },
+    [dispatch, getWorkspacesByUser]
+  );
+
+  return {
+    findWorkspacesByUser,
+    workspaces,
     error
   };
 };

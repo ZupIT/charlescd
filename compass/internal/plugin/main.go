@@ -19,12 +19,13 @@
 package plugin
 
 import (
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"plugin"
 )
 
 type UseCases interface {
-	FindAll(category string) ([]Plugin, error)
-	GetPluginBySrc(id string) (*plugin.Plugin, error)
+	FindAll(category string) ([]Plugin, errors.Error)
+	GetPluginBySrc(id string) (*plugin.Plugin, errors.Error)
 }
 
 type Main struct {
