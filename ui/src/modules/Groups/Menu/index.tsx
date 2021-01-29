@@ -70,12 +70,14 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
     </InfiniteScroll>
   );
 
-  const renderContent = () =>
-    isEmpty(list?.content) ? (
+  const renderEmpty = () => (
+    <Styled.Empty>
       <Text.h3 color="dark">No User group was found</Text.h3>
-    ) : (
-      renderList()
-    );
+    </Styled.Empty>
+  );
+
+  const renderContent = () =>
+    isEmpty(list?.content) ? renderEmpty() : renderList();
 
   return (
     <Fragment>

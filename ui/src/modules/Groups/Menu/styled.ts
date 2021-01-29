@@ -98,7 +98,10 @@ const ButtonModal = styled(ButtonComponent.Default)`
 `;
 
 const Loader = styled(LoaderMenuComponent.List)`
-  /* margin-left: 16px; */
+  padding: 0 16px;
+`;
+
+const Empty = styled.div`
   padding: 0 16px;
 `;
 
@@ -112,6 +115,7 @@ export default {
   Link,
   Button,
   Loader,
+  Empty,
   Modal: {
     Input: ModalInput,
     Title: ModalTitle,
