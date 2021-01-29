@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client.request
+import React from 'react';
+import Styled from './styled';
+import { DocumentationLinkProps } from './interface';
 
-data class HermesSubscriptionCreateRequest(
-    val url: String,
-    val apiKey: String,
-    val externalId: String,
-    val description: String,
-    val events: List<String>
-)
+const DocumentationLink = ({
+  text,
+  documentationLink
+}: DocumentationLinkProps) => {
+  return (
+    <>
+      <Styled.DocumentationLink target="_blank" href={documentationLink}>
+        {text}
+      </Styled.DocumentationLink>{' '}
+    </>
+  );
+};
+
+export default DocumentationLink;

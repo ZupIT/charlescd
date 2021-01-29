@@ -26,12 +26,12 @@ import javax.validation.constraints.Size
 data class CreateWorkspaceRequest(
     @field:NotNull
     @field:NotBlank
-    @field:Size(min = 1, max = 50, message = "Name minimum size is 1 and maximum is 50.")
+    @field:Size(min = 1, max = 64, message = "Name minimum size is 1 and maximum is 64.")
     val name: String
 ) {
     fun toWorkspace(id: String, author: User) = Workspace(
         id = id,
-        name = name,
+        name = name.trim(),
         author = author,
         createdAt = LocalDateTime.now()
     )

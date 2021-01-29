@@ -59,24 +59,4 @@ class DeploymentController(private val deploymentService: DeploymentServiceLegac
     ) {
         return this.deploymentService.deleteDeploymentById(id, workspaceId)
     }
-
-    @ApiOperation(value = "Undeploy")
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/{id}/undeploy")
-    fun undeploy(
-        @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathVariable("id") id: String
-    ) {
-        return this.deploymentService.undeploy(id, workspaceId)
-    }
-
-    @ApiOperation(value = "Undeploy V1")
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/v1/{id}/undeploy")
-    fun undeployV1(
-        @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathVariable("id") id: String
-    ) {
-        return this.deploymentService.undeployV1(id, workspaceId)
-    }
 }

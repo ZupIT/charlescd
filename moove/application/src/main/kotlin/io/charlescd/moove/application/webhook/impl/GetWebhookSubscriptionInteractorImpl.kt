@@ -19,15 +19,25 @@ package io.charlescd.moove.application.webhook.impl
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.GetWebhookSubscriptionInteractor
 import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
+import io.charlescd.moove.domain.SimpleWebhookSubscription
+import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
 class GetWebhookSubscriptionInteractorImpl @Inject constructor(
-    private val webhookService: WebhookService
+    private val webhookService: WebhookService,
+    private val hermesService: HermesService
 ) : GetWebhookSubscriptionInteractor {
-    override fun execute(workspaceId: String, id: String, authorization: String): SimpleWebhookSubscriptionResponse {
-        val webhookSubscription = webhookService.getSubscription(workspaceId, authorization, id)
+    override fun execute(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscriptionResponse {
+        val webhookSubscription = getSubscription(workspaceId, authorization, id)
         return SimpleWebhookSubscriptionResponse.from(webhookSubscription)
+    }
+
+    private fun getSubscription(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscription {
+        val author = webhookService.getAuthor(authorization)
+        val subscription = hermesService.getSubscription(author.email, id)
+        webhookService.validateWorkspace(workspaceId, id, author, subscription)
+        return subscription
     }
 }

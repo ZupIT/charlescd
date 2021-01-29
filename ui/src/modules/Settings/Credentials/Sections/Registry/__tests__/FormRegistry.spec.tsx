@@ -64,9 +64,6 @@ test('render Registry form default component', () => {
   const addRegistryText = screen.getByText('Add Registry');
   expect(addRegistryText).toBeInTheDocument();
 
-  const infoIcon = screen.getByTestId('icon-info');
-  expect(infoIcon).toBeInTheDocument();
-
   const chooseRegistryText = screen.getByText('Choose which one you want to add:');
   expect(chooseRegistryText).toBeInTheDocument();
 });

@@ -24,8 +24,14 @@ data class DeploymentCallbackRequest(
 ) {
 
     fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
+
+    fun isDeployEvent() = listOf(DeploymentRequestStatus.SUCCEEDED, DeploymentRequestStatus.FAILED).contains(this.deploymentStatus)
+
+    fun isEventStatusSuccessful() = listOf(DeploymentRequestStatus.SUCCEEDED, DeploymentRequestStatus.UNDEPLOYED).contains(this.deploymentStatus)
+
+    fun isEventStatusFailure() = listOf(DeploymentRequestStatus.FAILED, DeploymentRequestStatus.UNDEPLOY_FAILED).contains(this.deploymentStatus)
 }
 
 enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED, TIMED_OUT
+    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED, TIMED_OUT;
 }

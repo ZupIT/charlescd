@@ -35,7 +35,7 @@ class CreateWebhookSubscriptionInteractorImplTest extends Specification {
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        createWebhookSubscriptionInteractor = new CreateWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
+        createWebhookSubscriptionInteractor = new CreateWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to create subscription should do it successfully"() {
@@ -48,7 +48,6 @@ class CreateWebhookSubscriptionInteractorImplTest extends Specification {
 
         notThrown()
     }
-
 
     private static List<String> getEvents() {
         def events = new ArrayList()

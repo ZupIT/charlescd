@@ -17,8 +17,8 @@
 package io.charlescd.moove.infrastructure.service.client
 
 import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
-import io.charlescd.moove.infrastructure.service.client.request.HermesSubscriptionCreateRequest
-import io.charlescd.moove.infrastructure.service.client.request.HermesSubscriptionUpdateRequest
+import io.charlescd.moove.infrastructure.service.client.request.HermesCreateSubscriptionRequest
+import io.charlescd.moove.infrastructure.service.client.request.HermesUpdateSubscriptionRequest
 import io.charlescd.moove.infrastructure.service.client.response.*
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
@@ -36,7 +36,7 @@ interface HermesClient {
     )
     fun subscribe(
         @RequestHeader("x-author") authorEmail: String,
-        @RequestBody request: HermesSubscriptionCreateRequest
+        @RequestBody request: HermesCreateSubscriptionRequest
     ): HermesSubscriptionCreateResponse
 
     @ResponseStatus(HttpStatus.OK)
@@ -48,7 +48,7 @@ interface HermesClient {
     fun updateSubscription(
         @RequestHeader("x-author") authorEmail: String,
         @PathVariable("id") id: String,
-        @RequestBody request: HermesSubscriptionUpdateRequest
+        @RequestBody request: HermesUpdateSubscriptionRequest
     ): HermesSubscriptionResponse
 
     @ResponseStatus(HttpStatus.OK)
@@ -72,4 +72,15 @@ interface HermesClient {
         @RequestHeader("x-author") authorEmail: String,
         @PathVariable("id") id: String
     )
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["/subscriptions/{id}/health-check"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun healthCheckSubscription(
+        @RequestHeader("x-author") authorEmail: String,
+        @PathVariable("id") id: String
+    ): HermesHealthCheckSubscriptionResponse
 }

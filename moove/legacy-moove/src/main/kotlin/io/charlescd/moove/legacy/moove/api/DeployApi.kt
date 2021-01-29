@@ -21,12 +21,9 @@ package io.charlescd.moove.legacy.moove.api
 import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyErrorDecoderConfiguration
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployModuleRequest
-import io.charlescd.moove.legacy.moove.api.request.UndeployRequest
-import io.charlescd.moove.legacy.moove.api.request.UndeployRequestV1
 import io.charlescd.moove.legacy.moove.api.response.CreateDeployCdConfigurationResponse
 import io.charlescd.moove.legacy.moove.api.response.CreateDeployModuleResponse
 import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
-import io.charlescd.moove.legacy.moove.api.response.UndeployResponse
 import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
@@ -35,22 +32,6 @@ import org.springframework.web.bind.annotation.*
 
 @FeignClient(name = "deployApi", url = "\${charlescd.deploy.url}", configuration = [DefaultLegacyErrorDecoderConfiguration::class])
 interface DeployApi {
-
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping(
-        value = ["/v2/deployments/{deploymentId}/undeploy"],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
-        consumes = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    fun undeploy(@PathVariable("deploymentId") deploymentId: String, @Valid @RequestBody request: UndeployRequest): UndeployResponse
-
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping(
-        value = ["/undeployments"],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
-        consumes = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    fun undeployV1(@RequestBody request: UndeployRequestV1): UndeployResponse
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(

@@ -37,12 +37,12 @@ class GetWebhookSubscriptionInteractorImplTest extends Specification {
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        getWebhookSubscriptionInteractor = new GetWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
+        getWebhookSubscriptionInteractor = new GetWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to get subscription should do it successfully"() {
         when:
-        getWebhookSubscriptionInteractor.execute(workspaceId, subscriptionId, authorization)
+        getWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -54,7 +54,7 @@ class GetWebhookSubscriptionInteractorImplTest extends Specification {
 
     def "when trying to get subscription and is wrong workspace should throw not found exception"() {
         when:
-        getWebhookSubscriptionInteractor.execute("workspaceIdOther", subscriptionId, authorization)
+        getWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail

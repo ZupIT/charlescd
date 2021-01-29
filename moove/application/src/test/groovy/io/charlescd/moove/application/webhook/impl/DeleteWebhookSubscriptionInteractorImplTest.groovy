@@ -37,12 +37,12 @@ class DeleteWebhookSubscriptionInteractorImplTest extends Specification {
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        deleteWebhookSubscriptionInteractor = new DeleteWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
+        deleteWebhookSubscriptionInteractor = new DeleteWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to delete subscription should do it successfully"() {
         when:
-        deleteWebhookSubscriptionInteractor.execute(workspaceId, subscriptionId, authorization)
+        deleteWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -54,7 +54,7 @@ class DeleteWebhookSubscriptionInteractorImplTest extends Specification {
 
     def "when trying to delete subscription and is wrong workspace should throw not found exception"() {
         when:
-        deleteWebhookSubscriptionInteractor.execute("workspaceIdOther", subscriptionId, authorization)
+        deleteWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail

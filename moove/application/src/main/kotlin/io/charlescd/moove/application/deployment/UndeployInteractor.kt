@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+package io.charlescd.moove.application.deployment
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
+interface UndeployInteractor {
 
-  return status;
-};
-
-export const isNotBlank = (value: string) => !!value.trim();
+    fun execute(workspaceId: String, authorization: String, id: String)
+}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState, useCallback } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
@@ -39,20 +39,19 @@ const Circles = () => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState<string>(CIRCLE_STATUS.active);
   const [name, setName] = useState('');
-  const [message, setMessage] = useState('');
   const profileName = getProfileByKey('name');
   const query = getQueryStrings();
   const circles = query.getAll('circle');
 
-  useEffect(() => {
+  const onChange = useCallback(() => {
     const page = 0;
     dispatch(resetContentAction());
     filterCircles({ name, status, page });
+  }, [dispatch, filterCircles, status, name]);
 
-    if (message === 'Deleted') {
-      filterCircles({ name, status, page });
-    }
-  }, [status, name, filterCircles, message, dispatch]);
+  useEffect(() => {
+    onChange();
+  }, [status, name, onChange]);
 
   const loadMore = (page: number) => {
     filterCircles({ name, status, page });
@@ -100,11 +99,7 @@ const Circles = () => {
               renderPlaceholder()
             ) : (
               <Styled.ScrollableX>
-                <CirclesComparation
-                  onChange={(delCircleStatus: string) =>
-                    setMessage(delCircleStatus)
-                  }
-                />
+                <CirclesComparation onChange={() => onChange()} />
               </Styled.ScrollableX>
             )}
           </Route>

@@ -19,5 +19,5 @@ package io.charlescd.moove.application.webhook
 import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
 
 interface GetWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, id: String, authorization: String): SimpleWebhookSubscriptionResponse
+    fun execute(workspaceId: String, authorization: String, id: String): SimpleWebhookSubscriptionResponse
 }

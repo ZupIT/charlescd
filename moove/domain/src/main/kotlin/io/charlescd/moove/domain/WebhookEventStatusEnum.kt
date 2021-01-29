@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.moove.api.request
+package io.charlescd.moove.domain
 
-data class UndeployRequestV1(
-    val authorId: String,
-    val deploymentId: String
-)
+enum class WebhookEventStatusEnum {
+    SUCCESS,
+    FAIL,
+    TIMEOUT
+}
