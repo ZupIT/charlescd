@@ -96,7 +96,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: 'ZupIT/charlescd-automation'
-          token: '${{ secrets.AUTOMATION_TESTS_TOKEN }}'
+          token: ${{ secrets.AUTOMATION_TESTS_TOKEN }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -204,12 +204,12 @@ jobs:
           --set ingress-nginx.controller.service.type=ClusterIP \
           --set compass.database.host=charlescd${{ steps.get_sha.outputs.SHA }}-postgresql
           --set butler.image.name=zupcharles/charlescd-butler:${{ steps.get_version.outputs.VERSION }}
-          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+          kubeconfig: ${{ secrets.KUBECONFIG_DEV }}
 
     - uses: actions/checkout@v2
       with:
         repository: 'ZupIT/charlescd-automation'
-        token: '${{ secrets.AUTOMATION_TESTS_TOKEN }}'
+        token: ${{ secrets.AUTOMATION_TESTS_TOKEN }}
 
     - name: Zup Settings integration tests
       run: |
@@ -228,13 +228,13 @@ jobs:
           --set cdNamespace=charlestest${{ steps.get_sha.outputs.SHA }} \
           --set githubTargetUrl="" \
           --set GITHUB_SHA=${{ steps.get_sha.outputs.SHA }}
-        kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+        kubeconfig: ${{ secrets.KUBECONFIG_DEV }}
 
     - name: UndeployForTests
       uses: WyriHaximus/github-action-helm3@v1.0.0
       with:
         exec: helm uninstall charlescd${{ steps.get_sha.outputs.SHA }} --namespace=charlestest${{ steps.get_sha.outputs.SHA }}
-        kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+        kubeconfig: ${{ secrets.KUBECONFIG_DEV }}
 
     - name: remove namespace
       uses: steebchen/kubectl@master
