@@ -31,7 +31,7 @@ import Modal from 'core/components/Modal';
 import Icon from 'core/components/Icon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
-import { isIDMAuthFlow, isRoot } from 'core/utils/auth';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
 import { isRequired, maxLength } from 'core/utils/validations';
 import { isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
@@ -56,7 +56,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   });
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const isAbleToReset = !isIDMAuthFlow() && loggedUserId !== user?.id;
+  const isAbleToReset = !isIDMEnabled() && loggedUserId !== user?.id;
   const { updateNameById, user: userUpdated, status } = useUpdateName();
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         name="Copy link"
         onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
-      {!isIDMAuthFlow() && (
+      {!isIDMEnabled() && (
         <Dropdown.Item
           icon="delete"
           name="Delete"

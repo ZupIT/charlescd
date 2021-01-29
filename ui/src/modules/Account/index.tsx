@@ -27,7 +27,7 @@ import Placeholder from 'core/components/Placeholder';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
-import { isIDMAuthFlow, isRoot } from 'core/utils/auth';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
 import { isRoot } from 'core/utils/auth';
 import { isRequired, maxLength } from 'core/utils/validations';
 import InputTitle from 'core/components/Form/InputTitle';
@@ -137,7 +137,7 @@ const Account = () => {
 
   const renderTabActions = () => (
     <Styled.Actions>
-      {!isIDMAuthFlow() && (
+      {!isIDMEnabled() && (
         <LabeledIcon
           icon="account"
           marginContent="5px"
