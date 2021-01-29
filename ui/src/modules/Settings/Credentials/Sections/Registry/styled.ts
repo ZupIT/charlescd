@@ -73,6 +73,7 @@ const Message = styled.div<status>`
 
 const Select = styled(SelectSingle)`
   width: 271px;
+  margin-top: 20px;
 `;
 
 const Placeholder = styled(TextComponent.h4)`

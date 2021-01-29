@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import Icon from 'core/components/Icon';
 import Form from 'core/components/Form';
-import { validFields } from 'core/utils/validation';
+import { validFields } from 'core/utils/validations';
 import routes from 'core/constants/routes';
 import { redirectTo } from 'core/utils/routes';
 import Styled from '../styled';
