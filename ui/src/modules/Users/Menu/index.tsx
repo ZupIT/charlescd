@@ -39,6 +39,23 @@ const UserMenu = ({ onSearch, children }: Props) => {
       ? delParam('user', routes.usersComparation, history, id)
       : addParam('user', routes.usersComparation, history, id);
 
+  const renderUsers = () =>
+    isEmpty(items) ? (
+      <Text.h3 data-testid={'empty-result-user'} color="dark">
+        No User was found
+      </Text.h3>
+    ) : (
+      map(items, ({ email, name }: UserPaginationItem) => (
+        <MenuItem
+          key={email}
+          id={email}
+          name={name}
+          isActive={isActive(email)}
+          onSelect={() => toggleUser(email)}
+        />
+      ))
+    );
+
   return (
     <>
       <Styled.Actions>
@@ -48,8 +65,6 @@ const UserMenu = ({ onSearch, children }: Props) => {
           </LabeledIcon>
         </Styled.Button>
       </Styled.Actions>
-      <Styled.SearchInput resume onSearch={onSearch} />
-      <Styled.Content>{children}</Styled.Content>
     </>
   );
 };
