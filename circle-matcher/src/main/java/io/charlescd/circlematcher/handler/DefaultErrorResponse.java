@@ -17,8 +17,6 @@
 package io.charlescd.circlematcher.handler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +29,7 @@ public class DefaultErrorResponse {
     public String status;
     public Source source;
     public Map<String, String> meta;
+
     public DefaultErrorResponse(
             String id,
             List<String> links,
@@ -98,6 +97,7 @@ public class DefaultErrorResponse {
     }
 
 }
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class Source {
     public String getPointer() {
@@ -116,6 +116,7 @@ class Source {
         this.pointer = pointer;
         this.parameter = parameter;
     }
+
     public Source(String pointer) {
         this.pointer = pointer;
     }

@@ -1,7 +1,5 @@
 package io.charlescd.circlematcher.handler;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -9,20 +7,19 @@ public class ExceptionUtils {
 
     public static DefaultErrorResponse createNotFoundErrorResponse(String message, String sourceString) {
         Source source = new Source(sourceString);
-       return new DefaultErrorResponse( UUID.randomUUID().toString(),
+        return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 "Not found",
                 message,
                 "404",
-                source
-                ,
+                source,
                 getMetaInfo()
        );
     }
 
     public static DefaultErrorResponse createBadRequestError(String message, String sourceString) {
         Source source = new Source(sourceString);
-        return new DefaultErrorResponse( UUID.randomUUID().toString(),
+        return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 "Bad Request",
                 message,
@@ -31,9 +28,10 @@ public class ExceptionUtils {
                 getMetaInfo()
         );
     }
+
     public static DefaultErrorResponse createBusinessExceptionError(String message, String title, String sourceString, Exception exception) {
         Source source = new Source(sourceString);
-        return new DefaultErrorResponse( UUID.randomUUID().toString(),
+        return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 title,
                 message,
@@ -45,7 +43,7 @@ public class ExceptionUtils {
 
     public static DefaultErrorResponse createInternalServerError(String message, String sourceString) {
         Source source = new Source(sourceString);
-        return new DefaultErrorResponse( UUID.randomUUID().toString(),
+        return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 "Internal Server Error",
                 message,
@@ -54,8 +52,9 @@ public class ExceptionUtils {
                 getMetaInfo()
         );
     }
+
     private static Map<String, String> getMetaInfo() {
-        Map<String, String> metaInfo = new HashMap<String,String>();
+        Map<String, String> metaInfo = new HashMap<String, String>();
         metaInfo.put("timestamp", LocalDateTime.now().toString());
         metaInfo.put("component", "circle-matcher");
         return metaInfo;

@@ -19,6 +19,6 @@ public enum MatcherErrorCode {
     }
 
     public void appendParameter(String parameters) {
-       this.key =  String.format("%s: %s",this.key, parameters);
+        this.key = String.format("%s: %s", this.key, parameters);
     }
 }

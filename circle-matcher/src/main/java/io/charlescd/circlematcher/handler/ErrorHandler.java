@@ -42,22 +42,30 @@ public class ErrorHandler {
     public DefaultErrorResponse handleBusinessException(BusinessException exception) {
         logger.error("BAD REQUEST ERROR - ", exception.getErrorCode());
 
-        return ExceptionUtils.createBusinessExceptionError(exception.getErrorCode().getKey(), exception.getTitle(),     exception.getSource(), exception);
+        return ExceptionUtils.createBusinessExceptionError(
+                exception.getErrorCode().getKey(),
+                exception.getTitle(),
+                exception.getSource(),
+                exception
+        );
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public DefaultErrorResponse handleNotFoundError(NoSuchElementException exception) {
         logger.error("NOT FOUND ERROR - ", exception);
-        return ExceptionUtils.createNotFoundErrorResponse(exception.getMessage(), exception.getStackTrace()[0].getMethodName());
+        return ExceptionUtils.createNotFoundErrorResponse(
+                exception.getMessage(),
+                exception.getStackTrace()[0].getMethodName()
+        );
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public DefaultErrorResponse handleConstraintsValidation(MethodArgumentNotValidException exception) {
         logger.error("BAD REQUEST ERROR - ", exception);
-        String message = "Invalid request body."+processFieldErrors(exception.getFieldErrors());
-        return ExceptionUtils.createBadRequestError(message, getSourceFields(exception.getFieldErrors()) );
+        String message = "Invalid request body." + processFieldErrors(exception.getFieldErrors());
+        return ExceptionUtils.createBadRequestError(message, getSourceFields(exception.getFieldErrors()));
     }
 
     private String getSourceFields(List<FieldError> fieldErrors) {
@@ -75,20 +83,29 @@ public class ErrorHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public DefaultErrorResponse handleIllegalArgument(IllegalArgumentException exception) {
         logger.error("BAD REQUEST ERROR - ", exception);
-        return ExceptionUtils.createBadRequestError(exception.getMessage(), exception.getStackTrace()[0].getMethodName());
+        return ExceptionUtils.createBadRequestError(
+                exception.getMessage(),
+                exception.getStackTrace()[0].getMethodName()
+        );
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public DefaultErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         logger.error("BAD REQUEST ERROR - ", exception);
-        return  ExceptionUtils.createBadRequestError(exception.getMessage(), exception.getStackTrace()[0].getMethodName());
+        return  ExceptionUtils.createBadRequestError(
+                exception.getMessage(),
+                null
+        );
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public DefaultErrorResponse handleException(Exception exception) {
         logger.error("INTERNAL SERVER ERROR - ", exception);
-        return ExceptionUtils.createInternalServerError("Unexpected error. Please, try again later.", exception.getStackTrace()[0].getMethodName());
+        return ExceptionUtils.createInternalServerError(
+                "Unexpected error. Please, try again later.",
+                exception.getStackTrace()[0].getMethodName()
+        );
     }
 }

@@ -1,7 +1,10 @@
 package io.charlescd.circlematcher.handler
 
 import io.charlescd.circlematcher.domain.exception.BusinessException
-import io.charlescd.circlematcher.domain.exception.MatcherErrorCode;
+import io.charlescd.circlematcher.domain.exception.MatcherErrorCode
+import org.springframework.core.MethodParameter
+import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import spock.lang.Specification
 
 import java.time.LocalDateTime;
@@ -69,6 +72,57 @@ class ErrorHandlerTest extends Specification {
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
         assert response.source.pointer == "segmentation/workspaceId"
+    }
+
+    def "should return the correct message from bad request exception"() {
+        given:
+        def errorHandler = new ErrorHandler();
+        def businessException = new IllegalArgumentException("argument not valid")
+        def metaInfo = new HashMap<String,String>();
+        metaInfo.put("timestamp", LocalDateTime.now().toString());
+        metaInfo.put("component", "circle-matcher");
+
+        when:
+        def response = errorHandler.handleIllegalArgument(businessException)
+        then:
+        assert response.details == 'argument not valid'
+        assert response.title == 'Bad Request'
+        assert response.status == "400"
+        assert response.meta.get("component") == metaInfo.get("component")
+    }
+
+    def "should return the correct message from ilegal argument"() {
+        given:
+        def errorHandler = new ErrorHandler();
+        def illegalArgumentException = new IllegalArgumentException("argument not valid")
+        def metaInfo = new HashMap<String,String>();
+        metaInfo.put("timestamp", LocalDateTime.now().toString());
+        metaInfo.put("component", "circle-matcher");
+
+        when:
+        def response = errorHandler.handleIllegalArgument(businessException)
+        then:
+        assert response.details == 'argument not valid'
+        assert response.title == 'Bad Request'
+        assert response.status == "400"
+        assert response.meta.get("component") == metaInfo.get("component")
+    }
+
+    def "should return the correct message from http message not readable"() {
+        given:
+        def errorHandler = new ErrorHandler();
+        def httpMessage = new HttpMessageNotReadableException("message not readable")
+        def metaInfo = new HashMap<String,String>();
+        metaInfo.put("timestamp", LocalDateTime.now().toString());
+        metaInfo.put("component", "circle-matcher");
+
+        when:
+        def response = errorHandler.handleHttpMessageNotReadableException(httpMessage)
+        then:
+        assert response.details == 'message not readable'
+        assert response.title == 'Bad Request'
+        assert response.status == "400"
+        assert response.meta.get("component") == metaInfo.get("component")
     }
 
 }

@@ -5,7 +5,7 @@ public class BusinessException extends RuntimeException {
     private String  source;
     private String  title;
 
-    public BusinessException(MatcherErrorCode errorCode,String source, String title) {
+    public BusinessException(MatcherErrorCode errorCode, String source, String title) {
         this.errorCode = errorCode;
         this.source = source;
         this.title = title;
