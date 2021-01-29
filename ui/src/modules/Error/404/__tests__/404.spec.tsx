@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-import { ValidationSchema } from 'class-validator'
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import Error404 from '..';
 
-export const OctopipeDefaultConfigurationDataSchema: ValidationSchema = {
+test('render Error placeholder and go to workspaces', () => {
+  render(<Error404 />);
 
-  name: 'octopipeDefaultConfigurationDataSchema',
+  const button = screen.getByTestId('button-iconRounded-error-404');
+  const errorScreen = screen.getByTestId('placeholder-error-403');
+  
+  userEvent.click(button);
 
-  properties: {
-    gitProvider: [
-      {
-        type: 'isIn',
-        constraints: [['GITHUB', 'GITLAB']],
-        message: '$value is not valid. Supported providers are GITHUB and GITLAB'
-      },
-      {
-        type: 'isNotEmpty'
-      }
-    ],
-    gitToken: [{ type: 'isNotEmpty' }],
-    namespace: [{ type: 'isNotEmpty' }]
-  }
-}
+  expect(errorScreen).toBeInTheDocument();
+});
+
+

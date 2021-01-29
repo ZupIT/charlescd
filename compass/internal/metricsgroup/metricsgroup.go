@@ -71,8 +71,8 @@ func (main Main) Validate(metricsGroup MetricsGroup) errors.ErrorList {
 		err := errors.NewError("Invalid data", "Name is required").WithMeta("field", "name").WithOperations("Validate.NameTrimSpace")
 		ers.Append(err)
 
-	} else if len(metricsGroup.Name) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in Name").WithMeta("field", "name").WithOperations("Validate.NameMaximumLength")
+	} else if len(metricsGroup.Name) > 64 {
+		err := errors.NewError("Invalid data", "64 Maximum length in Name").WithMeta("field", "name").WithOperations("Validate.NameMaximumLength")
 		ers.Append(err)
 	}
 

@@ -95,8 +95,8 @@ func (main Main) ValidateAction(action Request) errors.ErrorList {
 			WithMeta("field", "nickname").
 			WithOperations("ValidateAction.NameTrimSpace")
 		ers.Append(err)
-	} else if len(action.Nickname) > 100 {
-		err := errors.NewError("Invalid data", "action nickname is limited to 100 characters maximum").
+	} else if len(action.Nickname) > 64 {
+		err := errors.NewError("Invalid data", "action nickname is limited to 64 characters maximum").
 			WithMeta("field", "nickname").
 			WithOperations("ValidateAction.NicknameLen")
 		ers.Append(err)
@@ -107,8 +107,8 @@ func (main Main) ValidateAction(action Request) errors.ErrorList {
 			WithMeta("field", "description").
 			WithOperations("ValidateAction.DescriptionTrimSpace")
 		ers.Append(err)
-	} else if len(action.Description) > 100 {
-		err := errors.NewError("Invalid data", "description is limited to 100 characters maximum").
+	} else if len(action.Description) > 64 {
+		err := errors.NewError("Invalid data", "description is limited to 64 characters maximum").
 			WithMeta("field", "description").
 			WithOperations("ValidateAction.DescriptionLen")
 		ers.Append(err)
