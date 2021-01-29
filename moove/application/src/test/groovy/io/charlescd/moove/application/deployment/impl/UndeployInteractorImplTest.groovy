@@ -49,7 +49,7 @@ class UndeployInteractorImplTest extends Specification {
                 new WebhookEventService(hermesService, new BuildService(buildRepository)))
     }
 
-    def 'when deploy does not exist, should throw exception'() {
+    def 'when deploy does not exist, should throw exception and notify hermes'() {
         given:
         def id = "5d4c95b4-6f83-11ea-bc55-0242ac130003"
         def workspaceId = TestUtils.workspaceId
@@ -60,7 +60,7 @@ class UndeployInteractorImplTest extends Specification {
 
         then:
         1 * deploymentRepository.find(id, workspaceId) >> Optional.empty()
-        0 * hermesService.notifySubscriptionEvent(_)
+        1 * hermesService.notifySubscriptionEvent(_)
 
         thrown(NotFoundException)
     }

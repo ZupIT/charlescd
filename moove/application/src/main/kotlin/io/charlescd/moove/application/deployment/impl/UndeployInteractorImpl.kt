@@ -38,7 +38,7 @@ open class UndeployInteractorImpl @Inject constructor(
 
     @Transactional
     override fun execute(workspaceId: String, authorization: String, id: String) {
-        val deployment: Deployment = deploymentService.findByIdAndWorkspace(id, workspaceId)
+        val deployment: Deployment = getDeployment(id, workspaceId)
         updateDeploymentStatus(deployment)
         undeploy(id, authorization, deployment)
     }
@@ -51,9 +51,9 @@ open class UndeployInteractorImpl @Inject constructor(
         return userService.findByAuthorizationToken(authorization).id
     }
 
-    private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment) {
-        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.START_UNDEPLOY, status)
-        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
+    private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment, error: String? = null) {
+        val simpleWebhookEvent = buildSimpleWebhookEvent(deployment.workspaceId, status)
+        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment, error)
     }
 
     private fun undeploy(id: String, authorization: String, deployment: Deployment) {
@@ -61,8 +61,26 @@ open class UndeployInteractorImpl @Inject constructor(
             deployService.undeploy(id, getAuthorId(authorization))
             notifyEvent(WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
-            notifyEvent(WebhookEventStatusEnum.FAIL, deployment)
+            notifyEvent(WebhookEventStatusEnum.FAIL, deployment, ex.message)
             throw ex
         }
+    }
+
+    private fun getDeployment(deploymentId: String, workspaceId: String): Deployment {
+        try {
+            return deploymentService.findByIdAndWorkspace(deploymentId, workspaceId)
+        } catch (ex: Exception) {
+            notifyNotFoundErrorEvent(workspaceId, WebhookEventStatusEnum.FAIL, ex.message!!)
+            throw ex
+        }
+    }
+
+    private fun notifyNotFoundErrorEvent(workspaceId: String, status: WebhookEventStatusEnum, error: String) {
+        val simpleWebhookEvent = buildSimpleWebhookEvent(workspaceId, status)
+        webhookEventService.notifyNotFoundErrorEvent(simpleWebhookEvent, error)
+    }
+
+    private fun buildSimpleWebhookEvent(workspaceId: String, status: WebhookEventStatusEnum): SimpleWebhookEvent {
+        return SimpleWebhookEvent(workspaceId, WebhookEventTypeEnum.START_UNDEPLOY, status)
     }
 }

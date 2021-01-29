@@ -112,6 +112,7 @@ class HermesClientServiceTest extends Specification {
                 "workspaceId",
                 WebhookEventTypeEnum.START_DEPLOY,
                 WebhookEventStatusEnum.SUCCESS,
+                null,
                 deploymentEvent
         )
 

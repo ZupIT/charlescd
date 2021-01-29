@@ -30,17 +30,38 @@ class WebhookEventService(
     private val buildService: BuildService
 ) {
 
-    fun notifyDeploymentEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment) {
+    fun notifyDeploymentEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment, error: String? = null) {
         hermesService.notifySubscriptionEvent(
-            buildWebhookDeploymentEventType(simpleWebhookEvent, deployment))
+            buildWebhookDeploymentEventType(simpleWebhookEvent, deployment, error)
+        )
     }
 
-    private fun buildWebhookDeploymentEventType(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment): WebhookDeploymentEventType {
+    fun notifyNotFoundErrorEvent(simpleWebhookEvent: SimpleWebhookEvent, errorMessage: String) {
+        hermesService.notifySubscriptionEvent(
+            buildWebhookNotFoundErrorEventType(simpleWebhookEvent, errorMessage)
+        )
+    }
+
+    private fun buildWebhookDeploymentEventType(
+        simpleWebhookEvent: SimpleWebhookEvent,
+        deployment: Deployment,
+        error: String? = null
+    ): WebhookDeploymentEventType {
         return WebhookDeploymentEventType(
             simpleWebhookEvent.workspaceId,
             simpleWebhookEvent.eventType,
             simpleWebhookEvent.eventStatus,
+            error,
             buildWebhookDeploymentEvent(deployment, simpleWebhookEvent)
+        )
+    }
+
+    private fun buildWebhookNotFoundErrorEventType(simpleWebhookEvent: SimpleWebhookEvent, errorMessage: String): WebhookNotFoundErrorEventType {
+        return WebhookNotFoundErrorEventType(
+            simpleWebhookEvent.workspaceId,
+            simpleWebhookEvent.eventType,
+            simpleWebhookEvent.eventStatus,
+            errorMessage
         )
     }
 
@@ -59,7 +80,8 @@ class WebhookEventService(
 
     private fun getTimeExecutionEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): Long? {
         if (simpleWebhookEvent.eventType == WebhookEventTypeEnum.FINISH_DEPLOY &&
-            simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS) {
+            simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS
+        ) {
             return ChronoUnit.SECONDS.between(deployment.deployedAt, deployment.createdAt)
         }
         return null

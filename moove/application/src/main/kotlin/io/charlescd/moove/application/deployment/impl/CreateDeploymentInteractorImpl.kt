@@ -42,7 +42,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
 
     @Transactional
     override fun execute(request: CreateDeploymentRequest, workspaceId: String, authorization: String): DeploymentResponse {
-        val build: Build = buildService.find(request.buildId, workspaceId)
+        val build: Build = getBuild(request.buildId, workspaceId)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val user = userService.findByAuthorizationToken(authorization)
@@ -54,6 +54,15 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         } else {
             notifyEvent(WebhookEventStatusEnum.FAIL, deployment)
             throw BusinessException.of(MooveErrorCode.DEPLOY_INVALID_BUILD).withParameters(build.id)
+        }
+    }
+
+    private fun getBuild(buildId: String, workspaceId: String): Build {
+        try {
+            return buildService.find(buildId, workspaceId)
+        } catch (ex: Exception) {
+            notifyNotFoundErrorEvent(workspaceId, WebhookEventStatusEnum.FAIL, ex.message!!)
+            throw ex
         }
     }
 
@@ -71,9 +80,18 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         return request.toDeployment(workspaceId, user, circle)
     }
 
-    private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment) {
-        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.START_DEPLOY, status)
-        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
+    private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment, error: String? = null) {
+        val simpleWebhookEvent = buildSimpleWebhookEvent(deployment.workspaceId, status)
+        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment, error)
+    }
+
+    private fun notifyNotFoundErrorEvent(workspaceId: String, status: WebhookEventStatusEnum, error: String) {
+        val simpleWebhookEvent = buildSimpleWebhookEvent(workspaceId, status)
+        webhookEventService.notifyNotFoundErrorEvent(simpleWebhookEvent, error)
+    }
+
+    private fun buildSimpleWebhookEvent(workspaceId: String, status: WebhookEventStatusEnum): SimpleWebhookEvent {
+        return SimpleWebhookEvent(workspaceId, WebhookEventTypeEnum.START_DEPLOY, status)
     }
 
     private fun deploy(deployment: Deployment, build: Build, workspace: Workspace) {
@@ -81,7 +99,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
             deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
             notifyEvent(WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
-            notifyEvent(WebhookEventStatusEnum.FAIL, deployment)
+            notifyEvent(WebhookEventStatusEnum.FAIL, deployment, ex.message)
             throw ex
         }
     }
