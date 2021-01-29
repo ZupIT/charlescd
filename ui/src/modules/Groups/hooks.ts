@@ -48,7 +48,7 @@ export const useFindAllUserGroup = (): [
   const { response, loading } = userGroupData;
 
   const loadUserGroupList = useCallback(
-    (name: string, page: string) => {
+    (name: string, page = 0) => {
       getUserGroups({ name, page });
     },
     [getUserGroups]

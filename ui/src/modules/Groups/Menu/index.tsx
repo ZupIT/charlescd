@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useCallback } from 'react';
 import map from 'lodash/map';
-import some from 'lodash/some';
-import method from 'lodash/method';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -25,55 +23,50 @@ import InfiniteScroll from 'core/components/InfiniteScroll';
 import MenuItem from './MenuItem';
 import Loader from './Loaders';
 import Styled from './styled';
-
-import {
-  UserGroupPagination,
-  UserGroupPaginationItem
-} from '../interfaces/UserGroupsPagination';
+import { isActiveById } from '../helpers';
 import { useFindAllUserGroup } from '../hooks';
 import { useGlobalState } from 'core/state/hooks';
+import { UserGroupPaginationItem } from '../interfaces/UserGroupsPagination';
 
-interface ListProps {
-  // list: UserGroupPagination;
-  selectedItems: string[];
+interface Props {
+  onCreate: () => void;
   onSelect: (id: string) => void;
 }
 
-interface Props extends ListProps {
-  onCreate: () => void;
-}
-
-const UserGroupMenu = ({ onCreate, selectedItems, onSelect }: Props) => {
+const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
   const [name, setName] = useState<string>('');
   const [getUserGroups, loading] = useFindAllUserGroup();
   const { list } = useGlobalState(({ userGroups }) => userGroups);
 
+  const loadByPage = useCallback(
+    (page: number) => {
+      getUserGroups(name, page);
+    },
+    [name, getUserGroups]
+  );
+
   useEffect(() => {
-    const page = 0;
-    console.log('name', name);
-    getUserGroups(name, page);
-  }, [name]);
+    loadByPage(0);
+  }, [loadByPage]);
 
-  const loadMore = (page: number) => {
-    getUserGroups(name, page);
-  };
+  const renderItem = (item: UserGroupPaginationItem) => (
+    <MenuItem
+      key={item.id}
+      id={item.id}
+      name={item.name}
+      isActive={isActiveById(item.id)}
+      onSelect={onSelect}
+    />
+  );
 
-  const renderList = ({ selectedItems, onSelect }: ListProps) => (
+  const renderList = () => (
     <InfiniteScroll
       hasMore={!list.last}
-      loadMore={loadMore}
+      loadMore={loadByPage}
       isLoading={loading}
       loader={<Styled.Loader />}
     >
-      {map(list?.content, item => (
-        <MenuItem
-          key={item.id}
-          id={item.id}
-          name={item.name}
-          isActive={some(selectedItems, method('includes', item.id))}
-          onSelect={onSelect}
-        />
-      ))}
+      {map(list?.content, item => renderItem(item))}
     </InfiniteScroll>
   );
 
@@ -89,11 +82,7 @@ const UserGroupMenu = ({ onCreate, selectedItems, onSelect }: Props) => {
       <Styled.Content>
         <Styled.SearchInput resume onSearch={setName} />
         <Styled.List data-testid="user-group-menu">
-          {isEmpty(list?.content) && loading ? (
-            <Loader.List />
-          ) : (
-            renderList({ selectedItems, onSelect })
-          )}
+          {isEmpty(list?.content) && loading ? <Loader.List /> : renderList()}
         </Styled.List>
       </Styled.Content>
     </Fragment>

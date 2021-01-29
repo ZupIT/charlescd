@@ -33,10 +33,6 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0;
-
-  > * {
-    padding: 0 16px;
-  }
 `;
 
 const ListItem = styled(LabeledIcon)`
@@ -69,6 +65,8 @@ const Link = styled('button')<LinkProps>`
   background: none;
   border: none;
   text-decoration: none;
+  width: 100%;
+  padding: 0 16px;
   background-color: ${({ isActive }) =>
     isActive ? COLOR_BLACK_MARLIN : 'transparent'};
 `;
@@ -100,7 +98,8 @@ const ButtonModal = styled(ButtonComponent.Default)`
 `;
 
 const Loader = styled(LoaderMenuComponent.List)`
-  margin-left: 16px;
+  /* margin-left: 16px; */
+  padding: 0 16px;
 `;
 
 export default {

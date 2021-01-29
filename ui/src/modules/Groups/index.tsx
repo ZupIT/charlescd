@@ -21,12 +21,11 @@ import isEmpty from 'lodash/isEmpty';
 import Page from 'core/components/Page';
 import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
-import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
 import Menu from './Menu';
 import Tabs from './Tabs';
-import { addParamUserGroup, getSelectedUserGroups } from './helpers';
-import { useFindAllUserGroup, useCreateUserGroup } from './hooks';
+import { addParamUserGroup } from './helpers';
+import { useCreateUserGroup } from './hooks';
 import Styled from './styled';
 
 export enum FormAction {
@@ -37,11 +36,8 @@ export enum FormAction {
 const UserGroups = () => {
   const profileName = getProfileByKey('name');
   const history = useHistory();
-  // const [search, setSearch] = useState('');
   const [toggleModal, setToggleModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-  // const [getUserGroups, loading] = useFindAllUserGroup();
-  // const { list } = useGlobalState(({ userGroups }) => userGroups);
   const { register, watch, handleSubmit } = useForm();
   const watchName = watch('name');
   const {
@@ -53,10 +49,6 @@ const UserGroups = () => {
   useEffect(() => {
     setIsDisabled(isEmpty(watchName));
   }, [watchName]);
-
-  // useEffect(() => {
-  //   getUserGroups(search);
-  // }, [search, getUserGroups]);
 
   useEffect(() => {
     if (userGroupResponse) {
@@ -94,7 +86,6 @@ const UserGroups = () => {
       {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
-          selectedItems={getSelectedUserGroups()}
           onSelect={id =>
             addParamUserGroup(history, `${id}~${FormAction.view}`)
           }

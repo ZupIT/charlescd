@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo } from 'react';
+import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
@@ -33,4 +33,4 @@ const MenuItem = ({ id, name, onSelect, isActive }: Props) => (
   </Styled.Link>
 );
 
-export default memo(MenuItem);
+export default MenuItem;
