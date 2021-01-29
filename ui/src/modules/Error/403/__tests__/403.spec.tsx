@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.user.request
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import Error403 from '..';
 
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Size
+test('render Error placeholder and go to workspaces', () => {
+  render(<Error403 />);
 
-data class ChangeUserPasswordRequest(
-    @field:Size(max = 100)
-    val oldPassword: String,
-    @field:Pattern(
-        regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{10,}\$",
-        message = "Your password must fill our minimum security requirements."
-    )
-    @field:Size(max = 100)
-    val newPassword: String
-)
+  const button = screen.getByTestId('button-iconRounded-error-403');
+  const errorScreen = screen.getByTestId('placeholder-error-403');
+  
+  userEvent.click(button);
+
+  expect(errorScreen).toBeInTheDocument();
+});
+
+

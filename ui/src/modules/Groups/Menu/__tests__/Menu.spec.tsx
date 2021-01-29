@@ -16,48 +16,43 @@
 
 import React from 'react';
 import { render, screen, waitFor } from 'unit-test/testUtils';
+import { UserGroupItem } from './fixtures';
 import { FetchMock } from 'jest-fetch-mock/types';
 import userEvent from '@testing-library/user-event';
-import Menu from '..';
+import Menu from '../index';
 
-const props = {
-  isLoading: false,
-  items: [
-    {
-      id: '123',
-      name: 'name',
-      email: 'charles@zup.com.br',
-      applications: [{
-        id: '456',
-        name: '',
-        menbersCount: 10
-      }],
-      createdAt: '01/01/2020 00:01'
-    }
-  ],
-  onSearch: jest.fn()
-}
-
-beforeEach(() => {
-  (fetch as FetchMock).resetMocks();
-});
-
-test('render Menu default', async () => {
+test('render Menu users groups default', async () => {
   render(
-    <Menu {...props} />
+    <Menu 
+      onSearch={jest.fn()}
+      onCreate={jest.fn()}
+      onSelect={jest.fn()}
+      isLoading={false}
+      selectedItems={null}
+      items={[]}
+    />
   );
 
-  expect(screen.getByTestId('menu-users-charles@zup.com.br')).toBeInTheDocument();
+  const menu = screen.getByTestId('users-groups-menu');
+  const emptyItems = screen.getByText('No User group was found');
+
+  expect(menu).toBeInTheDocument();
+  expect(emptyItems).toBeInTheDocument();
 });
 
-test('render Menu default and do a empty search', async () => {
+test('render Menu items', async () => {
   render(
-    <Menu isLoading={false} items={[]}  onSearch={jest.fn()} />
+    <Menu 
+      onSearch={jest.fn()}
+      onCreate={jest.fn()}
+      onSelect={jest.fn()}
+      isLoading={false}
+      selectedItems={null}
+      items={UserGroupItem}
+    />
   );
 
-  const inputSearch = screen.getByTestId('input-text-search');
+  const menuItem = screen.getByTestId('group-menu-item-1');
+  expect(menuItem).toBeInTheDocument();
 
-  userEvent.type(inputSearch, 'unknown');
-  
-  await waitFor(() => expect(screen.getByTestId('empty-result-user')).toBeInTheDocument());
 });
