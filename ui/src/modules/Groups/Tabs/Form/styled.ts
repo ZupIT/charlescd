@@ -61,7 +61,18 @@ const UsersCounter = styled.div`
   align-items: center;
 `;
 
+const FieldErrorWrapper = styled.div`
+  display: flex;
+  margin-top: 5px;
+
+  span {
+    margin-top: 2px;
+    margin-left: 5px;
+  }
+`;
+
 export default {
+  FieldErrorWrapper,
   UserList,
   UserAvatar,
   ButtonAdd,

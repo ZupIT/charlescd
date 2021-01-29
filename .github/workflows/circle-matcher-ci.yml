@@ -17,11 +17,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up GraalVM
-      uses: DeLaGuardo/setup-graalvm@master
-      with:
-        graalvm-version: "20.3.0.java11"
+      - uses: actions/checkout@v2
+      - name: Set up GraalVM
+        uses: docker://findepi/graalvm:20.3.0-java11
+        with:
+          graalvm-version: "20.3.0.java11"
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository
