@@ -14,36 +14,19 @@
  * limitations under the License.
  */
 
-export interface Credentials {
-  address?: string;
-  accessToken: string;
-  serviceProvider: string;
-}
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import DocumentationLink from '../';
 
-export interface GitFormData {
-  name?: string;
-  credentials?: Credentials;
-}
 
-export interface Response {
-  id: string;
-  git?: GitFormData;
-}
+test('render DocumentationLink', () => {
+  render(
+    <DocumentationLink
+      text="documentation"
+      documentationLink="https://exampledoc.com"
+    />
+  );
 
-export interface PostResponse {
-  id: string;
-  name: string;
-}
-
-export type TestConnectionSuccess = {
-  status: string;
-};
-
-export type TestConnectionError = {
-  code: string;
-  message: string;
-};
-
-export type TestConnectionResponse =
-  | TestConnectionSuccess
-  | TestConnectionError;
+  const element = screen.getByText("documentation")
+  expect(element).toBeInTheDocument();
+});

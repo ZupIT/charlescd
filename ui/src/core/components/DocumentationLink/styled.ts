@@ -14,36 +14,13 @@
  * limitations under the License.
  */
 
-export interface Credentials {
-  address?: string;
-  accessToken: string;
-  serviceProvider: string;
-}
+import styled from 'styled-components';
 
-export interface GitFormData {
-  name?: string;
-  credentials?: Credentials;
-}
+const DocumentationLink = styled.a`
+  text-decoration: underline;
+  color: ${({ theme }) => theme.text.link};
+`;
 
-export interface Response {
-  id: string;
-  git?: GitFormData;
-}
-
-export interface PostResponse {
-  id: string;
-  name: string;
-}
-
-export type TestConnectionSuccess = {
-  status: string;
+export default {
+  DocumentationLink
 };
-
-export type TestConnectionError = {
-  code: string;
-  message: string;
-};
-
-export type TestConnectionResponse =
-  | TestConnectionSuccess
-  | TestConnectionError;

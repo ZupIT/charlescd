@@ -14,36 +14,7 @@
  * limitations under the License.
  */
 
-export interface Credentials {
-  address?: string;
-  accessToken: string;
-  serviceProvider: string;
+export interface DocumentationLinkProps {
+  text: string;
+  documentationLink: string;
 }
-
-export interface GitFormData {
-  name?: string;
-  credentials?: Credentials;
-}
-
-export interface Response {
-  id: string;
-  git?: GitFormData;
-}
-
-export interface PostResponse {
-  id: string;
-  name: string;
-}
-
-export type TestConnectionSuccess = {
-  status: string;
-};
-
-export type TestConnectionError = {
-  code: string;
-  message: string;
-};
-
-export type TestConnectionResponse =
-  | TestConnectionSuccess
-  | TestConnectionError;

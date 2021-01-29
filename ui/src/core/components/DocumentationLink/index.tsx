@@ -14,36 +14,21 @@
  * limitations under the License.
  */
 
-export interface Credentials {
-  address?: string;
-  accessToken: string;
-  serviceProvider: string;
-}
+import React from 'react';
+import Styled from './styled';
+import { DocumentationLinkProps } from './interface';
 
-export interface GitFormData {
-  name?: string;
-  credentials?: Credentials;
-}
-
-export interface Response {
-  id: string;
-  git?: GitFormData;
-}
-
-export interface PostResponse {
-  id: string;
-  name: string;
-}
-
-export type TestConnectionSuccess = {
-  status: string;
+const DocumentationLink = ({
+  text,
+  documentationLink
+}: DocumentationLinkProps) => {
+  return (
+    <>
+      <Styled.DocumentationLink target="_blank" href={documentationLink}>
+        {text}
+      </Styled.DocumentationLink>{' '}
+    </>
+  );
 };
 
-export type TestConnectionError = {
-  code: string;
-  message: string;
-};
-
-export type TestConnectionResponse =
-  | TestConnectionSuccess
-  | TestConnectionError;
+export default DocumentationLink;
