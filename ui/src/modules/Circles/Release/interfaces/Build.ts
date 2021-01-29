@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Author } from 'modules/Groups/interfaces/UserGroups';
 import { Module } from 'modules/Modules/interfaces/Module';
 
 interface Feature {
@@ -27,7 +26,6 @@ interface Feature {
 
 export interface Build {
   id: string;
-  authorId: Author;
   createdAt: string;
   features: Feature[];
   status: string;

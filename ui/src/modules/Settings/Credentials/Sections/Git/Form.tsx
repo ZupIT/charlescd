@@ -20,30 +20,35 @@ import Button from 'core/components/Button';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
+import { CHARLES_DOC } from 'core/components/Popover';
 import { useGit } from './hooks';
 import { radios } from './constants';
 import { GitFormData } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
-import { buildTestConnectionPayload } from './helpers';
+import { buildConnectionPayload } from './helpers';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
+import isEqual from 'lodash/isEqual';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 const FormGit = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
   const [gitType, setGitType] = useState('');
+  const [lastTestedForm, setLastTestedForm] = useState<GitFormData>();
   const {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
-    save: testConnection
+    save: testConnection,
+    reset: resetTestConnection
   } = useTestConnection(testGitConnection);
   const {
     register,
     handleSubmit,
     getValues,
-    setValue,
-    formState: { isValid }
+    formState: { isValid },
+    watch
   } = useForm<GitFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -55,34 +60,33 @@ const FormGit = ({ onFinish }: Props) => {
     }
   });
 
+  const form = watch();
+
+  useEffect(() => {
+    if (testConnectionResponse && testConnectionResponse.message) {
+      if (!isEqual(form, lastTestedForm)) {
+        resetTestConnection();
+      }
+    }
+  }, [form, testConnectionResponse, resetTestConnection, lastTestedForm]);
+
   useEffect(() => {
     if (responseAdd) {
       onFinish();
     }
   }, [onFinish, responseAdd]);
 
-  useEffect(() => {
-    if (gitType === 'GitHub') {
-      setValue('credentials.address', 'https://github.com');
-    } else if (gitType === 'GitLab') {
-      setValue('credentials.address', 'https://gitlab.com');
-    }
-  }, [setValue, gitType]);
-
   const onSubmit = (git: GitFormData) => {
     save({
       ...git,
-      credentials: {
-        ...git.credentials,
-        serviceProvider: gitType.toUpperCase()
-      }
+      credentials: buildConnectionPayload(git, gitType)
     });
   };
 
   const handleTestConnection = () => {
     const data = getValues();
-
-    const payload = buildTestConnectionPayload(data, gitType);
+    setLastTestedForm(data);
+    const payload = buildConnectionPayload(data, gitType);
     testConnection(payload);
   };
 
@@ -94,10 +98,18 @@ const FormGit = ({ onFinish }: Props) => {
       <Styled.Fields>
         <Form.Input
           ref={register({ required: true })}
-          name="credentials.address"
-          label={`Enter the ${gitType} url`}
+          name="name"
+          label={`Type a name for ${gitType}`}
         />
-        <Form.Password
+        {gitType !== 'GitHub' && (
+          <Form.Input
+            ref={register({ required: true })}
+            name="credentials.address"
+            label={`Enter the ${gitType} url`}
+          />
+        )}
+
+        <Form.Input
           ref={register({ required: true })}
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
@@ -130,17 +142,15 @@ const FormGit = ({ onFinish }: Props) => {
   return (
     <Styled.Content>
       <Styled.Title color="light">Add Git</Styled.Title>
-      <Styled.Info color="dark">
+      <Text.h5 color="dark">
         Adding a Git allows Charles to create, delete and merge branches as well
         as view repositories and generate releases. Consult our{' '}
-        <Styled.Link
-          href="https://docs.charlescd.io/get-started/defining-a-workspace/github"
-          target="_blank"
-        >
-          documentation
-        </Styled.Link>{' '}
+        <DocumentationLink
+          text="documentation"
+          documentationLink={`${CHARLES_DOC}/get-started/defining-a-workspace/github`}
+        />
         for further details.
-      </Styled.Info>
+      </Text.h5>
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>

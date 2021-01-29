@@ -4,7 +4,6 @@ const workspaces = {
       id: 'efbf25e0-c4dc-46c5-9fe4-61eb24049ac7',
       name: 'Workspace 1',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -69,7 +68,6 @@ const workspaces = {
       id: 'b53e07a4-8b0d-449d-985a-970a9a0e0576',
       name: 'Workspace 2',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -95,7 +93,6 @@ const workspaces = {
       id: '034d2225-d7b2-499e-96e2-53cac99ff405',
       name: 'Workspace 3',
       status: 'INCOMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -136,7 +133,6 @@ const workspaces = {
       id: 'd90fd814-5e33-43c6-ba2d-d9d04c5a5ec6',
       name: 'Workspace 4',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -149,7 +145,6 @@ const workspaces = {
       id: '2369847c-94f7-43c9-87c2-4f00c73290e7',
       name: 'Workspace 5',
       status: 'COMPLETE',
-      authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
       gitConfiguration: null,
       registryConfiguration: null,
       cdConfiguration: null,
@@ -202,7 +197,6 @@ const workspace = {
   id: 'd90fd814-5e22-43c6-ba2d-d9d04c3a5ec6',
   name: 'Workspace',
   status: 'COMPLETE',
-  authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f',
   gitConfiguration: null,
   registryConfiguration: null,
   cdConfiguration: null,
@@ -213,14 +207,12 @@ const workspace = {
 };
 
 const newWorkspace = {
-  name: 'New Workspace',
-  authorId: 'a7c3e4b6-2be6-4d22-8540-e2d6d5w4e03f'
+  name: 'New Workspace'
 };
 
 const updateWorkspaceName = {
   name: 'New Workspace Name',
-  status: 'COMPLETE',
-  authorId: 'a7c3e4b6-2be6-4d62-8540-e2d6d5f4e03f'
+  status: 'COMPLETE'
 };
 
 export default {

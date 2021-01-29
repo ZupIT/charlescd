@@ -29,11 +29,13 @@ import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
+import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v2/workspaces")
+
 class V2WorkspaceController(
     private val createWorkspaceInteractor: CreateWorkspaceInteractor,
     private val associateUserGroupInteractor: AssociateUserGroupToWorkspaceInteractor,
@@ -54,8 +56,11 @@ class V2WorkspaceController(
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createWorkspace(@Valid @RequestBody request: CreateWorkspaceRequest): WorkspaceResponse {
-        return createWorkspaceInteractor.execute(request)
+    fun createWorkspace(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @Valid @RequestBody request: CreateWorkspaceRequest
+    ): WorkspaceResponse {
+        return createWorkspaceInteractor.execute(request, authorization)
     }
 
     @ApiOperation(value = "Patch Workspace")
@@ -79,7 +84,7 @@ class V2WorkspaceController(
     @ResponseStatus(HttpStatus.OK)
     fun findAll(
         pageRequest: PageRequest,
-        @RequestParam(required = false, name = "name") name: String?
+        @RequestParam(required = false, name = "name") @Size(max = 10) name: String?
     ): ResourcePageResponse<WorkspaceResponse> {
         return findAllWorkspacesInteractor.execute(pageRequest, name)
     }

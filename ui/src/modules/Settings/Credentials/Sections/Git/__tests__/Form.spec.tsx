@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import userEvent from '@testing-library/user-event';
 import FormGit from '../Form';
@@ -30,17 +30,19 @@ test('should test a git connection', async () => {
   
   const githubButton = screen.getByTestId('radio-group-git-item-GitHub');
 
-  userEvent.click(githubButton);
+  await act(async() => {
+    userEvent.click(githubButton);
+  
+  });
 
-  const address = await screen.findByTestId('input-text-credentials.address');
-  const accessToken = await screen.findByTestId('input-password-credentials.accessToken');
+  await act(async() => {
+    userEvent.type(screen.getByTestId('input-text-credentials.accessToken'), '123');
+    userEvent.type(screen.getByTestId('input-text-name'), 'github');
+  })
 
-  userEvent.type(address, 'github.com');
-  userEvent.type(accessToken, '123');
-
-  const testConnectionButton = await screen.findByTestId('button-default-test-connection');
-  userEvent.click(testConnectionButton);
-
+  const testConnectionButton = screen.getByTestId('button-default-test-connection');
+  await act(async() => {
+    userEvent.click(testConnectionButton)
+  })
   const connectionMessageElement = await screen.findByText('Successful connection with git.');
-  expect(connectionMessageElement).toBeInTheDocument();
 });

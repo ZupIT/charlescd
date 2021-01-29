@@ -15,14 +15,13 @@
  */
 
 export interface Credentials {
-  address: string;
+  address?: string;
   accessToken: string;
   serviceProvider: string;
 }
 
 export interface GitFormData {
   name?: string;
-  authorId?: string;
   credentials?: Credentials;
 }
 

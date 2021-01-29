@@ -27,13 +27,21 @@ export const useTestConnection = (testConnection: FetchParams) => {
   const [loading, setLoading] = useState(false);
   const testConnectionFetchData = useFetchData<number>(testConnection);
 
+  const reset = () => {
+    setResponse({
+      message: null,
+      status: 'idle'
+    });
+  };
+
   const save = useCallback(
     async (payload: unknown) => {
       try {
         setLoading(true);
         await testConnectionFetchData(payload);
         setResponse({
-          status: 'success'
+          status: 'success',
+          message: 'Successful connection'
         });
         setLoading(false);
       } catch (error) {
@@ -52,6 +60,7 @@ export const useTestConnection = (testConnection: FetchParams) => {
 
   return {
     save,
+    reset,
     response,
     loading
   };

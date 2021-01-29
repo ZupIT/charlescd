@@ -82,8 +82,8 @@ This installation is recommended for who has already setup your infrastructure d
 | circlematcher.image.pullPolicy               | [See documentation](https://kubernetes.io/docs/concepts/containers/images/) | -                                                 |
 | circlematcher.service.name                   | name of Circle Matcher service                                              | charlescd-circle-matcher                          |
 | circlematcher.service.type                   | type of Circle Matcher service                                              | ClusterIP                                         |
-| circlematcher.resources.limits.cpu           | max amount of cpu that container can use                                    | 256m                                              |
-| circlematcher.resources.limits.memory        | max memory to be used to run                                                | 256Mi                                             |
+| circlematcher.resources.limits.cpu           | max amount of cpu that container can use                                    | 300m                                              |
+| circlematcher.resources.limits.memory        | max memory to be used to run                                                | 400Mi                                             |
 | circlematcher.resources.requests.cpu         | minimum allocated amount of cpu that container can use                      | 128m                                              |
 | circlematcher.resources.requests.memory      | minimum allocated amount of memmory that container can use                  | 128Mi                                             |
 | keycloak.enabled                             | enable keycloak install                                                     | true                                              |

@@ -21,6 +21,7 @@ package moove
 import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 )
 
@@ -46,21 +47,23 @@ const permissionQuery = `
 							AND user_group_id IN (SELECT user_group_id FROM user_groups_users WHERE user_id = ?)
 						`
 
-func (main Main) FindUserByEmail(email string) (User, error) {
+func (main Main) FindUserByEmail(email string) (User, errors.Error) {
 	user := User{}
 	db := main.Db.Where("email = ?", email).First(&user)
 	if db.Error != nil {
-		return User{}, db.Error
+		return User{}, errors.NewError("Find error", db.Error.Error()).
+			WithOperations("FindUserByEmail.First")
 	}
 
 	return user, nil
 }
 
-func (main Main) GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error) {
+func (main Main) GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, errors.Error) {
 	rawPermissions := make([]PermissionsResult, 0)
 	db := main.Db.Raw(permissionQuery, workspaceID, userID).Scan(&rawPermissions)
 	if db.Error != nil {
-		return nil, db.Error
+		return nil, errors.NewError("Get error", db.Error.Error()).
+			WithOperations("GetUserPermissions.Scan")
 	}
 
 	permsSet, err := getPermissionSet(rawPermissions)
@@ -76,13 +79,14 @@ func (main Main) GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, er
 	return resultPerms, nil
 }
 
-func getPermissionSet(rawPermissions []PermissionsResult) (map[string]bool, error) {
+func getPermissionSet(rawPermissions []PermissionsResult) (map[string]bool, errors.Error) {
 	permsMap := make(map[string]bool)
 	for _, raw := range rawPermissions {
 		perm := make([]Permission, 0)
 		err := json.Unmarshal(raw.Permissions, &perm)
 		if err != nil {
-			return nil, err
+			return nil, errors.NewError("Get error", err.Error()).
+				WithOperations("getPermissionSet.Unmarshal")
 		}
 
 		for _, singlePerm := range perm {

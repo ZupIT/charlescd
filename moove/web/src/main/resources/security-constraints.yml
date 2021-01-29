@@ -209,6 +209,10 @@ managementConstraints:
     methods:
       - GET
 
+  - pattern: /v2/users/{id}/workspaces
+    methods:
+      - GET
+
   - pattern: /v2/users/password
     methods:
       - PUT

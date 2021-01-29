@@ -27,12 +27,9 @@ import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Size
 
 data class CreateComposedBuildRequest(
-    @field:Size(min = 1, max = 50)
+    @field:Size(min = 1, max = 65)
     @field:NotBlank
     val releaseName: String,
-
-    @field:NotBlank
-    val authorId: String,
 
     @field:Valid
     @field:NotEmpty
@@ -41,6 +38,7 @@ data class CreateComposedBuildRequest(
 
     data class ModuleRequest(
         @field:NotBlank
+        @field:Size(max = 36)
         val id: String,
 
         @field:Valid
@@ -50,6 +48,7 @@ data class CreateComposedBuildRequest(
 
     data class ComponentRequest(
         @field:NotBlank
+        @field:Size(max = 36)
         val id: String,
 
         @field:NotBlank

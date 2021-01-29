@@ -23,8 +23,8 @@ import io.charlescd.moove.legacy.moove.request.configuration.CdTypeEnum
 data class CreateDeploySpinnakerCdConfigurationRequest(
     val type: CdTypeEnum,
     val configurationData: CreateDeploySpinnakerCdConfigurationData,
-    val name: String,
-    val authorId: String
+    val authorId: String,
+    val name: String
 ) : CreateDeployCdConfigurationRequest()
 
 data class CreateDeploySpinnakerCdConfigurationData(
