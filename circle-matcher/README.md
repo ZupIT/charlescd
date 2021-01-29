@@ -45,6 +45,13 @@ Then, simply use the circle identification information for any service call in y
 
 ## Running locally
 
+### Requirements
+- [GraalVM 20.3.0 with JDK 1.8+]
+- [Docker]
+- [Docker Compose]
+- [Maven]
+
+
 First up the Redis container:
 ```
 docker-compose -f docker-compose.xml up
@@ -52,7 +59,7 @@ docker-compose -f docker-compose.xml up
 
 Then run the application (if you want to run with another Redis flavors, use the appropriate profile):
 ```
-mvn spring-boot:run -Dspring-boot.run.profiles=local
+./run-local.sh
 ```
 
 ## Documentation

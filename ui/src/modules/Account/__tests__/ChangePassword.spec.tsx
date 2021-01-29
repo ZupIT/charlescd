@@ -29,25 +29,6 @@ test('check if button is disabled', async () => {
   expect(button).toBeDisabled();
 });
 
-test('render error in invalid field', async () => {
-  render(<ChangePassword />);
-
-  const newPassword = screen.getByTestId('input-password-newPassword');
-  const confirmPassword = screen.getByTestId('input-password-confirmPassword');
-
-  expect(newPassword).toBeInTheDocument();
-  expect(confirmPassword).toBeInTheDocument();
-
-  fireEvent.blur(newPassword);
-  fireEvent.blur(confirmPassword);
-  
-  const errorNewPasswordElement =  await screen.findByTestId('error-newPassword');
-  const errorConfirmPasswordElement =  await screen.findByTestId('error-confirmPassword');
-  
-  expect(errorNewPasswordElement).toBeInTheDocument();
-  expect(errorConfirmPasswordElement).toBeInTheDocument();
-});
-
 test('submit password change form', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
   const onSubmit = jest.fn();

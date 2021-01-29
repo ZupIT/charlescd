@@ -21,8 +21,8 @@ package datasource
 import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"io"
 
@@ -30,15 +30,15 @@ import (
 )
 
 type UseCases interface {
-	Parse(dataSource io.ReadCloser) (Request, error)
-	FindAllByWorkspace(workspaceID uuid.UUID, health string) ([]Response, error)
-	FindHealthByWorkspaceId(workspaceID uuid.UUID) (Response, error)
-	FindById(id string) (Response, error)
-	Save(dataSource Request) (Response, error)
-	Delete(id string) error
-	GetMetrics(dataSourceID string) (datasource.MetricList, error)
-	Validate(dataSource Request) []util.ErrorUtil
-	TestConnection(pluginSrc string, datasourceData json.RawMessage) error
+	Parse(dataSource io.ReadCloser) (Request, errors.Error)
+	FindAllByWorkspace(workspaceID uuid.UUID, health string) ([]Response, errors.Error)
+	FindHealthByWorkspaceId(workspaceID uuid.UUID) (Response, errors.Error)
+	FindById(id string) (Response, errors.Error)
+	Save(dataSource Request) (Response, errors.Error)
+	Delete(id string) errors.Error
+	GetMetrics(dataSourceID string) (datasource.MetricList, errors.Error)
+	Validate(dataSource Request) errors.ErrorList
+	TestConnection(pluginSrc string, datasourceData json.RawMessage) errors.Error
 }
 
 type Main struct {

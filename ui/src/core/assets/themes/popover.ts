@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { COLOR_BASTILLE, COLOR_BLACK_OP_20, COLOR_WHITE } from '../colors';
+import {
+  COLOR_BASTILLE,
+  COLOR_BLACK_OP_20,
+  COLOR_TRUE_V,
+  COLOR_WHITE
+} from '../colors';
 
 export const light = {};
 
@@ -22,6 +27,7 @@ export const dark = {
   background: COLOR_BASTILLE,
   shadow: COLOR_BLACK_OP_20,
   link: {
+    color: COLOR_TRUE_V,
     decorationColor: COLOR_WHITE
   }
 };

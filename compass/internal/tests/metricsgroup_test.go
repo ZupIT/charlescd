@@ -20,6 +20,11 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"strings"
+	"testing"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -27,11 +32,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasource2 "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"io/ioutil"
-	"strings"
-	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
@@ -82,6 +83,7 @@ func (s *SuiteMetricGroup) TestValidate() {
 	newMetricGroup := newBasicMetricGroup()
 
 	errList := s.repository.Validate(newMetricGroup)
+	fmt.Println(errList)
 	require.Empty(s.T(), errList)
 }
 
@@ -91,8 +93,8 @@ func (s *SuiteMetricGroup) TestValidateEmptyName() {
 
 	ers := s.repository.Validate(newMetricGroup)
 
-	require.Len(s.T(), ers, 1)
-	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "name is required"}, ers[0])
+	require.Len(s.T(), ers.Get().Errors, 1)
+	require.Equal(s.T(), "Name is required", ers.Get().Errors[0].Error().Detail)
 }
 
 func (s *SuiteMetricGroup) TestValidateBlankName() {
@@ -101,8 +103,8 @@ func (s *SuiteMetricGroup) TestValidateBlankName() {
 
 	ers := s.repository.Validate(newMetricGroup)
 
-	require.Len(s.T(), ers, 1)
-	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "name is required"}, ers[0])
+	require.Len(s.T(), ers.Get().Errors, 1)
+	require.Equal(s.T(), "Name is required", ers.Get().Errors[0].Error().Detail)
 }
 
 func (s *SuiteMetricGroup) TestValidateNameLength() {
@@ -111,8 +113,8 @@ func (s *SuiteMetricGroup) TestValidateNameLength() {
 
 	ers := s.repository.Validate(newMetricGroup)
 
-	require.Len(s.T(), ers, 1)
-	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "100 Maximum length in Name"}, ers[0])
+	require.Len(s.T(), ers.Get().Errors, 1)
+	require.Equal(s.T(), "64 Maximum length in Name", ers.Get().Errors[0].Error().Detail)
 }
 
 func (s *SuiteMetricGroup) TestValidateNilCircle() {
@@ -121,8 +123,8 @@ func (s *SuiteMetricGroup) TestValidateNilCircle() {
 
 	ers := s.repository.Validate(newMetricGroup)
 
-	require.Len(s.T(), ers, 1)
-	require.Equal(s.T(), util.ErrorUtil{Field: "circleID", Error: "CircleID is required"}, ers[0])
+	require.Len(s.T(), ers.Get().Errors, 1)
+	require.Equal(s.T(), "CircleID is required", ers.Get().Errors[0].Error().Detail)
 }
 
 func (s *SuiteMetricGroup) TestValidateNilWorkspaceID() {
@@ -131,8 +133,8 @@ func (s *SuiteMetricGroup) TestValidateNilWorkspaceID() {
 
 	ers := s.repository.Validate(newMetricGroup)
 
-	require.Len(s.T(), ers, 1)
-	require.Equal(s.T(), util.ErrorUtil{Field: "workspaceID", Error: "workspaceID is required"}, ers[0])
+	require.Len(s.T(), ers.Get().Errors, 1)
+	require.Equal(s.T(), "WorkspaceID is required", ers.Get().Errors[0].Error().Detail)
 }
 
 func (s *SuiteMetricGroup) TestParseMetricsGroup() {
@@ -144,7 +146,7 @@ func (s *SuiteMetricGroup) TestParseMetricsGroup() {
 
 	res, err := s.repository.Parse(stringReadCloser)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotNil(s.T(), res)
 }
 
@@ -153,7 +155,7 @@ func (s *SuiteMetricGroup) TestParseMetricsGroupError() {
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
 	_, err := s.repository.Parse(stringReadCloser)
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestPeriodValidate() {
@@ -164,13 +166,13 @@ func (s *SuiteMetricGroup) TestPeriodValidate() {
 func (s *SuiteMetricGroup) TestPeriodValidateNotFoundNumber() {
 	_, err := s.repository.PeriodValidate("d")
 
-	require.Equal(s.T(), "invalid period or interval: not found number", err.Error())
+	require.Equal(s.T(), "Invalid period or interval: not found number", err.Error().Detail)
 }
 
 func (s *SuiteMetricGroup) TestPeriodValidateNotFoundUnit() {
 	_, err := s.repository.PeriodValidate("1")
 
-	require.Equal(s.T(), "invalid period or interval: not found unit", err.Error())
+	require.Equal(s.T(), "Invalid period or interval: not found unit", err.Error().Detail)
 }
 
 func (s *SuiteMetricGroup) TestFindAll() {
@@ -187,7 +189,7 @@ func (s *SuiteMetricGroup) TestFindAll() {
 	}
 
 	list, err := s.repository.FindAll()
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	require.NotEmpty(s.T(), list)
 	for index, item := range list {
@@ -200,7 +202,7 @@ func (s *SuiteMetricGroup) TestFindAllError() {
 	s.DB.Close()
 
 	_, err := s.repository.FindAll()
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
@@ -209,7 +211,7 @@ func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
 	s.DB.Create(&metricGroup)
 
 	item, err := s.repository.FindById(metricGroup.ID.String())
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	metricGroup.BaseModel = item.BaseModel
 	require.Equal(s.T(), item.ID, metricGroup.ID)
@@ -219,7 +221,7 @@ func (s *SuiteMetricGroup) TestSave() {
 	metricGroup := newBasicMetricGroup()
 
 	createMetricGroup, err := s.repository.Save(metricGroup)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	metricGroup.BaseModel = createMetricGroup.BaseModel
 	require.Equal(s.T(), createMetricGroup, metricGroup)
@@ -230,7 +232,7 @@ func (s *SuiteMetricGroup) TestSaveError() {
 
 	s.DB.Close()
 	_, err := s.repository.Save(metricGroup)
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestUpdate() {
@@ -241,7 +243,7 @@ func (s *SuiteMetricGroup) TestUpdate() {
 	metricGroup.Name = "group 2"
 	metricGroup.CircleID = uuid.New()
 	createMetricGroup, err := s.repository.Update(metricGroup.ID.String(), metricGroup)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	metricGroup.BaseModel = createMetricGroup.BaseModel
 	require.Equal(s.T(), createMetricGroup, metricGroup)
@@ -256,7 +258,7 @@ func (s *SuiteMetricGroup) TestUpdateError() {
 	s.DB.Close()
 
 	_, err := s.repository.Update(metricGroup.ID.String(), metricGroup)
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestUpdateName() {
@@ -268,7 +270,7 @@ func (s *SuiteMetricGroup) TestUpdateName() {
 	metricGroup.Name = newName
 	createMetricGroup, err := s.repository.UpdateName(metricGroup.ID.String(), metricGroup)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.Equal(s.T(), createMetricGroup.Name, newName)
 }
 
@@ -282,7 +284,7 @@ func (s *SuiteMetricGroup) TestUpdateNameError() {
 	s.DB.Close()
 	_, err := s.repository.UpdateName(metricGroup.ID.String(), metricGroup)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestDelete() {
@@ -291,7 +293,7 @@ func (s *SuiteMetricGroup) TestDelete() {
 	s.DB.Create(&metricGroup)
 
 	err := s.repository.Remove(metricGroup.ID.String())
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestDeleteError() {
@@ -305,7 +307,7 @@ func (s *SuiteMetricGroup) TestDeleteError() {
 
 	s.DB.Close()
 	err := s.repository.Remove(metricgroup.ID.String())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
@@ -339,20 +341,20 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 	s.DB.Create(&metricgroup3)
 
 	res, err := s.repository.ListAllByCircle(circleID.String())
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.Len(s.T(), res, 2)
 }
 
 func (s *SuiteMetricGroup) TestFindCircleMetricGroupsError() {
 	s.DB.Close()
 	_, err := s.repository.ListAllByCircle(uuid.New().String())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestFindByIdError() {
 	s.DB.Close()
 	_, err := s.repository.FindById("any-id")
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestResumeByCircle() {
@@ -411,7 +413,7 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 	}
 
 	groupsResume, err := s.repository.ResumeByCircle(circleID.String())
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	for index, resume := range groupsResume {
 		expectedGroupResume[index].BaseModel = resume.BaseModel
@@ -422,7 +424,7 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 func (s *SuiteMetricGroup) TestResumeByCircleError() {
 	s.DB.Close()
 	_, err := s.repository.ResumeByCircle("")
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
@@ -471,7 +473,7 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
 	s.DB.Create(&metric2)
 
 	_, err := s.repository.QueryByGroupID(metricgroup.ID.String(), datasource2.Period{Value: 5, Unit: "d"}, datasource2.Period{Value: 30, Unit: "m"})
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestQueryByGroupIDDatabaseError() {
@@ -496,7 +498,7 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDDatabaseError() {
 
 	s.DB.Close()
 	_, err := s.repository.QueryByGroupID(metricgroup.ID.String(), datasource2.Period{Value: 5, Unit: "d"}, datasource2.Period{Value: 30, Unit: "m"})
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestResultByGroupErrorNotFoundPlugin() {
@@ -550,13 +552,13 @@ func (s *SuiteMetricGroup) TestResultByGroupErrorNotFoundPlugin() {
 	}
 
 	_, err := s.repository.ResultByGroup(metricgroup)
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestResultByIdError() {
 	s.DB.Close()
 	_, err := s.repository.ResultByID("someId")
 
-	require.Error(s.T(), err)
-	require.Equal(s.T(), "Not found metrics group: someId", err.Error())
+	require.NotNil(s.T(), err)
+	require.Equal(s.T(), "Not found metrics group: someId", err.Error().Detail)
 }

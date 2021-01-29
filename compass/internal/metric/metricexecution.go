@@ -20,7 +20,7 @@ package metric
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -39,48 +39,48 @@ type MetricExecution struct {
 	Status         string    `json:"status"`
 }
 
-func (main Main) FindAllMetricExecutions() ([]MetricExecution, error) {
+func (main Main) FindAllMetricExecutions() ([]MetricExecution, errors.Error) {
 	var metricExecutions []MetricExecution
 	db := main.db.Find(&metricExecutions)
 	if db.Error != nil {
-		logger.Error(util.FindAllMetricExecutionsError, "FindAllMetricExecutions", db.Error, metricExecutions)
-		return []MetricExecution{}, db.Error
+		return []MetricExecution{}, errors.NewError("Find error", db.Error.Error()).
+			WithOperations("FindAllMetricExecutions.Find")
 	}
 	return metricExecutions, nil
 }
 
-func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error) {
+func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, errors.Error) {
 	db := main.db.Save(&metricExecution)
 	if db.Error != nil {
-		logger.Error(util.UpdateMetricExecutionError, "UpdateMetricExecution", db.Error, metricExecution)
-		return MetricExecution{}, db.Error
+		return MetricExecution{}, errors.NewError("Update error", db.Error.Error()).
+			WithOperations("UpdateMetricExecution.Save")
 	}
 	return metricExecution, nil
 }
 
-func (main Main) updateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) error {
+func (main Main) updateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) errors.Error {
 	db := tx.Model(&MetricExecution{}).Where("metric_id = ?", metricId).Update("status", MetricUpdated)
 	if db.Error != nil {
-		logger.Error(util.UpdateMetricExecutionError, "updateExecutionStatus", db.Error, metricId)
-		return db.Error
+		return errors.NewError("Update error", db.Error.Error()).
+			WithOperations("updateExecutionStatus.Update")
 	}
 	return nil
 }
 
-func (main Main) saveMetricExecution(tx *gorm.DB, execution MetricExecution) (MetricExecution, error) {
+func (main Main) saveMetricExecution(tx *gorm.DB, execution MetricExecution) (MetricExecution, errors.Error) {
 	db := tx.Save(&execution)
 	if db.Error != nil {
-		logger.Error(util.SaveMetricExecutionError, "SaveMetricExecution", db.Error, execution)
-		return MetricExecution{}, db.Error
+		return MetricExecution{}, errors.NewError("Save error", db.Error.Error()).
+			WithOperations("saveMetricExecution.Save")
 	}
 	return execution, nil
 }
 
-func (main Main) removeMetricExecution(tx *gorm.DB, id string) error {
+func (main Main) removeMetricExecution(tx *gorm.DB, id string) errors.Error {
 	db := tx.Where("id = ?", id).Delete(MetricExecution{})
 	if db.Error != nil {
-		logger.Error(util.RemoveMetricExecutionError, "RemoveMetricExecution", db.Error, id)
-		return db.Error
+		return errors.NewError("Remove error", db.Error.Error()).
+			WithOperations("removeMetricExecution.Delete")
 	}
 	return nil
 }

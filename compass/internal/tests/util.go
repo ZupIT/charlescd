@@ -21,6 +21,8 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"time"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -31,13 +33,11 @@ import (
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
-	"os"
-	"time"
 )
 
 const dbLog = false
 
-const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method.`
+const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method. Now, we have fields that can be filled with more than 300 characters. So, we need more characters here...                                                                                                                                                                          . `
 
 func setupEnv() {
 	os.Setenv("ENV", "TEST")
