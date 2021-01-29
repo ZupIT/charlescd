@@ -20,15 +20,17 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/health"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
@@ -83,12 +85,9 @@ func TestInitHealth(t *testing.T) {
 }
 
 func (s SuiteHealth) TestComponentsHealthDataSourceError() {
-	workspaceId := uuid.New().String()
-	circleId := uuid.New().String()
+	_, err := s.repository.ComponentsHealth("", uuid.New().String(), uuid.New())
 
-	_, err := s.repository.ComponentsHealth("", workspaceId, circleId)
-
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
@@ -104,89 +103,76 @@ func (s SuiteHealth) TestComponentsHealthGetPluginBySrcError() {
 	}
 	s.DB.Create(&datasourceStruct)
 
-	_, err := s.repository.ComponentsHealth("", workspaceId.String(), circleId)
+	_, err := s.repository.ComponentsHealth("", circleId, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsHealthGetPluginBySrc() {
-	workspaceId := uuid.New()
 	circleId := uuid.New().String()
-	datasourceStruct := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&datasourceStruct)
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	_, err := s.repository.ComponentsHealth("", workspaceId.String(), circleId)
-	s.NoError(err)
+	s.DB.Exec(dataSourceInsert)
+
+	_, err := s.repository.ComponentsHealth("", circleId, dataSourceStruct.WorkspaceID)
+	s.Nil(err)
 }
 
 func (s SuiteHealth) TestComponentsError() {
-	workspaceId := uuid.New().String()
+	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	projectionType := "FIVE_MINUTES"
 	metricType := "REQUESTS_BY_CIRCLE"
 
-	_, err := s.repository.Components("", workspaceId, circleId, projectionType, metricType)
+	_, err := s.repository.Components("", circleId, projectionType, metricType, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsMetricTypeErrorByCircle() {
-	workspaceId := uuid.New().String()
+	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	projectionType := "FIVE_MINUTES"
 	metricType := "REQUESTS_ERRORS_BY_CIRCLE"
 
-	_, err := s.repository.Components("", workspaceId, circleId, projectionType, metricType)
+	_, err := s.repository.Components("", circleId, projectionType, metricType, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsMetricTypeLatencyByCircleError() {
-	workspaceId := uuid.New().String()
+	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	projectionType := "FIVE_MINUTES"
 	metricType := "REQUESTS_LATENCY_BY_CIRCLE"
 
-	_, err := s.repository.Components("", workspaceId, circleId, projectionType, metricType)
+	_, err := s.repository.Components("", circleId, projectionType, metricType, workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponentsMetricTypeDefaultError() {
-	workspaceId := uuid.New().String()
+	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	projectionType := "FIVE_MINUTES"
 
-	_, err := s.repository.Components("", workspaceId, circleId, projectionType, "")
+	_, err := s.repository.Components("", circleId, projectionType, "", workspaceId)
 
-	s.Require().Error(err)
+	s.Require().NotNil(err)
 }
 
 func (s SuiteHealth) TestComponents() {
 	circleIdHeader := uuid.New().String()
-	workspaceId := uuid.New()
 	circleId := uuid.New().String()
 	projectionType := "FIVE_MINUTES"
 	metricType := "REQUESTS_BY_CIRCLE"
 
-	datasourceStruct := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&datasourceStruct)
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
+	s.DB.Exec(dataSourceInsert)
 
-	_, err := s.repository.Components(circleIdHeader, workspaceId.String(), circleId, projectionType, metricType)
+	fmt.Println(dataSourceStruct)
 
-	require.NoError(s.T(), err)
+	_, err := s.repository.Components(circleIdHeader, circleId, projectionType, metricType, dataSourceStruct.WorkspaceID)
+
+	require.Nil(s.T(), err)
 }

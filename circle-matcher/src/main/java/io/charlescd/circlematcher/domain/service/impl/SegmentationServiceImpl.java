@@ -19,19 +19,19 @@ package io.charlescd.circlematcher.domain.service.impl;
 import io.charlescd.circlematcher.api.request.CreateSegmentationRequest;
 import io.charlescd.circlematcher.api.request.SegmentationRequest;
 import io.charlescd.circlematcher.api.request.UpdateSegmentationRequest;
-import io.charlescd.circlematcher.domain.Condition;
 import io.charlescd.circlematcher.domain.KeyMetadata;
-import io.charlescd.circlematcher.domain.LogicalOperatorType;
 import io.charlescd.circlematcher.domain.Node;
-import io.charlescd.circlematcher.domain.NodeType;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
+import io.charlescd.circlematcher.domain.exception.BusinessException;
+import io.charlescd.circlematcher.domain.exception.MatcherErrorCode;
 import io.charlescd.circlematcher.domain.service.SegmentationService;
 import io.charlescd.circlematcher.infrastructure.SegmentationKeyUtils;
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository;
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,12 +47,14 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     public void create(CreateSegmentationRequest request) {
+        validateSegmentation(request);
         var segmentation = decomposeSegmentation(request);
 
         segmentation.forEach(this::createSegmentationData);
     }
 
     public void update(UpdateSegmentationRequest updateSegmentationRequest) {
+        validateSegmentation(updateSegmentationRequest);
         var previousMetadata = this.keyMetadataRepository.findByReference(
                 updateSegmentationRequest.getPreviousReference()
         );
@@ -114,7 +116,7 @@ public class SegmentationServiceImpl implements SegmentationService {
                     item,
                     segmentationRequest.getReference(),
                     segmentationRequest.getCircleId(),
-                    isItConvertibleToKv(item) ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
+                    item.isConvertibleToKv() ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
                     segmentationRequest.getWorkspaceId(),
                     segmentationRequest.getIsDefault(),
                     segmentationRequest.getActive(),
@@ -129,27 +131,35 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     private void recursiveNodeExtraction(Node node, List<Node> nodes) {
-        if (NodeType.CLAUSE.equals(node.getType())
-                && LogicalOperatorType.AND.equals(node.getLogicalOperator())
-                || NodeType.RULE.equals(node.getType())) {
-
-            nodes.add(node);
-
-        } else if (NodeType.CLAUSE.equals(node.getType())
-                && node.getLogicalOperator().equals(LogicalOperatorType.OR)) {
+        if (node.isDecomposable()) {
             node.getClauses().forEach(item -> recursiveNodeExtraction(item, nodes));
+        } else {
+            nodes.add(node);
         }
-    }
-
-    private boolean isItConvertibleToKv(Node node) {
-        return NodeType.RULE.equals(node.getType())
-                && node.getContent() != null
-                && Condition.EQUAL.name().equals(node.getContent().getCondition());
     }
 
     private boolean shouldDecompose(SegmentationRequest segmentationRequest) {
         return SegmentationType.REGULAR.equals(segmentationRequest.getType()) && !segmentationRequest.getIsDefault();
     }
+
+    private void validateSegmentation(SegmentationRequest request) {
+        var isUpdate = request instanceof UpdateSegmentationRequest;
+
+        if (!request.getIsDefault()) {
+            return;
+        }
+        if (isUpdate) {
+            throw new BusinessException(MatcherErrorCode.CANNOT_UPDATE_DEFAULT_SEGMENTATION);
+        }
+
+        var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
+        var hasMetadataDefault = metadataList.stream().parallel()
+                .anyMatch(keyMetadata -> keyMetadata.getIsDefault());
+        if (hasMetadataDefault) {
+            throw new BusinessException(MatcherErrorCode.DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE);
+        }
+    }
+
 }
 
 

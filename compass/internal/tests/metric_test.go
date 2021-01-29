@@ -20,15 +20,16 @@ package tests
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"strings"
+	"testing"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	metricRepo "github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"io/ioutil"
-	"strings"
-	"testing"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -51,7 +52,7 @@ func (s *SuiteMetric) SetupSuite() {
 func (s *SuiteMetric) BeforeTest(_, _ string) {
 	var err error
 	s.DB, err = configuration.GetDBConnection("../../migrations")
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	s.DB.LogMode(dbLog)
 
@@ -111,7 +112,7 @@ func (s *SuiteMetric) TestParse() {
 
 	res, err := s.repository.ParseMetric(stringReadCloser)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotNil(s.T(), res)
 }
 
@@ -121,7 +122,7 @@ func (s *SuiteMetric) TestParseError() {
 
 	_, err := s.repository.ParseMetric(stringReadCloser)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestSaveMetric() {
@@ -160,7 +161,7 @@ func (s *SuiteMetric) TestSaveMetric() {
 
 	res, err := s.repository.SaveMetric(metricStruct)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	metricStruct.BaseModel = res.BaseModel
 	require.Equal(s.T(), res, metricStruct)
@@ -204,7 +205,7 @@ func (s *SuiteMetric) TestUpdateMetric() {
 
 	res, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	metricStruct.BaseModel = res.BaseModel
 	metricStruct.MetricExecution.Status = res.MetricExecution.Status
@@ -216,7 +217,7 @@ func (s *SuiteMetric) TestRemoveMetric() {
 
 	resErr := s.repository.RemoveMetric(id.String())
 
-	require.NoError(s.T(), resErr)
+	require.Nil(s.T(), resErr)
 	require.Nil(s.T(), resErr)
 }
 
@@ -226,7 +227,7 @@ func (s *SuiteMetric) TestRemoveMetricError() {
 	s.DB.Close()
 	resErr := s.repository.RemoveMetric(id.String())
 
-	require.Error(s.T(), resErr)
+	require.NotNil(s.T(), resErr)
 }
 
 func (s *SuiteMetric) TestFindMetricById() {
@@ -265,7 +266,7 @@ func (s *SuiteMetric) TestFindMetricById() {
 
 	res, err := s.repository.FindMetricById(metricStruct.ID.String())
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	metricStruct.BaseModel = res.BaseModel
 	require.Equal(s.T(), metricStruct, res)
@@ -286,7 +287,7 @@ func (s *SuiteMetric) TestSaveMetricError() {
 
 	_, err := s.repository.SaveMetric(metricStruct)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestUpdateMetricError() {
@@ -307,14 +308,14 @@ func (s *SuiteMetric) TestUpdateMetricError() {
 
 	_, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestFindMetricByIdError() {
 
 	_, err := s.repository.FindMetricById("any-id")
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestResultQueryGetPluginError() {
@@ -351,7 +352,7 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 
 	_, err := s.repository.ResultQuery(metricStruct)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestResultQuery() {
@@ -364,20 +365,13 @@ func (s *SuiteMetric) TestResultQuery() {
 		WorkspaceID: uuid.New(),
 	}
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	s.DB.Create(&dataSource)
+	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
 	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
+		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
 		GroupBy:        []metricRepo.MetricGroupBy{},
@@ -388,7 +382,7 @@ func (s *SuiteMetric) TestResultQuery() {
 
 	res, err := s.repository.ResultQuery(metricStruct)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotNil(s.T(), res)
 }
 
@@ -426,7 +420,7 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 
 	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 1, Unit: "h"})
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestQuery() {
@@ -438,21 +432,13 @@ func (s *SuiteMetric) TestQuery() {
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
+	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
+	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
 	metricStruct := metricRepo.Metric{
 		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
+		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
 		GroupBy:        []metricRepo.MetricGroupBy{},
@@ -464,7 +450,7 @@ func (s *SuiteMetric) TestQuery() {
 	res, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 1, Unit: "h"})
 
 	require.Empty(s.T(), res)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestQueryDatasourceError() {
@@ -480,7 +466,7 @@ func (s *SuiteMetric) TestQueryDatasourceError() {
 	}
 
 	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 13, Unit: "h"})
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMetric) TestCountMetrics() {
@@ -538,7 +524,7 @@ func (s *SuiteMetric) TestFindAllByGroup() {
 
 	listedMetrics, err := s.repository.FindAllByGroup(group1.ID.String())
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.Len(s.T(), listedMetrics, 2)
 	require.Equal(s.T(), metric1.ID, listedMetrics[0].ID)
 	require.Equal(s.T(), metric2.ID, listedMetrics[1].ID)
@@ -549,5 +535,5 @@ func (s *SuiteMetric) TestFindAllByGroupError() {
 
 	_, err := s.repository.FindAllByGroup(uuid.New().String())
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }

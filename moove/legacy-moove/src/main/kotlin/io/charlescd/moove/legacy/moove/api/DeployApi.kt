@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.legacy.moove.api
 
+import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyErrorDecoderConfiguration
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.api.request.CreateDeployModuleRequest
 import io.charlescd.moove.legacy.moove.api.request.UndeployRequest
@@ -32,7 +33,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "deployApi", url = "\${charlescd.deploy.url}")
+@FeignClient(name = "deployApi", url = "\${charlescd.deploy.url}", configuration = [DefaultLegacyErrorDecoderConfiguration::class])
 interface DeployApi {
 
     @ResponseStatus(HttpStatus.OK)

@@ -15,7 +15,7 @@
  */
 
 import { FetchMock } from 'jest-fetch-mock';
-import { createNewUser } from '../users';
+import { createNewUser, patchProfileById, changePassword, findWorkspacesByUserId, findUserByEmail } from '../users';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -36,4 +36,71 @@ test('create new user provider request', async () => {
   const data = await response.json();
 
   expect(data).toEqual({ message: 'new user created' });
+});
+
+test('update a user provider request', async () => {
+  const id = '123';
+  const name = 'Charles';
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ message: 'user updated' })
+  );
+
+  const response = await patchProfileById(id, name)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ message: 'user updated' });
+});
+
+test('update a user password provider request', async () => {
+  const passwords = {
+    oldPassword: '123',
+    newPassword: '456',
+    confirmPassword: '456'
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ message: 'password updated' })
+  );
+
+  const response = await changePassword(passwords)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ message: 'password updated' });
+});
+
+test('should get workspaces of some user', async () => {
+  const user = {
+    id: '123',
+    name: 'name',
+    email: 'charles@zup.com.br',
+    password: '123457'
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ status: 200 })
+  );
+
+  const response = await findWorkspacesByUserId(user.id)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ status: 200});
+});
+
+test('should find a user by email', async () => {
+  const user = {
+    id: '123',
+    name: 'name',
+    email: 'charles@zup.com.br',
+    password: '123457'
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ status: 200 })
+  );
+
+  const response = await findUserByEmail(user.email)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ status: 200});
 });

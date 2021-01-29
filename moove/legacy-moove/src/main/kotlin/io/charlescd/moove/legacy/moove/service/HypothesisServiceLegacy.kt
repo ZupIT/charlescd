@@ -25,11 +25,15 @@ import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.commons.representation.*
 import io.charlescd.moove.legacy.moove.request.hypothesis.*
-import io.charlescd.moove.legacy.repository.*
+import io.charlescd.moove.legacy.repository.CardColumnRepository
+import io.charlescd.moove.legacy.repository.CardRepository
+import io.charlescd.moove.legacy.repository.HypothesisRepository
+import io.charlescd.moove.legacy.repository.LabelRepository
 import io.charlescd.moove.legacy.repository.entity.*
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -38,10 +42,13 @@ import org.springframework.stereotype.Service
 class HypothesisServiceLegacy(
     private val hypothesisRepository: HypothesisRepository,
     private val labelRepository: LabelRepository,
-    private val userRepository: UserRepository,
+    private val userServiceLegacy: UserServiceLegacy,
     private val cardColumnRepository: CardColumnRepository,
     private val cardRepository: CardRepository
 ) {
+    @Value("\${charlescd.protected.branches}")
+    lateinit var protectedBranches: Array<String>
+
     fun findValidatedBuildsByHypothesisId(id: String, workspaceId: String): List<SimpleBuildRepresentation> {
         return this.hypothesisRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("hypothesis", id) }
@@ -59,9 +66,9 @@ class HypothesisServiceLegacy(
             .orElseThrow { NotFoundExceptionLegacy("hypothesis", id) }
 
     @Transactional
-    fun create(request: CreateHypothesisRequest, workspaceId: String): HypothesisRepresentation =
+    fun create(request: CreateHypothesisRequest, workspaceId: String, authorization: String): HypothesisRepresentation =
         request
-            .toEntity(workspaceId)
+            .toEntity(workspaceId, userServiceLegacy.findByAuthorizationToken(authorization))
             .let(hypothesisRepository::save)
             .also { createHypothesisCardColumns(it, workspaceId) }
             .toRepresentation()
@@ -237,12 +244,13 @@ class HypothesisServiceLegacy(
         return if (isItDeployedReleasesColumn(cardColumn)) {
             getCardsWithValidDeployments(cardColumn, hypothesis)
         } else {
+
             return cardColumn.copy(
                 id = cardColumn.id,
                 name = cardColumn.name,
                 cards = hypothesis.cards.filter { it.column.id == cardColumn.id && it.status == CardStatus.ACTIVE }
                     .sortedBy { it.index }
-                    .map { it.toSimpleRepresentation() },
+                    .map { it.toSimpleRepresentation(isProtectedCard(it)) },
                 builds = hypothesis.builds.filter { it.column?.id == cardColumn.id && it.status != BuildStatus.ARCHIVED }
                     .orderDeploymentsByDate()
                     .sortedByDescending { it.createdAt }
@@ -317,19 +325,15 @@ class HypothesisServiceLegacy(
             description = this.description
         )
 
-    private fun CreateHypothesisRequest.toEntity(workspaceId: String) = Hypothesis(
+    private fun CreateHypothesisRequest.toEntity(workspaceId: String, author: User) = Hypothesis(
         id = UUID.randomUUID().toString(),
         name = this.name,
-        author = findUserById(this.authorId),
+        author = author,
         description = this.description,
         createdAt = LocalDateTime.now(),
         labels = findLabelsByIds(this.labels),
         workspaceId = workspaceId
     )
-
-    private fun findUserById(id: String): User =
-        userRepository.findById(id)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
     private fun findLabelsByIds(ids: List<String>): List<Label> =
         ids.takeIf { it.isNotEmpty() }
@@ -384,5 +388,15 @@ class HypothesisServiceLegacy(
             it.name == ColumnConstants.BUILDS_COLUMN_NAME ||
                     it.name == ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME
         } ?: throw RuntimeException("Invalid column")
+    }
+    private fun isProtectedCard(card: Card): Boolean {
+        if (card is SoftwareCard) {
+            return isProtectedBranch(card.feature.branchName)
+        }
+        return false
+    }
+
+    private fun isProtectedBranch(branchName: String): Boolean {
+        return protectedBranches.contains(branchName)
     }
 }

@@ -18,8 +18,8 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { flatten } from 'lodash'
 import { EntityManager, getConnection, Repository } from 'typeorm'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
@@ -67,7 +67,9 @@ export class CreateDeploymentUseCase {
 
   private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents()
+    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
+      createDeploymentDto.circle.headerValue
+    )
     const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
     const unchangedComponents: ComponentEntity[] = activeComponents
       .filter(component => !requestedComponentsNames.includes(component.name))

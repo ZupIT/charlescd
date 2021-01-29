@@ -23,6 +23,7 @@ import routes from 'core/constants/routes';
 
 export interface ResponseError extends Error {
   status?: number;
+  code?: string;
 }
 
 interface FetchData<T> {
@@ -38,13 +39,17 @@ export interface FetchProps {
   responseArchive?: unknown;
   responseSave?: unknown;
   responseUpdate?: unknown;
+  responseTest?: unknown;
   response?: unknown;
   loadingAdd?: boolean;
   loadingAll?: boolean;
   loadingRemove?: boolean;
   loadingSave?: boolean;
   loadingUpdate?: boolean;
+  loadingTest?: boolean;
   loading?: boolean;
+  test?: Function;
+  errorTest?: unknown;
   getAll?: Function;
   findUserGroupByName?: Function;
   getById?: Function;
@@ -83,9 +88,13 @@ const getResponse = async (response: Response) => {
   }
 };
 
-export const useFetchData = <T>(
+export type FetchParams = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  req: (...args: any) => (options: RequestInit) => Promise<Response>
+  ...args: any
+) => (options: RequestInit) => Promise<Response>;
+
+export const useFetchData = <T>(
+  req: FetchParams
 ): ((...args: unknown[]) => Promise<T>) => {
   const isLoginRequest = login === req;
 

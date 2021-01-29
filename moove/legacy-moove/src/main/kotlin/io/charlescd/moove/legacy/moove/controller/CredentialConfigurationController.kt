@@ -21,6 +21,7 @@ package io.charlescd.moove.legacy.moove.controller
 import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
 import io.charlescd.moove.legacy.moove.request.configuration.CreateCdConfigurationRequest
 import io.charlescd.moove.legacy.moove.request.configuration.CreateRegistryConfigurationRequest
+import io.charlescd.moove.legacy.moove.request.configuration.TestRegistryConnectionRequest
 import io.charlescd.moove.legacy.moove.service.CredentialConfigurationService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -45,9 +46,10 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/registry")
     fun createRegistryConfig(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody createRegistryConfigRequest: CreateRegistryConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId)
+        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Create CD Config")
@@ -61,9 +63,10 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/cd")
     fun createCdConfig(
         @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody createCdConfigRequest: CreateCdConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId)
+        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId, authorization)
     }
 
     @ApiOperation(value = "Get configurations by Type")
@@ -79,5 +82,38 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
         @PathVariable id: String
     ): CredentialConfigurationRepresentation {
         return this.credentialConfigurationService.getConfigurationById(id, workspaceId)
+    }
+
+    @ApiOperation(value = "Test Registry Config")
+    @ApiImplicitParam(
+        name = "createRegistryConfigRequest",
+        value = "Create Registry Config",
+        required = true,
+        dataType = "CreateRegistryConfigurationRequest"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/registry/validation")
+    fun configurationValidation(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @Valid @RequestBody request: CreateRegistryConfigurationRequest,
+        @RequestHeader(value = "Authorization") authorization: String
+    ) {
+        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request, authorization)
+    }
+
+    @ApiOperation(value = "Test Registry Connection")
+    @ApiImplicitParam(
+        name = "testRegistryConnectionRequest",
+        value = "Test Registry Connection",
+        required = true,
+        dataType = "TestRegistryConnectionRequest"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/registry/connection-validation")
+    fun connectionValidation(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @Valid @RequestBody request: TestRegistryConnectionRequest
+    ) {
+        this.credentialConfigurationService.testRegistryConnection(workspaceId, request)
     }
 }

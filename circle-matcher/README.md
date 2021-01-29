@@ -43,6 +43,25 @@ The response could be:
 ```
 Then, simply use the circle identification information for any service call in your cluster. To do this, use the HTTP header **X-Circle-Id** with the value of **circles.id**.
 
+## Running locally
+
+### Requirements
+- [GraalVM 20.3.0 with JDK 1.8+]
+- [Docker]
+- [Docker Compose]
+- [Maven]
+
+
+First up the Redis container:
+```
+docker-compose -f docker-compose.xml up
+```
+
+Then run the application (if you want to run with another Redis flavors, use the appropriate profile):
+```
+./run-local.sh
+```
+
 ## Documentation
 
 Please check the [Charles Documentation].

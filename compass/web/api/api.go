@@ -19,68 +19,99 @@
 package api
 
 import (
-	"encoding/json"
-	"errors"
-	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"log"
 	"net/http"
+	"time"
 
-	"github.com/google/uuid"
-	"github.com/julienschmidt/httprouter"
+	"github.com/didip/tollbooth/limiter"
+
+	"github.com/casbin/casbin/v2"
+
+	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/health"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/moove"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/gorilla/mux"
 )
 
-type BaseEntityRepresentation struct {
-	ID uuid.UUID `json:"id"`
+type Api struct {
+	// Dependencies
+	enforcer              *casbin.Enforcer
+	limiter               *limiter.Limiter
+	pluginMain            plugin.UseCases
+	datasourceMain        datasource.UseCases
+	metricMain            metric.UseCases
+	actionMain            action.UseCases
+	metricGroupActionMain metricsgroupaction.UseCases
+	metricsGroupMain      metricsgroup.UseCases
+	mooveMain             moove.UseCases
+	healthMain            health.UseCases
 }
 
-type RestError struct {
-	Message string `json:"message"`
-}
+func NewApi(
+	enforcer *casbin.Enforcer,
+	limiter *limiter.Limiter,
+	pluginMain plugin.UseCases,
+	datasourceMain datasource.UseCases,
+	metricMain metric.UseCases,
+	actionMain action.UseCases,
+	metricGroupActionMain metricsgroupaction.UseCases,
+	metricsGroupMain metricsgroup.UseCases,
+	mooveMain moove.UseCases,
+	healthMain health.UseCases,
+) *mux.Router {
 
-type RestValidateError struct {
-	Message string           `json:"message"`
-	Errors  []util.ErrorUtil `json:"errors"`
-}
-
-func NewRestError(w http.ResponseWriter, status int, errs []error) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-
-	var restErrors []RestError
-	for _, err := range errs {
-		restErrors = append(restErrors, RestError{Message: err.Error()})
+	api := Api{
+		enforcer:              enforcer,
+		limiter:               limiter,
+		pluginMain:            pluginMain,
+		datasourceMain:        datasourceMain,
+		metricMain:            metricMain,
+		actionMain:            actionMain,
+		metricGroupActionMain: metricGroupActionMain,
+		metricsGroupMain:      metricsGroupMain,
+		mooveMain:             mooveMain,
+		healthMain:            healthMain,
 	}
-	json.NewEncoder(w).Encode(restErrors)
+	router := mux.NewRouter()
+	api.health(router)
+	api.metrics(router)
+
+	s := router.PathPrefix("/api").Subrouter()
+	s.Use(LoggingMiddleware)
+	s.Use(api.ValidatorMiddleware)
+
+	api.newV1Api(s)
+
+	return router
 }
 
-func NewRestValidateError(w http.ResponseWriter, status int, errs []util.ErrorUtil, msg string) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
+func (api *Api) health(router *mux.Router) {
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(":)"))
+		return
+	})
+}
 
-	var restErrors = RestValidateError{
-		Message: msg,
-		Errors:  errs,
+func (api *Api) metrics(router *mux.Router) {
+	router.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+		return
+	})
+}
+
+func Start(router *mux.Router) {
+	server := &http.Server{
+		Handler: router,
+		Addr:    ":8080",
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
-
-	json.NewEncoder(w).Encode(restErrors)
-}
-
-func NewRestSuccess(w http.ResponseWriter, status int, response interface{}) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(response)
-}
-
-func HttpValidator(
-	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string),
-) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
-		workspaceID := r.Header.Get("x-workspace-id")
-
-		if workspaceID == "" {
-			NewRestError(w, http.StatusInternalServerError, []error{errors.New("WorkspaceId is required")})
-			return
-		}
-		next(w, r, ps, workspaceID)
-	}
+	log.Fatal(server.ListenAndServe())
 }

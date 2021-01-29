@@ -22,3 +22,9 @@ export const configPath = '/registryConfigurationId';
 
 export const create = (registry: Registry) =>
   postRequest(`${endpoint}`, registry);
+
+export const testRegistryConnection = (registry: Registry) =>
+  postRequest(`${endpoint}/validation`, registry);
+
+export const validateConnection = (configurationId: string) =>
+  postRequest(`${endpoint}/connection-validation`, { configurationId });

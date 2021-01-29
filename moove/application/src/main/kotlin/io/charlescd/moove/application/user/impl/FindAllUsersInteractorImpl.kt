@@ -21,10 +21,11 @@ package io.charlescd.moove.application.user.impl
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindAllUsersInteractor
-import io.charlescd.moove.application.user.response.UserResponse
+import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -33,13 +34,17 @@ class FindAllUsersInteractorImpl @Inject constructor(
     private val userService: UserService
 ) : FindAllUsersInteractor {
 
-    override fun execute(name: String?, email: String?, pageRequest: PageRequest): ResourcePageResponse<UserResponse> {
-        return convert(userService.findAll(name, email, pageRequest))
+    override fun execute(name: String?, email: String?, authorization: String, pageRequest: PageRequest): ResourcePageResponse<SimpleUserResponse> {
+        val user = userService.findByAuthorizationToken(authorization)
+        if (user.root) {
+            return convert(userService.findAll(name, email, pageRequest))
+        }
+        throw ForbiddenException()
     }
 
-    private fun convert(page: Page<User>): ResourcePageResponse<UserResponse> {
+    private fun convert(page: Page<User>): ResourcePageResponse<SimpleUserResponse> {
         return ResourcePageResponse(
-            content = page.content.map { UserResponse.from(it) },
+            content = page.content.map { SimpleUserResponse.from(it) },
             page = page.pageNumber,
             size = page.size(),
             isLast = page.isLast(),

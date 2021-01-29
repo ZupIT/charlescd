@@ -20,6 +20,10 @@ package tests
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"strings"
+	"testing"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
@@ -27,9 +31,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"strings"
-	"testing"
 )
 
 type ActionSuite struct {
@@ -49,7 +50,7 @@ func (s *ActionSuite) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	s.DB.LogMode(dbLog)
 
@@ -84,7 +85,7 @@ func (s *ActionSuite) TestParseAction() {
 
 	wsID, _ := uuid.Parse("5b17f1ec-41ab-472a-b307-f0495e480a1c")
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotNil(s.T(), res)
 
 	require.Equal(s.T(), "Open-sea up", res.Nickname)
@@ -109,7 +110,7 @@ func (s *ActionSuite) TestParseActionUseDefault() {
 
 	wsID, _ := uuid.Parse("5b17f1ec-41ab-472a-b307-f0495e480a1c")
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotNil(s.T(), res)
 
 	require.Equal(s.T(), "Open-sea up", res.Nickname)
@@ -126,16 +127,16 @@ func (s *ActionSuite) TestParseActionError() {
 
 	_, err := s.repository.ParseAction(stringReadCloser)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *ActionSuite) TestFindActionById() {
-	actionToFind := newBasicAction()
+	insertAction, actionToFind := actionInsert("validaction")
 
-	s.DB.Create(&actionToFind)
+	s.DB.Exec(insertAction)
 	res, err := s.repository.FindActionById(actionToFind.ID.String())
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	actionToFind.BaseModel = res.BaseModel
 	require.Equal(s.T(), actionToFind, res)
 }
@@ -143,27 +144,24 @@ func (s *ActionSuite) TestFindActionById() {
 func (s *ActionSuite) TestFindActionByIdError() {
 	s.DB.Close()
 	_, err := s.repository.FindActionById(uuid.New().String())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
-	workspaceID := uuid.New()
-	actionToFind := newBasicAction()
-	actionToFind.WorkspaceId = workspaceID
+	insertAction, actionToFind := actionInsert("validaction")
 
-	s.DB.Create(&actionToFind)
-	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID.String(), workspaceID.String())
+	s.DB.Exec(insertAction)
+	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID, actionToFind.WorkspaceId)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	actionToFind.BaseModel = res.BaseModel
 	require.Equal(s.T(), actionToFind, res)
-	require.Equal(s.T(), workspaceID, res.WorkspaceId)
 }
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspaceError() {
 	s.DB.Close()
-	_, err := s.repository.FindActionByIdAndWorkspace(uuid.New().String(), uuid.New().String())
-	require.Error(s.T(), err)
+	_, err := s.repository.FindActionByIdAndWorkspace(uuid.New(), uuid.New())
+	require.NotNil(s.T(), err)
 }
 
 func (s *ActionSuite) TestFindAllActionByWorkspace() {
@@ -177,36 +175,38 @@ func (s *ActionSuite) TestFindAllActionByWorkspace() {
 	s.DB.Create(&actionStruct1)
 	s.DB.Create(&actionStruct2)
 
-	res, err := s.repository.FindAllActionsByWorkspace(wspID.String())
+	res, err := s.repository.FindAllActionsByWorkspace(wspID)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotEmpty(s.T(), res)
 	require.Len(s.T(), res, 2)
 }
 
 func (s *ActionSuite) TestFindByAllActionError() {
 	s.DB.Close()
-	_, err := s.repository.FindAllActionsByWorkspace(uuid.New().String())
+	_, err := s.repository.FindAllActionsByWorkspace(uuid.New())
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *ActionSuite) TestSaveAction() {
-	actionStruct := newBasicAction()
+	actionStruct := newBasicActionRequest()
 
 	res, err := s.repository.SaveAction(actionStruct)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	actionStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), actionStruct, res)
+	require.Equal(s.T(), actionStruct.BaseModel, res.BaseModel)
+	require.Equal(s.T(), actionStruct.Nickname, res.Nickname)
+	require.Equal(s.T(), actionStruct.Type, res.Type)
 }
 
 func (s *ActionSuite) TestSaveActionError() {
 	s.DB.Close()
-	actionStruct := action.Action{}
+	actionStruct := action.Request{}
 	_, err := s.repository.SaveAction(actionStruct)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *ActionSuite) TestDeleteAction() {
@@ -214,184 +214,193 @@ func (s *ActionSuite) TestDeleteAction() {
 
 	s.DB.Create(&actionStruct)
 	err := s.repository.DeleteAction(actionStruct.ID.String())
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 }
 
 func (s *ActionSuite) TestDeleteActionError() {
 	s.DB.Close()
 	err := s.repository.DeleteAction(uuid.New().String())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *ActionSuite) TestValidateActionEmptyNickname() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Nickname = ""
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "nickname", res[0].Field)
-	require.Equal(s.T(), "action nickname is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "nickname", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action nickname is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionBlankNickname() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Nickname = "  "
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "nickname", res[0].Field)
-	require.Equal(s.T(), "action nickname is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "nickname", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action nickname is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionTooLongNickname() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Nickname = bigString
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "nickname", res[0].Field)
-	require.Equal(s.T(), "action nickname is limited to 100 characters maximum", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "nickname", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action nickname is limited to 100 characters maximum", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionEmptyDescription() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Description = ""
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "description", res[0].Field)
-	require.Equal(s.T(), "description is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "description", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "description is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionBlankDescription() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Description = "  "
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "description", res[0].Field)
-	require.Equal(s.T(), "description is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "description", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "description is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionTooLongDescription() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Description = bigString
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "description", res[0].Field)
-	require.Equal(s.T(), "description is limited to 100 characters maximum", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "description", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "description is limited to 100 characters maximum", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionNilConfiguration() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Configuration = nil
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "configuration", res[0].Field)
-	require.Equal(s.T(), "action configuration is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "configuration", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action configuration is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionEmptyConfiguration() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Configuration = json.RawMessage("")
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "configuration", res[0].Field)
-	require.Equal(s.T(), "action configuration is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "configuration", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action configuration is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionNilWorkspace() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.WorkspaceId = uuid.Nil
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "workspaceId", res[0].Field)
-	require.Equal(s.T(), "workspaceId is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "workspaceId", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "workspaceId is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionEmptyType() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = ""
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "type", res[0].Field)
-	require.Equal(s.T(), "action type is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "type", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action type is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionBlankType() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "  "
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "type", res[0].Field)
-	require.Equal(s.T(), "action type is required", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "type", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action type is required", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionTypeToo() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = bigString
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "type", res[0].Field)
-	require.Equal(s.T(), "action type is limited to 100 characters maximum", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "type", res.GetErrors()[0].Error().Meta["field"])
+	require.Equal(s.T(), "action type is limited to 100 characters maximum", res.GetErrors()[0].Error().Detail)
 }
 
 func (s *ActionSuite) TestValidateActionPluginNotFound() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "no_plugin_found"
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "type", res[0].Field)
-	require.Equal(s.T(), "action type is invalid", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "type", res.GetErrors()[0].ErrorWithOperations().Meta["field"])
+	require.NotEmpty(s.T(), res.GetErrors()[0].ErrorWithOperations().Detail)
+	require.Equal(s.T(), "Invalid data", res.GetErrors()[0].ErrorWithOperations().Title)
+	require.Len(s.T(), res.GetErrors()[0].ErrorWithOperations().Operations, 1)
+	require.Equal(s.T(), "validateActionConfig.GetPluginBySrc", res.GetErrors()[0].ErrorWithOperations().Operations[0])
 }
 
 func (s *ActionSuite) TestValidateActionPluginLookupError() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "nofuncaction"
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "type", res[0].Field)
-	require.Equal(s.T(), "action type is invalid", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "type", res.GetErrors()[0].ErrorWithOperations().Meta["field"])
+	require.NotEmpty(s.T(), res.GetErrors()[0].ErrorWithOperations().Detail)
+	require.Equal(s.T(), "Invalid data", res.GetErrors()[0].ErrorWithOperations().Title)
+	require.Len(s.T(), res.GetErrors()[0].ErrorWithOperations().Operations, 1)
+	require.Equal(s.T(), "validateActionConfig.Lookup", res.GetErrors()[0].ErrorWithOperations().Operations[0])
 }
 
 func (s *ActionSuite) TestValidateActionInvalidConfig() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 	act.Type = "invalidaction"
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 1)
-	require.Equal(s.T(), "configuration", res[0].Field)
-	require.Equal(s.T(), "invalid config", res[0].Error)
+	require.Len(s.T(), res.GetErrors(), 1)
+	require.Equal(s.T(), "type", res.GetErrors()[0].ErrorWithOperations().Meta["field"])
+	require.NotEmpty(s.T(), res.GetErrors()[0].ErrorWithOperations().Detail)
+	require.Equal(s.T(), "Invalid data", res.GetErrors()[0].ErrorWithOperations().Title)
+	require.Len(s.T(), res.GetErrors()[0].ErrorWithOperations().Operations, 1)
+	require.Equal(s.T(), "validateActionConfig.pluginErrs", res.GetErrors()[0].ErrorWithOperations().Operations[0])
 }
 
 func (s *ActionSuite) TestValidateActionOk() {
-	act := newBasicAction()
+	act := newBasicActionRequest()
 
 	res := s.repository.ValidateAction(act)
 
-	require.Len(s.T(), res, 0)
+	require.Len(s.T(), res.GetErrors(), 0)
 }

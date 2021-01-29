@@ -15,7 +15,7 @@
  */
 
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
-import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/configuration/interfaces'
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 
 
 export const oneComponentHostnameGatewayOctopipe: OctopipeDeploymentRequest = {
@@ -63,18 +63,18 @@ export const oneComponentHostnameGatewayOctopipe: OctopipeDeploymentRequest = {
           {
             labels: {
               component: 'A',
-              tag: 'v1',
-              circleId: 'circle-id2'
-            },
-            name: 'circle-id2'
-          },
-          {
-            labels: {
-              component: 'A',
               tag: 'v0',
               circleId: 'default-circle-id'
             },
             name: 'default-circle-id'
+          },
+          {
+            labels: {
+              component: 'A',
+              tag: 'v1',
+              circleId: 'circle-id2'
+            },
+            name: 'circle-id2'
           }
         ]
       }

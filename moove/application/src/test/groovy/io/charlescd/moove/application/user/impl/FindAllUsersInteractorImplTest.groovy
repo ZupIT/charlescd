@@ -16,10 +16,13 @@
 
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -30,19 +33,24 @@ class FindAllUsersInteractorImplTest extends Specification {
 
     private UserRepository userRepository = Mock(UserRepository)
 
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
+
     void setup() {
-        this.findAllUsersInteractor = new FindAllUsersInteractorImpl(new UserService(userRepository))
+        this.findAllUsersInteractor = new FindAllUsersInteractorImpl(new UserService(userRepository, managementUserSecurityService))
     }
 
     def "when there is no user should return an empty page"() {
         given:
         def pageRequest = new PageRequest()
         def emptyPage = new Page([], 0, 20, 0)
+        def authorization = TestUtils.authorization
 
         when:
-        def response = this.findAllUsersInteractor.execute(null, null, pageRequest)
+        def response = this.findAllUsersInteractor.execute(null, "email", authorization, pageRequest)
 
         then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
         1 * this.userRepository.findAll(_, _, _) >> { arguments ->
             def argPageRequest = arguments[2]
 
@@ -59,7 +67,21 @@ class FindAllUsersInteractorImplTest extends Specification {
         assert response.isLast
     }
 
-    def "when there are users, should list them"() {
+    def "when there are users and request is not made by user root should throw ForbiddenException"() {
+        given:
+        def pageRequest = new PageRequest()
+        def user = TestUtils.user
+        def authorization = TestUtils.authorization
+        when:
+        this.findAllUsersInteractor.execute(TestUtils.name, null, authorization, pageRequest)
+
+        then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.user)
+        thrown(ForbiddenException)
+    }
+
+    def "when there are users and request is made by user root should list them"() {
         given:
         def pageRequest = new PageRequest()
         def author = new User("author-id", "charles-author", "author@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
@@ -67,11 +89,13 @@ class FindAllUsersInteractorImplTest extends Specification {
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
         def user = new User("user-id", "charles-user", "user@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
         def page = new Page([user], 0, 20, 1)
-
+        def authorization = TestUtils.authorization
         when:
-        def response = this.findAllUsersInteractor.execute(null, null, pageRequest)
+        def response = this.findAllUsersInteractor.execute(null, "email", authorization, pageRequest)
 
         then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
+        1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.userRoot)
         1 * this.userRepository.findAll(_, _, _) >> { arguments ->
             def argPageRequest = arguments[2]
 
@@ -89,13 +113,8 @@ class FindAllUsersInteractorImplTest extends Specification {
         assert response.content[0].email == user.email
         assert response.content[0].photoUrl == user.photoUrl
         assert response.content[0].createdAt == user.createdAt
-        assert response.content[0].workspaces.size() == user.workspaces.size()
-        assert response.content[0].workspaces[0].id == workspacePermission.id
-        assert response.content[0].workspaces[0].name == workspacePermission.name
-        assert response.content[0].workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.content[0].workspaces[0].permissions[0] == workspacePermission.permissions[0].name
-
         assert response.totalPages == 1
         assert response.isLast
     }
 }
+

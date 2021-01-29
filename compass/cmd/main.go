@@ -19,6 +19,15 @@
 package main
 
 import (
+	"log"
+	"time"
+
+	"github.com/casbin/casbin/v2"
+
+	utils "github.com/ZupIT/charlescd/compass/internal/util"
+
+	"strconv"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -29,11 +38,10 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"log"
-	"time"
-
-	utils "github.com/ZupIT/charlescd/compass/internal/util"
-	v1 "github.com/ZupIT/charlescd/compass/web/api/v1"
+	"github.com/ZupIT/charlescd/compass/web/api"
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth/limiter"
+	"github.com/sirupsen/logrus"
 
 	"github.com/joho/godotenv"
 )
@@ -41,24 +49,41 @@ import (
 func main() {
 	godotenv.Load()
 
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
 	db, err := configuration.GetDBConnection("migrations")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	if utils.IsDeveloperRunning() {
-		db.LogMode(true)
+	mooveDb, err := configuration.GetMooveDBConnection()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer mooveDb.Close()
+
+	enforcer, err := casbin.NewEnforcer("./auth.conf", "./policy.csv")
+	if err != nil {
+		log.Fatal(err)
 	}
 
+	lmt := configureRequestLimiter()
+
+	if utils.IsDeveloperRunning() {
+		db.LogMode(true)
+		mooveDb.LogMode(true)
+	}
+
+	mooveMain := moove.NewMain(mooveDb)
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	actionMain := action.NewMain(db, pluginMain)
 	metricsGroupActionMain := metricsgroupaction.NewMain(db, pluginMain, actionMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, metricsGroupActionMain)
-	mooveMain := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
-	healthMain := health.NewMain(db, datasourceMain, pluginMain, mooveMain)
+	mooveClient := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
+	healthMain := health.NewMain(db, datasourceMain, pluginMain, mooveClient)
 	metricDispatcher := dispatcher.NewDispatcher(metricMain)
 	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
@@ -66,14 +91,41 @@ func main() {
 	go metricDispatcher.Start(stopChan)
 	go actionDispatcher.Start(stopChan)
 
-	v1Api := v1.NewV1()
-	v1Api.NewPluginApi(pluginMain)
-	v1Api.NewMetricsGroupApi(metricsgroupMain)
-	v1Api.NewMetricApi(metricMain, metricsgroupMain)
-	v1Api.NewDataSourceApi(datasourceMain)
-	v1Api.NewCircleApi(metricsgroupMain)
-	v1Api.NewActionApi(actionMain)
-	v1Api.NewHealthApi(healthMain)
-	v1Api.NewMetricsGroupActionApi(metricsGroupActionMain)
-	v1Api.Start()
+	router := api.NewApi(
+		enforcer,
+		lmt,
+		pluginMain,
+		datasourceMain,
+		metricMain,
+		actionMain,
+		metricsGroupActionMain,
+		metricsgroupMain,
+		mooveMain,
+		healthMain,
+	)
+
+	api.Start(router)
+}
+
+func configureRequestLimiter() *limiter.Limiter {
+	reqLimit, err := strconv.ParseFloat(configuration.GetConfiguration("REQUESTS_PER_SECOND_LIMIT"), 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tokenTTL, err := strconv.Atoi(configuration.GetConfiguration("LIMITER_TOKEN_TTL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	headersTTL, err := strconv.Atoi(configuration.GetConfiguration("LIMITER_HEADERS_TTL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lmt := tollbooth.NewLimiter(reqLimit, nil)
+	lmt.SetTokenBucketExpirationTTL(time.Duration(tokenTTL) * time.Minute)
+	lmt.SetHeaderEntryExpirationTTL(time.Duration(headersTTL) * time.Minute)
+
+	return lmt
 }

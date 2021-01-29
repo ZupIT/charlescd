@@ -30,7 +30,8 @@ import org.hibernate.validator.constraints.URL;
         @JsonSubTypes.Type(value = AzureCreateDockerRegistryRequest.class, name = "Azure"),
         @JsonSubTypes.Type(value = AWSCreateDockerRegistryRequest.class, name = "AWS"),
         @JsonSubTypes.Type(value = GCPCreateDockerRegistryRequest.class, name = "GCP"),
-        @JsonSubTypes.Type(value = DockerHubCreateDockerRegistryRequest.class, name = "DOCKER_HUB")
+        @JsonSubTypes.Type(value = DockerHubCreateDockerRegistryRequest.class, name = "DOCKER_HUB"),
+        @JsonSubTypes.Type(value = HarborCreateDockerRegistryRequest.class, name = "HARBOR")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class CreateDockerRegistryConfigurationRequest {
@@ -38,7 +39,7 @@ public abstract class CreateDockerRegistryConfigurationRequest {
     @NotEmpty
     protected String name;
 
-    @URL
+    @URL(message = "Invalid address url")
     @NotEmpty
     protected String address;
 

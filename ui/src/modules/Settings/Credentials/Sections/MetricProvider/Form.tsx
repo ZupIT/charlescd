@@ -16,19 +16,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import Card from 'core/components/Card';
 import Button from 'core/components/Button';
-import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { Datasource, Plugin, PluginDatasource } from './interfaces';
 import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
-import { useDatasource, usePlugins, useTestConnection } from './hooks';
+import { useDatasource, usePlugins } from './hooks';
 import Styled from './styled';
 import { find, map } from 'lodash';
-import ConnectionStatus from './ConnectionStatus';
+import { testDataSourceConnection } from 'core/providers/datasources';
+import { useTestConnection } from 'core/hooks/useTestConnection';
+import ConnectionStatus from 'core/components/ConnectionStatus';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
@@ -36,7 +37,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
     save: testConnection
-  } = useTestConnection();
+  } = useTestConnection(testDataSourceConnection);
   const [datasourceHealth, setDatasourceHealth] = useState(false);
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins();
@@ -61,10 +62,6 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     setPlugin(find(plugins as Plugin[], { id: option['value'] }));
   };
 
-  const onClose = () => {
-    setPlugin(null);
-  };
-
   const handleTestConnection = () => {
     const { data } = getValues();
 
@@ -76,11 +73,6 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const renderFields = () => (
     <>
-      <Card.Config
-        icon="prometheus"
-        description={plugin.name}
-        onClose={() => onClose()}
-      />
       {(plugin.inputParameters as PluginDatasource).health && (
         <Styled.HealthWrapper>
           <Styled.HealthSwitch
@@ -115,10 +107,11 @@ const FormMetricProvider = ({ onFinish }: Props) => {
           />
         )
       )}
-
-      {!loadingConnectionResponse && testConnectionResponse && (
-        <ConnectionStatus status={testConnectionResponse as number} />
-      )}
+      <ConnectionStatus
+        successMessage="Successful connection with the metrics provider."
+        errorMessage={testConnectionResponse?.message}
+        status={testConnectionResponse?.status}
+      />
       <Styled.TestConnectionButton
         id="test-connection"
         type="button"
@@ -132,7 +125,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   );
 
   const renderSelect = () => (
-    <Select.Single
+    <Styled.Select
       control={control}
       name="url"
       label="Select a datasource plugin"
@@ -143,7 +136,8 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      {plugin ? renderFields() : renderSelect()}
+      {renderSelect()}
+      {plugin && renderFields()}
       <div>
         <Button.Default
           type="submit"
@@ -158,16 +152,16 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content>
-      <Text.h2 color="light">
-        Add Datasource
-        <Popover
-          title="Why we ask for Metrics Provider?"
-          icon="info"
-          link={`${CHARLES_DOC}/reference/metrics`}
-          linkLabel="View documentation"
-          description="Adding the URL of our tool helps Charles to metrics generation since this can vary from workspace to another. Consult the our documentation for further details."
+      <Text.h2 color="light">Add Datasource</Text.h2>
+      <Text.h4 color="dark" data-testid="text-datasource">
+        Adding the URL of our tool helps Charles to metrics generation since
+        this can vary from workspace to another. Consult the our{' '}
+        <DocumentationLink
+          text="documentation"
+          documentationLink={`${CHARLES_DOC}/reference/metrics`}
         />
-      </Text.h2>
+        for further details.
+      </Text.h4>
       {renderForm()}
     </Styled.Content>
   );

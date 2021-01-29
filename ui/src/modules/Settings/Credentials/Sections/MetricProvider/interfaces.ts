@@ -26,12 +26,11 @@ export interface Provider {
 
 export interface MetricProvider {
   provider: string;
-  authorId?: string;
   url: string;
 }
 
 export interface DatasourceData {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export interface Datasource {
@@ -64,7 +63,7 @@ export interface Plugin {
 
 export interface TestConnectionRequest {
   pluginSrc: string;
-  data: any
+  data: any;
 }
 
 export interface TestConnectionResponse {

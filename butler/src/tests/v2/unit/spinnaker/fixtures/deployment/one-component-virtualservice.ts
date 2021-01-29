@@ -15,8 +15,8 @@
  */
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
@@ -172,19 +172,19 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
               {
                 labels: {
                   component: 'A',
-                  tag: 'v1',
-                  circleId: 'circle-id2'
-                },
-                name: 'circle-id2'
-              },
-              {
-                labels: {
-                  component: 'A',
                   tag: 'v0',
                   circleId: 'default-circle-id'
                 },
                 name: 'default-circle-id'
               },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v1',
+                  circleId: 'circle-id2'
+                },
+                name: 'circle-id2'
+              }
             ]
           }
         }

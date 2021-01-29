@@ -21,6 +21,7 @@ import Text from 'core/components/Text';
 import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 import { fadeIn } from 'core/assets/style/animate';
+import ComponentText from 'core/components/Text';
 
 const Content = styled.div`
   display: flex;
@@ -88,16 +89,15 @@ const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
   ${({ isActive }: ButtonIconProps) =>
     isActive &&
     css`
-      background-color: ${({ theme }) => theme.radio.checked.background};
+      background-color: ${({ theme }) => theme.radio.button.checked.background};
       span {
-        color: ${({ theme }) => theme.radio.checked.color};
+        color: ${({ theme }) => theme.radio.button.checked.color};
       }
       i {
-        color: ${({ theme }) => theme.radio.checked.color};
+        color: ${({ theme }) => theme.radio.button.checked.color};
       }
     `};
 `;
-
 
 type FormContertProps = {
   showForm: boolean;
@@ -105,6 +105,29 @@ type FormContertProps = {
 
 const FormContent = styled.div<FormContertProps>`
   display: ${({ showForm }) => (showForm ? 'block' : 'none')};
+`;
+
+const Title = styled(ComponentText.h2)`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  > :last-child {
+    margin-left: 10px;
+  }
+`;
+
+const Info = styled(ComponentText.h5)`
+  margin-bottom: 20px;
+`;
+
+const Link = styled.a`
+  text-decoration: underline;
+  color: ${({ theme }) => theme.popover.link.color};
+  text-decoration-color: ${({ theme }) => theme.popover.link.color};
+  :hover {
+    text-decoration: underline;
+    text-decoration-color: ${({ theme }) => theme.popover.link.color};
+  }
 `;
 
 export default {
@@ -115,5 +138,8 @@ export default {
   OptionText,
   ButtonGroup,
   FormContent,
-  ButtonIconRounded
+  ButtonIconRounded,
+  Title,
+  Info,
+  Link
 };

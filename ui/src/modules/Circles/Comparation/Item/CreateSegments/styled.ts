@@ -55,12 +55,12 @@ const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
   ${({ isActive }: ButtonIconProps) =>
     isActive &&
     css`
-      background-color: ${({ theme }) => theme.radio.checked.background};
+      background-color: ${({ theme }) => theme.radio.button.checked.background};
       span {
-        color: ${({ theme }) => theme.radio.checked.color};
+        color: ${({ theme }) => theme.radio.button.checked.color};
       }
       i {
-        color: ${({ theme }) => theme.radio.checked.color};
+        color: ${({ theme }) => theme.radio.button.checked.color};
       }
     `};
 `;

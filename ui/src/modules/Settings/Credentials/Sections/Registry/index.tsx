@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useRegistry } from './hooks';
+import { useRegistry, useRegistryValidateConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
-
+import { FetchStatuses } from 'core/providers/base/hooks';
+import Notification from 'core/components/Notification';
 interface Props {
   form: string;
   setForm: Function;
@@ -31,16 +32,48 @@ interface Props {
 }
 
 const SectionRegistry = ({ form, setForm, data }: Props) => {
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const isLoading = status === 'pending';
   const [isAction, setIsAction] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
   const { remove, responseRemove, loadingRemove } = useRegistry();
+  const {
+    validateConnectionRegistry,
+    response,
+    error
+  } = useRegistryValidateConnection();
 
   useEffect(() => {
     setIsAction(true);
   }, [responseRemove]);
 
   useEffect(() => {
-    if (data) setIsAction(false);
-  }, [data]);
+    if (response) {
+      setIsDisabled(false);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    if (error) {
+      setIsDisabled(true);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data) {
+      setIsAction(false);
+
+      (async () => {
+        setStatus('pending');
+        await validateConnectionRegistry(data.id);
+        setStatus('resolved');
+      })();
+    }
+  }, [validateConnectionRegistry, data]);
+
+  const renderError = () => (
+    <Notification.Log type="error" content={error.message} />
+  );
 
   const renderSection = () => (
     <Section
@@ -48,14 +81,20 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
       icon="server"
       showAction={isAction}
       action={() => setForm(FORM_REGISTRY)}
+      type="Required"
     >
       {data && !responseRemove && (
-        <Card.Config
-          icon="server"
-          description={data.name}
-          isLoading={loadingRemove}
-          onClose={() => remove(data?.id)}
-        />
+        <Fragment>
+          <Card.Config
+            icon="server"
+            description={data.name}
+            isLoading={loadingRemove || isLoading}
+            isDisabled={isDisabled}
+            onClose={() => remove(data?.id)}
+          >
+            {error && renderError()}
+          </Card.Config>
+        </Fragment>
       )}
     </Section>
   );

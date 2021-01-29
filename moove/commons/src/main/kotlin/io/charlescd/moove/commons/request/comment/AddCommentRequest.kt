@@ -20,8 +20,5 @@ import javax.validation.constraints.NotBlank
 
 data class AddCommentRequest(
     @field:NotBlank
-    val authorId: String,
-
-    @field:NotBlank
     val comment: String
 )

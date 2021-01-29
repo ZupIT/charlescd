@@ -16,7 +16,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'core/state/hooks';
-import { useFetch } from 'core/providers/base/hooks';
+import { FetchStatuses, useFetch } from 'core/providers/base/hooks';
 import { UserGroup } from './interfaces/UserGroups';
 import {
   findAllUserGroup,
@@ -31,7 +31,6 @@ import { UserGroupPagination } from './interfaces/UserGroupsPagination';
 import { listUserGroupsAction } from './state/actions';
 import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
-import { getProfileByKey } from 'core/utils/profile';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { addParamUserGroup } from './helpers';
 import { useHistory } from 'react-router-dom';
@@ -104,7 +103,7 @@ export const useCreateUserGroup = (): {
 
   const createUserGroup = useCallback(
     (name: string) => {
-      save({ name, authorId: getProfileByKey('id') });
+      save({ name });
     },
     [save]
   );
@@ -125,13 +124,13 @@ export const useCreateUserGroup = (): {
 
 export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
   const [data, update] = useFetch<UserGroup>(updateUserGroup);
-  const [status, setStatus] = useState('');
-  const { response } = data;
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const { response, error } = data;
 
   const doUpdateUserGroup = useCallback(
     (id: string, name: string) => {
-      setStatus('');
-      update(id, { name, authorId: getProfileByKey('id') });
+      setStatus('pending');
+      update(id, { name });
     },
     [update]
   );
@@ -141,6 +140,12 @@ export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
       setStatus('resolved');
     }
   }, [setStatus, response]);
+
+  useEffect(() => {
+    if (error) {
+      setStatus('rejected');
+    }
+  }, [setStatus, error]);
 
   return [doUpdateUserGroup, response, status];
 };
@@ -197,19 +202,27 @@ export const useManagerMemberInUserGroup = (): [Function, string] => {
   const [, , onRemoveMemberUserGroup] = useFetch<UserGroup>(
     removeMemberToUserGroup
   );
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const managerMemberUserGroup = useCallback(
     (checked: boolean, groupId: string, memberId: string) => {
-      setStatus('');
+      setStatus('pending');
       if (checked) {
-        onAddMemberUserGroup(groupId, { memberId }).then(() => {
-          setStatus('resolved');
-        });
+        onAddMemberUserGroup(groupId, { memberId })
+          .then(() => {
+            setStatus('resolved');
+          })
+          .catch(() => {
+            setStatus('rejected');
+          });
       } else {
-        onRemoveMemberUserGroup(groupId, memberId).then(() => {
-          setStatus('resolved');
-        });
+        onRemoveMemberUserGroup(groupId, memberId)
+          .then(() => {
+            setStatus('resolved');
+          })
+          .catch(() => {
+            setStatus('rejected');
+          });
       }
     },
     [onAddMemberUserGroup, onRemoveMemberUserGroup]

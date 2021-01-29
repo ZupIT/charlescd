@@ -24,7 +24,6 @@ export interface Author {
   id?: string;
   name?: string;
   email?: string;
-  photoUrl?: string;
   createdAt?: string;
 }
 
@@ -34,6 +33,7 @@ export interface Role {
   value?: string;
   description?: string;
   createdAt?: string;
+  permissions?: unknown;
 }
 
 export interface UserGroup {

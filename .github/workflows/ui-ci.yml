@@ -2,13 +2,13 @@ name: build and test new ui
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'ui/**'
     tags: 
       - '!*'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'ui/**'
@@ -30,7 +30,7 @@ jobs:
         node-version: 12.x
     - run: yarn install
       working-directory: ./ui
-    - run: yarn build
+    - run: yarn build:all
       working-directory: ./ui
     - run: yarn test:coverage
       working-directory: ./ui
