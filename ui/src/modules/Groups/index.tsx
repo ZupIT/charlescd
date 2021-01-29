@@ -17,11 +17,11 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
 import Page from 'core/components/Page';
 import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
+import { isRequired, maxLength } from 'core/utils/validations';
 import Menu from './Menu';
 import Tabs from './Tabs';
 import { addParamUserGroup } from './helpers';
@@ -37,18 +37,19 @@ const UserGroups = () => {
   const profileName = getProfileByKey('name');
   const history = useHistory();
   const [toggleModal, setToggleModal] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { register, watch, handleSubmit } = useForm();
-  const watchName = watch('name');
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({
+    mode: 'onChange'
+  });
   const {
     createUserGroup,
     response: userGroupResponse,
     loading: loadingCreate
   } = useCreateUserGroup();
-
-  useEffect(() => {
-    setIsDisabled(isEmpty(watchName));
-  }, [watchName]);
 
   useEffect(() => {
     if (userGroupResponse) {
@@ -67,12 +68,16 @@ const UserGroups = () => {
         <Styled.Modal.Input
           name="name"
           label="Type a name"
-          ref={register({ required: true })}
+          error={errors?.name?.message}
+          ref={register({
+            required: isRequired(),
+            maxLength: maxLength()
+          })}
         />
         <Styled.Modal.Button
-          type="submit"
           id="user-group"
-          isDisabled={isDisabled}
+          type="submit"
+          isDisabled={!isValid}
           isLoading={loadingCreate}
         >
           Create user group

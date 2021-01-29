@@ -15,7 +15,9 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock/types';
+import userEvent from '@testing-library/user-event';
 import Menu from '..';
 
 const props = {
@@ -36,10 +38,26 @@ const props = {
   onSearch: jest.fn()
 }
 
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
 test('render Menu default', async () => {
-  const { getByTestId } = render(
+  render(
     <Menu {...props} />
   );
 
-  expect(getByTestId('menu-users-charles@zup.com.br')).toBeInTheDocument();
+  expect(screen.getByTestId('menu-users-charles@zup.com.br')).toBeInTheDocument();
+});
+
+test('render Menu default and do a empty search', async () => {
+  render(
+    <Menu isLoading={false} items={[]}  onSearch={jest.fn()} />
+  );
+
+  const inputSearch = screen.getByTestId('input-text-search');
+
+  userEvent.type(inputSearch, 'unknown');
+  
+  await waitFor(() => expect(screen.getByTestId('empty-result-user')).toBeInTheDocument());
 });

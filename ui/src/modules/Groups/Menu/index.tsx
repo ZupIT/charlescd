@@ -70,19 +70,26 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
     </InfiniteScroll>
   );
 
+  const renderContent = () =>
+    isEmpty(list?.content) ? (
+      <Text.h3 color="dark">No User group was found</Text.h3>
+    ) : (
+      renderList()
+    );
+
   return (
     <Fragment>
-      <Styled.Actions>
-        <Styled.Button onClick={onCreate}>
+      <Styled.Actions data-testid="users-groups-menu">
+        <Styled.Button onClick={onCreate} id="create-user-group">
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create user group</Text.h5>
           </LabeledIcon>
         </Styled.Button>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={setName} />
+        <Styled.SearchInput resume onSearch={setName} maxLength={64} />
         <Styled.List data-testid="user-group-menu">
-          {isEmpty(list?.content) && loading ? <Loader.List /> : renderList()}
+          {loading ? <Loader.List /> : renderContent()}
         </Styled.List>
       </Styled.Content>
     </Fragment>
