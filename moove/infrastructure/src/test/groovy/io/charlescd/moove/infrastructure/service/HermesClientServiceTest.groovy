@@ -150,11 +150,13 @@ class HermesClientServiceTest extends Specification {
 
         response.add(history)
 
+        def pageRequest = new PageRequest()
+
         when:
-        hermesService.getSubscriptionEventHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null)
+        hermesService.getSubscriptionEventHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest)
 
         then:
-        1 * hermesClient.getSubscriptionEventsHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null) >> response
+        1 * hermesClient.getSubscriptionEventsHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest.page, pageRequest.size) >> response
 
     }
 

@@ -19,6 +19,7 @@ package io.charlescd.moove.application.webhook.impl
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.EventHistoryWebhookSubscriptionInteractor
 import io.charlescd.moove.application.webhook.response.EventHistoryWebhookSubscriptionResponse
+import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscriptionEventHistory
 import io.charlescd.moove.domain.service.HermesService
@@ -38,9 +39,10 @@ class EventHistoryWebhookSubscriptionInteractorImpl @Inject constructor(
         eventType: String?,
         eventStatus: String?,
         eventField: String?,
-        eventValue: String?
+        eventValue: String?,
+        pageRequest: PageRequest
     ): List<EventHistoryWebhookSubscriptionResponse> {
-        val history = getEventHistory(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue)
+        val history = getEventHistory(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue, pageRequest)
         return history.map { EventHistoryWebhookSubscriptionResponse.from(it) }
     }
 
@@ -51,11 +53,12 @@ class EventHistoryWebhookSubscriptionInteractorImpl @Inject constructor(
         eventType: String?,
         eventStatus: String?,
         eventField: String?,
-        eventValue: String?
+        eventValue: String?,
+        pageRequest: PageRequest
     ): List<WebhookSubscriptionEventHistory> {
         val author = webhookService.getAuthor(authorization)
         validateSubscription(workspaceId, author, id)
-        return hermesService.getSubscriptionEventHistory(author.email, id, eventType, eventStatus, eventField, eventValue)
+        return hermesService.getSubscriptionEventHistory(author.email, id, eventType, eventStatus, eventField, eventValue, pageRequest)
     }
 
     private fun validateSubscription(workspaceId: String, author: User, id: String) {

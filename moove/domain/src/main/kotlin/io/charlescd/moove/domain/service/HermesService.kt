@@ -42,6 +42,7 @@ interface HermesService {
         eventType: String?,
         eventStatus: String?,
         eventField: String?,
-        eventValue: String?
+        eventValue: String?,
+        pageRequest: PageRequest
     ): List<WebhookSubscriptionEventHistory>
 }

@@ -66,10 +66,11 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         eventType: String?,
         eventStatus: String?,
         eventField: String?,
-        eventValue: String?
+        eventValue: String?,
+        pageRequest: PageRequest
     ): List<WebhookSubscriptionEventHistory> {
         return buildWebhookSubscriptionEventHistory(
-            hermesClient.getSubscriptionEventsHistory(authorEmail, id, eventType, eventStatus, eventField, eventValue))
+            hermesClient.getSubscriptionEventsHistory(authorEmail, id, eventType, eventStatus, eventField, eventValue, pageRequest.page, pageRequest.size))
     }
 
     private fun buildHermesSubscriptionEventPublishRequest(webhookEvent: WebhookEvent): HermesPublishSubscriptionEventRequest {

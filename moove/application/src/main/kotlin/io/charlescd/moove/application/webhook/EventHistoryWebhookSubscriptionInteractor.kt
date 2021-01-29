@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.webhook
 
 import io.charlescd.moove.application.webhook.response.EventHistoryWebhookSubscriptionResponse
+import io.charlescd.moove.domain.PageRequest
 
 interface EventHistoryWebhookSubscriptionInteractor {
     fun execute(
@@ -26,6 +27,7 @@ interface EventHistoryWebhookSubscriptionInteractor {
         eventType: String?,
         eventStatus: String?,
         eventField: String?,
-        eventValue: String?
+        eventValue: String?,
+        pageRequest: PageRequest
     ): List<EventHistoryWebhookSubscriptionResponse>
 }

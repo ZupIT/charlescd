@@ -107,6 +107,8 @@ interface HermesClient {
         @RequestParam(value = "eventType", required = false) eventType: String?,
         @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
         @RequestParam(value = "eventField", required = false) eventField: String?,
-        @RequestParam(value = "eventValue", required = false) eventValue: String?
+        @RequestParam(value = "eventValue", required = false) eventValue: String?,
+        @RequestParam(value = "page", required = true) page: Int,
+        @RequestParam(value= "size", required = true) size: Int
     ): List<HermesSubscriptionEventHistoryResponse>
 }

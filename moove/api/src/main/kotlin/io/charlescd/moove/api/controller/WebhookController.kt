@@ -21,6 +21,7 @@ import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionR
 import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
 import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
+import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
 import org.springframework.http.HttpStatus
@@ -33,7 +34,8 @@ class WebhookController(
     private val updateWebhookSubscriptionInteractor: UpdateWebhookSubscriptionInteractor,
     private val getWebhookSubscriptionInteractor: GetWebhookSubscriptionInteractor,
     private val deleteWebhookSubscriptionInteractor: DeleteWebhookSubscriptionInteractor,
-    private val healthCheckWebhookSubscriptionInteractor: HealthCheckWebhookSubscriptionInteractor
+    private val healthCheckWebhookSubscriptionInteractor: HealthCheckWebhookSubscriptionInteractor,
+    private val eventHistoryWebhookSubscriptionInteractor: EventHistoryWebhookSubscriptionInteractor
 ) {
 
     @ApiOperation(value = "Create a subscribe webhook")
@@ -102,8 +104,9 @@ class WebhookController(
         @RequestParam(value = "eventType", required = false) eventType: String?,
         @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
         @RequestParam(value = "eventField", required = false) eventField: String?,
-        @RequestParam(value = "eventValue", required = false) eventValue: String?
+        @RequestParam(value = "eventValue", required = false) eventValue: String?,
+        @Valid pageRequest: PageRequest
     ) {
-        healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
+        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue)
     }
 }
