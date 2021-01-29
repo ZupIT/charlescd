@@ -50,7 +50,13 @@ func main() {
 	}
 
 	goChan := make(chan os.Signal, 1)
-	queueprotocol.NewClient("fila1", "fila1", "amqp://guest:guest@localhost:5672/", logrus.New(), goChan)
+	queueprotocol.NewClient(
+		configuration.GetConfiguration("AMQP_LISTEN_QUEUE"),
+		configuration.GetConfiguration("AMQP_PUSH_QUEUE"),
+		configuration.GetConfiguration("AMQP_URL"),
+		logrus.New(),
+		goChan,
+	)
 
 	subscriptionMain := subscription.NewMain(db)
 	messageMain := message.NewMain(db)
