@@ -15,7 +15,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react-hooks';
-import { screen, wait } from 'unit-test/testUtils';
+import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useCreateUserGroup, useDeleteUserGroup, useFindAllUserGroup, useFindUserGroupByID, useListUser, useManagerMemberInUserGroup, useUpdateUserGroup } from '../hooks';
 import { UserGroup } from '../interfaces/UserGroups';
@@ -41,7 +41,7 @@ test('create a new user group', async () => {
     await result.current.createUserGroup(newUserGroup.name);
   });
 
-  await wait(() => expect(result.current.response).toMatchObject(newUserGroup));
+  await waitFor(() => expect(result.current.response).toMatchObject(newUserGroup));
 });
 
 test('error create a new user group', async () => {
@@ -60,8 +60,8 @@ test('error create a new user group', async () => {
     response = await result.current.createUserGroup(newUserGroup.name);
   });
 
-  await wait(() => expect(response).toBeUndefined());
-  await wait(() => expect(result.current.response).toBeUndefined());
+  await waitFor(() => expect(response).toBeUndefined());
+  await waitFor(() => expect(result.current.response).toBeUndefined());
 });
 
 test('to find all user groups', async () => {
@@ -91,7 +91,7 @@ test('to find all user groups', async () => {
     await result.current[0]('group 1');
   });
 
-  await wait(() => expect(result.current[2]).toMatchObject(userGroupPagination));
+  await waitFor(() => expect(result.current[2]).toMatchObject(userGroupPagination));
 });
 
 test('to find user group by id', async () => {
@@ -122,7 +122,7 @@ test('to find user group by id', async () => {
     await result.current[0]('123');
   });
 
-  await wait(() => expect(result.current[1]).toMatchObject(userGroup));
+  await waitFor(() => expect(result.current[1]).toMatchObject(userGroup));
 });
 
 test('to list users', async () => {
@@ -153,7 +153,7 @@ test('to list users', async () => {
     await result.current[0]('charlescd@zup.com.br');
   });
 
-  await wait(() => expect(result.current[1]).toMatchObject(users));
+  await waitFor(() => expect(result.current[1]).toMatchObject(users));
 });
 
 test('to update user group', async () => {
@@ -184,7 +184,7 @@ test('to update user group', async () => {
     await result.current[0]('123', 'Charles');
   });
 
-  await wait(() => expect(result.current[1]).toMatchObject(userGroup));
+  await waitFor(() => expect(result.current[1]).toMatchObject(userGroup));
 });
 
 test('to delete user group', async () => {
@@ -196,7 +196,7 @@ test('to delete user group', async () => {
     await result.current[0]('123');
   });
 
-  await wait(() => expect(result.current[1]).toMatchObject({}));
+  await waitFor(() => expect(result.current[1]).toMatchObject({}));
 });
 
 test('to manager members in user group', async () => {
@@ -208,5 +208,5 @@ test('to manager members in user group', async () => {
     await result.current[0](false, '123', '456');
   });
 
-  await wait(() => expect(result.current[1]).toBe('resolved'));
+  await waitFor(() => expect(result.current[1]).toBe('resolved'));
 });
