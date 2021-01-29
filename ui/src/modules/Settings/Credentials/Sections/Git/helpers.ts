@@ -1,12 +1,15 @@
 import { GitFormData } from './interfaces';
 
-export const buildTestConnectionPayload = (
+export const buildConnectionPayload = (
   formData: GitFormData,
   gitType: string
 ) => {
   return {
     credentials: {
-      address: formData.credentials.address,
+      address:
+        gitType === 'GitHub'
+          ? 'https://github.com'
+          : formData.credentials.address,
       accessToken: formData.credentials.accessToken,
       serviceProvider: gitType.toUpperCase()
     }

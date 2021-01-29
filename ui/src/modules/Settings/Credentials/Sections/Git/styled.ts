@@ -30,6 +30,7 @@ const Title = styled(ComponentText.h2)`
 
 const Subtitle = styled(ComponentText.h5)`
   margin-bottom: 10px;
+  margin-top: 20px;
 `;
 
 const Content = styled.div`

@@ -15,7 +15,7 @@
  */
 
 export interface Credentials {
-  address: string;
+  address?: string;
   accessToken: string;
   serviceProvider: string;
 }

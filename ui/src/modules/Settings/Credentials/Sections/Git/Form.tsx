@@ -20,33 +20,48 @@ import Button from 'core/components/Button';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import { CHARLES_DOC } from 'core/components/Popover';
 import { useGit } from './hooks';
 import { radios } from './constants';
 import { GitFormData } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
-import { buildTestConnectionPayload } from './helpers';
+import { buildConnectionPayload } from './helpers';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
+import isEqual from 'lodash/isEqual';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 const FormGit = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
   const [gitType, setGitType] = useState('');
+  const [lastTestedForm, setLastTestedForm] = useState<GitFormData>();
   const {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
-    save: testConnection
+    save: testConnection,
+    reset: resetTestConnection
   } = useTestConnection(testGitConnection);
   const {
     register,
     handleSubmit,
     getValues,
-    formState: { isValid }
+    formState: { isValid },
+    watch
   } = useForm<GitFormData>({
     mode: 'onChange'
   });
+
+  const form = watch();
+
+  useEffect(() => {
+    if (testConnectionResponse && testConnectionResponse.message) {
+      if (!isEqual(form, lastTestedForm)) {
+        resetTestConnection();
+      }
+    }
+  }, [form, testConnectionResponse, resetTestConnection, lastTestedForm]);
 
   useEffect(() => {
     if (responseAdd) {
@@ -57,17 +72,14 @@ const FormGit = ({ onFinish }: Props) => {
   const onSubmit = (git: GitFormData) => {
     save({
       ...git,
-      credentials: {
-        ...git.credentials,
-        serviceProvider: gitType.toUpperCase()
-      }
+      credentials: buildConnectionPayload(git, gitType)
     });
   };
 
   const handleTestConnection = () => {
     const data = getValues();
-
-    const payload = buildTestConnectionPayload(data, gitType);
+    setLastTestedForm(data);
+    const payload = buildConnectionPayload(data, gitType);
     testConnection(payload);
   };
 
@@ -82,11 +94,14 @@ const FormGit = ({ onFinish }: Props) => {
           name="name"
           label={`Type a name for ${gitType}`}
         />
-        <Form.Input
-          ref={register({ required: true })}
-          name="credentials.address"
-          label={`Enter the ${gitType} url`}
-        />
+        {gitType !== 'GitHub' && (
+          <Form.Input
+            ref={register({ required: true })}
+            name="credentials.address"
+            label={`Enter the ${gitType} url`}
+          />
+        )}
+
         <Form.Input
           ref={register({ required: true })}
           name="credentials.accessToken"
@@ -119,16 +134,16 @@ const FormGit = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content>
-      <Styled.Title color="light">
-        Add Git
-        <Popover
-          title="Why we need a Git?"
-          icon="info"
-          link={`${CHARLES_DOC}/get-started/defining-a-workspace/github`}
-          linkLabel="View documentation"
-          description="Adding a Git allows Charles to create, delete and merge branches as well as view repositories and generate releases. Consult our documentation for further details."
+      <Styled.Title color="light">Add Git</Styled.Title>
+      <Text.h5 color="dark">
+        Adding a Git allows Charles to create, delete and merge branches as well
+        as view repositories and generate releases. Consult our{' '}
+        <DocumentationLink
+          text="documentation"
+          documentationLink={`${CHARLES_DOC}/get-started/defining-a-workspace/github`}
         />
-      </Styled.Title>
+        for further details.
+      </Text.h5>
       <Styled.Subtitle color="dark">
         Choose witch one you want to add:
       </Styled.Subtitle>

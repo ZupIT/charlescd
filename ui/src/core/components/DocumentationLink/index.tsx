@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+import React from 'react';
+import Styled from './styled';
+import { DocumentationLinkProps } from './interface';
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
-
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
-    }
-  }, [options, clearValue]);
-
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
+const DocumentationLink = ({
+  text,
+  documentationLink
+}: DocumentationLinkProps) => {
+  return (
+    <>
+      <Styled.DocumentationLink target="_blank" href={documentationLink}>
+        {text}
+      </Styled.DocumentationLink>{' '}
+    </>
+  );
 };
 
-export default SingleValue;
+export default DocumentationLink;
