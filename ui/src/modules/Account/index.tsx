@@ -28,7 +28,6 @@ import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
 import { isIDMEnabled, isRoot } from 'core/utils/auth';
-import { isRoot } from 'core/utils/auth';
 import { isRequired, maxLength } from 'core/utils/validations';
 import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateName } from 'modules/Users/hooks';

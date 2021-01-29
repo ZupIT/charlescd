@@ -33,7 +33,6 @@ import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
 import { isIDMEnabled, isRoot } from 'core/utils/auth';
 import { isRequired, maxLength } from 'core/utils/validations';
-import { isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';

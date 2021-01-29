@@ -20,9 +20,9 @@ import Page from 'core/components/Page';
 import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
 import { getAccessTokenDecoded, logout } from 'core/utils/auth';
+import { isRoot } from 'core/utils/auth';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
-import { isRoot } from 'core/utils/auth';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
