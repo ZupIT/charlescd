@@ -267,7 +267,7 @@ export const useResetPassword = (): {
   return { resetPassword, response, status };
 };
 
-export const useUsers = (): [Function, Function, boolean] => {
+export const useUsers = (): [Function, UserPagination, boolean] => {
   const dispatch = useDispatch();
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response, error, loading } = usersData;
@@ -287,7 +287,7 @@ export const useUsers = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [filterUsers, getUsers, loading];
+  return [filterUsers, response, loading];
 };
 
 export default useUsers;
