@@ -9,7 +9,7 @@ NODETEST=$(NODECMD) run test:cov
 NODERUN=$(NODECMD) run start:prod
 BINARY_NAME=darwin-deploy
 
-# Commons commands
+# Commons commands here
 HOST=127.0.0.1
 
 all: build test
