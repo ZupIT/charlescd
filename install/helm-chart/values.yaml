@@ -316,3 +316,6 @@ hermes:
     requests:
       cpu: 64m
       memory: 64Mi
+
+rabbitmq:
+  enabled: true
