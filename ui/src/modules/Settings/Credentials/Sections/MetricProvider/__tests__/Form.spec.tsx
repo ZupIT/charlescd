@@ -34,7 +34,7 @@ test('render button test connection', async () => {
       response: '401 unauthorized'
     }));
 
-  render(<Form onFinish={jest.fn()}/>)
+  render(<Form onFinish={jest.fn()} />)
 
   const datasourcePlugin1 = await screen.findByText('Select a datasource plugin');
   selectEvent.select(datasourcePlugin1, 'Prometheus');
@@ -90,4 +90,6 @@ test('render datasource input by datasource change', async () => {
   expect(screen.getByText('Datasource name')).toBeInTheDocument();
   expect(screen.getByText('View ID')).toBeInTheDocument();
   expect(screen.getByText('Service Account')).toBeInTheDocument();
-})
+});
+
+

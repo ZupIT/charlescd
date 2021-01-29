@@ -14,35 +14,38 @@
  * limitations under the License.
  */
 
+export const DEFAULT_MAX_LENGTH = 100;
+
 export const checkPoints = [
   {
     name: 'Uppercase',
     rule: (pass = '') => new RegExp(/[A-Z]/).test(pass),
-    message: 'must have at least one uppercase character'
+    message: 'Must have at least one uppercase character'
   },
   {
     name: 'Lowercase',
     rule: (pass = '') => new RegExp(/[a-z]/).test(pass),
-    message: 'must have at least one lowercase character'
+    message: 'Must have at least one lowercase character'
   },
   {
     name: 'Numbers',
     rule: (pass = '') => new RegExp(/[0-9]/).test(pass),
-    message: 'must have at least one number'
+    message: 'Must have at least one number'
   },
   {
     name: 'Special Character',
     rule: (pass = '') => new RegExp(/[!@#$%^&*(),.?":{}|<>]/).test(pass),
-    message: 'must have at least one special character'
+    message: 'Must have at least one special character'
   },
   {
-    name: '10 characters',
-    rule: (pass = '') => pass?.length >= 10,
-    message: 'must be at least 10 characters'
+    name: 'Minimum 10 and max of 100 characters',
+    rule: (pass = '') =>
+      pass?.length >= 10 && pass?.length <= DEFAULT_MAX_LENGTH,
+    message: 'Must be between 10 and 100 characters'
   },
   {
     name: 'Confirm password',
-    rule: (pass = '', confirm = '') => pass !== '' && confirm === pass,
+    rule: (pass = '', confirm = '') => pass !== '' && pass === confirm,
     message: 'Passwords do not match'
   }
 ];
