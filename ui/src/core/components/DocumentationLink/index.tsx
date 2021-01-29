@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-import { ValidationSchema } from 'class-validator'
+import React from 'react';
+import Styled from './styled';
+import { DocumentationLinkProps } from './interface';
 
-export const OctopipeDefaultConfigurationDataSchema: ValidationSchema = {
+const DocumentationLink = ({
+  text,
+  documentationLink
+}: DocumentationLinkProps) => {
+  return (
+    <>
+      <Styled.DocumentationLink target="_blank" href={documentationLink}>
+        {text}
+      </Styled.DocumentationLink>{' '}
+    </>
+  );
+};
 
-  name: 'octopipeDefaultConfigurationDataSchema',
-
-  properties: {
-    gitProvider: [
-      {
-        type: 'isIn',
-        constraints: [['GITHUB', 'GITLAB']],
-        message: '$value is not valid. Supported providers are GITHUB and GITLAB'
-      },
-      {
-        type: 'isNotEmpty'
-      }
-    ],
-    gitToken: [{ type: 'isNotEmpty' }],
-    namespace: [{ type: 'isNotEmpty' }]
-  }
-}
+export default DocumentationLink;

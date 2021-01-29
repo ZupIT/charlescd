@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-import { ValidationSchema } from 'class-validator'
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import DocumentationLink from '../';
 
-export const OctopipeDefaultConfigurationDataSchema: ValidationSchema = {
 
-  name: 'octopipeDefaultConfigurationDataSchema',
+test('render DocumentationLink', () => {
+  render(
+    <DocumentationLink
+      text="documentation"
+      documentationLink="https://exampledoc.com"
+    />
+  );
 
-  properties: {
-    gitProvider: [
-      {
-        type: 'isIn',
-        constraints: [['GITHUB', 'GITLAB']],
-        message: '$value is not valid. Supported providers are GITHUB and GITLAB'
-      },
-      {
-        type: 'isNotEmpty'
-      }
-    ],
-    gitToken: [{ type: 'isNotEmpty' }],
-    namespace: [{ type: 'isNotEmpty' }]
-  }
-}
+  const element = screen.getByText("documentation")
+  expect(element).toBeInTheDocument();
+});
