@@ -18,7 +18,6 @@ package io.charlescd.circlematcher.domain.service
 
 
 import io.charlescd.circlematcher.api.request.IdentificationRequest
-import io.charlescd.circlematcher.domain.Content
 import io.charlescd.circlematcher.domain.KeyMetadata
 import io.charlescd.circlematcher.domain.SegmentationType
 import io.charlescd.circlematcher.domain.service.impl.IdentificationServiceImpl
@@ -48,7 +47,7 @@ class IdentificationServiceImplTest extends Specification {
         given:
 
         def key = "username"
-        def composedKey = "username:28840781-d86e-4803-a742-53566c140e56:REGULAR"
+        def composedKey = "username:28840781-d86e-4803-a742-53566c140e56:SIMPLE_KV"
         def value = "user@zup.com.br"
 
         def workspaceId = "78094351-7f16-4571-ac7a-7681db81e146"
@@ -59,8 +58,8 @@ class IdentificationServiceImplTest extends Specification {
         def values = new ArrayList()
         values.add(value)
 
-        def content = new Content("username", "CONTAINS", values)
-        def node = TestUtils.createClauseNode([TestUtils.createNode(content)])
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
         def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
