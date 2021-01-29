@@ -73,4 +73,7 @@ export const validatePercentage = (value: number, limitValue: number) => {
   if (value > limitValue) {
     return `Percentage should be lower than ${limitValue}.`;
   }
+  if (value < 0) {
+    return `Percentage cannot be negative.`;
+  }
 };

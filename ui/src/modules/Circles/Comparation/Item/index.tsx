@@ -22,9 +22,7 @@ import {
   useDeleteCircle,
   useSaveCircleManually,
   useSaveCircleWithFile,
-  useCircleUndeploy,
-  useCirclePercentage,
-  CIRCLE_STATUS
+  useCircleUndeploy
 } from 'modules/Circles/hooks';
 import { delParam, updateParam } from 'core/utils/path';
 import { useDispatch } from 'core/state/hooks';
@@ -63,19 +61,26 @@ import {
 import { SECTIONS } from './enums';
 import Styled from './styled';
 import get from 'lodash/get';
+import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPagination';
 
 interface Props {
   id: string;
   onChange: (delCircleStatus: string) => void;
+  updateCircle: () => void;
+  circlesListResponse: CirclePercentagePagination;
 }
 
-const CirclesComparationItem = ({ id, onChange }: Props) => {
+const CirclesComparationItem = ({
+  id,
+  onChange,
+  updateCircle,
+  circlesListResponse
+}: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [activeSection, setActiveSection] = useState<SECTIONS>();
   const [isEditing, setIsEditing] = useState(false);
   const [data, circleActions] = useCircle();
-  const [responseGetCircles, getFilteredCircles] = useCirclePercentage();
   const { circleResponse, components, loading } = data;
   const { loadCircle, loadComponents } = circleActions;
   const [delCircle, delCircleResponse] = useDeleteCircle();
@@ -95,12 +100,6 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [releaseEnabled, setReleaseEnabled] = useState<boolean>(true);
 
   useEffect(() => {
-    if (circleResponse?.matcherType === 'PERCENTAGE') {
-      getFilteredCircles('', CIRCLE_STATUS.active);
-    }
-  }, [getFilteredCircles, circleResponse]);
-
-  useEffect(() => {
     if (circleResponse) {
       setCircle(circleResponse);
     }
@@ -110,7 +109,14 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
     if (response) {
       setCircle(response);
     }
-  }, [response]);
+    if (
+      circle &&
+      circle.deployment?.status === DEPLOYMENT_STATUS.undeploying &&
+      !response.deployment
+    ) {
+      updateCircle();
+    }
+  }, [response, circle, updateCircle]);
 
   useEffect(() => {
     let timeout = 0;
@@ -146,8 +152,9 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           status: DEPLOYMENT_STATUS.undeploying
         }
       });
+      updateCircle();
     }
-  }, [undeployStatus, setCircle, circle, resetUndeployStatus]);
+  }, [undeployStatus, setCircle, circle, resetUndeployStatus, updateCircle]);
 
   useEffect(() => {
     if (id === NEW_TAB) {
@@ -167,19 +174,19 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
 
   const checkIfReleaseIsEnabled = () => {
     const sumPercentage: number = get(
-      responseGetCircles,
+      circlesListResponse,
       'content[0].sumPercentage',
       0
     );
     const availablePercentage = 100 - sumPercentage;
-    if (availablePercentage < circle.percentage) {
+    if (availablePercentage < circle.percentage && !circle.deployment) {
       return setReleaseEnabled(false);
     }
     return setReleaseEnabled(true);
   };
 
   useEffect(() => {
-    if (responseGetCircles) {
+    if (circlesListResponse && circle) {
       checkIfReleaseIsEnabled();
     }
   });
@@ -187,6 +194,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const handleDelete = (deployStatus: string) => {
     delCircle(id, deployStatus, circle?.name);
     setAction('');
+    updateCircle();
   };
 
   const saveCircleName = (name: string) => {
@@ -211,12 +219,14 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         circleData.id
       );
     }
+    updateCircle();
     setActiveSection(undefined);
   };
 
   const onCreateRelease = (deployment: Deployment) => {
     setCircle({ ...circle, deployment });
     setActiveSection(undefined);
+    updateCircle();
   };
 
   const renderDropdown = () => (
@@ -311,7 +321,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         circle={circle}
         isEditing={isEditing}
         onClickCreate={() => setActiveSection(SECTIONS.SEGMENTS)}
-        percentageCircles={responseGetCircles}
+        percentageCircles={circlesListResponse}
         setActiveSection={setActiveSection}
       />
       <LayerRelease
