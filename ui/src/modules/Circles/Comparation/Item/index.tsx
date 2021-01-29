@@ -106,17 +106,21 @@ const CirclesComparationItem = ({
   }, [circleResponse]);
 
   useEffect(() => {
+    if (
+      response &&
+      !response?.deployment && 
+      circle?.deployment?.status === DEPLOYMENT_STATUS.undeploying ) {
+        updateCircle();
+        setCircle(response);
+    }
+  }, [response, circle, updateCircle])
+
+  useEffect(() => {
     if (response) {
       setCircle(response);
     }
-    if (
-      circle &&
-      circle.deployment?.status === DEPLOYMENT_STATUS.undeploying &&
-      !response.deployment
-    ) {
-      updateCircle();
-    }
-  }, [response, circle, updateCircle]);
+
+  }, [response]);
 
   useEffect(() => {
     let timeout = 0;
@@ -152,7 +156,6 @@ const CirclesComparationItem = ({
           status: DEPLOYMENT_STATUS.undeploying
         }
       });
-      updateCircle();
     }
   }, [undeployStatus, setCircle, circle, resetUndeployStatus, updateCircle]);
 

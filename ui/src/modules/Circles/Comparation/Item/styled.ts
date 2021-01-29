@@ -184,6 +184,7 @@ const WarningPercentageContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin-top: 15px;
+  margin-bottom: 15px;
 
   > span {
     margin-left: 10px;
