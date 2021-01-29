@@ -30,6 +30,7 @@ import (
 type Message struct {
 	util.BaseModel
 	SubscriptionId uuid.UUID `json:"subscriptionId"`
+	LastStatus     string    `json:"lastStatus"`
 	EventType      string    `json:"eventType"`
 	Event          string    `json:"event" gorm:"type:jsonb"`
 }
@@ -74,25 +75,6 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 			WithOperations("Save.Result")
 	}
 
-	//pushMsg, err := json.Marshal(response)
-	//if err != nil {
-	//	return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
-	//		WithOperations("Save.Marshal")
-	//}
-	//
-	//err = main.amqpClient.Push(pushMsg)
-	//if err != nil {
-	//	return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
-	//		WithOperations("Save.Push")
-	//}
-	//
-	//convertedMsg := requestToResponse(response)
-	//_, execErr := main.executionMain.Save(convertedMsg)
-	//if execErr != nil {
-	//	return []payloads.MessageResponse{}, errors.NewError("Save Message error", err.Error()).
-	//		WithOperations("Save.Execution")
-	//}
-
 	return response, nil
 }
 
@@ -107,4 +89,3 @@ func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 
 	return response, nil
 }
-

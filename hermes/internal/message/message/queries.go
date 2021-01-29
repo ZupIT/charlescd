@@ -1,6 +1,8 @@
 package message
 
 const FindAllNotEnqueuedQuery = `
-SELECT m.*
-FROM messages m LEFT JOIN messages_executions_histories meh on m.id = meh.execution_id;
+SELECT *
+FROM messages
+WHERE (last_status = '') IS NOT FALSE
+   OR last_status ILIKE 'NOT_ENQUEUED';
 `

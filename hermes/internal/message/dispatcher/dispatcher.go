@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+const (
+	enqueued    = "ENQUEUED"
+	notEnqueued = "NOT_ENQUEUED"
+)
+
 func (main *Main) Start(stopChan chan bool) error {
 	interval, err := time.ParseDuration("15s")
 	if err != nil {
@@ -49,10 +54,9 @@ func (main *Main) dispatch() {
 	}
 }
 
-func (main *Main) sendMessage(message payloads.MessageResponse) {
+func (main *Main) sendMessage(message payloads.MessageResponse) error {
 	defer main.mux.Unlock()
 	main.mux.Lock()
-
 
 	fmt.Println("sendMessage")
 	pushMsg, err := json.Marshal(message)
@@ -65,21 +69,37 @@ func (main *Main) sendMessage(message payloads.MessageResponse) {
 
 	err = main.amqpClient.Push(pushMsg)
 	if err != nil {
-		data := messageexecutionhistory.MessagesExecutionsHistory{
-			ID:           uuid.New(),
-			ExecutionId:  message.Id,
-			ExecutionLog: "",
-			Status:       "ENQUEUD_FAILED",
-			LoggedAt:     time.Now(),
-		}
-
-		retry := main.db.Table("messages_executions_histories").Create(&data)
-		if retry.Error != nil {
-			logrus.WithFields(logrus.Fields{
-				"err": errors.NewError("Push message error", "Could not save message execution").
-					WithOperations("sendMessage.Push.Retry"),
-			}).Errorln()
-		}
+		main.updateMessageStatus(message, notEnqueued)
+		return err
 	}
 
+	main.updateMessageStatus(message, enqueued)
+
+	return nil
+}
+
+func (main *Main) updateMessageStatus(message payloads.MessageResponse, status string) {
+	data := messageexecutionhistory.MessagesExecutionsHistory{
+		ID:           uuid.New(),
+		ExecutionId:  message.Id,
+		ExecutionLog: "",
+		Status:       status,
+		LoggedAt:     time.Now(),
+	}
+
+	retryExec := main.db.Table("messages_executions_histories").Create(&data)
+	if retryExec.Error != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Push message error", "Could not save not enqueued execution").
+				WithOperations("sendMessage.Push.RetryExec"),
+		}).Errorln()
+	}
+
+	retryMsg := main.db.Table("messages").Where("id = ?", message.Id).Update("last_status", status)
+	if retryMsg.Error != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Push message error", "Could not update not enqueued message").
+				WithOperations("sendMessage.Push.RetryMsg"),
+		}).Errorln()
+	}
 }
