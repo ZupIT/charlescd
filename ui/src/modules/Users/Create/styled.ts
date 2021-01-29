@@ -67,15 +67,6 @@ const Fields = styled.div`
   }
 `;
 
-const FieldErrorWrapper = styled.div`
-  display: flex;
-
-  span {
-    margin-left: 5px;
-    margin-top: 2px;
-  }
-`;
-
 export default {
   Wrapper,
   ContentIcon,
@@ -84,6 +75,5 @@ export default {
   Title,
   Subtitle,
   Fields,
-  Form,
-  FieldErrorWrapper
+  Form
 };
