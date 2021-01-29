@@ -53,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up GraalVM
-        uses: findepi/graalvm@master
+        uses: findepi/graalvm@java11
         with:
           graalvm-version: "20.3.0-java11"
       - uses: actions/cache@v1
