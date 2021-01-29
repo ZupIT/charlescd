@@ -27,6 +27,7 @@ const SearchInput = ({
   name = 'search',
   className,
   onSearch,
+  maxLength,
   ...rest
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -44,6 +45,7 @@ const SearchInput = ({
       </label>
       <Styled.Input
         {...rest}
+        maxLength={maxLength}
         name={name}
         id="inputSearch"
         onFocus={onFocus}

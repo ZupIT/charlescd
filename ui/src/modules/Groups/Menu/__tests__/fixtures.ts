@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import { UserGroupPaginationItem } from '../../interfaces/UserGroupsPagination';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
-
-  return status;
-};
-
-export const isNotBlank = (value: string) => !!value.trim();
+export const UserGroupItem: UserGroupPaginationItem[] = [
+  {
+    id: '1',
+    name: 'user',
+    users: []
+  }];

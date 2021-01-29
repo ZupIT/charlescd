@@ -22,9 +22,11 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 
 data class CreateGitConfigurationRequest(
     @field:NotBlank
+    @field:Size(max = 64)
     val name: String,
 
     @field:Valid
