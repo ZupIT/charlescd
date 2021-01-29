@@ -30,11 +30,10 @@ test('should test a git connection', async () => {
   
   const githubButton = screen.getByTestId('radio-group-git-item-GitHub');
 
-
   await act(async() => {
     userEvent.click(githubButton);
   
-  })
+  });
 
   await act(async() => {
     userEvent.type(screen.getByTestId('input-text-credentials.accessToken'), '123');
@@ -47,5 +46,3 @@ test('should test a git connection', async () => {
   })
   const connectionMessageElement = await screen.findByText('Successful connection with git.');
 });
-
-
