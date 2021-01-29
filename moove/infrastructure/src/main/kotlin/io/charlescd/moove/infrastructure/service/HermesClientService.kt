@@ -110,7 +110,7 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         return HermesPublishSubscriptionEventRequest(
             eventType = webhookDeploymentEvent.eventType,
             externalId = webhookDeploymentEvent.externalId,
-            event = Gson().toJson(webhookDeploymentEvent.event) // TODO: It's OK???
+            event = Gson().toJson(webhookDeploymentEvent.event)
         )
     }
 }

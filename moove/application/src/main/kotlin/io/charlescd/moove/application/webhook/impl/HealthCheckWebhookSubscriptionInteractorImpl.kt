@@ -36,7 +36,11 @@ class HealthCheckWebhookSubscriptionInteractorImpl @Inject constructor(
         return HealthCheckWebhookSubscriptionResponse.from(healthCheckWebhookSubscription)
     }
 
-    private fun healthCheckSubscription(workspaceId: String, authorization: String, id: String): HealthCheckWebhookSubscription {
+    private fun healthCheckSubscription(
+        workspaceId: String,
+        authorization: String,
+        id: String
+    ): HealthCheckWebhookSubscription {
         val author = webhookService.getAuthor(authorization)
         validateSubscription(workspaceId, author, id)
         return hermesService.healthCheckSubscription(author.email, id)

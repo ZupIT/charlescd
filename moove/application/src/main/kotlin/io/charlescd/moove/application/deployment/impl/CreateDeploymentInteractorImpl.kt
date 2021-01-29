@@ -41,7 +41,11 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
 ) : CreateDeploymentInteractor {
 
     @Transactional
-    override fun execute(request: CreateDeploymentRequest, workspaceId: String, authorization: String): DeploymentResponse {
+    override fun execute(
+        request: CreateDeploymentRequest,
+        workspaceId: String,
+        authorization: String
+    ): DeploymentResponse {
         val build: Build = buildService.find(request.buildId, workspaceId)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
