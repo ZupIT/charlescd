@@ -28,7 +28,7 @@ import {
   removeMemberToUserGroup
 } from 'core/providers/user-group';
 import { UserGroupPagination } from './interfaces/UserGroupsPagination';
-import { listUserGroupsAction } from './state/actions';
+import { loadUserGroupsAction } from './state/actions';
 import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -56,7 +56,7 @@ export const useFindAllUserGroup = (): [
 
   useEffect(() => {
     if (response) {
-      dispatch(listUserGroupsAction(response));
+      dispatch(loadUserGroupsAction(response));
     }
   }, [response, dispatch]);
 

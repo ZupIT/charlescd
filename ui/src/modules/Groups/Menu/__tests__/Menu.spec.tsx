@@ -17,42 +17,51 @@
 import React from 'react';
 import { render, screen, waitFor } from 'unit-test/testUtils';
 import { UserGroupItem } from './fixtures';
-import { FetchMock } from 'jest-fetch-mock/types';
-import userEvent from '@testing-library/user-event';
+import * as StateHooks from 'core/state/hooks';
 import Menu from '../index';
 
-test('render Menu users groups default', async () => {
+test('render Menu user groups default', async () => {
   render(
     <Menu 
-      onSearch={jest.fn()}
       onCreate={jest.fn()}
       onSelect={jest.fn()}
-      isLoading={false}
-      selectedItems={null}
-      items={[]}
     />
   );
 
-  const menu = screen.getByTestId('users-groups-menu');
-  const emptyItems = screen.getByText('No User group was found');
+  const menu = await screen.findByTestId('user-groups-menu');
+  const emptyItems = await screen.findByText('No User group was found');
 
   expect(menu).toBeInTheDocument();
   expect(emptyItems).toBeInTheDocument();
 });
 
-test('render Menu items', async () => {
+test('render Menu user groups items', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    list: {
+      content: [{
+        id: '1',
+        name: 'group',
+        page: 0,
+        size: 1,
+        totalPages: 1,
+        last: true,
+        users: [{
+          id: '2',
+          name: 'Charles',
+          email: 'charlescd@zup.com.br',
+          createdAt: '2021-01-01 01:01'
+        }]
+      }]
+    },
+  }));
+
   render(
     <Menu 
-      onSearch={jest.fn()}
       onCreate={jest.fn()}
       onSelect={jest.fn()}
-      isLoading={false}
-      selectedItems={null}
-      items={UserGroupItem}
     />
   );
 
-  const menuItem = screen.getByTestId('group-menu-item-1');
+  const menuItem = await screen.findByTestId('group-menu-item-1');
   expect(menuItem).toBeInTheDocument();
-
 });

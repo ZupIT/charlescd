@@ -32,14 +32,14 @@ interface GetUserGroupActionType {
   payload: UserGroup;
 }
 
-export const listUserGroupsAction = (
+export const loadUserGroupsAction = (
   payload: UserGroupPagination
 ): UserGroupsActionTypes => ({
   type: ACTION_TYPES.loadedUserGroups,
   payload
 });
 
-export const getUserGroupAction = (
+export const loadUserGroupAction = (
   payload: UserGroup
 ): UserGroupsActionTypes => ({
   type: ACTION_TYPES.loadedUserGroup,

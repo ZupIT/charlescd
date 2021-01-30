@@ -49,12 +49,12 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
     loadByPage(0);
   }, [loadByPage]);
 
-  const renderItem = (item: UserGroupPaginationItem) => (
+  const renderItem = ({ id, name }: UserGroupPaginationItem) => (
     <MenuItem
-      key={item.id}
-      id={item.id}
-      name={item.name}
-      isActive={isActiveById(item.id)}
+      key={id}
+      id={id}
+      name={name}
+      isActive={isActiveById(id)}
       onSelect={onSelect}
     />
   );
@@ -81,7 +81,7 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
 
   return (
     <Fragment>
-      <Styled.Actions data-testid="users-groups-menu">
+      <Styled.Actions data-testid="user-groups-menu">
         <Styled.Button onClick={onCreate} id="create-user-group">
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create user group</Text.h5>
