@@ -63,4 +63,182 @@ jobs:
       run: |
         curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
         horusec start -p ./
-        
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: charlescd-butler
+        IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+      run: |
+        cd butler
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+
+  build_automation_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: 'ZupIT/charlescd-automation'
+          token: ${{ secrets.AUTOMATION_TESTS_TOKEN }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-automation
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  run_integration_tests:
+    runs-on: ubuntu-latest
+    needs: [ build,
+             build_automation_tests
+    ]
+    steps:
+
+    - uses: actions/checkout@v2
+      with:
+        ref: main
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+    - name: Update helm dependencies
+      uses: WyriHaximus/github-action-helm3@v1.0.0
+      with:
+        exec: helm dependency update ./install/helm-chart
+
+    - name: Get SHA
+      id: get_sha
+      run: echo ::set-output name=SHA::$(echo $GITHUB_SHA)
+
+    - name: Get REL_NAME for Keycloak
+      id: get_rel_name
+      run: |
+        export relName=charlescd${{ steps.get_sha.outputs.SHA }}-keycloak
+        cutRelName="${relName:0:20}"
+        echo ::set-output name=REL_NAME::$(echo $cutRelName)
+
+    - name: Get CHARLES_HOST
+      id: get_charles_host
+      run: |
+        echo ::set-output name=CHARLES_HOST::$(echo "http://charlescd${{ steps.get_sha.outputs.SHA }}-ingress-nginx-controller.charlestest${{ steps.get_sha.outputs.SHA }}.svc.cluster.local")
+
+    - name: prepare keycloak vars
+      run: |
+        cat <<-EOF > keycloak-values.yaml
+        keycloak:
+          keycloak:
+            extraEnv: |
+              - name: PROXY_ADDRESS_FORWARDING
+                value: "true"
+              - name: DB_USER
+                value: "keycloak"
+              - name: DB_PASSWORD
+                value: "DCWYW66Mq2ca6w8u"
+              - name: DB_VENDOR
+                value: "POSTGRES"
+              - name: DB_PORT
+                value: "5432"
+              - name: DB_ADDR
+                value: "charlescd${{ steps.get_sha.outputs.SHA }}-postgresql"
+              - name: DB_DATABASE
+                value: "keycloak"
+              - name: DB_SCHEMA
+                value: "public"
+              cli:
+                custom: |
+                  /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="${{ steps.get_charles_host.outputs.CHARLES_HOST }}/keycloak/auth")
+        EOF
+
+    - name: DeployForTests
+      uses: WyriHaximus/github-action-helm3@v1.0.0
+      with:
+        exec: |
+          helm install --create-namespace charlescd${{ steps.get_sha.outputs.SHA }} ./install/helm-chart/ --wait --atomic \
+          --namespace=charlestest${{ steps.get_sha.outputs.SHA }} \
+          --set butler.octopipeHost="http://charlescd${{ steps.get_sha.outputs.SHA }}-octopipe:8080" \
+          --set butler.database.host=charlescd${{ steps.get_sha.outputs.SHA }}-postgresql \
+          --set moove.allowedOriginHost="${{ steps.get_charles_host.outputs.CHARLES_HOST }}" \
+          --set moove.keycloakHost="http://${{ steps.get_rel_name.outputs.REL_NAME }}-http/keycloak/auth" \
+          --set moove.database.host=charlescd${{ steps.get_sha.outputs.SHA }}-postgresql \
+          --set villager.database.host=charlescd${{ steps.get_sha.outputs.SHA }}-postgresql \
+          --set ui.apiHost="${{ steps.get_charles_host.outputs.CHARLES_HOST }}" \
+          --set ui.authHost="${{ steps.get_charles_host.outputs.CHARLES_HOST }}/keycloak" \
+          --set ui.idmRedirectHost="${{ steps.get_charles_host.outputs.CHARLES_HOST }}" \
+          --set circlematcher.allowedOriginHost="${{ steps.get_charles_host.outputs.CHARLES_HOST }}" \
+          --values keycloak-values.yaml \
+          --set redis.master.service.type=ClusterIP \
+          --set envoy.idm.endpoint=${{ steps.get_rel_name.outputs.REL_NAME }}-http \
+          --set ingress.host="${{ steps.get_charles_host.outputs.CHARLES_HOST }}"
+          --set ingress-nginx.controller.service.type=ClusterIP \
+          --set compass.database.host=charlescd${{ steps.get_sha.outputs.SHA }}-postgresql
+          --set butler.image.name=zupcharles/charlescd-butler:${{ steps.get_version.outputs.VERSION }}
+          kubeconfig: ${{ secrets.KUBECONFIG_DEV }}
+
+    - uses: actions/checkout@v2
+      with:
+        repository: 'ZupIT/charlescd-automation'
+        token: ${{ secrets.AUTOMATION_TESTS_TOKEN }}
+
+    - name: Zup Settings integration tests
+      run: |
+        cat <<-EOF > values-integration-tests.yaml
+        ${{ secrets.VALUES_INTEGRATION_TESTS }}
+        EOF
+
+    - name: RunIntegrationTests
+      uses: WyriHaximus/github-action-helm3@v1.0.0
+      with:
+        exec: | 
+          helm install charlestests ./helm-chart/ --wait --atomic --namespace=charlestest${{ steps.get_sha.outputs.SHA }} \
+          --values=./values-integration-tests.yaml \
+          --set commandToRun="cp /usr/src/testenv/.env /usr/src/test/api/; cp /usr/src/testenv/.env /usr/src/test/ui/; cd /usr/src/test/api; npm run pretest:pipeline; npm run test:e2e; npm run postest:pipeline" \
+          --set charlesHost="${{ steps.get_charles_host.outputs.CHARLES_HOST }}" \
+          --set cdNamespace=charlestest${{ steps.get_sha.outputs.SHA }} \
+          --set githubTargetUrl="" \
+          --set GITHUB_SHA=${{ steps.get_sha.outputs.SHA }}
+        kubeconfig: ${{ secrets.KUBECONFIG_DEV }}
+
+    - name: UndeployForTests
+      uses: WyriHaximus/github-action-helm3@v1.0.0
+      with:
+        exec: helm uninstall charlescd${{ steps.get_sha.outputs.SHA }} --namespace=charlestest${{ steps.get_sha.outputs.SHA }}
+        kubeconfig: ${{ secrets.KUBECONFIG_DEV }}
+
+    - name: remove namespace
+      uses: steebchen/kubectl@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG_DEV }}
+      with:
+        args: delete ns charlestest${{ steps.get_sha.outputs.SHA }}
