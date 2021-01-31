@@ -36,6 +36,33 @@ type Message struct {
 	Event          string    `json:"event" gorm:"type:jsonb"`
 }
 
+func (main Main) Validate(message payloads.PayloadRequest) errors.ErrorList {
+	ers := errors.NewErrorList()
+
+	if message.ExternalId == uuid.Nil {
+		err := errors.NewError("Invalid data", "ExternalId is required").
+			WithMeta("field", "externalId").
+			WithOperations("Validate.ExternalIdIsNil")
+		ers.Append(err)
+	}
+
+	if message.EventType == "" {
+		err := errors.NewError("Invalid data", "EventType is required").
+			WithMeta("field", "eventType").
+			WithOperations("Validate.EventTypeIsNil")
+		ers.Append(err)
+	}
+
+	if message.Event == nil || len(message.Event) == 0 {
+		err := errors.NewError("Invalid data", "Event is required").
+			WithMeta("field", "event").
+			WithOperations("Validate.EventLen")
+		ers.Append(err)
+	}
+
+	return ers
+}
+
 func (main Main) ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, errors.Error) {
 	var payload *payloads.PayloadRequest
 	err := json.NewDecoder(request).Decode(&payload)
@@ -52,12 +79,7 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 	var response []payloads.MessageResponse
 
 	for _, r := range messagesRequest {
-		msg := Message{
-			ID:             uuid.New(),
-			SubscriptionId: r.SubscriptionId,
-			EventType:      r.EventType,
-			Event:          string(r.Event),
-		}
+		msg := requestToEntity(r)
 
 		msgList = append(msgList, msg)
 		ids = append(ids, msg.ID)
@@ -82,4 +104,14 @@ func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 	}
 
 	return response, nil
+}
+
+
+func requestToEntity(r payloads.Request) Message {
+	return Message{
+		ID:             uuid.New(),
+		SubscriptionId: r.SubscriptionId,
+		EventType:      r.EventType,
+		Event:          string(r.Event),
+	}
 }

@@ -136,6 +136,11 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
+		if err := messageMain.Validate(request); len(err.GetErrors()) > 0 {
+			restutil.NewResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
 		subscriptions, err := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)

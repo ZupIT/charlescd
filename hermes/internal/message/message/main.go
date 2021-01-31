@@ -29,6 +29,7 @@ import (
 
 type UseCases interface {
 	ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, errors.Error)
+	Validate(message payloads.PayloadRequest) errors.ErrorList
 	Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error)
 	FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 }
