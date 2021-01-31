@@ -23,12 +23,13 @@ import (
 	"github.com/google/uuid"
 	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
-	"hermes/util"
 	"io"
+	"time"
 )
 
 type Message struct {
-	util.BaseModel
+	ID             uuid.UUID `json:"id"`
+	CreatedAt      time.Time `json:"-"`
 	SubscriptionId uuid.UUID `json:"subscriptionId"`
 	LastStatus     string    `json:"lastStatus"`
 	EventType      string    `json:"eventType"`
@@ -47,19 +48,22 @@ func (main Main) ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, e
 
 func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error) {
 	var msgList []Message
+	var ids []uuid.UUID
 	var response []payloads.MessageResponse
 
 	for _, r := range messagesRequest {
 		msg := Message{
-			BaseModel:      util.BaseModel{ID: uuid.New()},
+			ID:             uuid.New(),
 			SubscriptionId: r.SubscriptionId,
 			EventType:      r.EventType,
 			Event:          string(r.Event),
 		}
+
 		msgList = append(msgList, msg)
+		ids = append(ids, msg.ID)
 	}
 
-	result := main.db.Model(&Message{}).Create(&msgList).Scan(&response)
+	result := main.db.Model(&Message{}).Create(&msgList).Find(&response, ids)
 	if result.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
 			WithOperations("Save.Result")
