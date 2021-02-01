@@ -96,8 +96,9 @@ export const useCreateUserGroup = (): {
   loading: boolean;
   response: UserGroup;
 } => {
+  const dispatch = useDispatch();
   const history = useHistory();
-  const [listUserGroups] = useFindAllUserGroup();
+  const [getAllUserGroups, , userGroups] = useFindAllUserGroup();
   const [usersData, save] = useFetch<UserGroup>(saveUserGroup);
   const { response, loading } = usersData;
 
@@ -109,11 +110,17 @@ export const useCreateUserGroup = (): {
   );
 
   useEffect(() => {
+    if (userGroups) {
+      dispatch(loadUserGroupsAction(userGroups));
+    }
+  }, [dispatch, userGroups]);
+
+  useEffect(() => {
     if (response) {
-      listUserGroups();
+      getAllUserGroups();
       addParamUserGroup(history, `${response?.id}~${FormAction.edit}`);
     }
-  }, [response, listUserGroups, history]);
+  }, [response, getAllUserGroups, history]);
 
   return {
     createUserGroup,
@@ -172,9 +179,10 @@ export const useDeleteUserGroup = (): [Function, UserGroup, boolean] => {
 
   useEffect(() => {
     if (userGroups) {
+      dispatch(loadUserGroupsAction(userGroups));
       setIsFinished(true);
     }
-  }, [userGroups]);
+  }, [dispatch, userGroups]);
 
   useEffect(() => {
     if (error) {
