@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.webhook.response
+package io.charlescd.moove.domain
 
-import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
+data class WebhookSubscriptionEventHistory(
+    val executionId: String,
+    val subscription: WebhookSubscriptionInfo,
+    val status: String,
+    val updatedAt: String,
+    val event: WebhookEventInfo,
+    val executionLog: String
+)
 
-data class HealthCheckWebhookSubscriptionResponse(
-    val status: Long,
-    val details: String
-) {
-    companion object {
-        fun from(healthCheckWebhookSubscription: WebhookSubscriptionHealthCheck) = HealthCheckWebhookSubscriptionResponse(
-            status = healthCheckWebhookSubscription.status,
-            details = healthCheckWebhookSubscription.details
-        )
-    }
-}
+data class WebhookSubscriptionInfo(
+    val id: String,
+    val description: String,
+    val url: String
+)
+
+data class WebhookEventInfo(
+    val type: String,
+    val externalId: String,
+    val status: String,
+    val message: String
+)

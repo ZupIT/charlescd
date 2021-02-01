@@ -17,34 +17,48 @@
 package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.WebhookService
-import io.charlescd.moove.application.webhook.HealthCheckWebhookSubscriptionInteractor
-import io.charlescd.moove.application.webhook.response.HealthCheckWebhookSubscriptionResponse
+import io.charlescd.moove.application.webhook.EventHistoryWebhookSubscriptionInteractor
+import io.charlescd.moove.application.webhook.response.EventHistoryWebhookSubscriptionResponse
+import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
+import io.charlescd.moove.domain.WebhookSubscriptionEventHistory
 import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
-class HealthCheckWebhookSubscriptionInteractorImpl @Inject constructor(
+class EventHistoryWebhookSubscriptionInteractorImpl @Inject constructor(
     private val webhookService: WebhookService,
     private val hermesService: HermesService
-) : HealthCheckWebhookSubscriptionInteractor {
+) : EventHistoryWebhookSubscriptionInteractor {
 
-    override fun execute(workspaceId: String, authorization: String, id: String): HealthCheckWebhookSubscriptionResponse {
-        val healthCheckWebhookSubscription = healthCheckSubscription(workspaceId, authorization, id)
-        return HealthCheckWebhookSubscriptionResponse.from(healthCheckWebhookSubscription)
-    }
-
-    private fun healthCheckSubscription(
+    override fun execute(
         workspaceId: String,
         authorization: String,
-        id: String
-    ): HealthCheckWebhookSubscription {
-    private fun healthCheckSubscription(workspaceId: String, authorization: String, id: String): WebhookSubscriptionHealthCheck {
+        id: String,
+        eventType: String?,
+        eventStatus: String?,
+        eventField: String?,
+        eventValue: String?,
+        pageRequest: PageRequest
+    ): List<EventHistoryWebhookSubscriptionResponse> {
+        val history = getEventHistory(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue, pageRequest)
+        return history.map { EventHistoryWebhookSubscriptionResponse.from(it) }
+    }
+
+    private fun getEventHistory(
+        workspaceId: String,
+        authorization: String,
+        id: String,
+        eventType: String?,
+        eventStatus: String?,
+        eventField: String?,
+        eventValue: String?,
+        pageRequest: PageRequest
+    ): List<WebhookSubscriptionEventHistory> {
         val author = webhookService.getAuthor(authorization)
         validateSubscription(workspaceId, author, id)
-        return hermesService.healthCheckSubscription(author.email, id)
+        return hermesService.getSubscriptionEventHistory(author.email, id, eventType, eventStatus, eventField, eventValue, pageRequest)
     }
 
     private fun validateSubscription(workspaceId: String, author: User, id: String) {

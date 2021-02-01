@@ -22,8 +22,7 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.infrastructure.service.client.*
 import io.charlescd.moove.infrastructure.service.client.request.*
-import io.charlescd.moove.infrastructure.service.client.response.HermesHealthCheckSubscriptionResponse
-import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
+import io.charlescd.moove.infrastructure.service.client.response.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -53,7 +52,7 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         hermesClient.deleteSubscription(authorEmail, id)
     }
 
-    override fun healthCheckSubscription(authorEmail: String, id: String): HealthCheckWebhookSubscription {
+    override fun healthCheckSubscription(authorEmail: String, id: String): WebhookSubscriptionHealthCheck {
         return buildHealthCheckWebhookSubscription(hermesClient.healthCheckSubscription(authorEmail, id))
     }
 
@@ -61,15 +60,24 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         hermesPublisherClient.notifyEvent(buildHermesSubscriptionEventPublishRequest(webhookEvent))
     }
 
+    override fun getSubscriptionEventHistory(
+        authorEmail: String,
+        id: String,
+        eventType: String?,
+        eventStatus: String?,
+        eventField: String?,
+        eventValue: String?,
+        pageRequest: PageRequest
+    ): List<WebhookSubscriptionEventHistory> {
+        return buildWebhookSubscriptionEventHistory(
+            hermesClient.getSubscriptionEventsHistory(authorEmail, id, eventType, eventStatus, eventField, eventValue, pageRequest.page, pageRequest.size))
+    }
+
     private fun buildHermesSubscriptionEventPublishRequest(webhookEvent: WebhookEvent): HermesPublishSubscriptionEventRequest {
         return when (webhookEvent) {
             is WebhookDeploymentEventType -> buildHermesPublishSubscriptionEventRequest(webhookEvent)
             else -> (throw NotFoundException("WebhookEventTypeEnum", webhookEvent.toString()))
         }
-    }
-
-    override fun getSubscriptionHistory() {
-        TODO("Not yet implemented")
     }
 
     private fun buildHermesSubscriptionCreateRequest(simpleWebhookSubscription: SimpleWebhookSubscription): HermesCreateSubscriptionRequest {
@@ -99,8 +107,8 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         )
     }
 
-    private fun buildHealthCheckWebhookSubscription(healthCheck: HermesHealthCheckSubscriptionResponse): HealthCheckWebhookSubscription {
-        return HealthCheckWebhookSubscription(
+    private fun buildHealthCheckWebhookSubscription(healthCheck: HermesHealthCheckSubscriptionResponse): WebhookSubscriptionHealthCheck {
+        return WebhookSubscriptionHealthCheck(
             status = healthCheck.status,
             details = healthCheck.details
         )
@@ -111,6 +119,36 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
             eventType = webhookDeploymentEvent.eventType,
             externalId = webhookDeploymentEvent.externalId,
             event = Gson().toJson(webhookDeploymentEvent.event)
+        )
+    }
+
+    private fun buildWebhookSubscriptionEventHistory(hermesSubscriptionEventHistoryResponse: List<HermesSubscriptionEventHistoryResponse>):
+            List<WebhookSubscriptionEventHistory> {
+        return hermesSubscriptionEventHistoryResponse.map {
+            WebhookSubscriptionEventHistory(
+            executionId = it.executionId,
+            status = it.status,
+            updatedAt = it.updatedAt,
+            subscription = buildWebhookSubscriptionInfo(it.hermesSubscription),
+            event = buildEventInfo(it.hermesEvent),
+            executionLog = it.executionLog
+        ) }
+    }
+
+    private fun buildWebhookSubscriptionInfo(hermesSubscriptionInfoResponse: HermesSubscriptionInfoResponse): WebhookSubscriptionInfo {
+        return WebhookSubscriptionInfo(
+            hermesSubscriptionInfoResponse.id,
+            hermesSubscriptionInfoResponse.description,
+            hermesSubscriptionInfoResponse.url
+        )
+    }
+
+    private fun buildEventInfo(hermesEventInfoResponse: HermesEventInfoResponse): WebhookEventInfo {
+        return WebhookEventInfo(
+            hermesEventInfoResponse.type,
+            hermesEventInfoResponse.externalId,
+            hermesEventInfoResponse.status,
+            hermesEventInfoResponse.message
         )
     }
 }
