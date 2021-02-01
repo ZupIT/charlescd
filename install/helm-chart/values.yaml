@@ -1,5 +1,5 @@
 butler:
-  enabled: false
+  enabled: true
   name: "charlescd-butler"
   octopipeHost: "http://charlescd-octopipe:8080"
   database:
@@ -28,7 +28,7 @@ butler:
       memory: 128Mi
 
 moove:
-  enabled: false
+  enabled: true
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
   keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
@@ -58,10 +58,10 @@ moove:
       memory: 128Mi
 
 sidecarIstio:
-  enabled: false
+  enabled: true
 
 villager:
-  enabled: false
+  enabled: true
   name: "charlescd-villager"
   database:
     name: charlescd_villager
@@ -89,7 +89,7 @@ villager:
       memory: 128Mi
 
 ui:
-  enabled: false
+  enabled: true
   name: charlescd-ui
   apiHost: http://charles.info.example
   authUri: http://charles.info.example/keycloak
@@ -117,7 +117,7 @@ ui:
       memory: 64Mi
 
 circlematcher:
-  enabled: false
+  enabled: true
   name: charlescd-circle-matcher
   redis:
     host: charlescd-redis-master
@@ -144,7 +144,7 @@ circlematcher:
       memory: 128Mi
 
 keycloak:
-  enabled: false
+  enabled: true
   keycloak:
     extraEnv: |
       - name: PROXY_ADDRESS_FORWARDING
@@ -173,30 +173,30 @@ keycloak:
         /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
 
 postgresql:
-  enabled: false
+  enabled: true
   postgresqlUsername: "postgres"
   postgresqlPassword: "firstpassword"
 
 redis:
-  enabled: false
+  enabled: true
   password: "hb2Fj9MGKjBkZ6zV"
 
 envoy:
-  enabled: false
+  enabled: true
   ui:
-    enabled: false
+    enabled: true
   moove:
-    enabled: false
+    enabled: true
   circlematcher:
-    enabled: false
+    enabled: true
   keycloak:
-    enabled: false
+    enabled: true
   octopipe:
-    enabled: false
+    enabled: true
   compass:
-    enabled: false
+    enabled: true
   cors:
-    enabled: false
+    enabled: true
     hosts: []
   idm:
     endpoint: charlescd-keycloak-http
@@ -207,10 +207,10 @@ envoy:
 ingress:
   host: charles.info.example
   class: nginx
-  enabled: false
+  enabled: true
 
 nginx_ingress_controller:
-  enabled: false
+  enabled: true
 
 ingress-nginx:
   controller:
@@ -220,7 +220,7 @@ ingress-nginx:
 ##      default-ssl-certificate: "namespace/secret"
 
 octopipe:
-  enabled: false
+  enabled: true
   envVars:
     - name: APP_PORT
       value: "8080"
@@ -232,7 +232,7 @@ octopipe:
       value: "10"
 
 compass:
-  enabled: false
+  enabled: true
   name: "charlescd-compass"
   database:
     name: charlescd_compass
@@ -284,7 +284,7 @@ compass:
       memory: 64Mi
 
 hermes:
-  enabled: false
+  enabled: true
   name: "charlescd-hermes"
   database:
     name: hermes
