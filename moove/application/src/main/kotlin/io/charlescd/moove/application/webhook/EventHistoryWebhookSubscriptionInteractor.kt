@@ -16,9 +16,18 @@
 
 package io.charlescd.moove.application.webhook
 
-import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
-import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
+import io.charlescd.moove.application.webhook.response.EventHistoryWebhookSubscriptionResponse
+import io.charlescd.moove.domain.PageRequest
 
-interface UpdateWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String, request: UpdateWebhookSubscriptionRequest): WebhookSubscriptionResponse
+interface EventHistoryWebhookSubscriptionInteractor {
+    fun execute(
+        workspaceId: String,
+        authorEmail: String,
+        id: String,
+        eventType: String?,
+        eventStatus: String?,
+        eventField: String?,
+        eventValue: String?,
+        pageRequest: PageRequest
+    ): List<EventHistoryWebhookSubscriptionResponse>
 }

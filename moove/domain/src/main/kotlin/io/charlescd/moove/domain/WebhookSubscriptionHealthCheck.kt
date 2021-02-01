@@ -16,7 +16,7 @@
 
 package io.charlescd.moove.domain
 
-data class HealthCheckWebhookSubscription(
-    val status: Int,
+data class WebhookSubscriptionHealthCheck(
+    val status: Long,
     val details: String
 )

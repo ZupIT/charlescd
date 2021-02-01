@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.webhook
+package io.charlescd.moove.domain
 
-import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
-import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
+data class WebhookSubscriptionEventHistory(
+    val executionId: String,
+    val subscription: WebhookSubscriptionInfo,
+    val status: String,
+    val updatedAt: String,
+    val event: WebhookEventInfo,
+    val executionLog: String
+)
 
-interface UpdateWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String, request: UpdateWebhookSubscriptionRequest): WebhookSubscriptionResponse
-}
+data class WebhookSubscriptionInfo(
+    val id: String,
+    val description: String,
+    val url: String
+)
+
+data class WebhookEventInfo(
+    val type: String,
+    val externalId: String,
+    val status: String,
+    val message: String
+)

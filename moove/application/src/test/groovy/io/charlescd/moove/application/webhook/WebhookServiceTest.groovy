@@ -19,9 +19,10 @@ package io.charlescd.moove.application.webhook
 import io.charlescd.moove.application.UserService
 
 import io.charlescd.moove.application.WebhookService
-import io.charlescd.moove.domain.HealthCheckWebhookSubscription
+import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
 import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -71,7 +72,7 @@ class WebhookServiceTest extends Specification {
         def author = getAuthor(true)
 
         when:
-        webhookService.validateWorkspace("OtherWorkspaceId", subscriptionId,  author, simpleWebhookSubscription)
+        webhookService.validateWorkspace("OtherWorkspaceId", subscriptionId,  author, webhookSubscription)
 
         then:
         notThrown()
@@ -82,12 +83,11 @@ class WebhookServiceTest extends Specification {
         def author = getAuthor(false)
 
         when:
-        webhookService.validateWorkspace("OtherWorkspaceId", subscriptionId,  author, simpleWebhookSubscription)
+        webhookService.validateWorkspace("OtherWorkspaceId", subscriptionId,  author, webhookSubscription)
 
         then:
         thrown(NotFoundException)
     }
-
 
     private static List<String> getEvents() {
         def events = new ArrayList()
@@ -119,11 +119,16 @@ class WebhookServiceTest extends Specification {
     }
 
     private static SimpleWebhookSubscription getSimpleWebhookSubscription() {
-        return new SimpleWebhookSubscription('https://mywebhook.com.br', workspaceId,
+        return new SimpleWebhookSubscription('https://mywebhook.com.br'," apiKey", workspaceId,
                 'My Webhook', events)
     }
 
-    private static HealthCheckWebhookSubscription getHealthCheckWebhookSubscription() {
-        return new HealthCheckWebhookSubscription(500, "Unexpected error")
+    private static WebhookSubscription getWebhookSubscription() {
+        return new WebhookSubscription("subscriptionId",'https://mywebhook.com.br'," apiKey", workspaceId,
+                'My Webhook', events)
+    }
+
+    private static WebhookSubscriptionHealthCheck getHealthCheckWebhookSubscription() {
+        return new WebhookSubscriptionHealthCheck(500, "Unexpected error")
     }
 }

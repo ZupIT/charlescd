@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up GraalVM
-      uses: DeLaGuardo/setup-graalvm@master
+      uses: findepi/graalvm@master
       with:
-        graalvm-version: "20.3.0.java11"
+        graalvm-version: "20.3.0-java11"
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository

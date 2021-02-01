@@ -21,8 +21,11 @@ import io.charlescd.moove.infrastructure.service.client.HermesClient
 import io.charlescd.moove.infrastructure.service.client.HermesPublisherClient
 import io.charlescd.moove.infrastructure.service.client.request.HermesCreateSubscriptionRequest
 import io.charlescd.moove.infrastructure.service.client.request.HermesUpdateSubscriptionRequest
+import io.charlescd.moove.infrastructure.service.client.response.HermesEventInfoResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesHealthCheckSubscriptionResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionCreateResponse
+import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionEventHistoryResponse
+import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionInfoResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
 import spock.lang.Specification
 
@@ -42,7 +45,7 @@ class HermesClientServiceTest extends Specification {
         given:
         def request = new HermesCreateSubscriptionRequest('https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
-        def subscription = new WebhookSubscription('https://mywebhook.com.br', 'secret', 'workspaceId',
+        def subscription = new SimpleWebhookSubscription('https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
         def response = new HermesSubscriptionCreateResponse("subscriptionId")
 
@@ -123,20 +126,53 @@ class HermesClientServiceTest extends Specification {
 
     }
 
+    def 'when get subscription event history, should do it successfully'() {
+        given:
+
+        def response = new ArrayList()
+        def history = new HermesSubscriptionEventHistoryResponse(
+                "executionId",
+                new HermesSubscriptionInfoResponse(
+                        "subscriptionId",
+                        "subscriptionDescription",
+                        "subscriptionUrl"
+                ),
+                "ENQUEUED",
+                LocalDateTime.now().toString(),
+                new HermesEventInfoResponse(
+                        "DEPLOY",
+                        "workspaceId",
+                        "SUCCESS",
+                        "json"
+                ),
+                "log"
+        )
+
+        response.add(history)
+
+        def pageRequest = new PageRequest()
+
+        when:
+        hermesService.getSubscriptionEventHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest)
+
+        then:
+        1 * hermesClient.getSubscriptionEventsHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest.page, pageRequest.size) >> response
+
+    }
+
 
     private static String getAuthorEmail() {
         return "email@email.com"
     }
 
     private static HermesSubscriptionResponse getHermesSubscriptionResponse() {
-        return new HermesSubscriptionResponse('https://mywebhook.com.br', 'secret', 'workspaceId',
+        return new HermesSubscriptionResponse("subscriptionId",'https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
     }
 
     private static HermesHealthCheckSubscriptionResponse getHermesHealthCheckSubscriptionResponse() {
         return new HermesHealthCheckSubscriptionResponse(200, "OK!")
     }
-
 
     private static List<String> getEvents() {
         def events = new ArrayList()

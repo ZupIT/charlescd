@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+package io.charlescd.moove.application.webhook.response
 
-data class WebhookSubscription(
+import io.charlescd.moove.domain.WebhookSubscription
+
+data class WebhookSubscriptionResponse(
     val id: String,
     val url: String,
-    val apiKey: String,
     val workspaceId: String,
     val description: String,
     val events: List<String>
-)
-
-data class SimpleWebhookSubscription(
-    val url: String,
-    val apiKey: String,
-    val workspaceId: String,
-    val description: String,
-    val events: List<String>
-)
+) {
+    companion object {
+        fun from(webhookSubscription: WebhookSubscription) = WebhookSubscriptionResponse(
+            id = webhookSubscription.id,
+            url = webhookSubscription.url,
+            description = webhookSubscription.description,
+            workspaceId = webhookSubscription.workspaceId,
+            events = webhookSubscription.events
+        )
+    }
+}
