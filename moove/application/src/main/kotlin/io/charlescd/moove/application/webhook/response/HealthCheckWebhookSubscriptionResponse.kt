@@ -16,14 +16,14 @@
 
 package io.charlescd.moove.application.webhook.response
 
-import io.charlescd.moove.domain.HealthCheckWebhookSubscription
+import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
 
 data class HealthCheckWebhookSubscriptionResponse(
-    val status: Int,
+    val status: Long,
     val details: String
 ) {
     companion object {
-        fun from(healthCheckWebhookSubscription: HealthCheckWebhookSubscription) = HealthCheckWebhookSubscriptionResponse(
+        fun from(healthCheckWebhookSubscription: WebhookSubscriptionHealthCheck) = HealthCheckWebhookSubscriptionResponse(
             status = healthCheckWebhookSubscription.status,
             details = healthCheckWebhookSubscription.details
         )

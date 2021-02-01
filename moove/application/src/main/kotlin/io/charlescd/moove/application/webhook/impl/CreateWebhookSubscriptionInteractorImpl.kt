@@ -20,7 +20,7 @@ import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.CreateWebhookSubscriptionInteractor
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
-import io.charlescd.moove.domain.WebhookSubscription
+import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
@@ -32,11 +32,11 @@ class CreateWebhookSubscriptionInteractorImpl @Inject constructor(
 ) : CreateWebhookSubscriptionInteractor {
 
     override fun execute(workspaceId: String, authorization: String, request: CreateWebhookSubscriptionRequest): CreateWebhookSubscriptionResponse {
-        val webhookSubscriptionId = subscribe(authorization, request.toWebhookSubscription(workspaceId))
+        val webhookSubscriptionId = subscribe(authorization, request.toSimpleWebhookSubscription(workspaceId))
         return CreateWebhookSubscriptionResponse.from(webhookSubscriptionId)
     }
 
-    private fun subscribe(authorization: String, webhookSubscription: WebhookSubscription): String {
-        return hermesService.subscribe(webhookService.getAuthorEmail(authorization), webhookSubscription)
+    private fun subscribe(authorization: String, simpleWebhookSubscription: SimpleWebhookSubscription): String {
+        return hermesService.subscribe(webhookService.getAuthorEmail(authorization), simpleWebhookSubscription)
     }
 }

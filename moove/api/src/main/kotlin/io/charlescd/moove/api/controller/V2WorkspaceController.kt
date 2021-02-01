@@ -99,8 +99,11 @@ class V2WorkspaceController(
     )
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun findWorkspace(@PathVariable id: String): WorkspaceResponse {
-        return findWorkspaceInteractor.execute(id)
+    fun findWorkspace(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable id: String
+    ): WorkspaceResponse {
+        return findWorkspaceInteractor.execute(id, authorization)
     }
 
     @ApiOperation(value = "Associate a user group to a Workspace")

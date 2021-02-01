@@ -19,8 +19,8 @@ package io.charlescd.moove.application.webhook.impl
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.HealthCheckWebhookSubscriptionInteractor
 import io.charlescd.moove.application.webhook.response.HealthCheckWebhookSubscriptionResponse
-import io.charlescd.moove.domain.HealthCheckWebhookSubscription
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
 import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
@@ -36,7 +36,7 @@ class HealthCheckWebhookSubscriptionInteractorImpl @Inject constructor(
         return HealthCheckWebhookSubscriptionResponse.from(healthCheckWebhookSubscription)
     }
 
-    private fun healthCheckSubscription(workspaceId: String, authorization: String, id: String): HealthCheckWebhookSubscription {
+    private fun healthCheckSubscription(workspaceId: String, authorization: String, id: String): WebhookSubscriptionHealthCheck {
         val author = webhookService.getAuthor(authorization)
         validateSubscription(workspaceId, author, id)
         return hermesService.healthCheckSubscription(author.email, id)

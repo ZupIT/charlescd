@@ -20,7 +20,8 @@ import io.charlescd.moove.application.webhook.*
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
-import io.charlescd.moove.application.webhook.response.SimpleWebhookSubscriptionResponse
+import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
+import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
 import org.springframework.http.HttpStatus
@@ -33,7 +34,8 @@ class WebhookController(
     private val updateWebhookSubscriptionInteractor: UpdateWebhookSubscriptionInteractor,
     private val getWebhookSubscriptionInteractor: GetWebhookSubscriptionInteractor,
     private val deleteWebhookSubscriptionInteractor: DeleteWebhookSubscriptionInteractor,
-    private val healthCheckWebhookSubscriptionInteractor: HealthCheckWebhookSubscriptionInteractor
+    private val healthCheckWebhookSubscriptionInteractor: HealthCheckWebhookSubscriptionInteractor,
+    private val eventHistoryWebhookSubscriptionInteractor: EventHistoryWebhookSubscriptionInteractor
 ) {
 
     @ApiOperation(value = "Create a subscribe webhook")
@@ -54,7 +56,7 @@ class WebhookController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String
-    ): SimpleWebhookSubscriptionResponse {
+    ): WebhookSubscriptionResponse {
         return getWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
     }
 
@@ -66,7 +68,7 @@ class WebhookController(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String,
         @Valid @RequestBody request: UpdateWebhookSubscriptionRequest
-    ): SimpleWebhookSubscriptionResponse {
+    ): WebhookSubscriptionResponse {
         return updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, request)
     }
 
@@ -90,5 +92,21 @@ class WebhookController(
         @PathVariable("id") id: String
     ) {
         healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
+    }
+
+    @ApiOperation(value = "Webhook event history")
+    @DeleteMapping("/{id}/history")
+    @ResponseStatus(HttpStatus.OK)
+    fun getSubscriptionEventHistory(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("id") id: String,
+        @RequestParam(value = "eventType", required = false) eventType: String?,
+        @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
+        @RequestParam(value = "eventField", required = false) eventField: String?,
+        @RequestParam(value = "eventValue", required = false) eventValue: String?,
+        @Valid pageRequest: PageRequest
+    ) {
+        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue)
     }
 }

@@ -33,7 +33,7 @@ class WebhookService(private val userService: UserService) {
         return userService.getEmailFromToken(authorization)
     }
 
-    fun validateWorkspace(workspaceId: String, id: String, author: User, subscription: SimpleWebhookSubscription) {
+    fun validateWorkspace(workspaceId: String, id: String, author: User, subscription: WebhookSubscription) {
         if (!author.root && subscription.workspaceId != workspaceId) {
             throw NotFoundException("subscription", id)
         }
