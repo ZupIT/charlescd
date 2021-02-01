@@ -18,9 +18,11 @@ import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import Users from '..';
 
-test('should render Users', () => {
+test('should render Users', async () => {
   render(<Users />);
 
+  expect(screen.getByTestId('page')).toBeInTheDocument();
+  expect(screen.getByTestId('page-menu')).toBeInTheDocument();
   expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
   expect(screen.getByText('Create user')).toBeInTheDocument();
 });
