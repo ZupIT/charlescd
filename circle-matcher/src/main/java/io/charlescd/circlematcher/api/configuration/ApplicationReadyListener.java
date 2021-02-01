@@ -9,14 +9,17 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Optional;
 
 @Component
 public class ApplicationReadyListener implements ApplicationListener<ApplicationReadyEvent> {
     private KeyMetadataRepository keyMetadataRepository;
     private SegmentationRepository segmentationRepository;
-    public ApplicationReadyListener(
-    ){
+    public ApplicationReadyListener(KeyMetadataRepository keyMetadataRepository,
+                                    SegmentationRepository segmentationRepository){
+        this.keyMetadataRepository = keyMetadataRepository;
+        this.segmentationRepository = segmentationRepository;
     }
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
