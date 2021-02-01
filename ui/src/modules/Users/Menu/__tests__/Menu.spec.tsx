@@ -15,9 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, waitFor } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
-import userEvent from '@testing-library/user-event';
 import Menu from '..';
 
 const props = {
