@@ -45,7 +45,7 @@ const MenuItem = ({ id, name, email }: Props) => {
       isActive={isActive()}
       data-testid={`menu-users-${email}`}
     >
-      <Styled.ListItem icon="user" isActive={isActive()}>
+      <Styled.ListItem icon="user">
         <Text.h4 color="light">{name}</Text.h4>
       </Styled.ListItem>
     </Styled.Link>
