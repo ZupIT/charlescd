@@ -51,9 +51,15 @@ jobs:
   build_and_push_release_circle_matcher:
     runs-on: ubuntu-latest
     steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
       - uses: actions/checkout@v2
       - name: Set up GraalVM
-        uses: docker://findepi/graalvm:20.3.0-java11
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: '21.0.0.java11'
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
