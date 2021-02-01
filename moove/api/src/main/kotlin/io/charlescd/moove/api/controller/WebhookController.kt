@@ -107,6 +107,6 @@ class WebhookController(
         @RequestParam(value = "eventValue", required = false) eventValue: String?,
         @Valid pageRequest: PageRequest
     ) {
-        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue)
+        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue, pageRequest)
     }
 }
