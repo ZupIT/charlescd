@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.5.1 (01/02/2021)
+- [#859](https://github.com/ZupIT/charlescd/pull/859) Setting a variable to save the version name (gitction workflow)
+- [#858](https://github.com/ZupIT/charlescd/pull/858) Fixing circle matcher graalvm version.
+- [#842](https://github.com/ZupIT/charlescd/pull/842) rabbit client
+- [#838](https://github.com/ZupIT/charlescd/pull/838) Moove webhook history events
+- [#856](https://github.com/ZupIT/charlescd/pull/856) Fixing lint of CI workflow 
+- [#854](https://github.com/ZupIT/charlescd/pull/854) Validate butler ci integration tests
+- [#853](https://github.com/ZupIT/charlescd/pull/853) Fixed regex URL validation
+- [#850](https://github.com/ZupIT/charlescd/pull/850) Fixing all CM workflows.
+- [#849](https://github.com/ZupIT/charlescd/pull/849) Fixing workflow.
+- [#848](https://github.com/ZupIT/charlescd/pull/848) Fixing circle matcher prod release workflow.
+- [#847](https://github.com/ZupIT/charlescd/pull/847) Fixig graalvm image.
+- [#846](https://github.com/ZupIT/charlescd/pull/846) Fixing prodrelease: circle matcher.
+- [#845](https://github.com/ZupIT/charlescd/pull/845) Fixing cm workflow.
+- [#843](https://github.com/ZupIT/charlescd/pull/843) Fixing circle matcher workflow devrelease and ci.
+- [#830](https://github.com/ZupIT/charlescd/pull/830) Moove webhook publish events
+- [#761](https://github.com/ZupIT/charlescd/pull/761) Improve git usability
+- [#796](https://github.com/ZupIT/charlescd/pull/796) Input validation on the screens: workspace, users, user group and account.
+- [#797](https://github.com/ZupIT/charlescd/pull/797) Fix octopipe cd configuration
+- [#815](https://github.com/ZupIT/charlescd/pull/815) Fix duplicated circle list after delete a circle
+- [#837](https://github.com/ZupIT/charlescd/pull/837) Registry and git improvements (settings page)
+- [#835](https://github.com/ZupIT/charlescd/pull/835) Fix filter workspaces
+- [#820](https://github.com/ZupIT/charlescd/pull/820) Butler operator routes
+- [#833](https://github.com/ZupIT/charlescd/pull/833) Fix metrics endpoint
+- [#825](https://github.com/ZupIT/charlescd/pull/825) Update graalvm image
+- [#739](https://github.com/ZupIT/charlescd/pull/739) Fix octopipe overriding helm objects
+- [#770](https://github.com/ZupIT/charlescd/pull/770) Update engine matcher
+- [#823](https://github.com/ZupIT/charlescd/pull/823) Datasource test connection error
+- [#724](https://github.com/ZupIT/charlescd/pull/724) Security restrict access users data
+- [#822](https://github.com/ZupIT/charlescd/pull/822) Hermes workflows
+- [#821](https://github.com/ZupIT/charlescd/pull/821) Automation data testid
+- [#750](https://github.com/ZupIT/charlescd/pull/750) Compass structured error
+- [#781](https://github.com/ZupIT/charlescd/pull/781) UI improvement in Metric Action
+- [#817](https://github.com/ZupIT/charlescd/pull/817) Registry and git improvements
+- [#814](https://github.com/ZupIT/charlescd/pull/814) CI Update of charts and changelog
+
+---
+
 ## 0.5.0 (19/01/2021)
 - [#813](https://github.com/ZupIT/charlescd/pull/813) Compass token bug hotfix
 - [#811](https://github.com/ZupIT/charlescd/pull/811) Fix: link menu size
@@ -507,7 +545,3 @@
 ---
 
 ## 0.2.12 (18/06/2020)
-
----
-
-## 0.2.11 (09/06/2020)
