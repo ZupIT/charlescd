@@ -21,3 +21,8 @@ psql -c "CREATE DATABASE charlescd_compass"
 psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
 psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
 psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+
+psql -c "CREATE DATABASE charlescd_hermes"
+psql -c "CREATE USER charlescd_hermes WITH PASSWORD 'aGVybWVz'"
+psql -c "ALTER DATABASE charlescd_hermes OWNER TO charlescd_hermes"
+psql -d charlescd_hermes -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
