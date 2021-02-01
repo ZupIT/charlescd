@@ -18,10 +18,12 @@ package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
-import io.charlescd.moove.application.webhook.HealthCheckWebhookSubscriptionInteractor
-import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
+import io.charlescd.moove.application.webhook.EventHistoryWebhookSubscriptionInteractor
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.WebhookEventInfo
 import io.charlescd.moove.domain.WebhookSubscription
+import io.charlescd.moove.domain.WebhookSubscriptionEventHistory
+import io.charlescd.moove.domain.WebhookSubscriptionInfo
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
@@ -30,38 +32,61 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class HealthCheckWebhookSubscriptionInteractorImplTest extends Specification {
+class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
 
-    private HealthCheckWebhookSubscriptionInteractor healthCheckWebhookSubscriptionInteractor
+    private EventHistoryWebhookSubscriptionInteractor eventHistoryWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        healthCheckWebhookSubscriptionInteractor = new HealthCheckWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
+        eventHistoryWebhookSubscriptionInteractor = new EventHistoryWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
     }
 
-    def "when trying to delete subscription should do it successfully"() {
+    def "when trying to get subscription event history should do it successfully"() {
+        given:
+        def response = new ArrayList()
+        def history = new WebhookSubscriptionEventHistory(
+                "executionId",
+                new WebhookSubscriptionInfo(
+                        subscriptionId,
+                        "subscriptionDescription",
+                        "subscriptionUrl"
+                ),
+                "ENQUEUED",
+                LocalDateTime.now().toString(),
+                new WebhookEventInfo(
+                        "DEPLOY",
+                        workspaceId,
+                        "SUCCESS",
+                        "json"
+                ),
+                "log"
+        )
+        response.add(history)
+
         when:
-        healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId)
+        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId, "DEPLOY", null, null, null)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
-        1 * this.hermesService.healthCheckSubscription(authorEmail, subscriptionId) >> healthCheckWebhookSubscription
+        1 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null) >> response
         notThrown()
     }
 
-    def "when trying to delete subscription and is wrong workspace should throw not found exception"() {
+    def "when trying to get subscription event history and is wrong workspace should throw not found exception"() {
+        given:
+
         when:
-        healthCheckWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId)
+        eventHistoryWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId, "DEPLOY", null, null, null)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
-        0 * this.hermesService.healthCheckSubscription(authorEmail, subscriptionId)
+        0 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null)
         thrown(NotFoundException)
     }
 
@@ -95,9 +120,5 @@ class HealthCheckWebhookSubscriptionInteractorImplTest extends Specification {
     private static WebhookSubscription getWebhookSubscription() {
         return new WebhookSubscription('subscriptionId', 'https://mywebhook.com.br', 'apiKey', 'workspaceId',
                 'My Webhook', events)
-    }
-
-    private static WebhookSubscriptionHealthCheck getHealthCheckWebhookSubscription() {
-        return new WebhookSubscriptionHealthCheck(200, "Last delivered was successfuly")
     }
 }

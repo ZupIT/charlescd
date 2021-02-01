@@ -21,8 +21,11 @@ import io.charlescd.moove.infrastructure.service.client.HermesClient
 import io.charlescd.moove.infrastructure.service.client.HermesPublisherClient
 import io.charlescd.moove.infrastructure.service.client.request.HermesCreateSubscriptionRequest
 import io.charlescd.moove.infrastructure.service.client.request.HermesUpdateSubscriptionRequest
+import io.charlescd.moove.infrastructure.service.client.response.HermesEventInfoResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesHealthCheckSubscriptionResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionCreateResponse
+import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionEventHistoryResponse
+import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionInfoResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
 import spock.lang.Specification
 
@@ -123,6 +126,41 @@ class HermesClientServiceTest extends Specification {
         1 * hermesPublisherClient.notifyEvent(_)
 
     }
+
+    def 'when get subscription event history, should do it successfully'() {
+        given:
+
+        def response = new ArrayList()
+        def history = new HermesSubscriptionEventHistoryResponse(
+                "executionId",
+                new HermesSubscriptionInfoResponse(
+                        "subscriptionId",
+                        "subscriptionDescription",
+                        "subscriptionUrl"
+                ),
+                "ENQUEUED",
+                LocalDateTime.now().toString(),
+                new HermesEventInfoResponse(
+                        "DEPLOY",
+                        "workspaceId",
+                        "SUCCESS",
+                        "json"
+                ),
+                "log"
+        )
+
+        response.add(history)
+
+        def pageRequest = new PageRequest()
+
+        when:
+        hermesService.getSubscriptionEventHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest)
+
+        then:
+        1 * hermesClient.getSubscriptionEventsHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest.page, pageRequest.size) >> response
+
+    }
+
 
     private static String getAuthorEmail() {
         return "email@email.com"

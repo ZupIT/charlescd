@@ -19,7 +19,7 @@ package io.charlescd.moove.application.webhook
 import io.charlescd.moove.application.UserService
 
 import io.charlescd.moove.application.WebhookService
-import io.charlescd.moove.domain.HealthCheckWebhookSubscription
+import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
 import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
@@ -89,7 +89,6 @@ class WebhookServiceTest extends Specification {
         thrown(NotFoundException)
     }
 
-
     private static List<String> getEvents() {
         def events = new ArrayList()
         events.add("DEPLOY")
@@ -129,7 +128,7 @@ class WebhookServiceTest extends Specification {
                 'My Webhook', events)
     }
 
-    private static HealthCheckWebhookSubscription getHealthCheckWebhookSubscription() {
-        return new HealthCheckWebhookSubscription(500, "Unexpected error")
+    private static WebhookSubscriptionHealthCheck getHealthCheckWebhookSubscription() {
+        return new WebhookSubscriptionHealthCheck(500, "Unexpected error")
     }
 }

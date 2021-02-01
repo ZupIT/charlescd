@@ -17,9 +17,7 @@
 package io.charlescd.moove.application.workspace.impl
 
 import io.charlescd.moove.application.*
-import io.charlescd.moove.application.user.UserServiceTest
 import io.charlescd.moove.application.workspace.FindWorkspaceInteractor
-import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
@@ -171,7 +169,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
         def webhookSubscription = new WebhookSubscription("subscriptionId", "https://my.webhook.com.br", "apiKey",  workspaceId, "Webhook Description", events)
         listWebhookSubscription.add(webhookSubscription)
 
-        def healthCheckSubscription = new HealthCheckWebhookSubscription(200, "OK!")
+        def healthCheckSubscription = new WebhookSubscriptionHealthCheck(200, "OK!")
 
         when:
         def response = getWorkspaceInteractor.execute(workspaceId, authorization)
