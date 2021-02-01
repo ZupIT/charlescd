@@ -19,6 +19,7 @@ package io.charlescd.moove.application.webhook.impl
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.EventHistoryWebhookSubscriptionInteractor
+import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookEventInfo
 import io.charlescd.moove.domain.WebhookSubscription
@@ -65,28 +66,31 @@ class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
         )
         response.add(history)
 
+        def pageRequest = new PageRequest()
+
         when:
-        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId, "DEPLOY", null, null, null)
+        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId, "DEPLOY", null, null, null, pageRequest)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
-        1 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null) >> response
+        1 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null, pageRequest) >> response
         notThrown()
     }
 
     def "when trying to get subscription event history and is wrong workspace should throw not found exception"() {
         given:
+        def pageRequest = new PageRequest()
 
         when:
-        eventHistoryWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId, "DEPLOY", null, null, null)
+        eventHistoryWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId, "DEPLOY", null, null, null, pageRequest)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
-        0 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null)
+        0 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null, pageRequest)
         thrown(NotFoundException)
     }
 
