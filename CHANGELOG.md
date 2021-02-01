@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.5.1 (01/02/2021)
+- [#854](https://github.com/ZupIT/charlescd/pull/854) Validate butler ci integration tests
+- [#853](https://github.com/ZupIT/charlescd/pull/853) Fixed regex URL validation
+- [#830](https://github.com/ZupIT/charlescd/pull/830) Moove webhook publish events
+- [#761](https://github.com/ZupIT/charlescd/pull/761) Improve git usability
+- [#796](https://github.com/ZupIT/charlescd/pull/796) Input validation on the screens: workspace, users, user group and account.
+- [#797](https://github.com/ZupIT/charlescd/pull/797) Fix octopipe cd configuration
+- [#815](https://github.com/ZupIT/charlescd/pull/815) Fix duplicated circle list after delete a circle
+- [#837](https://github.com/ZupIT/charlescd/pull/837) Registry and git improvements (settings page)
+- [#835](https://github.com/ZupIT/charlescd/pull/835) Fix filter workspaces
+- [#820](https://github.com/ZupIT/charlescd/pull/820) Butler operator routes
+- [#833](https://github.com/ZupIT/charlescd/pull/833) Fix metrics endpoint
+- [#739](https://github.com/ZupIT/charlescd/pull/739) Fix octopipe overriding helm objects
+- [#770](https://github.com/ZupIT/charlescd/pull/770) Update engine matcher
+- [#823](https://github.com/ZupIT/charlescd/pull/823) Datasource test connection error
+- [#724](https://github.com/ZupIT/charlescd/pull/724) Security restrict access users data
+- [#821](https://github.com/ZupIT/charlescd/pull/821) Automation data testid
+- [#750](https://github.com/ZupIT/charlescd/pull/750) Compass structured error
+- [#781](https://github.com/ZupIT/charlescd/pull/781) UI improvement in Metric Action
+- [#817](https://github.com/ZupIT/charlescd/pull/817) Registry and git improvements
+
+---
+
 ## 0.5.0 (19/01/2021)
 - [#813](https://github.com/ZupIT/charlescd/pull/813) Compass token bug hotfix
 - [#811](https://github.com/ZupIT/charlescd/pull/811) Fix: link menu size
@@ -507,7 +530,3 @@
 ---
 
 ## 0.2.12 (18/06/2020)
-
----
-
-## 0.2.11 (09/06/2020)
