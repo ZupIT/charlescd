@@ -42,7 +42,7 @@ export const findAllUserGroup = (
 ) => {
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
-    name: filter?.name,
+    name: filter?.name || '',
     page: `${filter.page ?? 0}`
   });
 
