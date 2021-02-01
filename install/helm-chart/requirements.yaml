@@ -20,5 +20,5 @@ dependencies:
   condition: nginx_ingress_controller.enabled
 - name: rabbitmq
   condition: rabbitmq.enabled
-  version: "3.8.11"
-  repository: https://charts.bitnami.com/bitnami/rabbitmq
+  repository: https://charts.bitnami.com/bitnami
+  version: "8.9.1"
