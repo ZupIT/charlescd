@@ -19,7 +19,8 @@ import { UserGroup } from '../interfaces/UserGroups';
 
 export enum ACTION_TYPES {
   loadedUserGroups = 'USER_GROUPS/LOADED_USERS_GROUPS',
-  loadedUserGroup = 'USER_GROUPS/GET_USER_GROUP'
+  loadedUserGroup = 'USER_GROUPS/GET_USER_GROUP',
+  resetUserGroups = 'USER_GROUPS/RESET_USERS_GROUPS'
 }
 
 interface ListUserGroupsActionType {
@@ -30,6 +31,10 @@ interface ListUserGroupsActionType {
 interface GetUserGroupActionType {
   type: typeof ACTION_TYPES.loadedUserGroup;
   payload: UserGroup;
+}
+
+interface ResetUserGroupsType {
+  type: typeof ACTION_TYPES.resetUserGroups;
 }
 
 export const loadUserGroupsAction = (
@@ -46,6 +51,11 @@ export const loadUserGroupAction = (
   payload
 });
 
+export const resetUserGroupsAction = (): UserGroupsActionTypes => ({
+  type: ACTION_TYPES.resetUserGroups
+});
+
 export type UserGroupsActionTypes =
   | ListUserGroupsActionType
-  | GetUserGroupActionType;
+  | GetUserGroupActionType
+  | ResetUserGroupsType;

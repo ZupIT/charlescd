@@ -28,7 +28,7 @@ import {
   removeMemberToUserGroup
 } from 'core/providers/user-group';
 import { UserGroupPagination } from './interfaces/UserGroupsPagination';
-import { loadUserGroupsAction } from './state/actions';
+import { loadUserGroupsAction, resetUserGroupsAction } from './state/actions';
 import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -111,6 +111,7 @@ export const useCreateUserGroup = (): {
 
   useEffect(() => {
     if (userGroups) {
+      dispatch(resetUserGroupsAction());
       dispatch(loadUserGroupsAction(userGroups));
     }
   }, [dispatch, userGroups]);
@@ -179,6 +180,7 @@ export const useDeleteUserGroup = (): [Function, UserGroup, boolean] => {
 
   useEffect(() => {
     if (userGroups) {
+      dispatch(resetUserGroupsAction());
       dispatch(loadUserGroupsAction(userGroups));
       setIsFinished(true);
     }

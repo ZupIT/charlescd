@@ -51,6 +51,12 @@ export const userGroupReducer = (
         item: action.payload
       };
     }
+    case ACTION_TYPES.resetUserGroups: {
+      return {
+        ...state,
+        list: userGroupInitialState.list
+      };
+    }
     default: {
       return state;
     }
