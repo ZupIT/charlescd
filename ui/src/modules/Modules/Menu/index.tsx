@@ -33,7 +33,7 @@ import Styled from './styled';
 import { Module } from '../interfaces/Module';
 
 const ModulesMenu = () => {
-  const { getAllModules, loading } = useFindAllModules();
+  const { getAllModules, loading, response } = useFindAllModules();
   const { list } = useGlobalState(({ modules }) => modules);
   const history = useHistory();
 
