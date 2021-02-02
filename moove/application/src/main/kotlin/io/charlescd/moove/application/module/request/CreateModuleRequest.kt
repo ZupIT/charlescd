@@ -33,7 +33,9 @@ data class CreateModuleRequest(
 
     @field:NotBlank
     @field:Size(max = 2048)
-    @field:Pattern(regexp = "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:\\/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$")
+    @field:Pattern(regexp = "[Hh][Tt][Tt][Pp][Ss]?:\\/\\/(?:(?:[a-zA-Z\\u00a1-\\uffff0-9]+-?)*[a-zA-Z\\u00a1-\\uffff0-9]+)" +
+            "(?:\\.(?:[a-zA-Z\\u00a1-\\uffff0-9]+-?)*[a-zA-Z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-zA-Z\\u00a1-\\uffff]{2,}))" +
+            "(?::\\d{2,5})?(?:\\/[^\\s]*)?", message = "URL inválida.")
     val gitRepositoryAddress: String,
 
     @field:NotBlank

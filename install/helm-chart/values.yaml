@@ -11,7 +11,7 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.5.0
+    name: zupcharles/charlescd-butler:0.5.1
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -41,7 +41,7 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:0.5.0
+    name: zupcharles/charlescd-moove:0.5.1
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -72,7 +72,7 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.5.0
+    name: zupcharles/charlescd-villager:0.5.1
     pullPolicy: Always
   service:
     name: charlescd-villager
@@ -100,7 +100,7 @@ ui:
   idmRedirectHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.5.0
+    name: zupcharles/charlescd-ui:0.5.1
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -127,7 +127,7 @@ circlematcher:
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.5.0
+    name: zupcharles/charlescd-circle-matcher:0.5.1
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
@@ -267,7 +267,7 @@ compass:
       secretName: "compass-aes256-key"
       secretKey: "encryption-key"
   image:
-    name: zupcharles/charlescd-compass:0.5.0
+    name: zupcharles/charlescd-compass:0.5.1
     pullPolicy: Always
   service:
     name: charlescd-compass
@@ -282,3 +282,43 @@ compass:
     requests:
       cpu: 64m
       memory: 64Mi
+
+hermes:
+  enabled: true
+  name: "charlescd-hermes"
+  database:
+    name: hermes
+    host: charlescd-postgresql
+    port: 5432
+    user: hermes
+    password: aGVybWVz
+  replicaCount: 1
+  envVars:
+    - name: DB_SSL
+      value: "disable"
+  secretEnvVars:
+    - name: ENCRYPTION_KEY
+      secretName: "hermes-aes256-key"
+      secretKey: "encryption-key"
+  image:
+    name: zupcharles/charlescd-hermes:0.5.0
+    pullPolicy: Always
+  service:
+    name: charlescd-hermes
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 8080
+  resources:
+    limits:
+      cpu: 128m
+      memory: 128Mi
+    requests:
+      cpu: 64m
+      memory: 64Mi
+
+rabbitmq:
+  enabled: true
+  auth:
+    username: charlescd_hermes
+    password: aGVybWVz
