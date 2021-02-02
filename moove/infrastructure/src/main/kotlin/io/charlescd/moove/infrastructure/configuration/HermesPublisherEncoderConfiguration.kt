@@ -18,26 +18,18 @@ package io.charlescd.moove.infrastructure.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import feign.Logger
 import feign.Response
 import feign.Retryer
-import feign.codec.Encoder
 import feign.codec.ErrorDecoder
-import feign.form.FormEncoder
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import java.io.IOException
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
 import java.nio.charset.StandardCharsets
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.cloud.openfeign.support.SpringEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
 import org.springframework.util.StreamUtils
 
 @Configuration
@@ -46,24 +38,13 @@ class HermesPublisherEncoderConfiguration(
 ) {
 
     @Bean
-    fun hermesPublisherFeignLogger(): Logger.Level {
-        return Logger.Level.FULL
-    }
-
-    @Bean
-    @Scope("prototype")
-    fun hermesPublisherFeignFormEncoder(): Encoder {
-        return FormEncoder(SpringEncoder(messageConverters))
+    fun hermesPublisherRetryer(): Retryer {
+        return Retryer.Default(5, 30, 5) // TODO: Colocar em properties???
     }
 
     @Bean
     fun hermesPublisherErrorDecoder(): ErrorDecoder {
         return CustomErrorDecoder()
-    }
-
-    @Bean
-    fun hermesPublisherRetryer(): Retryer {
-        return Retryer.Default(5, 30, 5) // TODO: Colocar em properties???
     }
 
     class CustomErrorDecoder : ErrorDecoder {
@@ -91,11 +72,13 @@ class HermesPublisherEncoderConfiguration(
                 return responseAsString ?: "Error reading response of request"
             }
         }
+
         private fun getResponseAsObject(message: String): String {
             val objectResponse = jacksonObjectMapper().readValue(message, ErrorResponse::class.java)
             return objectResponse.message.toString()
         }
     }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class ErrorResponse(
         val statusCode: String,

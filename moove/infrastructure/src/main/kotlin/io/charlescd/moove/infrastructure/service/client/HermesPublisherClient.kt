@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
-@FeignClient(name = "hermesClient", url = "\${charlescd.hermes.url}", configuration = [HermesPublisherEncoderConfiguration::class])
+@FeignClient(name = "hermesPublisherClient", url = "\${charlescd.hermes.url}", configuration = [HermesPublisherEncoderConfiguration::class])
 interface HermesPublisherClient {
 
     @ResponseStatus(HttpStatus.OK)
