@@ -45,8 +45,8 @@ export const useFindAllModules = (): {
   const { response, loading } = modulesData;
 
   const getAllModules = useCallback(
-    (name: string) => {
-      getModules(name);
+    (name: string, page = 0) => {
+      getModules({ name, page });
     },
     [getModules]
   );

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { Fragment, useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
 import Can from 'containers/Can';
@@ -24,27 +24,22 @@ import Text from 'core/components/Text';
 import { addParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { isParamExists } from 'core/utils/path';
+import InfiniteScroll from 'core/components/InfiniteScroll';
+import { useGlobalState } from 'core/state/hooks';
 import { useFindAllModules } from '../hooks/module';
-import { Module } from '../interfaces/Module';
 import MenuItem from './MenuItem';
 import Loader from './Loaders';
 import Styled from './styled';
+import { Module } from '../interfaces/Module';
 
-interface MenuProps {
-  items: Module[];
-  isLoading?: boolean;
+interface Props {
+  onCreate?: () => void;
+  onSelect?: (id: string) => void;
 }
 
-const ModuleList = ({ items }: MenuProps) => (
-  <>
-    {map(items, item => (
-      <MenuItem key={item.id} id={item.id} name={item.name} />
-    ))}
-  </>
-);
-
-const ModuleMenu = ({ items, isLoading }: MenuProps) => {
-  const { getAllModules } = useFindAllModules();
+const ModulesMenu = ({ onCreate, onSelect }: Props) => {
+  const { getAllModules, loading } = useFindAllModules();
+  const { list } = useGlobalState(({ modules }) => modules);
   const history = useHistory();
 
   const openNewModule = () => {
@@ -57,8 +52,34 @@ const ModuleMenu = ({ items, isLoading }: MenuProps) => {
     getAllModules(search);
   };
 
+  const loadByPage = useCallback(
+    (page: number, name?: string) => {
+      getAllModules(name, page);
+    },
+    [getAllModules]
+  );
+
+  useEffect(() => {
+    loadByPage(0);
+  }, [loadByPage]);
+
+  const renderItem = ({ id, name }: Module) => (
+    <MenuItem key={id} id={id} name={name} />
+  );
+
+  const renderList = () => (
+    <InfiniteScroll
+      hasMore={!list.last}
+      loadMore={loadByPage}
+      isLoading={loading}
+      loader={<Styled.Loader />}
+    >
+      {map(list?.content, item => renderItem(item))}
+    </InfiniteScroll>
+  );
+
   return (
-    <>
+    <Fragment>
       <Styled.Actions>
         <Can I="write" a="modules" passThrough>
           <Styled.Button onClick={openNewModule}>
@@ -70,12 +91,10 @@ const ModuleMenu = ({ items, isLoading }: MenuProps) => {
       </Styled.Actions>
       <Styled.Content>
         <Styled.SearchInput resume onSearch={onSearch} />
-        <Styled.List>
-          {isLoading ? <Loader.List /> : <ModuleList items={items} />}
-        </Styled.List>
+        <Styled.List>{loading ? <Loader.List /> : renderList()}</Styled.List>
       </Styled.Content>
-    </>
+    </Fragment>
   );
 };
 
-export default ModuleMenu;
+export default ModulesMenu;
