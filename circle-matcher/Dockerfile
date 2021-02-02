@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/graalvm-ce:20.3.0
+FROM findepi/graalvm:20.3.0-java11
 
 ENV APP_TARGET target
 ENV APP charlescd-circle-matcher.jar
