@@ -14,6 +14,7 @@ require (
 	github.com/streadway/amqp v1.0.0
 	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9 // indirect
 	golang.org/x/text v0.3.4 // indirect
+	gorm.io/datatypes v1.0.0
 	gorm.io/driver/postgres v1.0.5
 	gorm.io/gorm v1.20.8
 )

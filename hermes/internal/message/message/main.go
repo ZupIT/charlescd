@@ -32,7 +32,7 @@ type UseCases interface {
 	ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, errors.Error)
 	Validate(message payloads.PayloadRequest) errors.ErrorList
 	Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error)
-	FindAllBySubscriptionId(subscriptionId uuid.UUID) ([]payloads.FullMessageResponse, errors.Error)
+	FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string) ([]payloads.FullMessageResponse, errors.Error)
 	FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 }
 

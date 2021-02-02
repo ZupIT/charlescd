@@ -138,7 +138,14 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			return
 		}
 
-		result, err := messageMain.FindAllBySubscriptionId(subscriptionId)
+		qp := map[string]string{
+			"EventType": r.URL.Query().Get("eventyType"),
+			"Status": r.URL.Query().Get("status"),
+			"EventField": r.URL.Query().Get("eventField"),
+			"EventValue": r.URL.Query().Get("eventValue"),
+		}
+
+		result, err := messageMain.FindAllBySubscriptionId(subscriptionId, qp)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return

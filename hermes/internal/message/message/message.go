@@ -21,6 +21,8 @@ package message
 import (
 	"encoding/json"
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
+	"gorm.io/gorm"
 	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
 	"io"
@@ -106,16 +108,44 @@ func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 	return response, nil
 }
 
-func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID) ([]payloads.FullMessageResponse, errors.Error) {
-	var response []payloads.FullMessageResponse
+func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string) ([]payloads.FullMessageResponse, errors.Error) {
+	var cond interface{} = ""
 
-	query := main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Find(&response)
+	if parameters["EventValue"] != "" && parameters["EventField"] != "" {
+		cond = datatypes.JSONQuery("event").Equals(parameters["EventValue"], parameters["EventField"])
+	}
+
+	query, response := main.buildQuery(subscriptionId, cond, parameters)
 	if query.Error != nil {
 		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionId Message error", query.Error.Error()).
 			WithOperations("FindAllBySubscriptionId.Query")
 	}
 
 	return response, nil
+}
+
+func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params map[string]string) (*gorm.DB, []payloads.FullMessageResponse) {
+	var response []payloads.FullMessageResponse
+
+	if params["EventType"] != "" && params["Status"] != "" {
+		return main.db.Model(&Message{}).
+			Where("subscription_id = ? AND event_type = ? AND last_status =?", subscriptionId, params["EventType"], params["Status"]).
+			Find(&response, cond), response
+	}
+
+	if params["EventType"] != "" {
+		return main.db.Model(&Message{}).
+			Where("subscription_id = ? AND event_type = ?", subscriptionId, params["EventType"]).
+			Find(&response, cond), response
+	}
+
+	if params["Status"] != "" {
+		return main.db.Model(&Message{}).
+			Where("subscription_id = ? AND last_status = ?", subscriptionId, params["Status"]).
+			Find(&response, cond), response
+	}
+
+	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Find(&response, cond), response
 }
 
 func requestToEntity(r payloads.Request) Message {
