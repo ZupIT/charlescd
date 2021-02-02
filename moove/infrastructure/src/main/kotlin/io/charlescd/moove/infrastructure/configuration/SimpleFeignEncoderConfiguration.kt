@@ -50,7 +50,7 @@ class SimpleFeignEncoderConfiguration(
     }
 
     @Bean
-    @Scope
+    @Scope("prototype")
     fun simpleFeignFormEncoder(): Encoder {
         return FormEncoder(SpringEncoder(messageConverters))
     }

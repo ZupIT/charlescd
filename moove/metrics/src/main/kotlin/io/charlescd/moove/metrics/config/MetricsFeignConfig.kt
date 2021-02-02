@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
 
 @Configuration
-class MetricsFeignConfig() {
+class MetricsFeignConfig {
 
     @Bean
     fun metricsErrorDecoder(): ErrorDecoder {

@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
 
 @Configuration
-class DefaultLegacyErrorDecoderConfiguration() {
+class DefaultLegacyErrorDecoderConfiguration {
 
     @Bean
     fun defaultLegacyErrorDecoder(): ErrorDecoder {
