@@ -38,7 +38,6 @@ spec:
       initContainers:
         - name: consulnode-init
           image: "{{.Values.imageCredentials.registry}}/{{ .Values.consulnode.repository }}"
-          # image: lukascaska/realwave-node-consul:v1
           volumeMounts:
             - name: consul-config
               mountPath: {{ .Values.consulnode.path }}  
