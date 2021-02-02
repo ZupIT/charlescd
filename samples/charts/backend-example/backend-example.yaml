@@ -1,0 +1,64 @@
+replicaCount: 1
+
+envVars:
+
+appname: backend-example
+    
+image:
+  tag: latest
+service:
+  name: backend-example
+  type: ClusterIP
+  ports:
+   - name: http
+     port: 3000
+configmaps:
+  enabled: false
+startcommand: 
+  enabled: false
+ingress:
+  enabled: false
+resources:
+   limits:
+    cpu: 256m
+    memory: 256Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imageCredentials:
+  registry: example
+  username: example
+  password: example
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP  
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1   
+
+consulnode:
+  enabled: false
+
+  istio:
+  enabled: true
+
+vault:
+  enabled: false
