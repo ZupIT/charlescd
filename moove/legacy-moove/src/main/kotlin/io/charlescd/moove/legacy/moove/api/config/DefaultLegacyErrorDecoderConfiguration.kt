@@ -28,16 +28,12 @@ import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.nio.charset.StandardCharsets
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
 
 @Configuration
-class DefaultLegacyErrorDecoderConfiguration(
-    val messageConverters: ObjectFactory<HttpMessageConverters>
-) {
+class DefaultLegacyErrorDecoderConfiguration {
 
     @Bean
     fun defaultLegacyErrorDecoder(): ErrorDecoder {

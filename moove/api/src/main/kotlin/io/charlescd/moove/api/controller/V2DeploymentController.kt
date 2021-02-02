@@ -61,7 +61,7 @@ class V2DeploymentController(
 
     @ApiOperation(value = "Undeploy Deployment")
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping
+    @PostMapping("/{deploymentId}/undeploy")
     fun undeploy(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
