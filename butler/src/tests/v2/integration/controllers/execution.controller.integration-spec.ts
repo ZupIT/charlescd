@@ -17,6 +17,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { GitProvidersEnum } from'../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from'../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import * as request from 'supertest'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
@@ -67,8 +69,8 @@ describe('DeploymentController v2', () => {
 
   it('returns ok for valid params with existing cdConfiguration', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -161,8 +163,8 @@ describe('DeploymentController v2', () => {
 
   it('returns the right entity values', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'

@@ -17,7 +17,6 @@
 import { Injectable } from '@nestjs/common'
 import { CdTypeEnum } from '../../api/configurations/enums'
 import { ConsoleLoggerService } from '../logs/console'
-import { SpinnakerConnector } from './spinnaker/connector'
 import { CdConnector } from './interfaces/cd-connector.interface'
 import { OctopipeConnector } from './octopipe/connector'
 
@@ -25,15 +24,12 @@ import { OctopipeConnector } from './octopipe/connector'
 export class CdStrategyFactory {
 
   constructor(
-    private readonly spinnakerConnector: SpinnakerConnector,
     private readonly octopipeConnector: OctopipeConnector,
     private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
   public create(type: CdTypeEnum): CdConnector {
     switch (type) {
-      case CdTypeEnum.SPINNAKER:
-        return this.spinnakerConnector
       case CdTypeEnum.OCTOPIPE:
         return this.octopipeConnector
       default:

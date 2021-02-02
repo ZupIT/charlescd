@@ -4,6 +4,8 @@ import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { DeploymentComponent } from '../../../../app/v2/api/deployments/interfaces/deployment.interface'
 import { noRepeatedDefaultCircleDr } from './fixtures/deployment/no-repeated-default-circle-dr'
 import { noRepeatedCircleDr } from './fixtures/deployment/no-repeated-circle-dr'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 it('must not insert two default circle subsets', () => {
   const newComponent: DeploymentComponent = {
@@ -22,12 +24,12 @@ it('must not insert two default circle subsets', () => {
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
     cdConfiguration: {
       id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
+      type: CdTypeEnum.OCTOPIPE,
+      configurationData: { 
+        gitProvider: GitProvidersEnum.GITHUB, 
+        namespace: 'sandbox', 
+        provider: ClusterProviderEnum.DEFAULT, 
+        gitToken: 'example' 
       },
       name: 'spinnakerconfiguration',
       authorId: 'user-2',
@@ -60,12 +62,12 @@ it('must not insert two default circle subsets', () => {
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
+          type: CdTypeEnum.OCTOPIPE,
+          configurationData: { 
+            gitProvider: GitProvidersEnum.GITHUB, 
+            namespace: 'sandbox', 
+            provider: ClusterProviderEnum.DEFAULT, 
+            gitToken: 'example' 
           },
           name: 'spinnakerconfiguration',
           authorId: 'user-2',
@@ -93,12 +95,12 @@ it('must not insert two default circle subsets', () => {
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
+          type: CdTypeEnum.OCTOPIPE,
+          configurationData: { 
+            gitProvider: GitProvidersEnum.GITHUB, 
+            namespace: 'sandbox', 
+            provider: ClusterProviderEnum.DEFAULT, 
+            gitToken: 'example' 
           },
           name: 'spinnakerconfiguration',
           authorId: 'user-2',
@@ -133,12 +135,12 @@ it('must not insert two subsets for the same circle', () => {
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
     cdConfiguration: {
       id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
+      type: CdTypeEnum.OCTOPIPE,
+      configurationData: { 
+        gitProvider: GitProvidersEnum.GITHUB, 
+        namespace: 'sandbox', 
+        provider: ClusterProviderEnum.DEFAULT, 
+        gitToken: 'example' 
       },
       name: 'spinnakerconfiguration',
       authorId: 'user-2',
@@ -171,12 +173,12 @@ it('must not insert two subsets for the same circle', () => {
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
+          type: CdTypeEnum.OCTOPIPE,
+          configurationData: { 
+            gitProvider: GitProvidersEnum.GITHUB, 
+            namespace: 'sandbox', 
+            provider: ClusterProviderEnum.DEFAULT, 
+            gitToken: 'example' 
           },
           name: 'spinnakerconfiguration',
           authorId: 'user-2',
@@ -204,12 +206,12 @@ it('must not insert two subsets for the same circle', () => {
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
+          type: CdTypeEnum.OCTOPIPE,
+          configurationData: { 
+            gitProvider: GitProvidersEnum.GITHUB, 
+            namespace: 'sandbox', 
+            provider: ClusterProviderEnum.DEFAULT, 
+            gitToken: 'example' 
           },
           name: 'spinnakerconfiguration',
           authorId: 'user-2',

@@ -44,10 +44,6 @@ export const ConfigurationConstants = {
 
   DARWIN_CALLBACK: 'http://localhost:8883/deploy/notifications',
 
-  SPINNAKER_URL: 'http://localhost:8883/spinnaker',
-
-  SPINNAKER_GITHUB_ACCOUNT: 'github-account',
-
   HELM_TEMPLATE_URL: 'http://localhost:8883/helm',
 
   HELM_PREFIX_URL: 'http://localhost:8883/helm',

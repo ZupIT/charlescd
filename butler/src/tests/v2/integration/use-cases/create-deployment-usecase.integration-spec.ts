@@ -26,6 +26,8 @@ import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
+import { GitProvidersEnum } from'../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from'../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -64,8 +66,8 @@ describe('CreateDeploymentUsecase v2', () => {
 
   it('should only merge default circle components from the previous deployment entity of that circle', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'

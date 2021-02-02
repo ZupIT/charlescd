@@ -33,6 +33,8 @@ import { ConfigurationConstants } from '../../../../app/v2/core/constants/applic
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { GitProvidersEnum } from'../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from'../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 let mock = express()
 
@@ -72,8 +74,8 @@ describe('DeploymentCleanupHandler', () => {
 
   it('updates old unresolved deployments', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -121,8 +123,8 @@ describe('DeploymentCleanupHandler', () => {
 
   it('set deployment notification_status to error when notification fails', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'

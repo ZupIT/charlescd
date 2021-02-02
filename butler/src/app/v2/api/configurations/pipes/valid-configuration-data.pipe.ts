@@ -32,12 +32,7 @@ export class ValidConfigurationDataPipe implements PipeTransform {
 
   public async transform(createCdConfigurationDto: CreateCdConfigurationDto): Promise<CreateCdConfigurationDto> {
 
-    if (createCdConfigurationDto.type === CdTypeEnum.SPINNAKER) {
-      const errors: ValidationError[] = await validate('spinnakerConfigurationDataSchema', createCdConfigurationDto.configurationData)
-      if (errors.length) {
-        throw new BadRequestException(errors)
-      }
-    } else if (createCdConfigurationDto.type === CdTypeEnum.OCTOPIPE) {
+    if (createCdConfigurationDto.type === CdTypeEnum.OCTOPIPE) {
 
       const errors: ValidationError[] = await this.validateForProvider(createCdConfigurationDto)
 

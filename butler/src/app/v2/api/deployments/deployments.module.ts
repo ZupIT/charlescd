@@ -18,7 +18,6 @@ import { HttpModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { CdConfigurationEntity } from '../configurations/entity'
 import { CdConfigurationsRepository } from '../configurations/repository'
-import { SpinnakerApiService } from '../../core/integrations/spinnaker/spinnaker-api.service'
 import { MooveService } from '../../core/integrations/moove'
 import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
@@ -27,7 +26,6 @@ import { PgBossWorker } from './jobs/pgboss.worker'
 import { DeploymentCleanupHandler } from './use-cases/deployment-cleanup-handler'
 import { DeploymentHandlerUseCase } from './use-cases/deployment-handler.usecase'
 import { ReceiveNotificationUseCase } from './use-cases/receive-notification.usecase'
-import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
 import { ComponentsRepositoryV2 } from './repository'
 import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.usecase'
@@ -67,8 +65,6 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
     MooveService,
     DeploymentCleanupHandler,
     ConsoleLoggerService,
-    SpinnakerConnector,
-    SpinnakerApiService,
     CdStrategyFactory,
     OctopipeConnector,
     OctopipeApi

@@ -15,7 +15,7 @@
  */
 
 import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
-import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
+import { OctopipeConfigurationData } from '../../../api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
@@ -29,7 +29,7 @@ const IstioDeploymentManifestsUtils = {
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${(deployment.cdConfiguration.configurationData as OctopipeConfigurationData).namespace}`
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -47,7 +47,7 @@ const IstioDeploymentManifestsUtils = {
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${(deployment.cdConfiguration.configurationData as OctopipeConfigurationData).namespace}`
       },
       spec: {
         host: component.name,

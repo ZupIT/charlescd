@@ -32,7 +32,6 @@ import {
   OctopipeEKSConfigurationDataSchema,
   OctopipeGenericConfigurationDataSchema,
   OctopipeDefaultConfigurationDataSchema,
-  SpinnakerConfigurationDataSchema
 } from './app/v2/core/validations/schemas'
 import { Request, Response, Router } from 'express'
 
@@ -52,7 +51,6 @@ async function bootstrap() {
     ]
   })
 
-  registerSchema(SpinnakerConfigurationDataSchema)
   registerSchema(OctopipeEKSConfigurationDataSchema)
   registerSchema(OctopipeGenericConfigurationDataSchema)
   registerSchema(OctopipeDefaultConfigurationDataSchema)

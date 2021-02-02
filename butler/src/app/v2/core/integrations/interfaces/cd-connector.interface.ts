@@ -15,7 +15,7 @@
  */
 
 import { Component, Deployment } from '../../../api/deployments/interfaces'
-import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
+import { ConnectorResult, ConnectorResultError } from './connector-result.interface'
 import { ConnectorConfiguration } from './connector-configuration.interface'
 
 export interface CdConnector {

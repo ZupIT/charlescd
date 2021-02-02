@@ -19,7 +19,7 @@ import { ConsoleLoggerService } from '../../logs/console'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
-import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
+import { ConnectorResult, ConnectorResultError } from '../interfaces/connector-result.interface'
 import { OctopipeApi } from './octopipe-api'
 import { OctopipeRequestBuilder } from './request-builder'
 

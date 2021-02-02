@@ -29,6 +29,8 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { UndeploymentValidation } from '../../../../app/v2/api/deployments/pipes/undeployment-validation.pipe'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
+import { GitProvidersEnum } from'../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from'../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication
@@ -145,8 +147,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
   })
 
   const configEntity = new CdConfigurationEntity(
-    CdTypeEnum.SPINNAKER,
-    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+    CdTypeEnum.OCTOPIPE,
+    { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
     'config-name',
     'authorId',
     'workspaceId'

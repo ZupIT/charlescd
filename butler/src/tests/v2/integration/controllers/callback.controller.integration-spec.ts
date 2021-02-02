@@ -35,6 +35,8 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { GitProvidersEnum } from'../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from'../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 let mock = express()
 
@@ -84,8 +86,8 @@ describe('CallbackController v2', () => {
 
   it('set deployment callback status and active boolean for success notification', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -182,8 +184,8 @@ describe('CallbackController v2', () => {
 
   it('set deployment callback status for failure callback', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -281,8 +283,8 @@ describe('CallbackController v2', () => {
 
   it('set undeployment callback status to inactive for success notification', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -380,8 +382,8 @@ describe('CallbackController v2', () => {
 
   it('keeps the deployment as active if cd response is a failure', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'

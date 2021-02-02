@@ -22,7 +22,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCdConfigurationDto {
 
-    @ApiProperty({ enum: [CdTypeEnum.SPINNAKER, CdTypeEnum.OCTOPIPE] })
+    @ApiProperty({ enum: [CdTypeEnum.OCTOPIPE] })
     @IsNotEmpty()
     public readonly type: CdTypeEnum
 

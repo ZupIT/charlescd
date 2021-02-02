@@ -41,10 +41,6 @@ export const Configuration: IEnvConfiguration = {
 
   darwinIstioDeploymentCallbackUrl: process.env.DARWIN_CALLBACK || ConfigurationConstants.DARWIN_CALLBACK,
 
-  spinnakerUrl: process.env.SPINNAKER_URL || ConfigurationConstants.SPINNAKER_URL,
-
-  spinnakerGithubAccount: process.env.SPINNAKER_GITHUB_ACCOUNT || ConfigurationConstants.SPINNAKER_GITHUB_ACCOUNT,
-
   helmTemplateUrl: process.env.HELM_TEMPLATE_URL || ConfigurationConstants.HELM_TEMPLATE_URL,
 
   helmPrefixUrl: process.env.HELM_PREFIX_URL || ConfigurationConstants.HELM_PREFIX_URL,

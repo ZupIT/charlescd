@@ -33,10 +33,12 @@ import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.wor
 import { DeploymentHandlerUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-handler.usecase'
 import { ReceiveNotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/receive-notification.usecase'
 import express = require('express')
-import { SpinnakerConnector } from '../../../../app/v2/core/integrations/spinnaker/connector'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { GitProvidersEnum } from'../../../../app/v2/core/configuration/interfaces'
+import { ClusterProviderEnum } from'../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { OctopipeConnector } from'../../../../app/v2/core/integrations/octopipe/connector'
 
 let mock = express()
 
@@ -48,7 +50,7 @@ describe('DeploymentHandler', () => {
   let manager: EntityManager
   let mockServer: Server
   let notificationUseCase: ReceiveNotificationUseCase
-  let spinnakerConnector: SpinnakerConnector
+  let octopipeConnector: OctopipeConnector
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -66,7 +68,7 @@ describe('DeploymentHandler', () => {
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandlerUseCase>(DeploymentHandlerUseCase)
     notificationUseCase = app.get<ReceiveNotificationUseCase>(ReceiveNotificationUseCase)
-    spinnakerConnector = app.get<SpinnakerConnector>(SpinnakerConnector)
+    octopipeConnector = app.get<OctopipeConnector>(OctopipeConnector)
     manager = fixtureUtilsService.connection.manager
   })
 
@@ -111,8 +113,8 @@ describe('DeploymentHandler', () => {
     })
 
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -193,8 +195,8 @@ describe('DeploymentHandler', () => {
     })
 
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/error', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -232,8 +234,8 @@ describe('DeploymentHandler', () => {
 
   it('stop the job when the deployment status is flagged as TIMED_OUT', async() => {
     const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -270,11 +272,11 @@ describe('DeploymentHandler', () => {
 
   it('should pass the correct activeComponents for the deployment method when multiple cdConfigurationIds with active deployments coexist', async() => {
     const cdConfiguration1 = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'namespace1' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace1', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
-      'workspaceId1'
+      'workspaceId'
     )
     await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration1)
 
@@ -310,11 +312,11 @@ describe('DeploymentHandler', () => {
     await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
 
     const cdConfiguration2 = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'namespace2' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace2', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
-      'workspaceId2'
+      'workspaceId'
     )
     await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration2)
 
@@ -383,7 +385,7 @@ describe('DeploymentHandler', () => {
       name: 'job-name'
     }
 
-    const createDeploymentSpy = jest.spyOn(spinnakerConnector, 'createDeployment')
+    const createDeploymentSpy = jest.spyOn(octopipeConnector, 'createDeployment')
     await deploymentHandler.run(executionJob)
     expect(createDeploymentSpy).toHaveBeenCalledWith(
       expect.anything(),
@@ -415,11 +417,11 @@ describe('DeploymentHandler', () => {
 
   it('should pass the correct activeComponents for the undeployment method when multiple cdConfigurationIds with active deployments coexist', async() => {
     const cdConfiguration1 = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'namespace1' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace1', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
-      'workspaceId1'
+      'workspaceId'
     )
     await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration1)
 
@@ -455,11 +457,11 @@ describe('DeploymentHandler', () => {
     await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
 
     const cdConfiguration2 = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'namespace2' },
+      CdTypeEnum.OCTOPIPE,
+      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace2', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
       'config-name',
       'authorId',
-      'workspaceId2'
+      'workspaceId'
     )
     await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration2)
 
@@ -508,7 +510,7 @@ describe('DeploymentHandler', () => {
       name: 'job-name1'
     }
 
-    const createUndeploymentSpy = jest.spyOn(spinnakerConnector, 'createUndeployment')
+    const createUndeploymentSpy = jest.spyOn(octopipeConnector, 'createUndeployment')
     await deploymentHandler.run(executionJob1)
     expect(createUndeploymentSpy).toHaveBeenCalledWith(
       expect.anything(),

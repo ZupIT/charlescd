@@ -20,7 +20,7 @@ import { DeploymentComponent } from '../../../api/deployments/interfaces/deploym
 import { UrlUtils } from '../../utils/url.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
+import { CommonTemplateUtils } from './utils/common-template.utils'
 import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
