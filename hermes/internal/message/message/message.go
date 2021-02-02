@@ -106,6 +106,17 @@ func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 	return response, nil
 }
 
+func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID) ([]payloads.FullMessageResponse, errors.Error) {
+	var response []payloads.FullMessageResponse
+
+	query := main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Find(&response)
+	if query.Error != nil {
+		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionId Message error", query.Error.Error()).
+			WithOperations("FindAllBySubscriptionId.Query")
+	}
+
+	return response, nil
+}
 
 func requestToEntity(r payloads.Request) Message {
 	return Message{

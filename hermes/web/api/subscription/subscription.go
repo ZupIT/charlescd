@@ -23,6 +23,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"hermes/internal/message/message"
+	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/message/payloads"
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
@@ -126,6 +127,68 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 
 		restutil.NewResponse(w, http.StatusOK, result)
 	}
+}
+
+func History(messageMain message.UseCases, executionMain messageexecutionhistory.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		if uuidErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			return
+		}
+
+		result, err := messageMain.FindAllBySubscriptionId(subscriptionId)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		var executionIds []uuid.UUID
+		for _, msg := range result {
+			executionIds = append(executionIds, msg.Id)
+		}
+
+		response, err := executionMain.FindAllByExecutionId(executionIds)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		history := mapMessages(result, response)
+
+		restutil.NewResponse(w, http.StatusOK, history)
+	}
+}
+
+func mapMessages(messages []payloads.FullMessageResponse, executions []payloads.FullMessageExecutionResponse) []payloads.HistoryPayload {
+	var response []payloads.HistoryPayload
+
+	for _, messageResponse := range messages {
+		p := payloads.HistoryPayload{
+			FullMessageResponse: payloads.FullMessageResponse{
+				Id:             messageResponse.Id,
+				EventType:      messageResponse.EventType,
+				Event:          messageResponse.Event,
+				LastStatus:     messageResponse.LastStatus,
+				SubscriptionId: messageResponse.SubscriptionId,
+			},
+		}
+		var execs []payloads.FullMessageExecutionResponse
+
+		for _, executionResponse := range executions {
+
+			if messageResponse.Id == executionResponse.ExecutionId {
+				execs = append(execs, executionResponse)
+				p.Executions = execs
+			}
+
+		}
+		response = append(response, p)
+
+	}
+
+	return response
 }
 
 func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {

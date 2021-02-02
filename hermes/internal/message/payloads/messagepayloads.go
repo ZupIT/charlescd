@@ -40,3 +40,23 @@ type MessageResponse struct {
 	EventType string          `json:"eventType"`
 	Event     json.RawMessage `json:"event"`
 }
+
+type FullMessageResponse struct {
+	Id             uuid.UUID       `json:"id"`
+	EventType      string          `json:"eventType"`
+	Event          json.RawMessage `json:"event"`
+	LastStatus     string          `json:"lastStatus"`
+	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+}
+
+type FullMessageExecutionResponse struct {
+	Id           uuid.UUID `json:"id"`
+	ExecutionId  uuid.UUID `json:"executionId"`
+	ExecutionLog string    `json:"executionLog"`
+	Status       string    `json:"status"`
+}
+
+type HistoryPayload struct {
+	FullMessageResponse
+	Executions []FullMessageExecutionResponse `json:"executions"`
+}

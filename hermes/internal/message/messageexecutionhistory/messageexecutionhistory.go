@@ -34,7 +34,6 @@ type MessagesExecutionsHistory struct {
 }
 
 func (main Main) Save(executionsRequest payloads.ExecutionRequest) (payloads.Response, errors.Error) {
-
 	exec := MessagesExecutionsHistory{
 		ID:           uuid.New(),
 		ExecutionId:  executionsRequest.ExecutionId,
@@ -50,4 +49,15 @@ func (main Main) Save(executionsRequest payloads.ExecutionRequest) (payloads.Res
 	}
 
 	return payloads.Response{Id: exec.ID}, nil
+}
+
+func (main Main) FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullMessageExecutionResponse, errors.Error) {
+	var response []payloads.FullMessageExecutionResponse
+
+	query := main.db.Model(&MessagesExecutionsHistory{}).Where("execution_id IN ?", executionId).Find(&response)
+	if query.Error != nil {
+		return []payloads.FullMessageExecutionResponse{}, errors.NewError("Save Message Execution error", query.Error.Error()).
+			WithOperations("Save.Result")
+	}
+	return response, nil
 }

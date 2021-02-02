@@ -19,6 +19,7 @@
 package message
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/message/payloads"
@@ -31,6 +32,7 @@ type UseCases interface {
 	ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, errors.Error)
 	Validate(message payloads.PayloadRequest) errors.ErrorList
 	Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error)
+	FindAllBySubscriptionId(subscriptionId uuid.UUID) ([]payloads.FullMessageResponse, errors.Error)
 	FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 }
 

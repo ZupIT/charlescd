@@ -19,6 +19,7 @@
 package messageexecutionhistory
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
@@ -26,6 +27,7 @@ import (
 
 type UseCases interface {
 	Save(executionsRequest payloads.ExecutionRequest) (payloads.Response, errors.Error)
+	FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullMessageExecutionResponse, errors.Error)
 }
 
 type Main struct {
