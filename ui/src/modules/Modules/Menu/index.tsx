@@ -32,12 +32,7 @@ import Loader from './Loaders';
 import Styled from './styled';
 import { Module } from '../interfaces/Module';
 
-interface Props {
-  onCreate?: () => void;
-  onSelect?: (id: string) => void;
-}
-
-const ModulesMenu = ({ onCreate, onSelect }: Props) => {
+const ModulesMenu = () => {
   const { getAllModules, loading } = useFindAllModules();
   const { list } = useGlobalState(({ modules }) => modules);
   const history = useHistory();

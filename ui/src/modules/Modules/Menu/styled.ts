@@ -32,10 +32,6 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0;
-
-  > * {
-    padding: 0 16px;
-  }
 `;
 
 const ListItem = styled(LabeledIcon)`
@@ -53,6 +49,7 @@ const Actions = styled.div`
   > * + * {
     margin-left: 20px;
   }
+
   padding: 0 16px;
 `;
 
@@ -64,6 +61,8 @@ const Link = styled('button')<LinkProps>`
   background: none;
   border: none;
   text-decoration: none;
+  width: 100%;
+  padding: 0 16px;
   background-color: ${({ isActive }) =>
     isActive ? COLOR_BLACK_MARLIN : 'transparent'};
 `;
@@ -114,7 +113,6 @@ export default {
   ListItem,
   Content,
   Actions,
-  // Icon,
   Loader,
   Link,
   Button,
