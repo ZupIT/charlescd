@@ -59,14 +59,14 @@ class ErrorHandlerTest extends Specification {
                 MatcherErrorCode.DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE,
                 "segmentation/workspaceId",
                 "Error creating segmentation",
-        );
+        ).withParameters("123456");
         def metaInfo = new HashMap<String,String>();
         metaInfo.put("component", "circle-matcher");
 
         when:
         def response = errorHandler.handleBusinessException(businessException)
         then:
-        assert response.details == 'Default segmentation already registered in workspace'
+        assert response.details == 'Default segmentation already registered in workspace: 123456'
         assert response.title == 'Error creating segmentation'
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
