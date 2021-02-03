@@ -17,7 +17,6 @@
 package io.charlescd.moove.application
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import io.charlescd.moove.domain.MooveErrorCode
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ErrorEntityResponse(
@@ -28,7 +27,4 @@ data class ErrorEntityResponse(
     val status: String?,
     val source: Map<String, String>?,
     val meta: Map<String, String>?
-) {
-
-}
-
+)

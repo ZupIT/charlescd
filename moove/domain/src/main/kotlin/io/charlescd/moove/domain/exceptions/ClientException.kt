@@ -18,15 +18,12 @@
 
 package io.charlescd.moove.domain.exceptions
 
-
 data class ClientException(
-    val id:String?,
-    val links:List<String>?,
-    val title:String?,
-    val details:String?,
-    val status:String?,
+    val id: String?,
+    val links: List<String>?,
+    val title: String?,
+    val details: String?,
+    val status: String?,
     val source: Map<String, String>?,
     val meta: Map<String, String>?
-): RuntimeException() {
-
-}
+) : RuntimeException()

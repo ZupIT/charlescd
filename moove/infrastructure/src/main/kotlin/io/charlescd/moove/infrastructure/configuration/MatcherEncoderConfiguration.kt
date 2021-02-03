@@ -21,16 +21,15 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.domain.exceptions.ClientException
-import org.apache.http.util.ExceptionUtils
 import java.io.IOException
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
+import java.time.LocalDateTime
+import java.util.*
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.StreamUtils
-import java.time.LocalDateTime
-import java.util.*
 
 @Configuration
 class MatcherEncoderConfiguration {
@@ -45,7 +44,14 @@ class MatcherEncoderConfiguration {
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
             logger.info("Response as object $responseMessage")
-            return ClientException(responseMessage.id, responseMessage.links, responseMessage.title, responseMessage.details,responseMessage.status,responseMessage.source, responseMessage.meta)
+            return ClientException(
+                responseMessage.id,
+                responseMessage.links,
+                responseMessage.title,
+                responseMessage.details,
+                responseMessage.status,
+                responseMessage.source,
+                responseMessage.meta)
         }
 
         private fun extractMessageFromResponse(response: Response?): ErrorResponse {
@@ -58,7 +64,6 @@ class MatcherEncoderConfiguration {
                 return responseAsString?.let {
                     getResponseAsObject(it)
                 } ?: createErrorResponse("No response body")
-
             } catch (ex: IOException) {
                 logger.error(ex.message, ex)
                 return createErrorResponse("Error reading response", ex)
@@ -71,10 +76,10 @@ class MatcherEncoderConfiguration {
             )
         }
 
-        private fun getMetaInfo(exception: Exception?): Map<String,String>? {
-            var metaInfo = mutableMapOf<String,String>()
+        private fun getMetaInfo(exception: Exception?): Map<String, String>? {
+            var metaInfo = mutableMapOf<String, String>()
 
-            exception?.let{
+            exception?.let {
                 metaInfo.put("stacktrace", it.cause.toString())
             }
             metaInfo.put("data", LocalDateTime.now().toString())

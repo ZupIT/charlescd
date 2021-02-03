@@ -62,7 +62,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseBody
     fun clientExceptions(ex: ClientException): ErrorEntityResponse {
         this.logger.error(ex.details, ex)
-        return ErrorEntityResponse(ex.id, ex.links, ex.title ,ex.details, ex.status, ex.source, ex.meta)
+        return ErrorEntityResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

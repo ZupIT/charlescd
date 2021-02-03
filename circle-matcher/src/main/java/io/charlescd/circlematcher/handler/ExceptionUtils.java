@@ -9,7 +9,7 @@ import java.util.UUID;
 public class ExceptionUtils {
 
     public static DefaultErrorResponse createNotFoundErrorResponse(String message, String sourceString) {
-        Map<String,String> source = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<String, String>();
         source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
@@ -22,7 +22,7 @@ public class ExceptionUtils {
     }
 
     public static DefaultErrorResponse createBadRequestError(String message, String sourceString) {
-        Map<String,String> source = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<String, String>();
         source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
@@ -39,7 +39,7 @@ public class ExceptionUtils {
             String title,
             String sourceString,
             Exception exception) {
-        Map<String,String> source = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<String, String>();
         source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
@@ -52,7 +52,7 @@ public class ExceptionUtils {
     }
 
     public static DefaultErrorResponse createInternalServerError(String message, String sourceString) {
-        Map<String,String> source = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<String, String>();
         source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),

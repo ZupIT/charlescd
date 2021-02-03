@@ -17,7 +17,6 @@
 package io.charlescd.moove.infrastructure.service.client
 
 import io.charlescd.moove.infrastructure.configuration.MatcherEncoderConfiguration
-import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
 import io.charlescd.moove.infrastructure.service.client.response.IdentifyResponse

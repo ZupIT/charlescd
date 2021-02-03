@@ -74,7 +74,6 @@ public class ErrorHandler {
     }
 
     private String processFieldErrors(List<FieldError> fieldErrors) {
-        System.out.println("field"+fieldErrors);
         return fieldErrors.stream()
                 .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
                 .collect(joining("\n"));
