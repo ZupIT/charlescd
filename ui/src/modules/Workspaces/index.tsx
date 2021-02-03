@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import { useGlobalState } from 'core/state/hooks';
@@ -37,13 +37,13 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
-  const onIDMFlow = () => {
+  const onIDMFlow = useCallback(() => {
     if (isRoot()) {
       filterWorkspace(name);
     } else {
       findWorkspacesByUserId(userId);
     }
-  };
+  }, [filterWorkspace, findWorkspacesByUserId]);
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
