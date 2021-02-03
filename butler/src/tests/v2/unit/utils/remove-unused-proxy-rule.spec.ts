@@ -359,3 +359,79 @@ it('should not perform cleanup when no new component is deployed', () => {
   expect(removedVersions.map(c => c.name)).toEqual([])
 
 })
+it('should perform override when there is only one component active in circle', () => {
+  const deployment: Deployment = {
+    id: 'deployment-id',
+    authorId: 'user-1',
+    callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
+    cdConfiguration: {
+      id: 'cd-configuration-id',
+      type: CdTypeEnum.SPINNAKER,
+      configurationData: {
+        gitAccount: 'github-artifact',
+        account: 'default',
+        namespace: 'sandbox',
+        url: 'spinnaker-url'
+      },
+      name: 'spinnakerconfiguration',
+      authorId: 'user-2',
+      workspaceId: 'workspace-id',
+      createdAt: new Date(),
+      deployments: null
+    },
+    defaultCircle: false,
+    circleId: 'circle-id',
+    createdAt: new Date(),
+    components: [
+      {
+        id: 'component-id-1',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v2',
+        imageUrl: 'https://repository.com/A:v2',
+        name: 'A',
+        running: false,
+        gatewayName: null,
+        hostValue: null
+      }
+    ]
+  }
+
+  const activeComponents: Component[] = [
+    {
+      id: 'component-id-4',
+      helmUrl: 'http://localhost:2222/helm',
+      imageTag: 'v1',
+      imageUrl: 'https://repository.com/B:v1',
+      name: 'B',
+      running: true,
+      gatewayName: null,
+      hostValue: null,
+      deployment: {
+        id: 'deployment-id4',
+        authorId: 'user-1',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
+        circleId: 'circle-id',
+        createdAt: new Date(),
+        cdConfiguration: {
+          id: 'cd-configuration-id',
+          type: CdTypeEnum.SPINNAKER,
+          configurationData: {
+            gitAccount: 'github-artifact',
+            account: 'default',
+            namespace: 'sandbox',
+            url: 'spinnaker-url'
+          },
+          name: 'spinnakerconfiguration',
+          authorId: 'user-2',
+          workspaceId: 'workspace-id',
+          createdAt: new Date(),
+          deployments: null
+        },
+        defaultCircle: false
+      }
+    }
+  ]
+  const removedVersions = unusedComponentProxy(deployment, activeComponents)
+  expect(removedVersions.map(c => c.name)).toEqual(['B'])
+
+})
