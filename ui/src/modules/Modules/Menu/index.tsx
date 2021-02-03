@@ -17,6 +17,7 @@
 import React, { Fragment, useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import Can from 'containers/Can';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -62,6 +63,12 @@ const ModulesMenu = () => {
     <MenuItem key={id} id={id} name={name} />
   );
 
+  const renderEmpty = () => (
+    <Styled.Empty>
+      <Text.h3 color="dark">No Modules was found</Text.h3>
+    </Styled.Empty>
+  );
+
   const renderList = () => (
     <InfiniteScroll
       hasMore={!list.last}
@@ -72,6 +79,9 @@ const ModulesMenu = () => {
       {map(list?.content, item => renderItem(item))}
     </InfiniteScroll>
   );
+
+  const renderContent = () =>
+    isEmpty(list?.content) ? renderEmpty() : renderList();
 
   return (
     <Fragment>
@@ -86,7 +96,7 @@ const ModulesMenu = () => {
       </Styled.Actions>
       <Styled.Content>
         <Styled.SearchInput resume onSearch={onSearch} />
-        <Styled.List>{loading ? <Loader.List /> : renderList()}</Styled.List>
+        <Styled.List>{loading ? <Loader.List /> : renderContent()}</Styled.List>
       </Styled.Content>
     </Fragment>
   );

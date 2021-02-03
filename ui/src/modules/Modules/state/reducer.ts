@@ -67,8 +67,6 @@ export const modulesReducer = (
       };
     }
     case ACTION_TYPES.resetModules: {
-      console.log('resetModules');
-
       return {
         ...state,
         list: modulesInitialState.list

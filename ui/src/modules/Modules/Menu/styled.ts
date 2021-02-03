@@ -107,6 +107,10 @@ const Loader = styled(LoaderMenuComponent.List)`
   margin-left: 16px;
 `;
 
+const Empty = styled.div`
+  padding: 0 16px;
+`;
+
 export default {
   SearchInput,
   List,
@@ -115,6 +119,7 @@ export default {
   Actions,
   Loader,
   Link,
+  Empty,
   Button,
   Modal: {
     Input: ModalInput,

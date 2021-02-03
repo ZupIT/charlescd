@@ -53,6 +53,17 @@ test('render Modules Menu', async () => {
   expect(moduleName).toBeInTheDocument();
 });
 
+
+test('render Modules Menu empty', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({}));
+
+  render(<Menu />);
+
+  const moduleName = await screen.findByText('No Modules was found');
+
+  expect(moduleName).toBeInTheDocument();
+});
+
 test('render Modules Menu on Loading', () => {
   render(<Menu />);
 
