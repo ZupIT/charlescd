@@ -100,7 +100,7 @@ class ErrorHandlerTest extends Specification {
         metaInfo.put("component", "circle-matcher");
 
         when:
-        def response = errorHandler.handleIllegalArgument(businessException)
+        def response = errorHandler.handleIllegalArgument(illegalArgumentException)
         then:
         assert response.details == 'argument not valid'
         assert response.title == 'Bad Request'
