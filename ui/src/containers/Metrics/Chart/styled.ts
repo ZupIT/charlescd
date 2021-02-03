@@ -28,11 +28,11 @@ const Controls = styled.div`
   justify-content: center;
 `;
 
-interface ControlItem {
+type ControlItemProps = {
   isActive?: boolean;
 }
 
-const ControlItem = styled.div<ControlItem>`
+const ControlItem = styled.div<ControlItemProps>`
   width: 30px;
   padding: 5px;
   margin: 0 10px;
