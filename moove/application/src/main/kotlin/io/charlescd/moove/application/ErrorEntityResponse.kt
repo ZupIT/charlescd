@@ -27,7 +27,7 @@ data class ErrorEntityResponse(
     val details: String?,
     val status: String?,
     val source: Map<String, String>?,
-    val meta: String?
+    val meta: Map<String, String>?
 ) {
 
 }

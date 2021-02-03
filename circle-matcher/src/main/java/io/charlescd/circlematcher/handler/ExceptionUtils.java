@@ -9,7 +9,8 @@ import java.util.UUID;
 public class ExceptionUtils {
 
     public static DefaultErrorResponse createNotFoundErrorResponse(String message, String sourceString) {
-        Source source = new Source(sourceString);
+        Map<String,String> source = new HashMap<String, String>();
+        source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 "Not found",
@@ -21,7 +22,8 @@ public class ExceptionUtils {
     }
 
     public static DefaultErrorResponse createBadRequestError(String message, String sourceString) {
-        Source source = new Source(sourceString);
+        Map<String,String> source = new HashMap<String, String>();
+        source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 "Bad Request",
@@ -37,7 +39,8 @@ public class ExceptionUtils {
             String title,
             String sourceString,
             Exception exception) {
-        Source source = new Source(sourceString);
+        Map<String,String> source = new HashMap<String, String>();
+        source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 title,
@@ -49,7 +52,8 @@ public class ExceptionUtils {
     }
 
     public static DefaultErrorResponse createInternalServerError(String message, String sourceString) {
-        Source source = new Source(sourceString);
+        Map<String,String> source = new HashMap<String, String>();
+        source.put("pointer", sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 "Internal Server Error",

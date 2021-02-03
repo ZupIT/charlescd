@@ -4,6 +4,8 @@ import io.charlescd.circlematcher.domain.exception.BusinessException
 import io.charlescd.circlematcher.domain.exception.MatcherErrorCode
 import org.springframework.core.MethodParameter
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.validation.BindingResult
+import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import spock.lang.Specification
 
@@ -21,7 +23,6 @@ class ErrorHandlerTest extends Specification {
                 "Error updating segmentation"
         );
         def metaInfo = new HashMap<String,String>();
-        metaInfo.put("timestamp", LocalDateTime.now().toString());
         metaInfo.put("component", "circle-matcher");
 
         when:
@@ -39,7 +40,6 @@ class ErrorHandlerTest extends Specification {
         def errorHandler = new ErrorHandler();
         def noSuchElement = new NoSuchElementException("Default metadata not found")
         def metaInfo = new HashMap<String,String>();
-        metaInfo.put("timestamp", LocalDateTime.now().toString());
         metaInfo.put("component", "circle-matcher");
 
         when:
@@ -61,17 +61,16 @@ class ErrorHandlerTest extends Specification {
                 "Error creating segmentation",
         );
         def metaInfo = new HashMap<String,String>();
-        metaInfo.put("timestamp", LocalDateTime.now().toString());
         metaInfo.put("component", "circle-matcher");
 
         when:
         def response = errorHandler.handleBusinessException(businessException)
         then:
-        assert response.details == 'Default segmentation already registered in workspace'
+        assert response.details == 'Default segmentation already registered in workspace: null'
         assert response.title == 'Error creating segmentation'
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
-        assert response.source.pointer == "segmentation/workspaceId"
+        assert response.source.get("pointer") == "segmentation/workspaceId"
     }
 
     def "should return the correct message from bad request exception"() {
@@ -96,14 +95,13 @@ class ErrorHandlerTest extends Specification {
         def errorHandler = new ErrorHandler();
         def illegalArgumentException = new IllegalArgumentException("argument not valid")
         def metaInfo = new HashMap<String,String>();
-        metaInfo.put("timestamp", LocalDateTime.now().toString());
         metaInfo.put("component", "circle-matcher");
 
         when:
         def response = errorHandler.handleIllegalArgument(illegalArgumentException)
         then:
         assert response.details == 'argument not valid'
-        assert responseD.title == 'Bad Request'
+        assert response.title == 'Bad Request'
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
     }
@@ -113,7 +111,6 @@ class ErrorHandlerTest extends Specification {
         def errorHandler = new ErrorHandler();
         def httpMessage = new HttpMessageNotReadableException("message not readable")
         def metaInfo = new HashMap<String,String>();
-        metaInfo.put("timestamp", LocalDateTime.now().toString());
         metaInfo.put("component", "circle-matcher");
 
         when:
@@ -122,6 +119,42 @@ class ErrorHandlerTest extends Specification {
         assert response.details == 'message not readable'
         assert response.title == 'Bad Request'
         assert response.status == "400"
+        assert response.meta.get("component") == metaInfo.get("component")
+    }
+
+    def "should return the correct message from internal server error exception"() {
+        given:
+        def errorHandler = new ErrorHandler();
+        def exception = new Exception("null pointer")
+        def metaInfo = new HashMap<String,String>();
+        metaInfo.put("component", "circle-matcher");
+
+        when:
+        def response = errorHandler.handleException(exception)
+        then:
+        assert response.details == 'null pointer'
+        assert response.title == 'Internal server error'
+        assert response.status == "500"
+        assert response.meta.get("component") == metaInfo.get("component")
+    }
+
+    def "should return the correct message from constraint valdiation exception"() {
+        given:
+        def errorHandler = new ErrorHandler();
+
+        def exception = Mock(MethodArgumentNotValidException)
+        def metaInfo = new HashMap<String,String>();
+        metaInfo.put("component", "circle-matcher");
+        def fieldErrors = new FieldError("segmentation", "node", "Invalid node")
+        when:
+        def response = errorHandler.handleConstraintsValidation(exception)
+        then:
+        exception.getMessage() >> "Error validating node"
+        exception.getFieldErrors() >> [fieldErrors]
+        assert response.details == 'Invalid request body.node: Invalid node'
+        assert response.title == 'Bad Request'
+        assert response.status == "400"
+        assert response.source.get("pointer") == "segmentation/node"
         assert response.meta.get("component") == metaInfo.get("component")
     }
 

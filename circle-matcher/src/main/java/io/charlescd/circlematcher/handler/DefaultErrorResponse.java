@@ -23,12 +23,12 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultErrorResponse {
     private  String id;
-    public List<String> links;
-    public String title;
-    public String details;
-    public String status;
-    public Source source;
-    public Map<String, String> meta;
+    private List<String> links;
+    private String title;
+    private String details;
+    private String status;
+    private Map<String, String> source;
+    private Map<String, String> meta;
 
     public DefaultErrorResponse(
             String id,
@@ -36,7 +36,7 @@ public class DefaultErrorResponse {
             String title,
             String details,
             String status,
-            Source source,
+            Map<String, String> source,
             Map<String, String> meta
     ) {
         this.links = links;
@@ -80,11 +80,11 @@ public class DefaultErrorResponse {
         this.details = details;
     }
 
-    public Source getSource() {
+    public Map<String, String> getSource() {
         return source;
     }
 
-    public void setSource(Source source) {
+    public void setSource(Map<String, String> source) {
         this.source = source;
     }
 

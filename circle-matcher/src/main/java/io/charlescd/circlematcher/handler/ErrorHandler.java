@@ -56,7 +56,7 @@ public class ErrorHandler {
         logger.error("NOT FOUND ERROR - ", exception);
         return ExceptionUtils.createNotFoundErrorResponse(
                 exception.getMessage(),
-                exception.getStackTrace()[0].getMethodName()
+                null
         );
     }
 
@@ -74,6 +74,7 @@ public class ErrorHandler {
     }
 
     private String processFieldErrors(List<FieldError> fieldErrors) {
+        System.out.println("field"+fieldErrors);
         return fieldErrors.stream()
                 .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
                 .collect(joining("\n"));
@@ -85,7 +86,7 @@ public class ErrorHandler {
         logger.error("BAD REQUEST ERROR - ", exception);
         return ExceptionUtils.createBadRequestError(
                 exception.getMessage(),
-                exception.getStackTrace()[0].getMethodName()
+                null
         );
     }
 
@@ -105,7 +106,7 @@ public class ErrorHandler {
         logger.error("INTERNAL SERVER ERROR - ", exception);
         return ExceptionUtils.createInternalServerError(
                 "Unexpected error. Please, try again later.",
-                exception.getStackTrace()[0].getMethodName()
+                null
         );
     }
 }
