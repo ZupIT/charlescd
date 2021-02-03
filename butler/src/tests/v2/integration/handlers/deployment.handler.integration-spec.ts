@@ -38,7 +38,6 @@ import { TestSetupUtils } from '../test-setup-utils'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { GitProvidersEnum } from'../../../../app/v2/core/configuration/interfaces'
 import { ClusterProviderEnum } from'../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { OctopipeConnector } from'../../../../app/v2/core/integrations/octopipe/connector'
 
 let mock = express()
 
@@ -50,7 +49,6 @@ describe('DeploymentHandler', () => {
   let manager: EntityManager
   let mockServer: Server
   let notificationUseCase: ReceiveNotificationUseCase
-  let octopipeConnector: OctopipeConnector
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -68,7 +66,6 @@ describe('DeploymentHandler', () => {
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandlerUseCase>(DeploymentHandlerUseCase)
     notificationUseCase = app.get<ReceiveNotificationUseCase>(ReceiveNotificationUseCase)
-    octopipeConnector = app.get<OctopipeConnector>(OctopipeConnector)
     manager = fixtureUtilsService.connection.manager
   })
 
