@@ -18,15 +18,16 @@ package gitlab
 
 import (
 	"crypto/tls"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/resty.v1"
 )
 
 type GitlabRepository struct {
@@ -39,56 +40,69 @@ func NewGitlabRepository(url, token string) GitlabRepository {
 }
 
 func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) (string, string, error) {
-	var responseMap map[string]interface{}
 	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_GIT_HTTPS_VALIDATION"))
 	if errParse != nil {
 		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("SKIP_GIT_HTTPS_VALIDATION invalid, valid options (1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)")
 	}
-	customTransport := http.DefaultTransport.(*http.Transport).Clone()
-	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: skipTLS}
-	client := &http.Client{Transport: customTransport}
-	filesData := []string{}
 
-	for _, fileName := range gitlabRepository.getDefaultFileNamesByName(name) {
-		filePath := fmt.Sprintf("%s/%s%%2F%s?ref=master", gitlabRepository.Url, name, fileName)
-
-		request, err := http.NewRequest("GET", filePath, nil)
-		if err != nil {
-			return "", "", err
-		}
-
-		request.Header.Add("PRIVATE-TOKEN", fmt.Sprintf("%s", gitlabRepository.Token))
-		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("Request file from repository. Url: " + filePath)
-		response, err := client.Do(request)
-		if err != nil {
-			return "", "", errors.New("Unable to request file for repository. Error: " + err.Error())
-		}
-
-		if response.StatusCode != 200 {
-			return "", "", errors.New("Failed to find file in repository. StatusCode: " + strconv.Itoa(response.StatusCode))
-		}
-
-		err = json.NewDecoder(response.Body).Decode(&responseMap)
-		if err != nil {
-			return "", "", errors.New("It was not possible to decode the request body. Error: " + err.Error())
-		}
-
-		content := fmt.Sprintf("%s", responseMap["content"])
-		contentDecoded, err := base64.StdEncoding.DecodeString(content)
-
-		if err != nil {
-			return "", "", errors.New("It was not possible to decode the body in base64 of the request. Error: " + err.Error())
-		}
-
-		filesData = append(filesData, string(contentDecoded))
+	basePathSplit := strings.Split(gitlabRepository.Url, "?")
+	basePath := basePathSplit[0]
+	queryParams, err := url.ParseQuery(basePathSplit[1])
+	if err != nil {
+		return "", "", err
 	}
 
-	return filesData[0], filesData[1], nil
-}
-
-func (gitlabRepository GitlabRepository) getDefaultFileNamesByName(name string) []string {
-	return []string{
-		fmt.Sprintf("%s-darwin.tgz", name),
-		fmt.Sprintf("%s.yaml", name),
+	if queryParams.Get("path") != "" {
+		queryParams.Set("path", fmt.Sprintf("%s/%s", queryParams.Get("path"), name))
+	} else {
+		queryParams.Set("path", fmt.Sprintf("%s", name))
 	}
+
+	client := resty.New()
+	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: skipTLS})
+	client.SetHeader("PRIVATE-TOKEN", fmt.Sprintf("token %s", gitlabRepository.Token))
+
+	resp, err := client.R().Get(fmt.Sprintf("%s/tree?%s", basePath, queryParams.Encode()))
+	if err != nil {
+		return "", "", err
+	}
+
+	var contentList []map[string]interface{}
+	err = json.Unmarshal(resp.Body(), &contentList)
+	if err != nil {
+		return "", "", err
+	}
+
+	var template string
+	var value string
+	for _, content := range contentList {
+		contentName, ok := content["name"].(string)
+		if !ok {
+			return "", "", errors.New("Not found name in content list api. ")
+		}
+
+		if strings.Contains(contentName, ".tgz") {
+			resp, err := client.R().Get(fmt.Sprintf("%s/%s%%2F%s?%s", gitlabRepository.Url, name, contentName, queryParams.Encode()))
+			if err != nil {
+				return "", "", err
+			}
+
+			template = string(resp.Body())
+		}
+
+		if strings.Contains(contentName, fmt.Sprintf("%s.yaml", name)) || strings.Contains(contentName, "value.yaml") {
+			resp, err := client.R().Get(fmt.Sprintf("%s/%s%%2F%s?%s", gitlabRepository.Url, name, contentName, queryParams.Encode()))
+			if err != nil {
+				return "", "", err
+			}
+
+			value = string(resp.Body())
+		}
+	}
+
+	if template == "" || value == "" {
+		return "", "", errors.New("not found template or value in gitlab repository")
+	}
+
+	return template, value, nil
 }

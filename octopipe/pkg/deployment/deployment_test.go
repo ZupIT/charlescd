@@ -19,6 +19,7 @@ package deployment
 import (
 	"context"
 	"fmt"
+	"k8s.io/client-go/rest"
 	"log"
 	"os"
 	"strings"
@@ -157,15 +158,12 @@ func toJSON(manifest string) map[string]interface{} {
 }
 
 func TestActionFailed(t *testing.T) {
-	scheme := runtime.NewScheme()
-	client := fake.NewSimpleDynamicClient(scheme)
-
 	deployment := deploymentMain.NewDeployment(
 		"fake",
 		false,
 		"default",
 		toJSON(simpleManifest),
-		client,
+		&rest.Config{},
 	)
 
 	err := deployment.Do()
@@ -184,7 +182,7 @@ func TestCreateResource(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifest),
-		client,
+		&rest.Config{},
 	)
 
 	err := deployment.Do()
@@ -213,7 +211,7 @@ func TestUpdateResource(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifestRunning),
-		client,
+		&rest.Config{},
 	)
 
 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
@@ -242,7 +240,7 @@ func TestUndeployResourceControllerSuccess(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifestRunning),
-		client,
+		&rest.Config{},
 	)
 
 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
@@ -277,7 +275,7 @@ func TestUndeployNonResourceControllerSuccess(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifest),
-		client,
+		&rest.Config{},
 	)
 
 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
@@ -308,7 +306,7 @@ func TestUndeployIfNotExist(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifestForUpdate),
-		client,
+		&rest.Config{},
 	)
 
 	err := deployment.Do()
