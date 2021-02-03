@@ -223,7 +223,7 @@ class KeyMetadataRepositoryTest extends Specification {
 
     }
 
-    def "should find all  oldmetadata key metadata records"() {
+    def "should find all  old key metadata records"() {
 
         given:
 
