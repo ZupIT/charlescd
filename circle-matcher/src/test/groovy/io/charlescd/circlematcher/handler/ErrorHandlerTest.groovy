@@ -132,8 +132,8 @@ class ErrorHandlerTest extends Specification {
         when:
         def response = errorHandler.handleException(exception)
         then:
-        assert response.details == 'null pointer'
-        assert response.title == 'Internal server error'
+        assert response.details == 'Unexpected error. Please, try again later.'
+        assert response.title == 'Internal Server Error'
         assert response.status == "500"
         assert response.meta.get("component") == metaInfo.get("component")
     }
