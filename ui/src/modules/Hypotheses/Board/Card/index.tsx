@@ -39,9 +39,9 @@ export interface Props {
   isSelectable?: boolean;
 }
 
-interface Params {
-  hypothesisId: string;
-}
+type Params = {
+  hypothesisId: string
+};
 
 const CardBoard = forwardRef(
   (
