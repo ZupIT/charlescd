@@ -282,7 +282,6 @@ class CredentialConfigurationService(
     ): CreateDeployCdConfigurationRequest {
 
         return when (createCdConfigRequest) {
-            is CreateSpinnakerCdConfigurationRequest -> createCdConfigRequest.toDeployRequest(user)
             is CreateOctopipeCdConfigurationRequest -> createCdConfigRequest.toDeployRequest(user)
             else -> throw IllegalArgumentException("Invalid cd configuration type")
         }
