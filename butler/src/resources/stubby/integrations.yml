@@ -42,6 +42,17 @@
     body: >
       {}
 
+- request:
+    method: POST
+    url: ^/octopipe/api/v2/deployments
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
 # NOTIFICATION
 
 - request:

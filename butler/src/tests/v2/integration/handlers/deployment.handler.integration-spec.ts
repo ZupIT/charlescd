@@ -96,22 +96,6 @@ describe('DeploymentHandler', () => {
       return res.send({ ok: 'ok' })
     })
 
-    mock.post('/ok/tasks', (req, res) => {
-      res.sendStatus(200)
-    })
-
-    mock.get('/ok/applications/:app/pipelineConfigs/:cdConfig', (req, res) => {
-      res.send({ id: '123123123123' })
-    })
-
-    mock.post('/ok/pipelines/:app/:pipeline', (req, res) => {
-      res.send({ id: '123123123123' })
-    })
-
-    mock.post('/v2/executions/:executionId/notify', (req, res) => {
-      res.send({ ok: '???' })
-    })
-
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.OCTOPIPE,
       { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
@@ -156,7 +140,6 @@ describe('DeploymentHandler', () => {
 
     const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
     const notHandledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
-
     expect(handledDeployment.components.map(c => c.running)).toEqual([true])
     expect(notHandledDeployment.components.map(c => c.running)).toEqual([false])
 
@@ -177,368 +160,368 @@ describe('DeploymentHandler', () => {
     expect(firstStopped.components.map(c => c.running)).toEqual([false])
   })
 
-  it('dont set components to running if CD returns an error', async() => {
-    mock.post('/error/tasks', (req, res) => {
-      res.sendStatus(500)
-    })
+  // it('dont set components to running if CD returns an error', async() => {
+  //   mock.post('/error/tasks', (req, res) => {
+  //     res.sendStatus(500)
+  //   })
 
-    mock.get('/error/applications/:app/pipelineConfigs/:cdConfig', (req, res) => {
-      res.send({ id: '123123123123' })
-    })
+  //   mock.get('/error/applications/:app/pipelineConfigs/:cdConfig', (req, res) => {
+  //     res.send({ id: '123123123123' })
+  //   })
 
-    mock.post('/error/pipelines/:app/:pipeline', (req, res) => {
-      res.send({ id: '123123123123' })
-    })
+  //   mock.post('/error/pipelines/:app/:pipeline', (req, res) => {
+  //     res.send({ id: '123123123123' })
+  //   })
 
-    mock.post('/error/pipelines', (req, res) => {
-      res.send({ ok: '???' })
-    })
+  //   mock.post('/error/pipelines', (req, res) => {
+  //     res.send({ ok: '???' })
+  //   })
 
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-    const params = {
-      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
-      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
-      components: [
-        {
-          helmRepository: 'https://some-helm.repo',
-          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com',
-          buildImageTag: 'tag1',
-          componentName: 'component-name'
-        }
-      ],
-      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
-      defaultCircle: false
-    }
+  //   const cdConfiguration = new CdConfigurationEntity(
+  //     CdTypeEnum.OCTOPIPE,
+  //     { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
+  //     'config-name',
+  //     'authorId',
+  //     'workspaceId'
+  //   )
+  //   await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+  //   const params = {
+  //     deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+  //     circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+  //     components: [
+  //       {
+  //         helmRepository: 'https://some-helm.repo',
+  //         componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+  //         buildImageUrl: 'imageurl.com',
+  //         buildImageTag: 'tag1',
+  //         componentName: 'component-name'
+  //       }
+  //     ],
+  //     authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+  //     cdConfigurationId: cdConfiguration.id,
+  //     callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+  //     incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+  //     defaultCircle: false
+  //   }
 
-    const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
-    const firstDeployment = firstFixtures.deployment
-    const firstJob = firstFixtures.job
+  //   const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+  //   const firstDeployment = firstFixtures.deployment
+  //   const firstJob = firstFixtures.job
 
-    await deploymentHandler.run(firstJob)
+  //   await deploymentHandler.run(firstJob)
 
-    const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
+  //   const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
 
-    expect(handledDeployment.components.map(c => c.running)).toEqual([false])
-  })
+  //   expect(handledDeployment.components.map(c => c.running)).toEqual([false])
+  // })
 
-  it('stop the job when the deployment status is flagged as TIMED_OUT', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-    const params = {
-      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
-      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
-      components: [
-        {
-          helmRepository: 'https://some-helm.repo',
-          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com',
-          buildImageTag: 'tag1',
-          componentName: 'component-name'
-        }
-      ],
-      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      deploymentStatus: DeploymentStatusEnum.TIMED_OUT,
-      defaultCircle: false
-    }
+  // it('stop the job when the deployment status is flagged as TIMED_OUT', async() => {
+  //   const cdConfiguration = new CdConfigurationEntity(
+  //     CdTypeEnum.OCTOPIPE,
+  //     { gitProvider: GitProvidersEnum.GITHUB, namespace: 'my-namespace', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
+  //     'config-name',
+  //     'authorId',
+  //     'workspaceId'
+  //   )
+  //   await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+  //   const params = {
+  //     deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+  //     circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+  //     components: [
+  //       {
+  //         helmRepository: 'https://some-helm.repo',
+  //         componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+  //         buildImageUrl: 'imageurl.com',
+  //         buildImageTag: 'tag1',
+  //         componentName: 'component-name'
+  //       }
+  //     ],
+  //     authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+  //     cdConfigurationId: cdConfiguration.id,
+  //     callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+  //     deploymentStatus: DeploymentStatusEnum.TIMED_OUT,
+  //     defaultCircle: false
+  //   }
 
-    const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+  //   const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
 
-    await expect(
-      deploymentHandler.run(fixtures.job)
-    ).rejects.toThrow(new Error('Deployment timed out'))
+  //   await expect(
+  //     deploymentHandler.run(fixtures.job)
+  //   ).rejects.toThrow(new Error('Deployment timed out'))
 
-    const timedOutDeployment = await manager.findOneOrFail(DeploymentEntity, { id: fixtures.deployment.id }, { relations: ['executions'] })
-    expect(timedOutDeployment.executions.map(e => e.status)).toEqual([DeploymentStatusEnum.TIMED_OUT])
-  })
+  //   const timedOutDeployment = await manager.findOneOrFail(DeploymentEntity, { id: fixtures.deployment.id }, { relations: ['executions'] })
+  //   expect(timedOutDeployment.executions.map(e => e.status)).toEqual([DeploymentStatusEnum.TIMED_OUT])
+  // })
 
-  it('should pass the correct activeComponents for the deployment method when multiple cdConfigurationIds with active deployments coexist', async() => {
-    const cdConfiguration1 = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace1', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration1)
+  // it('should pass the correct activeComponents for the deployment method when multiple cdConfigurationIds with active deployments coexist', async() => {
+  //   const cdConfiguration1 = new CdConfigurationEntity(
+  //     CdTypeEnum.OCTOPIPE,
+  //     { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace1', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
+  //     'config-name',
+  //     'authorId',
+  //     'workspaceId'
+  //   )
+  //   await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration1)
 
-    const defaultCircleActiveDeploymentDiffCdConfig = new DeploymentEntity(
-      'baa226a2-97f1-4e1b-b05a-d758839408f9',
-      'user-1',
-      '333365f8-bb29-49f7-bf2b-3ec956a71583',
-      cdConfiguration1,
-      'http://localhost:1234/notifications/deployment?deploymentId=1',
-      [
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/A:v1',
-          'A',
-          'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
-          null,
-          null
-        ),
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/B:v1',
-          'B',
-          '1c29210c-e313-4447-80e3-db89b2359138',
-          null,
-          null
-        )
-      ],
-      true
-    )
-    defaultCircleActiveDeploymentDiffCdConfig.active = true
-    await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
+  //   const defaultCircleActiveDeploymentDiffCdConfig = new DeploymentEntity(
+  //     'baa226a2-97f1-4e1b-b05a-d758839408f9',
+  //     'user-1',
+  //     '333365f8-bb29-49f7-bf2b-3ec956a71583',
+  //     cdConfiguration1,
+  //     'http://localhost:1234/notifications/deployment?deploymentId=1',
+  //     [
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/A:v1',
+  //         'A',
+  //         'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
+  //         null,
+  //         null
+  //       ),
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/B:v1',
+  //         'B',
+  //         '1c29210c-e313-4447-80e3-db89b2359138',
+  //         null,
+  //         null
+  //       )
+  //     ],
+  //     true
+  //   )
+  //   defaultCircleActiveDeploymentDiffCdConfig.active = true
+  //   await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
 
-    const cdConfiguration2 = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace2', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration2)
+  //   const cdConfiguration2 = new CdConfigurationEntity(
+  //     CdTypeEnum.OCTOPIPE,
+  //     { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace2', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
+  //     'config-name',
+  //     'authorId',
+  //     'workspaceId'
+  //   )
+  //   await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration2)
 
-    const defaultCircleActiveDeploymentSameCdConfig = new DeploymentEntity(
-      'f3cb70be-abe6-4efd-ae3e-2081d11c6922',
-      'user-1',
-      '4d9f61b9-64d0-4425-a9f7-69983c5ce837',
-      cdConfiguration2,
-      'http://localhost:1234/notifications/deployment?deploymentId=1',
-      [
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/C:v1',
-          'C',
-          '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
-          null,
-          null
-        ),
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/D:v1',
-          'D',
-          'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
-          null,
-          null
-        )
-      ],
-      true
-    )
-    defaultCircleActiveDeploymentSameCdConfig.active = true
-    await manager.save(defaultCircleActiveDeploymentSameCdConfig)
+  //   const defaultCircleActiveDeploymentSameCdConfig = new DeploymentEntity(
+  //     'f3cb70be-abe6-4efd-ae3e-2081d11c6922',
+  //     'user-1',
+  //     '4d9f61b9-64d0-4425-a9f7-69983c5ce837',
+  //     cdConfiguration2,
+  //     'http://localhost:1234/notifications/deployment?deploymentId=1',
+  //     [
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/C:v1',
+  //         'C',
+  //         '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+  //         null,
+  //         null
+  //       ),
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/D:v1',
+  //         'D',
+  //         'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+  //         null,
+  //         null
+  //       )
+  //     ],
+  //     true
+  //   )
+  //   defaultCircleActiveDeploymentSameCdConfig.active = true
+  //   await manager.save(defaultCircleActiveDeploymentSameCdConfig)
 
-    const newDefaultCircleDeployment: DeploymentEntity = await manager.save(new DeploymentEntity(
-      '1960773a-63d8-43be-ac77-dbcc8a39cd63',
-      'user-1',
-      '04310637-3686-4635-b408-4547c722f2d7',
-      cdConfiguration2,
-      'http://localhost:1234/notifications/deployment?deploymentId=1',
-      [
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/E:v1',
-          'E',
-          '463e7680-0e59-4bda-9eb6-eb10bb2cdc90',
-          null,
-          null
-        )
-      ],
-      true
-    ))
+  //   const newDefaultCircleDeployment: DeploymentEntity = await manager.save(new DeploymentEntity(
+  //     '1960773a-63d8-43be-ac77-dbcc8a39cd63',
+  //     'user-1',
+  //     '04310637-3686-4635-b408-4547c722f2d7',
+  //     cdConfiguration2,
+  //     'http://localhost:1234/notifications/deployment?deploymentId=1',
+  //     [
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/E:v1',
+  //         'E',
+  //         '463e7680-0e59-4bda-9eb6-eb10bb2cdc90',
+  //         null,
+  //         null
+  //       )
+  //     ],
+  //     true
+  //   ))
 
-    const execution : Execution = await manager.save(new Execution(
-      newDefaultCircleDeployment,
-      ExecutionTypeEnum.DEPLOYMENT,
-      'ccc7141b-4d55-4a60-971e-86f3a5a6fb7a',
-      DeploymentStatusEnum.CREATED,
-    ))
+  //   const execution : Execution = await manager.save(new Execution(
+  //     newDefaultCircleDeployment,
+  //     ExecutionTypeEnum.DEPLOYMENT,
+  //     'ccc7141b-4d55-4a60-971e-86f3a5a6fb7a',
+  //     DeploymentStatusEnum.CREATED,
+  //   ))
 
-    const executionJob : JobWithDoneCallback<Execution, unknown> = {
-      data: execution,
-      done: () => ({}),
-      id: 'job-id',
-      name: 'job-name'
-    }
+  //   const executionJob : JobWithDoneCallback<Execution, unknown> = {
+  //     data: execution,
+  //     done: () => ({}),
+  //     id: 'job-id',
+  //     name: 'job-name'
+  //   }
 
-    const createDeploymentSpy = jest.spyOn(octopipeConnector, 'createDeployment')
-    await deploymentHandler.run(executionJob)
-    expect(createDeploymentSpy).toHaveBeenCalledWith(
-      expect.anything(),
-      [
-        expect.objectContaining({
-          helmUrl: 'http://localhost:2222/helm',
-          imageTag: 'v1',
-          imageUrl: 'https://repository.com/D:v1',
-          name: 'D',
-          componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
-          hostValue: null,
-          gatewayName: null,
-          running: false
-        }),
-        expect.objectContaining({
-          helmUrl: 'http://localhost:2222/helm',
-          imageTag: 'v1',
-          imageUrl: 'https://repository.com/C:v1',
-          name: 'C',
-          componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
-          hostValue: null,
-          gatewayName: null,
-          running: false
-        }),
-      ],
-      expect.anything()
-    )
-  })
+  //   const createDeploymentSpy = jest.spyOn(octopipeConnector, 'createDeployment')
+  //   await deploymentHandler.run(executionJob)
+  //   expect(createDeploymentSpy).toHaveBeenCalledWith(
+  //     expect.anything(),
+  //     [
+  //       expect.objectContaining({
+  //         helmUrl: 'http://localhost:2222/helm',
+  //         imageTag: 'v1',
+  //         imageUrl: 'https://repository.com/D:v1',
+  //         name: 'D',
+  //         componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+  //         hostValue: null,
+  //         gatewayName: null,
+  //         running: false
+  //       }),
+  //       expect.objectContaining({
+  //         helmUrl: 'http://localhost:2222/helm',
+  //         imageTag: 'v1',
+  //         imageUrl: 'https://repository.com/C:v1',
+  //         name: 'C',
+  //         componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+  //         hostValue: null,
+  //         gatewayName: null,
+  //         running: false
+  //       }),
+  //     ],
+  //     expect.anything()
+  //   )
+  // })
 
-  it('should pass the correct activeComponents for the undeployment method when multiple cdConfigurationIds with active deployments coexist', async() => {
-    const cdConfiguration1 = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace1', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration1)
+  // it('should pass the correct activeComponents for the undeployment method when multiple cdConfigurationIds with active deployments coexist', async() => {
+  //   const cdConfiguration1 = new CdConfigurationEntity(
+  //     CdTypeEnum.OCTOPIPE,
+  //     { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace1', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
+  //     'config-name',
+  //     'authorId',
+  //     'workspaceId'
+  //   )
+  //   await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration1)
 
-    const defaultCircleActiveDeploymentDiffCdConfig = new DeploymentEntity(
-      'baa226a2-97f1-4e1b-b05a-d758839408f9',
-      'user-1',
-      '333365f8-bb29-49f7-bf2b-3ec956a71583',
-      cdConfiguration1,
-      'http://localhost:1234/notifications/deployment?deploymentId=1',
-      [
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/A:v1',
-          'A',
-          'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
-          null,
-          null
-        ),
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/B:v1',
-          'B',
-          '1c29210c-e313-4447-80e3-db89b2359138',
-          null,
-          null
-        )
-      ],
-      true
-    )
-    defaultCircleActiveDeploymentDiffCdConfig.active = true
-    await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
+  //   const defaultCircleActiveDeploymentDiffCdConfig = new DeploymentEntity(
+  //     'baa226a2-97f1-4e1b-b05a-d758839408f9',
+  //     'user-1',
+  //     '333365f8-bb29-49f7-bf2b-3ec956a71583',
+  //     cdConfiguration1,
+  //     'http://localhost:1234/notifications/deployment?deploymentId=1',
+  //     [
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/A:v1',
+  //         'A',
+  //         'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
+  //         null,
+  //         null
+  //       ),
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/B:v1',
+  //         'B',
+  //         '1c29210c-e313-4447-80e3-db89b2359138',
+  //         null,
+  //         null
+  //       )
+  //     ],
+  //     true
+  //   )
+  //   defaultCircleActiveDeploymentDiffCdConfig.active = true
+  //   await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
 
-    const cdConfiguration2 = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace2', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration2)
+  //   const cdConfiguration2 = new CdConfigurationEntity(
+  //     CdTypeEnum.OCTOPIPE,
+  //     { gitProvider: GitProvidersEnum.GITHUB, namespace: 'namespace2', provider: ClusterProviderEnum.DEFAULT, gitToken: 'example' },
+  //     'config-name',
+  //     'authorId',
+  //     'workspaceId'
+  //   )
+  //   await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration2)
 
-    let defaultCircleActiveDeploymentSameCdConfig = new DeploymentEntity(
-      'f3cb70be-abe6-4efd-ae3e-2081d11c6922',
-      'user-1',
-      '4d9f61b9-64d0-4425-a9f7-69983c5ce837',
-      cdConfiguration2,
-      'http://localhost:1234/notifications/deployment?deploymentId=1',
-      [
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/C:v1',
-          'C',
-          '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
-          null,
-          null
-        ),
-        new ComponentEntity(
-          'http://localhost:2222/helm',
-          'v1',
-          'https://repository.com/D:v1',
-          'D',
-          'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
-          null,
-          null
-        )
-      ],
-      true
-    )
-    defaultCircleActiveDeploymentSameCdConfig.active = true
-    defaultCircleActiveDeploymentSameCdConfig = await manager.save(defaultCircleActiveDeploymentSameCdConfig)
+  //   let defaultCircleActiveDeploymentSameCdConfig = new DeploymentEntity(
+  //     'f3cb70be-abe6-4efd-ae3e-2081d11c6922',
+  //     'user-1',
+  //     '4d9f61b9-64d0-4425-a9f7-69983c5ce837',
+  //     cdConfiguration2,
+  //     'http://localhost:1234/notifications/deployment?deploymentId=1',
+  //     [
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/C:v1',
+  //         'C',
+  //         '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+  //         null,
+  //         null
+  //       ),
+  //       new ComponentEntity(
+  //         'http://localhost:2222/helm',
+  //         'v1',
+  //         'https://repository.com/D:v1',
+  //         'D',
+  //         'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+  //         null,
+  //         null
+  //       )
+  //     ],
+  //     true
+  //   )
+  //   defaultCircleActiveDeploymentSameCdConfig.active = true
+  //   defaultCircleActiveDeploymentSameCdConfig = await manager.save(defaultCircleActiveDeploymentSameCdConfig)
 
-    const execution : Execution = await manager.save(new Execution(
-      defaultCircleActiveDeploymentSameCdConfig,
-      ExecutionTypeEnum.UNDEPLOYMENT,
-      'ccc7141b-4d55-4a60-971e-86f3a5a6fb7a',
-      DeploymentStatusEnum.CREATED,
-    ))
+  //   const execution : Execution = await manager.save(new Execution(
+  //     defaultCircleActiveDeploymentSameCdConfig,
+  //     ExecutionTypeEnum.UNDEPLOYMENT,
+  //     'ccc7141b-4d55-4a60-971e-86f3a5a6fb7a',
+  //     DeploymentStatusEnum.CREATED,
+  //   ))
 
-    const executionJob1 : JobWithDoneCallback<Execution, unknown> = {
-      data: execution,
-      done: () => ({}),
-      id: 'job-id1',
-      name: 'job-name1'
-    }
+  //   const executionJob1 : JobWithDoneCallback<Execution, unknown> = {
+  //     data: execution,
+  //     done: () => ({}),
+  //     id: 'job-id1',
+  //     name: 'job-name1'
+  //   }
 
-    const createUndeploymentSpy = jest.spyOn(octopipeConnector, 'createUndeployment')
-    await deploymentHandler.run(executionJob1)
-    expect(createUndeploymentSpy).toHaveBeenCalledWith(
-      expect.anything(),
-      [
-        expect.objectContaining({
-          helmUrl: 'http://localhost:2222/helm',
-          imageTag: 'v1',
-          imageUrl: 'https://repository.com/D:v1',
-          name: 'D',
-          componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
-          hostValue: null,
-          gatewayName: null,
-          running: false
-        }),
-        expect.objectContaining({
-          helmUrl: 'http://localhost:2222/helm',
-          imageTag: 'v1',
-          imageUrl: 'https://repository.com/C:v1',
-          name: 'C',
-          componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
-          hostValue: null,
-          gatewayName: null,
-          running: false
-        }),
-      ],
-      expect.anything()
-    )
-  })
+  //   const createUndeploymentSpy = jest.spyOn(octopipeConnector, 'createUndeployment')
+  //   await deploymentHandler.run(executionJob1)
+  //   expect(createUndeploymentSpy).toHaveBeenCalledWith(
+  //     expect.anything(),
+  //     [
+  //       expect.objectContaining({
+  //         helmUrl: 'http://localhost:2222/helm',
+  //         imageTag: 'v1',
+  //         imageUrl: 'https://repository.com/D:v1',
+  //         name: 'D',
+  //         componentId: 'bc0e1fe7-6fc3-402c-9b87-af827bedfc05',
+  //         hostValue: null,
+  //         gatewayName: null,
+  //         running: false
+  //       }),
+  //       expect.objectContaining({
+  //         helmUrl: 'http://localhost:2222/helm',
+  //         imageTag: 'v1',
+  //         imageUrl: 'https://repository.com/C:v1',
+  //         name: 'C',
+  //         componentId: '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
+  //         hostValue: null,
+  //         gatewayName: null,
+  //         running: false
+  //       }),
+  //     ],
+  //     expect.anything()
+  //   )
+  // })
 })
 
 const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<{deployment: DeploymentEntity, execution:Execution, job: JobWithDoneCallback<Execution, unknown>  }> => {
