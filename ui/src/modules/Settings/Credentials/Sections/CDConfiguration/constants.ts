@@ -18,11 +18,6 @@ import { RadioButton } from 'core/components/Radio/Buttons';
 
 export const FORM_CD_CONFIGURATION = 'cd-configuration';
 
-export const radios: RadioButton[] = [
-  { icon: 'charlescd', name: 'CharlesCD', value: 'OCTOPIPE' },
-  { icon: 'spinnaker', name: 'Spinnaker', value: 'SPINNAKER' }
-];
-
 export const gitProviders = [
   {
     value: 'GITHUB',

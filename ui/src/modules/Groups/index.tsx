@@ -74,25 +74,25 @@ const UserGroups = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Modal.Title color="light">New user group</Styled.Modal.Title>
         <Styled.Modal.Input
-            name="name"
-            label="Type a name"
-            error={errors?.name?.message}
-            ref={register({
-              required: isRequired(),
-              maxLength: maxLength()
-            })}
-          />
-          <Styled.Modal.Button
-            id="user-group"
-            type="submit"
-            isDisabled={!isValid}
-            isLoading={loadingCreate}
-          >
-            Create user group
-          </Styled.Modal.Button>
-        </form>
-      </Modal.Default>
-    );
+          name="name"
+          label="Type a name"
+          error={errors?.name?.message}
+          ref={register({
+            required: isRequired(),
+            maxLength: maxLength()
+          })}
+        />
+        <Styled.Modal.Button
+          id="user-group"
+          type="submit"
+          isDisabled={!isValid}
+          isLoading={loadingCreate}
+        >
+          Create user group
+        </Styled.Modal.Button>
+      </form>
+    </Modal.Default>
+  );
 
   return (
     <Page>
