@@ -20,10 +20,10 @@ import Page from 'core/components/Page';
 import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
 import { getAccessTokenDecoded, isIDMAuthFlow, logout } from 'core/utils/auth';
+import { useWorkspacesByUser } from 'modules/Users/hooks';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
 import { isRoot } from 'core/utils/auth';
-import { findWorkspacesByUserId } from 'core/providers/users';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -34,6 +34,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const workspaces = getProfileByKey('workspaces');
   const userId = getProfileByKey('id');
   const [filterWorkspace, , loading] = useWorkspace();
+  const { findWorkspacesByUser } = useWorkspacesByUser();
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
@@ -41,9 +42,9 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     if (isRoot()) {
       filterWorkspace(name);
     } else {
-      findWorkspacesByUserId(userId);
+      findWorkspacesByUser(userId);
     }
-  }, [filterWorkspace, name, userId]);
+  }, [filterWorkspace, findWorkspacesByUser, name, userId]);
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
