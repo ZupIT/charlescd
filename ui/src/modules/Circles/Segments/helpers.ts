@@ -45,7 +45,7 @@ export const getGroupVerticalLine = (
   let firstGroupIsRule = false;
   const first = 0;
 
-  fields?.map((field, index) => {
+  fields?.forEach((field, index) => {
     const isMiddleGroup = index > first && index < fields.length - 1;
 
     if (index === first) {
