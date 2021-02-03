@@ -289,7 +289,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
     ).toEqual(completeOctopipeDeploymentWithOverrides)
   })
 
-  it('Should undeploy A:v1 and B:v1 and C:v2 when new deploy is A:v2, B:V2 and D:v2 and current components are A:v1, B:V1 and C:v2, but should keep remove C:V2 from circle-id', async() => {
+  it('Should undeploy updated components from circle and remove component that is not present on deployment request', async() => {
 
     const deploymentWith3Components: Deployment = {
       id: 'deployment-id',
