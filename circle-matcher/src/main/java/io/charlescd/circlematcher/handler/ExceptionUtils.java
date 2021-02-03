@@ -1,7 +1,10 @@
 package io.charlescd.circlematcher.handler;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ExceptionUtils {
 
@@ -29,7 +32,11 @@ public class ExceptionUtils {
         );
     }
 
-    public static DefaultErrorResponse createBusinessExceptionError(String message, String title, String sourceString, Exception exception) {
+    public static DefaultErrorResponse createBusinessExceptionError(
+            String message,
+            String title,
+            String sourceString,
+            Exception exception) {
         Source source = new Source(sourceString);
         return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),

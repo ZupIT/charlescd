@@ -103,7 +103,7 @@ class ErrorHandlerTest extends Specification {
         def response = errorHandler.handleIllegalArgument(illegalArgumentException)
         then:
         assert response.details == 'argument not valid'
-        assert response.title == 'Bad Request'
+        assert responseD.title == 'Bad Request'
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
     }

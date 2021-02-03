@@ -98,33 +98,3 @@ public class DefaultErrorResponse {
 
 }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-class Source {
-    public String getPointer() {
-        return pointer;
-    }
-
-    public void setPointer(String pointer) {
-        this.pointer = pointer;
-    }
-
-    public String getParameter() {
-        return parameter;
-    }
-
-    public Source(String pointer, String parameter) {
-        this.pointer = pointer;
-        this.parameter = parameter;
-    }
-
-    public Source(String pointer) {
-        this.pointer = pointer;
-    }
-
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
-
-    private String pointer;
-    private String parameter;
-}
