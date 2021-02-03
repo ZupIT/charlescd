@@ -19,6 +19,7 @@
 package subscription
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -28,6 +29,7 @@ import (
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
 	"net/http"
+	"strconv"
 )
 
 func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
@@ -181,10 +183,9 @@ func mapMessages(messages []payloads.FullMessageResponse, executions []payloads.
 				SubscriptionId: messageResponse.SubscriptionId,
 			},
 		}
+
 		var execs []payloads.FullMessageExecutionResponse
-
 		for _, executionResponse := range executions {
-
 			if messageResponse.Id == executionResponse.ExecutionId {
 				execs = append(execs, executionResponse)
 				p.Executions = execs
@@ -217,7 +218,11 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
-		requestMessages := subscriptionToMessageRequest(subscriptions, request)
+		requestMessages, eventErr := subscriptionToMessageRequest(subscriptions, request)
+		if eventErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
 
 		createdMessages, err := messageMain.Publish(requestMessages)
 		if err != nil {
@@ -229,15 +234,24 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 	}
 }
 
-func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdResponse, request payloads.PayloadRequest) []payloads.Request {
+func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdResponse, request payloads.PayloadRequest) ([]payloads.Request, error) {
 	var messages []payloads.Request
+
+	unEvent, err := strconv.Unquote(string(request.Event))
+	if err != nil {
+		return nil, errors.New("cannot parse this event: "+ err.Error())
+	}
+
+	rawEvent := json.RawMessage(unEvent)
+
 	for _, s := range subscriptions {
 		msg := payloads.Request{
 			SubscriptionId: s.Id,
 			EventType:      request.EventType,
-			Event:          request.Event,
+			Event:          rawEvent,
 		}
 		messages = append(messages, msg)
 	}
-	return messages
+
+	return messages, nil
 }

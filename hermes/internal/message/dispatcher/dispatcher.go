@@ -15,6 +15,7 @@ import (
 const (
 	enqueued    = "ENQUEUED"
 	notEnqueued = "NOT_ENQUEUED"
+	successLog  = "SUCCESS"
 )
 
 func (main *Main) Start(stopChan chan bool) error {
@@ -70,20 +71,20 @@ func (main *Main) sendMessage(message payloads.MessageResponse) error {
 
 	err = main.amqpClient.Push(pushMsg)
 	if err != nil {
-		main.updateMessageStatus(message, notEnqueued)
+		main.updateMessageStatus(message, notEnqueued, err.Error())
 		return err
 	}
 
-	main.updateMessageStatus(message, enqueued)
+	main.updateMessageStatus(message, enqueued, successLog)
 
 	return nil
 }
 
-func (main *Main) updateMessageStatus(message payloads.MessageResponse, status string) {
+func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, log string) {
 	data := messageexecutionhistory.MessagesExecutionsHistory{
 		ID:           uuid.New(),
 		ExecutionId:  message.Id,
-		ExecutionLog: "",
+		ExecutionLog: log,
 		Status:       status,
 		LoggedAt:     time.Now(),
 	}

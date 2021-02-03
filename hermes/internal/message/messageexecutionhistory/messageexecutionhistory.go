@@ -54,7 +54,7 @@ func (main Main) Save(executionsRequest payloads.ExecutionRequest) (payloads.Res
 func (main Main) FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullMessageExecutionResponse, errors.Error) {
 	var response []payloads.FullMessageExecutionResponse
 
-	query := main.db.Model(&MessagesExecutionsHistory{}).Where("execution_id IN ?", executionId).Find(&response)
+	query := main.db.Model(&MessagesExecutionsHistory{}).Where("execution_id IN ?", executionId).Order("logged_at desc").Find(&response)
 	if query.Error != nil {
 		return []payloads.FullMessageExecutionResponse{}, errors.NewError("Save Message Execution error", query.Error.Error()).
 			WithOperations("Save.Result")
