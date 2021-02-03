@@ -21,7 +21,6 @@ import io.charlescd.circlematcher.domain.KeyMetadata;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
@@ -52,7 +51,9 @@ public class KeyMetadataRepository implements RedisRepository {
             var metadata = this.objectMapper.convertValue(cursor.next(), KeyMetadata.class);
             metadataList.add(metadata);
         }
-        return metadataList.parallelStream().filter(metadata -> metadata.getActive() == null).collect(Collectors.toList());
+        return metadataList
+                .parallelStream()
+                .filter(metadata -> metadata.getActive() == null).collect(Collectors.toList());
     }
 
     public List<KeyMetadata> findByWorkspaceId(String workspaceId) {
