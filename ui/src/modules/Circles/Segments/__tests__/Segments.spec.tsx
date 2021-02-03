@@ -15,11 +15,8 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer';
 import { render, fireEvent, screen } from 'unit-test/testUtils';
 import Segments from '..';
-
-(global as any).MutationObserver = MutationObserver;
 
 test('render Segments default component', () => {
   render(<Segments />);
