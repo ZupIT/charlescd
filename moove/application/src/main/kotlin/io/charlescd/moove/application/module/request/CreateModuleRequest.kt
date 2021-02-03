@@ -24,18 +24,22 @@ import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
+import javax.validation.constraints.*
 
 data class CreateModuleRequest(
     @field:NotBlank
+    @field:Size(max = 64)
     val name: String,
 
     @field:NotBlank
+    @field:Size(max = 2048)
+    @field:Pattern(regexp = "[Hh][Tt][Tt][Pp][Ss]?:\\/\\/(?:(?:[a-zA-Z\\u00a1-\\uffff0-9]+-?)*[a-zA-Z\\u00a1-\\uffff0-9]+)" +
+            "(?:\\.(?:[a-zA-Z\\u00a1-\\uffff0-9]+-?)*[a-zA-Z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-zA-Z\\u00a1-\\uffff]{2,}))" +
+            "(?::\\d{2,5})?(?:\\/[^\\s]*)?", message = "URL inválida.")
     val gitRepositoryAddress: String,
 
     @field:NotBlank
+    @field:Size(max = 2048)
     val helmRepository: String,
 
     @field:Valid
@@ -44,10 +48,10 @@ data class CreateModuleRequest(
 ) {
     fun toDomain(moduleId: String, workspaceId: String, author: User) = Module(
         id = moduleId,
-        name = this.name,
+        name = this.name.trim(),
         gitRepositoryAddress = this.gitRepositoryAddress,
         createdAt = LocalDateTime.now(),
-        helmRepository = this.helmRepository,
+        helmRepository = this.helmRepository.trim(),
         author = author,
         components = this.components.map { it.toDomain(moduleId, workspaceId) },
         workspaceId = workspaceId
@@ -56,27 +60,31 @@ data class CreateModuleRequest(
 
 data class ComponentRequest(
     @field:NotBlank
+    @field:Size(max = 64)
     val name: String,
 
     @field:NotNull
     val errorThreshold: Int,
 
     @field:NotNull
+    @field:Min(value = 0)
     val latencyThreshold: Int,
 
+    @field:Size(max = 2048)
     val hostValue: String?,
 
+    @field:Size(max = 100)
     val gatewayName: String?
 ) {
     fun toDomain(moduleId: String, workspaceId: String) = Component(
         id = UUID.randomUUID().toString(),
-        name = this.name,
+        name = this.name.trim(),
         moduleId = moduleId,
         createdAt = LocalDateTime.now(),
         workspaceId = workspaceId,
         errorThreshold = this.errorThreshold,
         latencyThreshold = this.latencyThreshold,
-        hostValue = this.hostValue,
-        gatewayName = this.gatewayName
+        hostValue = this.hostValue?.trim(),
+        gatewayName = this.gatewayName?.trim()
     )
 }

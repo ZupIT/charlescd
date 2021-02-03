@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import React from 'react';
+import Styled from './styled';
+import { DocumentationLinkProps } from './interface';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
-
-  return status;
+const DocumentationLink = ({
+  text,
+  documentationLink
+}: DocumentationLinkProps) => {
+  return (
+    <>
+      <Styled.DocumentationLink target="_blank" href={documentationLink}>
+        {text}
+      </Styled.DocumentationLink>{' '}
+    </>
+  );
 };
 
-export const isNotBlank = (value: string) => !!value.trim();
+export default DocumentationLink;
