@@ -108,7 +108,7 @@ describe('DeploymentHandler', () => {
       res.send({ id: '123123123123' })
     })
 
-    mock.post('/ok/pipelines', (req, res) => {
+    mock.post('/v2/executions/:executionId/notify', (req, res) => {
       res.send({ ok: '???' })
     })
 
