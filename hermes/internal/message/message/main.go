@@ -34,6 +34,7 @@ type UseCases interface {
 	Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error)
 	FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string) ([]payloads.FullMessageResponse, errors.Error)
 	FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
+	FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusResponse, errors.Error)
 }
 
 type Main struct {

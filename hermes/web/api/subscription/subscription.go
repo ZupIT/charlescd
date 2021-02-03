@@ -221,3 +221,22 @@ func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.Respon
 	}
 }
 
+func HealthCheck(messageMain message.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		if uuidErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			return
+		}
+
+		result, err := messageMain.FindMostRecent(subscriptionId)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		restutil.NewResponse(w, http.StatusOK, result)
+	}
+}
+

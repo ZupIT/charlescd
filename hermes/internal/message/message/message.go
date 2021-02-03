@@ -148,6 +148,22 @@ func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params m
 	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Find(&response, cond), response
 }
 
+func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusResponse, errors.Error) {
+	r := payloads.FullMessageResponse{}
+
+	q := main.db.Model(&Message{}).Select("last_status").Where("subscription_id = ?", subscriptionId).Order("created_at desc").Limit(1).Find(&r)
+	if q.Error != nil {
+		return payloads.StatusResponse{}, errors.NewError("FindAllNotEnqueued Message error", q.Error.Error()).
+			WithOperations("FindAllNotEnqueued.Query")
+	}
+
+	if r.LastStatus != "ENQUEUED" {
+		return payloads.StatusResponse{Status: 503, Details: "Service unavailable"}, nil
+	}
+
+	return payloads.StatusResponse{Status: 200, Details: "Webhook available, last message was successfully enqueued"}, nil
+}
+
 func requestToEntity(r payloads.Request) Message {
 	return Message{
 		ID:             uuid.New(),

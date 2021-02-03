@@ -48,3 +48,8 @@ type FullMessageResponse struct {
 	LastStatus     string          `json:"lastStatus"`
 	SubscriptionId uuid.UUID       `json:"subscriptionId"`
 }
+
+type StatusResponse struct {
+	Status  int16  `json:"status"`
+	Details string `json:"Details"`
+}
