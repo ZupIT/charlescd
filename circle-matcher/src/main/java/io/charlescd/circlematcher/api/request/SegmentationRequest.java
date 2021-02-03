@@ -120,7 +120,6 @@ public abstract class SegmentationRequest {
 
     public Boolean getActive() {
         return active;
-
     }
 
     public LocalDateTime getCreatedAt() {
