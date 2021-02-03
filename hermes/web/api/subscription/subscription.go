@@ -207,26 +207,26 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
-		if err := messageMain.Validate(request); len(err.GetErrors()) > 0 {
-			restutil.NewResponse(w, http.StatusBadRequest, err)
+		if vErr := messageMain.Validate(request); len(vErr.GetErrors()) > 0 {
+			restutil.NewResponse(w, http.StatusBadRequest, vErr)
 			return
 		}
 
-		subscriptions, err := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
-		if err != nil {
-			restutil.NewResponse(w, http.StatusInternalServerError, err)
+		subscriptions, sErr := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
+		if sErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, sErr)
 			return
 		}
 
 		requestMessages, eventErr := subscriptionToMessageRequest(subscriptions, request)
 		if eventErr != nil {
-			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			restutil.NewResponse(w, http.StatusInternalServerError, eventErr)
 			return
 		}
 
-		createdMessages, err := messageMain.Publish(requestMessages)
-		if err != nil {
-			restutil.NewResponse(w, http.StatusInternalServerError, err)
+		createdMessages, pErr := messageMain.Publish(requestMessages)
+		if pErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, pErr)
 			return
 		}
 
