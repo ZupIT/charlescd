@@ -23,7 +23,6 @@ jobs:
       - name: Build with Maven
         working-directory: ./circle-matcher
         run: mvn -B clean install -Djfr.unsupported.vm=true
-
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
