@@ -272,7 +272,7 @@ export const useCirclePercentage = (): [
     if (error) {
       dispatch(
         toogleNotification({
-          text: `Error to save circle`,
+          text: `Error to fetch percentage circle`,
           status: 'error'
         })
       );
