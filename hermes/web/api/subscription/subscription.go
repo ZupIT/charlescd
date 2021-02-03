@@ -19,17 +19,14 @@
 package subscription
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"hermes/internal/message/message"
 	"hermes/internal/message/messageexecutionhistory"
-	"hermes/internal/message/payloads"
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
 	"net/http"
-	"strconv"
 )
 
 func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
@@ -164,39 +161,10 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			return
 		}
 
-		history := mapMessages(result, response)
+		history := restutil.MessageAndExecutionToHistoryResponse(result, response)
 
 		restutil.NewResponse(w, http.StatusOK, history)
 	}
-}
-
-func mapMessages(messages []payloads.FullMessageResponse, executions []payloads.FullMessageExecutionResponse) []payloads.HistoryResponse {
-	var response []payloads.HistoryResponse
-
-	for _, messageResponse := range messages {
-		p := payloads.HistoryResponse{
-			FullMessageResponse: payloads.FullMessageResponse{
-				Id:             messageResponse.Id,
-				EventType:      messageResponse.EventType,
-				Event:          messageResponse.Event,
-				LastStatus:     messageResponse.LastStatus,
-				SubscriptionId: messageResponse.SubscriptionId,
-			},
-		}
-
-		var execs []payloads.FullMessageExecutionResponse
-		for _, executionResponse := range executions {
-			if messageResponse.Id == executionResponse.ExecutionId {
-				execs = append(execs, executionResponse)
-				p.Executions = execs
-			}
-
-		}
-		response = append(response, p)
-
-	}
-
-	return response
 }
 
 func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
@@ -218,7 +186,7 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
-		requestMessages, eventErr := subscriptionToMessageRequest(subscriptions, request)
+		requestMessages, eventErr := restutil.SubscriptionToMessageRequest(subscriptions, request)
 		if eventErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, eventErr)
 			return
@@ -234,24 +202,22 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 	}
 }
 
-func subscriptionToMessageRequest(subscriptions []subscription.ExternalIdResponse, request payloads.PayloadRequest) ([]payloads.Request, error) {
-	var messages []payloads.Request
-
-	unEvent, err := strconv.Unquote(string(request.Event))
-	if err != nil {
-		return nil, errors.New("cannot parse this event: "+ err.Error())
-	}
-
-	rawEvent := json.RawMessage(unEvent)
-
-	for _, s := range subscriptions {
-		msg := payloads.Request{
-			SubscriptionId: s.Id,
-			EventType:      request.EventType,
-			Event:          rawEvent,
+func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		externalId, uuidErr := uuid.Parse(params["externalId"])
+		if uuidErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr.Error())
+			return
 		}
-		messages = append(messages, msg)
-	}
 
-	return messages, nil
+		result, err := subscriptionMain.FindAllByExternalId(externalId)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		restutil.NewResponse(w, http.StatusOK, result)
+	}
 }
+

@@ -38,8 +38,8 @@ func (main Main) FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullM
 
 	query := main.db.Model(&MessagesExecutionsHistory{}).Where("execution_id IN ?", executionId).Order("logged_at desc").Find(&response)
 	if query.Error != nil {
-		return []payloads.FullMessageExecutionResponse{}, errors.NewError("Save Message Execution error", query.Error.Error()).
-			WithOperations("Save.Result")
+		return []payloads.FullMessageExecutionResponse{}, errors.NewError("FindAllByExecutionId History error", query.Error.Error()).
+			WithOperations("FindAllByExecutionId.Result")
 	}
 
 	return response, nil

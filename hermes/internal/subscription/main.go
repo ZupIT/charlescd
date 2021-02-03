@@ -34,6 +34,7 @@ type UseCases interface {
 	Delete(subscriptionId uuid.UUID, author string) errors.Error
 	FindById(subscriptionId uuid.UUID) (Response, errors.Error)
 	FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error)
+	FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.Error)
 }
 type Main struct {
 	db *gorm.DB

@@ -90,7 +90,7 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 	result := main.db.Model(&Message{}).Create(&msgList).Find(&response, ids)
 	if result.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
-			WithOperations("Save.Result")
+			WithOperations("Publish.Result")
 	}
 
 	return response, nil
