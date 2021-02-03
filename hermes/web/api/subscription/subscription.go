@@ -170,11 +170,11 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 	}
 }
 
-func mapMessages(messages []payloads.FullMessageResponse, executions []payloads.FullMessageExecutionResponse) []payloads.HistoryPayload {
-	var response []payloads.HistoryPayload
+func mapMessages(messages []payloads.FullMessageResponse, executions []payloads.FullMessageExecutionResponse) []payloads.HistoryResponse {
+	var response []payloads.HistoryResponse
 
 	for _, messageResponse := range messages {
-		p := payloads.HistoryPayload{
+		p := payloads.HistoryResponse{
 			FullMessageResponse: payloads.FullMessageResponse{
 				Id:             messageResponse.Id,
 				EventType:      messageResponse.EventType,

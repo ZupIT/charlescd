@@ -26,7 +26,6 @@ import (
 )
 
 type UseCases interface {
-	Save(executionsRequest payloads.ExecutionRequest) (payloads.Response, errors.Error)
 	FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullMessageExecutionResponse, errors.Error)
 }
 

@@ -21,7 +21,6 @@ package payloads
 import (
 	"encoding/json"
 	"github.com/google/uuid"
-	"time"
 )
 
 type Request struct {
@@ -48,17 +47,4 @@ type FullMessageResponse struct {
 	Event          json.RawMessage `json:"event"`
 	LastStatus     string          `json:"lastStatus"`
 	SubscriptionId uuid.UUID       `json:"subscriptionId"`
-}
-
-type FullMessageExecutionResponse struct {
-	Id           uuid.UUID `json:"-"`
-	ExecutionId  uuid.UUID `json:"-"`
-	ExecutionLog string    `json:"executionLog"`
-	Status       string    `json:"status"`
-	LoggedAt     time.Time `json:"loggedAt"`
-}
-
-type HistoryPayload struct {
-	FullMessageResponse
-	Executions []FullMessageExecutionResponse `json:"executions"`
 }

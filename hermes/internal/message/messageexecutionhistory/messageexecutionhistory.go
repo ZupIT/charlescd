@@ -33,24 +33,6 @@ type MessagesExecutionsHistory struct {
 	LoggedAt     time.Time `json:"-"`
 }
 
-func (main Main) Save(executionsRequest payloads.ExecutionRequest) (payloads.Response, errors.Error) {
-	exec := MessagesExecutionsHistory{
-		ID:           uuid.New(),
-		ExecutionId:  executionsRequest.ExecutionId,
-		ExecutionLog: "LOGGER",  //TODO
-		Status:       "SUCCESS", //TODO
-		LoggedAt:     time.Now(),
-	}
-
-	result := main.db.Model(&MessagesExecutionsHistory{}).Create(&exec)
-	if result.Error != nil {
-		return payloads.Response{}, errors.NewError("Save Message Execution error", result.Error.Error()).
-			WithOperations("Save.Result")
-	}
-
-	return payloads.Response{Id: exec.ID}, nil
-}
-
 func (main Main) FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullMessageExecutionResponse, errors.Error) {
 	var response []payloads.FullMessageExecutionResponse
 
@@ -59,5 +41,6 @@ func (main Main) FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullM
 		return []payloads.FullMessageExecutionResponse{}, errors.NewError("Save Message Execution error", query.Error.Error()).
 			WithOperations("Save.Result")
 	}
+
 	return response, nil
 }
