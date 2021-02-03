@@ -68,6 +68,7 @@ class ApplicationReadyEventTest extends Specification {
         applicationReadyListener.onApplicationEvent(applicationReadyEvent)
         then:
         1 * keymetadatRepository.findAllOldMetadata() >> [keyMetadata]
+        1 * segmentationRepository.findByKey(content.getKey()) >> Optional.of(segmentation)
         1 * keymetadatRepository.create(keyMetadata)
         1 * keymetadatRepository.remove(keyMetadata)
         1 * segmentationRepository.removeByKey(content.getKey())
