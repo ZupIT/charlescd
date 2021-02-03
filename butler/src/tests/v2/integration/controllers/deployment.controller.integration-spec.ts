@@ -311,10 +311,10 @@ describe('DeploymentController v2', () => {
       defaultCircle: false
     }
     const errorMessages = [
-      'modules.0.components.2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      'modules.0.components.3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      'modules.0.components.4.buildImageUrl must be shorter than or equal to 253 characters',
-      'modules.0.Duplicated components with the property \'componentName\''
+      '2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      '3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      '4.buildImageUrl must be shorter than or equal to 253 characters',
+      '0.Duplicated components with the property \'componentName\''
     ]
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -410,7 +410,7 @@ describe('DeploymentController v2', () => {
     }
 
     const errorMessages = [
-      'modules.0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
+      '0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
     ]
 
     await request(app.getHttpServer())
@@ -467,7 +467,7 @@ describe('DeploymentController v2', () => {
     }
 
     const errorMessages = [
-      'modules.0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
+      '0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
     ]
 
     await request(app.getHttpServer())
