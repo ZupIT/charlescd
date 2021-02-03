@@ -18,6 +18,7 @@ RUN go build -o ./out/hermes cmd/*.go
 FROM alpine:3.12.0
 
 COPY --from=builder /app/hermes/out/hermes .
+COPY --from=builder /app/hermes/.env .
 COPY --from=builder /app/hermes/migrations /migrations
 
 EXPOSE 8080
