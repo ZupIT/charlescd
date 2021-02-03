@@ -66,7 +66,7 @@ class ErrorHandlerTest extends Specification {
         when:
         def response = errorHandler.handleBusinessException(businessException)
         then:
-        assert response.details == 'Default segmentation already registered in workspace: null'
+        assert response.details == 'Default segmentation already registered in workspace'
         assert response.title == 'Error creating segmentation'
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
@@ -138,7 +138,7 @@ class ErrorHandlerTest extends Specification {
         assert response.meta.get("component") == metaInfo.get("component")
     }
 
-    def "should return the correct message from constraint valdiation exception"() {
+    def "should return the correct message from constraint validation exception"() {
         given:
         def errorHandler = new ErrorHandler();
 
