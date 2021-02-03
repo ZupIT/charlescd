@@ -49,7 +49,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     if (isIDMAuthFlow()) {
       onIDMFlow();
     }
-  }, [name, onIDMFlow]);
+  }, [onIDMFlow]);
 
   useEffect(() => {
     if (!email) logout();
