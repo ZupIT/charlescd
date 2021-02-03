@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import { CHARLES_DOC } from 'core/components/Popover';
 import { useRegistry } from './hooks';
 import { options } from './constants';
 import { Registry } from './interfaces';
@@ -33,6 +33,7 @@ import { Option } from 'core/components/Form/Select/interfaces';
 import isEqual from 'lodash/isEqual';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import { testRegistryConnection } from 'core/providers/registry';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 const registryPlaceholder: Option = {
   AZURE: 'example.azurecr.io',
@@ -284,16 +285,17 @@ const FormRegistry = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content>
-      <Styled.Title color="light">
-        Add Registry
-        <Popover
-          title="Why we need a Registry?"
-          icon="info"
-          link={`${CHARLES_DOC}/get-started/defining-a-workspace/docker-registry`}
-          linkLabel="View documentation"
-          description="Adding your Docker Registry allows Charles to watch for new images being generated and list all the images saved in your registry in order to deploy them. Consult our documentation for further details. "
-        />
-      </Styled.Title>
+      <Styled.Title color="light">Add Registry</Styled.Title>
+      <Text.h5 color="dark">
+        Adding your Docker Registry allows Charles to watch for new images being
+        generated and list all the images saved in your registry in order to
+        deploy them. Consult our{' '}
+        <DocumentationLink
+          text="documentation"
+          documentationLink={`${CHARLES_DOC}/reference/registry`}
+        />{' '}
+        for further details.
+      </Text.h5>
       <Styled.Select
         placeholder="Choose which one you want to add:"
         customOption={CustomOption.Icon}

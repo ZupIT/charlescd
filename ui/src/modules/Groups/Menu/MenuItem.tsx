@@ -26,7 +26,11 @@ interface Props {
 }
 
 const MenuItem = ({ id, name, onSelect, isActive }: Props) => (
-  <Styled.Link onClick={() => onSelect(id)} isActive={isActive}>
+  <Styled.Link
+    onClick={() => onSelect(id)}
+    isActive={isActive}
+    data-testid={`group-menu-item-${id}`}
+  >
     <Styled.ListItem icon="users" marginContent="8px">
       <Text.h4 color="light">{name}</Text.h4>
     </Styled.ListItem>
