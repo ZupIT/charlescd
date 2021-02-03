@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
@@ -73,31 +73,25 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     return errors?.modules?.[index]?.[name]?.message;
   };
 
-  const checkTagByName = useCallback(
-    async (
-      moduleId: string,
-      componentId: string,
-      name: string
-    ) => {
-      setValue(`${prefixName}.tag`, '');
-      const tag = await getComponentTag(moduleId, componentId, { name });
+  const checkTagByName = async (
+    moduleId: string,
+    componentId: string,
+    name: string
+  ) => {
+    setValue(`${prefixName}.tag`, '');
+    const tag = await getComponentTag(moduleId, componentId, { name });
 
-      setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
-      setIsEmptyTag(isEmpty(tag?.artifact));
-    }, [getComponentTag, prefixName, setValue]);
+    setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
+    setIsEmptyTag(isEmpty(tag?.artifact));
+  };
 
-  const onSearchTag = useCallback(() => {
+  const onSearchTag = () => {
     const componentId = getValues(`${prefixName}.component`);
     const moduleId = getValues(`${prefixName}.module`);
     const name = getValues(`${prefixName}.version`);
 
     checkTagByName(moduleId, componentId, name);
-  }, [checkTagByName, getValues, prefixName]);
-
-  const debouncedOnChange = useMemo(
-    () => debounce(onSearchTag, 300),
-    [onSearchTag],
-  );
+  };
 
   return (
     <Styled.Module.Wrapper>
@@ -142,7 +136,8 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
         <Styled.Module.Input
           name={`${prefixName}.version`}
           ref={register({ required: true })}
-          onChange={debouncedOnChange}
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+          onChange={useCallback(debounce(onSearchTag, 700), [])}
           isLoading={status.isPending}
           hasError={isEmptyTag}
           label="Version name"
