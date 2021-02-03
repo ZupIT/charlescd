@@ -58,6 +58,7 @@ class ApplicationReadyEventTest extends Specification {
         def content = TestUtils.createContent([value])
         def node = TestUtils.createNode(content)
         def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR, true)
+        sout
         def keyMetadata = new KeyMetadata(content.getKey(), segmentation)
         given:
         def segmentationRepository  = Mock(SegmentationRepository)

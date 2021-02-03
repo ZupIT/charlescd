@@ -101,7 +101,7 @@ public class Segmentation {
     }
 
     public Boolean getActive() {
-        return this.active == null || this.active;
+        return this.active;
     }
 
     public void setActive(Boolean active) {
