@@ -43,7 +43,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     } else {
       findWorkspacesByUserId(userId);
     }
-  }, [filterWorkspace, findWorkspacesByUserId, name, userId]);
+  }, [filterWorkspace, name, userId]);
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
