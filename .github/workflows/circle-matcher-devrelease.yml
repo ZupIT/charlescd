@@ -10,7 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up GraalVM
-        uses: docker://findepi/graalvm:20.3.0-java11
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: '21.0.0.java11'
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
