@@ -19,7 +19,7 @@ package io.charlescd.moove.application
 import com.fasterxml.jackson.annotation.JsonInclude
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class ErrorDetailedResponse (
+data class ErrorDetailedResponse(
     val id: String?,
     val links: List<String>?,
     val title: String?,
