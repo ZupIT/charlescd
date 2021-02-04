@@ -43,7 +43,6 @@ class MatcherEncoderConfiguration {
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
-            logger.info("Response as object $responseMessage")
             return ClientException(
                 responseMessage.id,
                 responseMessage.links,
@@ -60,7 +59,6 @@ class MatcherEncoderConfiguration {
                 responseAsString = response?.body()?.let {
                     StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
                 }
-                logger.info("Response as object $responseAsString")
                 return responseAsString?.let {
                     getResponseAsObject(it)
                 } ?: createErrorResponse("No response body")
@@ -72,16 +70,13 @@ class MatcherEncoderConfiguration {
 
         private fun createErrorResponse(title: String, exception: Exception? = null): ErrorResponse {
             return ErrorResponse(UUID.randomUUID().toString(), emptyList(), title, details = exception?.message, status = "500", source = emptyMap(),
-                meta = this.getMetaInfo(exception)
+                meta = this.getMetaInfo()
             )
         }
 
-        private fun getMetaInfo(exception: Exception?): Map<String, String>? {
+        private fun getMetaInfo(): Map<String, String>? {
             var metaInfo = mutableMapOf<String, String>()
 
-            exception?.let {
-                metaInfo.put("stacktrace", it.cause.toString())
-            }
             metaInfo.put("data", LocalDateTime.now().toString())
             metaInfo.put("component", "moove")
             return metaInfo

@@ -55,6 +55,25 @@ class MatcherDecoderConfigurationTest extends Specification {
 
     }
 
+    def "should return the correct entity data when fails to ready response"() {
+        given:
+        def response = GroovyMock(Response)
+        def body = Mock(Response.Body)
+        ReflectionTestUtils.setField(response, "status", 400)
+        ReflectionTestUtils.setField(response, "body", body)
+
+        when:
+        def exception = matcherErrorDecoder.decode("methodkey", response)
+
+        then:
+        body.asInputStream() >> { throw new IOException() }
+        assert exception instanceof ClientException
+        assert exception.title == 'Error reading response'
+        assert exception.status == '500'
+        assert exception.meta.get("component") == "moove"
+
+    }
+
     private InputStream getReturnAsInputStream() {
         String response = "{\n" +
                 "    \"id\": \"8bc5c197-4698-4c55-98eb-021dbd783353\",\n" +
