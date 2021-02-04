@@ -33,9 +33,7 @@ class DefaultLegacyErrorDecoderConfigurationTest extends Specification {
     ErrorDecoder errorDecoder
 
     void setup() {
-        HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper())
-        ObjectFactory<HttpMessageConverters> objectFactory = { -> new HttpMessageConverters(jacksonConverter) }
-        feignErrorDecoderConfiguration = new DefaultLegacyErrorDecoderConfiguration(objectFactory)
+        feignErrorDecoderConfiguration = new DefaultLegacyErrorDecoderConfiguration()
         errorDecoder = feignErrorDecoderConfiguration.defaultLegacyErrorDecoder()
     }
 
