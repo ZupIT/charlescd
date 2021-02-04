@@ -19,7 +19,7 @@ import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, isIDMAuthFlow, logout } from 'core/utils/auth';
+import { getAccessTokenDecoded, isIDMEnabled, isRoot, logout } from 'core/utils/auth';
 import { useWorkspacesByUser } from 'modules/Users/hooks';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
@@ -46,7 +46,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   }, [filterWorkspace, findWorkspacesByUser, name, userId]);
 
   useEffect(() => {
-    if (isIDMAuthFlow()) {
+    if (isIDMEnabled()) {
       onIDMFlow();
     }
   }, [onIDMFlow]);

@@ -38,7 +38,7 @@ import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
 import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
 import { saveProfile, getProfile } from 'core/utils/profile';
-import { isIDMAuthFlow } from 'core/utils/auth';
+import { isIDMEnabled } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
