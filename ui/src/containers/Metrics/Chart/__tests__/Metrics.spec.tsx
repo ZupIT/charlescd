@@ -29,7 +29,7 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
-test('render circle metrics component', () => {
+test('render circle metrics component', async () => {
   const id = 'circle-id';
   const testId = `circle-metric-${id}`;
 
@@ -41,7 +41,7 @@ test('render circle metrics component', () => {
     />
   );
 
-  waitFor(() => expect(screen.getByTestId(testId)).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId(testId)).toBeInTheDocument());
 });
 
 test('filter circle metrics to 30m', () => {
