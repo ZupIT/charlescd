@@ -21,10 +21,6 @@ import userEvent from '@testing-library/user-event';
 import SectionWebhook from '../';
 import { Webhook } from '../interfaces';
 
-beforeEach(() => {
-  (fetch as FetchMock).resetMocks();
-});
-
 const data: Webhook[] = [{
   id: "123",
   url: 'https://charlescd.io/webhook',
@@ -56,7 +52,7 @@ test('render webhook successful', async () => {
   render(<SectionWebhook form={form} setForm={setForm} data={data} />);
 
   const errorText = screen.queryByTestId('log-error');
-  waitFor(() => expect(errorText).not.toBeInTheDocument());
+  expect(errorText).not.toBeInTheDocument();
 });
 
 test('should remove/cancel webhook', async () => {
@@ -72,5 +68,5 @@ test('should remove/cancel webhook', async () => {
   await act(async () => userEvent.click(iconVerticalDots));
 
   let iconDelete = screen.queryByTestId('icon-delete');
-  waitFor(() => expect(iconDelete).toBeInTheDocument());
+  expect(iconDelete).toBeInTheDocument();
 });
