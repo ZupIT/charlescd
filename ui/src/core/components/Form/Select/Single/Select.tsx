@@ -34,6 +34,7 @@ const Select = ({
   onInputChange,
   customOption,
   hasError,
+  value = null,
   icon
 }: Props) => (
   <div data-testid="react-select">
@@ -45,6 +46,7 @@ const Select = ({
       isLoading={isLoading}
       hasError={hasError}
       icon={icon}
+      value={value}
       components={{
         ValueContainer: FloatingLabel,
         Option: customOption ? customOption : components.Option,
