@@ -37,7 +37,6 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
 import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
-import { saveProfile, getProfile } from 'core/utils/profile';
 import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
@@ -91,12 +90,6 @@ export const useWorkspacesByUser = (): {
   const getWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
   const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
   const [error, setError] = useState<ResponseError>(null);
-
-  useEffect(() => {
-    if (workspaces) {
-      saveProfile({ ...getProfile(), workspaces });
-    }
-  }, [workspaces]);
 
   const findWorkspacesByUser = useCallback(
     async (id: Pick<User, 'id'>) => {
