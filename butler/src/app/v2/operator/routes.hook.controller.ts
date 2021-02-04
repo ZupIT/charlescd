@@ -31,7 +31,7 @@ export class RoutesHookController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: RouteHookParams): Promise<unknown> {
     const proxySpecs = await this.createRoutesUseCase.execute(params)
-    console.log({ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: { children: JSON.stringify(proxySpecs) } })
+
     return { children: proxySpecs }
   }
 }
