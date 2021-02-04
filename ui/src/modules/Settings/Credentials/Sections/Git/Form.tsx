@@ -77,7 +77,9 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
   const onSubmit = (git: GitFormData) => {
     save({
       ...git,
-      credentials: buildConnectionPayload(git, gitType)
+      credentials: {
+        ...buildConnectionPayload(git, gitType).credentials
+      }
     });
   };
 
