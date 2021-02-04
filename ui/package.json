@@ -11,7 +11,7 @@
   "scripts": {
     "build": "react-scripts build",
     "postbuild": "rm -rf dist && mv build dist",
-    "build:all": "yarn build",
+    "build:all": "yarn build && yarn build:microfrontend",
     "build:microfrontend": "react-app-rewired build",
     "start": "cross-env ENVIRONMENT=development node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
     "start:idm": "cross-env ENVIRONMENT=idm node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
