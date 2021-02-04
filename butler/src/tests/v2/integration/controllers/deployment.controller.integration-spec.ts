@@ -21,7 +21,6 @@ import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
-import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
@@ -33,7 +32,6 @@ import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopi
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let worker: PgBossWorker
   let manager: EntityManager
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -48,21 +46,16 @@ describe('DeploymentController v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
-    await worker.pgBoss.stop()
     await app.close()
   })
 
   beforeEach(async() => {
-    await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
   })
   it('returns ok for valid params with existing cdConfiguration', async() => {
     const cdConfiguration = new CdConfigurationEntity(

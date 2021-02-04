@@ -26,7 +26,6 @@ import { CreateComponentRequestDto } from '../../../../app/v2/api/deployments/dt
 import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { CreateModuleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-module-request.dto'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
-import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import express = require('express')
@@ -44,7 +43,6 @@ describe('CallbackController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let mockServer: Server
-  let worker: PgBossWorker
   let manager: EntityManager
   let manifests: KubernetesManifest[]
   beforeAll(async() => {
@@ -60,24 +58,19 @@ describe('CallbackController v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
     manifests = defaultManifests
   })
 
   afterAll(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
-    await worker.pgBoss.stop()
     await app.close()
   })
 
   beforeEach(async() => {
     mock = express()
     mockServer = mock.listen(9000)
-    await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
   })
 
   afterEach(async() => {
