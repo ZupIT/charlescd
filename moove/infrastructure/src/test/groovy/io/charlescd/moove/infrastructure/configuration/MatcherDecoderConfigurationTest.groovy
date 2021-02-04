@@ -32,8 +32,6 @@ class MatcherDecoderConfigurationTest extends Specification {
     MatcherEncoderConfiguration.MatcherErrorDecoder matcherErrorDecoder
 
     void setup() {
-        HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper())
-        ObjectFactory<HttpMessageConverters> objectFactory = { -> new HttpMessageConverters(jacksonConverter) }
         matcherErrorDecoder = new MatcherEncoderConfiguration.MatcherErrorDecoder()
     }
 

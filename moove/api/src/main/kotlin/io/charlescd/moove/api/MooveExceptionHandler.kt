@@ -16,7 +16,7 @@
 
 package io.charlescd.moove.api
 
-import io.charlescd.moove.application.ErrorEntityResponse
+import io.charlescd.moove.application.ErrorDetailedResponse
 import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
 import io.charlescd.moove.commons.exceptions.*
@@ -60,9 +60,9 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ExceptionHandler(ClientException::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    fun clientExceptions(ex: ClientException): ErrorEntityResponse {
+    fun clientExceptions(ex: ClientException): ErrorDetailedResponse {
         this.logger.error(ex.details, ex)
-        return ErrorEntityResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
+        return ErrorDetailedResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

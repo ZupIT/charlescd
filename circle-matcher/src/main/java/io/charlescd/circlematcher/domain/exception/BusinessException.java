@@ -11,10 +11,6 @@ public class BusinessException extends RuntimeException {
         this.title = title;
     }
 
-    public BusinessException(MatcherErrorCode matcherErrorCode) {
-        this.errorCode = matcherErrorCode;
-    }
-
     public BusinessException withParameters(String parameters) {
         this.getErrorCode().appendParameter(parameters);
         return this;

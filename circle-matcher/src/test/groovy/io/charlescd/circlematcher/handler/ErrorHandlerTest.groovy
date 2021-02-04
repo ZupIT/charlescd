@@ -27,7 +27,10 @@ class ErrorHandlerTest extends Specification {
 
         when:
         def response = errorHandler.handleBusinessException(businessException)
+
         then:
+        assert response.links == []
+        assert response.id instanceof String
         assert response.details == 'Cannot update default segmentation'
         assert response.title == 'Error updating segmentation'
         assert response.status == "400"
@@ -45,6 +48,8 @@ class ErrorHandlerTest extends Specification {
         when:
         def response = errorHandler.handleNotFoundError(noSuchElement)
         then:
+        assert response.links == []
+        assert response.id instanceof String
         assert response.details == 'Default metadata not found'
         assert response.title == 'Not found'
         assert response.status == "404"
@@ -66,6 +71,8 @@ class ErrorHandlerTest extends Specification {
         when:
         def response = errorHandler.handleBusinessException(businessException)
         then:
+        assert response.links == []
+        assert response.id instanceof String
         assert response.details == 'Default segmentation already registered in workspace: 123456'
         assert response.title == 'Error creating segmentation'
         assert response.status == "400"
@@ -100,6 +107,8 @@ class ErrorHandlerTest extends Specification {
         when:
         def response = errorHandler.handleIllegalArgument(illegalArgumentException)
         then:
+        assert response.links == []
+        assert response.id instanceof String
         assert response.details == 'argument not valid'
         assert response.title == 'Bad Request'
         assert response.status == "400"
@@ -116,6 +125,8 @@ class ErrorHandlerTest extends Specification {
         when:
         def response = errorHandler.handleHttpMessageNotReadableException(httpMessage)
         then:
+        assert response.links == []
+        assert response.id instanceof String
         assert response.details == 'message not readable'
         assert response.title == 'Bad Request'
         assert response.status == "400"
@@ -132,6 +143,8 @@ class ErrorHandlerTest extends Specification {
         when:
         def response = errorHandler.handleException(exception)
         then:
+        assert response.links == []
+        assert response.id instanceof String
         assert response.details == 'Unexpected error. Please, try again later.'
         assert response.title == 'Internal Server Error'
         assert response.status == "500"
@@ -151,6 +164,8 @@ class ErrorHandlerTest extends Specification {
         then:
         exception.getMessage() >> "Error validating node"
         exception.getFieldErrors() >> [fieldErrors]
+        assert response.links == []
+        assert response.id instanceof String
         assert response.details == 'Invalid request body.node: Invalid node'
         assert response.title == 'Bad Request'
         assert response.status == "400"
