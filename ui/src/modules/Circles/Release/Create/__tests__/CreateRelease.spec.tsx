@@ -69,7 +69,7 @@ test('form should be valid', async () => {
 
   await waitFor(() =>
     expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
-    { timeout: 500 }
+    { timeout: 700 }
   );
 });
 
