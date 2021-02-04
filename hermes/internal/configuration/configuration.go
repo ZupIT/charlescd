@@ -23,7 +23,6 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	postgresmigrate "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
@@ -76,16 +75,4 @@ func GetConfiguration(configuration string) string {
 	}
 
 	return env
-}
-
-func CheckEnvValues() {
-	myEnv, _ := godotenv.Read()
-
-	for value, _ := range myEnv {
-		if myEnv[value] == "" {
-			logrus.WithFields(logrus.Fields{
-				"err": fmt.Sprintf("%s key not found in the .env file", value),
-			}).Warnln()
-		}
-	}
 }
