@@ -90,10 +90,10 @@ test('render Workspace modal and add new workspace', async () => {
   expect(screen.queryByTestId('modal-default')).toBeInTheDocument();
 });
 
-test('render Workspace with isIDMAuthFlow disabled and search', async () => {
+test('render Workspace with isIDMEnabled disabled and search', async () => {
   const workspaceRequest = jest.fn();
 
-  jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => false);
+  jest.spyOn(authUtils, 'isIDMEnabled').mockImplementation(() => false);
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
   const useWorkspaceSpy = jest.spyOn(WorkspaceHooks, 'useWorkspace')
     .mockImplementation(() => [workspaceRequest, jest.fn(), false]);
@@ -108,10 +108,10 @@ test('render Workspace with isIDMAuthFlow disabled and search', async () => {
   await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(0));
 });
 
-test('render Workspace with isIDMAuthFlow enabled and search', async () => {
+test('render Workspace with isIDMEnabled enabled and search', async () => {
   const workspaceRequest = jest.fn();
 
-  jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => true);
+  jest.spyOn(authUtils, 'isIDMEnabled').mockImplementation(() => true);
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
   jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
   
