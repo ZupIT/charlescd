@@ -53,6 +53,10 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   }, [onIDMFlow]);
 
   useEffect(() => {
+    filterWorkspace(name);
+  }, [name, filterWorkspace]);
+
+  useEffect(() => {
     if (!email) logout();
   }, [email]);
 
