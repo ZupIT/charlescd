@@ -21,6 +21,10 @@ import selectEvent from 'react-select-event';
 import { FetchMock } from 'jest-fetch-mock';
 import CreateRelease from '../index';
 
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
 const mockGetModules = JSON.stringify({
   content: [
     {
