@@ -287,15 +287,22 @@ hermes:
   enabled: true
   name: "charlescd-hermes"
   database:
-    name: hermes
+    name: charlescd_hermes
     host: charlescd-postgresql
     port: 5432
-    user: hermes
+    user: charlescd_hermes
     password: aGVybWVz
   replicaCount: 1
   envVars:
+    envVars:
     - name: DB_SSL
       value: "disable"
+    - name: AMQP_URL
+      value: amqp://charlescd_hermes:aGVybWVz@rabbitmq:5672/
+    - name: AMQP_LISTEN_QUEUE
+      value: queue
+    - name: AMQP_PUSH_QUEUE
+      value: queue
   secretEnvVars:
     - name: ENCRYPTION_KEY
       secretName: "hermes-aes256-key"
