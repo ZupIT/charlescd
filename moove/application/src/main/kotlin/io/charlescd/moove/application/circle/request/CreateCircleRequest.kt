@@ -28,10 +28,12 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 class CreateCircleRequest(
 
     @field:NotBlank
+    @field:Size(min = 1, max = 64, message = "Name minimum size is 1 and maximum is 64.")
     val name: String,
 
     @field:Valid
@@ -39,7 +41,7 @@ class CreateCircleRequest(
 ) {
     fun toDomain(user: User, workspaceId: String) = Circle(
         id = UUID.randomUUID().toString(),
-        name = name,
+        name = name.trim(),
         createdAt = LocalDateTime.now(),
         reference = UUID.randomUUID().toString(),
         author = user,
@@ -68,9 +70,9 @@ data class NodePart(
     }
 
     data class RulePart(
-        @field:[NotNull NotBlank] val key: String?,
+        @field:[NotNull NotBlank Size(max = 64)] val key: String?,
         @field:[NotNull] val condition: ConditionEnum?,
-        @field:[NotNull NotEmpty] val value: List<String>?
+        @field:[NotNull NotEmpty Size(max = 100)] val value: List<String>?
     )
 
     enum class ConditionEnum {
