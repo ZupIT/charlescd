@@ -16,7 +16,7 @@
 
 import forEach from 'lodash/forEach';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
-import { checkPoints } from './helpers';
+import { checkPoints, DEFAULT_MAX_LENGTH } from './helpers';
 
 interface Error {
   [key: string]: {
@@ -42,6 +42,13 @@ export const validationResolver = (data: CheckPassword) => {
       };
     }
   });
+
+  if (data.oldPassword?.length > DEFAULT_MAX_LENGTH) {
+    error['oldPassword'] = {
+      type: 'MaxLength',
+      message: 'Maximum of 100 characters'
+    };
+  }
 
   return {
     values: {},

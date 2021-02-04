@@ -28,8 +28,10 @@ import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
+import Icon from 'core/components/Icon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
+import { isRequired, maxLength } from 'core/utils/validations';
 import { isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
@@ -48,7 +50,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const [isOpenModalPassword, toggleModalPassword] = useState(false);
   const [action, setAction] = useState('');
   const [currentUser, setCurrentUser] = useState<User>();
-  const { register, handleSubmit } = useForm<User>();
+  const { register, handleSubmit, errors } = useForm<User>({
+    mode: 'onChange'
+  });
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
   const { updateNameById, user: userUpdated, status } = useUpdateName();
@@ -96,8 +100,8 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       onDismiss={() => setAction('Cancel')}
     >
       <Text.h4 color="light">
-        By deleting this user, his information will be also deleted. Do you wish
-        to continue?
+        By deleting this user, all related information will also be deleted. Do
+        you wish to continue?
       </Text.h4>
     </Modal.Trigger>
   );
@@ -152,14 +156,25 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       <Styled.Layer>
         <ContentIcon icon="user">
           {isRoot() ? (
-            <InputTitle
-              key={currentUser.name}
-              name="name"
-              resume
-              ref={register({ required: true })}
-              defaultValue={currentUser.name}
-              onClickSave={handleSubmit(onSubmit)}
-            />
+            <>
+              <InputTitle
+                key={currentUser.name}
+                name="name"
+                resume
+                ref={register({
+                  required: isRequired(),
+                  maxLength: maxLength()
+                })}
+                defaultValue={currentUser.name}
+                onClickSave={handleSubmit(onSubmit)}
+              />
+              {errors.name && (
+                <Styled.FieldErrorWrapper>
+                  <Icon name="error" color="error" />
+                  <Text.h6 color="error">{errors.name.message}</Text.h6>
+                </Styled.FieldErrorWrapper>
+              )}
+            </>
           ) : (
             <Text.h2 color="light">{currentUser.name}</Text.h2>
           )}

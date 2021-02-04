@@ -16,21 +16,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { testGitConnection } from 'core/providers/workspace';
+import { useTestConnection } from 'core/hooks/useTestConnection';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 import Button from 'core/components/Button';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { useGit } from './hooks';
 import { radios } from './constants';
 import { GitFormData } from './interfaces';
 import { Props } from '../interfaces';
-import Styled from './styled';
-import { buildTestConnectionPayload } from './helpers';
-import { testGitConnection } from 'core/providers/workspace';
-import { useTestConnection } from 'core/hooks/useTestConnection';
-import ConnectionStatus from 'core/components/ConnectionStatus';
+import { buildConnectionPayload } from './helpers';
 import isEqual from 'lodash/isEqual';
+import Styled from './styled';
 
 const FormGit = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
@@ -49,7 +48,14 @@ const FormGit = ({ onFinish }: Props) => {
     formState: { isValid },
     watch
   } = useForm<GitFormData>({
-    mode: 'onChange'
+    mode: 'onChange',
+    defaultValues: {
+      credentials: {
+        address: '.',
+        accessToken: '',
+        serviceProvider: ''
+      }
+    }
   });
 
   const form = watch();
@@ -72,8 +78,7 @@ const FormGit = ({ onFinish }: Props) => {
     save({
       ...git,
       credentials: {
-        ...git.credentials,
-        serviceProvider: gitType.toUpperCase()
+        ...buildConnectionPayload(git, gitType).credentials
       }
     });
   };
@@ -81,7 +86,7 @@ const FormGit = ({ onFinish }: Props) => {
   const handleTestConnection = () => {
     const data = getValues();
     setLastTestedForm(data);
-    const payload = buildTestConnectionPayload(data, gitType);
+    const payload = buildConnectionPayload(data, gitType);
     testConnection(payload);
   };
 
@@ -96,11 +101,14 @@ const FormGit = ({ onFinish }: Props) => {
           name="name"
           label={`Type a name for ${gitType}`}
         />
-        <Form.Input
-          ref={register({ required: true })}
-          name="credentials.address"
-          label={`Enter the ${gitType} url`}
-        />
+        {gitType !== 'GitHub' && (
+          <Form.Input
+            ref={register({ required: true })}
+            name="credentials.address"
+            label={`Enter the ${gitType} url`}
+          />
+        )}
+
         <Form.Input
           ref={register({ required: true })}
           name="credentials.accessToken"
@@ -133,18 +141,20 @@ const FormGit = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content>
-      <Styled.Title color="light">
-        Add Git
-        <Popover
-          title="Why we need a Git?"
-          icon="info"
-          link={`${CHARLES_DOC}/get-started/defining-a-workspace/github`}
-          linkLabel="View documentation"
-          description="Adding a Git allows Charles to create, delete and merge branches as well as view repositories and generate releases. Consult our documentation for further details."
-        />
-      </Styled.Title>
+      <Styled.Title color="light">Add Git</Styled.Title>
+      <Styled.Info color="dark">
+        Adding a Git allows Charles to create, delete and merge branches, as
+        well as view repositories and generate releases. Consult our{' '}
+        <Styled.Link
+          href="https://docs.charlescd.io/get-started/defining-a-workspace/github"
+          target="_blank"
+        >
+          documentation
+        </Styled.Link>{' '}
+        for further details.
+      </Styled.Info>
       <Styled.Subtitle color="dark">
-        Choose witch one you want to add:
+        Choose which one you want to add:
       </Styled.Subtitle>
       <Radio.Buttons
         name="git"

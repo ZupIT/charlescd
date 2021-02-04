@@ -29,6 +29,7 @@ import { find, map } from 'lodash';
 import { testDataSourceConnection } from 'core/providers/datasources';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
@@ -152,15 +153,13 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   return (
     <Styled.Content>
       <Text.h2 color="light">Add Datasource</Text.h2>
-      <Text.h4 color="dark">
+      <Text.h4 color="dark" data-testid="text-datasource">
         Adding the URL of our tool helps Charles to metrics generation since
         this can vary from workspace to another. Consult the our{' '}
-        <Styled.DocumentationLink
-          target="_blank"
-          href={`${CHARLES_DOC}/reference/metrics`}
-        >
-          documentation
-        </Styled.DocumentationLink>{' '}
+        <DocumentationLink
+          text="documentation"
+          documentationLink={`${CHARLES_DOC}/reference/metrics`}
+        />
         for further details.
       </Text.h4>
       {renderForm()}

@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 beforeAll(() => {
-  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br', isRoot: true });
+  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br', root: true });
 });
 
 const props = {
@@ -56,7 +56,7 @@ test('should open a user and successfully update the name', async () => {
 
   const InputNameWrapper = await screen.findByTestId('input-wrapper-name');
   expect(InputNameWrapper).toBeInTheDocument();
-  act(() => userEvent.click(InputNameWrapper));
+  await act(async () => userEvent.click(InputNameWrapper));
 
   const InputName = await screen.findByTestId('input-text-name');
   expect(InputName).toBeInTheDocument();
@@ -64,7 +64,7 @@ test('should open a user and successfully update the name', async () => {
 
   const ButtonSubmit = await screen.findByTestId('button-default-submit');
   expect(ButtonSubmit).toBeInTheDocument();
-  act(() => userEvent.click(ButtonSubmit));
+  await act(async () => userEvent.click(ButtonSubmit));
 });
 
 test('render Modal.Trigger on UsersComparationItem component', async () => {
@@ -84,7 +84,7 @@ test('render Modal.Trigger on UsersComparationItem component', async () => {
   expect(deleteIcon).toBeInTheDocument();
   userEvent.click(deleteIcon);
 
-  const Description = await screen.findByText('By deleting this user, his information will be also deleted. Do you wish to continue?');
+  const Description = await screen.findByText('By deleting this user, all related information will also be deleted. Do you wish to continue?');
   expect(Description).toBeInTheDocument();
 
   const modal = screen.getByTestId('modal-trigger');
@@ -136,7 +136,7 @@ test('click on Delete button in Modal.Trigger component', async () => {
 });
 
 test('close UsersComparationItem component', async () => {
-  const delParamSpy = spyOn(PathUtils, 'delParam');
+  const delParamSpy = jest.spyOn(PathUtils, 'delParam');
   render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );

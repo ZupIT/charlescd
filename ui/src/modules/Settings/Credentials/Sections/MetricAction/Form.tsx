@@ -24,6 +24,7 @@ import { Props } from '../interfaces';
 import Styled from './styled';
 import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 const FormAddAction = ({ onFinish }: Props) => {
   const [loadingPlugins, setLoadingPlugins] = useState(true);
@@ -147,15 +148,13 @@ const FormAddAction = ({ onFinish }: Props) => {
   return (
     <Styled.Content data-testid="add-action-form">
       <Styled.Title color="light">Add Metric Action</Styled.Title>
-      <Styled.Info color="dark">
+      <Styled.Info color="dark" data-testid="text-metric-action">
         You can create an action and add a trigger to perform an automatic task.
         Consult our{' '}
-        <Styled.Link
-          href="https://docs.charlescd.io/reference/metrics/metrics-actions"
-          target="_blank"
-        >
-          documentation
-        </Styled.Link>{' '}
+        <DocumentationLink
+          documentationLink="https://docs.charlescd.io/reference/metrics/metrics-actions"
+          text="documentation"
+        />
         for further details.
       </Styled.Info>
       <FormProvider {...formMethods}>

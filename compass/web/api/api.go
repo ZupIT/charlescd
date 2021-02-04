@@ -19,6 +19,7 @@
 package api
 
 import (
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
 	"time"
@@ -78,11 +79,13 @@ func NewApi(
 		healthMain:            healthMain,
 	}
 	router := mux.NewRouter()
-	s := router.PathPrefix("/api").Subrouter()
-
-	router.Use(LoggingMiddleware)
-	router.Use(api.ValidatorMiddleware)
 	api.health(router)
+	api.metrics(router)
+
+	s := router.PathPrefix("/api").Subrouter()
+	s.Use(LoggingMiddleware)
+	s.Use(api.ValidatorMiddleware)
+
 	api.newV1Api(s)
 
 	return router
@@ -91,6 +94,13 @@ func NewApi(
 func (api *Api) health(router *mux.Router) {
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(":)"))
+		return
+	})
+}
+
+func (api *Api) metrics(router *mux.Router) {
+	router.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
 		return
 	})
 }
