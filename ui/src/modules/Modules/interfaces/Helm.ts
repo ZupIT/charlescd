@@ -17,7 +17,7 @@
 export interface Helm {
   helmOrganization: string;
   helmRepository: string;
-  helmPath: string;
+  helmPath?: string;
   helmGitlabUrl?: string;
   helmBranch?: string;
 }

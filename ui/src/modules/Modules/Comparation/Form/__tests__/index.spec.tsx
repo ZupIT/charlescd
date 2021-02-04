@@ -51,7 +51,16 @@ const fakeComponent: ComponentInterface = {
 
 const fakeModule: Module = {
   gitRepositoryAddress: "fake-github",
-  helmRepository: "fake-api",
+  helmRepository: "http://api.github.com/repos/zupit/charlescd/content?ref=master",
+  id: "1",
+  name: "fake-module",
+  author: fakeAuthor,
+  components: [fakeComponent]
+}
+
+const fakeGitlabModule: Module = {
+  gitRepositoryAddress: "fake-github",
+  helmRepository: "https://gitlabexample.com/api/v4/projects/zup%2Fcharlescd/repository/files/teste%2Fteste?ref=master",
   id: "1",
   name: "fake-module",
   author: fakeAuthor,
@@ -85,7 +94,7 @@ test("Test component for edit mode render", async () => {
 });
 
 
-test("Test component for edit mode render", async () => {
+test("Test component for edit mode create", async () => {
   const { container } = render(
     <AllTheProviders>
       <FormModule
@@ -98,3 +107,19 @@ test("Test component for edit mode render", async () => {
 
   await waitFor(() => expect(container.innerHTML).toMatch("Create module"));
 });
+
+
+test("Test component for edit mode render with gitlab", async () => {
+  const { container } = render(
+    <AllTheProviders>
+      <FormModule
+        onChange={mockOnChange}
+        module={fakeGitlabModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  await waitFor(() => expect(container.innerHTML).toMatch("Edit module"));
+});
+

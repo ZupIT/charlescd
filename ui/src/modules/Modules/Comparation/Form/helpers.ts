@@ -64,20 +64,18 @@ const createGitlabApi = ({
   helmPath,
   helmBranch
 }: Helm) => {
-  console.log(helmGitlabUrl, helmOrganization, helmRepository, helmPath, helmBranch)
-  let url = `${helmGitlabUrl}/api/v4/projects/${helmOrganization}%2F${helmRepository}/repository/files`
+  let url = `${helmGitlabUrl}/api/v4/projects/${helmOrganization}%2F${helmRepository}/repository/files`;
 
-  if (helmPath.length) {
-    url = url.concat(`/${helmPath.split("/").join("%2F")}`);
+  if (helmPath) {
+    url = url.concat(`/${helmPath.split('/').join('%2F')}`);
   }
 
-  if (helmBranch.length) {
+  if (helmBranch) {
     url = url.concat(`?ref=${helmBranch}`);
   } else {
     url = url.concat('?ref=main');
   }
 
-  console.log(url)
   return url;
 };
 
@@ -97,32 +95,47 @@ const destructGithub = (
   const infoSplit = leftInfo.split('/');
   const organization = infoSplit[0];
   const repository = infoSplit[1];
-  const path = infoSplit.splice(3).join('/');
   setValue('helmOrganization', organization);
   setValue('helmRepository', repository);
-  setValue('helmPath', path);
+
+  if (infoSplit.length < 4) {
+    const branch = infoSplit[2].split('?');
+    setValue('helmBranch', branch[1].slice(4));
+  } else {
+    const pathBranchList = infoSplit[3].split('?');
+    const path = pathBranchList[0];
+    const branch = pathBranchList[1].slice(4);
+    setValue('helmPath', path);
+    setValue('helmBranch', branch);
+  }
 };
 
 const destructGitlab = (
   url: string,
   setValue: (name: any, value: any) => void
 ) => {
-  const baseUrlFind = '/api/v4/projects'
+  const baseUrlFind = '/api/v4/projects';
   const baseUrlLocation = url.indexOf(baseUrlFind);
   const baseUrl = url.slice(0, baseUrlLocation);
-  const leftInfo = url.slice(baseUrlLocation + baseUrlFind.length + 1 ); // + 1 remove extra /
+  const leftInfo = url.slice(baseUrlLocation + baseUrlFind.length + 1); // + 1 remove extra /
   const infoSplit = leftInfo.split('/');
-  const orgRepoEncode = infoSplit[0].split("%2F")
+  const orgRepoEncode = infoSplit[0].split('%2F');
   const organization = orgRepoEncode[0];
   const repository = orgRepoEncode[1];
-  const pathBranchEncode = infoSplit[3].split("?")
-  const path = pathBranchEncode[0].split("%2F").join("/")
-  const branch = pathBranchEncode[1].slice( 4)
   setValue('helmOrganization', organization);
   setValue('helmRepository', repository);
-  setValue('helmPath', path);
   setValue('helmGitlabUrl', baseUrl);
-  setValue('helmBranch', branch);
+
+  if (infoSplit.length < 4) {
+    const pathBranchEncode = infoSplit[2].split('?');
+    setValue('helmBranch', pathBranchEncode[1].slice(4));
+  } else {
+    const pathBranchEncode = infoSplit[3].split('?');
+    const path = pathBranchEncode[0].split('%2F').join('/');
+    const branch = pathBranchEncode[1].slice(4);
+    setValue('helmPath', path);
+    setValue('helmBranch', branch);
+  }
 };
 
 export const destructHelmUrl = (
