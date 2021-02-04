@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, Ref, useImperativeHandle } from 'react';
+import React, { useRef, useState, useImperativeHandle } from 'react';
 import Button from 'core/components/Button';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import Styled from './styled';

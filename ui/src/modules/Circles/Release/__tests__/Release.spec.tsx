@@ -16,10 +16,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from 'unit-test/testUtils';
-import MutationObserver from 'mutation-observer'
 import Release from '../index';
-
-(global as any).MutationObserver = MutationObserver
 
 test('should render the CreateRelease component', () => {
   render(
