@@ -20,13 +20,4 @@ export class ExecutionsController {
   ): Promise<PaginatedExecutions> {
     return await this.paginatedExecutionsUseCase.execute(params)
   }
-
-  @Post('/:id/notify')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  public async receiveNotification(
-    @Param('id') executionId: string,
-    @Body() deploymentNotification: DeploymentNotificationRequestDto,
-  ): Promise<Execution> {
-    return await this.receiveNotificationUseCase.execute(executionId, deploymentNotification)
-  }
 }
