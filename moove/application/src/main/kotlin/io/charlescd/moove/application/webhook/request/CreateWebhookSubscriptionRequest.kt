@@ -19,13 +19,11 @@ package io.charlescd.moove.application.webhook.request
 import io.charlescd.moove.domain.SimpleWebhookSubscription
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 data class CreateWebhookSubscriptionRequest(
     @field:NotBlank
     @field:Size(max = 256)
-    @field:Pattern(regexp = "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:\\/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$")
     val url: String,
 
     val apiKey: String,
