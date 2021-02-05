@@ -20,12 +20,11 @@ import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.CreateWebhookSubscriptionInteractor
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
-import io.charlescd.moove.domain.WebhookSubscription
+import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
-
 
 class CreateWebhookSubscriptionInteractorImplTest extends Specification {
 
@@ -35,7 +34,7 @@ class CreateWebhookSubscriptionInteractorImplTest extends Specification {
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        createWebhookSubscriptionInteractor = new CreateWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
+        createWebhookSubscriptionInteractor = new CreateWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to create subscription should do it successfully"() {
@@ -44,11 +43,10 @@ class CreateWebhookSubscriptionInteractorImplTest extends Specification {
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        1 * this.hermesService.subscribe(authorEmail, webhookSubscription) >> subscriptionId
+        1 * this.hermesService.subscribe(authorEmail, simpleWebhookSubscription) >> subscriptionId
 
         notThrown()
     }
-
 
     private static List<String> getEvents() {
         def events = new ArrayList()
@@ -77,8 +75,8 @@ class CreateWebhookSubscriptionInteractorImplTest extends Specification {
                 'My Webhook', events)
     }
 
-    private static WebhookSubscription getWebhookSubscription() {
-        return new WebhookSubscription('https://mywebhook.com.br', 'secret', 'workspaceId',
+    private static SimpleWebhookSubscription getSimpleWebhookSubscription() {
+        return new SimpleWebhookSubscription('https://mywebhook.com.br', 'secret', 'workspaceId',
                 'My Webhook', events)
     }
 }

@@ -17,8 +17,8 @@
 package io.charlescd.moove.infrastructure.service.client
 
 import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
-import io.charlescd.moove.infrastructure.service.client.request.HermesSubscriptionCreateRequest
-import io.charlescd.moove.infrastructure.service.client.request.HermesSubscriptionUpdateRequest
+import io.charlescd.moove.infrastructure.service.client.request.HermesCreateSubscriptionRequest
+import io.charlescd.moove.infrastructure.service.client.request.HermesUpdateSubscriptionRequest
 import io.charlescd.moove.infrastructure.service.client.response.*
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
@@ -36,7 +36,7 @@ interface HermesClient {
     )
     fun subscribe(
         @RequestHeader("x-author") authorEmail: String,
-        @RequestBody request: HermesSubscriptionCreateRequest
+        @RequestBody request: HermesCreateSubscriptionRequest
     ): HermesSubscriptionCreateResponse
 
     @ResponseStatus(HttpStatus.OK)
@@ -48,7 +48,7 @@ interface HermesClient {
     fun updateSubscription(
         @RequestHeader("x-author") authorEmail: String,
         @PathVariable("id") id: String,
-        @RequestBody request: HermesSubscriptionUpdateRequest
+        @RequestBody request: HermesUpdateSubscriptionRequest
     ): HermesSubscriptionResponse
 
     @ResponseStatus(HttpStatus.OK)
@@ -72,4 +72,43 @@ interface HermesClient {
         @RequestHeader("x-author") authorEmail: String,
         @PathVariable("id") id: String
     )
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["/subscriptions/{id}/health-check"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun healthCheckSubscription(
+        @RequestHeader("x-author") authorEmail: String,
+        @PathVariable("id") id: String
+    ): HermesHealthCheckSubscriptionResponse
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["/subscriptions/external-id/{externalId}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun getSubscriptionsByExternalId(
+        @RequestHeader("x-author") authorEmail: String,
+        @PathVariable("externalId") externalId: String
+    ): List<HermesSubscriptionResponse>
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["/subscriptions/{id}/history"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun getSubscriptionEventsHistory(
+        @RequestHeader("x-author") authorEmail: String,
+        @PathVariable("id") id: String,
+        @RequestParam(value = "eventType", required = false) eventType: String?,
+        @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
+        @RequestParam(value = "eventField", required = false) eventField: String?,
+        @RequestParam(value = "eventValue", required = false) eventValue: String?,
+        @RequestParam(value = "page", required = true) page: Int,
+        @RequestParam(value = "size", required = true) size: Int
+    ): List<HermesSubscriptionEventHistoryResponse>
 }

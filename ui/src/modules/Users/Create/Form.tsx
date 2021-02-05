@@ -18,10 +18,10 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
 import Button from 'core/components/Button';
 import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import { maxLength, isRequired, emailPattern } from 'core/utils/validations';
 import { NewUser } from 'modules/Users/interfaces/User';
 import Styled from './styled';
 import { useCreateUser } from '../hooks';
@@ -39,7 +39,7 @@ const FormUser = ({ onFinish }: Props) => {
     handleSubmit,
     errors,
     formState: { isValid }
-  } = useForm<NewUser>({ mode: 'onChange' });
+  } = useForm<NewUser>({ mode: 'onBlur' });
   const { create, newUser } = useCreateUser();
   const [status, setStatus] = useState<string>('');
 
@@ -69,31 +69,32 @@ const FormUser = ({ onFinish }: Props) => {
     >
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true, maxLength: 100 })}
+          ref={register({
+            required: isRequired(),
+            maxLength: maxLength(64)
+          })}
           name="name"
           label="User name"
+          error={errors?.name?.message}
         />
         <Form.Input
           ref={register({
-            required: true,
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Entered value does not match email format'
-            }
+            required: isRequired(),
+            maxLength: maxLength(64),
+            pattern: emailPattern()
           })}
           name="email"
           label="E-mail"
+          error={errors?.email?.message}
         />
-        {!!errors.email && (
-          <Styled.FieldErrorWrapper>
-            <Icon name="error" color="error" />
-            <Text.h6 color="error">{errors.email.message}</Text.h6>
-          </Styled.FieldErrorWrapper>
-        )}
         <Form.Password
-          ref={register({ required: true })}
+          ref={register({
+            required: isRequired(),
+            maxLength: maxLength(100)
+          })}
           name="password"
           label="Create password"
+          error={errors?.password?.message}
         />
       </Styled.Fields>
       <Button.Default

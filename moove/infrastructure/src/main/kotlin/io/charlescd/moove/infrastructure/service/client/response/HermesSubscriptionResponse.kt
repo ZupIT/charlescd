@@ -17,6 +17,7 @@
 package io.charlescd.moove.infrastructure.service.client.response
 
 data class HermesSubscriptionResponse(
+    val id: String,
     val url: String,
     val apiKey: String,
     val externalId: String,

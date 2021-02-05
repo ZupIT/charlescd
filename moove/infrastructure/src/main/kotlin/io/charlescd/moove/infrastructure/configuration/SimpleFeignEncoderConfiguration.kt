@@ -45,18 +45,18 @@ class SimpleFeignEncoderConfiguration(
 ) {
 
     @Bean
-    fun feignLogger(): Logger.Level {
+    fun simpleFeignLogger(): Logger.Level {
         return Logger.Level.FULL
     }
 
     @Bean
     @Scope("prototype")
-    fun feignFormEncoder(): Encoder {
+    fun simpleFeignFormEncoder(): Encoder {
         return FormEncoder(SpringEncoder(messageConverters))
     }
 
     @Bean
-    fun errorDecoder(): ErrorDecoder {
+    fun simpleErrorDecoder(): ErrorDecoder {
         return CustomErrorDecoder()
     }
 

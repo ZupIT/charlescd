@@ -20,8 +20,8 @@ import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.UpdateWebhookSubscriptionInteractor
 import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
-import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
@@ -38,30 +38,30 @@ class UpdateWebhookSubscriptionInteractorImplTest extends Specification {
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        updateWebhookSubscriptionInteractor = new UpdateWebhookSubscriptionInteractorImpl(new WebhookService(hermesService, new UserService(userRepository, managementUserSecurityService)))
+        updateWebhookSubscriptionInteractor = new UpdateWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to update subscription should do it successfully"() {
         when:
-        updateWebhookSubscriptionInteractor.execute(workspaceId, subscriptionId, authorization, updateWebhookSubscriptionRequest())
+        updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId, updateWebhookSubscriptionRequest())
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-        1 * this.hermesService.updateSubscription(authorEmail, subscriptionId, events) >> simpleWebhookSubscription
+        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
+        1 * this.hermesService.updateSubscription(authorEmail, subscriptionId, events) >> webhookSubscription
         notThrown()
     }
 
     def "when trying to update subscription and is wrong workspace should throw not found exception"() {
         when:
-        updateWebhookSubscriptionInteractor.execute("workspaceIdOther", subscriptionId, authorization, updateWebhookSubscriptionRequest())
+        updateWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId, updateWebhookSubscriptionRequest())
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-        0 * this.hermesService.updateSubscription(authorEmail, subscriptionId, events) >> simpleWebhookSubscription
+        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
+        0 * this.hermesService.updateSubscription(authorEmail, subscriptionId, events) >> webhookSubscription
 
         thrown(NotFoundException)
     }
@@ -93,8 +93,8 @@ class UpdateWebhookSubscriptionInteractorImplTest extends Specification {
         return "subscriptionId"
     }
 
-    private static SimpleWebhookSubscription getSimpleWebhookSubscription() {
-        return new SimpleWebhookSubscription('https://mywebhook.com.br', 'workspaceId',
+    private static WebhookSubscription getWebhookSubscription() {
+        return new WebhookSubscription('subscriptionId', 'https://mywebhook.com.br', 'apiKey', 'workspaceId',
                 'My Webhook', events)
     }
 

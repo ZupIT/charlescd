@@ -22,7 +22,7 @@ func (main *Main) Start(stopChan chan bool) error {
 	interval, err := time.ParseDuration(configuration.GetConfiguration("PUBLISHER_TIME"))
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start dispatch", "Get sync interval failed").
+			"err": errors.NewError("Cannot start publish", "Get sync interval failed").
 				WithOperations("Start.getInterval"),
 		}).Errorln()
 		return err
@@ -32,7 +32,7 @@ func (main *Main) Start(stopChan chan bool) error {
 	for {
 		select {
 		case <-ticker.C:
-			main.dispatch()
+			main.publish()
 		case <-stopChan:
 			return nil
 		}
@@ -40,12 +40,12 @@ func (main *Main) Start(stopChan chan bool) error {
 
 }
 
-func (main *Main) dispatch() {
+func (main *Main) publish() {
 	messages, err := main.messageMain.FindAllNotEnqueued()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start dispatch", "Could not find active messages").
-				WithOperations("dispatch.FindAllNotEnqueued"),
+			"err": errors.NewError("Cannot start publish", "Could not find active messages").
+				WithOperations("publish.FindAllNotEnqueued"),
 		}).Errorln()
 	}
 

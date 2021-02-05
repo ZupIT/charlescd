@@ -39,6 +39,7 @@ data class CreateBuildRequest(
     val tagName: String,
 
     @field:NotBlank
+    @field:Size(max = 36)
     val hypothesisId: String
 
 ) {

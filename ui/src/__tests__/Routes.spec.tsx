@@ -19,7 +19,7 @@ import { render, screen, waitFor } from 'unit-test/testUtils';
 import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'core/utils/auth';
 import { getProfileByKey, profileKey } from 'core/utils/profile';
 import { FetchMock } from 'jest-fetch-mock';
-import { MemoryRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { setIsMicrofrontend } from 'App';
 import Routes from '../Routes';
 
@@ -75,7 +75,11 @@ test('render with a valid session token', async () => {
     workspaces: [{ id: '1', name: 'workspace' }]
   }));
 
-  render(<MemoryRouter><Routes /></MemoryRouter>);
+  render(
+    <BrowserRouter basename="/">
+      <Routes />
+    </BrowserRouter>
+  );
 
   const sidebar = await screen.findByTestId('sidebar');
   expect(sidebar).toBeInTheDocument();
@@ -123,6 +127,7 @@ test('render and valid login saving the session', async () => {
       'access_token': token,
       'refresh_token': 'opqrstuvwxyz'
     }))
+    .mockResponseOnce(JSON.stringify({}))
     .mockResponseOnce(JSON.stringify({
       id: '1',
       name: 'charlescd',

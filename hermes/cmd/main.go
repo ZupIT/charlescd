@@ -22,9 +22,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"hermes/internal/configuration"
-	"hermes/internal/notification/publisher"
 	"hermes/internal/notification/message"
 	"hermes/internal/notification/messageexecutionhistory"
+	"hermes/internal/notification/publisher"
 	"hermes/internal/subscription"
 	"hermes/queueprotocol"
 	"hermes/web/api"
@@ -33,12 +33,7 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	configuration.CheckEnvValues()
+	godotenv.Load()
 
 	db, err := configuration.GetDBConnection("migrations")
 	if err != nil {
@@ -51,12 +46,18 @@ func main() {
 	}
 
 	goChan := make(chan os.Signal, 1)
-	amqpClient := queueprotocol.NewClient("fila1", "fila1", "amqp://guest:guest@localhost:5672/", logrus.New(), goChan)
+	amqpClient := queueprotocol.NewClient(
+		configuration.GetConfiguration("AMQP_LISTEN_QUEUE"),
+		configuration.GetConfiguration("AMQP_PUSH_QUEUE"),
+		configuration.GetConfiguration("AMQP_URL"),
+		logrus.New(),
+		goChan,
+	)
 
 	subscriptionMain := subscription.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
-	messagePublisher := publisher.NewMain(db,amqpClient,messageMain,messageExecutionMain)
+	messagePublisher := publisher.NewMain(db, amqpClient, messageMain, messageExecutionMain)
 
 	stopChan := make(chan bool, 0)
 	go messagePublisher.Start(stopChan)

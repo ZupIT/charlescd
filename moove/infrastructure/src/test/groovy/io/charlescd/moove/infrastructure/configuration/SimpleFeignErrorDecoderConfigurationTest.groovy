@@ -35,7 +35,7 @@ class SimpleFeignErrorDecoderConfigurationTest extends Specification {
         HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper())
         ObjectFactory<HttpMessageConverters> objectFactory = { -> new HttpMessageConverters(jacksonConverter) }
         feignErrorDecoderConfiguration = new SimpleFeignEncoderConfiguration(objectFactory)
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
+        errorDecoder = feignErrorDecoderConfiguration.simpleErrorDecoder()
     }
 
     def "should return illegal argument exception when status is 400"() {

@@ -22,15 +22,27 @@ import io.charlescd.moove.domain.*
 
 interface HermesService {
 
-    fun subscribe(authorEmail: String, webhookSubscription: WebhookSubscription): String
+    fun subscribe(authorEmail: String, simpleWebhookSubscription: SimpleWebhookSubscription): String
 
-    fun getSubscription(authorEmail: String, id: String): SimpleWebhookSubscription
+    fun getSubscription(authorEmail: String, id: String): WebhookSubscription
 
-    fun updateSubscription(authorEmail: String, id: String, events: List<String>): SimpleWebhookSubscription
+    fun getSubscriptinsByExternalId(authorEmail: String, externalId: String): List<WebhookSubscription>
+
+    fun updateSubscription(authorEmail: String, id: String, events: List<String>): WebhookSubscription
 
     fun deleteSubscription(authorEmail: String, id: String)
 
-    fun getSubscriptionHistory() // TODO Implement
+    fun healthCheckSubscription(authorEmail: String, id: String): WebhookSubscriptionHealthCheck
 
-    fun publishSubscription() // TODO Implement
+    fun notifySubscriptionEvent(webhookEvent: WebhookEvent)
+
+    fun getSubscriptionEventHistory(
+        authorEmail: String,
+        id: String,
+        eventType: String?,
+        eventStatus: String?,
+        eventField: String?,
+        eventValue: String?,
+        pageRequest: PageRequest
+    ): List<WebhookSubscriptionEventHistory>
 }

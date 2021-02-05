@@ -24,6 +24,7 @@ type Props = {
   hasMore: boolean;
   isLoading: boolean;
   loadMore: (page: number) => void;
+  rootMargin?: string;
 };
 
 const InfiniteScroll = ({
@@ -31,7 +32,8 @@ const InfiniteScroll = ({
   loader,
   isLoading,
   hasMore,
-  loadMore
+  loadMore,
+  rootMargin = '1px'
 }: Props) => {
   const childrenLength = Children.count(children);
   const showSentinelLoader = !isLoading && childrenLength && hasMore;
@@ -39,7 +41,7 @@ const InfiniteScroll = ({
   const [loaderRef, scrollerRef, resetPage] = useInfiniteScroll<
     HTMLDivElement,
     HTMLDivElement
-  >({ hasMore, loadMore });
+  >({ hasMore, loadMore, rootMargin });
 
   useEffect(() => {
     if (childrenLength === 0) {

@@ -16,35 +16,36 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import io.charlescd.moove.application.DeploymentService
+import io.charlescd.moove.application.WebhookEventService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
-import io.charlescd.moove.domain.Deployment
-import io.charlescd.moove.domain.DeploymentStatusEnum
-import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.DeploymentRepository
+import io.charlescd.moove.domain.*
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.transaction.Transactional
 
 @Named
-open class DeploymentCallbackInteractorImpl(private val deploymentRepository: DeploymentRepository) :
+open class DeploymentCallbackInteractorImpl(
+    private val deploymentService: DeploymentService,
+    private val webhookEventService: WebhookEventService
+) :
     DeploymentCallbackInteractor {
 
     @Transactional
     override fun execute(id: String, request: DeploymentCallbackRequest) {
-        val deployment = updateDeploymentInfo(findDeployment(id), request)
+        val deployment = updateDeploymentInfo(id, request)
         if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
             updateStatusOfPreviousDeployment(deployment.circle.id)
         }
-        updateDeployment(deployment)
+        deploymentService.update(deployment)
+        notifyEvent(request, deployment)
     }
 
-    private fun updateDeployment(deployment: Deployment) {
-        this.deploymentRepository.update(deployment)
-    }
+    private fun updateDeploymentInfo(deploymentId: String, request: DeploymentCallbackRequest): Deployment {
+        val deployment = deploymentService.find(deploymentId)
 
-    private fun updateDeploymentInfo(deployment: Deployment, request: DeploymentCallbackRequest): Deployment {
         return when (request.deploymentStatus) {
             DeploymentRequestStatus.SUCCEEDED -> deployment.copy(
                 status = DeploymentStatusEnum.DEPLOYED,
@@ -61,20 +62,37 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
     }
 
     private fun updateStatusOfPreviousDeployment(circleId: String) {
-        this.deploymentRepository.find(circleId, DeploymentStatusEnum.DEPLOYED)
+        this.deploymentService.findByCircleIdAndStatus(circleId, DeploymentStatusEnum.DEPLOYED)
             .map { deployment ->
-                this.deploymentRepository.updateStatus(
+                this.deploymentService.updateStatus(
                     deployment.id,
                     DeploymentStatusEnum.NOT_DEPLOYED
                 )
             }
     }
 
-    private fun findDeployment(id: String): Deployment {
-        return this.deploymentRepository.findById(
-            id
-        ).orElseThrow {
-            NotFoundException("deployment", id)
+    private fun notifyEvent(request: DeploymentCallbackRequest, deployment: Deployment) {
+        val webhookEventType = getWebhookEventType(request, deployment)
+        val webhookEventStatus = getWebhookEventStatus(request)
+        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, webhookEventType, webhookEventStatus)
+        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
+    }
+
+    private fun getWebhookEventType(callbackRequest: DeploymentCallbackRequest, deployment: Deployment): WebhookEventTypeEnum {
+        if (callbackRequest.isDeployEvent() || deployment.deployedAt != null) {
+            return WebhookEventTypeEnum.FINISH_DEPLOY
         }
+        return WebhookEventTypeEnum.FINISH_DEPLOY
+    }
+
+    private fun getWebhookEventStatus(callbackRequest: DeploymentCallbackRequest): WebhookEventStatusEnum {
+        if (callbackRequest.isEventStatusSuccessful()) {
+            return WebhookEventStatusEnum.SUCCESS
+        }
+
+        if (callbackRequest.isEventStatusFailure()) {
+            return WebhookEventStatusEnum.FAIL
+        }
+        return WebhookEventStatusEnum.TIMEOUT
     }
 }

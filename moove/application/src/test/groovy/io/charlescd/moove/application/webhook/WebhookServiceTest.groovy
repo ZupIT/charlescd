@@ -17,13 +17,14 @@
 package io.charlescd.moove.application.webhook
 
 import io.charlescd.moove.application.UserService
+
 import io.charlescd.moove.application.WebhookService
+import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
 import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
-import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 
@@ -33,99 +34,58 @@ class WebhookServiceTest extends Specification {
 
     private WebhookService webhookService
 
-    private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
-        this.webhookService = new WebhookService(hermesService,   new UserService(userRepository, managementUserSecurityService),)
+        this.webhookService = new WebhookService(new UserService(userRepository, managementUserSecurityService))
     }
 
-    def "when create webhook subscription should not throw"() {
+    def "when trying to get author should do it successfully"() {
         given:
-        def subscription = new WebhookSubscription( 'https://mywebhook.com.br', 'secret', 'workspaceId',
-                'My Webhook', events)
+        def author = getAuthor(false)
 
         when:
-        this.webhookService.subscribe(authorization, subscription)
+        webhookService.getAuthor(authorization)
 
         then:
-        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        0 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * this.hermesService.subscribe(authorEmail, subscription) >> "subscriptionId"
-
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
+        1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         notThrown()
     }
 
-    def "when get webhook subscription should not throw"() {
+    def "when trying to get author email should do it successfully"() {
+        given:
+        def author = getAuthor(false)
+
         when:
-        this.webhookService.getSubscription(workspaceId, authorization, subscriptionId)
+        webhookService.getAuthorEmail(authorization)
 
         then:
-        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
+        0 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         notThrown()
     }
 
-    def "when get webhook subscription and author not root and workspaceId is wrong, should throw NotFoundException"() {
+    def "when trying to access subscription as user root should do it successfully"() {
+        given:
+        def author = getAuthor(true)
+
         when:
-        this.webhookService.getSubscription("workspaceIdOther", authorization, subscriptionId)
+        webhookService.validateWorkspace("OtherWorkspaceId", subscriptionId,  author, webhookSubscription)
 
         then:
-        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-
-        thrown(NotFoundException)
-    }
-
-    def "when update webhook subscription should not throw"() {
-        when:
-        this.webhookService.updateSubscription(workspaceId, authorization, subscriptionId, events)
-
-        then:
-        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-
         notThrown()
     }
 
-    def "when update webhook subscription and workspaceId is wrong, should not update and throw NotFoundException"() {
+    def "when trying to access subscription as user  not root with other workspace should do throw NotFoundException"() {
+        given:
+        def author = getAuthor(false)
+
         when:
-        this.webhookService.getSubscription("workspaceIdOther", authorization, subscriptionId)
+        webhookService.validateWorkspace("OtherWorkspaceId", subscriptionId,  author, webhookSubscription)
 
         then:
-        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-
-        thrown(NotFoundException)
-    }
-
-    def "when delete webhook subscription should not throw"() {
-        when:
-        this.webhookService.deleteSubscription(workspaceId, authorization, subscriptionId)
-
-        then:
-        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-
-        notThrown()
-    }
-
-    def "when delete webhook subscription and workspaceId is wrong, should not update and throw NotFoundException"() {
-        when:
-        this.webhookService.deleteSubscription("workspaceIdOther", authorization, subscriptionId)
-
-        then:
-        1 * managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        1 * userRepository.findByEmail(authorEmail) >> Optional.of(author)
-        1 * hermesService.getSubscription(authorEmail, subscriptionId) >> simpleWebhookSubscription
-
         thrown(NotFoundException)
     }
 
@@ -139,10 +99,12 @@ class WebhookServiceTest extends Specification {
         return "email@email.com"
     }
 
-    private static User getAuthor() {
+    private static User getAuthor(boolean root) {
        return new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "charlescd", authorEmail, "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], root, LocalDateTime.now())
     }
+
+
 
     private static String getAuthorization() {
         return "Bearer qwerty"
@@ -157,7 +119,16 @@ class WebhookServiceTest extends Specification {
     }
 
     private static SimpleWebhookSubscription getSimpleWebhookSubscription() {
-        return new SimpleWebhookSubscription('https://mywebhook.com.br', workspaceId,
+        return new SimpleWebhookSubscription('https://mywebhook.com.br'," apiKey", workspaceId,
                 'My Webhook', events)
+    }
+
+    private static WebhookSubscription getWebhookSubscription() {
+        return new WebhookSubscription("subscriptionId",'https://mywebhook.com.br'," apiKey", workspaceId,
+                'My Webhook', events)
+    }
+
+    private static WebhookSubscriptionHealthCheck getHealthCheckWebhookSubscription() {
+        return new WebhookSubscriptionHealthCheck(500, "Unexpected error")
     }
 }
