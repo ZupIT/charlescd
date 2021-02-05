@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';

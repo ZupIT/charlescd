@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
 import keys from 'lodash/keys';

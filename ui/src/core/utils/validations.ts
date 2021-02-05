@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { isString } from 'lodash';
 import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
 
@@ -28,7 +29,9 @@ export const validFields = (fields: object) => {
   return status;
 };
 
-export const isNotBlank = (value: string) => !!value.trim();
+export const isNotBlank = (value: string) => !!value?.trim() || 'No whitespaces';
+
+export const trimValue = (value: string) => value?.trim();
 
 export const maxLength = (value = 64, message?: string) => ({
   value: value,

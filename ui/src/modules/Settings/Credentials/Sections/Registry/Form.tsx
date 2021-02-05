@@ -15,7 +15,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -34,6 +33,7 @@ import isEqual from 'lodash/isEqual';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import { testRegistryConnection } from 'core/providers/registry';
 import DocumentationLink from 'core/components/DocumentationLink';
+import useForm from 'core/hooks/useForm';
 
 const registryPlaceholder: Option = {
   AZURE: 'example.azurecr.io',
@@ -58,6 +58,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   } = useTestConnection(testRegistryConnection);
   const {
     register,
+    registerManual,
     handleSubmit,
     reset,
     control,
@@ -84,10 +85,10 @@ const FormRegistry = ({ onFinish }: Props) => {
 
   useEffect(() => {
     if (registryType === 'DOCKER_HUB') {
-      register('address');
+      registerManual('address');
       setValue('address', 'https://registry.hub.docker.com');
     }
-  }, [registryType, setValue, register]);
+  }, [registryType, setValue, registerManual]);
 
   useEffect(() => {
     if (testConnectionResponse && testConnectionResponse.message) {

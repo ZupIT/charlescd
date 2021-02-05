@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
 import { copyToClipboard } from 'core/utils/clipboard';
