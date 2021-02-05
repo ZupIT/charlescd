@@ -19,7 +19,6 @@ package generic
 import (
 	"encoding/base64"
 
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 )
 
@@ -34,32 +33,27 @@ func NewGenericProvider(genericProvider GenericProvider) GenericProvider {
 	return genericProvider
 }
 
-func (genericProvider GenericProvider) GetClient() (dynamic.Interface, error) {
-	restConfig, err := genericProvider.getRestConfig()
+func (genericProvider GenericProvider) GetClient() (*rest.Config, error) {
+	return genericProvider.getRestConfig()
+}
+
+func (genericProvider GenericProvider) getRestConfig() (*rest.Config, error) {
+	caData, err := genericProvider.getCAData()
 	if err != nil {
 		return nil, err
 	}
 
-	return dynamic.NewForConfig(&restConfig)
-}
-
-func (genericProvider GenericProvider) getRestConfig() (rest.Config, error) {
-	caData, err := genericProvider.getCAData()
-	if err != nil {
-		return rest.Config{}, err
-	}
-
 	clientCertificate, err := genericProvider.getClientCertificate()
 	if err != nil {
-		return rest.Config{}, err
+		return nil, err
 	}
 
 	clientKey, err := genericProvider.getClientKey()
 	if err != nil {
-		return rest.Config{}, err
+		return nil, err
 	}
 
-	restConfig := rest.Config{
+	restConfig := &rest.Config{
 		Host: genericProvider.Host,
 		TLSClientConfig: rest.TLSClientConfig{
 			CertData: clientCertificate,

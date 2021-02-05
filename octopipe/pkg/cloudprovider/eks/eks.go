@@ -23,7 +23,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	eksService "github.com/aws/aws-sdk-go/service/eks"
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/aws-iam-authenticator/pkg/token"
 )
@@ -39,33 +38,28 @@ func NewEKSProvider(eksProvider EKSProvider) EKSProvider {
 	return eksProvider
 }
 
-func (eksProvider EKSProvider) GetClient() (dynamic.Interface, error) {
-	restConfig, err := eksProvider.getRestConfig()
+func (eksProvider EKSProvider) GetClient() (*rest.Config, error) {
+	return eksProvider.getRestConfig()
+}
+
+func (eksProvider EKSProvider) getRestConfig() (*rest.Config, error) {
+	awsSession := eksProvider.getAWSSession()
+	eksClusterData, err := eksProvider.getEKSClusterDataBySession(awsSession)
 	if err != nil {
 		return nil, err
 	}
 
-	return dynamic.NewForConfig(&restConfig)
-}
-
-func (eksProvider EKSProvider) getRestConfig() (rest.Config, error) {
-	awsSession := eksProvider.getAWSSession()
-	eksClusterData, err := eksProvider.getEKSClusterDataBySession(awsSession)
-	if err != nil {
-		return rest.Config{}, err
-	}
-
 	bearerToken, err := eksProvider.getK8sTokenByAwsClusterAndSession(eksClusterData, awsSession)
 	if err != nil {
-		return rest.Config{}, err
+		return nil, err
 	}
 
 	encodedCertificate, err := eksProvider.getEncodedCertificateByEKSCluster(eksClusterData)
 	if err != nil {
-		return rest.Config{}, err
+		return nil, err
 	}
 
-	restConfig := rest.Config{
+	restConfig := &rest.Config{
 		Host:        aws.StringValue(eksClusterData.Endpoint),
 		BearerToken: bearerToken,
 		TLSClientConfig: rest.TLSClientConfig{

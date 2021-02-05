@@ -16,15 +16,17 @@
 
 package deployment
 
-import "k8s.io/client-go/dynamic"
+import (
+	"k8s.io/client-go/rest"
+)
 
 type MainUseCases interface {
 	NewDeployment(
 		action string,
-		forceUpdate bool,
-		namespaces string,
+		update bool,
+		namespace string,
 		manifest map[string]interface{},
-		config dynamic.Interface,
+		config *rest.Config,
 	) UseCases
 }
 
