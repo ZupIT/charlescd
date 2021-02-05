@@ -20,11 +20,11 @@ import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import InfiniteScroll from 'core/components/InfiniteScroll';
+import { useDispatch, useGlobalState } from 'core/state/hooks';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 import { isActiveById } from '../helpers';
 import { useFindAllUserGroup } from '../hooks';
-import { useDispatch, useGlobalState } from 'core/state/hooks';
 import { UserGroupPaginationItem } from '../interfaces/UserGroupsPagination';
 import { resetUserGroupsAction } from '../state/actions';
 
@@ -40,17 +40,19 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
   const { list } = useGlobalState(({ userGroups }) => userGroups);
   const isRenderEmpty = isEmpty(list.content) && !loading;
 
-  const loadByPage = useCallback(
-    (page: number) => {
-      getUserGroups(name, page);
-    },
-    [getUserGroups, name]
-  );
+  const onChange = useCallback(() => {
+    const page = 0;
+    dispatch(resetUserGroupsAction());
+    getUserGroups(name, page);
+  }, [dispatch, getUserGroups, name]);
 
   useEffect(() => {
-    dispatch(resetUserGroupsAction());
-    loadByPage(0);
-  }, [dispatch, loadByPage]);
+    onChange();
+  }, [name, onChange]);
+
+  const loadMore = (page: number) => {
+    getUserGroups(name, page);
+  };
 
   const renderItem = ({ id, name }: UserGroupPaginationItem) => (
     <MenuItem
@@ -74,7 +76,7 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
   const renderContent = () => (
     <InfiniteScroll
       hasMore={!list.last}
-      loadMore={loadByPage}
+      loadMore={loadMore}
       isLoading={loading}
       loader={<Styled.Loader />}
     >
