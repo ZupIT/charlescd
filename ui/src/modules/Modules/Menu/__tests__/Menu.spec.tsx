@@ -65,6 +65,7 @@ test('render Modules Menu empty', async () => {
 });
 
 test('render Modules Menu on Loading', () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({}));
   render(<Menu />);
 
   const loading = screen.getByText('Loading...');
