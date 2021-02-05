@@ -120,24 +120,24 @@ export const redirectToIDM = () => {
 };
 
 export const logout = () => {
-  if (isIDMEnabled()) {
-    const refreshToken = getRefreshToken();
-    const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogout}`;
+  // if (isIDMEnabled()) {
+  //   const refreshToken = getRefreshToken();
+  //   const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogout}`;
 
-    fetch(url, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `client_id=${IDMClient}&refresh_token=${refreshToken}`,
-      method: 'POST'
-    }).finally(() => {
-      clearSession();
-      redirectTo(routes.main);
-    });
-  } else {
-    clearSession();
-    redirectTo(routes.login);
-  }
+  //   fetch(url, {
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded'
+  //     },
+  //     body: `client_id=${IDMClient}&refresh_token=${refreshToken}`,
+  //     method: 'POST'
+  //   }).finally(() => {
+  //     clearSession();
+  //     redirectTo(routes.main);
+  //   });
+  // } else {
+  //   clearSession();
+  //   redirectTo(routes.login);
+  // }
 };
 
 export const checkStatus = (status: number) => {
