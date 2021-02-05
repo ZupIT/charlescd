@@ -5,7 +5,6 @@ import (
 	"hermes/internal/message/message"
 	"hermes/internal/message/messageexecutionhistory"
 	"hermes/queueprotocol"
-	"sync"
 )
 
 type UseCases interface {
@@ -17,9 +16,8 @@ type Main struct {
 	amqpClient    *queueprotocol.Client
 	messageMain   message.UseCases
 	executionMain messageexecutionhistory.UseCases
-	mux           sync.Mutex
 }
 
 func NewMain(db *gorm.DB, amqpClient *queueprotocol.Client, messageMain message.UseCases, executionMain messageexecutionhistory.UseCases) UseCases {
-	return &Main{db, amqpClient, messageMain, executionMain, sync.Mutex{}}
+	return &Main{db, amqpClient, messageMain, executionMain}
 }

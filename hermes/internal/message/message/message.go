@@ -23,6 +23,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
+	"hermes/internal/configuration"
 	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
 	"io"
@@ -99,7 +100,7 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error) {
 	var response []payloads.MessageResponse
 
-	query := main.db.Raw(FindAllNotEnqueuedQuery).Scan(&response)
+	query := main.db.Raw(FindAllNotEnqueuedQuery, configuration.GetConfiguration("PUBLISHER_RETRY")).Scan(&response)
 	if query.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("FindAllNotEnqueued Message error", query.Error.Error()).
 			WithOperations("FindAllNotEnqueued.Query")

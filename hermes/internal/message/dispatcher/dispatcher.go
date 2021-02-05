@@ -2,10 +2,10 @@ package dispatcher
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"hermes/internal/configuration"
 	"hermes/internal/message/messageexecutionhistory"
 	"hermes/internal/message/payloads"
 	"hermes/pkg/errors"
@@ -19,7 +19,7 @@ const (
 )
 
 func (main *Main) Start(stopChan chan bool) error {
-	interval, err := time.ParseDuration("15s")
+	interval, err := time.ParseDuration(configuration.GetConfiguration("PUBLISHER_TIME"))
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": errors.NewError("Cannot start dispatch", "Get sync interval failed").
@@ -49,18 +49,13 @@ func (main *Main) dispatch() {
 		}).Errorln()
 	}
 
-	fmt.Println("dispatch")
 
 	for _, msg := range messages {
-		go main.sendMessage(msg)
+		 main.sendMessage(msg)
 	}
 }
 
 func (main *Main) sendMessage(message payloads.MessageResponse) error {
-	defer main.mux.Unlock()
-	main.mux.Lock()
-
-	fmt.Println("sendMessage")
 	pushMsg, err := json.Marshal(message)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
