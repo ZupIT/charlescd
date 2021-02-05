@@ -41,7 +41,7 @@ jest.mock("react-hook-form", () => {
   };
 });
 
-test("Test componentForm for one component render", () => {
+test("componentForm for one component render", () => {
   const { container } = render(
     <ThemeProviderWrapper>
       <ComponentForm
@@ -57,7 +57,7 @@ test("Test componentForm for one component render", () => {
   expect(container.innerHTML).toMatch("input-wrapper-components[0].name");
 });
 
-test("Test componentForm for two or more components render and trash", async () => {
+test("componentForm for two or more components render and trash", async () => {
   const { container, getByTestId } = render(
     <ThemeProviderWrapper>
       <ComponentForm
@@ -75,12 +75,12 @@ test("Test componentForm for two or more components render and trash", async () 
   const trashComponent: any = getByTestId("icon-trash")
 
   fireEvent.click(trashComponent)
-  waitFor(() => {
+  await waitFor(() => {
     expect(mockRemove).toBeCalledTimes(1)
   });
 });
 
-test("Test componentForm for more Options render", () => {
+test("componentForm for more Options render", () => {
   const { container } = render(
     <ThemeProviderWrapper>
       <ComponentForm
