@@ -22,9 +22,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"hermes/internal/configuration"
-	"hermes/internal/message/dispatcher"
-	"hermes/internal/message/message"
-	"hermes/internal/message/messageexecutionhistory"
+	"hermes/internal/notification/publisher"
+	"hermes/internal/notification/message"
+	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/subscription"
 	"hermes/queueprotocol"
 	"hermes/web/api"
@@ -56,7 +56,7 @@ func main() {
 	subscriptionMain := subscription.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
-	messagePublisher := dispatcher.NewMain(db,amqpClient,messageMain,messageExecutionMain)
+	messagePublisher := publisher.NewMain(db,amqpClient,messageMain,messageExecutionMain)
 
 	stopChan := make(chan bool, 0)
 	go messagePublisher.Start(stopChan)

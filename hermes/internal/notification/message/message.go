@@ -24,7 +24,7 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"hermes/internal/configuration"
-	"hermes/internal/message/payloads"
+	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"io"
 	"time"

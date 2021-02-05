@@ -1,4 +1,4 @@
-package dispatcher
+package publisher
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"hermes/internal/configuration"
-	"hermes/internal/message/messageexecutionhistory"
-	"hermes/internal/message/payloads"
+	"hermes/internal/notification/messageexecutionhistory"
+	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"time"
 )
@@ -49,6 +49,10 @@ func (main *Main) dispatch() {
 		}).Errorln()
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"Messages ready to publish": len(messages),
+		"Time": time.Now(),
+	}).Println()
 
 	for _, msg := range messages {
 		 main.sendMessage(msg)

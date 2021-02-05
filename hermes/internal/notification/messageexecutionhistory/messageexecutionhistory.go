@@ -20,7 +20,7 @@ package messageexecutionhistory
 
 import (
 	"github.com/google/uuid"
-	"hermes/internal/message/payloads"
+	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"time"
 )

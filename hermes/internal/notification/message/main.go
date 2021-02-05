@@ -21,8 +21,8 @@ package message
 import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"hermes/internal/message/messageexecutionhistory"
-	"hermes/internal/message/payloads"
+	"hermes/internal/notification/messageexecutionhistory"
+	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"hermes/queueprotocol"
 	"io"

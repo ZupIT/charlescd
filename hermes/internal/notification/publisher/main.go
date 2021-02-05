@@ -1,9 +1,9 @@
-package dispatcher
+package publisher
 
 import (
 	"gorm.io/gorm"
-	"hermes/internal/message/message"
-	"hermes/internal/message/messageexecutionhistory"
+	"hermes/internal/notification/message"
+	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/queueprotocol"
 )
 

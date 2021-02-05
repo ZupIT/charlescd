@@ -3,7 +3,7 @@ package restutil
 import (
 	"encoding/json"
 	"errors"
-	"hermes/internal/message/payloads"
+	"hermes/internal/notification/payloads"
 	"hermes/internal/subscription"
 	"strconv"
 )
