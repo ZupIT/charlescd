@@ -17,14 +17,14 @@
 package io.charlescd.moove.application.webhook.response
 
 import io.charlescd.moove.domain.WebhookSubscriptionEventHistory
+import java.time.LocalDateTime
 
 data class EventHistoryWebhookSubscriptionResponse(
     val executionId: String,
     val subscription: WebhookSubscriptionInfoResponse,
     val status: String,
-    val updatedAt: String,
     val event: WebhookEventInfoResponse,
-    val executionLog: String
+    val executions: List<WebhookExecutionInfoResponse>
 ) {
     companion object {
         fun from(webhookSubscriptionEventHistory: WebhookSubscriptionEventHistory) = EventHistoryWebhookSubscriptionResponse(
@@ -32,17 +32,22 @@ data class EventHistoryWebhookSubscriptionResponse(
             subscription = WebhookSubscriptionInfoResponse(
                 webhookSubscriptionEventHistory.subscription.id,
                 webhookSubscriptionEventHistory.subscription.description,
-                webhookSubscriptionEventHistory.subscription.url
+                webhookSubscriptionEventHistory.subscription.url,
+                webhookSubscriptionEventHistory.subscription.workspaceId
+
             ),
             status = webhookSubscriptionEventHistory.status,
-            updatedAt = webhookSubscriptionEventHistory.updatedAt,
             event = WebhookEventInfoResponse(
                 webhookSubscriptionEventHistory.event.type,
-                webhookSubscriptionEventHistory.event.externalId,
-                webhookSubscriptionEventHistory.event.status,
-                webhookSubscriptionEventHistory.event.message
+                webhookSubscriptionEventHistory.event.content
             ),
-            executionLog = webhookSubscriptionEventHistory.executionLog
+            executions = webhookSubscriptionEventHistory.executions.map {
+                WebhookExecutionInfoResponse(
+                    it.executionLog,
+                    it.status,
+                    it.loggedAt
+                )
+            }
         )
     }
 }
@@ -50,12 +55,17 @@ data class EventHistoryWebhookSubscriptionResponse(
 data class WebhookSubscriptionInfoResponse(
     val id: String,
     val description: String,
-    val url: String
+    val url: String,
+    val workspaceId: String
 )
 
 data class WebhookEventInfoResponse(
     val type: String,
-    val externalId: String,
+    val content: String
+)
+
+data class WebhookExecutionInfoResponse(
+    val executionLog: String,
     val status: String,
-    val message: String
+    val loggedAt: LocalDateTime
 )
