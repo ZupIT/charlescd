@@ -12,11 +12,3 @@ WHERE id IN (SELECT message_id
                    GROUP BY m.id) as g
              where total < ?);
 `
-
-//const FindAllNotEnqueuedQuery = `
-//SELECT *
-//FROM messages
-//WHERE (last_status = '') IS NOT FALSE
-//   OR last_status ILIKE 'NOT_ENQUEUED';
-//`
-
