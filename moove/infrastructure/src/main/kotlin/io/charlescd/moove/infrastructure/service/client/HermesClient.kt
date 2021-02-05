@@ -103,7 +103,7 @@ interface HermesClient {
     )
     fun getSubscriptionEventsHistory(
         @RequestHeader("x-author") authorEmail: String,
-        @PathVariable("externalId") externalId: String,
+        @PathVariable("id") id: String,
         @RequestParam(value = "eventType", required = false) eventType: String?,
         @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
         @RequestParam(value = "eventField", required = false) eventField: String?,

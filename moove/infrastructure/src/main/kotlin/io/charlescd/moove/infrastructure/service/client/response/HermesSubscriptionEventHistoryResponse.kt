@@ -16,24 +16,20 @@
 
 package io.charlescd.moove.infrastructure.service.client.response
 
+import java.time.LocalDateTime
+
 data class HermesSubscriptionEventHistoryResponse(
-    val executionId: String,
-    val hermesSubscription: HermesSubscriptionInfoResponse,
-    val status: String,
-    val updatedAt: String,
-    val hermesEvent: HermesEventInfoResponse,
-    val executionLog: String
-)
-
-data class HermesSubscriptionInfoResponse(
     val id: String,
-    val description: String,
-    val url: String
+    val eventType: String,
+    val event: String,
+    val lastStatus: String,
+    val subscriptionId: String,
+    val executions: List<HermesExecutionInfoResponse>
+
 )
 
-data class HermesEventInfoResponse(
-    val type: String,
-    val externalId: String,
+data class HermesExecutionInfoResponse(
+    val executionLog: String,
     val status: String,
-    val message: String
+    val loggedAt: LocalDateTime
 )

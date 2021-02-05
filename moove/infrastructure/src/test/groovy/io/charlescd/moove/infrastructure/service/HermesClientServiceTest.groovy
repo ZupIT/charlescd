@@ -21,11 +21,10 @@ import io.charlescd.moove.infrastructure.service.client.HermesClient
 import io.charlescd.moove.infrastructure.service.client.HermesPublisherClient
 import io.charlescd.moove.infrastructure.service.client.request.HermesCreateSubscriptionRequest
 import io.charlescd.moove.infrastructure.service.client.request.HermesUpdateSubscriptionRequest
-import io.charlescd.moove.infrastructure.service.client.response.HermesEventInfoResponse
+import io.charlescd.moove.infrastructure.service.client.response.HermesExecutionInfoResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesHealthCheckSubscriptionResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionCreateResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionEventHistoryResponse
-import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionInfoResponse
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
 import spock.lang.Specification
 
@@ -132,20 +131,11 @@ class HermesClientServiceTest extends Specification {
         def response = new ArrayList()
         def history = new HermesSubscriptionEventHistoryResponse(
                 "executionId",
-                new HermesSubscriptionInfoResponse(
-                        "subscriptionId",
-                        "subscriptionDescription",
-                        "subscriptionUrl"
-                ),
-                "ENQUEUED",
-                LocalDateTime.now().toString(),
-                new HermesEventInfoResponse(
-                        "DEPLOY",
-                        "workspaceId",
-                        "SUCCESS",
-                        "json"
-                ),
-                "log"
+                "DEPLOY",
+                "\"{\\\"subscriptionId\\\":\\\"adsdasasd\\\",\\\"executionId\\\":\\\"qwerty-poiuy-asdf-ghjkl\\\",\\\"event\\\":{\\\"type\\\":\\\"DEPLOY\\\",\\\"status\\\":\\\"SUCCESS\\\",\\\"date\\\":\\\"2020-01-10 22:00:00\\\",\\\"timeExecution\\\":20,\\\"workspaceId\\\":\\\"adosasokdds\\\",\\\"author\\\":{\\\"email\\\":\\\"author@email.com\\\",\\\"name\\\":\\\"athor\\\"},\\\"circle\\\":{\\\"id\\\":\\\"circleId\\\",\\\"name\\\":\\\"circleName\\\"},\\\"release\\\":{\\\"tag\\\":\\\"tag\\\",\\\"modules\\\":[{\\\"id\\\":\\\"moduleId\\\",\\\"name\\\":\\\"moduleName\\\",\\\"componentes\\\":[{\\\"id\\\":\\\"componentId\\\",\\\"name\\\":\\\"componentName\\\"},{\\\"id\\\":\\\"componentId2\\\",\\\"name\\\":\\\"componentName2\\\"}]},{\\\"id\\\":\\\"moduleId2\\\",\\\"name\\\":\\\"moduleName2\\\",\\\"componentes\\\":[{\\\"id\\\":\\\"componentId3\\\",\\\"name\\\":\\\"componentName3\\\"},{\\\"id\\\":\\\"componentId4\\\",\\\"name\\\":\\\"componentName4\\\"}]}],\\\"features\\\":[{\\\"name\\\":\\\"featureA\\\",\\\"branchName\\\":\\\"minha-branchA\\\"},{\\\"name\\\":\\\"featureB\\\",\\\"branchName\\\":\\\"minha-branchB\\\"}]}}}\"",
+                "SENDED",
+                "subscriptionId",
+                new ArrayList<HermesExecutionInfoResponse>()
         )
 
         response.add(history)
@@ -156,6 +146,7 @@ class HermesClientServiceTest extends Specification {
         hermesService.getSubscriptionEventHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest)
 
         then:
+        1 * hermesClient.getSubscription(authorEmail, "subscriptionId") >> hermesSubscriptionResponse
         1 * hermesClient.getSubscriptionEventsHistory(authorEmail, "subscriptionId", "DEPLOY", null, null, null, pageRequest.page, pageRequest.size) >> response
 
     }

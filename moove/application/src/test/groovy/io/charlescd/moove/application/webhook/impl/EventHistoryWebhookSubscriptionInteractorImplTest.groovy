@@ -22,6 +22,7 @@ import io.charlescd.moove.application.webhook.EventHistoryWebhookSubscriptionInt
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookEventInfo
+import io.charlescd.moove.domain.WebhookExecutionInfo
 import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.WebhookSubscriptionEventHistory
 import io.charlescd.moove.domain.WebhookSubscriptionInfo
@@ -52,17 +53,15 @@ class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
                 new WebhookSubscriptionInfo(
                         subscriptionId,
                         "subscriptionDescription",
-                        "subscriptionUrl"
+                        "subscriptionUrl",
+                        workspaceId
                 ),
                 "ENQUEUED",
-                LocalDateTime.now().toString(),
                 new WebhookEventInfo(
                         "DEPLOY",
-                        workspaceId,
-                        "SUCCESS",
                         "json"
                 ),
-                "log"
+                new ArrayList<WebhookExecutionInfo>()
         )
         response.add(history)
 

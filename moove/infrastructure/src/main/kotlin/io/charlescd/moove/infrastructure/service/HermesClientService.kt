@@ -69,8 +69,12 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         eventValue: String?,
         pageRequest: PageRequest
     ): List<WebhookSubscriptionEventHistory> {
+        val subscriptionEventsHistory =
+            hermesClient.getSubscriptionEventsHistory(authorEmail, id, eventType, eventStatus, eventField, eventValue, pageRequest.page, pageRequest.size)
         return buildWebhookSubscriptionEventHistory(
-            hermesClient.getSubscriptionEventsHistory(authorEmail, id, eventType, eventStatus, eventField, eventValue, pageRequest.page, pageRequest.size))
+            authorEmail,
+            subscriptionEventsHistory
+        )
     }
 
     private fun buildHermesSubscriptionEventPublishRequest(webhookEvent: WebhookEvent): HermesPublishSubscriptionEventRequest {
@@ -122,33 +126,38 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
         )
     }
 
-    private fun buildWebhookSubscriptionEventHistory(hermesSubscriptionEventHistoryResponse: List<HermesSubscriptionEventHistoryResponse>):
+    private fun buildWebhookSubscriptionEventHistory(authorEmail: String, hermesSubscriptionEventHistoryResponse: List<HermesSubscriptionEventHistoryResponse>):
             List<WebhookSubscriptionEventHistory> {
         return hermesSubscriptionEventHistoryResponse.map {
             WebhookSubscriptionEventHistory(
-            executionId = it.executionId,
-            status = it.status,
-            updatedAt = it.updatedAt,
-            subscription = buildWebhookSubscriptionInfo(it.hermesSubscription),
-            event = buildEventInfo(it.hermesEvent),
-            executionLog = it.executionLog
+                executionId = it.id,
+                subscription = buildWebhookSubscriptionInfo(authorEmail, it.subscriptionId),
+                status = it.lastStatus,
+                event = buildEventInfo(it),
+                executions = it.executions.map {
+                    WebhookExecutionInfo(
+                        it.executionLog,
+                        it.status,
+                        it.loggedAt
+                    )
+                }
         ) }
     }
 
-    private fun buildWebhookSubscriptionInfo(hermesSubscriptionInfoResponse: HermesSubscriptionInfoResponse): WebhookSubscriptionInfo {
+    private fun buildWebhookSubscriptionInfo(authorEmail: String, subscriptionId: String): WebhookSubscriptionInfo {
+        val subscription = hermesClient.getSubscription(authorEmail, subscriptionId)
         return WebhookSubscriptionInfo(
-            hermesSubscriptionInfoResponse.id,
-            hermesSubscriptionInfoResponse.description,
-            hermesSubscriptionInfoResponse.url
+            subscription.id,
+            subscription.description,
+            subscription.url,
+            subscription.externalId
         )
     }
 
-    private fun buildEventInfo(hermesEventInfoResponse: HermesEventInfoResponse): WebhookEventInfo {
+    private fun buildEventInfo(hermesEventInfoResponse: HermesSubscriptionEventHistoryResponse): WebhookEventInfo {
         return WebhookEventInfo(
-            hermesEventInfoResponse.type,
-            hermesEventInfoResponse.externalId,
-            hermesEventInfoResponse.status,
-            hermesEventInfoResponse.message
+            hermesEventInfoResponse.eventType,
+            hermesEventInfoResponse.event
         )
     }
 }

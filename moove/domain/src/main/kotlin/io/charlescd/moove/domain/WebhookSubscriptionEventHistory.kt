@@ -16,24 +16,30 @@
 
 package io.charlescd.moove.domain
 
+import java.time.LocalDateTime
+
 data class WebhookSubscriptionEventHistory(
     val executionId: String,
     val subscription: WebhookSubscriptionInfo,
     val status: String,
-    val updatedAt: String,
     val event: WebhookEventInfo,
-    val executionLog: String
+    val executions: List<WebhookExecutionInfo>
 )
 
 data class WebhookSubscriptionInfo(
     val id: String,
     val description: String,
-    val url: String
+    val url: String,
+    val workspaceId: String
 )
 
 data class WebhookEventInfo(
     val type: String,
-    val externalId: String,
+    val content: String
+)
+
+data class WebhookExecutionInfo(
+    val executionLog: String,
     val status: String,
-    val message: String
+    val loggedAt: LocalDateTime
 )
