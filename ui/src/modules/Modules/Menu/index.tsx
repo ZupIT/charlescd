@@ -26,17 +26,19 @@ import { addParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { isParamExists } from 'core/utils/path';
 import InfiniteScroll from 'core/components/InfiniteScroll';
-import { useGlobalState } from 'core/state/hooks';
+import { useDispatch, useGlobalState } from 'core/state/hooks';
+import { resetModulesAction } from '../state/actions';
 import { useFindAllModules } from '../hooks/module';
+import { Module } from '../interfaces/Module';
 import MenuItem from './MenuItem';
 import Loader from './Loaders';
 import Styled from './styled';
-import { Module } from '../interfaces/Module';
 
 const ModulesMenu = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const { getAllModules, loading } = useFindAllModules();
   const { list } = useGlobalState(({ modules }) => modules);
-  const history = useHistory();
 
   const openNewModule = () => {
     if (!isParamExists('module', NEW_TAB)) {
@@ -56,8 +58,9 @@ const ModulesMenu = () => {
   );
 
   useEffect(() => {
+    dispatch(resetModulesAction());
     loadByPage(0);
-  }, [loadByPage]);
+  }, [dispatch, loadByPage]);
 
   const renderItem = ({ id, name }: Module) => (
     <MenuItem key={id} id={id} name={name} />
