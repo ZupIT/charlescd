@@ -23,7 +23,7 @@ import { clearProfile } from './profile';
 import { clearWorkspace } from './workspace';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { redirectTo } from './routes';
-import routes from 'core/constants/routes';
+// import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import { microfrontendKey } from './microfrontend';
 
@@ -45,7 +45,7 @@ const IDMUrl = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 const IDMRealm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
 const IDMClient = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
 const IDMUrlLogin = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGIN_URI;
-const IDMUrlLogout = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGOUT_URI;
+// const IDMUrlLogout = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGOUT_URI;
 const IDMUrlRedirect = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
 
 export const setAccessToken = (token: string) =>
