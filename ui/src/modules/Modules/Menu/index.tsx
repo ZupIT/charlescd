@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Fragment, useCallback, useEffect } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
@@ -37,8 +37,10 @@ import Styled from './styled';
 const ModulesMenu = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const [name, setName] = useState<string>('');
   const { getAllModules, loading } = useFindAllModules();
   const { list } = useGlobalState(({ modules }) => modules);
+  const isRenderEmpty = isEmpty(list.content) && !loading;
 
   const openNewModule = () => {
     if (!isParamExists('module', NEW_TAB)) {
@@ -46,15 +48,11 @@ const ModulesMenu = () => {
     }
   };
 
-  const onSearch = (search: string) => {
-    getAllModules(search);
-  };
-
   const loadByPage = useCallback(
-    (page: number, name?: string) => {
+    (page: number) => {
       getAllModules(name, page);
     },
-    [getAllModules]
+    [getAllModules, name]
   );
 
   useEffect(() => {
@@ -63,28 +61,34 @@ const ModulesMenu = () => {
   }, [dispatch, loadByPage]);
 
   const renderItem = ({ id, name }: Module) => (
-    <MenuItem key={id} id={id} name={name} />
+    <MenuItem
+      key={id}
+      id={id}
+      name={name}
+      isActive={isActiveById(id)}
+      onSelect={onSelect}
+    />
   );
 
   const renderEmpty = () => (
     <Styled.Empty>
-      <Text.h3 color="dark">No Modules was found</Text.h3>
+      <Text.h3 color="dark">No User group was found</Text.h3>
     </Styled.Empty>
   );
 
-  const renderList = () => (
+  const renderList = (data: Module[]) =>
+    map(data, item => renderItem(item))
+
+  const renderContent = () => (
     <InfiniteScroll
       hasMore={!list.last}
       loadMore={loadByPage}
       isLoading={loading}
       loader={<Styled.Loader />}
     >
-      {map(list?.content, item => renderItem(item))}
+      {isRenderEmpty ? renderEmpty() : renderList(list.content)}
     </InfiniteScroll>
   );
-
-  const renderContent = () =>
-    isEmpty(list?.content) ? renderEmpty() : renderList();
 
   return (
     <Fragment>
@@ -98,8 +102,8 @@ const ModulesMenu = () => {
         </Can>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
-        <Styled.List>{loading ? <Loader.List /> : renderContent()}</Styled.List>
+        <Styled.SearchInput resume onSearch={setName} />
+        {renderContent()}
       </Styled.Content>
     </Fragment>
   );
