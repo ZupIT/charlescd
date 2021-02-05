@@ -23,6 +23,7 @@ import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-ca
 import { cdConfigurationFixture, deployComponentsFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import { routesManifests } from '../../fixtures/manifests.fixture'
 import { RouteHookParams } from '../../../../app/v2/operator/params.interface'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 
 describe('Hook Routes Manifest Creation', () => {
 
@@ -92,5 +93,439 @@ describe('Hook Routes Manifest Creation', () => {
     const manifests = routeUseCase.execute(hookParams)
 
     await expect(manifests).rejects.toThrowError()
+  })
+})
+
+
+describe('Compare observed routes state with desired routes state', () => {
+  it('should return true when observed and desired states are empty', () => {
+    const deploymentRepository = new DeploymentRepositoryV2()
+    const componentsRepository = new ComponentsRepositoryV2()
+    const cdConfigurationsRepository = new CdConfigurationsRepository()
+    const consoleLoggerService = new ConsoleLoggerService()
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
+    jest.spyOn(cdConfigurationsRepository, 'findDecrypted').mockImplementation(async() => cdConfigurationFixture)
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
+
+    const observed = { 'DestinationRule.networking.istio.io/v1beta1':{}, 'VirtualService.networking.istio.io/v1beta1':{} }
+    const desired : KubernetesManifest[] = []
+    const routeUseCase = new CreateRoutesManifestsUseCase(
+      deploymentRepository,
+      componentsRepository,
+      cdConfigurationsRepository,
+      consoleLoggerService
+    )
+
+    expect(routeUseCase.checkRoutes(observed, desired)).toEqual(true)
+
+  })
+  it('should return true when observed and desired states are empty', () => {
+    const deploymentRepository = new DeploymentRepositoryV2()
+    const componentsRepository = new ComponentsRepositoryV2()
+    const cdConfigurationsRepository = new CdConfigurationsRepository()
+    const consoleLoggerService = new ConsoleLoggerService()
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
+    jest.spyOn(cdConfigurationsRepository, 'findDecrypted').mockImplementation(async() => cdConfigurationFixture)
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
+
+
+    const observed = {
+      'DestinationRule.networking.istio.io/v1beta1': {
+        'abobora': {
+          'apiVersion': 'networking.istio.io/v1beta1',
+          'kind': 'DestinationRule',
+          'spec': {
+            'host': 'abobora',
+            'subsets': [
+              {
+                'labels': {
+                  'circleId': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+                  'component': 'abobora',
+                  'tag': 'latest'
+                },
+                'name': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              }
+            ]
+          }
+        },
+        'jilo': {
+          'apiVersion': 'networking.istio.io/v1beta1',
+          'kind': 'DestinationRule',
+          'spec': {
+            'host': 'jilo',
+            'subsets': [
+              {
+                'labels': {
+                  'circleId': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+                  'component': 'jilo',
+                  'tag': 'latest'
+                },
+                'name': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              }
+            ]
+          }
+        }
+      },
+      'VirtualService.networking.istio.io/v1beta1': {
+        'abobora': {
+          'apiVersion': 'networking.istio.io/v1beta1',
+          'kind': 'VirtualService',
+          'spec': {
+            'gateways': [],
+            'hosts': [
+              'abobora'
+            ],
+            'http': [
+              {
+                'match': [
+                  {
+                    'headers': {
+                      'cookie': {
+                        'regex': '.*x-circle-id=ad2a1669-34b8-4af2-b42c-acbad2ec6b60.*'
+                      }
+                    }
+                  }
+                ],
+                'route': [
+                  {
+                    'destination': {
+                      'host': 'abobora',
+                      'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                    },
+                    'headers': {
+                      'request': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      },
+                      'response': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                'match': [
+                  {
+                    'headers': {
+                      'x-circle-id': {
+                        'exact': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    }
+                  }
+                ],
+                'route': [
+                  {
+                    'destination': {
+                      'host': 'abobora',
+                      'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                    },
+                    'headers': {
+                      'request': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      },
+                      'response': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        'jilo': {
+          'apiVersion': 'networking.istio.io/v1beta1',
+          'kind': 'VirtualService',
+          'spec': {
+            'gateways': [],
+            'hosts': [
+              'jilo'
+            ],
+            'http': [
+              {
+                'match': [
+                  {
+                    'headers': {
+                      'cookie': {
+                        'regex': '.*x-circle-id=ad2a1669-34b8-4af2-b42c-acbad2ec6b60.*'
+                      }
+                    }
+                  }
+                ],
+                'route': [
+                  {
+                    'destination': {
+                      'host': 'jilo',
+                      'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                    },
+                    'headers': {
+                      'request': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      },
+                      'response': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                'match': [
+                  {
+                    'headers': {
+                      'x-circle-id': {
+                        'exact': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    }
+                  }
+                ],
+                'route': [
+                  {
+                    'destination': {
+                      'host': 'jilo',
+                      'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                    },
+                    'headers': {
+                      'request': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      },
+                      'response': {
+                        'set': {
+                          'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+    const desired = [
+      {
+        'apiVersion': 'networking.istio.io/v1beta1',
+        'kind': 'DestinationRule',
+        'metadata': {
+          'name': 'jilo',
+          'namespace': 'default'
+        },
+        'spec': {
+          'host': 'jilo',
+          'subsets': [
+            {
+              'labels': {
+                'component': 'jilo',
+                'tag': 'latest',
+                'circleId': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              },
+              'name': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+            }
+          ]
+        }
+      },
+      {
+        'apiVersion': 'networking.istio.io/v1beta1',
+        'kind': 'VirtualService',
+        'metadata': {
+          'name': 'jilo',
+          'namespace': 'default'
+        },
+        'spec': {
+          'gateways': [],
+          'hosts': [
+            'jilo'
+          ],
+          'http': [
+            {
+              'match': [
+                {
+                  'headers': {
+                    'cookie': {
+                      'regex': '.*x-circle-id=ad2a1669-34b8-4af2-b42c-acbad2ec6b60.*'
+                    }
+                  }
+                }
+              ],
+              'route': [
+                {
+                  'destination': {
+                    'host': 'jilo',
+                    'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                  },
+                  'headers': {
+                    'request': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    },
+                    'response': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              'match': [
+                {
+                  'headers': {
+                    'x-circle-id': {
+                      'exact': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                    }
+                  }
+                }
+              ],
+              'route': [
+                {
+                  'destination': {
+                    'host': 'jilo',
+                    'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                  },
+                  'headers': {
+                    'request': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    },
+                    'response': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        'apiVersion': 'networking.istio.io/v1beta1',
+        'kind': 'DestinationRule',
+        'metadata': {
+          'name': 'abobora',
+          'namespace': 'default'
+        },
+        'spec': {
+          'host': 'abobora',
+          'subsets': [
+            {
+              'labels': {
+                'component': 'abobora',
+                'tag': 'latest',
+                'circleId': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              },
+              'name': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+            }
+          ]
+        }
+      },
+      {
+        'apiVersion': 'networking.istio.io/v1beta1',
+        'kind': 'VirtualService',
+        'metadata': {
+          'name': 'abobora',
+          'namespace': 'default'
+        },
+        'spec': {
+          'gateways': [],
+          'hosts': [
+            'abobora'
+          ],
+          'http': [
+            {
+              'match': [
+                {
+                  'headers': {
+                    'cookie': {
+                      'regex': '.*x-circle-id=ad2a1669-34b8-4af2-b42c-acbad2ec6b60.*'
+                    }
+                  }
+                }
+              ],
+              'route': [
+                {
+                  'destination': {
+                    'host': 'abobora',
+                    'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                  },
+                  'headers': {
+                    'request': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    },
+                    'response': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              'match': [
+                {
+                  'headers': {
+                    'x-circle-id': {
+                      'exact': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                    }
+                  }
+                }
+              ],
+              'route': [
+                {
+                  'destination': {
+                    'host': 'abobora',
+                    'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                  },
+                  'headers': {
+                    'request': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    },
+                    'response': {
+                      'set': {
+                        'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+
+    const routeUseCase = new CreateRoutesManifestsUseCase(
+      deploymentRepository,
+      componentsRepository,
+      cdConfigurationsRepository,
+      consoleLoggerService
+    )
+
+    expect(routeUseCase.checkRoutes(observed, desired)).toEqual(true)
+
   })
 })

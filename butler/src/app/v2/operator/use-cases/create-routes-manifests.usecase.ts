@@ -16,6 +16,7 @@
 
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
+import { isEmpty, isEqual } from 'lodash'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { Component } from '../../api/deployments/interfaces'
@@ -25,7 +26,7 @@ import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manif
 import { DeploymentUtils } from '../../core/integrations/utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../../core/integrations/utils/istio-deployment-manifests.utils'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { RouteHookParams } from '../params.interface'
+import { RouteChildren, RouteHookParams } from '../params.interface'
 
 @Injectable()
 export class CreateRoutesManifestsUseCase {
@@ -37,7 +38,7 @@ export class CreateRoutesManifestsUseCase {
     private readonly consoleLoggerService: ConsoleLoggerService,
   ) { }
 
-  public async execute(hookParams: RouteHookParams): Promise<KubernetesObject[]> {
+  public async execute(hookParams: RouteHookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     this.consoleLoggerService.log('START:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
     const specs = Promise.all(hookParams.parent.spec.circles.flatMap(async c => {
       const deployment = await this.retriveDeploymentFor(c.id)
@@ -45,9 +46,22 @@ export class CreateRoutesManifestsUseCase {
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
       this.consoleLoggerService.log('FINISH:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
       return proxySpecs
-    })).then(s => s.flat())
+    })).then(s => {
 
+      console.log({
+        observed: JSON.stringify(hookParams.children),
+        desired: JSON.stringify(s.flat())
+      })
+
+      return { children: s.flat() }
+    }
+    )
     return specs
+  }
+
+  public checkRoutes(observed: RouteChildren, desired: KubernetesManifest[]): boolean {
+    const o = Object.values(observed).flat().filter( (o:  KubernetesManifest) => !isEmpty(o))
+    return isEqual(o, desired)
   }
 
   private async retriveDeploymentFor(id: string): Promise<DeploymentEntityV2> {

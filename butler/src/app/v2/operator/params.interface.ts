@@ -15,11 +15,13 @@ export interface RouteHookParams {
       }[]
     }
   }
-  children: {
-    'VirtualService.networking.istio.io/v1beta1': Record<string, unknown>,
-    'DestinationRule.networking.istio.io/v1beta1': Record<string, unknown>
-  }
+  children: RouteChildren
   finalizing: boolean
+}
+
+export interface RouteChildren {
+  'VirtualService.networking.istio.io/v1beta1': Record<string, unknown>,
+  'DestinationRule.networking.istio.io/v1beta1': Record<string, unknown>
 }
 
 export interface HookParams {
