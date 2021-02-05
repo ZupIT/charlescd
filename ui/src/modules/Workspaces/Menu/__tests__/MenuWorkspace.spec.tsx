@@ -18,10 +18,10 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Menu from '../index';
-import workspaces from '../../../../../stub/workspaces/mock';
+import { workspaces } from './fixtures';
 
 const props = {
-  items: workspaces.workspaces.content,
+  items: workspaces.content,
   onSearch: jest.fn()
 };
 

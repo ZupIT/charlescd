@@ -15,15 +15,12 @@
  */
 
 import React, { ReactElement } from "react";
-import { render, act, fireEvent, cleanup, wait, screen, waitFor } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import FormModule from "../";
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
 import { Module, Author } from "modules/Modules/interfaces/Module";
 import { Actions, Subjects } from "core/utils/abilities";
-import MutationObserver from 'mutation-observer'
-
-(global as any).MutationObserver = MutationObserver
 
 interface fakeCanProps {
   I?: Actions;
