@@ -59,6 +59,10 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 
 	var contentList []map[string]interface{}
 	err = json.Unmarshal(resp.Body(), &contentList)
+	if resp.IsError() {
+		return "", "", errors.New(string(resp.Body()))
+	}
+
 	if err != nil {
 		return "", "", err
 	}
@@ -68,12 +72,12 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 	for _, content := range contentList {
 		contentName, ok := content["name"].(string)
 		if !ok {
-			return "", "", errors.New("Not found name in content list api. ")
+			continue
 		}
 
 		downloadUrl, ok := content["download_url"].(string)
 		if !ok {
-			return "", "", errors.New("Not found download_url in content list api.")
+			continue
 		}
 
 		if strings.Contains(contentName, ".tgz") {
@@ -85,7 +89,7 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 			template = string(resp.Body())
 		}
 
-		if strings.Contains(name, fmt.Sprintf("%s.yaml", contentName)) || strings.Contains(contentName, "value.yaml") {
+		if strings.Contains(contentName, fmt.Sprintf("%s.yaml", name)) || strings.Contains(contentName, "value.yaml") {
 			resp, err := client.R().Get(downloadUrl)
 			if err != nil {
 				return "", "", err

@@ -18,6 +18,7 @@ package gitlab
 
 import (
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -46,23 +47,23 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 	}
 
 	basePathSplit := strings.Split(gitlabRepository.Url, "?")
-	basePath := basePathSplit[0]
+	basePathRepositorySplit := strings.Split(basePathSplit[0], "/files")
+	basePathRepository := basePathRepositorySplit[0]
 	queryParams, err := url.ParseQuery(basePathSplit[1])
 	if err != nil {
 		return "", "", err
 	}
 
-	if queryParams.Get("path") != "" {
-		queryParams.Set("path", fmt.Sprintf("%s/%s", queryParams.Get("path"), name))
-	} else {
-		queryParams.Set("path", fmt.Sprintf("%s", name))
-	}
-
+	queryParams.Add("path", name)
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: skipTLS})
-	client.SetHeader("PRIVATE-TOKEN", fmt.Sprintf("token %s", gitlabRepository.Token))
+	client.SetHeader("PRIVATE-TOKEN", fmt.Sprintf("%s", gitlabRepository.Token))
 
-	resp, err := client.R().Get(fmt.Sprintf("%s/tree?%s", basePath, queryParams.Encode()))
+	resp, err := client.R().Get(fmt.Sprintf("%s/tree?%s", basePathRepository, queryParams.Encode()))
+	if resp.IsError() {
+		return "", "", errors.New(string(resp.Body()))
+	}
+
 	if err != nil {
 		return "", "", err
 	}
@@ -78,25 +79,65 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 	for _, content := range contentList {
 		contentName, ok := content["name"].(string)
 		if !ok {
-			return "", "", errors.New("Not found name in content list api. ")
+			continue
 		}
 
+		var path string
+		if basePathRepositorySplit[1] == "" {
+			path = url.PathEscape(fmt.Sprintf("%s/%s", name, contentName))
+		} else {
+			path = url.PathEscape(fmt.Sprintf("%s/%s/%s", basePathRepositorySplit[1], name, contentName))
+		}
 		if strings.Contains(contentName, ".tgz") {
-			resp, err := client.R().Get(fmt.Sprintf("%s/%s%%2F%s?%s", gitlabRepository.Url, name, contentName, queryParams.Encode()))
+			resp, err := client.R().Get(fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()))
+			if resp.IsError() {
+				return "", "", errors.New(string(resp.Body()))
+			}
+
 			if err != nil {
 				return "", "", err
 			}
 
-			template = string(resp.Body())
+			var contentFile map[string]interface{}
+			err = json.Unmarshal(resp.Body(), &contentFile)
+			if err != nil {
+				return "", "", err
+			}
+
+			content, ok := contentFile["content"].(string)
+			if !ok {
+				return "", "", nil
+			}
+
+			sDec, _ := base64.StdEncoding.DecodeString(content)
+
+			template = string(sDec)
 		}
 
 		if strings.Contains(contentName, fmt.Sprintf("%s.yaml", name)) || strings.Contains(contentName, "value.yaml") {
-			resp, err := client.R().Get(fmt.Sprintf("%s/%s%%2F%s?%s", gitlabRepository.Url, name, contentName, queryParams.Encode()))
+			resp, err := client.R().Get(fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()))
+			if resp.IsError() {
+				return "", "", errors.New(string(resp.Body()))
+			}
+
 			if err != nil {
 				return "", "", err
 			}
 
-			value = string(resp.Body())
+			var contentFile map[string]interface{}
+			err = json.Unmarshal(resp.Body(), &contentFile)
+			if err != nil {
+				return "", "", err
+			}
+
+			content, ok := contentFile["content"].(string)
+			if !ok {
+				return "", "", nil
+			}
+
+			sDec, _ := base64.StdEncoding.DecodeString(content)
+
+			value = string(sDec)
 		}
 	}
 
