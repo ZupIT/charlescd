@@ -25,8 +25,9 @@ import Loader from './Loaders';
 import Styled from './styled';
 import { isActiveById } from '../helpers';
 import { useFindAllUserGroup } from '../hooks';
-import { useGlobalState } from 'core/state/hooks';
+import { useDispatch, useGlobalState } from 'core/state/hooks';
 import { UserGroupPaginationItem } from '../interfaces/UserGroupsPagination';
+import { resetUserGroupsAction } from '../state/actions';
 
 interface Props {
   onCreate: () => void;
@@ -34,20 +35,22 @@ interface Props {
 }
 
 const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
+  const dispatch = useDispatch();
   const [name, setName] = useState<string>('');
   const [getUserGroups, loading] = useFindAllUserGroup();
   const { list } = useGlobalState(({ userGroups }) => userGroups);
 
   const loadByPage = useCallback(
-    (page: number) => {
+    (page: number, name?: string) => {
       getUserGroups(name, page);
     },
-    [name, getUserGroups]
+    [getUserGroups]
   );
 
   useEffect(() => {
+    dispatch(resetUserGroupsAction());
     loadByPage(0);
-  }, [loadByPage]);
+  }, [dispatch, loadByPage]);
 
   const renderItem = ({ id, name }: UserGroupPaginationItem) => (
     <MenuItem
