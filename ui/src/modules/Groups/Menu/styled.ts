@@ -29,12 +29,6 @@ const SearchInput = styled(SearchInputComponent)`
   padding: 0 16px;
 `;
 
-const List = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-`;
-
 const ListItem = styled(LabeledIcon)`
   padding: 15px 0;
   cursor: pointer;
@@ -42,8 +36,7 @@ const ListItem = styled(LabeledIcon)`
 `;
 
 const Content = styled.div`
-  height: calc(100vh - 200px);
-  overflow-y: auto;
+  height: calc(100vh - 250px);
 `;
 
 const Actions = styled.div`
@@ -107,7 +100,6 @@ const Empty = styled.div`
 
 export default {
   SearchInput,
-  List,
   ListItem,
   Content,
   Actions,

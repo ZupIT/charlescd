@@ -21,7 +21,6 @@ import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import InfiniteScroll from 'core/components/InfiniteScroll';
 import MenuItem from './MenuItem';
-import Loader from './Loaders';
 import Styled from './styled';
 import { isActiveById } from '../helpers';
 import { useFindAllUserGroup } from '../hooks';
@@ -39,12 +38,13 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
   const [name, setName] = useState<string>('');
   const [getUserGroups, loading] = useFindAllUserGroup();
   const { list } = useGlobalState(({ userGroups }) => userGroups);
+  const isRenderEmpty = isEmpty(list.content) && !loading;
 
   const loadByPage = useCallback(
-    (page: number, name?: string) => {
+    (page: number) => {
       getUserGroups(name, page);
     },
-    [getUserGroups]
+    [getUserGroups, name]
   );
 
   useEffect(() => {
@@ -62,40 +62,38 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
     />
   );
 
-  const renderList = () => (
-    <InfiniteScroll
-      hasMore={!list.last}
-      loadMore={loadByPage}
-      isLoading={loading}
-      loader={<Styled.Loader />}
-    >
-      {map(list?.content, item => renderItem(item))}
-    </InfiniteScroll>
-  );
-
   const renderEmpty = () => (
     <Styled.Empty>
       <Text.h3 color="dark">No User group was found</Text.h3>
     </Styled.Empty>
   );
 
-  const renderContent = () =>
-    isEmpty(list?.content) ? renderEmpty() : renderList();
+  const renderList = (data: UserGroupPaginationItem[]) =>
+    map(data, item => renderItem(item))
+
+  const renderContent = () => (
+    <InfiniteScroll
+      hasMore={!list.last}
+      loadMore={loadByPage}
+      isLoading={loading}
+      loader={<Styled.Loader />}
+    >
+      {isRenderEmpty ? renderEmpty() : renderList(list.content)}
+    </InfiniteScroll>
+  );
 
   return (
     <Fragment>
-      <Styled.Actions data-testid="user-groups-menu">
+      <Styled.Actions data-testid="user-groups-action">
         <Styled.Button onClick={onCreate} id="create-user-group">
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create user group</Text.h5>
           </LabeledIcon>
         </Styled.Button>
       </Styled.Actions>
-      <Styled.Content>
+      <Styled.Content data-testid="user-groups-menu">
         <Styled.SearchInput resume onSearch={setName} maxLength={64} />
-        <Styled.List data-testid="user-group-menu">
-          {loading ? <Loader.List /> : renderContent()}
-        </Styled.List>
+        {renderContent()}
       </Styled.Content>
     </Fragment>
   );

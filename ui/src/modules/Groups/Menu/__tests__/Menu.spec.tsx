@@ -15,8 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, waitFor } from 'unit-test/testUtils';
-import { UserGroupItem } from './fixtures';
+import { render, screen } from 'unit-test/testUtils';
 import * as StateHooks from 'core/state/hooks';
 import Menu from '../index';
 
@@ -28,7 +27,7 @@ test('render Menu user groups default', async () => {
     />
   );
 
-  const menu = await screen.findByTestId('user-groups-menu');
+  const menu = await screen.findByTestId('user-groups-action');
   const emptyItems = await screen.findByText('No User group was found');
 
   expect(menu).toBeInTheDocument();
