@@ -24,6 +24,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
@@ -102,7 +103,37 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.photoUrl == user.photoUrl
     }
 
-    def "should return request user when requester is not root"() {
+    def "should find an user by email when requester is not root and own user"() {
+        given:
+        def base64Email = "dXNlckB6dXAuY29tLmJy"
+
+        def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
+                [], true, LocalDateTime.now())
+
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+
+        def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+                [workspacePermission], false, LocalDateTime.now())
+
+        def authorization = TestUtils.authorization
+
+        when:
+        def response = findUserByEmailInteractor.execute(base64Email, authorization)
+
+        then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> "user@zup.com.br"
+        1 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+        1 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+
+        assert response != null
+        assert response.id == user.id
+        assert response.name == user.name
+        assert response.createdAt == user.createdAt
+        assert response.photoUrl == user.photoUrl
+    }
+
+    def "should return Forbidden when requester is not root and not own user"() {
         given:
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
@@ -118,18 +149,14 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
 
         when:
-        def response = findUserByEmailInteractor.execute(base64Email, authorization)
+        findUserByEmailInteractor.execute(base64Email, authorization)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> "email@email"
         1 * this.userRepository.findByEmail("email@email") >> Optional.of(TestUtils.user)
-        1 * this.userRepository.findByEmail(TestUtils.user.email) >> Optional.of(user)
+        0 * this.userRepository.findByEmail(TestUtils.user.email) >> Optional.of(user)
 
-        assert response != null
-        assert response.id == user.id
-        assert response.name == user.name
-        assert response.createdAt == user.createdAt
-        assert response.photoUrl == user.photoUrl
+        thrown(ForbiddenException)
     }
 
     def "should return an user with an empty workspace when no workspaces where found"() {
