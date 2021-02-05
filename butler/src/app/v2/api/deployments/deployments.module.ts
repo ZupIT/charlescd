@@ -30,8 +30,6 @@ import { DeploymentRepositoryV2 } from './repository/deployment.repository'
 import { ExecutionRepository } from './repository/execution.repository'
 import { ExecutionsController } from './controller/executions.controller'
 import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.usecase'
-import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
-import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
 import { HelmManifest } from '../../core/manifests/helm/helm-manifest'
 import { GitHubRepository } from '../../core/integrations/github/github-repository'
 import { GitLabRepository } from '../../core/integrations/gitlab/gitlab-repository'
@@ -63,8 +61,6 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
     PaginatedExecutionsUseCase,
     MooveService,
     ConsoleLoggerService,
-    OctopipeConnector,
-    OctopipeApi,
     GitHubRepository,
     GitLabRepository,
     RepositoryStrategyFactory,
