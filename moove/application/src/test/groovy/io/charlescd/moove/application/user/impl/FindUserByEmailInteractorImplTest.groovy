@@ -103,7 +103,7 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.photoUrl == user.photoUrl
     }
 
-    def "should find an user by email when requester is not root and own user"() {
+    def "should return user by email when requester is not root but is the user himself"() {
         given:
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
@@ -133,7 +133,7 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.photoUrl == user.photoUrl
     }
 
-    def "should return Forbidden when requester is not root and not own user"() {
+    def "when requester is not root and not the user himself should throw ForbiddenException"() {
         given:
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
