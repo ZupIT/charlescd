@@ -41,8 +41,6 @@ export class CreateDeploymentUseCase {
   constructor(
     @InjectRepository(DeploymentEntity)
     private deploymentsRepository: Repository<DeploymentEntity>,
-    @InjectRepository(Execution)
-    private executionRepository: Repository<Execution>,
     @InjectRepository(ComponentsRepositoryV2)
     private componentsRepository: ComponentsRepositoryV2,
     private readonly consoleLoggerService: ConsoleLoggerService,
