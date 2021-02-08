@@ -52,15 +52,12 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     }
   }, [onIDMFlow]);
 
-  useEffect(() => {
-    filterWorkspace(name);
-  }, [name, filterWorkspace]);
 
   useEffect(() => {
     if (!email) logout();
   }, [email]);
 
-  const handleOnSearch = (name: string) => !loading && setName(name);
+  const handleOnSearch = (name: string) => !loading && filterWorkspace(name);
 
   return (
     <Page>
