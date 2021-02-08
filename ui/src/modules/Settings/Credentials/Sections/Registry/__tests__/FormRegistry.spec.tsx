@@ -741,7 +741,7 @@ test('should clean test connection message after change form', async () => {
   expect(successMessage).not.toBeInTheDocument();
 });
 
-test('should clean test connection error message after change form', async () => {
+test('should clean test error connection message after change form', async () => {
   const error = {
     status: '404',
     message: 'invalid registry'

@@ -32,9 +32,14 @@ import Styled from './styled';
 
 const FormCDConfiguration = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingAdd, loadingSave } = useCDConfiguration();
-  const { control, register, handleSubmit } = useForm<CDConfiguration>();
+  const formMethods = useForm<CDConfiguration>({
+    mode: 'onChange'
+  });
+  const { control, register, errors, handleSubmit, formState: { isValid } } = formMethods;
   const [configType, setConfigType] = useState('');
   const [providerType, setProviderType] = useState('');
+  console.log(isValid);
+  console.log(errors);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -175,9 +180,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
       </Styled.Fields>
       <Button.Default
         type="submit"
-        isDisabled={
-          !isEmpty(providerType) || configType === 'SPINNAKER' ? false : true
-        }
+        isDisabled={!isValid}
         isLoading={loadingAdd || loadingSave}
       >
         Save
