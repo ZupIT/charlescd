@@ -156,7 +156,7 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
         </Text.h2>
       </Styled.Title>
       <Styled.Description>
-        <Text.h4 color="dark" data-testid="text-datasource">
+        <Text.h4 color="dark" data-testid="user-group-help-text">
           With the user group you have more control over the entire application.
           You can choose which accesses this group will have in this workspace.
           Consult the our{' '}

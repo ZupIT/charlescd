@@ -19,10 +19,11 @@
 package subscription
 
 import (
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"hermes/pkg/errors"
 	"io"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type UseCases interface {

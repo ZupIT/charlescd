@@ -57,7 +57,6 @@ func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases
 	s := router.PathPrefix("/api").Subrouter()
 
 	s.Use(LoggingMiddleware)
-	s.Use(ValidatorMiddleware)
 	api.newV1Api(s)
 
 	return router

@@ -20,13 +20,14 @@ package subscription
 
 import (
 	"errors"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"hermes/internal/notification/message"
 	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
@@ -138,8 +139,8 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 		}
 
 		qp := map[string]string{
-			"EventType": r.URL.Query().Get("eventyType"),
-			"Status": r.URL.Query().Get("status"),
+			"EventType":  r.URL.Query().Get("eventyType"),
+			"Status":     r.URL.Query().Get("status"),
 			"EventField": r.URL.Query().Get("eventField"),
 			"EventValue": r.URL.Query().Get("eventValue"),
 		}
@@ -239,4 +240,3 @@ func HealthCheck(messageMain message.UseCases) func(w http.ResponseWriter, r *ht
 		restutil.NewResponse(w, http.StatusOK, result)
 	}
 }
-
