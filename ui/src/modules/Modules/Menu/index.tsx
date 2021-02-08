@@ -31,7 +31,6 @@ import { resetModulesAction } from '../state/actions';
 import { useFindAllModules } from '../hooks/module';
 import { Module } from '../interfaces/Module';
 import MenuItem from './MenuItem';
-import Loader from './Loaders';
 import Styled from './styled';
 
 const ModulesMenu = () => {
@@ -40,7 +39,7 @@ const ModulesMenu = () => {
   const [name, setName] = useState<string>('');
   const { getAllModules, loading } = useFindAllModules();
   const { list } = useGlobalState(({ modules }) => modules);
-  const isRenderEmpty = isEmpty(list.content) && !loading;
+  const isEmptyList = isEmpty(list.content) && !loading;
 
   const openNewModule = () => {
     if (!isParamExists('module', NEW_TAB)) {
@@ -48,25 +47,25 @@ const ModulesMenu = () => {
     }
   };
 
-  const loadByPage = useCallback(
-    (page: number) => {
-      getAllModules(name, page);
-    },
-    [getAllModules, name]
-  );
+  const onChange = useCallback(() => {
+    const page = 0;
+    dispatch(resetModulesAction());
+    getAllModules(name, page);
+  }, [dispatch, getAllModules, name]);
 
   useEffect(() => {
-    dispatch(resetModulesAction());
-    loadByPage(0);
-  }, [dispatch, loadByPage]);
+    onChange();
+  }, [name, onChange]);
+
+  const loadMore = (page: number) => {
+    getAllModules(name, page);
+  };
 
   const renderItem = ({ id, name }: Module) => (
     <MenuItem
       key={id}
       id={id}
       name={name}
-      isActive={isActiveById(id)}
-      onSelect={onSelect}
     />
   );
 
@@ -82,11 +81,11 @@ const ModulesMenu = () => {
   const renderContent = () => (
     <InfiniteScroll
       hasMore={!list.last}
-      loadMore={loadByPage}
+      loadMore={loadMore}
       isLoading={loading}
       loader={<Styled.Loader />}
     >
-      {isRenderEmpty ? renderEmpty() : renderList(list.content)}
+      {isEmptyList ? renderEmpty() : renderList(list.content)}
     </InfiniteScroll>
   );
 
