@@ -72,7 +72,7 @@ public class Segmentation {
                 metadata.getType(),
                 metadata.getWorkspaceId(),
                 metadata.getIsDefault(),
-                metadata.getActive(),
+                metadata.isActive(),
                 metadata.getCreatedAt());
     }
 
@@ -100,7 +100,7 @@ public class Segmentation {
         return workspaceId;
     }
 
-    public Boolean getActive() {
+    public Boolean isActive() {
         return this.active;
     }
 

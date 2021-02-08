@@ -113,12 +113,12 @@ public abstract class SegmentationRequest {
 
     public Segmentation toSegmentation() {
         return new Segmentation(
-            this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, active,
-            this.createdAt
+            this.name, this.node, this.reference, this.circleId, this.type, this.workspaceId, this.isDefault,
+                this.active, this.createdAt
         );
     }
 
-    public Boolean getActive() {
+    public Boolean isActive() {
         return active;
     }
 

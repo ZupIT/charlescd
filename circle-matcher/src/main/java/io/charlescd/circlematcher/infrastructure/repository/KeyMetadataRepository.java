@@ -53,7 +53,7 @@ public class KeyMetadataRepository implements RedisRepository {
         }
         return metadataList
                 .parallelStream()
-                .filter(metadata -> metadata.getActive() == null).collect(Collectors.toList());
+                .filter(metadata -> metadata.isActive() == null).collect(Collectors.toList());
     }
 
     public List<KeyMetadata> findByWorkspaceId(String workspaceId) {

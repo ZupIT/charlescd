@@ -49,7 +49,7 @@ public class KeyMetadata {
         this.name = segmentation.getName();
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
-        this.active = segmentation.getActive();
+        this.active = segmentation.isActive();
         this.createdAt = segmentation.getCreatedAt();
     }
 
@@ -81,7 +81,7 @@ public class KeyMetadata {
         return isDefault;
     }
 
-    public Boolean getActive() {
+    public Boolean isActive() {
         return active;
     }
 
