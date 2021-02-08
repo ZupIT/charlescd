@@ -71,7 +71,7 @@ const ModulesMenu = () => {
 
   const renderEmpty = () => (
     <Styled.Empty>
-      <Text.h3 color="dark">No User group was found</Text.h3>
+      <Text.h3 color="dark">No Modules was found</Text.h3>
     </Styled.Empty>
   );
 
@@ -85,7 +85,7 @@ const ModulesMenu = () => {
       isLoading={loading}
       loader={<Styled.Loader />}
     >
-      {isEmptyList ? renderEmpty() : renderList(list.content)}
+      {isEmptyList ? renderEmpty() : renderList(list?.content)}
     </InfiniteScroll>
   );
 
