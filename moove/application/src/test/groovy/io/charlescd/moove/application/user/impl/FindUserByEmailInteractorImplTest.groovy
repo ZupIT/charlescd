@@ -123,8 +123,7 @@ class FindUserByEmailInteractorImplTest extends Specification {
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> "user@zup.com.br"
-        1 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
-        1 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+        2 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
 
         assert response != null
         assert response.id == user.id
