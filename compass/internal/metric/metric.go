@@ -88,15 +88,15 @@ func (main Main) Validate(metric Metric) errors.ErrorList {
 		ers.Append(err)
 	}
 
-	if metric.Nickname != "" && len(metric.Nickname) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in Nickname").
+	if metric.Nickname != "" && len(metric.Nickname) > 64 {
+		err := errors.NewError("Invalid data", "64 Maximum length in Nickname").
 			WithMeta("field", "nickname").
 			WithOperations("Validate.NicknameLen")
 		ers.Append(err)
 	}
 
-	if metric.Metric != "" && len(metric.Metric) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in Metric").
+	if metric.Metric != "" && len(metric.Metric) > 64 {
+		err := errors.NewError("Invalid data", "64 Maximum length in Metric").
 			WithMeta("field", "metric").
 			WithOperations("Validate.MetricLen")
 		ers.Append(err)
