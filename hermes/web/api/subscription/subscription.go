@@ -20,11 +20,12 @@ package subscription
 
 import (
 	"errors"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
