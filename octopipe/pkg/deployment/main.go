@@ -17,6 +17,7 @@
 package deployment
 
 import (
+	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 	"k8s.io/client-go/rest"
 )
 
@@ -27,6 +28,7 @@ type MainUseCases interface {
 		namespace string,
 		manifest map[string]interface{},
 		config *rest.Config,
+		kubectl kube.Kubectl,
 	) UseCases
 }
 

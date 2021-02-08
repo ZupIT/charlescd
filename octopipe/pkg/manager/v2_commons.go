@@ -5,6 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/argoproj/gitops-engine/pkg/utils/kube"
+	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
+	"k8s.io/klog/klogr"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 
@@ -44,7 +47,11 @@ func (manager Manager) applyV2Manifest(
 		return err
 	}
 
-	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config)
+	kubectl := &kube.KubectlCmd{
+		Log:    klogr.New(),
+		Tracer: tracing.NopTracer{},
+	}
+	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config, kubectl)
 	err = deployment.Do()
 	if err != nil {
 		log.WithFields(log.Fields{"function": "applyV2Manifest", "error": err.Error()}).Info("ERROR:DO_DEPLOYMENT")
@@ -130,7 +137,7 @@ func (manager Manager) triggerV2Callback(callbackUrl string, callbackType string
 		log.Fields{"function": "triggerV2Callback", "callbackUrl": callbackUrl, "status": status, "type": callbackType, "incomingCircleId": incomingCircleId},
 	).Info("START:TRIGGER_V2_CALLBACK")
 	client := http.Client{}
-	callbackData := V2CallbackData{callbackType, status }
+	callbackData := V2CallbackData{callbackType, status}
 	request, err := manager.mountV2WebhookRequest(callbackUrl, callbackData, incomingCircleId)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "triggerV2Callback", "error": err.Error()}).Info("ERROR:MOUNT_V2_WEBHOOK_REQUEST")

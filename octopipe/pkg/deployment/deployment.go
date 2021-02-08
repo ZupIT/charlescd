@@ -21,9 +21,7 @@ import (
 	"errors"
 	"github.com/argoproj/gitops-engine/pkg/health"
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog/klogr"
 	"k8s.io/kubectl/pkg/cmd/util"
 	"os"
 	"strconv"
@@ -50,7 +48,7 @@ type Deployment struct {
 	namespace string
 	manifest  map[string]interface{}
 	config    *rest.Config
-	kubectl   kube.KubectlCmd
+	kubectl   kube.Kubectl
 }
 
 func (main *DeploymentMain) NewDeployment(
@@ -59,6 +57,7 @@ func (main *DeploymentMain) NewDeployment(
 	namespace string,
 	manifest map[string]interface{},
 	config *rest.Config,
+	kubectl kube.Kubectl,
 ) UseCases {
 	return &Deployment{
 		action:    action,
@@ -66,10 +65,7 @@ func (main *DeploymentMain) NewDeployment(
 		namespace: namespace,
 		manifest:  manifest,
 		config:    config,
-		kubectl: kube.KubectlCmd{
-			Log:    klogr.New(),
-			Tracer: tracing.NopTracer{},
-		},
+		kubectl:   kubectl,
 	}
 }
 
@@ -116,16 +112,20 @@ func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) er
 				return err
 			}
 
-			healthStatus, err := health.GetResourceHealth(resource, nil)
-			if err != nil {
-				ticker.Stop()
-				return err
+			if resource != nil {
+				healthStatus, err := health.GetResourceHealth(resource, nil)
+				if err != nil {
+					ticker.Stop()
+					return err
+				}
+
+				if healthStatus != nil && healthStatus.Status == health.HealthStatusHealthy {
+					ticker.Stop()
+					return nil
+				}
 			}
 
-			if healthStatus != nil && healthStatus.Status == health.HealthStatusHealthy {
-				ticker.Stop()
-				return nil
-			}
+			return nil
 		}
 	}
 }
@@ -154,6 +154,10 @@ func (deployment *Deployment) deploy() error {
 	return nil
 }
 func isResourController(resource *unstructured.Unstructured) bool {
+	if resource == nil {
+		return false
+	}
+
 	_, isRsourceController, _ := unstructured.NestedInt64(resource.Object, "status", "replicas")
 	return isRsourceController
 }

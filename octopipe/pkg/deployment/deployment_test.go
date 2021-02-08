@@ -17,7 +17,23 @@
 package deployment
 
 import (
+	"context"
+	"fmt"
+	"github.com/argoproj/gitops-engine/pkg/utils/kube/kubetest"
+	"k8s.io/client-go/rest"
+	"log"
+	"os"
+	"strings"
+	"testing"
+
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic/fake"
+	"k8s.io/client-go/kubernetes/scheme"
 )
 
 var deploymentMain = NewDeploymentMain()
@@ -126,3 +142,182 @@ status:
   replicas: 1
   availableReplicas: 1
 `
+
+func toJSON(manifest string) map[string]interface{} {
+	decode := scheme.Codecs.UniversalDeserializer().Decode
+	obj, _, err := decode([]byte(manifest), nil, nil)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error while decoding YAML object. Err was: %s", err))
+	}
+
+	unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return unstructuredObj
+}
+
+func TestActionFailed(t *testing.T) {
+	deployment := deploymentMain.NewDeployment(
+		"fake",
+		false,
+		"default",
+		toJSON(simpleManifest),
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+	)
+
+	err := deployment.Do()
+	if err != nil && !strings.Contains(err.Error(), "Failed to execute deployment") {
+		t.Error(err)
+	}
+
+}
+
+func TestCreateResource(t *testing.T) {
+	scheme := runtime.NewScheme()
+	client := fake.NewSimpleDynamicClient(scheme)
+
+	deployment := deploymentMain.NewDeployment(
+		DeployAction,
+		false,
+		"default",
+		toJSON(simpleManifest),
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+	)
+
+	err := deployment.Do()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.Fake.ClearActions()
+}
+
+func TestUpdateResource(t *testing.T) {
+	scheme := runtime.NewScheme()
+	client := fake.NewSimpleDynamicClient(scheme)
+
+	unstructuredObj := &unstructured.Unstructured{
+		Object: toJSON(simpleManifest),
+	}
+
+	deployment := deploymentMain.NewDeployment(
+		DeployAction,
+		false,
+		"default",
+		toJSON(simpleManifestRunning),
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+	)
+
+	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
+
+	err = deployment.Do()
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestUndeployResourceControllerSuccess(t *testing.T) {
+	scheme := runtime.NewScheme()
+	client := fake.NewSimpleDynamicClient(scheme)
+
+	unstructuredObj := &unstructured.Unstructured{
+		Object: toJSON(simpleManifestRunning),
+	}
+
+	deployment := deploymentMain.NewDeployment(
+		UndeployAction,
+		false,
+		"default",
+		toJSON(simpleManifestRunning),
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+	)
+
+	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
+
+	err = deployment.Do()
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = client.Resource(deploymentRes).Namespace("default").Get(context.TODO(), "nginx-deployment", metav1.GetOptions{})
+	if err != nil && !k8sErrors.IsNotFound(err) {
+		t.Error(err)
+	}
+
+}
+
+func TestUndeployNonResourceControllerSuccess(t *testing.T) {
+	scheme := runtime.NewScheme()
+	client := fake.NewSimpleDynamicClient(scheme)
+
+	unstructuredObj := &unstructured.Unstructured{
+		Object: toJSON(simpleManifest),
+	}
+
+	deployment := deploymentMain.NewDeployment(
+		UndeployAction,
+		false,
+		"default",
+		toJSON(simpleManifest),
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+	)
+
+	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
+
+	err = deployment.Do()
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = client.Resource(deploymentRes).Namespace("default").Get(context.TODO(), "nginx-deployment", metav1.GetOptions{})
+	if err != nil && !k8sErrors.IsNotFound(err) {
+		t.Error(err)
+	}
+
+}
+
+func TestUndeployIfNotExist(t *testing.T) {
+	scheme := runtime.NewScheme()
+	client := fake.NewSimpleDynamicClient(scheme)
+
+	deployment := deploymentMain.NewDeployment(
+		UndeployAction,
+		false,
+		"default",
+		toJSON(simpleManifestForUpdate),
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+	)
+
+	err := deployment.Do()
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = client.Resource(deploymentRes).Namespace("default").Get(context.TODO(), "nginx-deployment", metav1.GetOptions{})
+	if err != nil && !k8sErrors.IsNotFound(err) {
+		t.Error(err)
+	}
+}
