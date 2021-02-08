@@ -41,7 +41,6 @@ public class ErrorHandler {
     @ExceptionHandler(BusinessException.class)
     public DefaultErrorResponse handleBusinessException(BusinessException exception) {
         logger.error("BAD REQUEST ERROR - ", exception.getErrorCode());
-
         return ExceptionUtils.createBusinessExceptionError(
                 exception.getErrorCode().getKey(),
                 exception.getTitle(),

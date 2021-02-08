@@ -6,11 +6,9 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import spock.lang.Specification
-
 import java.time.LocalDateTime;
 
 class ErrorHandlerTest extends Specification {
-
 
     def "should return the correct message from business exception method"() {
         given:

@@ -10,7 +10,7 @@ public enum MatcherErrorCode {
         this.key = key;
     }
 
-    public String  getKey() {
+    public String getKey() {
         return key;
     }
 
