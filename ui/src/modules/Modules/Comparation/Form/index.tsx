@@ -29,6 +29,7 @@ import Components from './Components';
 import { component } from './constants';
 import { validFields } from './helpers';
 import Styled from './styled';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 interface Props {
   module: Module;
@@ -120,13 +121,13 @@ const FormModule = ({ module, onChange }: Props) => {
             label="Name the module"
             name="name"
             defaultValue={module?.name}
-            ref={register({ required: true })}
+            ref={register(isRequiredAndNotBlank)}
           />
           <Styled.Input
             label="URL git"
             name="gitRepositoryAddress"
             defaultValue={module?.gitRepositoryAddress}
-            ref={register({ required: true })}
+            ref={register(isRequiredAndNotBlank)}
           />
           {!isEdit && <Components fieldArray={fieldArray} />}
           <Styled.FieldPopover>
@@ -134,7 +135,7 @@ const FormModule = ({ module, onChange }: Props) => {
               label="Insert a helm repository link"
               name="helmRepository"
               defaultValue={module?.helmRepository}
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
             />
             <Styled.Popover
               title="Helm"

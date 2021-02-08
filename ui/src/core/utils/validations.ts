@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { isString } from 'lodash';
 import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
 
@@ -39,7 +38,7 @@ export const isRequiredAndNotBlank = {
     notBlank: isNotBlank
   },
   setValueAs: trimValue
-}
+} as const;
 
 export const maxLength = (value = 64, message?: string) => ({
   value: value,

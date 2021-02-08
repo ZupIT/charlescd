@@ -17,7 +17,7 @@
 import React from 'react';
 import ContentIcon from 'core/components/ContentIcon';
 import Styled from '../styled';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 
 interface Props {
   name: string;
@@ -38,7 +38,7 @@ const LayerName = ({ name, onSave }: Props) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.InputTitle
             name="name"
-            ref={register}
+            ref={register({})}
             onClickSave={onSubmit}
             placeholder="Type a name"
             defaultValue={name}

@@ -150,13 +150,13 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
             label="Enter host value"
             name="hostValue"
             defaultValue={component?.hostValue}
-            ref={register()}
+            ref={register({})}
           />
           <Styled.Input
             label="Enter gateway name"
             name="gatewayName"
             defaultValue={component?.gatewayName}
-            ref={register()}
+            ref={register({})}
           />
         </Styled.Components.AdvancedOptionWrapper>
         <Can I="write" a="modules" isDisabled={isDisabled} passThrough>

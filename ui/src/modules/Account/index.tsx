@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';

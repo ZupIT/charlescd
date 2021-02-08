@@ -21,7 +21,7 @@ function useForm<
     const customRules: RegisterOptions = {
       ...registerOptions,
       validate: {
-        ...registerOptions.validate,
+        ...registerOptions?.validate,
         notBlank: isNotBlank
       },
       setValueAs: trimValue

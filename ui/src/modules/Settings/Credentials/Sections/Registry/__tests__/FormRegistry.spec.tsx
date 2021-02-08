@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, act, screen, waitFor } from 'unit-test/testUtils';
+import { render, act, screen } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
@@ -113,7 +113,7 @@ test('should have successful test connection with AZURE registry', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Azure');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
@@ -145,7 +145,7 @@ test('should have failed test connection with AZURE registry', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Azure');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
@@ -178,7 +178,7 @@ test('should render Registry with GCP form', async () => {
 
   const fillInfoText = await screen.findByText('Fill in the fields below with your GCP information:');
   expect(fillInfoText).toBeInTheDocument();
-  
+
   const projectIdInput = screen.getByText('Enter the project id');
   expect(projectIdInput).toBeInTheDocument();
 });
@@ -188,7 +188,7 @@ test('should not trigger onSubmit on json parse error with GCP form', async () =
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'GCP');
-  
+
   const inputGCPName = await screen.findByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
@@ -225,7 +225,7 @@ test('should not enable submit button after partially filled GCP form', async ()
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, '');
   });
-    
+
   expect(submitButton).toBeDisabled();
 });
 
@@ -249,7 +249,7 @@ test('should enable submit button after fill GCP form', async () => {
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
-  
+
   const testConnectionButton = screen.getByText('Test connection');
   await act(async () => userEvent.click(testConnectionButton));
 
@@ -265,7 +265,7 @@ test('should test connectivity with GCR successful', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'GCP');
-  
+
   const inputGCPName = await screen.findByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
@@ -277,7 +277,7 @@ test('should test connectivity with GCR successful', async () => {
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
-  
+
   const testConnectionButton = screen.getByText('Test connection');
   await act(async () => userEvent.click(testConnectionButton));
 
@@ -296,7 +296,7 @@ test('should test connectivity with GCR error', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'GCP');
-  
+
   const inputGCPName = await screen.findByTestId('input-text-name');
   const inputGCPAddress = screen.getByTestId('input-text-address');
   const inputGCPOrganization = screen.getByTestId('input-text-organization');
@@ -326,17 +326,17 @@ test('should render Registry form with AWS values', async () => {
 
   const fillInfoText = await screen.findByText('Fill in the fields below with your AWS information:');
   expect(fillInfoText).toBeInTheDocument();
-  
+
   const text = screen.getByText('Enter the region');
   expect(text).toBeInTheDocument();
 });
 
 test('should render Registry form with AWS values and secret input', async () => {
     render(<FormRegistry onFinish={mockOnFinish}/>);
-  
+
     const registryLabel = screen.getByText('Choose which one you want to add:');
     selectEvent.select(registryLabel, 'AWS');
-    
+
     const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
     userEvent.click(radioAuthButton);
 
@@ -346,10 +346,10 @@ test('should render Registry form with AWS values and secret input', async () =>
 
 test('should render Registry form without AWS secret input', async () => {
     render(<FormRegistry onFinish={mockOnFinish}/>);
-  
+
     const registryLabel = screen.getByText('Choose which one you want to add:');
     await act(() => selectEvent.select(registryLabel, 'AWS'));
-        
+
     const text = screen.queryByText('Enter the access key');
     expect(text).not.toBeInTheDocument();
 });
@@ -362,10 +362,10 @@ test('should enable submit button after fill AWS form', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'AWS');
-  
+
   const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
   await act(async () => userEvent.click(radioAuthButton));
-  
+
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
@@ -393,10 +393,10 @@ test('should not enable submit button after partially filled AWS form (missing n
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'AWS');
-  
+
   const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
   await act(async () => userEvent.click(radioAuthButton));
-  
+
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
   const inputAwsSecretKey = screen.getByTestId("input-password-secretKey");
@@ -410,7 +410,7 @@ test('should not enable submit button after partially filled AWS form (missing n
     userEvent.type(inputAwsSecretKey, 'fake-secret-key');
     userEvent.type(inputAwsRegion, 'fake-region');
   });
-  
+
   expect(testConnectionButton).toBeDisabled();
   expect(submitButton).toBeDisabled();
 });
@@ -425,7 +425,7 @@ test('should test AWS registry connection successful', async () => {
 
   const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
   await act(async () => userEvent.click(radioAuthButton));
-  
+
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
@@ -460,7 +460,7 @@ test('should test AWS registry connection error', async () => {
 
   const radioAuthButton = await screen.findByTestId("switch-aws-auth-handler");
   await act(async () => userEvent.click(radioAuthButton));
-  
+
   const inputAwsName = screen.getByTestId("input-text-name");
   const inputAwsAddress = screen.getByTestId("input-text-address");
   const inputAwsAccessKey = screen.getByTestId("input-password-accessKey");
@@ -490,7 +490,7 @@ test('should render Registry form with Docker Hub form', async () => {
 
   const fillInfoText = await screen.findByText('Fill in the fields below with your Docker Hub information:');
   expect(fillInfoText).toBeInTheDocument();
-  
+
   const registryField = screen.getByText('Type a name for Registry');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
@@ -502,7 +502,7 @@ test('should submit Docker Hub form', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Docker Hub');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
@@ -527,7 +527,7 @@ test('should test connectivity with Docker Hub successful', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Docker Hub');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
@@ -557,7 +557,7 @@ test('should test connectivity with Docker Hub error', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Docker Hub');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
@@ -650,7 +650,7 @@ test('should test connection with Harbor (success)', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Harbor');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
@@ -682,7 +682,7 @@ test('should test connection with Harbor (error)', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Harbor');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
@@ -711,7 +711,7 @@ test('should clean test connection message after change form', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Harbor');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
@@ -741,7 +741,7 @@ test('should clean test connection message after change form', async () => {
   expect(successMessage).not.toBeInTheDocument();
 });
 
-test('should clean test connection message after change form', async () => {
+test('should clean test connection error message after change form', async () => {
   const error = {
     status: '404',
     message: 'invalid registry'
@@ -752,13 +752,12 @@ test('should clean test connection message after change form', async () => {
 
   const registryLabel = screen.getByText('Choose which one you want to add:');
   selectEvent.select(registryLabel, 'Harbor');
-  
+
   const registryField = await screen.findByText('Type a name for Registry');
   const registryURLField = screen.getByText('Enter the registry url');
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
   const testConnectionButton = screen.getByText('Test connection');
-  let submitButton = screen.getByTestId('button-default-submit-registry');
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
