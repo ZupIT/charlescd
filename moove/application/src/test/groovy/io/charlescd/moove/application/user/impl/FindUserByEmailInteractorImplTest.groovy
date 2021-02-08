@@ -108,7 +108,7 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], true, LocalDateTime.now())
+                [], false, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
