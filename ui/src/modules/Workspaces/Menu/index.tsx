@@ -56,7 +56,7 @@ const WorkspaceMenu = ({
     handleSubmit,
     errors,
     formState: { isValid }
-  } = useForm({ mode: 'onChange' });
+  } = useForm<FormValues>({ mode: 'onChange' });
   const {
     save,
     response: saveWorkspaceResponse,
