@@ -33,7 +33,7 @@ import isEqual from 'lodash/isEqual';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import { testRegistryConnection } from 'core/providers/registry';
 import DocumentationLink from 'core/components/DocumentationLink';
-import useForm from 'core/hooks/useForm';
+import { useForm } from 'react-hook-form';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 const registryPlaceholder: Option = {
@@ -59,7 +59,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   } = useTestConnection(testRegistryConnection);
   const {
     register,
-    registerManual,
     handleSubmit,
     reset,
     control,
@@ -86,10 +85,10 @@ const FormRegistry = ({ onFinish }: Props) => {
 
   useEffect(() => {
     if (registryType === 'DOCKER_HUB') {
-      registerManual('address', isRequiredAndNotBlank);
+      register('address', isRequiredAndNotBlank);
       setValue('address', 'https://registry.hub.docker.com');
     }
-  }, [registryType, setValue, registerManual]);
+  }, [registryType, setValue, register]);
 
   useEffect(() => {
     if (testConnectionResponse && testConnectionResponse.message) {
@@ -129,7 +128,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     return (
       <>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="region"
           label="Enter the region"
         />
@@ -142,12 +141,12 @@ const FormRegistry = ({ onFinish }: Props) => {
         {awsUseSecret && (
           <>
             <Form.Password
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
               name="accessKey"
               label="Enter the access key"
             />
             <Form.Password
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
               name="secretKey"
               label="Enter the secret key"
             />
@@ -161,7 +160,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     return (
       <>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="organization"
           label="Enter the project id"
         />
@@ -184,12 +183,12 @@ const FormRegistry = ({ onFinish }: Props) => {
     return (
       <>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="username"
           label="Enter the username"
         />
         <Form.Password
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="password"
           label="Enter the password"
         />
@@ -215,7 +214,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       </Text.h5>
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="name"
           label="Type a name for Registry"
         />

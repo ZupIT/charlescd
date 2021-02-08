@@ -741,7 +741,7 @@ test('should clean test connection message after change form', async () => {
   expect(successMessage).not.toBeInTheDocument();
 });
 
-test('should clean test error connection message after change form', async () => {
+test('should clean test connection message after change form', async () => {
   const error = {
     status: '404',
     message: 'invalid registry'
@@ -758,6 +758,7 @@ test('should clean test error connection message after change form', async () =>
   const usernameField = screen.getByText('Enter the username');
   const passwordField = screen.getByText('Enter the password');
   const testConnectionButton = screen.getByText('Test connection');
+  let submitButton = screen.getByTestId('button-default-submit-registry');
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
