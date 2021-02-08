@@ -20,6 +20,7 @@ package payloads
 
 import (
 	"encoding/json"
+
 	"github.com/google/uuid"
 )
 
@@ -51,5 +52,5 @@ type FullMessageResponse struct {
 
 type StatusResponse struct {
 	Status  int16  `json:"status"`
-	Details string `json:"Details"`
+	Details string `json:"details"`
 }
