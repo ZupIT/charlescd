@@ -19,7 +19,7 @@ package io.charlescd.moove.domain
 data class WebhookSubscription(
     val id: String,
     val url: String,
-    val apiKey: String,
+    val apiKey: String? = null,
     val workspaceId: String,
     val description: String,
     val events: List<String>
@@ -27,7 +27,7 @@ data class WebhookSubscription(
 
 data class SimpleWebhookSubscription(
     val url: String,
-    val apiKey: String,
+    val apiKey: String? = null,
     val workspaceId: String,
     val description: String,
     val events: List<String>
