@@ -108,6 +108,43 @@ class MatcherDecoderConfigurationTest extends Specification {
 
     }
 
+    def "should return the correct entity data when response body is null"() {
+        given:
+        def response = GroovyMock(Response)
+        def body = Mock(Response.Body)
+        ReflectionTestUtils.setField(response, "status", 400)
+        ReflectionTestUtils.setField(response, "body", null)
+
+        when:
+        def exception = matcherErrorDecoder.decode("methodkey", response)
+
+        then:
+        body.asInputStream() >> { throw new IOException() }
+        assert exception instanceof BadRequestClientException
+        assert exception.title == 'No response body'
+        assert exception.status == '500'
+        assert exception.meta.get("component") == "moove"
+
+    }
+
+    def "should return the correct entity data when response is null"() {
+        given:
+        def response = GroovyMock(Response)
+        def body = Mock(Response.Body)
+
+
+        when:
+        def exception = matcherErrorDecoder.decode("methodkey", response)
+
+        then:
+        body.asInputStream() >> { getReturnAsInputStream()}
+        assert exception instanceof InternalErrorClientException
+        assert exception.title == 'No response body'
+        assert exception.status == '500'
+        assert exception.meta.get("component") == "moove"
+
+    }
+
     private InputStream getReturnAsInputStream() {
         String response = "{\n" +
                 "    \"id\": \"3c402eb6-a728-46dd-bf6b-f2f7e75df4f2\",\n" +
