@@ -19,13 +19,11 @@
 package api
 
 import (
-	"github.com/sirupsen/logrus"
-	"hermes/pkg/errors"
-	"hermes/web/restutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
 
 var whitelistPaths = []string{
