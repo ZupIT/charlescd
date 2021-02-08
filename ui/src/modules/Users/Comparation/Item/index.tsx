@@ -165,6 +165,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
                   required: isRequired(),
                   maxLength: maxLength()
                 })}
+                isDisabled={!!errors.name}
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
               />
