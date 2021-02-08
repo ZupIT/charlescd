@@ -39,7 +39,7 @@ const ModulesMenu = () => {
   const [name, setName] = useState<string>('');
   const { getAllModules, loading } = useFindAllModules();
   const { list } = useGlobalState(({ modules }) => modules);
-  const isEmptyList = isEmpty(list.content) && !loading;
+  const isEmptyList = isEmpty(list?.content) && !loading;
 
   const openNewModule = () => {
     if (!isParamExists('module', NEW_TAB)) {
@@ -80,7 +80,7 @@ const ModulesMenu = () => {
 
   const renderContent = () => (
     <InfiniteScroll
-      hasMore={!list.last}
+      hasMore={!list?.last}
       loadMore={loadMore}
       isLoading={loading}
       loader={<Styled.Loader />}
