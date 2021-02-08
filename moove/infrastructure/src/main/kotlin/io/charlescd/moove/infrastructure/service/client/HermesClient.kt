@@ -30,7 +30,7 @@ interface HermesClient {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
-        value = ["/v1/subscriptions"],
+        value = ["/api/v1/subscriptions"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -41,7 +41,7 @@ interface HermesClient {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping(
-        value = ["/v1/subscriptions/{id}"],
+        value = ["/api/v1/subscriptions/{id}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -53,7 +53,7 @@ interface HermesClient {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(
-        value = ["/v1/subscriptions/{id}"],
+        value = ["/api/v1/subscriptions/{id}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -64,7 +64,7 @@ interface HermesClient {
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(
-        value = ["/v1/subscriptions/{id}"],
+        value = ["/api/v1/subscriptions/{id}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -75,7 +75,7 @@ interface HermesClient {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(
-        value = ["/v1/subscriptions/{id}/health-check"],
+        value = ["/api/v1/subscriptions/{id}/health-check"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -86,7 +86,7 @@ interface HermesClient {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(
-        value = ["/v1/subscriptions/external-id/{externalId}"],
+        value = ["/api/v1/subscriptions/external-id/{externalId}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -97,7 +97,7 @@ interface HermesClient {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(
-        value = ["/v1/subscriptions/{id}/history"],
+        value = ["/api/v1/subscriptions/{id}/history"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
