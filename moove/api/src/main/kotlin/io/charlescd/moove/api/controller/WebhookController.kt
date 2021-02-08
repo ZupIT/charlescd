@@ -20,6 +20,7 @@ import io.charlescd.moove.application.webhook.*
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
+import io.charlescd.moove.application.webhook.response.HealthCheckWebhookSubscriptionResponse
 import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiOperation
@@ -90,8 +91,8 @@ class WebhookController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String
-    ) {
-        healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
+    ): HealthCheckWebhookSubscriptionResponse {
+        return healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
     }
 
     @ApiOperation(value = "Webhook event history")
