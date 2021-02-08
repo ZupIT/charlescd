@@ -18,7 +18,7 @@ package io.charlescd.moove.infrastructure.service.client.request
 
 data class HermesCreateSubscriptionRequest(
     val url: String,
-    val apiKey: String,
+    val apiKey: String? = null,
     val externalId: String,
     val description: String,
     val events: List<String>
