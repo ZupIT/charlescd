@@ -167,6 +167,10 @@ func (deployment *Deployment) undeploy() error {
 		return nil
 	}
 
+	if err != nil {
+		return err
+	}
+
 	if !isResourController(resourceInCluster) {
 		return nil
 	}
