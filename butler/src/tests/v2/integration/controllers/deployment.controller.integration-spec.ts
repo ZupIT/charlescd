@@ -21,7 +21,6 @@ import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
-import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
@@ -33,7 +32,6 @@ import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopi
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let worker: PgBossWorker
   let manager: EntityManager
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -48,21 +46,16 @@ describe('DeploymentController v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
-    await worker.pgBoss.stop()
     await app.close()
   })
 
   beforeEach(async() => {
-    await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
   })
   it('returns ok for valid params with existing cdConfiguration', async() => {
     const cdConfiguration = new CdConfigurationEntity(
@@ -311,10 +304,10 @@ describe('DeploymentController v2', () => {
       defaultCircle: false
     }
     const errorMessages = [
-      'modules.0.components.2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      'modules.0.components.3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      'modules.0.components.4.buildImageUrl must be shorter than or equal to 253 characters',
-      'modules.0.Duplicated components with the property \'componentName\''
+      '2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      '3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      '4.buildImageUrl must be shorter than or equal to 253 characters',
+      '0.Duplicated components with the property \'componentName\''
     ]
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -410,7 +403,7 @@ describe('DeploymentController v2', () => {
     }
 
     const errorMessages = [
-      'modules.0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
+      '0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
     ]
 
     await request(app.getHttpServer())
@@ -467,7 +460,7 @@ describe('DeploymentController v2', () => {
     }
 
     const errorMessages = [
-      'modules.0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
+      '0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
     ]
 
     await request(app.getHttpServer())

@@ -15,9 +15,7 @@
  */
 
 import { CdConfigurationExistencePipe } from './cd-configuration-existence-pipe'
-import { SimultaneousDeploymentValidationPipe } from './simultaneous-deployment-validation.pipe'
 
 export {
-  CdConfigurationExistencePipe,
-  SimultaneousDeploymentValidationPipe
+  CdConfigurationExistencePipe
 }

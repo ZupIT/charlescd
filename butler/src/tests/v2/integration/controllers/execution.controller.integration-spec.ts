@@ -27,7 +27,6 @@ import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/dep
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
-import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { defaultManifests } from '../../fixtures/manifests.fixture'
@@ -35,7 +34,6 @@ import { defaultManifests } from '../../fixtures/manifests.fixture'
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let worker: PgBossWorker
   let manager: EntityManager
   let manifests: KubernetesManifest[]
   beforeAll(async() => {
@@ -51,22 +49,17 @@ describe('DeploymentController v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
     manifests = defaultManifests
   })
 
   afterAll(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
-    await worker.pgBoss.stop()
     await app.close()
   })
 
   beforeEach(async() => {
-    await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
   })
 
   it('returns ok for valid params with existing cdConfiguration', async() => {
