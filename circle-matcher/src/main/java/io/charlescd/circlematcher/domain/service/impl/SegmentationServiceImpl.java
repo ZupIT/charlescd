@@ -31,7 +31,6 @@ import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepositor
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 @Service
