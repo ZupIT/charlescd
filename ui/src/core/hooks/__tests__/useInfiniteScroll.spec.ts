@@ -7,7 +7,7 @@ import {
 import useInfiniteScroll from '../useInfiniteScroll';
 
 describe('useInfiniteScroll', () => {
-  let hook;
+  let hook: any;
   let scrollerNode = document.createElement('div');
   let loaderNode = document.createElement('div');
   let loadMore = jest.fn();

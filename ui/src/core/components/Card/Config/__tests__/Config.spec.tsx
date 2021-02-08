@@ -41,5 +41,5 @@ test('render CardConfig default component', async () => {
 
 	expect(btnAction).toBeInTheDocument();
 	userEvent.click(btnAction);
-	waitFor(() => expect(click).toBeCalled());
+	await waitFor(() => expect(click).toBeCalled());
 });

@@ -22,9 +22,9 @@ const { Placeholder } = components;
 const FloatingLabel = ({
   children,
   ...props
-}: ValueContainerProps<OptionTypeBase>) => (
+}: ValueContainerProps<OptionTypeBase, false>) => (
   <components.ValueContainer {...props}>
-    <Placeholder {...props} innerProps={null}>
+    <Placeholder {...props} innerProps={null} isDisabled={false} isFocused={false}>
       {props.selectProps.placeholder}
     </Placeholder>
     {React.Children.map(children as ReactElement[], child => {
