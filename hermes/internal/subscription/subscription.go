@@ -151,3 +151,15 @@ func (main Main) FindAllByExternalIdAndEvent(externalId uuid.UUID, event string)
 
 	return res, nil
 }
+
+func (main Main) FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.Error) {
+	var res []Response
+
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND deleted_at IS NULL", externalId)
+	if q.Error != nil {
+		return []Response{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
+			WithOperations("FindAllByExternalId.QuerySubscription")
+	}
+
+	return res, nil
+}

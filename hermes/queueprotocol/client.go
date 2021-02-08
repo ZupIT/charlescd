@@ -19,7 +19,6 @@ const (
 	reconnectDelay = 5 * time.Second
 )
 
-// Client holds necessery information for rabbitMQ
 type Client struct {
 	pushQueue     string
 	logger        *logrus.Logger
@@ -54,8 +53,6 @@ func NewClient(listenQueue, pushQueue, addr string, l *logrus.Logger, done chan 
 	return &client
 }
 
-// handleReconnect will wait for a connection error on
-// notifyClose, and then continuously attempt to reconnect.
 func (c *Client) handleReconnect(listenQueue, addr string) {
 	for c.alive {
 		c.isConnected = false
@@ -128,8 +125,9 @@ func (c *Client) connect(listenQueue, addr string) bool {
 func (c *Client) changeConnection(connection *amqp.Connection, channel *amqp.Channel) {
 	c.connection = connection
 	c.channel = channel
+	c.channel.Confirm(false)
 	c.notifyClose = make(chan *amqp.Error)
-	c.notifyConfirm = make(chan amqp.Confirmation)
+	c.notifyConfirm = make(chan amqp.Confirmation, 1)
 	c.channel.NotifyClose(c.notifyClose)
 	c.channel.NotifyPublish(c.notifyConfirm)
 }
@@ -138,7 +136,6 @@ func (c *Client) Push(data []byte) error {
 	if !c.isConnected {
 		return errors.New("failed to push : not connected")
 	}
-	fmt.Println("Push")
 	for {
 		err := c.UnsafePush(data)
 		if err != nil {
@@ -152,6 +149,7 @@ func (c *Client) Push(data []byte) error {
 			if confirm.Ack {
 				return nil
 			}
+			return errors.New("no push confirmation received")
 		case <-time.After(reconnectDelay):
 			return errors.New("no push confirmation received")
 		}
@@ -159,19 +157,15 @@ func (c *Client) Push(data []byte) error {
 
 }
 
-// UnsafePush will push to the queue without checking for
-// confirmation. It returns an error if it fails to connect.
-// No guarantees are provided for whether the server will
-// receive the message.
 func (c *Client) UnsafePush(data []byte) error {
 	if !c.isConnected {
 		return ErrDisconnected
 	}
 	return c.channel.Publish(
-		"",          // Exchange
-		c.pushQueue, // Routing key
-		false,       // Mandatory
-		false,       // Immediate
+		"",
+		c.pushQueue,
+		false,
+		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        data,

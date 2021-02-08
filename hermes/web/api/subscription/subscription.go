@@ -20,6 +20,8 @@ package subscription
 
 import (
 	"errors"
+	"hermes/internal/notification/message"
+	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
 	"net/http"
@@ -118,6 +120,118 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 		}
 
 		result, err := subscriptionMain.FindById(subscriptionId)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		restutil.NewResponse(w, http.StatusOK, result)
+	}
+}
+
+func History(messageMain message.UseCases, executionMain messageexecutionhistory.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		if uuidErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			return
+		}
+
+		qp := map[string]string{
+			"EventType":  r.URL.Query().Get("eventyType"),
+			"Status":     r.URL.Query().Get("status"),
+			"EventField": r.URL.Query().Get("eventField"),
+			"EventValue": r.URL.Query().Get("eventValue"),
+		}
+
+		result, err := messageMain.FindAllBySubscriptionId(subscriptionId, qp)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		var executionIds []uuid.UUID
+		for _, msg := range result {
+			executionIds = append(executionIds, msg.Id)
+		}
+
+		response, err := executionMain.FindAllByExecutionId(executionIds)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		history := restutil.MessageAndExecutionToHistoryResponse(result, response)
+
+		restutil.NewResponse(w, http.StatusOK, history)
+	}
+}
+
+func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		request, err := messageMain.ParsePayload(r.Body)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		if vErr := messageMain.Validate(request); len(vErr.GetErrors()) > 0 {
+			restutil.NewResponse(w, http.StatusBadRequest, vErr)
+			return
+		}
+
+		subscriptions, sErr := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
+		if sErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, sErr)
+			return
+		}
+
+		requestMessages, eventErr := restutil.SubscriptionToMessageRequest(subscriptions, request)
+		if eventErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, eventErr)
+			return
+		}
+
+		createdMessages, pErr := messageMain.Publish(requestMessages)
+		if pErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, pErr)
+			return
+		}
+
+		restutil.NewResponse(w, http.StatusCreated, createdMessages)
+	}
+}
+
+func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		externalId, uuidErr := uuid.Parse(params["externalId"])
+		if uuidErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr.Error())
+			return
+		}
+
+		result, err := subscriptionMain.FindAllByExternalId(externalId)
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		restutil.NewResponse(w, http.StatusOK, result)
+	}
+}
+
+func HealthCheck(messageMain message.UseCases) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		if uuidErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
+			return
+		}
+
+		result, err := messageMain.FindMostRecent(subscriptionId)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return

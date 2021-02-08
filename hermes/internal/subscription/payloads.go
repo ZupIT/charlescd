@@ -47,6 +47,7 @@ type UpdateResponse struct {
 }
 
 type Response struct {
+	ID          uuid.UUID       `json:"id"`
 	ExternalId  uuid.UUID       `json:"externalId"`
 	Url         string          `json:"url"`
 	Description string          `json:"description"`

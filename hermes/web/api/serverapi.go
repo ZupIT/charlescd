@@ -23,8 +23,8 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"hermes/internal/message"
-	"hermes/internal/messageexecutionhistory"
+	"hermes/internal/notification/message"
+	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/subscription"
 	"log"
 	"net/http"
@@ -49,6 +49,7 @@ func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases
 		messageMain:      messageMain,
 		executionMain:    executionMain,
 	}
+
 	router := mux.NewRouter()
 	api.health(router)
 	api.readiness(router, db)
