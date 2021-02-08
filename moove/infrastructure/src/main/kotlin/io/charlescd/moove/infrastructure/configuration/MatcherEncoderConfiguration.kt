@@ -20,7 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
-import io.charlescd.moove.domain.exceptions.ClientException
+import io.charlescd.moove.domain.exceptions.BadRequestClientException
+import io.charlescd.moove.domain.exceptions.InternalErrorClientException
+import io.charlescd.moove.domain.exceptions.NotFoundClientException
 import java.io.IOException
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
@@ -43,14 +45,32 @@ class MatcherEncoderConfiguration {
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
             val responseMessage: ErrorResponse = this.extractMessageFromResponse(response)
-            return ClientException(
-                responseMessage.id,
-                responseMessage.links,
-                responseMessage.title,
-                responseMessage.details,
-                responseMessage.status,
-                responseMessage.source,
-                responseMessage.meta)
+            return when (response?.status()) {
+                400 -> BadRequestClientException(
+                    responseMessage.id,
+                    responseMessage.links,
+                    responseMessage.title,
+                    responseMessage.details,
+                    responseMessage.status,
+                    responseMessage.source,
+                    responseMessage.meta)
+                404 -> NotFoundClientException(
+                    responseMessage.id,
+                    responseMessage.links,
+                    responseMessage.title,
+                    responseMessage.details,
+                    responseMessage.status,
+                    responseMessage.source,
+                    responseMessage.meta)
+                else -> InternalErrorClientException(
+                    responseMessage.id,
+                    responseMessage.links,
+                    responseMessage.title,
+                    responseMessage.details,
+                    responseMessage.status,
+                    responseMessage.source,
+                    responseMessage.meta)
+            }
         }
 
         private fun extractMessageFromResponse(response: Response?): ErrorResponse {

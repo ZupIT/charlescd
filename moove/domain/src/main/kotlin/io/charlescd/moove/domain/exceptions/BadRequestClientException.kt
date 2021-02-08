@@ -18,7 +18,7 @@
 
 package io.charlescd.moove.domain.exceptions
 
-data class ClientException(
+data class BadRequestClientException(
     val id: String?,
     val links: List<String>?,
     val title: String?,

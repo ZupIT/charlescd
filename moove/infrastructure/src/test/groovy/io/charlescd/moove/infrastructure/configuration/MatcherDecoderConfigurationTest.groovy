@@ -16,15 +16,9 @@
 
 package io.charlescd.moove.infrastructure.configuration
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import feign.Response
-import feign.codec.ErrorDecoder
-import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.ClientException
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import io.charlescd.moove.domain.exceptions.BadRequestClientException
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 
@@ -47,7 +41,7 @@ class MatcherDecoderConfigurationTest extends Specification {
 
         then:
         body.asInputStream() >> this.getReturnAsInputStream()
-        assert exception instanceof ClientException
+        assert exception instanceof BadRequestClientException
         assert exception.title == 'Internal Server Error'
         assert exception.details == 'Unexpected error. Please, try again later.'
 
@@ -65,7 +59,7 @@ class MatcherDecoderConfigurationTest extends Specification {
 
         then:
         body.asInputStream() >> { throw new IOException() }
-        assert exception instanceof ClientException
+        assert exception instanceof BadRequestClientException
         assert exception.title == 'Error reading response'
         assert exception.status == '500'
         assert exception.meta.get("component") == "moove"

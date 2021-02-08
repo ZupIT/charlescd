@@ -21,10 +21,7 @@ import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
 import io.charlescd.moove.commons.exceptions.*
 import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.ClientException
-import io.charlescd.moove.domain.exceptions.ForbiddenException
-import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.exceptions.*
 import java.lang.IllegalArgumentException
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -57,10 +54,26 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
         return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
     }
 
-    @ExceptionHandler(ClientException::class)
+    @ExceptionHandler(BadRequestClientException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun clientBadRequestExceptions(ex: BadRequestClientException): ErrorDetailedResponse {
+        this.logger.error(ex.details, ex)
+        return ErrorDetailedResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
+    }
+
+    @ExceptionHandler(NotFoundClientException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    fun clientNotFoundExceptions(ex: NotFoundClientException): ErrorDetailedResponse {
+        this.logger.error(ex.details, ex)
+        return ErrorDetailedResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
+    }
+
+    @ExceptionHandler(InternalErrorClientException::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    fun clientExceptions(ex: ClientException): ErrorDetailedResponse {
+    fun clientInternalErrorExceptions(ex: InternalErrorClientException): ErrorDetailedResponse {
         this.logger.error(ex.details, ex)
         return ErrorDetailedResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
     }
