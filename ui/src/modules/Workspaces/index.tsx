@@ -35,7 +35,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const userId = getProfileByKey('id');
   const [filterWorkspace, , loading] = useWorkspace();
   const { findWorkspacesByUser } = useWorkspacesByUser();
-  const [name, setName] = useState('');
+  const [name] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
   const onIDMFlow = useCallback(() => {
