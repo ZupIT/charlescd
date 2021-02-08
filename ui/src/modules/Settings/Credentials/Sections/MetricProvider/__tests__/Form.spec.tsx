@@ -15,13 +15,48 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import Form from '../Form';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
 import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+test('render button test connection', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(Plugins))
+    .mockResponseOnce(JSON.stringify({
+      response: '401 unauthorized'
+    }));
+
+  render(<Form onFinish={jest.fn()} />)
+
+  const datasourcePlugin1 = await screen.findByText('Select a datasource plugin');
+  selectEvent.select(datasourcePlugin1, 'Prometheus');
+  const dataSourceHealth = await screen.findByText('Datasource health');
+  const dataSourceName = await screen.findByText('Datasource name');
+  const dataSourceUrl = await screen.findByText('Url');
+
+  expect(dataSourceHealth).toBeInTheDocument();
+  expect(dataSourceName).toBeInTheDocument();
+  expect(dataSourceUrl).toBeInTheDocument();
+
+  await act(() => userEvent.type(screen.getByTestId('input-text-name'), 'name'));
+  await act(() => userEvent.type(screen.getByTestId('input-text-data.url'), 'name'));
+
+  const btn = await screen.findByTestId('button-default-test-connection');
+  expect(btn).not.toBeDisabled();
+
+  userEvent.click(btn);
+
+  const status = await screen.findByTestId("connection-success");
+  expect(status).toBeInTheDocument();
+});
 
 test('render Metrics Provider default component', async () => {
   const finish = jest.fn();
@@ -48,35 +83,13 @@ test('render datasource input by datasource change', async () => {
   expect(screen.getByText('Datasource health')).toBeInTheDocument();
   expect(screen.getByText('Datasource name')).toBeInTheDocument();
   expect(screen.getByText('Url')).toBeInTheDocument();
-})
 
-test('render button test connection', async () => {
-  (fetch as FetchMock)
-    .mockResponseOnce(JSON.stringify(Plugins))
-    .mockResponseOnce(JSON.stringify({
-      response: '401 unauthorized'
-    }));
+  const datasourcePlugin2 = screen.getByText('Select a datasource plugin');
+  await act(async () => selectEvent.select(datasourcePlugin2, 'Google Analytics'));
 
-  render(<Form onFinish={jest.fn()}/>)
-
-  const datasourcePlugin1 = await screen.findByText('Select a datasource plugin');
-  selectEvent.select(datasourcePlugin1, 'Prometheus');
-  const dataSourceHealth = await screen.findByText('Datasource health');
-  const dataSourceName = await screen.findByText('Datasource name');
-  const dataSourceUrl = await screen.findByText('Url');
-
-  expect(dataSourceHealth).toBeInTheDocument();
-  expect(dataSourceName).toBeInTheDocument();
-  expect(dataSourceUrl).toBeInTheDocument();
-
-  await act(() => userEvent.type(screen.getByTestId('input-text-name'), 'name'));
-  await act(() => userEvent.type(screen.getByTestId('input-text-data.url'), 'name'));
-
-  const btn = await screen.findByTestId('button-default-test-connection');
-  expect(btn).not.toBeDisabled();
-
-  userEvent.click(btn);
-
-  const status = await screen.findByTestId("connection-success");
-  expect(status).toBeInTheDocument();
+  expect(screen.getByText('Datasource name')).toBeInTheDocument();
+  expect(screen.getByText('View ID')).toBeInTheDocument();
+  expect(screen.getByText('Service Account')).toBeInTheDocument();
 });
+
+

@@ -23,7 +23,7 @@ const useDynamicImport = (name: string) => {
   const [uri, setUri] = useState('');
 
   useEffect(() => {
-    let abort: () => void = null;
+    let abort: (value: unknown) => void = null;
 
     (async () => {
       const abortController = new Promise(resolve => {
@@ -37,7 +37,7 @@ const useDynamicImport = (name: string) => {
       });
     })();
 
-    return () => abort();
+    return () => abort('');
   }, [name, setUri]);
 
   return [uri];
