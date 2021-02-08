@@ -24,6 +24,11 @@ interface WrapperProps {
 const Wrapper = styled.div<WrapperProps>`
   position: relative;
   height: 42px;
+
+  input {
+    padding-right: 30px;
+  }
+
   ${({ type }) =>
     type === 'hidden' &&
     css`

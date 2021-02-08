@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, Ref, useImperativeHandle } from 'react';
+import React, { useRef, useState, useImperativeHandle } from 'react';
 import Button from 'core/components/Button';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import Styled from './styled';
@@ -27,6 +27,7 @@ interface Props {
   resume?: boolean;
   readOnly?: boolean;
   onClickSave?: () => void;
+  isDisabled?: boolean;
 }
 const InputTitle = React.forwardRef(
   (
@@ -37,7 +38,8 @@ const InputTitle = React.forwardRef(
       defaultValue,
       resume,
       onClickSave,
-      readOnly
+      readOnly,
+      isDisabled
     }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
@@ -74,6 +76,7 @@ const InputTitle = React.forwardRef(
             type="submit"
             size="EXTRA_SMALL"
             onClick={onButtonClick}
+            isDisabled={isDisabled}
           >
             Save
           </Button.Default>

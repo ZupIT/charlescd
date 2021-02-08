@@ -27,7 +27,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
   };
 
   return (
-    <Styled.Components.ColumnWrapper key={field.id}>
+    <Styled.Components.ColumnWrapper key={field.id} data-testid={`components[${index}]`}>
       <Styled.Components.Wrapper>
         {fields.length > one && (
           <Styled.Components.Trash

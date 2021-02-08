@@ -29,6 +29,7 @@ import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
+import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -83,7 +84,7 @@ class V2WorkspaceController(
     @ResponseStatus(HttpStatus.OK)
     fun findAll(
         pageRequest: PageRequest,
-        @RequestParam(required = false, name = "name") name: String?
+        @RequestParam(required = false, name = "name") @Size(max = 10) name: String?
     ): ResourcePageResponse<WorkspaceResponse> {
         return findAllWorkspacesInteractor.execute(pageRequest, name)
     }

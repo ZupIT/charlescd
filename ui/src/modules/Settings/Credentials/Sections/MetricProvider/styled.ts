@@ -105,11 +105,6 @@ const HealthWrapper = styled.div`
   display: flex;
 `;
 
-const DocumentationLink = styled.a`
-  text-decoration: underline;
-  color: ${({ theme }) => theme.text.link};
-`;
-
 export default {
   Form,
   Content,
@@ -118,6 +113,5 @@ export default {
   Select,
   TestConnectionButton,
   HealthWrapper,
-  HealthSwitch,
-  DocumentationLink
+  HealthSwitch
 };

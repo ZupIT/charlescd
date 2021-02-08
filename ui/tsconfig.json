@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
-    "baseUrl": "./src",
     "target": "es5",
+    "baseUrl": "./src",
     "lib": [
       "dom",
       "dom.iterable",
@@ -14,19 +13,16 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "strictNullChecks": false,
     "resolveJsonModule": true,
+    "strictNullChecks": false,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react-jsx"
   },
   "include": [
     "src"
-  ],
-  "paths": {
-    "core/*": ["core/*"],
-    "unit-test/*": ["unit-test/*"]
-  }
+  ]
 }

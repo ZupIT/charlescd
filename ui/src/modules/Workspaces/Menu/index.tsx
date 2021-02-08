@@ -18,9 +18,11 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
+import { isRequired, maxLength } from 'core/utils/validations';
 import routes from 'core/constants/routes';
 import { saveWorkspace } from 'core/utils/workspace';
 import { isRoot } from 'core/utils/auth';
@@ -44,11 +46,13 @@ const WorkspaceMenu = ({
   isLoading,
   selectedWorkspace
 }: Props) => {
-  const MAX_LENGTH_NAME = 50;
   const history = useHistory();
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { register, handleSubmit, watch } = useForm();
-  const name = watch('name');
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({ mode: 'onChange' });
   const {
     save,
     response: saveWorkspaceResponse,
@@ -56,22 +60,20 @@ const WorkspaceMenu = ({
   } = useSaveWorkspace();
   const [toggleModal, setToggleModal] = useState(false);
 
-  useEffect(() => {
-    if (name !== null) {
-      setIsDisabled(name);
-    }
-  }, [name, setIsDisabled]);
-
   const renderWorkspaces = () =>
-    map(items, ({ id, name, status }: Workspace) => (
-      <MenuItem
-        key={id}
-        id={id}
-        name={name}
-        status={status}
-        selectedWorkspace={(name: string) => selectedWorkspace(name)}
-      />
-    ));
+    isEmpty(items) ? (
+      <Text.h3 color="dark">No workspace was found</Text.h3>
+    ) : (
+      map(items, ({ id, name, status }: Workspace) => (
+        <MenuItem
+          key={id}
+          id={id}
+          name={name}
+          status={status}
+          selectedWorkspace={(name: string) => selectedWorkspace(name)}
+        />
+      ))
+    );
 
   const openWorkspaceModal = () => setToggleModal(true);
 
@@ -96,13 +98,16 @@ const WorkspaceMenu = ({
           </Styled.Modal.Title>
           <Styled.Modal.Input
             name="name"
-            maxLength={MAX_LENGTH_NAME}
             label="Type a name"
-            ref={register({ required: true, maxLength: MAX_LENGTH_NAME })}
+            error={errors?.name?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength()
+            })}
           />
           <Styled.Modal.Button
             type="submit"
-            isDisabled={!isDisabled}
+            isDisabled={!isValid}
             isLoading={saveWorkspaceLoading}
           >
             Create workspace
@@ -126,7 +131,12 @@ const WorkspaceMenu = ({
         </Styled.Button>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} disabled={!isRoot()} />
+        <Styled.SearchInput
+          resume
+          onSearch={onSearch}
+          disabled={!isRoot()}
+          maxLength={64}
+        />
         <Styled.List>
           {isLoading ? <Loader.List /> : renderWorkspaces()}
         </Styled.List>
