@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
-import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
-import { getAccessTokenDecoded, logout } from 'core/utils/auth';
+import Placeholder from 'core/components/Placeholder';
+import { getAccessTokenDecoded, isIDMAuthFlow, logout } from 'core/utils/auth';
+import { useWorkspacesByUser } from 'modules/Users/hooks';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
+import { isRoot } from 'core/utils/auth';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -30,13 +32,25 @@ interface Props {
 const Workspaces = ({ selectedWorkspace }: Props) => {
   const { name: profileName, email } = getAccessTokenDecoded();
   const workspaces = getProfileByKey('workspaces');
+  const userId = getProfileByKey('id');
   const [filterWorkspace, , loading] = useWorkspace();
+  const { findWorkspacesByUser } = useWorkspacesByUser();
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
+  const onIDMFlow = useCallback(() => {
+    if (isRoot()) {
+      filterWorkspace(name);
+    } else {
+      findWorkspacesByUser(userId);
+    }
+  }, [filterWorkspace, findWorkspacesByUser, name, userId]);
+
   useEffect(() => {
-    filterWorkspace(name);
-  }, [name, filterWorkspace]);
+    if (isIDMAuthFlow()) {
+      onIDMFlow();
+    }
+  }, [onIDMFlow]);
 
   useEffect(() => {
     if (!email) logout();

@@ -17,8 +17,8 @@
 import {
   COLOR_BASTILLE,
   COLOR_BLACK_OP_20,
-  COLOR_WHITE,
-  COLOR_TRUE_V
+  COLOR_TRUE_V,
+  COLOR_WHITE
 } from '../colors';
 
 export const light = {};
