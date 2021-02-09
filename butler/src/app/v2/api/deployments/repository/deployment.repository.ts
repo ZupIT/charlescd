@@ -27,6 +27,25 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .getMany()
   }
 
+  public async updateHealthStatus(id: string, status: boolean): Promise<DeploymentEntityV2> {
+    const updated = await this.createQueryBuilder('d')
+      .update()
+      .set({ healthy: status })
+      .where({ id: id })
+      .returning('id')
+      .execute()
+    return this.findOneOrFail(updated.raw[0].id)
+  }
+  public async updateRouteStatus(id: string, status: boolean): Promise<DeploymentEntityV2> {
+    const updated = await this.createQueryBuilder('d')
+      .update()
+      .set({ routed: status })
+      .where({ id: id })
+      .returning('id')
+      .execute()
+    return this.findOneOrFail(updated.raw[0].id)
+  }
+
   public async findWithComponentsAndConfig(deploymentId: string): Promise<DeploymentEntityV2> {
     return this.findOneOrFail({ id: deploymentId }, { relations: ['cdConfiguration', 'components'] })
   }

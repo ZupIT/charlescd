@@ -5,6 +5,7 @@ import { ComponentsRepositoryV2 } from '../api/deployments/repository/component.
 import { DeploymentRepositoryV2 } from '../api/deployments/repository/deployment.repository'
 import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../core/integrations/k8s/client'
+import { ConsoleLoggerService } from '../core/logs/console/console-logger.service'
 import { HookParams } from './params.interface'
 import { Reconcile } from './reconcile'
 
@@ -15,7 +16,8 @@ export class DeploymentsHookController {
     private readonly k8sClient: K8sClient,
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
-    private readonly configurationRepository: CdConfigurationsRepository
+    private readonly configurationRepository: CdConfigurationsRepository,
+    private readonly consoleLoggerService: ConsoleLoggerService
   ) { }
 
   @Post('/v2/operator/deployment/hook/reconcile')
@@ -38,6 +40,7 @@ export class DeploymentsHookController {
       const previousDeploymentId = deployment.previousDeploymentId
 
       if (previousDeploymentId === null) {
+        await this.deploymentRepository.updateHealthStatus(deployment.id, false)
         return { children: specs, resyncAfterSeconds: 5 }
       }
       const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
@@ -46,7 +49,14 @@ export class DeploymentsHookController {
     }
 
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
-    await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
+    try {
+      await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
+    } catch (error) {
+      this.consoleLoggerService.error('DEPLOYMENT_RECONCILE:APPLY_ROUTE_CRD_ERROR', error)
+      await this.deploymentRepository.updateHealthStatus(deployment.id, false)
+      return { children: specs, resyncAfterSeconds: 5 }
+    }
+    await this.deploymentRepository.updateHealthStatus(deployment.id, true)
     return { children: specs }
   }
 

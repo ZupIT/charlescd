@@ -57,6 +57,12 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'current' })
   public current!: boolean
 
+  @Column({ name: 'healthy' })
+  public healthy!: boolean
+
+  @Column({ name: 'routed' })
+  public routed!: boolean
+
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 

@@ -18,7 +18,6 @@ import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nes
 import { RouteHookParams } from './params.interface'
 import { HookReconcileResponseDto } from './hook-reconcile-response.dto'
 import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
-import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
 
 @Controller('/')
 export class RoutesHookController {
@@ -30,7 +29,7 @@ export class RoutesHookController {
   @Post('/v2/operator/routes/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async reconcile(@Body() params: RouteHookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
+  public async reconcile(@Body() params: RouteHookParams): Promise<HookReconcileResponseDto> {
     return await this.createRoutesUseCase.execute(params)
   }
 }

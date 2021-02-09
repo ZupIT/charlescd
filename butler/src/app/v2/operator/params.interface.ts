@@ -1,5 +1,5 @@
 export interface RouteHookParams {
-  controller: Record<string, unknown>
+  controller?: Record<string, unknown>
   parent: {
     apiVersion: 'charlescd.io/v1'
     kind: 'CharlesRoutes'
@@ -20,8 +20,8 @@ export interface RouteHookParams {
 }
 
 export interface RouteChildren {
-  'VirtualService.networking.istio.io/v1beta1': Record<string, unknown>,
-  'DestinationRule.networking.istio.io/v1beta1': Record<string, unknown>
+  'VirtualService.networking.istio.io/v1beta1': VirtualServiceSpec,
+  'DestinationRule.networking.istio.io/v1beta1': DestinationRuleSpec
 }
 
 export interface HookParams {
@@ -84,6 +84,67 @@ export interface DeploymentSpec {
     metadata: SpecMetadata
     status: SpecStatus
     spec: unknown
+  }
+}
+
+export interface VirtualServiceSpec {
+  [key: string]: {
+    apiVersion: string
+    kind: string
+    metadata?: SpecMetadata
+    spec: {
+      gateways: string[]
+      hosts: string[]
+      http: {
+        match?: {
+          headers: {
+            cookie?: {
+              regex: string
+            }
+            'x-circle-id'?: {
+              exact: string
+            }
+          }
+        }[],
+        route: {
+          destination: {
+            host: string
+            subset: string
+          }
+          headers: {
+            request: {
+              set: {
+                'x-circle-source': string
+              }
+            },
+            response: {
+              set: {
+                'x-circle-source': string
+              }
+            }
+          }
+        }[]
+      }[]
+    }
+  }
+}
+
+export interface DestinationRuleSpec {
+  [key: string]: {
+    apiVersion: string
+    kind: string
+    metadata?: SpecMetadata
+    spec: {
+      host: string
+      subsets: {
+        labels: {
+          circleId: string
+          component: string
+          tag: string
+        }
+        name: string
+      }[]
+    }
   }
 }
 
