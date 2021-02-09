@@ -76,9 +76,6 @@ export const getRoles = () => {
     const id = getWorkspaceId();
     const workspaces = getProfileByKey('workspaces');
     const { permissions } = find(workspaces, ['id', id]) || { permissions: [] };
-    console.log('workspaceID', id);
-    console.log('workspaces', workspaces);
-    console.log('permissions', permissions);
     return permissions;
   } catch (e) {
     return [];
@@ -87,10 +84,6 @@ export const getRoles = () => {
 
 export const hasPermission = (role: string) => {
   const roles = getRoles();
-  console.log('roles', roles);
-  console.log('role', role);
-  console.log('includes', includes(roles, role));
-  console.log('hasPermission', isRoot() || includes(roles, role));
   return isRoot() || includes(roles, role);
 };
 
