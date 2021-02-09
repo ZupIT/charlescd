@@ -40,6 +40,7 @@ import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
 import { isIDMAuthFlow } from 'core/utils/auth';
 import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
 import { WorkspacePagination } from 'modules/Workspaces/interfaces/WorkspacePagination';
+import { getProfile, saveProfile } from 'core/utils/profile';
 
 export const useUser = (): {
   findByEmail: Function;
@@ -99,7 +100,7 @@ export const useWorkspacesByUser = (): {
         if (id) {
           const res = await getWorkspacesByUser(id);
           setWorkspaces(res);
-          console.log('findWorkspace', res);
+          saveProfile({ ...getProfile(), workspaces: res });
           dispatch(loadedWorkspacesAction({
             content: res,
             page: 0,

@@ -73,7 +73,6 @@ export const useLogin = (): {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    console.log('saveWorkspace', { ...user, workspaces });
     if (workspaces) {
       saveProfile({ ...user, workspaces });
 
@@ -101,7 +100,6 @@ export const useLogin = (): {
         if (root) {
           await loadWorkspaces();
         } else {
-          console.log('not root');
           await findWorkspacesByUser(id);
         }
       } catch (e) {
