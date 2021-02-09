@@ -44,8 +44,7 @@ public class ErrorHandler {
         return ExceptionUtils.createBusinessExceptionError(
                 exception.getErrorCode().getKey(),
                 exception.getTitle(),
-                exception.getSource(),
-                exception
+                exception.getSource()
         );
     }
 

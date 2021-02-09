@@ -25,59 +25,24 @@ import java.util.UUID;
 public class ExceptionUtils {
 
     public static DefaultErrorResponse createNotFoundErrorResponse(String message, String sourceString) {
-        Map<String, String> source = new HashMap<String, String>();
-        source.put("pointer", sourceString);
-        return new DefaultErrorResponse(UUID.randomUUID().toString(),
-                new ArrayList<String>(),
-                "Not found",
-                message,
-                "404",
-                source,
-                getMetaInfo()
-       );
+        return createExceptionError(message, "Not found", sourceString, "404");
     }
 
     public static DefaultErrorResponse createBadRequestError(String message, String sourceString) {
-        Map<String, String> source = new HashMap<String, String>();
-        source.put("pointer", sourceString);
-        return new DefaultErrorResponse(UUID.randomUUID().toString(),
-                new ArrayList<String>(),
-                "Bad Request",
-                message,
-                "400",
-                source,
-                getMetaInfo()
-        );
+        return createExceptionError(message, "Bad Request", sourceString, "400");
     }
 
     public static DefaultErrorResponse createBusinessExceptionError(
             String message,
             String title,
-            String sourceString,
-            Exception exception) {
-        Map<String, String> source = new HashMap<String, String>();
-        source.put("pointer", sourceString);
-        return new DefaultErrorResponse(UUID.randomUUID().toString(),
-                new ArrayList<String>(),
-                title,
-                message,
-                "400",
-                source,
-                getMetaInfo()
-        );
+            String sourceString
+    ) {
+        return createExceptionError(message, title, sourceString, "400");
     }
 
     public static DefaultErrorResponse createInternalServerError(String message, String sourceString) {
-        Map<String, String> source = new HashMap<String, String>();
-        source.put("pointer", sourceString);
-        return new DefaultErrorResponse(UUID.randomUUID().toString(),
-                new ArrayList<String>(),
-                "Internal Server Error",
-                message,
-                "500",
-                source,
-                getMetaInfo()
-        );
+
+        return createExceptionError(message, "Internal Server Error", sourceString, "500");
     }
 
     private static Map<String, String> getMetaInfo() {
@@ -86,4 +51,17 @@ public class ExceptionUtils {
         metaInfo.put("component", "circle-matcher");
         return metaInfo;
     }
+    public static DefaultErrorResponse createExceptionError(String message, String title, String sourceString, String status) {
+        Map<String, String> source = new HashMap<String, String>();
+        source.put("pointer", sourceString);
+        return new DefaultErrorResponse (UUID.randomUUID().toString(),
+                new ArrayList<String>(),
+                title,
+                message,
+                status,
+                source,
+                getMetaInfo()
+        );
+    }
+
 }
