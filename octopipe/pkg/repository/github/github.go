@@ -46,13 +46,19 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 	}
 
 	basePathSplit := strings.Split(githubRepository.Url, "?")
-	basePath := basePathSplit[0]
-	queryParams := basePathSplit[1]
+	var completePath string
+	if len(basePathSplit) > 1 {
+		basePath := basePathSplit[0]
+		queryParams := basePathSplit[1]
+		completePath = fmt.Sprintf("%s/%s?%s", basePath, name, queryParams)
+	} else {
+		completePath = fmt.Sprintf("%s/%s", githubRepository.Url, name)
+	}
 
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: skipTLS})
 	client.SetHeader("Authorization", fmt.Sprintf("token %s", githubRepository.Token))
-	resp, err := client.R().Get(fmt.Sprintf("%s/%s?%s", basePath, name, queryParams))
+	resp, err := client.R().Get(completePath)
 	if err != nil {
 		return "", "", err
 	}
