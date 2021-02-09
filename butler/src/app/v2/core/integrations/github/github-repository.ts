@@ -15,7 +15,8 @@
  */
 
 import { HttpService, Injectable } from '@nestjs/common'
-import { AxiosResponse } from 'axios'
+import { AxiosResponse, AxiosRequestConfig } from 'axios'
+import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
@@ -27,17 +28,20 @@ export class GitHubRepository implements Repository {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly httpService: HttpService) {}
 
-  public async getResource(config: RequestConfig): Promise<Resource> {
-    const urlResource = new URL(`${config.url}/contents/${config.resourceName}?ref=${config.branch}`)
+  public async getResource(requestConfig: RequestConfig): Promise<Resource> {
+    const urlResource = new URL(`${requestConfig.url}/contents/${requestConfig.resourceName}?ref=${requestConfig.branch}`)
     this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITHUB', urlResource)
-    return this.downloadResource(urlResource, config.resourceName, {
-      'Content-Type': 'application/json',
-      'Authorization': config.token
+    return this.downloadResource(urlResource, requestConfig.resourceName, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': requestConfig.token
+      },
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
     })
   }
 
-  private async downloadResource(url: URL, resourceName: string, headers: Record<string, string>): Promise<Resource> {
-    const response = await this.fetch(url, headers)
+  private async downloadResource(url: URL, resourceName: string, config: AxiosRequestConfig): Promise<Resource> {
+    const response = await this.fetch(url, config)
 
     if(this.isFile(response.data)) {
       return {
@@ -56,9 +60,9 @@ export class GitHubRepository implements Repository {
     for (const item of response.data) {
       if (item.type === 'dir') {
         url.pathname = `${url.pathname}/${item.name}`
-        resource.children?.push(await this.downloadResource(url, item.name, headers))
+        resource.children?.push(await this.downloadResource(url, item.name, config))
       } else {
-        const fileContent = await this.fetch(item._links.git, headers)
+        const fileContent = await this.fetch(item._links.git, config)
         resource.children?.push({
           name: item.name,
           type: ResourceType.FILE,
@@ -73,8 +77,8 @@ export class GitHubRepository implements Repository {
     return !Array.isArray(data)
   }
 
-  private async fetch(url: URL, headers: Record<string, string>): Promise<AxiosResponse> {
+  private async fetch(url: URL, config: AxiosRequestConfig): Promise<AxiosResponse> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url.toString())
-    return this.httpService.get(url.toString(), headers).toPromise()
+    return this.httpService.get(url.toString(), config).toPromise()
   }
 }

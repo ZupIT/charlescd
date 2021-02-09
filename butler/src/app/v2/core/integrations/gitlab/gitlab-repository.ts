@@ -15,7 +15,8 @@
  */
 
 import { HttpService, Injectable } from '@nestjs/common'
-import { AxiosResponse } from 'axios'
+import { AxiosResponse, AxiosRequestConfig } from 'axios'
+import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
@@ -27,22 +28,25 @@ export class GitLabRepository implements Repository {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly httpService: HttpService) {}
 
-  public async getResource(config: RequestConfig): Promise<Resource> {
-    const resourcePath = `/tree?path=${config.resourceName}`
-    this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITLAB', `${config.url}${resourcePath}&ref=${config.branch}`)
-    const headers = {
-      'Content-Type': 'application/json',
-      'PRIVATE-TOKEN': config.token
+  public async getResource(requestConfig: RequestConfig): Promise<Resource> {
+    const resourcePath = `/tree?path=${requestConfig.resourceName}`
+    this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITLAB', `${requestConfig.url}${resourcePath}&ref=${requestConfig.branch}`)
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'PRIVATE-TOKEN': requestConfig.token
+      },
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
     }
-    return this.downloadResource(config.url, resourcePath, config.resourceName, headers, config.branch)
+    return this.downloadResource(requestConfig.url, resourcePath, requestConfig.resourceName, config, requestConfig.branch)
   }
 
-  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, headers: Record<string, string>, branch: string): Promise<Resource> {
+  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, config: AxiosRequestConfig, branch: string): Promise<Resource> {
     const urlResource = `${baseUrl}${resourcePath}&ref=${branch}`
-    const response = await this.fetch(urlResource, headers)
+    const response = await this.fetch(urlResource, config)
 
     if(this.isResourceFile(response.data)) {
-      return this.downloadFile(baseUrl, resourceName, headers, branch)
+      return this.downloadFile(baseUrl, resourceName, config, branch)
     }
 
     const resource: Resource = {
@@ -54,17 +58,17 @@ export class GitLabRepository implements Repository {
     for (const item of response.data) {
       if (item.type === 'tree') {
         const nextResourcePath = `${resourcePath}/${item.name}`
-        resource.children?.push(await this.downloadResource(baseUrl, nextResourcePath, item.name, headers, branch))
+        resource.children?.push(await this.downloadResource(baseUrl, nextResourcePath, item.name, config, branch))
       } else {
-        resource.children?.push(await this.downloadFile(baseUrl, item.path, headers, branch))
+        resource.children?.push(await this.downloadFile(baseUrl, item.path, config, branch))
       }
     }
     return resource
   }
 
-  private async downloadFile(baseUrl: string, path: string, headers: Record<string, string>, branch: string): Promise<Resource> {
+  private async downloadFile(baseUrl: string, path: string, config: AxiosRequestConfig, branch: string): Promise<Resource> {
     const fileUrl = `${baseUrl}/files/${encodeURIComponent(path)}?ref=${branch}`
-    const fileContent = await this.fetch(fileUrl, headers)
+    const fileContent = await this.fetch(fileUrl, config)
     return {
       name: fileContent.data.file_name,
       type: ResourceType.FILE,
@@ -76,8 +80,8 @@ export class GitLabRepository implements Repository {
     return !data?.length
   }
 
-  private async fetch(url: string, headers: Record<string, string>): Promise<AxiosResponse> {
+  private async fetch(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url)
-    return this.httpService.get(url, headers).toPromise()
+    return this.httpService.get(url, config).toPromise()
   }
 }
