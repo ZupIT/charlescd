@@ -168,7 +168,7 @@ const FormModule = ({ module, onChange }: Props) => {
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
-          label="Insert gitlab branch (Optional)"
+          label="Insert gitlab branch (Optional, Default = main)"
           name="helmBranch"
           ref={helmRegister()}
         />
