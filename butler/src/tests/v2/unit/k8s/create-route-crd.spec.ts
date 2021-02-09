@@ -17,7 +17,7 @@
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Component } from '../../../../app/v2/api/deployments/interfaces'
 import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder'
-import { expectedRouteCrd } from './fixtures/expected-route-crd'
+import { CharlesRoutes } from '../../../../app/v2/core/integrations/k8s/interfaces/charles-routes.interface'
 
 it('must generate the correct CharlesRoutes custom resource object', () => {
   const activeComponents: Component[] = [
@@ -31,7 +31,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
       gatewayName: null,
       hostValue: null,
       deployment: {
-        id: 'deployment-id2',
+        id: 'deployment-circle-1',
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id-1',
@@ -64,7 +64,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
       gatewayName: null,
       hostValue: null,
       deployment: {
-        id: 'deployment-id',
+        id: 'deployment-circle-2',
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id-2',
@@ -97,9 +97,9 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
       gatewayName: null,
       hostValue: null,
       deployment: {
-        id: 'deployment-id',
+        id: 'deployment-circle-1',
         authorId: 'user-1',
-        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id-1',
         createdAt: new Date(),
         cdConfiguration: {
@@ -130,7 +130,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
       gatewayName: null,
       hostValue: null,
       deployment: {
-        id: 'deployment-id',
+        id: 'deployment-circle-2',
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id-2',
@@ -163,7 +163,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
       gatewayName: null,
       hostValue: null,
       deployment: {
-        id: 'deployment-id',
+        id: 'deployment-circle-3',
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id-3',
@@ -188,7 +188,57 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
     }
   ]
 
+  const expectedRouteCrd: CharlesRoutes = {
+    apiVersion: 'charlescd.io/v1',
+    kind: 'CharlesRoutes',
+    metadata: {
+      name: 'namespace-routes'
+    },
+    spec: {
+      circles: [
+        {
+          id: 'circle-id-1',
+          default: false,
+          components: [
+            {
+              name: 'A',
+              tag: 'v2'
+            },
+            {
+              name: 'B',
+              tag: 'v2'
+            }
+          ]
+        },
+        {
+          id: 'circle-id-2',
+          default: true,
+          components: [
+            {
+              name: 'A',
+              tag: 'v3'
+            },
+            {
+              name: 'B',
+              tag: 'v3'
+            }
+          ]
+        },
+        {
+          id: 'circle-id-3',
+          default: false,
+          components: [
+            {
+              name: 'C',
+              tag: 'v4'
+            }
+          ]
+        }
+      ]
+    }
+  }
+
   expect(
-    CrdBuilder.buildRoutingCrdManifest('cd-configuration-id', activeComponents)
+    CrdBuilder.buildRoutingCrdManifest('namespace', activeComponents)
   ).toEqual(expectedRouteCrd)
 })

@@ -23,7 +23,30 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
   public async findActiveComponents(): Promise<DeploymentEntityV2[]> {
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.active = true')
+      .where('deployment.current = true')
       .getMany()
+  }
+
+  public async updateHealthStatus(id: string, status: boolean): Promise<DeploymentEntityV2> {
+    const updated = await this.createQueryBuilder('d')
+      .update()
+      .set({ healthy: status })
+      .where({ id: id })
+      .returning('id')
+      .execute()
+    return this.findOneOrFail(updated.raw[0].id)
+  }
+  public async updateRouteStatus(id: string, status: boolean): Promise<DeploymentEntityV2> {
+    const updated = await this.createQueryBuilder('d')
+      .update()
+      .set({ routed: status })
+      .where({ id: id })
+      .returning('id')
+      .execute()
+    return this.findOneOrFail(updated.raw[0].id)
+  }
+
+  public async findWithComponentsAndConfig(deploymentId: string): Promise<DeploymentEntityV2> {
+    return this.findOneOrFail({ id: deploymentId }, { relations: ['cdConfiguration', 'components'] })
   }
 }

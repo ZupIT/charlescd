@@ -1,5 +1,5 @@
 export const noRepeatedDefaultCircleDr = {
-  apiVersion: 'networking.istio.io/v1alpha3',
+  apiVersion: 'networking.istio.io/v1beta1',
   kind: 'DestinationRule',
   metadata: {
     name: 'A',

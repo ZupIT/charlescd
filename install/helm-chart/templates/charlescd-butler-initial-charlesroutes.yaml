@@ -4,4 +4,4 @@ metadata:
   name: {{ .Release.Namespace }}-routes
   namespace: {{ .Release.Namespace }}
 spec:
-  components: []
+  circles: []

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-export const DeploymentsConfigurationConstants = {
+import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
 
-  DEFAULT_CIRCLE_HEADER_NAME: 'x-circle-id',
+export interface HookReconcileResponseDto {
+  status?: unknown //TODO unkown é o tipo correto?
+  children: KubernetesManifest[],
+  resyncAfterSeconds?: number
 }

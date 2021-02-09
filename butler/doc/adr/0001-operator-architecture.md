@@ -40,14 +40,26 @@ spec:
 
 Routes example
 ```yaml
-api: k8s.charles.io
+apiVersion: charlescd.io/v1
 kind: CharlesRoutes
+metadata:
+  name: default-routes
 spec:
   circles:
-    - id: <id-circle>
+    - id: first-circle
+      default: true
       components:
-      - quiz-app-backend
-      - quiz-app-frontend
+        - name: quiz-app-backend
+          tag: v1
+        - name: quiz-app-frontend
+          tag: v1
+    - id: second-circle
+      default: false
+      components:
+        - name: quiz-app-backend
+          tag: v2
+        - name: quiz-app-frontend
+          tag: v2
 ```
 
 Butler will only directly apply the CRDs to the cluster.

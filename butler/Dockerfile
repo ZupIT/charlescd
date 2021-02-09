@@ -1,9 +1,5 @@
 FROM node:12.17.0-alpine3.9
 
-ENV NODE_ENV qa
-
-ENV CONSUL_HOST consul-server
-
 ENV APP_PATH /opt/darwin-deploy
 
 RUN apk upgrade --update-cache --available && \
@@ -16,10 +12,11 @@ RUN helm version
 
 RUN mkdir -p $APP_PATH
 WORKDIR $APP_PATH
+COPY . $APP_PATH
 
-ADD package.json $APP_PATH
-RUN npm install
+RUN npm ci
+RUN npm run build
 
-ADD ./dist $APP_PATH
+ENV NODE_OPTIONS --enable-source-maps
 
-ENTRYPOINT node main.js
+ENTRYPOINT node dist/main.js

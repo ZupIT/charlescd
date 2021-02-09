@@ -25,7 +25,6 @@ import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { customManifests } from '../../fixtures/manifests.fixture'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
@@ -33,7 +32,6 @@ import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfac
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let worker: PgBossWorker
   let manager: EntityManager
 
   beforeAll(async() => {
@@ -48,21 +46,16 @@ describe('CreateDeploymentUsecase v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
-    await worker.pgBoss.stop()
     await app.close()
   })
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.start()
-    await worker.pgBoss.clearStorage()
   })
 
   it('should only merge default circle components from the previous deployment entity of that circle', async() => {
@@ -161,7 +154,7 @@ describe('CreateDeploymentUsecase v2', () => {
       ],
       true
     )
-    sameCircleActiveDeployment.active = true
+    sameCircleActiveDeployment.current = true
 
     const diffCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       'd63ef13f-6138-41ca-ac64-6f5c25eb89f2',
@@ -193,7 +186,7 @@ describe('CreateDeploymentUsecase v2', () => {
       ],
       true
     )
-    diffCircleActiveDeployment.active = true
+    diffCircleActiveDeployment.current = true
 
     const normalCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       '2ba59bb7-842a-43e7-b2c8-85f35d62781b',
@@ -225,7 +218,7 @@ describe('CreateDeploymentUsecase v2', () => {
       ],
       false
     )
-    normalCircleActiveDeployment.active = true
+    normalCircleActiveDeployment.current = true
 
     await manager.save(sameCircleActiveDeployment)
     await manager.save(diffCircleActiveDeployment)

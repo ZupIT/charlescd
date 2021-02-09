@@ -38,6 +38,9 @@ export class K8sClient {
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
     const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
     this.consoleLoggerService.log('GET:CHARLES_DEPLOYMENT_MANIFEST', { deploymentManifest })
+
+    Object.assign(deploymentManifest.metadata, { labels: { deployment_id: deployment.id } })
+
     try {
       await this.readResource(deploymentManifest)
       await this.patchResource(deploymentManifest)
@@ -88,7 +91,7 @@ export class K8sClient {
         undefined,
         { headers: { 'Content-type': 'application/merge-patch+json' } }
       )
-      this.consoleLoggerService.log('GET:PATCH_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      this.consoleLoggerService.log('GET:PATCH_RESOURCE_RESPONSE')
     } catch(error) {
       this.consoleLoggerService.log('ERROR:PATCH_RESOURCE_MANIFEST', { error })
       throw error
@@ -99,7 +102,7 @@ export class K8sClient {
     try {
       this.consoleLoggerService.log('START:CREATE_RESOURCE_MANIFEST')
       const res = await this.client.create(manifest)
-      this.consoleLoggerService.log('GET:CREATE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      this.consoleLoggerService.log('GET:CREATE_RESOURCE_RESPONSE')
     } catch(error) {
       this.consoleLoggerService.log('ERROR:CREATE_RESOURCE_MANIFEST', { error })
       throw error
@@ -120,7 +123,7 @@ export class K8sClient {
     try {
       this.consoleLoggerService.log('START:DELETE_RESOURCE_MANIFEST')
       const res = await this.client.delete(manifest)
-      this.consoleLoggerService.log('GET:DELETE_RESOURCE_RESPONSE', { response: JSON.stringify(res) })
+      this.consoleLoggerService.log('GET:DELETE_RESOURCE_RESPONSE')
     } catch(error) {
       this.consoleLoggerService.log('ERROR:DELETE_RESOURCE_MANIFEST', { error })
       throw error

@@ -14,7 +14,19 @@
  * limitations under the License.
  */
 
-export const DeploymentsConfigurationConstants = {
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-  DEFAULT_CIRCLE_HEADER_NAME: 'x-circle-id',
+export class AddPreviousDeploymentIdTov2deployments20210115163900 implements MigrationInterface {
+
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.addColumn('v2deployments', new TableColumn({
+      name: 'previous_deployment_id',
+      type: 'uuid',
+      isNullable: true
+    }))
+  }
+
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropColumn('v2deployments', 'previous_deployment_id')
+  }
 }

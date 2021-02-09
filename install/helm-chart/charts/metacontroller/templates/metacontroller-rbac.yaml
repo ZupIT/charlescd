@@ -23,7 +23,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: metacontroller
-  namespace: metacontroller
+  namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: metacontroller
