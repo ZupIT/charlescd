@@ -287,7 +287,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   return (
     <Styled.Content>
       <Styled.Title color="light">Add Registry</Styled.Title>
-      <Text.h5 color="dark">
+      <Text.h5 color="dark" data-testid="registry-help-text">
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to
         deploy them. Consult our{' '}
