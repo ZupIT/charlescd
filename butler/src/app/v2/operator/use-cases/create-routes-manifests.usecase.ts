@@ -26,7 +26,7 @@ import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manif
 import { DeploymentUtils } from '../../core/integrations/utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../../core/integrations/utils/istio-deployment-manifests.utils'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { RouteChildren, RouteHookParams } from '../params.interface'
+import { DestinationRuleSpec, RouteChildren, RouteHookParams, VirtualServiceSpec } from '../params.interface'
 
 @Injectable()
 export class CreateRoutesManifestsUseCase {
@@ -40,28 +40,41 @@ export class CreateRoutesManifestsUseCase {
 
   public async execute(hookParams: RouteHookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     this.consoleLoggerService.log('START:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
-    const specs = Promise.all(hookParams.parent.spec.circles.flatMap(async c => {
+    let specs : (VirtualServiceSpec | DestinationRuleSpec)[]= []
+    for (const c of hookParams.parent.spec.circles) {
       const deployment = await this.retriveDeploymentFor(c.id)
       const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
-      this.consoleLoggerService.log('FINISH:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
-      return proxySpecs
-    })).then(s => {
-
-      console.log({
-        observed: JSON.stringify(hookParams.children),
-        desired: JSON.stringify(s.flat())
-      })
-
-      return { children: s.flat() }
+      specs = specs.concat(proxySpecs)
     }
-    )
-    return specs
+    console.log({
+      observed: JSON.stringify(hookParams),
+      desired: JSON.stringify(specs)
+    })
+    return { children: specs }
   }
 
-  public checkRoutes(observed: RouteChildren, desired: KubernetesManifest[]): boolean {
-    const o = Object.values(observed).flat().filter( (o:  KubernetesManifest) => !isEmpty(o))
-    return isEqual(o, desired)
+  public checkRoutes(observed: RouteHookParams, desired: (VirtualServiceSpec | DestinationRuleSpec)[]): boolean[] {
+    const a = observed.parent.spec.circles.flatMap(circle => {
+      return circle.components.flatMap(component => {
+        const presentComponents = desired.filter( d => component.name === d.metadata.name)
+      })
+    })
+
+    return a
+    // const desiredDestinationRules: DestinationRuleSpec[] = desired.filter(this.isDestinationRule)
+    // desired.map(d => {
+    //   const presentOnDestinationRules = d.metadata.name in observed['DestinationRule.networking.istio.io/v1beta1']
+    //   const presentOnDestinationVirtualServices = d.metadata.name in observed['VirtualService.networking.istio.io/v1beta1']
+    //   if (!presentOnDestinationRules && !presentOnDestinationVirtualServices) {
+    //     return {
+    //       circle:
+    //     }
+    //   }
+
+
+
+    // })
   }
 
   private async retriveDeploymentFor(id: string): Promise<DeploymentEntityV2> {
@@ -74,8 +87,8 @@ export class CreateRoutesManifestsUseCase {
     return deployment
   }
 
-  private createProxySpecsFor(deployment: DeploymentEntityV2, activeComponents: Component[]): KubernetesManifest[] {
-    const proxySpecs: KubernetesManifest[] = []
+  private createProxySpecsFor(deployment: DeploymentEntityV2, activeComponents: Component[]): (VirtualServiceSpec | DestinationRuleSpec)[] {
+    const proxySpecs: (VirtualServiceSpec | DestinationRuleSpec)[] = []
     deployment.components.forEach(component => {
       const manifests = this.createIstioProxiesManifestsFor(deployment, component, activeComponents)
       manifests.forEach(m => proxySpecs.push(m))
@@ -86,10 +99,14 @@ export class CreateRoutesManifestsUseCase {
   private createIstioProxiesManifestsFor(deployment: DeploymentEntityV2,
     newComponent: Component,
     activeComponents: Component[]
-  ): [KubernetesManifest, KubernetesManifest] {
+  ): (VirtualServiceSpec | DestinationRuleSpec)[] {
     const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, newComponent.name)
     const destinationRules = IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, newComponent, activeByName)
     const virtualService = IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, newComponent, activeByName)
     return [destinationRules, virtualService]
+  }
+
+  private isDestinationRule(manifest: (VirtualServiceSpec | DestinationRuleSpec)): manifest is DestinationRuleSpec {
+    return manifest.kind === 'DestinationRule'
   }
 }

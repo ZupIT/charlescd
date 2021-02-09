@@ -1,3 +1,5 @@
+import { Http } from '../core/integrations/interfaces/k8s-manifest.interface'
+
 export interface RouteHookParams {
   controller?: Record<string, unknown>
   parent: {
@@ -20,8 +22,8 @@ export interface RouteHookParams {
 }
 
 export interface RouteChildren {
-  'VirtualService.networking.istio.io/v1beta1': VirtualServiceSpec,
-  'DestinationRule.networking.istio.io/v1beta1': DestinationRuleSpec
+  'VirtualService.networking.istio.io/v1beta1': ChildVirtualServiceSpec,
+  'DestinationRule.networking.istio.io/v1beta1': ChildDestinationRuleSpec
 }
 
 export interface HookParams {
@@ -87,53 +89,35 @@ export interface DeploymentSpec {
   }
 }
 
+export interface ChildVirtualServiceSpec {
+  [key: string]: VirtualServiceSpec
+}
+
 export interface VirtualServiceSpec {
-  [key: string]: {
     apiVersion: string
-    kind: string
-    metadata?: SpecMetadata
+    kind: 'VirtualService'
+    metadata: {
+      name: string
+      namespace: string
+    }
     spec: {
       gateways: string[]
       hosts: string[]
-      http: {
-        match?: {
-          headers: {
-            cookie?: {
-              regex: string
-            }
-            'x-circle-id'?: {
-              exact: string
-            }
-          }
-        }[],
-        route: {
-          destination: {
-            host: string
-            subset: string
-          }
-          headers: {
-            request: {
-              set: {
-                'x-circle-source': string
-              }
-            },
-            response: {
-              set: {
-                'x-circle-source': string
-              }
-            }
-          }
-        }[]
-      }[]
+      http: Http[]
     }
   }
+
+export interface ChildDestinationRuleSpec {
+  [key: string]: DestinationRuleSpec
 }
 
 export interface DestinationRuleSpec {
-  [key: string]: {
     apiVersion: string
-    kind: string
-    metadata?: SpecMetadata
+    kind: 'DestinationRule'
+    metadata: {
+      name: string
+      namespace: string
+    }
     spec: {
       host: string
       subsets: {
@@ -146,7 +130,6 @@ export interface DestinationRuleSpec {
       }[]
     }
   }
-}
 
 export interface ServiceSpec {
   [key: string]: {
