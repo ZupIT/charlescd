@@ -50,8 +50,8 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
 
     const payload = omit(webhook, 'eventType');
 
-    if (webhook.id) {
-      edit(webhook.id, payload);
+    if (data?.id) {
+      edit(data?.id, payload);
     } else {
       save(payload);
     }
@@ -103,6 +103,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           ref={register()}
           name="apiKey"
           label="Secret"
+          autoComplete="new-password"
           defaultValue={data?.apiKey}
         />
         <Text.h5 color="dark">
