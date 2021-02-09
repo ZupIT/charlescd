@@ -16,7 +16,6 @@
 
 import React, { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
-import isEmpty from 'lodash/isEmpty';
 import first from 'lodash/first';
 import Button from 'core/components/Button';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
