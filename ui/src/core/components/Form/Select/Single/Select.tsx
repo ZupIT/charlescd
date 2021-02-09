@@ -34,7 +34,7 @@ const Select = ({
   onInputChange,
   customOption,
   hasError,
-  value = null,
+  value = undefined,
   icon
 }: Props) => (
   <div data-testid="react-select">

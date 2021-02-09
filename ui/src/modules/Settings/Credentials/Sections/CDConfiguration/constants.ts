@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { RadioButton } from 'core/components/Radio/Buttons';
+import { RadioButtonProps } from 'core/components/Radio/Buttons';
 
 export const FORM_CD_CONFIGURATION = 'cd-configuration';
 
-export const radios: RadioButton[] = [
+export const radios: RadioButtonProps[] = [
   { icon: 'charlescd', name: 'CharlesCD', value: 'OCTOPIPE' },
   { icon: 'spinnaker', name: 'Spinnaker', value: 'SPINNAKER' }
 ];
@@ -44,7 +44,7 @@ export const gitProviders = [
   }
 ];
 
-export const providers: RadioButton[] = [
+export const providers: RadioButtonProps[] = [
   {
     name: 'Default',
     value: 'DEFAULT'
