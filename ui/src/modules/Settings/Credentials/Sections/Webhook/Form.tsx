@@ -100,7 +100,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           defaultValue={data?.url}
         />
         <Form.Password
-          ref={register({ required: true })}
+          ref={register()}
           name="apiKey"
           label="Secret"
           defaultValue={data?.apiKey}
