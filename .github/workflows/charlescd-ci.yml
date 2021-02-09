@@ -328,6 +328,14 @@ jobs:
 
   notify-team:
     runs-on: ubuntu-latest
+    needs: [ build_and_push_alpha_butler,
+             build_and_push_alpha_circle_matcher,
+             build_and_push_alpha_moove,
+             build_and_push_alpha_octopipe,
+             build_and_push_alpha_ui,
+             build_and_push_alpha_villager,
+             build_and_push_alpha_compass
+    ]
     steps:
       - name: ping
         run: |
