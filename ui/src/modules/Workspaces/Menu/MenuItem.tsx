@@ -46,8 +46,6 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
     setUserAbilities();
     dispatch(statusWorkspaceAction('idle'));
     dispatch(loadedWorkspaceAction({ ...workspace, id, name, status }));
-    console.log('hasPermission', hasPermission('maintenance_write'))
-    console.log('status', status);
     history.push({
       pathname:
         status === WORKSPACE_STATUS.INCOMPLETE &&
