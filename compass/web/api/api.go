@@ -19,10 +19,14 @@
 package api
 
 import (
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/cors"
 
 	"github.com/didip/tollbooth/limiter"
 
@@ -106,12 +110,32 @@ func (api *Api) metrics(router *mux.Router) {
 }
 
 func Start(router *mux.Router) {
+	allowedOrigins := strings.Split(os.Getenv("ORIGIN_HOSTS"), ",")
+
+	corsOpts := cors.New(cors.Options{
+		AllowedOrigins: allowedOrigins,
+		AllowedMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+			http.MethodHead,
+		},
+
+		AllowedHeaders: []string{
+			"*",
+		},
+	})
+
 	server := &http.Server{
-		Handler: router,
+		Handler: corsOpts.Handler(router),
 		Addr:    ":8080",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
+
 	log.Fatal(server.ListenAndServe())
 }
