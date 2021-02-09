@@ -17,7 +17,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { flatten } from 'lodash'
-import { EntityManager, getConnection, Repository, UpdateResult } from 'typeorm'
+import { EntityManager, getConnection, Repository } from 'typeorm'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
@@ -41,8 +41,6 @@ export class CreateDeploymentUseCase {
   constructor(
     @InjectRepository(DeploymentEntity)
     private deploymentsRepository: Repository<DeploymentEntity>,
-    @InjectRepository(Execution)
-    private executionRepository: Repository<Execution>,
     @InjectRepository(ComponentsRepositoryV2)
     private componentsRepository: ComponentsRepositoryV2,
     private readonly consoleLoggerService: ConsoleLoggerService,

@@ -16,7 +16,6 @@
 
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { flatMap, uniq } from 'lodash'
 import { Repository } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { ComponentsRepositoryV2 } from '../repository/component.repository'
