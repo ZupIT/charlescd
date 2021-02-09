@@ -21,7 +21,6 @@ import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
 import { getAccessTokenDecoded, isIDMAuthFlow, logout } from 'core/utils/auth';
 import { isRoot } from 'core/utils/auth';
-import { saveProfile, getProfile } from 'core/utils/profile';
 import { useWorkspacesByUser } from 'modules/Users/hooks';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
@@ -35,7 +34,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const workspaces = getProfileByKey('workspaces');
   const userId = getProfileByKey('id');
   const [filterWorkspace, , loading] = useWorkspace();
-  const { findWorkspacesByUser, workspaces: response } = useWorkspacesByUser();
+  const { findWorkspacesByUser } = useWorkspacesByUser();
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
@@ -46,12 +45,6 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
       findWorkspacesByUser(userId);
     }
   }, [filterWorkspace, findWorkspacesByUser, name, userId]);
-
-  useEffect(() => {
-    if (response) {
-      saveProfile({ ...getProfile(), response });
-    }
-  }, [response]);
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
