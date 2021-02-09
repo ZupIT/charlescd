@@ -99,6 +99,7 @@ export const useWorkspacesByUser = (): {
         if (id) {
           const res = await getWorkspacesByUser(id);
           setWorkspaces(res);
+          console.log('findWorkspace', res);
           dispatch(loadedWorkspacesAction({
             content: res,
             page: 0,

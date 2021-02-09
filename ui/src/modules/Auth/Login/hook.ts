@@ -74,6 +74,7 @@ export const useLogin = (): {
 
   useEffect(() => {
     if (workspaces) {
+      console.log('saveWorkspace', { ...user, workspaces });
       saveProfile({ ...user, workspaces });
 
       setStatus('resolved');

@@ -76,6 +76,7 @@ export const getRoles = () => {
     const id = getWorkspaceId();
     const workspaces = getProfileByKey('workspaces');
     const { permissions } = find(workspaces, ['id', id]) || { permissions: [] };
+    console.log(workspaces, permissions);
     return permissions;
   } catch (e) {
     return [];
