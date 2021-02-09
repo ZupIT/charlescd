@@ -43,6 +43,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
+  // TODO remove getworkspace?
   return [filterWorkspace, getWorkspace, loading];
 };
 

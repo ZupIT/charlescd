@@ -35,6 +35,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const userId = getProfileByKey('id');
   const [filterWorkspace, , loading] = useWorkspace();
   const { findWorkspacesByUser } = useWorkspacesByUser();
+  // TODO remove name?
   const [name] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
@@ -53,7 +54,9 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   }, [onIDMFlow]);
 
   useEffect(() => {
-    if (!email) logout();
+    if (!email) {
+      logout();
+    }
   }, [email]);
 
   const handleOnSearch = (name: string) => !loading && filterWorkspace(name);
