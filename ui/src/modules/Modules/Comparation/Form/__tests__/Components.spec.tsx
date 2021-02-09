@@ -15,7 +15,7 @@
  */
 
 import React from "react";
-import { render, act, waitFor } from "@testing-library/react";
+import { render, act, waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Components from "../Components";
 import { Component } from "modules/Modules/interfaces/Component";
@@ -51,7 +51,7 @@ jest.mock("react-hook-form", () => {
   };
 });
 
-test("Test componentForm for one component render", async () => {
+test("componentForm for one component render", async () => {
   const { container } = render(
     <ThemeProviderWrapper>
       <Components
@@ -68,7 +68,7 @@ test("Test componentForm for one component render", async () => {
   await waitFor(() => expect(container.innerHTML).toMatch("input-wrapper-components[0]"));
 });
 
-test("Test componentForm for two components render", async () => {
+test("componentForm for two components render", async () => {
   const { container } = render(
     <ThemeProviderWrapper>
       <Components
@@ -88,8 +88,8 @@ test("Test componentForm for two components render", async () => {
   });
 });
 
-test("Test componentForm for append another component", async () => {
-  const { container, getByTestId , rerender} = render(
+test("componentForm for append another component", async () => {
+  render(
     <ThemeProviderWrapper>
       <Components
         fieldArray={{
@@ -102,25 +102,11 @@ test("Test componentForm for append another component", async () => {
     </ThemeProviderWrapper>
   );
 
-  const buttonAppend = getByTestId("button-default-add-component")
+  const buttonAppend = screen.getByTestId("button-default-add-component")
   act(() => userEvent.click(buttonAppend));
 
-  rerender(
-    <ThemeProviderWrapper>
-      <Components
-        fieldArray={{
-          append: mockAppend,
-          remove: mockRemove,
-          fields: arrayFakeComponents
-        }}
-        key={"fake-key"}
-      />
-    </ThemeProviderWrapper>
-  );
-
   await waitFor(() => {
-    expect(container.innerHTML).toMatch("input-wrapper-components[0]");
-    expect(container.innerHTML).toMatch("input-wrapper-components[1]");
-    expect(container.innerHTML).toMatch("input-wrapper-components[2]");
+    const component = screen.getByTestId("components[0]")
+    expect(component).toBeInTheDocument();
   });
 });

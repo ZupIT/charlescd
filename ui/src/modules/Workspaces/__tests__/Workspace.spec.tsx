@@ -15,14 +15,11 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, act, waitFor, wait } from 'unit-test/testUtils';
+import { render, screen, fireEvent, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
-import MutationObserver from 'mutation-observer';
 import Workspace from '../';
-
-(global as any).MutationObserver = MutationObserver;
 
 const originalWindow = { ...window };
 
@@ -55,7 +52,9 @@ jest.mock('react-cookies', () => {
 
 test('render Workspace modal', async () => {
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  
   render(<Workspace selectedWorkspace={jest.fn()} />);
+  
   const button = screen.getByTestId('button-default-workspaceModal');
   fireEvent.click(button);
 
@@ -66,29 +65,14 @@ test('render Workspace modal', async () => {
   await waitFor(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
 });
 
-test('render Workspace and search', async () => {
-  const workspaceRequest = jest.fn();
-
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  
-  render(<Workspace selectedWorkspace={jest.fn()} />);
-
-  const search = screen.getByTestId('input-text-search');
-
-  await act(() => userEvent.type(search , 'workspace'));
-
-  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(2));
-});
-
 test('render Workspace and see a placeholder', async () => {
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
   
   render(<Workspace selectedWorkspace={jest.fn()} />);
 
-  const placeholder = screen.queryByTestId('placeholder-empty-workspaces');
-
-  expect(placeholder).toBeInTheDocument();
+  await waitFor(() => {
+    expect(screen.queryByTestId('placeholder-empty-workspaces')).toBeInTheDocument();
+  });
 });
 
 test('render Workspace modal and add new workspace', async () => {
@@ -104,4 +88,38 @@ test('render Workspace modal and add new workspace', async () => {
   fireEvent.input(inputWorkspace , 'workspace');
 
   expect(screen.queryByTestId('modal-default')).toBeInTheDocument();
+});
+
+test('render Workspace with isIDMAuthFlow disabled and search', async () => {
+  const workspaceRequest = jest.fn();
+
+  jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => false);
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  const useWorkspaceSpy = jest.spyOn(WorkspaceHooks, 'useWorkspace')
+    .mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  
+  useWorkspaceSpy.mockRestore();
+  render(<Workspace selectedWorkspace={jest.fn()} />);
+
+  const search = screen.getByTestId('input-text-search');
+
+  await act(() => userEvent.type(search , 'workspace'));
+
+  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(0));
+});
+
+test('render Workspace with isIDMAuthFlow enabled and search', async () => {
+  const workspaceRequest = jest.fn();
+
+  jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => true);
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  
+  render(<Workspace selectedWorkspace={jest.fn()} />);
+
+  const search = screen.getByTestId('input-text-search');
+
+  await act(() => userEvent.type(search , 'workspace'));
+
+  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(1));
 });
