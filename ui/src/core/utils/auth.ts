@@ -90,6 +90,7 @@ export const hasPermission = (role: string) => {
   console.log('roles', roles);
   console.log('role', role);
   console.log('includes', includes(roles, role));
+  console.log('hasPermission', isRoot() || includes(roles, role));
   return isRoot() || includes(roles, role);
 };
 
