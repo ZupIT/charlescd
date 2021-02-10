@@ -21,6 +21,7 @@ import IconComponent from 'core/components/Icon';
 import ButtonComponent from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
+import LoaderMenuComponent from './Loaders';
 
 const SearchInput = styled(SearchInputComponent)`
   margin: 15px 0;
@@ -98,16 +99,26 @@ const ButtonModal = styled(ButtonComponent.Default)`
   margin-top: 20px;
 `;
 
+const Empty = styled.div`
+  padding: 0 16px;
+`;
+
+const Loader = styled(LoaderMenuComponent.List)`
+  padding: 0 16px;
+`;
+
 export default {
   Item,
   SearchInput,
   List,
   ListItem,
+  Loader,
   Content,
   Actions,
   Icon,
   Link,
   Button,
+  Empty,
   Modal: {
     Input: ModalInput,
     Title: ModalTitle,
