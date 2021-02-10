@@ -25,8 +25,6 @@ export class ReadDeploymentDto {
 
   public readonly modulesDeployments: ReadModuleDeploymentDto[]
 
-  public readonly authorId: string
-
   public readonly description: string
 
   public readonly circle: ReadCircleDeploymentDto | undefined
@@ -51,7 +49,6 @@ export class ReadDeploymentDto {
     this.id = id
     this.applicationName = applicationName
     this.modulesDeployments = modulesDeployments
-    this.authorId = authorId
     this.description = description
     this.circle = circle
     this.callbackUrl = callbackUrl

@@ -33,11 +33,6 @@ export class CreateDeploymentRequestDto {
   public deploymentId: string
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  public authorId: string
-
-  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   public callbackUrl: string
@@ -67,47 +62,50 @@ export class CreateDeploymentRequestDto {
   @Type(() => CreateModuleDeploymentDto)
   public readonly modules: CreateModuleDeploymentDto[]
 
+  @ApiProperty()
+  public metadata: Record<string, string>
+
   constructor(
     deploymentId: string,
-    authorId: string,
     callbackUrl: string,
     cdConfigurationId: string,
     circle: CreateCircleDeploymentDto,
     status: DeploymentStatusEnum,
     modules: CreateModuleDeploymentDto[],
-    defaultCircle: boolean
+    defaultCircle: boolean,
+    metadata: Record<string, string>
   ) {
-    this.deploymentId = deploymentId
-    this.authorId = authorId
+    this.deploymentId = deploymentId,
     this.callbackUrl = callbackUrl
     this.cdConfigurationId = cdConfigurationId
     this.circle = circle
     this.status = status
     this.modules = modules
     this.defaultCircle = defaultCircle
+    this.metadata = metadata
   }
 
   public toCircleEntity(): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
-      this.authorId,
       this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
       this.getDeploymentComponents(),
-      this.defaultCircle
+      this.defaultCircle,
+      this.metadata
     )
   }
 
   public toDefaultEntity(activeComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
-      this.authorId,
       this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
       [ ...activeComponents, ...this.getDeploymentComponents()],
-      this.defaultCircle
+      this.defaultCircle,
+      this.metadata
     )
   }
 

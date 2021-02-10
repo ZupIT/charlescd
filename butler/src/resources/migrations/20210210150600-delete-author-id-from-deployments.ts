@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from './'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export interface Deployment {
-    id: string
+export class DeleteAuthorIdFromDeployments20210210153500 implements MigrationInterface {
 
-    callbackUrl: string
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.query(`
+      ALTER TABLE v2deployments drop column author_id
+    `)
+  }
 
-    createdAt: Date
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string
-
-    components?: DeploymentComponent[]
-
-    defaultCircle: boolean
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.query(`
+      ALTER TABLE v2deployments add column author_id
+    `)
+  }
 }
-
-export type DeploymentComponent = Omit<Component, 'deployment'>

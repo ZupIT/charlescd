@@ -28,9 +28,6 @@ export class DeploymentEntityV2 implements Deployment {
   @PrimaryColumn({ name: 'id' })
   public id!: string
 
-  @Column({ name: 'author_id' })
-  public authorId!: string
-
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
 
@@ -50,7 +47,6 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'circle_id', nullable: false, type: 'varchar' })
   public circleId!: string
 
-
   @Column({ name: 'active' })
   public active!: boolean
 
@@ -60,22 +56,25 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'default_circle' })
   public defaultCircle!: boolean
 
+  @Column({ type: 'jsonb', name: 'metadata', nullable: true })
+  public metadata!: Record<string, string>
+
   constructor(
     deploymentId: string,
-    authorId: string,
     circleId: string,
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
     components: ComponentEntity[],
-    defaultCircle: boolean
+    defaultCircle: boolean,
+    metadata: Record<string, string>
   ) {
     this.id = deploymentId
-    this.authorId = authorId
     this.circleId = circleId
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
     this.defaultCircle = defaultCircle
+    this.metadata = metadata
   }
 
   public toReadDto(): ReadDeploymentDto {
@@ -88,7 +87,6 @@ export class DeploymentEntityV2 implements Deployment {
     return {
       id: this.id,
       applicationName: this.cdConfiguration.id,
-      authorId: this.authorId,
       callbackUrl: this.callbackUrl,
       circle: { headerValue: circleId },
       createdAt: this.createdAt,
@@ -102,7 +100,6 @@ export class DeploymentEntityV2 implements Deployment {
     return {
       id: this.id,
       applicationName: this.cdConfiguration.id,
-      authorId: this.authorId,
       callbackUrl: this.callbackUrl,
       circle: undefined,
       createdAt: this.createdAt,
