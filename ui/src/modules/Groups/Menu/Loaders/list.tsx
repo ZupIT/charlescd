@@ -26,8 +26,8 @@ export const Loader: FunctionComponent = () => (
     backgroundColor="#3a393c"
     foregroundColor="#2c2b2e"
   >
-    <rect x="0" y="0" rx="4" ry="4" width="260" height="15" />
-    <rect x="0" y="35" rx="4" ry="4" width="260" height="15" />
-    <rect x="0" y="70" rx="4" ry="4" width="260" height="15" />
+    <rect x="16" y="0" rx="4" ry="4" width="260" height="15" />
+    <rect x="16" y="35" rx="4" ry="4" width="260" height="15" />
+    <rect x="16" y="70" rx="4" ry="4" width="260" height="15" />
   </ContentLoader>
 );
