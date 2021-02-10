@@ -93,12 +93,17 @@ export interface ChildVirtualServiceSpec {
   [key: string]: VirtualServiceSpec
 }
 
+export interface ChildDestinationRuleSpec {
+  [key: string]: DestinationRuleSpec
+}
+
 export interface VirtualServiceSpec {
     apiVersion: string
     kind: 'VirtualService'
     metadata: {
       name: string
       namespace: string
+      circles: string[]
     }
     spec: {
       gateways: string[]
@@ -107,16 +112,13 @@ export interface VirtualServiceSpec {
     }
   }
 
-export interface ChildDestinationRuleSpec {
-  [key: string]: DestinationRuleSpec
-}
-
 export interface DestinationRuleSpec {
     apiVersion: string
     kind: 'DestinationRule'
     metadata: {
       name: string
       namespace: string
+      circles: string[]
     }
     spec: {
       host: string

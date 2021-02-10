@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
-import { isEmpty, isEqual } from 'lodash'
+import { isEmpty } from 'lodash'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { Component } from '../../api/deployments/interfaces'
@@ -26,7 +25,8 @@ import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manif
 import { DeploymentUtils } from '../../core/integrations/utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../../core/integrations/utils/istio-deployment-manifests.utils'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { DestinationRuleSpec, RouteChildren, RouteHookParams, VirtualServiceSpec } from '../params.interface'
+import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../params.interface'
+import { PartialRouteHookParams, SpecsUnion } from '../partial-params.interface'
 
 @Injectable()
 export class CreateRoutesManifestsUseCase {
@@ -54,27 +54,55 @@ export class CreateRoutesManifestsUseCase {
     return { children: specs }
   }
 
-  public checkRoutes(observed: RouteHookParams, desired: (VirtualServiceSpec | DestinationRuleSpec)[]): boolean[] {
-    const a = observed.parent.spec.circles.flatMap(circle => {
-      return circle.components.flatMap(component => {
-        const presentComponents = desired.filter( d => component.name === d.metadata.name)
+  public getRoutesStatus(observed: PartialRouteHookParams, desired: SpecsUnion[]): {circle: string, component: string, status: boolean, kind: string}[] {
+    if (desired.length === 0) {
+      return []
+    }
+    return desired.flatMap(spec => {
+      return spec.metadata.circles.flatMap(desiredCircleId => {
+        return this.handleSpecStatus(observed, spec, desiredCircleId)
       })
     })
+  }
 
-    return a
-    // const desiredDestinationRules: DestinationRuleSpec[] = desired.filter(this.isDestinationRule)
-    // desired.map(d => {
-    //   const presentOnDestinationRules = d.metadata.name in observed['DestinationRule.networking.istio.io/v1beta1']
-    //   const presentOnDestinationVirtualServices = d.metadata.name in observed['VirtualService.networking.istio.io/v1beta1']
-    //   if (!presentOnDestinationRules && !presentOnDestinationVirtualServices) {
-    //     return {
-    //       circle:
-    //     }
-    //   }
+  private handleSpecStatus(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): { circle: string, component: string, status: boolean, kind: string } {
+    const baseResponse = {
+      circle: circleId,
+      component: spec.metadata.name,
+      kind: spec.kind,
+      status: false
+    }
 
+    if (this.checkEmptySpecs(observed) === true) {
+      baseResponse.status = false
+      return baseResponse
+    }
 
+    if (this.checkComponentExistsOnObserved(observed, spec, circleId)) {
+      baseResponse.status = true
+      return baseResponse
+    } else {
+      baseResponse.status = false
+      return baseResponse
+    }
+  }
 
-    // })
+  private checkEmptySpecs(observed: PartialRouteHookParams): boolean {
+    const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1beta1'])
+    const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1beta1'])
+    if (emptyDestinationRules || emptyVirtualServices) {
+      return true
+    }
+    return false
+  }
+
+  private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
+    const desiredDestinationRulePresent = observed.children['DestinationRule.networking.istio.io/v1beta1'][spec.metadata.name].metadata.circles.includes(circleId)
+    const desiredVirtualServicePresent = observed.children['VirtualService.networking.istio.io/v1beta1'][spec.metadata.name].metadata.circles.includes(circleId)
+    if (desiredDestinationRulePresent && desiredVirtualServicePresent) {
+      return true
+    }
+    return false
   }
 
   private async retriveDeploymentFor(id: string): Promise<DeploymentEntityV2> {
@@ -106,7 +134,10 @@ export class CreateRoutesManifestsUseCase {
     return [destinationRules, virtualService]
   }
 
-  private isDestinationRule(manifest: (VirtualServiceSpec | DestinationRuleSpec)): manifest is DestinationRuleSpec {
+  private isDestinationRule(manifest: SpecsUnion): manifest is DestinationRuleSpec {
     return manifest.kind === 'DestinationRule'
+  }
+  private isVirtualService(manifest: SpecsUnion): manifest is VirtualServiceSpec {
+    return manifest.kind === 'VirtualService'
   }
 }

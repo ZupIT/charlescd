@@ -17,13 +17,13 @@
 import 'jest'
 import { CdConfigurationsRepository } from '../../../../app/v2/api/configurations/repository'
 import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repository'
-import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
+import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
+import { RouteHookParams } from '../../../../app/v2/operator/params.interface'
+import { PartialRouteHookParams, SpecsUnion } from '../../../../app/v2/operator/partial-params.interface'
 import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
 import { cdConfigurationFixture, deployComponentsFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import { routesManifests } from '../../fixtures/manifests.fixture'
-import { DestinationRuleSpec, HookParams, RouteHookParams, VirtualServiceSpec } from '../../../../app/v2/operator/params.interface'
-import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 
 describe('Hook Routes Manifest Creation', () => {
 
@@ -98,65 +98,14 @@ describe('Hook Routes Manifest Creation', () => {
 
 
 describe('Compare observed routes state with desired routes state', () => {
-  it('should return true when observed and desired states are empty', () => {
+  it('should return empty array when observed and desired states are empty', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
     const cdConfigurationsRepository = new CdConfigurationsRepository()
     const consoleLoggerService = new ConsoleLoggerService()
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
-    jest.spyOn(cdConfigurationsRepository, 'findDecrypted').mockImplementation(async() => cdConfigurationFixture)
-    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
 
-    // const observed = { 'DestinationRule.networking.istio.iov1beta1: {}, 'VirtualService.networking.istio.iov1beta1: {} }
-    const observed : RouteHookParams = {
-      controller: {
-        kind: 'CompositeController',
-        apiVersion: 'metacontroller.k8s.io/v1alpha1',
-        metadata: {
-          name: 'charlesroutes-controller',
-        },
-        spec: {
-          parentResource: {
-            apiVersion: 'charlescd.io/v1',
-            resource: 'charlesroutes'
-          },
-          childResources: [
-            {
-              apiVersion: 'networking.istio.io/v1beta1',
-              resource: 'virtualservices',
-              updateStrategy: {
-                method: 'InPlace',
-                statusChecks: {}
-              }
-            },
-            {
-              apiVersion: 'networking.istio.io/v1beta1',
-              resource: 'destinationrules',
-              updateStrategy: {
-                method: 'InPlace',
-                statusChecks: {}
-              }
-            }
-          ],
-          hooks: {
-            sync: {
-              webhook: {
-                url: 'http://charlescd-butler.default.svc.cluster.local:3000/v2/operator/routes/hook/reconcile'
-              }
-            }
-          },
-          generateSelector: true
-        },
-        status: {}
-      },
+    const observed : PartialRouteHookParams = {
       parent: {
-        apiVersion: 'charlescd.io/v1',
-        kind: 'CharlesRoutes',
-        metadata: {
-          name: 'abobora',
-          namespace: 'default'
-        },
-
         spec: {
           circles: [
             {
@@ -179,10 +128,9 @@ describe('Compare observed routes state with desired routes state', () => {
       children: {
         'DestinationRule.networking.istio.io/v1beta1': {},
         'VirtualService.networking.istio.io/v1beta1': {}
-      },
-      finalizing: false
+      }
     }
-    const desired : (VirtualServiceSpec | DestinationRuleSpec)[] = []
+    const desired : SpecsUnion[] = []
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,
@@ -190,291 +138,110 @@ describe('Compare observed routes state with desired routes state', () => {
       consoleLoggerService
     )
 
-    expect(routeUseCase.checkRoutes(observed, desired)).toEqual([])
+    expect(routeUseCase.getRoutesStatus(observed, desired)).toEqual([])
 
   })
-  it('should return true when observed and desired states are empty', () => {
+  it('should return the objects with status true for all desired components', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
     const cdConfigurationsRepository = new CdConfigurationsRepository()
     const consoleLoggerService = new ConsoleLoggerService()
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
-    jest.spyOn(cdConfigurationsRepository, 'findDecrypted').mockImplementation(async() => cdConfigurationFixture)
-    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
 
-
-    const observed : RouteHookParams = {
-      'controller': {
-        'kind': 'CompositeController',
-        'apiVersion': 'metacontroller.k8s.io/v1alpha1',
-        'spec': {
-          'parentResource': {
-            'apiVersion': 'charlescd.io/v1',
-            'resource': 'charlesroutes'
-          },
-          'childResources': [
+    const observed : PartialRouteHookParams = {
+      parent: {
+        spec: {
+          circles: [
             {
-              'apiVersion': 'networking.istio.io/v1beta1',
-              'resource': 'virtualservices',
-              'updateStrategy': {
-                'method': 'InPlace',
-                'statusChecks': {}
-              }
-            },
-            {
-              'apiVersion': 'networking.istio.io/v1beta1',
-              'resource': 'destinationrules',
-              'updateStrategy': {
-                'method': 'InPlace',
-                'statusChecks': {}
-              }
-            }
-          ],
-          'hooks': {
-            'sync': {
-              'webhook': {
-                'url': 'http://charlescd-butler.default.svc.cluster.local:3000/v2/operator/routes/hook/reconcile'
-              }
-            }
-          },
-          'generateSelector': true
-        },
-        'status': {}
-      },
-      'parent': {
-        'apiVersion': 'charlescd.io/v1',
-        'kind': 'CharlesRoutes',
-        metadata: {
-          name: 'default-routes',
-          namespace: 'default'
-        },
-        'spec': {
-          'circles': [
-            {
-              'components': [
+              components: [
                 {
-                  'name': 'jilo',
-                  'tag': 'latest'
+                  name: 'jilo',
+                  tag: 'latest'
                 },
                 {
-                  'name': 'abobora',
-                  'tag': 'latest'
+                  name: 'abobora',
+                  tag: 'latest'
                 }
               ],
-              'default': false,
-              'id': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              default: false,
+              id: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
             }
           ]
         }
       },
-      'children': {
+      children: {
         'DestinationRule.networking.istio.io/v1beta1': {
-          'abobora': {
-            'apiVersion': 'networking.istio.io/v1beta1',
-            'kind': 'DestinationRule',
+          abobora: {
+            kind: 'DestinationRule',
             metadata: {
               name: 'abobora',
-              namespace: 'default'
-            },
-            'spec': {
-              'host': 'abobora',
-              'subsets': [
-                {
-                  'labels': {
-                    'circleId': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-                    'component': 'abobora',
-                    'tag': 'latest'
-                  },
-                  'name': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                }
-              ]
+              namespace: 'default',
+              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
             }
           },
-          'jilo': {
-            'apiVersion': 'networking.istio.io/v1beta1',
-            'kind': 'DestinationRule',
+          jilo: {
+            kind: 'DestinationRule',
             metadata: {
               name: 'abobora',
-              namespace: 'default'
-            },
-
-            'spec': {
-              'host': 'jilo',
-              'subsets': [
-                {
-                  'labels': {
-                    'circleId': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-                    'component': 'jilo',
-                    'tag': 'latest'
-                  },
-                  'name': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                }
-              ]
+              namespace: 'default',
+              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
             }
           }
         },
         'VirtualService.networking.istio.io/v1beta1': {
-          'abobora': {
-            'apiVersion': 'networking.istio.io/v1beta1',
-            'kind': 'VirtualService',
+          abobora: {
+            kind: 'VirtualService',
             metadata: {
               name: 'abobora',
-              namespace: 'default'
-            },
-
-            'spec': {
-              'gateways': [],
-              'hosts': [
-                'abobora'
-              ],
-              'http': [
-                {
-                  'match': [
-                    {
-                      'headers': {
-                        'cookie': {
-                          'regex': '.*x-circle-id=ad2a1669-34b8-4af2-b42c-acbad2ec6b60.*'
-                        }
-                      }
-                    }
-                  ],
-                  'route': [
-                    {
-                      'destination': {
-                        'host': 'abobora',
-                        'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                      },
-                      'headers': {
-                        'request': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        },
-                        'response': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  'match': [
-                    {
-                      'headers': {
-                        'x-circle-id': {
-                          'exact': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                        }
-                      }
-                    }
-                  ],
-                  'route': [
-                    {
-                      'destination': {
-                        'host': 'abobora',
-                        'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                      },
-                      'headers': {
-                        'request': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        },
-                        'response': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
+              namespace: 'default',
+              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
             }
           },
-          'jilo': {
-            'apiVersion': 'networking.istio.io/v1beta1',
-            'kind': 'VirtualService',
+          jilo: {
+            kind: 'VirtualService',
             metadata: {
               name: 'jilo',
-              namespace: 'default'
-            },
-            'spec': {
-              'gateways': [],
-              'hosts': [
-                'jilo'
-              ],
-              'http': [
-                {
-                  'match': [
-                    {
-                      'headers': {
-                        'cookie': {
-                          'regex': '.*x-circle-id=ad2a1669-34b8-4af2-b42c-acbad2ec6b60.*'
-                        }
-                      }
-                    }
-                  ],
-                  'route': [
-                    {
-                      'destination': {
-                        'host': 'jilo',
-                        'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                      },
-                      'headers': {
-                        'request': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        },
-                        'response': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  'match': [
-                    {
-                      'headers': {
-                        'x-circle-id': {
-                          'exact': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                        }
-                      }
-                    }
-                  ],
-                  'route': [
-                    {
-                      'destination': {
-                        'host': 'jilo',
-                        'subset': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                      },
-                      'headers': {
-                        'request': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        },
-                        'response': {
-                          'set': {
-                            'x-circle-source': 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
+              namespace: 'default',
+              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
             }
           }
         }
-      },
-      'finalizing': false
+      }
     }
+
+    const desired : SpecsUnion[] = [
+      {
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'jilo',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        }
+      },
+      {
+        kind: 'VirtualService',
+        metadata: {
+          name: 'jilo',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        },
+      },
+      {
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'abobora',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        }
+      },
+      {
+        kind: 'VirtualService',
+        metadata: {
+          name: 'abobora',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        }
+      }
+    ]
 
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
@@ -483,18 +250,134 @@ describe('Compare observed routes state with desired routes state', () => {
       consoleLoggerService
     )
 
-    expect(routeUseCase.checkRoutes(observed, desired)).toEqual([
+    expect(routeUseCase.getRoutesStatus(observed, desired)).toEqual([
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'jilo',
+        kind: 'DestinationRule',
+        status: true
+      },
+      {
+        circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+        component: 'jilo',
+        kind: 'VirtualService',
         status: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
+        kind: 'DestinationRule',
+        status: true
+      },
+      {
+        circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+        component: 'abobora',
+        kind: 'VirtualService',
         status: true
       }
     ])
 
+  })
+  it('should return the objects with status false for all desired components when the observed state is does not have the routes', () => {
+    const deploymentRepository = new DeploymentRepositoryV2()
+    const componentsRepository = new ComponentsRepositoryV2()
+    const cdConfigurationsRepository = new CdConfigurationsRepository()
+    const consoleLoggerService = new ConsoleLoggerService()
+
+
+    const observed : PartialRouteHookParams = {
+      parent: {
+        spec: {
+          circles: [
+            {
+              components: [
+                {
+                  name: 'jilo',
+                  tag: 'latest'
+                },
+                {
+                  name: 'abobora',
+                  tag: 'latest'
+                }
+              ],
+              default: false,
+              id: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+            }
+          ]
+        }
+      },
+      children: {
+        'DestinationRule.networking.istio.io/v1beta1': {},
+        'VirtualService.networking.istio.io/v1beta1': {}
+      }
+    }
+
+    const desired : SpecsUnion[] = [
+      {
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'jilo',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        }
+      },
+      {
+        kind: 'VirtualService',
+        metadata: {
+          name: 'jilo',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        }
+      },
+      {
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'abobora',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        },
+      },
+      {
+        kind: 'VirtualService',
+        metadata: {
+          name: 'abobora',
+          namespace: 'default',
+          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+        }
+      }
+    ]
+    const routeUseCase = new CreateRoutesManifestsUseCase(
+      deploymentRepository,
+      componentsRepository,
+      cdConfigurationsRepository,
+      consoleLoggerService
+    )
+
+    expect(routeUseCase.getRoutesStatus(observed, desired)).toEqual([
+      {
+        circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+        component: 'jilo',
+        kind: 'DestinationRule',
+        status: false
+      },
+      {
+        circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+        component: 'jilo',
+        kind: 'VirtualService',
+        status: false
+      },
+      {
+        circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+        component: 'abobora',
+        kind: 'DestinationRule',
+        status: false
+      },
+      {
+        circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
+        component: 'abobora',
+        kind: 'VirtualService',
+        status: false
+      }
+    ])
   })
 })

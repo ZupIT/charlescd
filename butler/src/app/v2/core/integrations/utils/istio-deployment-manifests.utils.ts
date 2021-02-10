@@ -30,7 +30,8 @@ const IstioDeploymentManifestsUtils = {
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        circles: activeByName.map(c => c.deployment.circleId)
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -48,7 +49,8 @@ const IstioDeploymentManifestsUtils = {
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        circles: activeByName.map(c => c.deployment.circleId)
       },
       spec: {
         host: component.name,
