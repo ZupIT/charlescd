@@ -1,4 +1,4 @@
-package publisher
+package rabbitClient
 
 import (
 	"encoding/json"
@@ -12,13 +12,7 @@ import (
 	"time"
 )
 
-const (
-	enqueued    = "ENQUEUED"
-	notEnqueued = "NOT_ENQUEUED"
-	successLog  = "SUCCESS"
-)
-
-func (main *Main) Start(stopChan chan bool) error {
+func (main *Main) Publish(stopChan chan bool) error {
 	interval, err := time.ParseDuration(configuration.GetConfiguration("PUBLISHER_TIME"))
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -111,4 +105,16 @@ func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, 
 
 		return nil
 	})
+}
+
+func (main *Main) Consume(stopChan chan bool) {
+	go func() {
+		for {
+			err := main.amqpClient.Stream(stopChan)
+			if err != nil {
+				continue
+			}
+			break
+		}
+	}()
 }

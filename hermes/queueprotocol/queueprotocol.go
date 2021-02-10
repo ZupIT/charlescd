@@ -1,10 +1,12 @@
 package queueprotocol
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+	"hermes/internal/notification/payloads"
 	"os"
 	"runtime"
 	"sync"
@@ -21,6 +23,7 @@ const (
 
 type Client struct {
 	pushQueue     string
+	streamQueue   string
 	logger        *logrus.Logger
 	connection    *amqp.Connection
 	channel       *amqp.Channel
@@ -33,7 +36,7 @@ type Client struct {
 	wg            *sync.WaitGroup
 }
 
-func NewClient(listenQueue, pushQueue, addr string, l *logrus.Logger, done chan os.Signal) *Client {
+func NewClient(streamQueue, pushQueue, addr string, l *logrus.Logger, done chan os.Signal) *Client {
 	threads := runtime.GOMAXPROCS(0)
 	if numCPU := runtime.NumCPU(); numCPU > threads {
 		threads = numCPU
@@ -43,23 +46,24 @@ func NewClient(listenQueue, pushQueue, addr string, l *logrus.Logger, done chan 
 		logger:    l,
 		threads:   threads,
 		pushQueue: pushQueue,
+		streamQueue:   streamQueue,
 		done:      done,
 		alive:     true,
 		wg:        &sync.WaitGroup{},
 	}
 	client.wg.Add(threads)
 
-	go client.handleReconnect(listenQueue, addr)
+	go client.handleReconnect(addr)
 	return &client
 }
 
-func (c *Client) handleReconnect(listenQueue, addr string) {
+func (c *Client) handleReconnect(addr string) {
 	for c.alive {
 		c.isConnected = false
 		t := time.Now()
 		fmt.Printf("Attempting to connect to rabbitMQ: %s\n", addr)
 		var retryCount int
-		for !c.connect(listenQueue, addr) {
+		for !c.connect(addr) {
 			if !c.alive {
 				return
 			}
@@ -80,7 +84,7 @@ func (c *Client) handleReconnect(listenQueue, addr string) {
 	}
 }
 
-func (c *Client) connect(listenQueue, addr string) bool {
+func (c *Client) connect(addr string) bool {
 	conn, err := amqp.Dial(addr)
 	if err != nil {
 		c.logger.Printf("failed to dial rabbitMQ server: %v", err)
@@ -93,7 +97,7 @@ func (c *Client) connect(listenQueue, addr string) bool {
 	}
 	ch.Confirm(false)
 	_, err = ch.QueueDeclare(
-		listenQueue,
+		c.streamQueue,
 		true,  // Durable
 		false, // Delete when unused
 		false, // Exclusive
@@ -171,4 +175,116 @@ func (c *Client) UnsafePush(data []byte) error {
 			Body:        data,
 		},
 	)
+}
+
+func (c *Client) Stream(stopChan chan bool) error {
+
+	for {
+		if c.isConnected {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+
+	err := c.channel.Qos(1, 0, false)
+	if err != nil {
+		return err
+	}
+
+	var connectionDropped bool
+
+	for i := 1; i <= c.threads; i++ {
+		messages, err := c.channel.Consume(
+			c.streamQueue,
+			consumerName(i), // Consumer
+			true,           // Auto-Ack
+			false,           // Exclusive
+			false,           // No-local
+			false,           // No-Wait
+			nil,             // Args
+		)
+		if err != nil {
+			return err
+		}
+
+		go func() {
+			defer c.wg.Done()
+			for {
+				select {
+				case <-stopChan:
+					return
+				case msg, ok := <-messages:
+					if !ok {
+						connectionDropped = true
+						return
+					}
+					c.parseEvent(msg)
+				}
+			}
+		}()
+	}
+
+	c.wg.Wait()
+
+	if connectionDropped {
+		return ErrDisconnected
+	}
+
+	return nil
+}
+
+func (c *Client) parseEvent(msg amqp.Delivery) {
+	l := c.logger
+	startTime := time.Now()
+
+	var messageResponse payloads.MessageResponse
+	err := json.Unmarshal(msg.Body, &messageResponse)
+	if err != nil {
+		logAndNack(msg, l, startTime, "unmarshalling body: %s - %s", string(msg.Body), err.Error())
+		return
+	}
+
+	if messageResponse.EventType == "" {
+		logAndNack(msg, l, startTime, "received event without event type")
+		return
+	}
+
+	defer func(messageResponse payloads.MessageResponse, m amqp.Delivery, logger *logrus.Logger) {
+		if err := recover(); err != nil {
+			stack := make([]byte, 8096)
+			stack = stack[:runtime.Stack(stack, false)]
+			l.WithFields(logrus.Fields{
+				"stack": stack,
+				"error": err,
+			}).Fatal("panic recovery for rabbitMQ message")
+			msg.Nack(false, false)
+		}
+	}(messageResponse, msg, l)
+
+	//switch messageResponse.EventType {
+	//case "DEPLOY":
+	//	fmt.Println(messageResponse)
+	//case "UNDEPLOY":
+	//
+	//default:
+	//	msg.Reject(false)
+	//	return
+	//}
+
+	l.WithFields(logrus.Fields{
+		"took-ms": time.Since(startTime).Milliseconds(),
+	}).Info("Succeeded: \n", messageResponse)
+	msg.Ack(false)
+}
+
+func logAndNack(msg amqp.Delivery, l *logrus.Logger, t time.Time, err string, args ...interface{}) {
+	msg.Nack(false, false)
+	l.WithFields(logrus.Fields{
+		"took-ms": time.Since(t).Milliseconds(),
+	}).Error(fmt.Sprintf(err, args...))
+
+}
+
+func consumerName(i int) string {
+	return fmt.Sprintf("hermes-consumer-%v", i)
 }

@@ -20,24 +20,29 @@ package payloads
 
 import (
 	"encoding/json"
-
 	"github.com/google/uuid"
+	"time"
 )
 
+//published
 type Request struct {
 	SubscriptionId uuid.UUID       `json:"subscriptionId"`
 	EventType      string          `json:"eventType"`
 	Event          json.RawMessage `json:"event"`
 }
 
+// moove -> hermes
 type PayloadRequest struct {
-	ExternalId uuid.UUID       `json:"externalId"`
+	ExternalId uuid.UUID       `json:"externalId"` //workspace-id
 	EventType  string          `json:"eventType"`
 	Event      json.RawMessage `json:"event"`
 }
 
 type MessageResponse struct {
 	Id        uuid.UUID       `json:"id"`
+	CreatedAt      time.Time `json:"-"`
+	SubscriptionId uuid.UUID `json:"subscriptionId"`
+	LastStatus     string    `json:"lastStatus"`
 	EventType string          `json:"eventType"`
 	Event     json.RawMessage `json:"event"`
 }

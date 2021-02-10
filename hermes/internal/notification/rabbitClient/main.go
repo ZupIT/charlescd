@@ -1,4 +1,4 @@
-package publisher
+package rabbitClient
 
 import (
 	"gorm.io/gorm"
@@ -7,8 +7,15 @@ import (
 	"hermes/queueprotocol"
 )
 
+const (
+	enqueued    = "ENQUEUED"
+	notEnqueued = "NOT_ENQUEUED"
+	successLog  = "SUCCESS"
+)
+
 type UseCases interface {
-	Start(stopChan chan bool) error
+	Publish(stopChan chan bool) error
+	Consume(stopChan chan bool)
 }
 
 type Main struct {
