@@ -55,6 +55,9 @@ export class CreateDeploymentRequestDto {
   @Type(() => CreateComponentRequestDto)
   public readonly components: CreateComponentRequestDto[]
 
+  @ApiProperty()
+  public metadata: Record<string, string>
+
   constructor(
     deploymentId: string,
     authorId: string,
@@ -64,7 +67,8 @@ export class CreateDeploymentRequestDto {
     components: CreateComponentRequestDto[],
     namespace: string,
     git: CreateGitDeploymentDto,
-    timeoutInSeconds: number
+    timeoutInSeconds: number,
+    metadata: Record<string, string>
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -75,6 +79,7 @@ export class CreateDeploymentRequestDto {
     this.namespace = namespace
     this.git = git
     this.timeoutInSeconds = timeoutInSeconds
+    this.metadata = metadata
   }
 
   public toCircleEntity(newComponents: ComponentEntity[]): DeploymentEntity {
@@ -86,7 +91,8 @@ export class CreateDeploymentRequestDto {
       newComponents,
       this.circle.default,
       this.namespace,
-      this.timeoutInSeconds
+      this.timeoutInSeconds,
+      this.metadata
     )
   }
 
@@ -99,7 +105,9 @@ export class CreateDeploymentRequestDto {
       [ ...activeComponents, ...newComponents],
       this.circle.default,
       this.namespace,
-      this.timeoutInSeconds
+      this.timeoutInSeconds,
+      this.metadata
     )
   }
+
 }

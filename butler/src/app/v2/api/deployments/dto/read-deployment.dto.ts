@@ -18,9 +18,36 @@ export class ReadDeploymentDto {
 
   public readonly id: string
 
+<<<<<<< HEAD
+=======
+  public readonly applicationName: string
+
+  public readonly modulesDeployments: ReadModuleDeploymentDto[]
+
+  public readonly description: string
+
+  public readonly circle: ReadCircleDeploymentDto | undefined
+
+  public readonly callbackUrl: string
+
+  public readonly defaultCircle: boolean
+
+  public readonly createdAt: Date
+
+>>>>>>> 09cad5a05... add metadata info butler
   constructor(
     id: string,
   ) {
     this.id = id
+<<<<<<< HEAD
+=======
+    this.applicationName = applicationName
+    this.modulesDeployments = modulesDeployments
+    this.description = description
+    this.circle = circle
+    this.callbackUrl = callbackUrl
+    this.defaultCircle = defaultCircle
+    this.createdAt = createdAt
+>>>>>>> 09cad5a05... add metadata info butler
   }
 }

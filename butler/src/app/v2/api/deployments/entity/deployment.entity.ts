@@ -27,11 +27,11 @@ export class DeploymentEntityV2 implements Deployment {
   @PrimaryColumn({ name: 'id' })
   public id!: string
 
-  @Column({ name: 'author_id' })
-  public authorId!: string
-
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
+
+  @Column({ name: 'authorId' })
+  public authorId!: string
 
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
@@ -69,6 +69,9 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'default_circle' })
   public defaultCircle!: boolean
 
+  @Column({ type: 'jsonb', name: 'metadata', nullable: true })
+  public metadata!: Record<string, string>
+
   constructor(
     deploymentId: string,
     authorId: string,
@@ -77,16 +80,18 @@ export class DeploymentEntityV2 implements Deployment {
     components: ComponentEntity[],
     defaultCircle: boolean,
     namespace: string,
-    timeoutInSeconds: number
+    timeoutInSeconds: number,
+    metadata: Record<string, string>
   ) {
     this.id = deploymentId
-    this.authorId = authorId
     this.circleId = circleId
     this.callbackUrl = callbackUrl
     this.components = components
     this.defaultCircle = defaultCircle
     this.namespace = namespace
     this.timeoutInSeconds = timeoutInSeconds
+    this.metadata = metadata
+    this.authorId = authorId
   }
 
   public toReadDto(): ReadDeploymentDto {
