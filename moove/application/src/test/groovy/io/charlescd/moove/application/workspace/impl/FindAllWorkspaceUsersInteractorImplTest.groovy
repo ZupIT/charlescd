@@ -16,12 +16,16 @@
 
 package io.charlescd.moove.application.workspace.impl
 
+import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.FindAllWorkspaceUsersInteractor
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
+
 
 import java.time.LocalDateTime
 
@@ -31,24 +35,29 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
 
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        this.findAllWorkspaceUsersInteractor = new FindAllWorkspaceUsersInteractorImpl(new WorkspaceService(workspaceRepository, userRepository))
+        this.findAllWorkspaceUsersInteractor = new FindAllWorkspaceUsersInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, managementUserSecurityService))
     }
 
     def "when the workspace is not found should return an empty page of users"() {
         given:
         def workspaceId = "workspace-id"
-
+        def authorization = "Bearer qwerty"
+        def user = buildUser()
         def pageRequest = new PageRequest()
         def emptyPage = new Page([], 0, 20, 0)
 
         when:
-        def response = this.findAllWorkspaceUsersInteractor.execute(workspaceId, null, null, pageRequest)
+        def response = this.findAllWorkspaceUsersInteractor.execute(authorization, workspaceId, null, null, pageRequest)
 
         then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> user.email
+        1 * this.userRepository.findByEmail(user.email) >> Optional.of(user)
         1 * this.userRepository.findByWorkspace(workspaceId, null, null, _) >> { arguments ->
             def argPageRequest = arguments[3]
+
 
             assert argPageRequest instanceof PageRequest
 
@@ -66,6 +75,7 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
     def "when there are user linked to that workspace, should list them"() {
         given:
         def pageRequest = new PageRequest()
+        def authorization = "Bearer qwerty"
         def author = new User("author", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
         def workspaceId = "workspace-id"
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
@@ -73,11 +83,14 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
         def member1 = new User("member1", "charles", "member1@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
         def member2 = new User("member2", "charles", "member2@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
         def page = new Page([member1, member2], 0, 20, 1)
+        def user = buildUser()
 
         when:
-        def response = this.findAllWorkspaceUsersInteractor.execute(workspaceId, null, null, pageRequest)
+        def response = this.findAllWorkspaceUsersInteractor.execute(authorization, workspaceId, null, null, pageRequest)
 
         then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> user.email
+        1 * this.userRepository.findByEmail(user.email) >> Optional.of(user)
         1 * this.userRepository.findByWorkspace(workspaceId, null, null, _) >> { arguments ->
             def argPageRequest = arguments[3]
 
@@ -111,5 +124,32 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
         assert response.totalPages == 1
         assert response.isLast
     }
+
+    def "when requester not have access to workspace shoult thown NotFoundException"() {
+        given:
+        def authorization = "Bearer qwerty"
+        def user = buildUser()
+        def pageRequest = new PageRequest()
+
+
+        when:
+        this.findAllWorkspaceUsersInteractor.execute(authorization, "workspaceId", null, null, pageRequest)
+
+        then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> user.email
+        1 * this.userRepository.findByEmail(user.email) >> Optional.of(user)
+
+        thrown(NotFoundException)
+    }
+
+    private static User buildUser() {
+        def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
+                [], false, LocalDateTime.now())
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+        return new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+                [workspacePermission], false, LocalDateTime.now())
+    }
+
 
 }
