@@ -139,6 +139,8 @@ const AddUserModal = ({
     return <UserItem key={user.id} {...user} onSelected={setSelected} />
   }
 
+  const renderItems = () => map(users, user => renderItem(user))
+  
   return (
     <Styled.Wrapper
       data-testid="modal-user"
@@ -160,8 +162,7 @@ const AddUserModal = ({
             />
           </Styled.Header>
           <Styled.Content ref={contentRef}>
-            {map(users, user => renderItem(user))}
-            {isEmpty(users) && renderPlaceHolder()}
+            {isEmpty(users) ? renderPlaceHolder() : renderItems()}
           </Styled.Content>
           <Styled.Button.Update>
             <Button.Default
