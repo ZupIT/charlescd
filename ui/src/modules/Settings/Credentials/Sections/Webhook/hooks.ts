@@ -31,7 +31,7 @@ interface Props {
   save: (webhook: Webhook) => Promise<unknown>;
   remove: (id: string) => Promise<unknown>;
   list: (id: string) => Promise<unknown>;
-  edit: (id: string, webhook: Partial<Webhook>) => Promise<unknown>;
+  edit: (id: string, value: string[]) => Promise<unknown>;
 }
 
 export const useWebhook = (): Props => {
@@ -110,10 +110,10 @@ export const useWebhook = (): Props => {
   );
 
   const edit = useCallback(
-    async (id: string, webhook: Partial<Webhook>) => {
+    async (id: string, value: string[]) => {
       try {
         setStatus('pending');
-        const response = await editing(id, webhook);
+        const response = await editing(id, value);
         setStatus('resolved');
         return response;
       } catch (e) {
