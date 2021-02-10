@@ -21,7 +21,6 @@ import THEME from 'core/assets/themes';
 import { Provider as ContextProvider } from 'core/state/store';
 import { rootState, rootReducer } from 'core/state';
 import { setUserAbilities } from 'core/utils/abilities';
-import { microfrontendKey } from 'core/utils/microfrontend';
 import Routes from './Routes';
 
 const currentTheme = 'dark';
