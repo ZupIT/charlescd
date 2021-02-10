@@ -82,7 +82,7 @@ func (deployment *Deployment) Do() error {
 }
 
 func getTimeoutDuration() time.Duration {
-	defaultValue := time.Duration(100)
+	defaultValue := time.Duration(300)
 	envStr := os.Getenv("TIMEOUT_RESOURCE_VERIFICATION")
 	if envStr == "" {
 		return defaultValue
@@ -97,7 +97,7 @@ func getTimeoutDuration() time.Duration {
 }
 
 func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) error {
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(3 * time.Second)
 	timeout := time.After(getTimeoutDuration() * time.Second)
 	for {
 		select {
@@ -105,6 +105,7 @@ func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) er
 			ticker.Stop()
 			return errors.New("create or update timeout")
 		case <-ticker.C:
+
 			gvk := manifest.GroupVersionKind()
 
 			resource, err := deployment.kubectl.GetResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace)
@@ -124,8 +125,6 @@ func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) er
 					return nil
 				}
 			}
-
-			return nil
 		}
 	}
 }
