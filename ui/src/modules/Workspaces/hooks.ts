@@ -23,6 +23,7 @@ import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
 
+// TODO rename?
 export const useWorkspace = (): [Function, Function, boolean] => {
   const dispatch = useDispatch();
   const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
@@ -36,6 +37,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
   );
 
   useEffect(() => {
+    // TODO if(response)
     if (!error) {
       dispatch(loadedWorkspacesAction(response));
     } else {
