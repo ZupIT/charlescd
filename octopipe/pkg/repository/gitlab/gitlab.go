@@ -49,7 +49,12 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 	basePathSplit := strings.Split(gitlabRepository.Url, "?")
 	basePathRepositorySplit := strings.Split(basePathSplit[0], "/files")
 	basePathRepository := basePathRepositorySplit[0]
-	queryParams, err := url.ParseQuery(basePathSplit[1])
+	var pathQueries string
+	if len(basePathSplit) > 1 {
+		pathQueries = basePathSplit[1]
+	}
+
+	queryParams, err := url.ParseQuery(pathQueries)
 	if err != nil {
 		return "", "", err
 	}
