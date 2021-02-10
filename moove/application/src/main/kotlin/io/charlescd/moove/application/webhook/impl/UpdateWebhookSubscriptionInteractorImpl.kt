@@ -18,7 +18,7 @@ package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.UpdateWebhookSubscriptionInteractor
-import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
+import io.charlescd.moove.application.webhook.request.PatchWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
@@ -35,9 +35,9 @@ class UpdateWebhookSubscriptionInteractorImpl @Inject constructor(
         workspaceId: String,
         authorization: String,
         id: String,
-        request: UpdateWebhookSubscriptionRequest
+        request: PatchWebhookSubscriptionRequest
     ): WebhookSubscriptionResponse {
-        val webhookSubscription = updateSubscription(workspaceId, authorization, id, request.events)
+        val webhookSubscription = updateSubscription(workspaceId, authorization, id, request)
         return WebhookSubscriptionResponse.from(webhookSubscription)
     }
 
@@ -45,15 +45,17 @@ class UpdateWebhookSubscriptionInteractorImpl @Inject constructor(
         workspaceId: String,
         authorization: String,
         id: String,
-        events: List<String>
+        request: PatchWebhookSubscriptionRequest
     ): WebhookSubscription {
         val author = webhookService.getAuthor(authorization)
-        validateSubscription(workspaceId, author, id)
-        return hermesService.updateSubscription(author.email, id, events)
+        val subscription = getSubscription(workspaceId, author, id)
+        val patched = request.applyPatch(subscription)
+        return hermesService.updateSubscription(author.email, id, patched.events)
     }
 
-    private fun validateSubscription(workspaceId: String, author: User, id: String) {
+    private fun getSubscription(workspaceId: String, author: User, id: String): WebhookSubscription {
         val subscription = hermesService.getSubscription(author.email, id)
         webhookService.validateWorkspace(workspaceId, id, author, subscription)
+        return subscription
     }
 }

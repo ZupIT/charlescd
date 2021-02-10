@@ -24,7 +24,6 @@ import (
 	"hermes/pkg/errors"
 	"hermes/util"
 	"io"
-	"io/ioutil"
 	"time"
 )
 
@@ -79,14 +78,17 @@ func (main Main) ParseSubscription(subscription io.ReadCloser) (Request, errors.
 	return *newSubs, nil
 }
 
-func (main Main) ParseUpdate(subscription io.ReadCloser) ([]byte, errors.Error) {
-	body, err := ioutil.ReadAll(subscription)
+func (main Main) ParseUpdate(subscription io.ReadCloser) (UpdateRequest, errors.Error) {
+
+	var updateSubs *UpdateRequest
+
+	err := json.NewDecoder(subscription).Decode(&updateSubs)
 	if err != nil {
-		return []byte(""), errors.NewError("Parse error", err.Error()).
+		return UpdateRequest{}, errors.NewError("Parse error", err.Error()).
 			WithOperations("ParseUpdate.ParseDecode")
 	}
 
-	return body, nil
+	return *updateSubs, nil
 }
 
 func (main Main) Save(request Request) (SaveResponse, errors.Error) {
@@ -108,14 +110,20 @@ func (main Main) Save(request Request) (SaveResponse, errors.Error) {
 	return response, nil
 }
 
-func (main Main) Update(subscriptionId uuid.UUID, request []byte) (UpdateResponse, errors.Error) {
-	update := main.db.Model(&Subscription{}).Where("id = ?", subscriptionId).Update("events", &request)
+func (main Main) Update(subscriptionId uuid.UUID, request UpdateRequest) (Response, errors.Error) {
+	var response = Response{}
+
+	update := main.db.Model(&Subscription{}).
+		Where("id = ?", subscriptionId).
+		Update("events", &request.Events).
+		Scan(&response)
+
 	if update.Error != nil {
-		return UpdateResponse{}, errors.NewError("Update Subscription error", update.Error.Error()).
+		return Response{}, errors.NewError("Update Subscription error", update.Error.Error()).
 			WithOperations("Update.UpdateSubscription")
 	}
 
-	return UpdateResponse{Events: request}, nil
+	return response, nil
 }
 
 func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {

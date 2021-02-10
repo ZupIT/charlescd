@@ -16,10 +16,12 @@
 
 package io.charlescd.moove.application.webhook.impl
 
+import io.charlescd.moove.application.OpCodeEnum
+import io.charlescd.moove.application.PatchOperation
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.UpdateWebhookSubscriptionInteractor
-import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
+import io.charlescd.moove.application.webhook.request.PatchWebhookSubscriptionRequest
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -98,7 +100,9 @@ class UpdateWebhookSubscriptionInteractorImplTest extends Specification {
                 'My Webhook', events)
     }
 
-    private static UpdateWebhookSubscriptionRequest updateWebhookSubscriptionRequest() {
-        return new UpdateWebhookSubscriptionRequest(events)
+    private static PatchWebhookSubscriptionRequest updateWebhookSubscriptionRequest() {
+        def patches = new ArrayList()
+        patches.add(new PatchOperation(OpCodeEnum.REPLACE, "/events", events))
+        return new PatchWebhookSubscriptionRequest(patches)
     }
 }

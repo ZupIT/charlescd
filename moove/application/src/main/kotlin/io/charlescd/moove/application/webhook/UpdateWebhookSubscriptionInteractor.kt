@@ -16,9 +16,9 @@
 
 package io.charlescd.moove.application.webhook
 
-import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
+import io.charlescd.moove.application.webhook.request.PatchWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
 
 interface UpdateWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String, request: UpdateWebhookSubscriptionRequest): WebhookSubscriptionResponse
+    fun execute(workspaceId: String, authorization: String, id: String, request: PatchWebhookSubscriptionRequest): WebhookSubscriptionResponse
 }
