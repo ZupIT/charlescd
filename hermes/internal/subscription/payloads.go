@@ -42,10 +42,6 @@ type SaveResponse struct {
 	util.BaseModel
 }
 
-type UpdateResponse struct {
-	Events json.RawMessage `json:"events"`
-}
-
 type Response struct {
 	ID          uuid.UUID       `json:"id"`
 	ExternalId  uuid.UUID       `json:"externalId"`

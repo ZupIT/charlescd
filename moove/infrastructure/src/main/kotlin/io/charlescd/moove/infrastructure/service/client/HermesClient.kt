@@ -40,7 +40,7 @@ interface HermesClient {
     ): HermesSubscriptionCreateResponse
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping(
+    @PutMapping(
         value = ["/api/v1/subscriptions/{id}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]

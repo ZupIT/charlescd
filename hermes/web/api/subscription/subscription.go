@@ -75,13 +75,13 @@ func Update(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 			return
 		}
 
-		createdSubscription, err := subscriptionMain.Update(subscriptionId, request)
+		updatedResponse, err := subscriptionMain.Update(subscriptionId, request)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		restutil.NewResponse(w, http.StatusOK, createdSubscription)
+		restutil.NewResponse(w, http.StatusOK, updatedResponse)
 	}
 }
 

@@ -18,11 +18,12 @@ package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.webhook.*
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
-import io.charlescd.moove.application.webhook.request.UpdateWebhookSubscriptionRequest
+import io.charlescd.moove.application.webhook.request.PatchWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
 import io.charlescd.moove.application.webhook.response.HealthCheckWebhookSubscriptionResponse
 import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
 import io.charlescd.moove.domain.PageRequest
+import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
 import org.springframework.http.HttpStatus
@@ -62,13 +63,19 @@ class WebhookController(
     }
 
     @ApiOperation(value = "Update a subscription webhook")
+    @ApiImplicitParam(
+        name = "request",
+        value = "Patch Webhook",
+        required = true,
+        dataType = "PatchWebhookSubscriptionRequest"
+    )
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun updateSubscription(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: String,
-        @Valid @RequestBody request: UpdateWebhookSubscriptionRequest
+        @Valid @RequestBody request: PatchWebhookSubscriptionRequest
     ): WebhookSubscriptionResponse {
         return updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, request)
     }
