@@ -19,13 +19,14 @@ package deployment
 import (
 	"context"
 	"errors"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/argoproj/gitops-engine/pkg/health"
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 	"k8s.io/client-go/rest"
 	"k8s.io/kubectl/pkg/cmd/util"
-	"os"
-	"strconv"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -114,6 +115,11 @@ func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) er
 			}
 
 			if resource != nil {
+				if !isResourController(resource) {
+					ticker.Stop()
+					return nil
+				}
+
 				healthStatus, err := health.GetResourceHealth(resource, nil)
 				if err != nil {
 					ticker.Stop()
