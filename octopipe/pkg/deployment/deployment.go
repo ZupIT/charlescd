@@ -18,7 +18,7 @@ package deployment
 
 import (
 	"context"
-	"errors"
+	"octopipe/pkg/customerror"
 	"os"
 	"strconv"
 	"time"
@@ -27,8 +27,6 @@ import (
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 	"k8s.io/client-go/rest"
 	"k8s.io/kubectl/pkg/cmd/util"
-
-	log "github.com/sirupsen/logrus"
 
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -71,14 +69,13 @@ func (main *DeploymentMain) NewDeployment(
 }
 
 func (deployment *Deployment) Do() error {
-
 	switch deployment.action {
 	case DeployAction:
 		return deployment.deploy()
 	case UndeployAction:
 		return deployment.undeploy()
 	default:
-		return errors.New("Failed to execute deployment")
+		return customerror.New("Deploy action failed", "Not recognize deploy action", nil, "deployment.Do")
 	}
 }
 
@@ -104,14 +101,30 @@ func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) er
 		select {
 		case <-timeout:
 			ticker.Stop()
-			return errors.New("create or update timeout")
+			return customerror.New(
+				"Resource watch failed",
+				"Timeout",
+				map[string]string{
+					"resourceName":     manifest.GetName(),
+					"groupVersionKind": manifest.GroupVersionKind().String(),
+				},
+				"deployment.newWatcher.timeout",
+			)
 		case <-ticker.C:
 
 			gvk := manifest.GroupVersionKind()
 
 			resource, err := deployment.kubectl.GetResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace)
 			if err != nil {
-				return err
+				return customerror.New(
+					"Resource watch failed",
+					err.Error(),
+					map[string]string{
+						"resourceName":     manifest.GetName(),
+						"groupVersionKind": manifest.GroupVersionKind().String(),
+					},
+					"deployment.newWatcher.GetResource",
+				)
 			}
 
 			if resource != nil {
@@ -123,7 +136,15 @@ func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) er
 				healthStatus, err := health.GetResourceHealth(resource, nil)
 				if err != nil {
 					ticker.Stop()
-					return err
+					return customerror.New(
+						"Resource watch failed",
+						err.Error(),
+						map[string]string{
+							"resourceName":     manifest.GetName(),
+							"groupVersionKind": manifest.GroupVersionKind().String(),
+						},
+						"deployment.newWatcher.GetResourceHealth",
+					)
 				}
 
 				if healthStatus != nil && healthStatus.Status == health.HealthStatusHealthy {
@@ -148,12 +169,20 @@ func (deployment *Deployment) deploy() error {
 		false,
 	)
 	if err != nil {
-		return err
+		return customerror.New(
+			"Deploy failed",
+			err.Error(),
+			map[string]string{
+				"resourceName":     manifest.GetName(),
+				"groupVersionKind": manifest.GroupVersionKind().String(),
+			},
+			"deployment.deploy.ApplyResource",
+		)
 	}
 
 	err = deployment.newWatcher(manifest)
 	if err != nil {
-		return deployment.getDeploymentError("Watch failed", err, manifest)
+		return customerror.WithOperation(err, "deployment.deploy.ApplyResource")
 	}
 
 	return nil
@@ -177,7 +206,15 @@ func (deployment *Deployment) undeploy() error {
 	}
 
 	if err != nil {
-		return err
+		return customerror.New(
+			"Undeploy failed",
+			err.Error(),
+			map[string]string{
+				"resourceName":     manifest.GetName(),
+				"groupVersionKind": manifest.GroupVersionKind().String(),
+			},
+			"deployment.undeploy.GetResource",
+		)
 	}
 
 	if !isResourController(resourceInCluster) {
@@ -190,7 +227,15 @@ func (deployment *Deployment) undeploy() error {
 	}
 
 	if err != nil {
-		return deployment.getDeploymentError("Failed to delete resource", err, manifest)
+		return customerror.New(
+			"Undeploy failed",
+			err.Error(),
+			map[string]string{
+				"resourceName":     manifest.GetName(),
+				"groupVersionKind": manifest.GroupVersionKind().String(),
+			},
+			"deployment.undeploy.DeleteResource",
+		)
 	}
 
 	return nil
@@ -200,11 +245,4 @@ func (deployment *Deployment) getUnstructuredManifest() *unstructured.Unstructur
 	return &unstructured.Unstructured{
 		Object: deployment.manifest,
 	}
-}
-
-func (deployment *Deployment) getDeploymentError(message string, err error, manifest *unstructured.Unstructured) error {
-	res, _ := manifest.MarshalJSON()
-
-	log.WithFields(log.Fields{"error": err.Error(), "resource": string(res)}).Error(message)
-	return err
 }

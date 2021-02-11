@@ -17,21 +17,23 @@
 package helm
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"strings"
 
 	"github.com/tidwall/sjson"
 
+	log "github.com/sirupsen/logrus"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/engine"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/kubernetes/scheme"
-
-	log "github.com/sirupsen/logrus"
+	kubeyaml "k8s.io/apimachinery/pkg/util/yaml"
 )
 
 type HelmTemplate struct {
@@ -113,16 +115,16 @@ func (helmTemplate HelmTemplate) getValuesHelmObject(renderedHelmObjects chartut
 	var values map[string]interface{}
 	valuesBytes, _ := json.Marshal(renderedHelmObjects["Values"])
 	err := json.Unmarshal(valuesBytes, &values)
-	 if err != nil {
-	 	return nil, err
-	 }
+	if err != nil {
+		return nil, err
+	}
 	return values, nil
 }
 
 func (helmTemplate HelmTemplate) overrideValues(
 	chartValues map[string]interface{}, overrideValues map[string]string,
 ) (map[string]interface{}, error) {
-	chartValuesBytes,_ := json.Marshal(chartValues)
+	chartValuesBytes, _ := json.Marshal(chartValues)
 	log.WithFields(log.Fields{"function": "overrideValues"}).Info("START:OVERRIDE_VALUES", string(chartValuesBytes))
 
 	newChartValueBytes, err := helmTemplate.overrideValueInChartValueBytes(chartValuesBytes, overrideValues)
@@ -134,7 +136,7 @@ func (helmTemplate HelmTemplate) overrideValues(
 		return nil, err
 	}
 
-	chartValuesOverrideBytes,_ := json.Marshal(newChartValue)
+	chartValuesOverrideBytes, _ := json.Marshal(newChartValue)
 	log.WithFields(log.Fields{"function": "overrideValues"}).Info("FINISH:OVERRIDE_VALUES", string(chartValuesOverrideBytes))
 	return newChartValue, nil
 }
@@ -174,22 +176,23 @@ func (helmTemplate HelmTemplate) encodeManifests(manifests map[string]string) (m
 			continue
 		}
 
-		decode := scheme.Codecs.UniversalDeserializer().Decode
-		obj, _, err := decode([]byte(manifest), nil, nil)
-		if err != nil {
+		d := kubeyaml.NewYAMLOrJSONDecoder(bytes.NewReader([]byte(manifest)), 4096)
+		ext := runtime.RawExtension{}
+		if err := d.Decode(&ext); err != nil {
 			return nil, err
 		}
 
-		if obj == nil {
-			return nil, errors.New("Codec universal deserializer nil")
+		ext.Raw = bytes.TrimSpace(ext.Raw)
+		if len(ext.Raw) == 0 || bytes.Equal(ext.Raw, []byte("null")) {
+			continue
 		}
 
-		unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
-		if err != nil {
-			return nil, err
+		u := &unstructured.Unstructured{}
+		if err := kubeyaml.Unmarshal(ext.Raw, u); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal manifest: %v", err)
 		}
 
-		encodedManifests[key] = unstructuredObj
+		encodedManifests[key] = u.Object
 	}
 
 	return encodedManifests, nil
