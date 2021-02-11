@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { render, screen, act, waitFor } from 'unit-test/testUtils';
+import { render, screen, act, waitFor, wait } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
 import {user} from './fixtures';
+import * as StateHooks from 'core/state/hooks';
 import Workspaces from '../';
 
 const originalWindow = { ...window };
@@ -123,12 +124,42 @@ test.only('render Workspace with isIDMAuthFlow enabled and search', async () => 
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
   jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
   jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  
+
+  jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValueOnce({
+      list: {
+        content: [
+          {
+            id: 1,
+            name: 'ws1'
+          },
+          {
+            id: 2,
+            name: 'ws2'
+          }
+        ]
+      }
+    })
+    .mockReturnValue({
+      list: {
+        content: [
+          {
+            id: 2,
+            name: 'ws2'
+          }
+        ]
+      }
+    });
   render(<Workspaces selectedWorkspace={jest.fn()} />);
 
   const search = screen.getByTestId('input-text-search');
 
-  await act(async () => userEvent.type(search , 'workspace'));
+  expect(screen.getByText('ws1')).toBeInTheDocument();
+  expect(screen.getByText('ws2')).toBeInTheDocument();
+  await act(async () => userEvent.type(search , 'ws2'));
 
   await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(3));
+
+  expect(screen.getByText('ws2')).toBeInTheDocument();
+  expect(screen.queryByText('ws1')).not.toBeInTheDocument();
 });
