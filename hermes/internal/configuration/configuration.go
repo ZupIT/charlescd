@@ -28,6 +28,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
+	"strconv"
 )
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
@@ -75,4 +76,21 @@ func GetConfiguration(configuration string) string {
 	}
 
 	return env
+}
+
+func GetConfigurationAsInt64(configuration string) int64 {
+	env := os.Getenv(configuration)
+	if env == "" {
+		logrus.WithFields(logrus.Fields{
+			"err": fmt.Sprintf("%s key not found in the .env file", configuration),
+		}).Warnln()
+	}
+
+	envAsInt64, err:= strconv.ParseInt(env, 10, 64)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": fmt.Sprintf("%s parse error", err),
+		}).Warnln()
+	}
+	return envAsInt64
 }

@@ -171,3 +171,15 @@ func (main Main) FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.E
 
 	return res, nil
 }
+
+func (main Main) CountAllByExternalId(externalId uuid.UUID) (int64, errors.Error) {
+	var count int64
+
+	q := main.db.Model(&Subscription{}).Where("external_id = ? AND deleted_at IS NULL", externalId).Count(&count)
+	if q.Error != nil {
+		return 0, errors.NewError("Count Subscription Using ExternalID error", q.Error.Error()).
+			WithOperations("CountAllByExternalId.QuerySubscription")
+	}
+
+	return count, nil
+}

@@ -20,14 +20,14 @@ package subscription
 
 import (
 	"errors"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"hermes/internal/configuration"
 	"hermes/internal/notification/message"
 	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
 	"net/http"
-
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 )
 
 func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
@@ -48,6 +48,20 @@ func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 		if err := subscriptionMain.Validate(request); len(err.GetErrors()) > 0 {
 			restutil.NewResponse(w, http.StatusBadRequest, err)
 			return
+		}
+
+		subscriptionsCount, err := subscriptionMain.CountAllByExternalId(request.ExternalId)
+
+		if err != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+
+		if subscriptionsCount >= configuration.GetConfigurationAsInt64("SUBSCRIPTION_REGISTER_LIMIT") {
+			restutil.NewResponse(w, http.StatusUnprocessableEntity, "subscription limit reached to externalId")
+			return
+
 		}
 
 		createdSubscription, err := subscriptionMain.Save(request)
@@ -213,6 +227,7 @@ func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.Respon
 		}
 
 		result, err := subscriptionMain.FindAllByExternalId(externalId)
+
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -221,6 +236,7 @@ func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.Respon
 		restutil.NewResponse(w, http.StatusOK, result)
 	}
 }
+
 
 func HealthCheck(messageMain message.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

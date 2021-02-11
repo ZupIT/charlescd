@@ -36,6 +36,7 @@ type UseCases interface {
 	FindById(subscriptionId uuid.UUID) (Response, errors.Error)
 	FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error)
 	FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.Error)
+	CountAllByExternalId(externalId uuid.UUID) (int64, errors.Error)
 }
 type Main struct {
 	db *gorm.DB
