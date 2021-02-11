@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
@@ -25,25 +25,22 @@ import Modal from 'core/components/Modal';
 import { isRequired, maxLength } from 'core/utils/validations';
 import routes from 'core/constants/routes';
 import { saveWorkspace } from 'core/utils/workspace';
-import { isRoot } from 'core/utils/auth';
+import { isRoot, isIDMAuthFlow } from 'core/utils/auth';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 import { removeWizard } from 'modules/Settings/helpers';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 import Loader from './Loaders';
-
+import { useWorkspace } from '../hooks';
+import { useGlobalState } from 'core/state/hooks';
+import { getProfileByKey } from 'core/utils/profile';
+import { useWorkspacesByUser } from 'modules/Users/hooks';
 interface Props {
-  items: Workspace[];
-  onSearch: (name: string) => void;
-  isLoading?: boolean;
   selectedWorkspace: (name: string) => void;
 }
 
 const WorkspaceMenu = ({
-  items,
-  onSearch,
-  isLoading,
   selectedWorkspace
 }: Props) => {
   const history = useHistory();
@@ -59,12 +56,38 @@ const WorkspaceMenu = ({
     loading: saveWorkspaceLoading
   } = useSaveWorkspace();
   const [toggleModal, setToggleModal] = useState(false);
+  const [filterWorkspace, , loading] = useWorkspace();
+  const { findWorkspacesByUser } = useWorkspacesByUser();
+  const userId = getProfileByKey('id');
+  const workspaces = getProfileByKey('workspaces');
+  const { list } = useGlobalState(({ workspaces }) => workspaces);
+  const [name, setName] = useState('');
+
+  const onIDMFlow = useCallback(() => {
+    if (isRoot()) {
+      filterWorkspace();
+    } else {
+      findWorkspacesByUser(userId);
+    }
+  }, [filterWorkspace, findWorkspacesByUser, userId]);
+
+  useEffect(() => {
+    if (isIDMAuthFlow()) {
+      onIDMFlow();
+    }
+  }, [onIDMFlow]);
+
+  useEffect(() => {
+    if (isRoot()) {
+      filterWorkspace(name);
+    }
+  }, [name, filterWorkspace]);
 
   const renderWorkspaces = () =>
-    isEmpty(items) ? (
+    isEmpty(list?.content || workspaces) ? (
       <Text.h3 color="dark">No workspace was found</Text.h3>
     ) : (
-      map(items, ({ id, name, status }: Workspace) => (
+      map(list?.content || workspaces, ({ id, name, status }: Workspace) => (
         <MenuItem
           key={id}
           id={id}
@@ -133,12 +156,12 @@ const WorkspaceMenu = ({
       <Styled.Content>
         <Styled.SearchInput
           resume
-          onSearch={onSearch}
+          onSearch={setName}
           disabled={!isRoot()}
           maxLength={64}
         />
         <Styled.List>
-          {isLoading ? <Loader.List /> : renderWorkspaces()}
+          {loading ? <Loader.List /> : renderWorkspaces()}
         </Styled.List>
       </Styled.Content>
     </>

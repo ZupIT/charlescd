@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { getProfileByKey } from 'core/utils/profile';
+import React, { useEffect } from 'react';
 import Page from 'core/components/Page';
-import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, isIDMAuthFlow, logout } from 'core/utils/auth';
-import { isRoot } from 'core/utils/auth';
-import { useWorkspacesByUser } from 'modules/Users/hooks';
-import { useWorkspace } from './hooks';
+import { getAccessTokenDecoded, logout } from 'core/utils/auth';
 import Menu from './Menu';
 
 interface Props {
@@ -31,27 +26,6 @@ interface Props {
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
   const { name: profileName, email } = getAccessTokenDecoded();
-  const workspaces = getProfileByKey('workspaces');
-  const userId = getProfileByKey('id');
-  const [filterWorkspace, , loading] = useWorkspace();
-  const { findWorkspacesByUser } = useWorkspacesByUser();
-  // TODO remove name?
-  const [name, setName] = useState('');
-  const { list } = useGlobalState(({ workspaces }) => workspaces);
-
-  const onIDMFlow = useCallback(() => {
-    if (isRoot()) {
-      filterWorkspace();
-    } else {
-      findWorkspacesByUser(userId);
-    }
-  }, [filterWorkspace, findWorkspacesByUser, userId]);
-
-  useEffect(() => {
-    if (isIDMAuthFlow()) {
-      onIDMFlow();
-    }
-  }, [onIDMFlow]);
 
   useEffect(() => {
     if (!email) {
@@ -59,22 +33,10 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     }
   }, [email]);
 
-  useEffect(() => {
-    if (isRoot()) {
-      filterWorkspace(name);
-    }
-  }, [name, filterWorkspace]);
-
-
-  const handleOnSearch = (name: string) => !loading && setName(name);
-
   return (
     <Page>
       <Page.Menu>
         <Menu
-          items={list?.content || workspaces}
-          isLoading={loading}
-          onSearch={handleOnSearch}
           selectedWorkspace={(name: string) => selectedWorkspace(name)}
         />
       </Page.Menu>
