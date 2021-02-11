@@ -116,7 +116,7 @@ test('render Workspace with isIDMAuthFlow disabled and search', async () => {
   await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(0));
 });
 
-test('render Workspace with isIDMAuthFlow enabled and search', async () => {
+test.only('render Workspace with isIDMAuthFlow enabled and search', async () => {
   const workspaceRequest = jest.fn();
 
   jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => true);
@@ -130,5 +130,5 @@ test('render Workspace with isIDMAuthFlow enabled and search', async () => {
 
   await act(async () => userEvent.type(search , 'workspace'));
 
-  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(1));
+  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(3));
 });
