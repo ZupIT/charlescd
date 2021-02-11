@@ -32,7 +32,7 @@ import Styled from './styled';
 
 interface Props {
   module: Module;
-  onChange: Function;
+  onChange: () => void;
 }
 
 const formDefaultValues = {
@@ -46,29 +46,16 @@ const formDefaultValues = {
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
-  const isEdit = !isEmpty(module);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const isEditing = !isEmpty(module);
   const history = useHistory();
 
   const form = useForm<Module>({
-    defaultValues: formDefaultValues
+    defaultValues: module ?? formDefaultValues,
+    mode:  'onChange'
   });
 
-  const { register, control, getValues, handleSubmit, watch } = form;
+  const { register, control, handleSubmit, formState: { isValid } } = form;
   const fieldArray = useFieldArray({ control, name: 'components' });
-  const watchFields = watch();
-
-  useEffect(() => {
-    const form = getValues();
-    const isInvalid = !validFields(form);
-    const mod = {
-      name: module?.name,
-      gitRepositoryAddress: module?.gitRepositoryAddress,
-      helmRepository: module?.helmRepository
-    };
-
-    setIsDisabled(isEqual(mod, form) || isInvalid);
-  }, [watchFields, getValues, module]);
 
   useEffect(() => {
     if (updateStatus === 'resolved') {
@@ -77,7 +64,7 @@ const FormModule = ({ module, onChange }: Props) => {
   }, [updateStatus, onChange]);
 
   const onSubmit = (data: Module) => {
-    if (isEdit) {
+    if (isEditing) {
       updateModule(module?.id, data);
     } else {
       saveModule({ ...data });
@@ -86,7 +73,7 @@ const FormModule = ({ module, onChange }: Props) => {
 
   return (
     <Styled.Content>
-      {isEdit && (
+      {isEditing && (
         <Styled.Icon
           name="arrow-left"
           color="dark"
@@ -102,7 +89,7 @@ const FormModule = ({ module, onChange }: Props) => {
         />
       )}
       <Styled.Title color="light">
-        {isEdit ? 'Edit module' : 'Create module'}
+        {isEditing ? 'Edit module' : 'Create module'}
         <Popover
           title="How to create a module?"
           icon="info"
@@ -128,7 +115,7 @@ const FormModule = ({ module, onChange }: Props) => {
             defaultValue={module?.gitRepositoryAddress}
             ref={register({ required: true })}
           />
-          {!isEdit && <Components fieldArray={fieldArray} />}
+          {!isEditing && <Components fieldArray={fieldArray} />}
           <Styled.FieldPopover>
             <Styled.Input
               label="Insert a helm repository link"
@@ -145,13 +132,13 @@ const FormModule = ({ module, onChange }: Props) => {
               description="Helm helps you manage Kubernetes applications"
             />
           </Styled.FieldPopover>
-          <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
+          <Can I="write" a="modules" isDisabled={!isValid} passThrough>
             <Styled.Button
               type="submit"
               size="EXTRA_SMALL"
               isLoading={saveLoading || updateStatus === 'pending'}
             >
-              {isEdit ? 'Edit module' : 'Create module'}
+              {isEditing ? 'Edit module' : 'Create module'}
             </Styled.Button>
           </Can>
         </Styled.Form>

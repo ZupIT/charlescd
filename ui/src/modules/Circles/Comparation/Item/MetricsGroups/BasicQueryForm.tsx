@@ -32,8 +32,8 @@ const BasicQueryForm = () => {
 
   return (
     <>
-      {fields.map((item, index) => (
-        <Styled.RuleWrapper key={item.id}>
+      {fields.map((field, index) => (
+        <Styled.RuleWrapper key={field.id}>
           <StyledRule.Rule data-testid="segments-rules">
             <StyledRule.RuleTrash>
               <StyledRule.Button.Icon
@@ -45,14 +45,16 @@ const BasicQueryForm = () => {
             </StyledRule.RuleTrash>
             <StyledRule.Input
               type="hidden"
-              ref={register}
+              ref={register()}
               name={`filters[${index}].id`}
+              defaultValue={field.id} 
             />
             <StyledRule.Input
               label="Filter"
               name={`filters[${index}].field`}
               ref={register({ required: true })}
               maxLength={100}
+              defaultValue={field.field}
             />
             <StyledRule.Select
               options={operatorsOptions}
@@ -60,13 +62,14 @@ const BasicQueryForm = () => {
               rules={{ required: true }}
               label="Conditional"
               name={`filters[${index}].operator`}
-              defaultValue={getOperator(item.operator)}
+              defaultValue={getOperator(field.operator)}
             />
             <StyledRule.Input
               label="Value"
               name={`filters[${index}].value`}
               ref={register({ required: true })}
               maxLength={100}
+              defaultValue={field.value}
             />
           </StyledRule.Rule>
         </Styled.RuleWrapper>
