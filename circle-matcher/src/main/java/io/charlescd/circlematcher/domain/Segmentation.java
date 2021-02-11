@@ -18,6 +18,8 @@ package io.charlescd.circlematcher.domain;
 
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.time.LocalDateTime;
 
 public class Segmentation {
@@ -36,6 +38,7 @@ public class Segmentation {
 
     private Boolean isDefault;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean active;
 
     private LocalDateTime createdAt;
