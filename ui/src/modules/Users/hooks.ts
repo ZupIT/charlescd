@@ -39,6 +39,8 @@ import { UserPagination } from './interfaces/UserPagination';
 import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
 import { saveProfile, getProfile } from 'core/utils/profile';
 import { isIDMEnabled } from 'core/utils/auth';
+import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
+import { WorkspacePagination } from 'modules/Workspaces/interfaces/WorkspacePagination';
 
 export const useUser = (): {
   findByEmail: Function;
@@ -92,18 +94,20 @@ export const useWorkspacesByUser = (): {
   const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  useEffect(() => {
-    if (workspaces) {
-      saveProfile({ ...getProfile(), workspaces });
-    }
-  }, [workspaces]);
-
   const findWorkspacesByUser = useCallback(
     async (id: Pick<User, 'id'>) => {
       try {
         if (id) {
           const res = await getWorkspacesByUser(id);
           setWorkspaces(res);
+          saveProfile({ ...getProfile(), workspaces: res });
+          dispatch(loadedWorkspacesAction({
+            content: res,
+            page: 0,
+            size: res?.length,
+            totalPages: 1,
+            last: true
+          } as WorkspacePagination));
 
           return res;
         }
