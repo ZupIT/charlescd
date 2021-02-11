@@ -15,15 +15,12 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
 import { render, screen, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import Percentage from '../Percentage';
 import { circle, mockEmptyPercentageCircles, mockFullPercentageCircles, mockPercentageCircles } from './fixtures';
 import userEvent from '@testing-library/user-event';
-
-(global as any).MutationObserver = MutationObserver
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
