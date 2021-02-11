@@ -28,7 +28,7 @@ test('render groups', async () => {
 
   render(<Router history={history}><Groups /></Router>);
 
-  const UserGroupMenu = await screen.findByTestId('user-group-menu');
+  const UserGroupMenu = await screen.findByTestId('user-groups-menu');
 
   expect(UserGroupMenu).toBeInTheDocument();
 });

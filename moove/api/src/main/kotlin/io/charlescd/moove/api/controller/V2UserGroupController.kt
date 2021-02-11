@@ -83,7 +83,7 @@ class V2UserGroupController(
     @GetMapping
     fun findAll(
         @RequestParam("name", required = false) name: String?,
-        pageable: PageRequest
+        @Valid pageable: PageRequest
     ): ResourcePageResponse<UserGroupResponse> {
         return this.findAllUserGroupsInteractor.execute(name, pageable)
     }
