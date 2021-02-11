@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act, waitFor, wait } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
@@ -117,7 +117,23 @@ test('render Workspace with isIDMAuthFlow disabled and search', async () => {
   await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(0));
 });
 
-test.only('render Workspace with isIDMAuthFlow enabled and search', async () => {
+test('render Workspace with isIDMAuthFlow enabled and search', async () => {
+  const workspaceRequest = jest.fn();
+
+  jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => true);
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
+  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+
+  render(<Workspaces selectedWorkspace={jest.fn()} />);
+
+  const search = screen.getByTestId('input-text-search');
+  await act(async () => userEvent.type(search , 'ws2'));
+
+  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(3));
+});
+
+test('should search a workspace by name', async () => {
   const workspaceRequest = jest.fn();
 
   jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => true);
@@ -158,8 +174,6 @@ test.only('render Workspace with isIDMAuthFlow enabled and search', async () => 
   expect(screen.getByText('ws2')).toBeInTheDocument();
   await act(async () => userEvent.type(search , 'ws2'));
 
-  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(3));
-
-  expect(screen.getByText('ws2')).toBeInTheDocument();
-  expect(screen.queryByText('ws1')).not.toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText('ws2')).toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText('ws1')).not.toBeInTheDocument());
 });
