@@ -125,13 +125,15 @@ class V2WorkspaceController(
 
     @ApiOperation(value = "Find all Users associated to the given Workspace")
     @GetMapping("/{workspaceId}/users")
+    @ResponseStatus(HttpStatus.OK)
     fun findAllWorkspaceUsers(
+        @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable workspaceId: String,
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
         pageable: PageRequest
     ): ResourcePageResponse<UserResponse> {
-        return this.findAllWorkspaceUsersInteractor.execute(workspaceId, name, email, pageable)
+        return this.findAllWorkspaceUsersInteractor.execute(authorization, workspaceId, name, email, pageable)
     }
 
     @ApiOperation(value = "Verify metrics provider connection to the given Workspace")
