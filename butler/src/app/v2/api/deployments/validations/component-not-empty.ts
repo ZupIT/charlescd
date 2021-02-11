@@ -25,11 +25,11 @@ export class ComponentIsNotNull implements ValidatorConstraintInterface {
     if (components && components.length) {
       return true
     } else {
-      throw new HttpException({ error: 'Bad Request', message:['components could not be null or empty'], statusCode: HttpStatus.BAD_REQUEST  }, HttpStatus.BAD_REQUEST)
+      throw new HttpException({ error: 'Bad Request', message:['components should not be null or empty'], statusCode: HttpStatus.BAD_REQUEST  }, HttpStatus.BAD_REQUEST)
     }
   }
 
   public defaultMessage() : string {
-    return 'components could not be null or empty'
+    return 'components should not be null or empty'
   }
 }
