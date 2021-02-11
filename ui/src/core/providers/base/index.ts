@@ -169,7 +169,7 @@ export const patchRequest = (
   url: string,
   opType: string,
   path: string,
-  value?: string
+  value?: string | string[]
 ): ((options: RequestInit) => Promise<Response>) => {
   const patches = isUndefined(value)
     ? [{ op: opType, path }]

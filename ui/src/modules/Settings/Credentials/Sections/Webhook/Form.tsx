@@ -18,6 +18,7 @@ import React, { useEffect, Fragment } from 'react';
 import { useForm } from 'react-hook-form';
 import omit from 'lodash/omit';
 import size from 'lodash/size';
+import isEmpty from 'lodash/isEmpty';
 import includes from 'lodash/includes';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
@@ -37,6 +38,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
     formState: { isValid }
   } = useForm<Webhook>({ mode: 'onChange' });
 
+  const isEditMode = !isEmpty(data?.id);
   const watchEventType = watch('eventType');
 
   useEffect(() => {
@@ -48,12 +50,10 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
       webhook.events = EVENTS;
     }
 
-    const payload = omit(webhook, 'eventType');
-
-    if (data?.id) {
-      edit(data?.id, payload);
+    if (isEditMode) {
+      edit(data?.id, webhook.events);
     } else {
-      save(payload);
+      save(omit(webhook, 'eventType'));
     }
   };
 
@@ -91,18 +91,21 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           ref={register({ required: true })}
           name="description"
           label="Description"
+          disabled={isEditMode}
           defaultValue={data?.description}
         />
         <Form.Input
           ref={register({ required: true })}
           name="url"
           label="Webhook URL"
+          disabled={isEditMode}
           defaultValue={data?.url}
         />
         <Form.Password
           ref={register()}
           name="apiKey"
           label="Secret"
+          disabled={isEditMode}
           autoComplete="new-password"
           defaultValue={data?.apiKey}
         />

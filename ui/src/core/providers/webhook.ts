@@ -24,7 +24,7 @@ export const saveConfig = (webhook: Webhook) => postRequest(endpoint, webhook);
 
 export const getConfig = (id: string) => baseRequest(`${endpoint}/${id}`);
 
-export const editConfig = (id: string, value: string) =>
-  patchRequest(`${endpoint}/${id}`, 'replace', '', value);
+export const editConfig = (id: string, value: string[]) =>
+  patchRequest(`${endpoint}/${id}`, 'replace', '/events', value);
 
 export const delConfig = (id: string) => deleteRequest(`${endpoint}/${id}`);
