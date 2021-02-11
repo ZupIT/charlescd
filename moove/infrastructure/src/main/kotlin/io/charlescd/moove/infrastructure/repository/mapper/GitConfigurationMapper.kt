@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component
 class GitConfigurationMapper(private val objectMapper: ObjectMapper) {
 
     fun mapGitConfiguration(resultSet: ResultSet): GitConfiguration? {
+        resultSet.getString("git_configuration_id")
         return if (!resultSet.wasNull()) {
             GitConfiguration(
                 id = resultSet.getString("git_configuration_id"),

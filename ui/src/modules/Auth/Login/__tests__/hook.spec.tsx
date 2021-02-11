@@ -19,7 +19,6 @@ import { FetchMock } from 'jest-fetch-mock';
 import { circleKey } from 'core/utils/circle';
 import { accessTokenKey, refreshTokenKey } from 'core/utils/auth';
 import { useCircleMatcher, useLogin } from '../hook';
-import { CIRCLE_UNMATCHED } from '../constants';
 
 jest.mock('core/state/hooks', () => ({
   useDispatch: () => jest.fn()

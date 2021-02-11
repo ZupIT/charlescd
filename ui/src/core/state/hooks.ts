@@ -26,7 +26,7 @@ export const useGlobalState = <T>(cb: (state: State) => T) => {
 
 export const useDispatch = () => {
   const [, dispatch] = useContext(store);
-  const stableDispatch = useCallback(dispatch, []);
+  const stableDispatch = useCallback(dispatch, [dispatch]);
 
   return stableDispatch;
 };
