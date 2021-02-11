@@ -78,11 +78,6 @@ const Main = () => {
               allowedRoles={['root']}
             />
             <PrivateRoute
-              path={routes.hypotheses}
-              component={Hypotheses}
-              allowedRoles={['hypothesis_read']}
-            />
-            <PrivateRoute
               path={routes.circles}
               component={Circles}
               allowedRoles={['circles_read']}

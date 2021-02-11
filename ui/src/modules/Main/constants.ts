@@ -27,14 +27,6 @@ export const workspaceMenu = [
     subject: 'circles'
   },
   {
-    id: genMenuId(routes.hypotheses),
-    icon: 'hypotheses',
-    text: 'Hypotheses',
-    to: routes.hypotheses,
-    action: 'read',
-    subject: 'hypothesis'
-  },
-  {
     id: genMenuId(routes.modules),
     icon: 'modules',
     text: 'Modules',
@@ -83,14 +75,6 @@ export const rootWorkspaceMenu = [
     to: routes.circles,
     action: 'read',
     subject: 'circles'
-  },
-  {
-    id: genMenuId(routes.hypotheses),
-    icon: 'hypotheses',
-    text: 'Hypotheses',
-    to: routes.hypotheses,
-    action: 'read',
-    subject: 'hypothesis'
   },
   {
     id: genMenuId(routes.modules),
