@@ -51,10 +51,15 @@ public class ExceptionUtils {
         metaInfo.put("component", "circle-matcher");
         return metaInfo;
     }
-    public static DefaultErrorResponse createExceptionError(String message, String title, String sourceString, String status) {
+
+    public static DefaultErrorResponse createExceptionError(
+            String message,
+            String title,
+            String sourceString,
+            String status) {
         Map<String, String> source = new HashMap<String, String>();
         source.put("pointer", sourceString);
-        return new DefaultErrorResponse (UUID.randomUUID().toString(),
+        return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 title,
                 message,
