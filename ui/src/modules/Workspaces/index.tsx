@@ -36,16 +36,16 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const [filterWorkspace, , loading] = useWorkspace();
   const { findWorkspacesByUser } = useWorkspacesByUser();
   // TODO remove name?
-  const [name] = useState('');
+  const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
   const onIDMFlow = useCallback(() => {
     if (isRoot()) {
-      filterWorkspace(name);
+      filterWorkspace();
     } else {
       findWorkspacesByUser(userId);
     }
-  }, [filterWorkspace, findWorkspacesByUser, name, userId]);
+  }, [filterWorkspace, findWorkspacesByUser, userId]);
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
@@ -59,7 +59,14 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     }
   }, [email]);
 
-  const handleOnSearch = (name: string) => !loading && filterWorkspace(name);
+  useEffect(() => {
+    if (isRoot()) {
+      filterWorkspace(name);
+    }
+  }, [name, filterWorkspace]);
+
+
+  const handleOnSearch = (name: string) => !loading && setName(name);
 
   return (
     <Page>

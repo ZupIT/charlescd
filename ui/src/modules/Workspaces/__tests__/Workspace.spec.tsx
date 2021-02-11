@@ -121,5 +121,5 @@ test('render Workspace with isIDMAuthFlow enabled and search', async () => {
 
   await act(() => userEvent.type(search , 'workspace'));
 
-  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(1));
+  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(3));
 });
