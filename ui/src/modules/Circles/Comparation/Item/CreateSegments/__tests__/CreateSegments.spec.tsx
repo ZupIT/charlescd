@@ -15,7 +15,6 @@
  */
 
 import React from "react";
-import MutationObserver from "mutation-observer";
 import { render, screen, act, waitFor } from "unit-test/testUtils";
 import { FetchMock } from "jest-fetch-mock/types";
 import { Circle } from "modules/Circles/interfaces/Circle";
@@ -29,8 +28,6 @@ import {
   circleCSV
 } from "./fixtures";
 import { NEW_TAB } from "core/components/TabPanel/constants";
-
-(global as any).MutationObserver = MutationObserver;
 
 const simpleCircle = {
   deployment: {
