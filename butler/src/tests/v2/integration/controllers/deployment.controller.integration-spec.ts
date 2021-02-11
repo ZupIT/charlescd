@@ -351,7 +351,7 @@ describe('DeploymentController v2', () => {
       defaultCircle: false
     }
     const errorMessages = [
-      'components could not be null or empty'
+      'components should not be null or empty'
     ]
     
     await request(app.getHttpServer())
