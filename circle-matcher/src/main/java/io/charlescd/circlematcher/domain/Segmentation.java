@@ -16,10 +16,7 @@
 
 package io.charlescd.circlematcher.domain;
 
-
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.time.LocalDateTime;
 
 public class Segmentation {
