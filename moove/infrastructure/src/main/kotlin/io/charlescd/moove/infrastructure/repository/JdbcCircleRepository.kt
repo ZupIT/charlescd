@@ -36,8 +36,7 @@ class JdbcCircleRepository(
     private val circleExtractor: CircleExtractor,
     private val circleMetricExtractor: CircleMetricExtractor,
     private val circleHistoryExtractor: CircleHistoryExtractor
-) :
-    CircleRepository {
+) : CircleRepository {
 
     companion object {
         const val BASE_QUERY_STATEMENT = """

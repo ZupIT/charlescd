@@ -107,11 +107,12 @@ public class IdentificationServiceImpl implements IdentificationService {
         var matched = metadata.stream()
                 .parallel()
                 .map(item -> findSegmentation(item, request))
-                .filter(item -> item.isPresent() && isMatched(request, item.get()))
+                .filter(item -> item.isPresent() && isMatched(request, item.get()) && isActive(item.get()))
                 .sorted((Comparator.comparing(item -> item.get().getCreatedAt(),
                 Comparator.nullsLast(Comparator.reverseOrder()))))
                 .map(item -> new Circle(item.get().getCircleId(), item.get().getName()))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+
         if (matched.isEmpty()) {
             var percentageMatched = metadata.stream()
                     .parallel()
@@ -182,5 +183,9 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private int pickRandomValue() {
         return this.randomService.getRandomNumber(100);
+    }
+
+    private boolean isActive(Segmentation segmentation) {
+        return segmentation.isActive();
     }
 }

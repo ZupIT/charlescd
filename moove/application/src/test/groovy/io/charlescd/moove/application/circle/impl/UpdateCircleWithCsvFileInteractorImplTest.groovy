@@ -120,17 +120,19 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
 
         1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
-        1 * circleMatcherService.updateImport(_, _, _, _) >> { arguments ->
+        1 * circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
             def updatedCircle = arguments[0]
             def previousReference = arguments[1]
             def nodes = arguments[2]
             def matcherUri = arguments[3]
+            def active = arguments[4]
 
             assert updatedCircle instanceof Circle
             assert nodes instanceof List<JsonNode>
 
             matcherUri == workspace.circleMatcherUrl
             previousReference == circle.reference
+            active
 
             def node = objectMapper.treeToValue(updatedCircle.rules, NodePart.class)
             assert node.clauses[0].clauses[0].content.value.contains("ce532f07-3bcf-40f8-9a39-289fb527ed54")
@@ -139,7 +141,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
             assert node.clauses[0].clauses[3].content.value.contains("2dd5fd08-c23a-494a-80b6-66db39c73630")
         }
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
         1 * buildRepository.findById(deployment.buildId) >> Optional.of(build)
 
         assert response != null
@@ -193,7 +195,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
 
         0 * this.workspaceRepository.find(_)
 
-        0 * circleMatcherService.updateImport(_, _, _, _)
+        0 * circleMatcherService.updateImport(_, _, _, _, _)
 
         1 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
         1 * buildRepository.findById(deployment.buildId) >> Optional.of(build)
@@ -203,6 +205,100 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         assert response.reference != circle.reference
         assert response.importedKvRecords == 0
         assert response.importedAt == null
+    }
+
+    def "should update a circle with a csv segmentation file with no deployments with status active false"() {
+        given:
+        def fileContent = "IDs\n" +
+                "ce532f07-3bcf-40f8-9a39-289fb527ed54\n" +
+                "c4b13c9f-d151-4f68-aad5-313b08503bd6\n" +
+                "d77c5d16-a39f-406e-a33b-cee986b82348\n" +
+                "2dd5fd08-c23a-494a-80b6-66db39c73630\n"
+
+        def inputStream = new ByteArrayInputStream(fileContent.getBytes())
+
+        def circleId = "b40477e2-9374-47b5-a54e-8909fb867e6d"
+        def name = "Women"
+        def keyName = "IDs"
+        def workspaceId = "c4ffc9ac-47ef-4f73-b7fa-0c0384e978e9"
+        def authorId = "b312dd87-28e5-490d-967b-293a7e65f77d"
+        def request = new UpdateCircleWithCsvRequest(circleId, name, keyName, inputStream)
+
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
+
+        def author = getDummyUser(authorId)
+        def circle = getDummyCircle(circleId, author, nodePart, workspaceId, false)
+        def workspace = getDummyWorkspace(workspaceId, author)
+        def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
+
+        def deploymentId = "1bbb7057-5415-463b-9c25-0e3af442cf69"
+        def deployment = getDummyDeployment(deploymentId, author, circle, build.id, workspaceId)
+
+        when:
+        def response = this.updateCircleWithCsvFileInteractor.execute(request, workspaceId)
+
+        then:
+        1 * this.circleRepository.findById(circleId) >> Optional.of(circle)
+        1 * this.circleRepository.update(_) >> { arguments ->
+            def updatedCircle = arguments[0]
+
+            assert updatedCircle instanceof Circle
+            assert updatedCircle.id == circle.id
+            assert updatedCircle.name == name
+            assert updatedCircle.matcherType == MatcherTypeEnum.SIMPLE_KV
+            assert !updatedCircle.defaultCircle
+            assert updatedCircle.importedAt != null
+            assert updatedCircle.author == author
+            assert updatedCircle.importedKvRecords == 4
+
+            def node = objectMapper.treeToValue(updatedCircle.rules, NodePart.class)
+            assert node.clauses[0].clauses[0].content.value.contains("ce532f07-3bcf-40f8-9a39-289fb527ed54")
+            assert node.clauses[0].clauses[1].content.value.contains("c4b13c9f-d151-4f68-aad5-313b08503bd6")
+            assert node.clauses[0].clauses[2].content.value.contains("d77c5d16-a39f-406e-a33b-cee986b82348")
+            assert node.clauses[0].clauses[3].content.value.contains("2dd5fd08-c23a-494a-80b6-66db39c73630")
+
+            return updatedCircle
+        }
+
+        1 * this.keyValueRuleRepository.saveAll(_) >> { arguments ->
+            def nodeList = arguments[0]
+            assert nodeList instanceof List<KeyValueRule>
+            assert nodeList.size() == 4
+        }
+
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
+            def updatedCircle = arguments[0]
+            def previousReference = arguments[1]
+            def nodes = arguments[2]
+            def matcherUri = arguments[3]
+            def active = arguments[4]
+
+            assert updatedCircle instanceof Circle
+            assert nodes instanceof List<JsonNode>
+
+            matcherUri == workspace.circleMatcherUrl
+            previousReference == circle.reference
+            !active
+
+            def node = objectMapper.treeToValue(updatedCircle.rules, NodePart.class)
+            assert node.clauses[0].clauses[0].content.value.contains("ce532f07-3bcf-40f8-9a39-289fb527ed54")
+            assert node.clauses[0].clauses[1].content.value.contains("c4b13c9f-d151-4f68-aad5-313b08503bd6")
+            assert node.clauses[0].clauses[2].content.value.contains("d77c5d16-a39f-406e-a33b-cee986b82348")
+            assert node.clauses[0].clauses[3].content.value.contains("2dd5fd08-c23a-494a-80b6-66db39c73630")
+        }
+
+        2 * deploymentRepository.findActiveByCircleId(circleId) >> []
+        0 * buildRepository.findById(deployment.buildId) >> Optional.of(build)
+
+        assert response != null
+        assert response.rules != null
+        assert response.reference != circle.reference
+        assert response.importedKvRecords == 4
+        assert response.importedAt != null
     }
 
     private static Deployment getDummyDeployment(String deploymentId, User user, Circle circle, String buildId, String workspaceId) {

@@ -16,6 +16,7 @@
 
 package io.charlescd.circlematcher.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import org.springframework.util.Assert;
 
@@ -37,6 +38,9 @@ public class KeyMetadata {
 
     private Integer percentage;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean active;
+
     private LocalDateTime createdAt;
 
     public KeyMetadata() {
@@ -51,6 +55,7 @@ public class KeyMetadata {
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
         this.percentage = segmentation.getPercentage();
+        this.active = segmentation.isActive();
         this.createdAt = segmentation.getCreatedAt();
     }
 
@@ -106,6 +111,14 @@ public class KeyMetadata {
                 this.percentage + percentageToSum, "Sum of percentage of circles exceeded 100 or is lower than 0"
         );
         return this.percentage += percentageToSum;
+    }
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public LocalDateTime getCreatedAt() {

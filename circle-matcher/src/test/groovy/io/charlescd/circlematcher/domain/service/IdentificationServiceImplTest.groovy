@@ -66,7 +66,7 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
         def metadataList = new ArrayList()
@@ -107,7 +107,7 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
         def metadataList = new ArrayList()
@@ -150,8 +150,7 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
-
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def defaultSegmentation = TestUtils.createDefaultSegmentation(null, SegmentationType.REGULAR)
         def defaultMetadata = new KeyMetadata(defaultComposedKey, defaultSegmentation)
@@ -202,14 +201,14 @@ class IdentificationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
 
         def secondaryValues = new ArrayList()
         secondaryValues.add(secondValue)
         def secondaryContent = TestUtils.createContent(secondaryValues)
         def secondaryNode = TestUtils.createNode(secondaryContent)
-        def secondarySegmentation = TestUtils.createSegmentation(secondaryNode, SegmentationType.SIMPLE_KV)
+        def secondarySegmentation = TestUtils.createSegmentation(secondaryNode, SegmentationType.SIMPLE_KV, true)
         def secondaryKeyMetadata = new KeyMetadata(secondaryComposedKey, secondarySegmentation)
         def metadataList = new ArrayList()
         metadataList.add(keyMetadata)
@@ -302,6 +301,7 @@ class IdentificationServiceImplTest extends Specification {
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
                 15,
+                true,
                 LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
@@ -312,6 +312,7 @@ class IdentificationServiceImplTest extends Specification {
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
                 10,
+                true,
                 LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
@@ -354,6 +355,7 @@ class IdentificationServiceImplTest extends Specification {
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
                 15,
+                true,
                 LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
@@ -364,6 +366,7 @@ class IdentificationServiceImplTest extends Specification {
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
                 10,
+                true,
                 LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
@@ -406,6 +409,7 @@ class IdentificationServiceImplTest extends Specification {
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
                 15,
+                true,
                 LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
@@ -416,6 +420,7 @@ class IdentificationServiceImplTest extends Specification {
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
                 10,
+                true,
                 LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
@@ -459,6 +464,7 @@ class IdentificationServiceImplTest extends Specification {
                 "7a0c38d1-934e-478a-9dd2-813fa11aca8c",
                 false,
                 15,
+                true,
                 LocalDateTime.now()
         )
         def segmentationPercentage10 = new Segmentation("Percentage10",
@@ -469,6 +475,7 @@ class IdentificationServiceImplTest extends Specification {
                 "cd9fa9fb-ec80-4575-9ceb-b39ac3a4a898",
                 false,
                 10,
+                true,
                 LocalDateTime.now()
         )
         def segmentationDefault = TestUtils.createDefaultSegmentation(node, SegmentationType.REGULAR)
@@ -497,7 +504,7 @@ class IdentificationServiceImplTest extends Specification {
 
     }
 
-    def "should identify default circle when segmentaton type is regular"() {
+    def "should not identify a inactive circle"() {
 
         given:
 
@@ -522,8 +529,8 @@ class IdentificationServiceImplTest extends Specification {
         def differentContent = TestUtils.createContent(differentValues)
         def node = TestUtils.createNode(content)
         def differentNode = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
-        def differentSegmentation = TestUtils.createSegmentation(differentNode, SegmentationType.REGULAR)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
+        def differentSegmentation = TestUtils.createSegmentation(differentNode, SegmentationType.REGULAR, true)
 
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def defaultSegmentation = TestUtils.createDefaultSegmentation(null, SegmentationType.REGULAR)
@@ -551,5 +558,4 @@ class IdentificationServiceImplTest extends Specification {
         0 * segmentationRepository.isMember(composedKey, value)
         1 * segmentationRepository.findByKey(defaultComposedKey) >> Optional.of(differentSegmentation)
     }
-
 }

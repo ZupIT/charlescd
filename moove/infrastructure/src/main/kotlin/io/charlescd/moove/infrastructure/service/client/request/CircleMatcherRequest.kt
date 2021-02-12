@@ -30,7 +30,8 @@ class CircleMatcherRequest(
     @get:JsonProperty("isDefault")
     val isDefault: Boolean,
     val createdAt: LocalDateTime,
-    val percentage: Int? = null
+    val percentage: Int? = null,
+    val active: Boolean
 )
 
 data class Node(

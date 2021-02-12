@@ -35,7 +35,7 @@ class TestUtils {
         new Content("username", "EQUAL", values)
     }
 
-    static Segmentation createSegmentation(Node node, SegmentationType type) {
+    static Segmentation createSegmentation(Node node, SegmentationType type, Boolean active) {
         new Segmentation("Men",
                 node,
                 "28840781-d86e-4803-a742-53566c140e56",
@@ -44,6 +44,7 @@ class TestUtils {
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 false,
                 null,
+                active,
                 LocalDateTime.now())
     }
 
@@ -56,6 +57,7 @@ class TestUtils {
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 true,
                 null,
+                true,
                 LocalDateTime.now())
     }
 
@@ -68,6 +70,7 @@ class TestUtils {
                 "bde0c670-96c9-41f7-afac-f284a785c287",
                 false,
                 percentage,
+                true,
                 LocalDateTime.now())
     }
 
@@ -79,6 +82,7 @@ class TestUtils {
         createSegmentationRequest.circleId = "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85"
         createSegmentationRequest.type = type
         createSegmentationRequest.isDefault = false
+        createSegmentationRequest.active = true
         createSegmentationRequest.createdAt = LocalDateTime.now()
         createSegmentationRequest.percentage = 20
         return createSegmentationRequest
@@ -93,6 +97,7 @@ class TestUtils {
         request.node = node
         request.type = type
         request.isDefault = false
+        request.active = true
         request.createdAt = LocalDateTime.now()
         request.percentage = 20
         return request
