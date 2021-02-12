@@ -19,7 +19,7 @@ import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
-import Workspace from '../';
+import Workspace from '..';
 
 const originalWindow = { ...window };
 
