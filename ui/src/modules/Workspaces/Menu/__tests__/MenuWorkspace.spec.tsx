@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, waitFor } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Menu from '../index';
 import * as StateHooks from 'core/state/hooks';
@@ -71,28 +71,16 @@ test('renders Workspace menu without any results', async () => {
   const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
     .mockReturnValueOnce({
       list: {
-        content: [
-          {
-            id: 1,
-            name: 'ws1'
-          },
-          {
-            id: 2,
-            name: 'ws2'
-          }
-        ]
+        content: []
       }
     })
-  
+
   render(
     <Menu
       onCreate={props.onCreate}
       selectedWorkspace={props.selectedWorkspace}
     />
   );
-
-  const inputSearch = screen.getByTestId('input-text-search');
-  userEvent.type(inputSearch, 'unknown');
 
   await waitFor(() => expect(screen.getByText('No workspace was found')).toBeInTheDocument());
 
@@ -115,13 +103,13 @@ test('renders Workspace menu on loading', () => {
   useGlobalStateSpy.mockRestore();
 });
 
-test('should click Workspace item', () => {
+test.only('should click Workspace item', async () => {
   const selectedWorkspace = jest.fn();
   const workspaceRequest = jest.fn();
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
   jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
   const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValueOnce({
+    .mockReturnValue({
       list: {
         content: [
           {
@@ -143,10 +131,10 @@ test('should click Workspace item', () => {
     />
   );
 
-  const items = screen.getAllByText(/ws/);
-  userEvent.click(items[0]);
+  const item = await screen.findByTestId('workspace-ws1');
+  await act(async () => userEvent.click(item));
 
-  expect(selectedWorkspace).toHaveBeenCalled();
+  await waitFor(() => expect(selectedWorkspace).toHaveBeenCalled());
 
   useGlobalStateSpy.mockRestore();
 });
