@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { getAccessTokenDecoded, logout } from 'core/utils/auth';
 import Menu from './Menu';
+import { useSaveWorkspace } from 'modules/Workspaces/hooks';
+import { useHistory } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import routes from 'core/constants/routes';
+import { saveWorkspace } from 'core/utils/workspace';
+import { isRequired, maxLength } from 'core/utils/validations';
+import { removeWizard } from 'modules/Settings/helpers';
+import Modal from 'core/components/Modal';
+import { isRoot } from 'core/utils/auth';
+import Styled from './styled';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -26,6 +36,19 @@ interface Props {
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
   const { name: profileName, email } = getAccessTokenDecoded();
+  const [toggleModal, setToggleModal] = useState(false);
+  const {
+    save,
+    response: saveWorkspaceResponse,
+    loading: saveWorkspaceLoading
+  } = useSaveWorkspace();
+  const history = useHistory();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
     if (!email) {
@@ -33,10 +56,51 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     }
   }, [email]);
 
+  useEffect(() => {
+    if (saveWorkspaceResponse) {
+      removeWizard();
+      saveWorkspace(saveWorkspaceResponse);
+      history.push(routes.credentials);
+    }
+  }, [saveWorkspaceResponse, history]);
+
+  const onSubmit = ({ name }: Record<string, string>) => {
+    save({ name });
+  };
+
+  const renderModal = () =>
+    toggleModal && (
+      <Modal.Default onClose={() => setToggleModal(false)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Styled.Modal.Title color="light">
+            Create workspace
+          </Styled.Modal.Title>
+          <Styled.Modal.Input
+            name="name"
+            label="Type a name"
+            error={errors?.name?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength()
+            })}
+          />
+          <Styled.Modal.Button
+            type="submit"
+            isDisabled={!isValid}
+            isLoading={saveWorkspaceLoading}
+          >
+            Create workspace
+          </Styled.Modal.Button>
+        </form>
+      </Modal.Default>
+    );
+
   return (
     <Page>
+      {isRoot() && renderModal()}
       <Page.Menu>
         <Menu
+          onCreate={() => setToggleModal(true)}
           selectedWorkspace={(name: string) => selectedWorkspace(name)}
         />
       </Page.Menu>

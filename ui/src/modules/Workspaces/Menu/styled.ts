@@ -19,7 +19,6 @@ import LabeledIcon from 'core/components/LabeledIcon';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import IconComponent from 'core/components/Icon';
 import ButtonComponent from 'core/components/Button';
-import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import LoaderMenuComponent from './Loaders';
 
@@ -73,30 +72,11 @@ const Button = styled(ButtonComponent.Default)`
   height: auto;
 `;
 
-const ModalInput = styled(Form.Input)`
-  width: 315px;
-
-  > input {
-    background-color: ${({ theme }) => theme.modal.default.background};
-  }
-`;
-
-const ModalTitle = styled(Text.h2)`
-  margin-bottom: 20px;
-`;
-
 const Item = styled(Text.h4)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 230px;
-`;
-
-const ButtonModal = styled(ButtonComponent.Default)`
-  width: 155px;
-  padding-left: 0;
-  padding-right: 0;
-  margin-top: 20px;
 `;
 
 const Empty = styled.div`
@@ -118,10 +98,5 @@ export default {
   Icon,
   Link,
   Button,
-  Empty,
-  Modal: {
-    Input: ModalInput,
-    Title: ModalTitle,
-    Button: ButtonModal
-  }
+  Empty
 };

@@ -15,20 +15,12 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
-import Modal from 'core/components/Modal';
-import { isRequired, maxLength } from 'core/utils/validations';
-import routes from 'core/constants/routes';
-import { saveWorkspace } from 'core/utils/workspace';
 import { isRoot, isIDMAuthFlow } from 'core/utils/auth';
-import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
-import { removeWizard } from 'modules/Settings/helpers';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 import Loader from './Loaders';
@@ -37,25 +29,14 @@ import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
 import { useWorkspacesByUser } from 'modules/Users/hooks';
 interface Props {
+  onCreate: () => void;
   selectedWorkspace: (name: string) => void;
 }
 
 const WorkspaceMenu = ({
+  onCreate,
   selectedWorkspace
 }: Props) => {
-  const history = useHistory();
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState: { isValid }
-  } = useForm({ mode: 'onChange' });
-  const {
-    save,
-    response: saveWorkspaceResponse,
-    loading: saveWorkspaceLoading
-  } = useSaveWorkspace();
-  const [toggleModal, setToggleModal] = useState(false);
   const [filterWorkspace, , loading] = useWorkspace();
   const { findWorkspacesByUser } = useWorkspacesByUser();
   const userId = getProfileByKey('id');
@@ -98,54 +79,12 @@ const WorkspaceMenu = ({
       ))
     );
 
-  const openWorkspaceModal = () => setToggleModal(true);
-
-  const onSubmit = ({ name }: Record<string, string>) => {
-    save({ name });
-  };
-
-  useEffect(() => {
-    if (saveWorkspaceResponse) {
-      removeWizard();
-      saveWorkspace(saveWorkspaceResponse);
-      history.push(routes.credentials);
-    }
-  }, [saveWorkspaceResponse, history]);
-
-  const renderModal = () =>
-    toggleModal && (
-      <Modal.Default onClose={() => setToggleModal(false)}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Styled.Modal.Title color="light">
-            Create workspace
-          </Styled.Modal.Title>
-          <Styled.Modal.Input
-            name="name"
-            label="Type a name"
-            error={errors?.name?.message}
-            ref={register({
-              required: isRequired(),
-              maxLength: maxLength()
-            })}
-          />
-          <Styled.Modal.Button
-            type="submit"
-            isDisabled={!isValid}
-            isLoading={saveWorkspaceLoading}
-          >
-            Create workspace
-          </Styled.Modal.Button>
-        </form>
-      </Modal.Default>
-    );
-
   return (
     <>
-      {isRoot() && renderModal()}
       <Styled.Actions>
         <Styled.Button
           id="workspaceModal"
-          onClick={openWorkspaceModal}
+          onClick={onCreate}
           isDisabled={!isRoot()}
         >
           <LabeledIcon icon="plus-circle" marginContent="5px">
