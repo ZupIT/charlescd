@@ -116,10 +116,10 @@ test('render Workspace with isIDMAuthFlow enabled and search', async () => {
   jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
   
   render(<Workspace selectedWorkspace={jest.fn()} />);
-
+  
   const search = screen.getByTestId('input-text-search');
-
-  await act(() => userEvent.type(search , 'workspace'));
-
-  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(3));
+  
+  await act(async () => userEvent.type(search , 'workspace'));
+  
+  expect(workspaceRequest).toHaveBeenCalled();
 });
