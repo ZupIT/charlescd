@@ -39,12 +39,12 @@ type PayloadRequest struct {
 }
 
 type MessageResponse struct {
-	Id        uuid.UUID       `json:"id"`
-	CreatedAt      time.Time `json:"-"`
-	SubscriptionId uuid.UUID `json:"subscriptionId"`
-	LastStatus     string    `json:"lastStatus"`
-	EventType string          `json:"eventType"`
-	Event     json.RawMessage `json:"event"`
+	Id             uuid.UUID       `json:"id"`
+	CreatedAt      time.Time       `json:"createdAt"`
+	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+	LastStatus     string          `json:"lastStatus"`
+	EventType      string          `json:"eventType"`
+	Event          json.RawMessage `json:"event"`
 }
 
 type FullMessageResponse struct {

@@ -2,6 +2,7 @@ package rabbitClient
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -12,7 +13,7 @@ import (
 	"time"
 )
 
-func (main *Main) Publish(stopChan chan bool) error {
+func (main *Main) Publish(stopPub chan bool) error {
 	interval, err := time.ParseDuration(configuration.GetConfiguration("PUBLISHER_TIME"))
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -27,7 +28,7 @@ func (main *Main) Publish(stopChan chan bool) error {
 		select {
 		case <-ticker.C:
 			main.publish()
-		case <-stopChan:
+		case <-stopPub:
 			return nil
 		}
 	}
@@ -38,17 +39,16 @@ func (main *Main) publish() {
 	messages, err := main.messageMain.FindAllNotEnqueued()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start publish", "Could not find active messages").
+			"err": errors.NewError("Cannot start publisher", "Could not find active messages").
 				WithOperations("publish.FindAllNotEnqueued"),
 		}).Errorln()
 	}
 
-	logrus.WithFields(logrus.Fields{
-		"Messages ready to publish": len(messages),
-		"Time": time.Now(),
-	}).Println()
-
-	for _, msg := range messages {
+	for i, msg := range messages {
+		logrus.WithFields(logrus.Fields{
+			"Messages ready to publish": len(messages) - i,
+			"Time": time.Now(),
+		}).Println()
 		 main.sendMessage(msg)
 	}
 }
@@ -107,14 +107,28 @@ func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, 
 	})
 }
 
-func (main *Main) Consume(stopChan chan bool) {
-	go func() {
-		for {
-			err := main.amqpClient.Stream(stopChan)
+func (main *Main) Consume(stopCon chan bool) error {
+	interval, err := time.ParseDuration(configuration.GetConfiguration("CONSUMER_TIME"))
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot start consumer", "Get sync interval failed").
+				WithOperations("Start.getInterval"),
+		}).Errorln()
+		return err
+	}
+
+	ticker := time.NewTicker(interval)
+	for {
+		select {
+		case <-ticker.C:
+			err := main.amqpClient.Stream()
 			if err != nil {
-				continue
+				fmt.Println(err)
+				return err
 			}
-			break
+		case <-stopCon:
+			fmt.Println(stopCon)
+			return nil
 		}
-	}()
+	}
 }

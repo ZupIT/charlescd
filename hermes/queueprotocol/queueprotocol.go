@@ -43,13 +43,13 @@ func NewClient(streamQueue, pushQueue, addr string, l *logrus.Logger, done chan 
 	}
 
 	client := Client{
-		logger:    l,
-		threads:   threads,
-		pushQueue: pushQueue,
-		streamQueue:   streamQueue,
-		done:      done,
-		alive:     true,
-		wg:        &sync.WaitGroup{},
+		logger:      l,
+		threads:     threads,
+		pushQueue:   pushQueue,
+		streamQueue: streamQueue,
+		done:        done,
+		alive:       true,
+		wg:          &sync.WaitGroup{},
 	}
 	client.wg.Add(threads)
 
@@ -177,8 +177,7 @@ func (c *Client) UnsafePush(data []byte) error {
 	)
 }
 
-func (c *Client) Stream(stopChan chan bool) error {
-
+func (c *Client) Stream() error {
 	for {
 		if c.isConnected {
 			break
@@ -191,13 +190,11 @@ func (c *Client) Stream(stopChan chan bool) error {
 		return err
 	}
 
-	var connectionDropped bool
-
 	for i := 1; i <= c.threads; i++ {
 		messages, err := c.channel.Consume(
 			c.streamQueue,
-			consumerName(i), // Consumer
-			true,           // Auto-Ack
+			consumerName(i), 		// Consumer
+			false,           // Auto-Ack
 			false,           // Exclusive
 			false,           // No-local
 			false,           // No-Wait
@@ -207,45 +204,31 @@ func (c *Client) Stream(stopChan chan bool) error {
 			return err
 		}
 
-		go func() {
+		go func(i int) {
 			defer c.wg.Done()
-			for {
-				select {
-				case <-stopChan:
-					return
-				case msg, ok := <-messages:
-					if !ok {
-						connectionDropped = true
-						return
-					}
-					c.parseEvent(msg)
-				}
+			for msg := range messages {
+				c.processMessage(msg, consumerName(i))
 			}
-		}()
+		}(i)
 	}
 
 	c.wg.Wait()
 
-	if connectionDropped {
-		return ErrDisconnected
-	}
-
 	return nil
 }
 
-func (c *Client) parseEvent(msg amqp.Delivery) {
+func (c *Client) processMessage(msg amqp.Delivery, consumerName string) {
 	l := c.logger
 	startTime := time.Now()
 
-	var messageResponse payloads.MessageResponse
-	err := json.Unmarshal(msg.Body, &messageResponse)
+	messageResponse, err := parseMessage(msg)
 	if err != nil {
 		logAndNack(msg, l, startTime, "unmarshalling body: %s - %s", string(msg.Body), err.Error())
 		return
 	}
 
-	if messageResponse.EventType == "" {
-		logAndNack(msg, l, startTime, "received event without event type")
+	if messageResponse.Id.String() == "" {
+		logAndNack(msg, l, startTime, "received event without id")
 		return
 	}
 
@@ -261,19 +244,12 @@ func (c *Client) parseEvent(msg amqp.Delivery) {
 		}
 	}(messageResponse, msg, l)
 
-	//switch messageResponse.EventType {
-	//case "DEPLOY":
-	//	fmt.Println(messageResponse)
-	//case "UNDEPLOY":
-	//
-	//default:
-	//	msg.Reject(false)
-	//	return
-	//}
+	logrus.WithFields(logrus.Fields{
+		"Consumer":         consumerName,
+		"Message consumed": messageResponse.Id,
+		"Time":             time.Now(),
+	}).Println()
 
-	l.WithFields(logrus.Fields{
-		"took-ms": time.Since(startTime).Milliseconds(),
-	}).Info("Succeeded: \n", messageResponse)
 	msg.Ack(false)
 }
 
@@ -282,9 +258,15 @@ func logAndNack(msg amqp.Delivery, l *logrus.Logger, t time.Time, err string, ar
 	l.WithFields(logrus.Fields{
 		"took-ms": time.Since(t).Milliseconds(),
 	}).Error(fmt.Sprintf(err, args...))
-
 }
 
 func consumerName(i int) string {
-	return fmt.Sprintf("hermes-consumer-%v", i)
+	return fmt.Sprintf("hermes-consumer-%d", i)
+}
+
+func parseMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
+	var messageResponse payloads.MessageResponse
+	err := json.Unmarshal(msg.Body, &messageResponse)
+
+	return messageResponse, err
 }

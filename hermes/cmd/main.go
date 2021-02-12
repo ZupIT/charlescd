@@ -22,9 +22,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"hermes/internal/configuration"
-	"hermes/internal/notification/rabbitClient"
 	"hermes/internal/notification/message"
 	"hermes/internal/notification/messageexecutionhistory"
+	"hermes/internal/notification/rabbitClient"
 	"hermes/internal/subscription"
 	"hermes/queueprotocol"
 	"hermes/web/api"
@@ -57,11 +57,12 @@ func main() {
 	subscriptionMain := subscription.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
-	rabbitClient := rabbitClient.NewMain(db, amqpClient, messageMain, messageExecutionMain)
+	rabbitClientMain := rabbitClient.NewMain(db, amqpClient, messageMain, messageExecutionMain)
 
-	stopChan := make(chan bool, 0)
-	go rabbitClient.Publish(stopChan)
-	go rabbitClient.Consume(stopChan)
+	stopPub := make(chan bool, 0)
+	go rabbitClientMain.Publish(stopPub)
+	stopCon := make(chan bool, 0)
+	go rabbitClientMain.Consume(stopCon)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)
