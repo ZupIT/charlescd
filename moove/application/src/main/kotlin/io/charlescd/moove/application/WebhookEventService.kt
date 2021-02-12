@@ -29,17 +29,23 @@ class WebhookEventService(
     private val hermesService: HermesService,
     private val buildService: BuildService
 ) {
-
-    fun notifyDeploymentEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment, error: String? = null) {
-        hermesService.notifySubscriptionEvent(
-            buildWebhookDeploymentEventType(simpleWebhookEvent, deployment, error)
-        )
+    fun notifyDeploymentEvent(
+        workspaceId: String,
+        eventType: WebhookEventTypeEnum,
+        status: WebhookEventStatusEnum,
+        deployment: Deployment? = null,
+        error: String? = null
+    ) {
+            val simpleWebhookEvent = SimpleWebhookEvent(workspaceId, eventType, status)
+            val hermesEvent = buildHermesEvent(simpleWebhookEvent, deployment, error)
+            hermesService.notifySubscriptionEvent(hermesEvent)
     }
 
-    fun notifyNotFoundErrorEvent(simpleWebhookEvent: SimpleWebhookEvent, errorMessage: String) {
-        hermesService.notifySubscriptionEvent(
-            buildWebhookNotFoundErrorEventType(simpleWebhookEvent, errorMessage)
-        )
+    private fun buildHermesEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment?, error: String?): WebhookEvent {
+        if (deployment == null) {
+            return buildWebhookNotFoundErrorEventType(simpleWebhookEvent, error!!)
+        }
+        return buildWebhookDeploymentEventType(simpleWebhookEvent, deployment)
     }
 
     private fun buildWebhookDeploymentEventType(
