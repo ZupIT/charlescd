@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, logout } from 'core/utils/auth';
+import { getAccessTokenDecoded, logout, isRoot } from 'core/utils/auth';
 import Menu from './Menu';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
@@ -27,7 +27,6 @@ import { saveWorkspace } from 'core/utils/workspace';
 import { isRequired, maxLength } from 'core/utils/validations';
 import { removeWizard } from 'modules/Settings/helpers';
 import Modal from 'core/components/Modal';
-import { isRoot } from 'core/utils/auth';
 import Styled from './styled';
 
 interface Props {
@@ -69,7 +68,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   };
 
   const renderModal = () =>
-    toggleModal && (
+    isRoot() && (
       <Modal.Default onClose={() => setToggleModal(false)}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Modal.Title color="light">
@@ -97,7 +96,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
 
   return (
     <Page>
-      {isRoot() && renderModal()}
+      {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
           onCreate={() => setToggleModal(true)}
