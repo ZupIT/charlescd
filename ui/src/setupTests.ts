@@ -23,6 +23,11 @@ import fetch, { FetchMock } from 'jest-fetch-mock';
 import storageMock from 'unit-test/local-storage';
 import { mockCookie } from './unit-test/cookie';
 import 'mutationobserver-shim';
+import MockIntersectionObserver from 'unit-test/MockIntersectionObserver';
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
 interface CustomDocument {
   cookie?: string;
@@ -57,3 +62,5 @@ Object.assign(navigator, {
     writeText: () => undefined
   }
 });
+
+window.IntersectionObserver = MockIntersectionObserver;

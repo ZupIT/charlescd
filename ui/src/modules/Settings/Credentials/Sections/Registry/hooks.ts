@@ -18,8 +18,8 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   create,
   configPath,
-  validation,
-  validationConnection
+  testRegistryConnection,
+  validateConnection
 } from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import {
@@ -105,18 +105,18 @@ export const useRegistry = (): FetchProps => {
   };
 };
 
-export const useRegistryTest = (): {
-  testConnection: Function;
+export const useRegistryTestConnection = (): {
+  testConnectionRegistry: Function;
   response: Response;
   error: ResponseError;
   status: FetchStatus;
 } => {
   const status = useFetchStatus();
-  const test = useFetchData<Response>(validation);
+  const test = useFetchData<Response>(testRegistryConnection);
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  const testConnection = useCallback(
+  const testConnectionRegistry = useCallback(
     async (registry: Registry) => {
       try {
         if (registry) {
@@ -140,23 +140,23 @@ export const useRegistryTest = (): {
   );
 
   return {
-    testConnection,
+    testConnectionRegistry,
     response,
     error,
     status
   };
 };
 
-export const useRegistryConnection = (): {
-  testConnection: Function;
+export const useRegistryValidateConnection = (): {
+  validateConnectionRegistry: Function;
   response: Response;
   error: ResponseError;
 } => {
-  const test = useFetchData<Response>(validationConnection);
+  const test = useFetchData<Response>(validateConnection);
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  const testConnection = useCallback(
+  const validateConnectionRegistry = useCallback(
     async (configurationId: string) => {
       try {
         if (configurationId) {
@@ -177,7 +177,7 @@ export const useRegistryConnection = (): {
   );
 
   return {
-    testConnection,
+    validateConnectionRegistry,
     response,
     error
   };

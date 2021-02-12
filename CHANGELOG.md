@@ -1,5 +1,93 @@
 # Changelog
 
+## 0.5.1 (01/02/2021)
+- [#859](https://github.com/ZupIT/charlescd/pull/859) Setting a variable to save the version name (gitction workflow)
+- [#858](https://github.com/ZupIT/charlescd/pull/858) Fixing circle matcher graalvm version.
+- [#842](https://github.com/ZupIT/charlescd/pull/842) rabbit client
+- [#838](https://github.com/ZupIT/charlescd/pull/838) Moove webhook history events
+- [#856](https://github.com/ZupIT/charlescd/pull/856) Fixing lint of CI workflow 
+- [#854](https://github.com/ZupIT/charlescd/pull/854) Validate butler ci integration tests
+- [#853](https://github.com/ZupIT/charlescd/pull/853) Fixed regex URL validation
+- [#850](https://github.com/ZupIT/charlescd/pull/850) Fixing all CM workflows.
+- [#849](https://github.com/ZupIT/charlescd/pull/849) Fixing workflow.
+- [#848](https://github.com/ZupIT/charlescd/pull/848) Fixing circle matcher prod release workflow.
+- [#847](https://github.com/ZupIT/charlescd/pull/847) Fixig graalvm image.
+- [#846](https://github.com/ZupIT/charlescd/pull/846) Fixing prodrelease: circle matcher.
+- [#845](https://github.com/ZupIT/charlescd/pull/845) Fixing cm workflow.
+- [#843](https://github.com/ZupIT/charlescd/pull/843) Fixing circle matcher workflow devrelease and ci.
+- [#830](https://github.com/ZupIT/charlescd/pull/830) Moove webhook publish events
+- [#761](https://github.com/ZupIT/charlescd/pull/761) Improve git usability
+- [#796](https://github.com/ZupIT/charlescd/pull/796) Input validation on the screens: workspace, users, user group and account.
+- [#797](https://github.com/ZupIT/charlescd/pull/797) Fix octopipe cd configuration
+- [#815](https://github.com/ZupIT/charlescd/pull/815) Fix duplicated circle list after delete a circle
+- [#837](https://github.com/ZupIT/charlescd/pull/837) Registry and git improvements (settings page)
+- [#835](https://github.com/ZupIT/charlescd/pull/835) Fix filter workspaces
+- [#820](https://github.com/ZupIT/charlescd/pull/820) Butler operator routes
+- [#833](https://github.com/ZupIT/charlescd/pull/833) Fix metrics endpoint
+- [#825](https://github.com/ZupIT/charlescd/pull/825) Update graalvm image
+- [#739](https://github.com/ZupIT/charlescd/pull/739) Fix octopipe overriding helm objects
+- [#770](https://github.com/ZupIT/charlescd/pull/770) Update engine matcher
+- [#823](https://github.com/ZupIT/charlescd/pull/823) Datasource test connection error
+- [#724](https://github.com/ZupIT/charlescd/pull/724) Security restrict access users data
+- [#822](https://github.com/ZupIT/charlescd/pull/822) Hermes workflows
+- [#821](https://github.com/ZupIT/charlescd/pull/821) Automation data testid
+- [#750](https://github.com/ZupIT/charlescd/pull/750) Compass structured error
+- [#781](https://github.com/ZupIT/charlescd/pull/781) UI improvement in Metric Action
+- [#817](https://github.com/ZupIT/charlescd/pull/817) Registry and git improvements
+- [#814](https://github.com/ZupIT/charlescd/pull/814) CI Update of charts and changelog
+
+---
+
+## 0.5.0 (19/01/2021)
+- [#813](https://github.com/ZupIT/charlescd/pull/813) Compass token bug hotfix
+- [#811](https://github.com/ZupIT/charlescd/pull/811) Fix: link menu size
+- [#808](https://github.com/ZupIT/charlescd/pull/808) CI Update of charts and changelog
+- [#806](https://github.com/ZupIT/charlescd/pull/806) Change aws secret key text field to password field
+
+---
+
+## 0.4.9 (15/01/2021)
+- [#807](https://github.com/ZupIT/charlescd/pull/807) Added configmaps to octopipe
+- [#772](https://github.com/ZupIT/charlescd/pull/772) CI Update of charts and changelog
+- [#805](https://github.com/ZupIT/charlescd/pull/805) Hotfix: adding authorId when creating cd configuration.
+- [#798](https://github.com/ZupIT/charlescd/pull/798)  UI improvement in workspace configuration screen
+- [#801](https://github.com/ZupIT/charlescd/pull/801) Moove webhook crud apis
+
+---
+
+## 0.4.8 (14/01/2021)
+- [#788](https://github.com/ZupIT/charlescd/pull/788) Feature registry connection (Azure, dockerhub, GCP, Harbor and AWS)
+- [#791](https://github.com/ZupIT/charlescd/pull/791) Default Radio component
+- [#782](https://github.com/ZupIT/charlescd/pull/782) User group improvements
+- [#762](https://github.com/ZupIT/charlescd/pull/762) Update typescript and jest dependencies
+- [#793](https://github.com/ZupIT/charlescd/pull/793) Stale bot
+- [#795](https://github.com/ZupIT/charlescd/pull/795) Fixing Timezone action
+- [#783](https://github.com/ZupIT/charlescd/pull/783) Datasource improvements
+- [#771](https://github.com/ZupIT/charlescd/pull/771) Bump axios from 0.19.2 to 0.21.1 in /utils/matcher-s3-sync
+- [#759](https://github.com/ZupIT/charlescd/pull/759) Bump ini from 1.3.5 to 1.3.8 in /utils/matcher-s3-sync
+- [#758](https://github.com/ZupIT/charlescd/pull/758) Bump ini from 1.3.5 to 1.3.8 in /ui
+- [#794](https://github.com/ZupIT/charlescd/pull/794) Changing master to main
+- [#792](https://github.com/ZupIT/charlescd/pull/792) Changing master to main
+- [#789](https://github.com/ZupIT/charlescd/pull/789) Fix moove public paths
+- [#695](https://github.com/ZupIT/charlescd/pull/695) Git branch name validations
+- [#787](https://github.com/ZupIT/charlescd/pull/787) Hotfix: registry connection test.
+- [#780](https://github.com/ZupIT/charlescd/pull/780) Checkbox - New core/component 
+- [#738](https://github.com/ZupIT/charlescd/pull/738) Payload validation
+- [#774](https://github.com/ZupIT/charlescd/pull/774) Butler operator manifests
+- [#704](https://github.com/ZupIT/charlescd/pull/704) Adding Transactional to create user
+- [#719](https://github.com/ZupIT/charlescd/pull/719) Adding Infinite scroll at Circle Page
+- [#766](https://github.com/ZupIT/charlescd/pull/766) Butler k8s tests
+- [#768](https://github.com/ZupIT/charlescd/pull/768) CI Update of charts and changelog
+
+---
+
+## 0.4.7 (21/12/2020)
+- [#769](https://github.com/ZupIT/charlescd/pull/769) Fixing rate limit variables at moove chart
+- [#767](https://github.com/ZupIT/charlescd/pull/767) Hotfix: fixing moove chart and updating circle matcher readme
+- [#764](https://github.com/ZupIT/charlescd/pull/764) CI Update of charts and changelog
+
+---
+
 ## 0.4.6 (18/12/2020)
 - [#670](https://github.com/ZupIT/charlescd/pull/670) Vulnerabilites fixes
 - [#623](https://github.com/ZupIT/charlescd/pull/623) removing unused legacy code
@@ -457,23 +545,3 @@
 ---
 
 ## 0.2.12 (18/06/2020)
-
----
-
-## 0.2.11 (09/06/2020)
-
----
-
-## v0.2.10 (03/06/2020)
-
----
-
-## v0.2.9 (03/06/2020)
-
----
-
-## v0.2.8 (03/06/2020)
-
----
-
-## 0.2.7 (03/06/2020)

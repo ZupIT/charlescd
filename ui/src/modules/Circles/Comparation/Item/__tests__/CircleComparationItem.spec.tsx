@@ -17,7 +17,6 @@
 import React, { ReactElement } from 'react';
 import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
 import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
@@ -25,7 +24,7 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
-import {COLOR_COMET} from 'core/assets/colors';
+import { COLOR_COMET } from 'core/assets/colors';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -94,14 +93,15 @@ test('render CircleComparationItem default component', async () => {
 });
 
 test('render CircleComparationItem with release', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+  const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123-workspace',
       status: WORKSPACE_STATUS.COMPLETE
     },
     status: 'resolved'
   }));
-  jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
+
+  const useDatasourceSpy = jest.spyOn(DatasourceHooks, 'useDatasource').mockReturnValueOnce({
     responseAll: [],
     getAll: jest.fn
   });
@@ -123,6 +123,9 @@ test('render CircleComparationItem with release', async () => {
     expect(screen.getByText('Last release deployed')).toBeInTheDocument();
     expect(screen.getByText('Add datasource health')).toBeInTheDocument();
   });
+
+  useGlobalStateSpy.mockRestore();
+  useDatasourceSpy.mockRestore();
 });
 
 test('should render CircleComparationItem with an Inactive Default Circle', async () => {

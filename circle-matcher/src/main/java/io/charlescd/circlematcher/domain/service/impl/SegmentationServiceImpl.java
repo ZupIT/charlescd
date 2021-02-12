@@ -19,11 +19,8 @@ package io.charlescd.circlematcher.domain.service.impl;
 import io.charlescd.circlematcher.api.request.CreateSegmentationRequest;
 import io.charlescd.circlematcher.api.request.SegmentationRequest;
 import io.charlescd.circlematcher.api.request.UpdateSegmentationRequest;
-import io.charlescd.circlematcher.domain.Condition;
 import io.charlescd.circlematcher.domain.KeyMetadata;
-import io.charlescd.circlematcher.domain.LogicalOperatorType;
 import io.charlescd.circlematcher.domain.Node;
-import io.charlescd.circlematcher.domain.NodeType;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
 import io.charlescd.circlematcher.domain.exception.BusinessException;
@@ -119,7 +116,7 @@ public class SegmentationServiceImpl implements SegmentationService {
                     item,
                     segmentationRequest.getReference(),
                     segmentationRequest.getCircleId(),
-                    isItConvertibleToKv(item) ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
+                    item.isConvertibleToKv() ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
                     segmentationRequest.getWorkspaceId(),
                     segmentationRequest.getIsDefault(),
                     segmentationRequest.getCreatedAt())));
@@ -133,22 +130,11 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     private void recursiveNodeExtraction(Node node, List<Node> nodes) {
-        if (NodeType.CLAUSE.equals(node.getType())
-                && LogicalOperatorType.AND.equals(node.getLogicalOperator())
-                || NodeType.RULE.equals(node.getType())) {
-
-            nodes.add(node);
-
-        } else if (NodeType.CLAUSE.equals(node.getType())
-                && node.getLogicalOperator().equals(LogicalOperatorType.OR)) {
+        if (node.isDecomposable()) {
             node.getClauses().forEach(item -> recursiveNodeExtraction(item, nodes));
+        } else {
+            nodes.add(node);
         }
-    }
-
-    private boolean isItConvertibleToKv(Node node) {
-        return NodeType.RULE.equals(node.getType())
-                && node.getContent() != null
-                && Condition.EQUAL.name().equals(node.getContent().getCondition());
     }
 
     private boolean shouldDecompose(SegmentationRequest segmentationRequest) {

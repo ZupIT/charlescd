@@ -60,7 +60,6 @@ type status = {
 const Message = styled.div<status>`
   margin-top: 25px;
   display: flex;
-
   span {
     margin-left: 10px;
     color: ${({ status }) => darkTheme.message[status]};
@@ -74,6 +73,15 @@ const Message = styled.div<status>`
 
 const Select = styled(SelectSingle)`
   width: 271px;
+  margin-top: 20px;
+`;
+
+const Placeholder = styled(TextComponent.h4)`
+  pointer-events: none;
+  margin-top: -21px;
+  margin-left: 45px;
+  opacity: 60%;
+  overflow: hidden;
 `;
 
 export default {
@@ -83,5 +91,6 @@ export default {
   Form,
   Fields,
   Message,
-  Select
+  Select,
+  Placeholder
 };

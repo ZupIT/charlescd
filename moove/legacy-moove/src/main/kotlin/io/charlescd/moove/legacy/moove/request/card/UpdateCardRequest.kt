@@ -37,4 +37,8 @@ data class UpdateCardRequest(
 
     val branchDeletion: Boolean = true
 
-)
+) {
+    fun validate() {
+        BranchNameValidations().validateBranchName(branchName)
+    }
+}

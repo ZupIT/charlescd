@@ -189,6 +189,11 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
     setActiveSection(undefined);
   };
 
+  const isInactive = () =>
+    isDeploying(circle?.deployment?.status) ||
+    isUndeploying(circle?.deployment?.status) ||
+    circleCannotBeDeleted(circle);
+
   const renderDropdown = () => (
     <Dropdown>
       <Can I="write" a="circles" passThrough>
@@ -227,9 +232,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           icon="delete"
           name="Delete"
           tooltip={getTooltipMessage(circle)}
-          deploying={isDeploying(circle?.deployment?.status)}
-          undeploying={isUndeploying(circle?.deployment?.status)}
-          isInactive={circleCannotBeDeleted(circle)}
+          isInactive={isInactive()}
           onClick={() => setAction('Delete')}
         />
       </Can>

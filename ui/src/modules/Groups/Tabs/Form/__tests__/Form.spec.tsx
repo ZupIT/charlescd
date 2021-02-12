@@ -17,11 +17,8 @@
 import React from 'react';
 import { render } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import MutationObserver from 'mutation-observer';
 import Form from '../index';
 import { mockUserGroup1, mockUserGroup2 } from './fixtures';
-
-(global as any).MutationObserver = MutationObserver;
 
 test('render user group Form ', () => {
   const { getByTestId } = render(

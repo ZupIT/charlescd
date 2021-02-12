@@ -57,7 +57,7 @@ class FindAllCirclesInteractorImpl(
     ) = ResourcePageResponse.from(
         content,
         page.pageNumber,
-        page.pageSize,
+        page.size(),
         page.isLast(),
         page.totalPages()
     )

@@ -21,6 +21,24 @@ yarn start
 
 The app will start up on localhost:3000
 
+### Who to start the app with mocks
+Run the following commands in the [root folder] to get all dependencies installed in ui and to start the server:
+
+```
+yarn
+yarn stub
+```
+
+then on another terminal run
+
+```
+yarn mock:api
+```
+
+The app will start up on localhost:3000
+
+`We are still working on mock improvements`
+
 ### Testing
 
 To run the tests execute `yarn test`.

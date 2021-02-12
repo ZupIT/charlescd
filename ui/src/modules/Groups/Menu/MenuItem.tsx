@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo } from 'react';
+import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
@@ -26,11 +26,15 @@ interface Props {
 }
 
 const MenuItem = ({ id, name, onSelect, isActive }: Props) => (
-  <Styled.Link onClick={() => onSelect(id)} isActive={isActive}>
+  <Styled.Link
+    onClick={() => onSelect(id)}
+    isActive={isActive}
+    data-testid={`group-menu-item-${id}`}
+  >
     <Styled.ListItem icon="users" marginContent="8px">
       <Text.h4 color="light">{name}</Text.h4>
     </Styled.ListItem>
   </Styled.Link>
 );
 
-export default memo(MenuItem);
+export default MenuItem;
