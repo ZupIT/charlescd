@@ -155,7 +155,6 @@ const UpdateButtonWrapper = styled.div`
   align-items: center;
   padding: 20px 50px;
   border-bottom: 1px solid ${COLOR_BLACK_MARLIN};
-  cursor: pointer;
 `;
 
 const ItemChecked = styled.div``;
