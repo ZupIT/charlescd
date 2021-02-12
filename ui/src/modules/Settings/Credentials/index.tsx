@@ -147,11 +147,6 @@ const Credentials = ({ onClickHelp }: Props) => {
           getNewActions={getActions}
         />
       )}
-      <Section.Git
-        form={form}
-        setForm={setForm}
-        data={workspace.gitConfiguration}
-      />
       <Section.UserGroup
         form={form}
         setForm={setForm}
