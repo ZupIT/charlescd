@@ -18,6 +18,7 @@ package incluster
 
 import (
 	"k8s.io/client-go/rest"
+	"octopipe/pkg/customerror"
 )
 
 type InCluster struct{}
@@ -27,9 +28,18 @@ func NewInCluster() *InCluster {
 }
 
 func (inCluster *InCluster) GetClient() (*rest.Config, error) {
-	return inCluster.getRestConfig()
+	config, err := inCluster.getRestConfig()
+	if err != nil {
+		return nil, customerror.WithOperation(err, "incluster.GetClient.getRestConfig")
+	}
+
+	return config, nil
 }
 
 func (inCluster *InCluster) getRestConfig() (*rest.Config, error) {
-	return rest.InClusterConfig()
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return nil, customerror.New("", err.Error(), nil, "incluster.getClientKey.InClusterConfig")
+	}
+	return config, nil
 }

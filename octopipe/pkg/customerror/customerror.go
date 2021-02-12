@@ -1,6 +1,8 @@
 package customerror
 
 import (
+	"fmt"
+	"runtime"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,6 +26,7 @@ func WithLogFields(err error, operations ...string) logrus.Fields {
 	if !ok {
 		customerr = New("Internal error", err.Error(), nil, operations...)
 	}
+
 	return logrus.Fields{
 		"id":         customerr.ID.String(),
 		"title":      customerr.Title,
@@ -33,13 +36,13 @@ func WithLogFields(err error, operations ...string) logrus.Fields {
 	}
 }
 
-func WithOperation(err error, operation string) error {
+func WithOperation(err error, operation ...string) error {
 	customerr, ok := err.(*customerror)
 	if !ok {
-		return New("Internal error", err.Error(), nil, operation)
+		return New("Internal error", err.Error(), nil, operation...)
 	}
 
-	customerr.Operations = append(customerr.Operations, operation)
+	customerr.Operations = append(customerr.Operations, trace())
 	return customerr
 }
 
@@ -71,6 +74,14 @@ func New(title string, detail string, meta map[string]string, operations ...stri
 		Title:      title,
 		Detail:     detail,
 		Meta:       newMeta,
-		Operations: operations,
+		Operations: []string{trace()},
 	}
+}
+
+func trace() string {
+	pc := make([]uintptr, 10)
+	runtime.Callers(3, pc)
+	f := runtime.FuncForPC(pc[1])
+	file, line := f.FileLine(pc[1])
+	return fmt.Sprintf("%s:%d %s", file, line, f.Name())
 }

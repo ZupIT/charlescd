@@ -14,6 +14,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/google/go-github/v33 v33.0.0 // indirect
+	github.com/google/uuid v1.1.2
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.9
 	github.com/joho/godotenv v1.3.0

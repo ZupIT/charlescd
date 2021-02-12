@@ -19,15 +19,13 @@ package github
 import (
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"octopipe/pkg/customerror"
 	"os"
 	"strconv"
 	"strings"
 
 	"gopkg.in/resty.v1"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type GithubRepository struct {
@@ -42,7 +40,9 @@ func NewGithubRepository(url, token string) GithubRepository {
 func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) (string, string, error) {
 	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_GIT_HTTPS_VALIDATION"))
 	if errParse != nil {
-		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("SKIP_GIT_HTTPS_VALIDATION invalid, valid options (1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)")
+		return "", "", customerror.New("Get chart by github failed", errParse.Error(), map[string]string{
+			"validOptions": "1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False",
+		}, "github.GetTemplateAndValueByName.ParseBool")
 	}
 
 	basePathSplit := strings.Split(githubRepository.Url, "?")
@@ -60,17 +60,21 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 	client.SetHeader("Authorization", fmt.Sprintf("token %s", githubRepository.Token))
 	resp, err := client.R().Get(completePath)
 	if err != nil {
-		return "", "", err
+		return "", "", customerror.New("Get chart by github failed", err.Error(), map[string]string{
+			"path": completePath,
+		}, "github.GetTemplateAndValueByName.RequestGet")
+	}
+
+	if resp.IsError() {
+		return "", "", customerror.New("Get chart by github failed", string(resp.Body()), map[string]string{
+			"path": completePath,
+		}, "github.GetTemplateAndValueByName.respIsError")
 	}
 
 	var contentList []map[string]interface{}
 	err = json.Unmarshal(resp.Body(), &contentList)
-	if resp.IsError() {
-		return "", "", errors.New(string(resp.Body()))
-	}
-
 	if err != nil {
-		return "", "", err
+		return "", "", customerror.New("Get chart by github failed", err.Error(), nil, "github.GetTemplateAndValueByName.Unmarshal")
 	}
 
 	var template string
@@ -89,7 +93,13 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 		if strings.Contains(contentName, ".tgz") {
 			resp, err := client.R().Get(downloadUrl)
 			if err != nil {
-				return "", "", err
+				return "", "", customerror.New("Get chart by github failed", err.Error(), nil, "github.GetTemplateAndValueByName.GetTGZ")
+			}
+
+			if resp.IsError() {
+				return "", "", customerror.New("Get chart by github failed", string(resp.Body()), map[string]string{
+					"path": downloadUrl,
+				}, "github.GetTemplateAndValueByName.GetTGZIsError")
 			}
 
 			template = string(resp.Body())
@@ -98,7 +108,13 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 		if strings.Contains(contentName, fmt.Sprintf("%s.yaml", name)) || strings.Contains(contentName, "value.yaml") {
 			resp, err := client.R().Get(downloadUrl)
 			if err != nil {
-				return "", "", err
+				return "", "", customerror.New("Get chart by github failed", err.Error(), nil, "github.GetTemplateAndValueByName.GetValue")
+			}
+
+			if resp.IsError() {
+				return "", "", customerror.New("Get chart by github failed", string(resp.Body()), map[string]string{
+					"path": downloadUrl,
+				}, "github.GetTemplateAndValueByName.GetValueIsError")
 			}
 
 			value = string(resp.Body())
@@ -106,7 +122,7 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 	}
 
 	if template == "" || value == "" {
-		return "", "", errors.New("not found template or value in git repository")
+		return "", "", customerror.New("Get chart by github failed", "Not found template or value in repository", nil, "github.GetTemplateAndValueByName.VerifyTemplteAndValue")
 	}
 
 	return template, value, nil

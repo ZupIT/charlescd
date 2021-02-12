@@ -18,6 +18,7 @@ package generic
 
 import (
 	"encoding/base64"
+	"octopipe/pkg/customerror"
 
 	"k8s.io/client-go/rest"
 )
@@ -40,17 +41,17 @@ func (genericProvider GenericProvider) GetClient() (*rest.Config, error) {
 func (genericProvider GenericProvider) getRestConfig() (*rest.Config, error) {
 	caData, err := genericProvider.getCAData()
 	if err != nil {
-		return nil, err
+		return nil, customerror.WithOperation(err, "generic.getRestConfig.getCAData")
 	}
 
 	clientCertificate, err := genericProvider.getClientCertificate()
 	if err != nil {
-		return nil, err
+		return nil, customerror.WithOperation(err, "generic.getRestConfig.getClientCertificate")
 	}
 
 	clientKey, err := genericProvider.getClientKey()
 	if err != nil {
-		return nil, err
+		return nil, customerror.WithOperation(err, "generic.getRestConfig.getClientKey")
 	}
 
 	restConfig := &rest.Config{
@@ -66,13 +67,25 @@ func (genericProvider GenericProvider) getRestConfig() (*rest.Config, error) {
 }
 
 func (genericProvider GenericProvider) getCAData() ([]byte, error) {
-	return base64.StdEncoding.DecodeString(genericProvider.CAData)
+	b, err := base64.StdEncoding.DecodeString(genericProvider.CAData)
+	if err != nil {
+		return nil, customerror.New("", err.Error(), nil, "generic.getCAData.DecodeString")
+	}
+	return b, nil
 }
 
 func (genericProvider GenericProvider) getClientCertificate() ([]byte, error) {
-	return base64.StdEncoding.DecodeString(genericProvider.ClientCertificate)
+	b, err := base64.StdEncoding.DecodeString(genericProvider.ClientCertificate)
+	if err != nil {
+		return nil, customerror.New("", err.Error(), nil, "generic.getClientCertificate.DecodeString")
+	}
+	return b, nil
 }
 
 func (genericProvider GenericProvider) getClientKey() ([]byte, error) {
-	return base64.StdEncoding.DecodeString(genericProvider.ClientKey)
+	b, err := base64.StdEncoding.DecodeString(genericProvider.ClientKey)
+	if err != nil {
+		return nil, customerror.New("", err.Error(), nil, "generic.getClientKey.DecodeString")
+	}
+	return b, nil
 }

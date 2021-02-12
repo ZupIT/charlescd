@@ -23,11 +23,11 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"octopipe/pkg/customerror"
 	"os"
 	"strconv"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/resty.v1"
 )
 
@@ -43,7 +43,9 @@ func NewGitlabRepository(url, token string) GitlabRepository {
 func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) (string, string, error) {
 	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_GIT_HTTPS_VALIDATION"))
 	if errParse != nil {
-		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("SKIP_GIT_HTTPS_VALIDATION invalid, valid options (1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)")
+		return "", "", customerror.New("Get chart by gitlab failed", errParse.Error(), map[string]string{
+			"validOptions": "1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False",
+		}, "gitlab.GetTemplateAndValueByName.ParseBool")
 	}
 
 	basePathSplit := strings.Split(gitlabRepository.Url, "?")
@@ -56,7 +58,9 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 
 	queryParams, err := url.ParseQuery(pathQueries)
 	if err != nil {
-		return "", "", err
+		return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+			"path": gitlabRepository.Url,
+		}, "gitlab.GetTemplateAndValueByName.ParseQuery")
 	}
 
 	queryParams.Add("path", name)
@@ -65,18 +69,23 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 	client.SetHeader("PRIVATE-TOKEN", fmt.Sprintf("%s", gitlabRepository.Token))
 
 	resp, err := client.R().Get(fmt.Sprintf("%s/tree?%s", basePathRepository, queryParams.Encode()))
-	if resp.IsError() {
-		return "", "", errors.New(string(resp.Body()))
-	}
-
 	if err != nil {
-		return "", "", err
+		return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+			"path": fmt.Sprintf("%s/tree?%s", basePathRepository, queryParams.Encode()),
+		}, "gitlab.GetTemplateAndValueByName.GetTree")
+	}
+	if resp.IsError() {
+		return "", "", customerror.New("Get chart by gitlab failed", string(resp.Body()), map[string]string{
+			"path": fmt.Sprintf("%s/tree?%s", basePathRepository, queryParams.Encode()),
+		}, "gitlab.GetTemplateAndValueByName.GetTreeIsError")
 	}
 
 	var contentList []map[string]interface{}
 	err = json.Unmarshal(resp.Body(), &contentList)
 	if err != nil {
-		return "", "", err
+		return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+			"body": string(resp.Body()),
+		}, "gitlab.GetTemplateAndValueByName.Unmarshal")
 	}
 
 	var template string
@@ -95,18 +104,24 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 		}
 		if strings.Contains(contentName, ".tgz") {
 			resp, err := client.R().Get(fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()))
-			if resp.IsError() {
-				return "", "", errors.New(string(resp.Body()))
+			if err != nil {
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartTGZError")
 			}
 
-			if err != nil {
-				return "", "", err
+			if resp.IsError() {
+				return "", "", customerror.New("Get chart by gitlab failed", string(resp.Body()), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartTGZFailed")
 			}
 
 			var contentFile map[string]interface{}
 			err = json.Unmarshal(resp.Body(), &contentFile)
 			if err != nil {
-				return "", "", err
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"body": string(resp.Body()),
+				}, "gitlab.GetTemplateAndValueByName.UnmarshalChartTGZ")
 			}
 
 			content, ok := contentFile["content"].(string)
@@ -121,18 +136,24 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 
 		if strings.Contains(contentName, fmt.Sprintf("%s.yaml", name)) || strings.Contains(contentName, "value.yaml") {
 			resp, err := client.R().Get(fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()))
-			if resp.IsError() {
-				return "", "", errors.New(string(resp.Body()))
+			if err != nil {
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartValueError")
 			}
 
-			if err != nil {
-				return "", "", err
+			if resp.IsError() {
+				return "", "", customerror.New("Get chart by gitlab failed", string(resp.Body()), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartValueFailed")
 			}
 
 			var contentFile map[string]interface{}
 			err = json.Unmarshal(resp.Body(), &contentFile)
 			if err != nil {
-				return "", "", err
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"body": string(resp.Body()),
+				}, "gitlab.GetTemplateAndValueByName.UnmarshalChartValue")
 			}
 
 			content, ok := contentFile["content"].(string)
