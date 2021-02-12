@@ -4,10 +4,9 @@ export const noRepeatedCircleDr = {
   metadata: {
     name: 'A',
     namespace: 'sandbox',
-    circles: [
-      'default-circle-id',
-      'normal-circle-id'
-    ]
+    annotations: {
+      circles: '["default-circle-id","normal-circle-id"]'
+    }
   },
   spec: {
     host: 'A',

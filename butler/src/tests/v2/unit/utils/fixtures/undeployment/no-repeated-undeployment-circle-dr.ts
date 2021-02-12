@@ -4,9 +4,9 @@ export const noRepeatedUndeploymentCircleDr = {
   metadata: {
     name: 'A',
     namespace: 'sandbox',
-    circles: [
-      'default-circle-id'
-    ]
+    annotations: {
+      circles: '["default-circle-id"]'
+    }
   },
   spec: {
     host: 'A',

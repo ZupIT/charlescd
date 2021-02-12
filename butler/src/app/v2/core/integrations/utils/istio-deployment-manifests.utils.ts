@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
+import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
@@ -31,7 +31,9 @@ const IstioDeploymentManifestsUtils = {
       metadata: {
         name: `${component.name}`,
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
-        circles: activeByName.map(c => c.deployment.circleId)
+        annotations: {
+          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+        }
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -50,7 +52,9 @@ const IstioDeploymentManifestsUtils = {
       metadata: {
         name: component.name,
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
-        circles: activeByName.map(c => c.deployment.circleId)
+        annotations: {
+          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+        }
       },
       spec: {
         host: component.name,

@@ -31,7 +31,9 @@ const IstioUndeploymentManifestsUtils = {
       metadata: {
         name: `${component.name}`,
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
-        circles: activeByName.map(c => c.deployment.circleId)
+        annotations: {
+          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+        }
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -48,7 +50,10 @@ const IstioUndeploymentManifestsUtils = {
       metadata: {
         name: component.name,
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
-        circles: []
+        annotations: {
+          circles: JSON.stringify([])
+        }
+
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -85,7 +90,9 @@ const IstioUndeploymentManifestsUtils = {
       metadata: {
         name: component.name,
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
-        circles: istioSubsets.map(s => s.labels.circleId)
+        annotations: {
+          circles: JSON.stringify(istioSubsets.map(s => s.labels.circleId))
+        }
       },
       spec: {
         host: component.name,

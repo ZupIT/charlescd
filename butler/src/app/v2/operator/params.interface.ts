@@ -103,7 +103,9 @@ export interface VirtualServiceSpec {
     metadata: {
       name: string
       namespace: string
-      circles: string[]
+      annotations: {
+        circles: string,
+      }
     }
     spec: {
       gateways: string[]
@@ -118,7 +120,10 @@ export interface DestinationRuleSpec {
     metadata: {
       name: string
       namespace: string
-      circles: string[]
+      annotations: {
+        circles: string,
+      }
+      teste?: string
     }
     spec: {
       host: string
