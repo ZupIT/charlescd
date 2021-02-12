@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { isEmpty } from 'lodash'
+import { groupBy, isEmpty } from 'lodash'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { Component } from '../../api/deployments/interfaces'
@@ -43,15 +43,13 @@ export class CreateRoutesManifestsUseCase {
     let specs : (VirtualServiceSpec | DestinationRuleSpec)[]= []
     for (const c of hookParams.parent.spec.circles) {
       const deployment = await this.retriveDeploymentFor(c.id)
-      const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
+      const activeComponents = await this.componentsRepository.findHealthyActiveComponents(deployment.cdConfiguration.id)
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
       specs = specs.concat(proxySpecs)
     }
-    console.log({
-      observed: JSON.stringify(hookParams),
-      desired: JSON.stringify(specs)
-    })
-    return { children: specs }
+    const healthStatus = this.getRoutesStatus(hookParams, specs)
+    await this.updateHealthStatus(healthStatus)
+    return { children: specs, resyncAfterSeconds: 5 }
   }
 
   public getRoutesStatus(observed: PartialRouteHookParams, desired: SpecsUnion[]): {circle: string, component: string, status: boolean, kind: string}[] {
@@ -59,10 +57,26 @@ export class CreateRoutesManifestsUseCase {
       return []
     }
     return desired.flatMap(spec => {
-      return spec.metadata.circles.flatMap(desiredCircleId => {
+      const circles : string[] = JSON.parse(spec.metadata.annotations.circles)
+      return circles.flatMap(desiredCircleId => {
         return this.handleSpecStatus(observed, spec, desiredCircleId)
       })
     })
+  }
+
+  public async updateHealthStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
+    const components = groupBy(componentStatus, 'circle')
+    const results =  await Promise.all(Object.entries(components).flatMap(async c => {
+      const circleId = c[0]
+      const status = c[1]
+      if (status.every(s => s.status === true)) {
+        return await this.deploymentRepository.updateRouteStatus(circleId, true)
+      } else {
+        return await this.deploymentRepository.updateRouteStatus(circleId, false)
+      }
+    }))
+
+    return results
   }
 
   private handleSpecStatus(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): { circle: string, component: string, status: boolean, kind: string } {
@@ -97,8 +111,10 @@ export class CreateRoutesManifestsUseCase {
   }
 
   private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
-    const desiredDestinationRulePresent = observed.children['DestinationRule.networking.istio.io/v1beta1'][spec.metadata.name].metadata.circles.includes(circleId)
-    const desiredVirtualServicePresent = observed.children['VirtualService.networking.istio.io/v1beta1'][spec.metadata.name].metadata.circles.includes(circleId)
+    const destionRulesCircles : string[] = JSON.parse(observed.children['DestinationRule.networking.istio.io/v1beta1'][spec.metadata.name].metadata.annotations.circles)
+    const desiredDestinationRulePresent = destionRulesCircles.includes(circleId)
+    const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1beta1'][spec.metadata.name].metadata.annotations.circles)
+    const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
     if (desiredDestinationRulePresent && desiredVirtualServicePresent) {
       return true
     }
@@ -132,12 +148,5 @@ export class CreateRoutesManifestsUseCase {
     const destinationRules = IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, newComponent, activeByName)
     const virtualService = IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, newComponent, activeByName)
     return [destinationRules, virtualService]
-  }
-
-  private isDestinationRule(manifest: SpecsUnion): manifest is DestinationRuleSpec {
-    return manifest.kind === 'DestinationRule'
-  }
-  private isVirtualService(manifest: SpecsUnion): manifest is VirtualServiceSpec {
-    return manifest.kind === 'VirtualService'
   }
 }

@@ -36,11 +36,12 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .execute()
     return this.findOneOrFail(updated.raw[0].id)
   }
-  public async updateRouteStatus(id: string, status: boolean): Promise<DeploymentEntityV2> {
+
+  public async updateRouteStatus(circleId: string, status: boolean): Promise<DeploymentEntityV2> {
     const updated = await this.createQueryBuilder('d')
       .update()
       .set({ routed: status })
-      .where({ id: id })
+      .where({ circleId: circleId, current: true })
       .returning('id')
       .execute()
     return this.findOneOrFail(updated.raw[0].id)

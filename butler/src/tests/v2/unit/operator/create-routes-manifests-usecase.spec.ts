@@ -69,6 +69,7 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('generate route manifest correctly', async() => {
+    jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,
@@ -78,7 +79,7 @@ describe('Hook Routes Manifest Creation', () => {
 
     const manifests = await routeUseCase.execute(hookParams)
 
-    expect(manifests).toEqual({ children: routesManifests })
+    expect(manifests).toEqual({ children: routesManifests, resyncAfterSeconds: 5 })
   })
 
   it('throws exception when manifests generation fail', async() => {
@@ -175,7 +176,9 @@ describe('Compare observed routes state with desired routes state', () => {
             metadata: {
               name: 'abobora',
               namespace: 'default',
-              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+              annotations: {
+                circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+              }
             }
           },
           jilo: {
@@ -183,7 +186,9 @@ describe('Compare observed routes state with desired routes state', () => {
             metadata: {
               name: 'abobora',
               namespace: 'default',
-              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+              annotations: {
+                circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+              }
             }
           }
         },
@@ -193,7 +198,9 @@ describe('Compare observed routes state with desired routes state', () => {
             metadata: {
               name: 'abobora',
               namespace: 'default',
-              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+              annotations: {
+                circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+              }
             }
           },
           jilo: {
@@ -201,7 +208,9 @@ describe('Compare observed routes state with desired routes state', () => {
             metadata: {
               name: 'jilo',
               namespace: 'default',
-              circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+              annotations: {
+                circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+              }
             }
           }
         }
@@ -214,7 +223,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'jilo',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         }
       },
       {
@@ -222,7 +233,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'jilo',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         },
       },
       {
@@ -230,7 +243,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'abobora',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         }
       },
       {
@@ -238,7 +253,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'abobora',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         }
       }
     ]
@@ -318,7 +335,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'jilo',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         }
       },
       {
@@ -326,7 +345,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'jilo',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         }
       },
       {
@@ -334,7 +355,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'abobora',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         },
       },
       {
@@ -342,7 +365,9 @@ describe('Compare observed routes state with desired routes state', () => {
         metadata: {
           name: 'abobora',
           namespace: 'default',
-          circles: ['ad2a1669-34b8-4af2-b42c-acbad2ec6b60']
+          annotations: {
+            circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
+          }
         }
       }
     ]
