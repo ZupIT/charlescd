@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import isEqual from 'lodash/isEqual';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
@@ -27,7 +26,6 @@ import routes from 'core/constants/routes';
 import isEmpty from 'lodash/isEmpty';
 import Components from './Components';
 import { component } from './constants';
-import { validFields } from './helpers';
 import Styled from './styled';
 
 interface Props {
