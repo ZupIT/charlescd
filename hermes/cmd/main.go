@@ -23,10 +23,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"hermes/internal/configuration"
 	"hermes/internal/notification/message"
+	"hermes/internal/notification/messagePubSub"
 	"hermes/internal/notification/messageexecutionhistory"
-	"hermes/internal/notification/rabbitClient"
 	"hermes/internal/subscription"
-	"hermes/queueprotocol"
+	"hermes/rabbitClient"
 	"hermes/web/api"
 	"log"
 	"os"
@@ -46,7 +46,7 @@ func main() {
 	}
 
 	goChan := make(chan os.Signal, 1)
-	amqpClient := queueprotocol.NewClient(
+	amqpClient := rabbitClient.NewClient(
 		configuration.GetConfiguration("AMQP_LISTEN_QUEUE"),
 		configuration.GetConfiguration("AMQP_PUSH_QUEUE"),
 		configuration.GetConfiguration("AMQP_URL"),
@@ -57,12 +57,12 @@ func main() {
 	subscriptionMain := subscription.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
-	rabbitClientMain := rabbitClient.NewMain(db, amqpClient, messageMain, messageExecutionMain)
+	messagePubSubMain := messagePubSub.NewMain(db, amqpClient, messageMain, messageExecutionMain, subscriptionMain)
 
 	stopPub := make(chan bool, 0)
-	go rabbitClientMain.Publish(stopPub)
-	stopCon := make(chan bool, 0)
-	go rabbitClientMain.Consume(stopCon)
+	go messagePubSubMain.Publish(stopPub)
+	stopSub := make(chan bool, 0)
+	go messagePubSubMain.Consume(stopSub)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)

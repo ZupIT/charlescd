@@ -1,8 +1,7 @@
-package rabbitClient
+package messagePubSub
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -105,30 +104,4 @@ func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, 
 
 		return nil
 	})
-}
-
-func (main *Main) Consume(stopCon chan bool) error {
-	interval, err := time.ParseDuration(configuration.GetConfiguration("CONSUMER_TIME"))
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start consumer", "Get sync interval failed").
-				WithOperations("Start.getInterval"),
-		}).Errorln()
-		return err
-	}
-
-	ticker := time.NewTicker(interval)
-	for {
-		select {
-		case <-ticker.C:
-			err := main.amqpClient.Stream()
-			if err != nil {
-				fmt.Println(err)
-				return err
-			}
-		case <-stopCon:
-			fmt.Println(stopCon)
-			return nil
-		}
-	}
 }

@@ -19,6 +19,7 @@
 package subscription
 
 import (
+	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"io"
 
@@ -37,6 +38,7 @@ type UseCases interface {
 	FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error)
 	FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.Error)
 	CountAllByExternalId(externalId uuid.UUID) (int64, errors.Error)
+	SendWebhookEvent(msg payloads.MessageResponse) errors.Error
 }
 type Main struct {
 	db *gorm.DB

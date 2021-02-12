@@ -45,6 +45,7 @@ type SaveResponse struct {
 type Response struct {
 	ID          uuid.UUID       `json:"id"`
 	ExternalId  uuid.UUID       `json:"externalId"`
+	ApiKey      []byte          `json:"apiKey" gorm:"type:bytea"`
 	Url         string          `json:"url"`
 	Description string          `json:"description"`
 	Events      json.RawMessage `json:"events"`

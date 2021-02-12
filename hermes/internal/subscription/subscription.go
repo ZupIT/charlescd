@@ -19,11 +19,15 @@
 package subscription
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/google/uuid"
+	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"hermes/util"
 	"io"
+	"io/ioutil"
+	"net/http"
 	"time"
 )
 
@@ -182,4 +186,45 @@ func (main Main) CountAllByExternalId(externalId uuid.UUID) (int64, errors.Error
 	}
 
 	return count, nil
+}
+
+func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
+	sub, e := main.FindById(msg.SubscriptionId)
+	if e != nil {
+		return e
+	}
+
+	msgEvent, err := msg.Event.MarshalJSON()
+	if err != nil {
+		return errors.NewError("Error marshaling message event: ", err.Error()).
+			WithOperations(msg.Id.String())
+	}
+
+	type eventBody struct {
+		Content string `json:"content"`
+	}
+	reqBody, err := json.Marshal(eventBody{Content: string(msgEvent)})
+
+	req, err := http.NewRequest("POST", sub.Url, bytes.NewBuffer(reqBody))
+	if err != nil {
+		return errors.NewError("Error creating http request: ", err.Error()).
+			WithOperations(sub.Url)
+	}
+
+	req.Header.Add("Content-type", "application/json")
+	if string(sub.ApiKey) != "" {
+		req.Header.Add("x-application-key", string(sub.ApiKey))
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return errors.NewError("Error calling http request: ", err.Error()).
+			WithOperations(sub.Url)
+	}
+
+	defer res.Body.Close()
+	resBody, err := ioutil.ReadAll(res.Body)
+	print(string(resBody))
+
+	return nil
 }

@@ -1,4 +1,4 @@
-package queueprotocol
+package rabbitClient
 
 import (
 	"encoding/json"
@@ -177,7 +177,7 @@ func (c *Client) UnsafePush(data []byte) error {
 	)
 }
 
-func (c *Client) Stream() error {
+func (c *Client) Stream() (payloads.MessageResponse, error) {
 	for {
 		if c.isConnected {
 			break
@@ -187,49 +187,39 @@ func (c *Client) Stream() error {
 
 	err := c.channel.Qos(1, 0, false)
 	if err != nil {
-		return err
+		return payloads.MessageResponse{}, err
 	}
 
-	for i := 1; i <= c.threads; i++ {
-		messages, err := c.channel.Consume(
-			c.streamQueue,
-			consumerName(i), 		// Consumer
-			false,           // Auto-Ack
-			false,           // Exclusive
-			false,           // No-local
-			false,           // No-Wait
-			nil,             // Args
-		)
-		if err != nil {
-			return err
-		}
-
-		go func(i int) {
-			defer c.wg.Done()
-			for msg := range messages {
-				c.processMessage(msg, consumerName(i))
-			}
-		}(i)
+	messages, err := c.channel.Consume(
+		c.streamQueue,
+		time.Now().String(), // Consumer
+		false,               // Auto-Ack
+		false,               // Exclusive
+		false,               // No-local
+		false,               // No-Wait
+		nil,                 // Args
+	)
+	if err != nil {
+		print("a")
+		return payloads.MessageResponse{}, err
 	}
 
-	c.wg.Wait()
+	for msg := range messages {
+		messageResponse, err := c.processMessage(msg)
+		return messageResponse, err
+	}
 
-	return nil
+	return payloads.MessageResponse{}, err
 }
 
-func (c *Client) processMessage(msg amqp.Delivery, consumerName string) {
+func (c *Client) processMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
 	l := c.logger
 	startTime := time.Now()
 
 	messageResponse, err := parseMessage(msg)
 	if err != nil {
-		logAndNack(msg, l, startTime, "unmarshalling body: %s - %s", string(msg.Body), err.Error())
-		return
-	}
-
-	if messageResponse.Id.String() == "" {
-		logAndNack(msg, l, startTime, "received event without id")
-		return
+		logAndNack(msg, l, startTime, "error parse message: %s - %s", string(msg.Body), err.Error())
+		return payloads.MessageResponse{}, err
 	}
 
 	defer func(messageResponse payloads.MessageResponse, m amqp.Delivery, logger *logrus.Logger) {
@@ -245,12 +235,12 @@ func (c *Client) processMessage(msg amqp.Delivery, consumerName string) {
 	}(messageResponse, msg, l)
 
 	logrus.WithFields(logrus.Fields{
-		"Consumer":         consumerName,
 		"Message consumed": messageResponse.Id,
 		"Time":             time.Now(),
 	}).Println()
 
 	msg.Ack(false)
+	return messageResponse, nil
 }
 
 func logAndNack(msg amqp.Delivery, l *logrus.Logger, t time.Time, err string, args ...interface{}) {
@@ -258,10 +248,6 @@ func logAndNack(msg amqp.Delivery, l *logrus.Logger, t time.Time, err string, ar
 	l.WithFields(logrus.Fields{
 		"took-ms": time.Since(t).Milliseconds(),
 	}).Error(fmt.Sprintf(err, args...))
-}
-
-func consumerName(i int) string {
-	return fmt.Sprintf("hermes-consumer-%d", i)
 }
 
 func parseMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
