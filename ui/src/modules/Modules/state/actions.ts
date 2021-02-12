@@ -22,7 +22,8 @@ export enum ACTION_TYPES {
   loadModules = 'MODULES/LIST',
   loadModule = 'MODULES/GET',
   loadComponent = 'MODULES/ADD_COMPONENT',
-  resetModule = 'MODULES/RESET'
+  resetModule = 'MODULE/RESET',
+  resetModules = 'MODULES/RESET'
 }
 
 interface LoadModulesActionType {
@@ -42,6 +43,10 @@ interface LoadComponentActionType {
 
 interface ResetModuleActionType {
   type: typeof ACTION_TYPES.resetModule;
+}
+
+interface ResetModulesActionType {
+  type: typeof ACTION_TYPES.resetModules;
 }
 
 export const loadModulesAction = (
@@ -67,8 +72,13 @@ export const resetModuleAction = (): ResetModuleActionType => ({
   type: ACTION_TYPES.resetModule
 });
 
+export const resetModulesAction = (): ResetModulesActionType => ({
+  type: ACTION_TYPES.resetModules
+});
+
 export type ModulesActionTypes =
   | LoadModulesActionType
   | LoadModuleActionType
   | LoadComponentActionType
-  | ResetModuleActionType;
+  | ResetModuleActionType
+  | ResetModulesActionType;
