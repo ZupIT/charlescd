@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, act, waitFor } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
 import * as WorkspaceHooks from '../hooks';
@@ -56,12 +56,12 @@ test('render Workspace modal', async () => {
   render(<Workspace selectedWorkspace={jest.fn()} />);
   
   const button = screen.getByTestId('button-default-workspaceModal');
-  fireEvent.click(button);
+  userEvent.click(button);
 
-  await waitFor(() => expect(screen.queryByTestId('modal-default')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId('modal-default')).toBeInTheDocument());
   
   const cancelButton = screen.getByTestId('icon-cancel');
-  fireEvent.click(cancelButton);
+  userEvent.click(cancelButton);
   await waitFor(() => expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument());
 });
 
@@ -71,21 +71,22 @@ test('render Workspace and see a placeholder', async () => {
   render(<Workspace selectedWorkspace={jest.fn()} />);
 
   await waitFor(() => {
-    expect(screen.queryByTestId('placeholder-empty-workspaces')).toBeInTheDocument();
+    expect(screen.getByTestId('placeholder-empty-workspaces')).toBeInTheDocument();
   });
 });
 
 test('render Workspace modal and add new workspace', async () => {
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+
   render(<Workspace selectedWorkspace={jest.fn()} />);
+
   const button = screen.getByTestId('button-default-workspaceModal');
-  fireEvent.click(button);
+  userEvent.click(button);
 
   await waitFor(() => expect(screen.queryByTestId('modal-default')).toBeInTheDocument());
   
   const inputWorkspace = screen.getByTestId('label-text-name');
-
-  fireEvent.input(inputWorkspace , 'workspace');
+  await act(async () => userEvent.type(inputWorkspace , 'workspace'));
 
   expect(screen.queryByTestId('modal-default')).toBeInTheDocument();
 });
@@ -103,9 +104,9 @@ test('render Workspace with isIDMAuthFlow disabled and search', async () => {
 
   const search = screen.getByTestId('input-text-search');
 
-  await act(() => userEvent.type(search , 'workspace'));
+  await act(async () => userEvent.type(search , 'workspace'));
 
-  await waitFor(() => expect(workspaceRequest).toHaveBeenCalledTimes(0));
+  await waitFor(() => expect(workspaceRequest).not.toHaveBeenCalled());
 });
 
 test('render Workspace with isIDMAuthFlow enabled and search', async () => {
