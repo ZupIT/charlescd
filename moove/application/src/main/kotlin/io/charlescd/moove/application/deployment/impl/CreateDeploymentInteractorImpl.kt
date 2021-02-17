@@ -76,7 +76,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     }
 
     private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment) {
-        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.START_DEPLOY, status)
+        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.DEPLOY, WebhookEventSubTypeEnum.START_DEPLOY, status)
         webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
     }
 

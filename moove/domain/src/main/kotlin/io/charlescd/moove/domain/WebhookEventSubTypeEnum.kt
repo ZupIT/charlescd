@@ -16,15 +16,9 @@
 
 package io.charlescd.moove.domain
 
-abstract class WebhookEvent(
-    open val externalId: String,
-    open val eventType: WebhookEventTypeEnum,
-    open val eventStatus: WebhookEventStatusEnum
-)
-
-data class SimpleWebhookEvent(
-    val workspaceId: String,
-    val eventType: WebhookEventTypeEnum,
-    val eventSubType: WebhookEventSubTypeEnum,
-    val eventStatus: WebhookEventStatusEnum
-)
+enum class WebhookEventSubTypeEnum {
+    START_DEPLOY,
+    START_UNDEPLOY,
+    FINISH_DEPLOY,
+    FINISH_UNDEPLOY
+}

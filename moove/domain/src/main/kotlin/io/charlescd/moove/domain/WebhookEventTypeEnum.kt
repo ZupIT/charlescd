@@ -17,8 +17,6 @@
 package io.charlescd.moove.domain
 
 enum class WebhookEventTypeEnum {
-    START_DEPLOY,
-    START_UNDEPLOY,
-    FINISH_DEPLOY,
-    FINISH_UNDEPLOY
+    DEPLOY,
+    UNDEPLOY
 }

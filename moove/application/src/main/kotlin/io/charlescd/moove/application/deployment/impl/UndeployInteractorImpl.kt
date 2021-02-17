@@ -52,7 +52,7 @@ open class UndeployInteractorImpl @Inject constructor(
     }
 
     private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment) {
-        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.START_UNDEPLOY, status)
+        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.DEPLOY, WebhookEventSubTypeEnum.START_UNDEPLOY, status)
         webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
     }
 
