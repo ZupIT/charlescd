@@ -54,9 +54,10 @@ const Icon = styled(IconComponent)`
   cursor: pointer;
 `;
 
+// TODO remove margin?
 const Link = styled.button`
   display: block;
-  padding: 0px;
+  padding: 0 16px;
   margin: 0px;
   background: none;
   border: none;
