@@ -28,7 +28,7 @@ export class DeploymentsHookController {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const rawSpecs = deployment.components.flatMap(c => c.manifests)
-    const specs = reconcile.addMetadata(rawSpecs, deployment)
+    const specs = reconcile.addMetadata(rawSpecs, deployment, decryptedConfig)
 
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
@@ -44,7 +44,7 @@ export class DeploymentsHookController {
         return { children: specs, resyncAfterSeconds: 5 }
       }
       const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = reconcile.concatWithPrevious(previousDeployment, specs)
+      const currentAndPrevious = reconcile.concatWithPrevious(previousDeployment, specs, decryptedConfig)
       return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
 
