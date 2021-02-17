@@ -50,7 +50,7 @@ export class DeploymentsHookController {
 
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
     try {
-      await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
+      await this.k8sClient.applyRoutingCustomResource(activeComponents)
     } catch (error) {
       this.consoleLoggerService.error('DEPLOYMENT_RECONCILE:APPLY_ROUTE_CRD_ERROR', error)
       await this.deploymentRepository.updateHealthStatus(deployment.id, false)
@@ -65,10 +65,9 @@ export class DeploymentsHookController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: [], finalized: boolean, resyncAfterSeconds?: number }> {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
-    const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const finalized = true
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
-    await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
+    await this.k8sClient.applyRoutingCustomResource(activeComponents)
 
     // we cant trust that everything went well instantly, we need to keep returning finalized = true until we are sure there are no more routes to this deployment
     // const currentRoutes = this.k8sClient.getRoutingResource()

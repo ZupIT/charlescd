@@ -82,6 +82,8 @@ spec:
                 secretKeyRef:
                   name: deploy-aes256-key
                   key: encryption-key
+            - name: BUTLER_NAMESPACE
+              value: {{ .Release.Namespace }}
           resources:
 {{ toYaml .Values.butler.resources | indent 12 }}
     {{- with .Values.butler.nodeSelector }}

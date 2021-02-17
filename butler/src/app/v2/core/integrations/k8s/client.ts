@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import * as k8s from '@kubernetes/client-node'
 import { CrdBuilder } from './crd-builder'
 import { KubernetesManifest } from '../interfaces/k8s-manifest.interface'
 import { ConsoleLoggerService } from '../../logs/console'
+import { IoCTokensConstants } from '../../constants/ioc'
+import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
 
 @Injectable()
 export class K8sClient {
@@ -27,7 +29,9 @@ export class K8sClient {
   public client: k8s.KubernetesObjectApi
 
   constructor(
-    private consoleLoggerService: ConsoleLoggerService
+    private consoleLoggerService: ConsoleLoggerService,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private readonly envConfiguration: IEnvConfiguration
   ) {
     const kc = new k8s.KubeConfig()
     kc.loadFromCluster()
@@ -36,7 +40,7 @@ export class K8sClient {
 
   public async applyDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
-    const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, this.envConfiguration.butlerNamespace)
     this.consoleLoggerService.log('GET:CHARLES_DEPLOYMENT_MANIFEST', { deploymentManifest })
 
     Object.assign(deploymentManifest.metadata, { labels: { deployment_id: deployment.id } })
@@ -56,7 +60,7 @@ export class K8sClient {
 
   public async applyUndeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
     this.consoleLoggerService.log('START:UNDEPLOY_DEPLOYMENT_CUSTOM_RESOURCE', { deploymentId: deployment.id })
-    const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    const deploymentManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, this.envConfiguration.butlerNamespace)
 
     try {
       await this.readResource(deploymentManifest)
@@ -67,9 +71,9 @@ export class K8sClient {
     }
   }
 
-  public async applyRoutingCustomResource(cdConfigurationId: string, activeComponents: Component[]): Promise<void> { // TODO return type?
-    this.consoleLoggerService.log('START:APPLY_ROUTING_CUSTOM_RESOURCE', { cdConfigurationId, activeComponents })
-    const routingManifest = CrdBuilder.buildRoutingCrdManifest(cdConfigurationId, activeComponents)
+  public async applyRoutingCustomResource(activeComponents: Component[]): Promise<void> { // TODO return type?
+    this.consoleLoggerService.log('START:APPLY_ROUTING_CUSTOM_RESOURCE', { activeComponents })
+    const routingManifest = CrdBuilder.buildRoutingCrdManifest(activeComponents, this.envConfiguration.butlerNamespace)
 
     try {
       await this.readResource(routingManifest)
