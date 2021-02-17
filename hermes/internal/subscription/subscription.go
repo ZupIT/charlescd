@@ -21,6 +21,7 @@ package subscription
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
@@ -224,7 +225,7 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 
 	defer res.Body.Close()
 	resBody, err := ioutil.ReadAll(res.Body)
-	print(string(resBody))
+	fmt.Printf("%d: %s\n", res.StatusCode, resBody)
 
 	return nil
 }
