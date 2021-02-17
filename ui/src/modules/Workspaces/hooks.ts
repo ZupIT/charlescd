@@ -37,8 +37,7 @@ export const useWorkspace = (): [Function, Function, boolean] => {
   );
 
   useEffect(() => {
-    // TODO if(response)
-    if (!error) {
+    if (response) {
       dispatch(loadedWorkspacesAction(response));
     } else {
       console.error(error);
