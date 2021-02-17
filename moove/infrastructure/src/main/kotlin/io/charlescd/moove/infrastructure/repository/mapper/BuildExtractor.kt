@@ -23,6 +23,8 @@ import io.charlescd.moove.domain.*
 import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
+import java.util.*
+import kotlin.collections.HashSet
 
 @Component
 class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtractor<Set<Build>> {
@@ -195,8 +197,15 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         circle = mapCircle(resultSet),
         buildId = resultSet.getString("deployment_build_id"),
         workspaceId = resultSet.getString("deployment_workspace_id"),
-        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime()
+        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime(),
+        metadata = getMetadata(resultSet.getObject("deployment_metadata"))
     )
+
+    private fun getMetadata(metadata: Any?): Map<String, String>? {
+        return metadata?.let{
+            return it as Map<String,String>
+        }
+    }
 
     private fun mapDeploymentUser(resultSet: ResultSet) = User(
         id = resultSet.getString("deployment_user_id"),

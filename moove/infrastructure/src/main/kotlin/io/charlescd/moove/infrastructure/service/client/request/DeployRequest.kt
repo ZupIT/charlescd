@@ -25,7 +25,8 @@ data class DeployRequest(
     val circle: DeployCircleRequest,
     val callbackUrl: String,
     val cdConfigurationId: String,
-    val defaultCircle: Boolean
+    val defaultCircle: Boolean,
+    val metadata: Map<String, String>?
 )
 
 data class DeployModuleRequest(

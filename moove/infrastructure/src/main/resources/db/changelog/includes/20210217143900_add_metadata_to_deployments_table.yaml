@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20210217143900-0
+      author: thalles.freitas
+      comment: "Add column metadata to deployments"
+      changes:
+        - addColumn:
+            tableName: deployments
+            column:
+              name: metadata
+              type: jsonb
+              constraints:
+                nullable: true

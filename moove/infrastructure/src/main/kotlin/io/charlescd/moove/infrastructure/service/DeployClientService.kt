@@ -40,7 +40,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
                 build,
                 deployment.circle.id,
                 cdConfigurationId,
-                isDefaultCircle
+                isDefaultCircle,
+                deployment.metadata
             )
         )
     }
@@ -63,7 +64,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         build: Build,
         circleId: String,
         cdConfigurationId: String,
-        isDefault: Boolean
+        isDefault: Boolean,
+        metadata: Map<String, String>?
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
@@ -74,7 +76,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             circle = createDeployCircleRequest(circleId),
             callbackUrl = createCallbackUrl(deployment),
             cdConfigurationId = cdConfigurationId,
-            defaultCircle = isDefault
+            defaultCircle = isDefault,
+            metadata = metadata
         )
     }
 

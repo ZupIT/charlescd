@@ -32,7 +32,10 @@ data class CreateDeploymentRequest(
     val circleId: String,
 
     @field:NotBlank
-    val buildId: String
+    val buildId: String,
+
+    val metadata: Map<String, String>?
+
 ) {
     fun toDeployment(workspaceId: String, user: User, circle: Circle): Deployment {
         return Deployment(
@@ -44,6 +47,7 @@ data class CreateDeploymentRequest(
             status = DeploymentStatusEnum.DEPLOYING,
             workspaceId = workspaceId,
             buildId = buildId,
+            metadata = metadata,
             undeployedAt = null
         )
     }

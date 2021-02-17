@@ -27,6 +27,7 @@ data class Deployment(
     val circle: Circle,
     val buildId: String,
     val workspaceId: String,
+    val metadata: Map<String, String>?,
     val undeployedAt: LocalDateTime?
 ) {
     fun isActive(): Boolean =
