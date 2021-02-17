@@ -19,12 +19,13 @@ package deployment
 import (
 	"context"
 	"fmt"
-	"github.com/argoproj/gitops-engine/pkg/utils/kube/kubetest"
-	"k8s.io/client-go/rest"
 	"log"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/argoproj/gitops-engine/pkg/utils/kube/kubetest"
+	"k8s.io/client-go/rest"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
@@ -169,7 +170,8 @@ func TestActionFailed(t *testing.T) {
 	)
 
 	err := deployment.Do()
-	if err != nil && !strings.Contains(err.Error(), "Failed to execute deployment") {
+	fmt.Println(err)
+	if err != nil && !strings.Contains(err.Error(), "Not recognize deploy action") {
 		t.Error(err)
 	}
 

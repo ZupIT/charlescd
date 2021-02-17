@@ -139,7 +139,7 @@ const FormModule = ({ module, onChange }: Props) => {
       {helmGitProvider.value !== 'GITHUB' && (
         <Styled.FieldPopover>
           <Styled.Input
-            label="Insert gitlab url"
+            label="Insert url"
             name="helmGitlabUrl"
             ref={helmRegister({ required: true })}
           />
@@ -147,28 +147,28 @@ const FormModule = ({ module, onChange }: Props) => {
       )}
       <Styled.FieldPopover>
         <Styled.Input
-          label="Insert gitlab organization"
+          label="Insert organization"
           name="helmOrganization"
           ref={helmRegister({ required: true })}
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
-          label="Insert gitlab repository"
+          label="Insert repository"
           name="helmRepository"
           ref={helmRegister({ required: true })}
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
-          label="Insert gitlab path (Optional)"
+          label="Insert path (Optional)"
           name="helmPath"
           ref={helmRegister()}
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
-          label="Insert gitlab branch (Optional, Default = main)"
+          label="Insert branch (Optional, Default=main)"
           name="helmBranch"
           ref={helmRegister()}
         />
