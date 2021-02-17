@@ -109,13 +109,31 @@ func (c *Client) connect(addr string) bool {
 		return false
 	}
 
+	err = ch.ExchangeDeclare(
+		"retry",   // name
+		"fanout", // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
+	)
+
+	if err != nil {
+		c.logger.Printf("failed to declare listen exchange: %v", err)
+		return false
+	}
+
 	_, err = ch.QueueDeclare(
 		c.pushQueue,
 		true,  // Durable
 		false, // Delete when unused
 		false, // Exclusive
 		false, // No-wait
-		nil,   // Arguments
+		amqp.Table{
+			// When the message expires, send the message to the retry exchange
+			"x-dead-letter-exchange":"retry",
+		},   // Arguments
 	)
 	if err != nil {
 		c.logger.Printf("failed to declare push queue: %v", err)
@@ -161,6 +179,8 @@ func (c *Client) Push(data []byte) error {
 
 }
 
+
+
 func (c *Client) UnsafePush(data []byte) error {
 	if !c.isConnected {
 		return ErrDisconnected
@@ -173,6 +193,7 @@ func (c *Client) UnsafePush(data []byte) error {
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        data,
+			Expiration: "10000",
 		},
 	)
 }
