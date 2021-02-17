@@ -19,7 +19,6 @@
 package subscription
 
 import (
-	"encoding/json"
 	"github.com/google/uuid"
 	"hermes/util"
 )
@@ -30,12 +29,12 @@ type Request struct {
 	Url         string          `json:"url"`
 	Description string          `json:"description"`
 	ApiKey      string          `json:"apiKey"`
-	Events      json.RawMessage `json:"events"`
+	Events      []string        `json:"events"`
 	CreatedBy   string          `json:"createdBy"`
 }
 
 type UpdateRequest struct {
-	Events json.RawMessage `json:"events"`
+	Events []string `json:"events"`
 }
 
 type SaveResponse struct {
@@ -48,7 +47,7 @@ type Response struct {
 	ApiKey      []byte          `json:"apiKey" gorm:"type:bytea"`
 	Url         string          `json:"url"`
 	Description string          `json:"description"`
-	Events      json.RawMessage `json:"events"`
+	Events      string `json:"events"`
 }
 
 type ExternalIdResponse struct {

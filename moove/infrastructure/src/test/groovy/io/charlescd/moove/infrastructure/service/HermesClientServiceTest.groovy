@@ -30,7 +30,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class HermesClientServiceTest extends Specification {
+class HermesClientServiceTest extends Specificatqqion {
 
     private HermesClientService hermesService
     private HermesClient hermesClient = Mock(HermesClient)
@@ -100,7 +100,7 @@ class HermesClientServiceTest extends Specification {
 
     def 'when publish subscription deployment event, should do it successfully'() {
         def deploymentEvent = new WebhookDeploymentEvent(
-                WebhookEventTypeEnum.START_DEPLOY,
+                WebhookEventSubTypeEnum.START_DEPLOY,
                 WebhookEventStatusEnum.SUCCESS,
                 LocalDateTime.now(),
                 "workspaceId",
@@ -112,7 +112,7 @@ class HermesClientServiceTest extends Specification {
 
         def event = new WebhookDeploymentEventType(
                 "workspaceId",
-                WebhookEventTypeEnum.START_DEPLOY,
+                WebhookEventTypeEnum.DEPLOY,
                 WebhookEventStatusEnum.SUCCESS,
                 deploymentEvent
         )
@@ -158,7 +158,7 @@ class HermesClientServiceTest extends Specification {
 
     private static HermesSubscriptionResponse getHermesSubscriptionResponse() {
         return new HermesSubscriptionResponse("subscriptionId",'https://mywebhook.com.br', 'secret', 'workspaceId',
-                'My Webhook', events)
+                'My Webhook', "DEPLOY")
     }
 
     private static HermesHealthCheckSubscriptionResponse getHermesHealthCheckSubscriptionResponse() {
