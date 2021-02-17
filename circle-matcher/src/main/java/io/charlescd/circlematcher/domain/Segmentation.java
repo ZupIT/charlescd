@@ -18,7 +18,6 @@ package io.charlescd.circlematcher.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
-import org.springframework.util.Assert;
 
 public class Segmentation {
 
@@ -37,6 +36,7 @@ public class Segmentation {
     private Boolean isDefault;
 
     private Integer percentage;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean active;
 

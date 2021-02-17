@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
+@PercentageConstraint
 public abstract class SegmentationRequest {
 
     @NotBlank
@@ -51,7 +51,6 @@ public abstract class SegmentationRequest {
     private Boolean isDefault;
 
     @Valid
-    @PercentageConstraint
     private Integer percentage;
 
     @NotNull
@@ -147,4 +146,7 @@ public abstract class SegmentationRequest {
         this.active = active;
     }
 
+    public boolean hasValidPercentage() {
+        return this.getPercentage() >=0 && this.getPercentage() <= 100;
+    }
 }

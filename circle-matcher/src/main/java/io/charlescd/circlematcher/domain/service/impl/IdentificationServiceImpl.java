@@ -118,6 +118,7 @@ public class IdentificationServiceImpl implements IdentificationService {
                     .parallel()
                     .filter(KeyMetadata::isPercentage)
                     .filter(item -> item.getPercentage() > 0)
+                    .filter(KeyMetadata::isActive)
                     .sorted(Comparator.comparing(KeyMetadata::getPercentage))
                     .collect(Collectors.toList());
             if (!percentageMatched.isEmpty()) {

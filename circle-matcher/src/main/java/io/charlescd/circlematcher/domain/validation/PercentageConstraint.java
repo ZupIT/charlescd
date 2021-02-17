@@ -10,7 +10,7 @@ import javax.validation.Payload;
 
 @Documented
 @Constraint(validatedBy = PercentageValidator.class)
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PercentageConstraint {
     String message() default "Percentage must be between 0 and 100";
