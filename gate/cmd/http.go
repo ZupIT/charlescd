@@ -14,8 +14,8 @@ import (
 )
 
 type server struct {
-	pm       persistenceManager
-	echo     *echo.Echo
+	persistenceManager persistenceManager
+	httpServer     *echo.Echo
 	enforcer *casbin.Enforcer
 }
 
@@ -27,31 +27,32 @@ type CustomValidator struct {
 
 func newServer(pm persistenceManager) (server, error) {
 	return server{
-		pm:       pm,
-		echo:     createEchoInstance(),
+		persistenceManager:   pm,
+		httpServer: createHttpServerInstance(),
 	}, nil
 }
 
-func (s server) start(port string) error {
-	s.registerRoutes()
-	return s.echo.Start(fmt.Sprintf(":%s", port))
+func (server server) start(port string) error {
+	server.registerRoutes()
+	return server.httpServer.Start(fmt.Sprintf(":%s", port))
 }
 
-func createEchoInstance() *echo.Echo {
-	e := echo.New()
-	e.Use(echoMiddleware.RequestID())
-	e.Use(middlewares.ContextLogger)
-	e.Validator = buildCustomValidator()
-	e.Binder = echo.Binder(customBinder{})
+func createHttpServerInstance() *echo.Echo {
+	httpServer := echo.New()
+	httpServer.Use(echoMiddleware.RequestID())
+	httpServer.Use(middlewares.ContextLogger)
+	httpServer.Validator = buildCustomValidator()
+	httpServer.Binder = echo.Binder(customBinder{})
+
 	p := prometheus.NewPrometheus("echo", nil)
-	p.Use(e)
+	p.Use(httpServer)
 
-	return e
+	return httpServer
 }
 
-func (cb customBinder) Bind(i interface{}, c echo.Context) (err error) {
-	db := new(echo.DefaultBinder)
-	if err = db.Bind(i, c); err != nil {
+func (cb customBinder) Bind(i interface{}, echoCtx echo.Context) (err error) {
+	defaultBinder := new(echo.DefaultBinder)
+	if err = defaultBinder.Bind(i, echoCtx); err != nil {
 		return err
 	}
 
@@ -71,8 +72,8 @@ func buildCustomValidator() *CustomValidator {
 	return &CustomValidator{validator: v}
 }
 
-func (s server) registerRoutes() {
-	api := s.echo.Group("")
+func (server server) registerRoutes() {
+	api := server.httpServer.Group("")
 	{
 		api.GET("/health", handlers.Health())
 		api.GET("/metrics", handlers.Metrics())

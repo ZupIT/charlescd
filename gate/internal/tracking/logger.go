@@ -12,6 +12,7 @@ const LoggerFlag = LoggerType("api-logger-context")
 func NewLogger() (*zap.Logger, error) {
 	var logger *zap.Logger
 	var err error
+
 	if configuration.IsRunningInProduction() {
 		logger, err = zap.NewProduction()
 	} else {

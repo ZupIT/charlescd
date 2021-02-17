@@ -17,7 +17,7 @@ type persistenceManager struct {
 }
 
 func prepareDatabase() (persistenceManager, error) {
-	gormDB, err := connectDatabase()
+	db, err := connectDatabase()
 	if err != nil {
 		return persistenceManager{}, err
 	}
@@ -30,7 +30,7 @@ func prepareDatabase() (persistenceManager, error) {
 	}
 	 */
 
-	return loadPersistenceManager(gormDB)
+	return loadPersistenceManager(db)
 }
 
 func connectDatabase() (*gorm.DB, error) {
@@ -48,14 +48,14 @@ func connectDatabase() (*gorm.DB, error) {
 
 func runMigrations(sqlDb *sql.DB) error {
 	driver, err := pgMigrate.WithInstance(sqlDb, &pgMigrate.Config{})
-	m, err := migrate.NewWithDatabaseInstance(
+	dbMigrated, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", "resources/migrations"),
 		configuration.Get("DB_NAME"), driver)
 	if err != nil {
 		return err
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := dbMigrated.Up(); err != nil && err != migrate.ErrNoChange {
 		return err
 	}
 

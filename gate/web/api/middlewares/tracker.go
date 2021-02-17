@@ -7,17 +7,17 @@ import (
 )
 
 func ContextLogger(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
+	return func(echoCtx echo.Context) error {
 		logger, err := tracking.NewLogger()
 		if err != nil {
 			return err
 		}
 		defer logger.Sync()
 
-		sugar := logger.Sugar().With("request-id", c.Response().Header().Get("x-request-id"))
-		ctx := context.WithValue(c.Request().Context(), tracking.LoggerFlag, sugar)
-		c.SetRequest(c.Request().Clone(ctx))
+		sugar := logger.Sugar().With("request-id", echoCtx.Response().Header().Get("x-request-id"))
+		ctx := context.WithValue(echoCtx.Request().Context(), tracking.LoggerFlag, sugar)
+		echoCtx.SetRequest(echoCtx.Request().Clone(ctx))
 
-		return next(c)
+		return next(echoCtx)
 	}
 }

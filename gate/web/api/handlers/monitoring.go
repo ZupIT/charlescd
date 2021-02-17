@@ -7,14 +7,14 @@ import (
 )
 
 func Health() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "It's Fine")
+	return func(echoCtx echo.Context) error {
+		return echoCtx.JSON(http.StatusOK, "It's Fine")
 	}
 }
 
 func Metrics() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		promhttp.Handler().ServeHTTP(c.Response().Writer, c.Request())
+	return func(echoCtx echo.Context) error {
+		promhttp.Handler().ServeHTTP(echoCtx.Response().Writer, echoCtx.Request())
 		return nil
 	}
 }

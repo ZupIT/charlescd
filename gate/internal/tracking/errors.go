@@ -15,8 +15,8 @@ type CustomError struct {
 	Meta       map[string]string `json:"meta"`
 }
 
-func (c CustomError) Error() string {
-	return fmt.Sprintf("%s", c.Detail)
+func (customError CustomError) Error() string {
+	return fmt.Sprintf("%s", customError.Detail)
 }
 
 func WithOperation(err error, operation string) error {
