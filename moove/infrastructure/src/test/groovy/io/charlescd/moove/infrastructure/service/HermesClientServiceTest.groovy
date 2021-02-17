@@ -30,7 +30,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class HermesClientServiceTest extends Specificatqqion {
+class HermesClientServiceTest extends Specification {
 
     private HermesClientService hermesService
     private HermesClient hermesClient = Mock(HermesClient)

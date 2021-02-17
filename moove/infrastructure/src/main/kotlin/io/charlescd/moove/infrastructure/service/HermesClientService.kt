@@ -30,7 +30,6 @@ import io.charlescd.moove.infrastructure.service.client.response.HermesSubscript
 import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
 import org.springframework.stereotype.Service
 
-
 @Service
 class HermesClientService(private val hermesClient: HermesClient, private val hermesPublisherClient: HermesPublisherClient) : HermesService {
     override fun subscribe(authorEmail: String, simpleWebhookSubscription: SimpleWebhookSubscription): String {
@@ -113,7 +112,7 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
             url = subscription.url,
             description = subscription.description,
             workspaceId = subscription.externalId,
-            events =  subscription.events.split(",").map { it.trim() }
+            events = subscription.events.split(",").map { it.trim() }
         )
     }
 
