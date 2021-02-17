@@ -22,7 +22,7 @@ import LabeledIcon from 'core/components/LabeledIcon';
 import { isRoot, isIDMAuthFlow } from 'core/utils/auth';
 import MenuItem from './MenuItem';
 import Styled from './styled';
-import { useWorkspace } from '../hooks';
+import { useWorkspaces } from '../hooks';
 import { useGlobalState, useDispatch } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
 import { useWorkspacesByUser } from 'modules/Users/hooks';
@@ -38,7 +38,7 @@ const WorkspaceMenu = ({
   onCreate,
   selectedWorkspace
 }: Props) => {
-  const [filterWorkspace, , loading] = useWorkspace();
+  const [filterWorkspace, , loading] = useWorkspaces();
   const { findWorkspacesByUser } = useWorkspacesByUser();
   const userId = getProfileByKey('id');
   const workspaces = getProfileByKey('workspaces');

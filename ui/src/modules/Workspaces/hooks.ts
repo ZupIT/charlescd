@@ -23,8 +23,7 @@ import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
 
-// TODO rename?
-export const useWorkspace = (): [Function, Function, boolean] => {
+export const useWorkspaces = (): [Function, Function, boolean] => {
   const dispatch = useDispatch();
   const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
   const { response, error, loading } = workspacesData;
@@ -44,7 +43,6 @@ export const useWorkspace = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  // TODO remove getworkspace?
   return [filterWorkspace, getWorkspace, loading];
 };
 
