@@ -224,6 +224,11 @@ func (c *Client) Stream(response chan payloads.MessageResponse) {
 		logrus.Error(err)
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"[Consumer] - waiting messages on queue": c.streamQueue,
+		"Time":             time.Now(),
+	}).Println()
+
 	go func() {
 		for msg := range messages {
 			messageResponse := c.processMessage(msg)
