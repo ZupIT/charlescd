@@ -30,8 +30,8 @@ export const useWorkspace = (): [Function, Function, boolean] => {
   const { response, error, loading } = workspacesData;
 
   const filterWorkspace = useCallback(
-    (name: string) => {
-      getWorkspace({ name });
+    (name: string, page = 0) => {
+      getWorkspace({ name, page });
     },
     [getWorkspace]
   );

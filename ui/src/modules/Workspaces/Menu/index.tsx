@@ -20,14 +20,15 @@ import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import { isRoot, isIDMAuthFlow } from 'core/utils/auth';
-import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 import MenuItem from './MenuItem';
 import Styled from './styled';
-import Loader from './Loaders';
 import { useWorkspace } from '../hooks';
-import { useGlobalState } from 'core/state/hooks';
+import { useGlobalState, useDispatch } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
 import { useWorkspacesByUser } from 'modules/Users/hooks';
+import InfiniteScroll from 'core/components/InfiniteScroll';
+import { resetContentAction } from '../state/actions';
+import {WorkspacePaginationItem} from '../interfaces/WorkspacePagination';
 interface Props {
   onCreate: () => void;
   selectedWorkspace: (name: string) => void;
@@ -43,8 +44,11 @@ const WorkspaceMenu = ({
   const workspaces = getProfileByKey('workspaces');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
   const [name, setName] = useState('');
+  const dispatch = useDispatch();
+  const isRenderEmpty = isEmpty(list?.content || workspaces) && !loading;
 
   const onIDMFlow = useCallback(() => {
+    
     if (isRoot()) {
       filterWorkspace();
     } else {
@@ -54,29 +58,61 @@ const WorkspaceMenu = ({
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
+      console.log('IDMFLOW');
       onIDMFlow();
     }
   }, [onIDMFlow]);
 
-  useEffect(() => {
-    if (isRoot()) {
-      filterWorkspace(name);
-    }
-  }, [name, filterWorkspace]);
+  // TODO remove?
+  // useEffect(() => {
+  //   if (isRoot()) {
+  //     filterWorkspace(name);
+  //   }
+  // }, [name, filterWorkspace]);
 
-  const renderWorkspaces = () =>
-    isEmpty(list?.content || workspaces) ? (
-      <Text.h3 color="dark">No workspace was found</Text.h3>
-    ) : (
-      map(list?.content || workspaces, ({ id, name, status }: Workspace) => (
-        <MenuItem
-          key={id}
-          id={id}
-          name={name}
-          status={status}
-          selectedWorkspace={(name: string) => selectedWorkspace(name)}
-        />
-      ))
+  const onChange = useCallback(() => {
+    console.log('ONCHANGE');
+    const page = 0;
+    dispatch(resetContentAction());
+    filterWorkspace(name, page);
+  }, [dispatch, filterWorkspace, name]);
+
+  useEffect(() => {
+    onChange();
+  }, [name, onChange]);
+
+  const loadMore = (page: number) => {
+    filterWorkspace(name, page);
+  };
+
+  const renderList = (data: WorkspacePaginationItem[]) =>
+    map(data, item => renderItem(item))
+
+  const renderItem = ({ id, name, status }: WorkspacePaginationItem) => (
+    <MenuItem
+      key={id}
+      id={id}
+      name={name}
+      status={status}
+      selectedWorkspace={(name: string) => selectedWorkspace(name)}
+    />
+  );
+
+    const renderEmpty = () => (
+      <Styled.Empty>
+        <Text.h3 color="dark">No workspace was found</Text.h3>
+      </Styled.Empty>
+    );
+
+    const renderContent = () => (
+      <InfiniteScroll
+        hasMore={!list?.last}
+        loadMore={loadMore}
+        isLoading={loading}
+        loader={<Styled.Loader />}
+      >
+        {isRenderEmpty ? renderEmpty() : renderList(list?.content)}
+      </InfiniteScroll>
     );
 
   return (
@@ -99,9 +135,7 @@ const WorkspaceMenu = ({
           disabled={!isRoot()}
           maxLength={64}
         />
-        <Styled.List>
-          {loading ? <Loader.List /> : renderWorkspaces()}
-        </Styled.List>
+      {renderContent()}
       </Styled.Content>
     </>
   );

@@ -21,7 +21,8 @@ import { Workspace } from '../interfaces/Workspace';
 export enum ACTION_TYPES {
   loadedWorkspaces = 'WORKSPACES/LOADED_WORKSPACES',
   loadedWorkspace = 'WORKSPACES/LOADED_WORKSPACE',
-  statusWorkspace = 'WORKSPACES/STATUS'
+  statusWorkspace = 'WORKSPACES/STATUS',
+  resetContent = 'WORKSPACES/RESET_CONTENT'
 }
 
 interface LoadedWorkspacesActionType {
@@ -37,6 +38,10 @@ interface LoadedWorkspaceActionType {
 interface StatusWorkspaceActionType {
   type: typeof ACTION_TYPES.statusWorkspace;
   payload: FetchStatuses;
+}
+
+interface ResetContentActionType {
+  type: typeof ACTION_TYPES.resetContent;
 }
 
 export const loadedWorkspacesAction = (
@@ -60,7 +65,12 @@ export const statusWorkspaceAction = (
   payload
 });
 
+export const resetContentAction = (): ResetContentActionType => ({
+  type: ACTION_TYPES.resetContent
+});
+
 export type WorkspacesActionTypes =
   | LoadedWorkspacesActionType
   | LoadedWorkspaceActionType
-  | StatusWorkspaceActionType;
+  | StatusWorkspaceActionType
+  | ResetContentActionType;

@@ -64,4 +64,5 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   );
 };
 
+// TODO remove memo
 export default memo(MenuItem);
