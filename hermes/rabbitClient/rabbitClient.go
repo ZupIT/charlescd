@@ -177,7 +177,7 @@ func (c *Client) UnsafePush(data []byte) error {
 	)
 }
 
-func (c *Client) Stream() (payloads.MessageResponse, error) {
+func (c *Client) Stream(response chan payloads.MessageResponse) {
 	for {
 		if c.isConnected {
 			break
@@ -187,7 +187,7 @@ func (c *Client) Stream() (payloads.MessageResponse, error) {
 
 	err := c.channel.Qos(1, 0, false)
 	if err != nil {
-		return payloads.MessageResponse{}, err
+		logrus.Error(err)
 	}
 
 	messages, err := c.channel.Consume(
@@ -200,26 +200,25 @@ func (c *Client) Stream() (payloads.MessageResponse, error) {
 		nil,                 // Args
 	)
 	if err != nil {
-		print("a")
-		return payloads.MessageResponse{}, err
+		logrus.Error(err)
 	}
 
-	for msg := range messages {
-		messageResponse, err := c.processMessage(msg)
-		return messageResponse, err
-	}
-
-	return payloads.MessageResponse{}, err
+	go func() {
+		for msg := range messages {
+			messageResponse := c.processMessage(msg)
+			response <- messageResponse
+		}
+	}()
 }
 
-func (c *Client) processMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
+func (c *Client) processMessage(msg amqp.Delivery) payloads.MessageResponse {
 	l := c.logger
 	startTime := time.Now()
 
 	messageResponse, err := parseMessage(msg)
 	if err != nil {
 		logAndNack(msg, l, startTime, "error parse message: %s - %s", string(msg.Body), err.Error())
-		return payloads.MessageResponse{}, err
+		return payloads.MessageResponse{}
 	}
 
 	defer func(messageResponse payloads.MessageResponse, m amqp.Delivery, logger *logrus.Logger) {
@@ -240,7 +239,7 @@ func (c *Client) processMessage(msg amqp.Delivery) (payloads.MessageResponse, er
 	}).Println()
 
 	msg.Ack(false)
-	return messageResponse, nil
+	return messageResponse
 }
 
 func logAndNack(msg amqp.Delivery, l *logrus.Logger, t time.Time, err string, args ...interface{}) {
