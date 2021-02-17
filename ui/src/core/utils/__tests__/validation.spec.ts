@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isNotBlank } from "../validation";
+import { isNotBlank } from "../validations";
 
 test("should validate a empty field", () => {
   const emptyValue = '   ';

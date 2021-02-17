@@ -19,18 +19,24 @@
 package moove
 
 import (
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
+
+type ApiUseCases interface {
+	GetMooveComponents(circleIDHeader, circleId string, workspaceId uuid.UUID) ([]byte, errors.Error)
+}
 
 type APIClient struct {
 	URL        string
 	httpClient *http.Client
 }
 
-func NewAPIClient(url string, timeout time.Duration) APIClient {
+func NewAPIClient(url string, timeout time.Duration) ApiUseCases {
 	return APIClient{
 		URL: url,
 		httpClient: &http.Client{
@@ -44,8 +50,8 @@ type Main struct {
 }
 
 type UseCases interface {
-	FindUserByEmail(email string) (User, error)
-	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error)
+	FindUserByEmail(email string) (User, errors.Error)
+	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, errors.Error)
 }
 
 func NewMain(mooveDb *gorm.DB) UseCases {

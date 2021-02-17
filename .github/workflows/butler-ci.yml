@@ -5,13 +5,13 @@ name: build butler
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'butler/**'
     tags:
       - '!*'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'butler/**'
@@ -63,4 +63,3 @@ jobs:
       run: |
         curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
         horusec start -p ./
-        

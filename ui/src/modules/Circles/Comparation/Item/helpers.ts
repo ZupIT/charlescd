@@ -109,9 +109,5 @@ export const getTooltipMessage = (circle: Circle): string => {
 };
 
 export const circleCannotBeDeleted = (circle: Circle): boolean => {
-  if (isUndeployable(circle) || isDefaultCircle(circle?.name)) {
-    return true;
-  } else {
-    return false;
-  }
+  return isUndeployable(circle) || isDefaultCircle(circle?.name);
 };

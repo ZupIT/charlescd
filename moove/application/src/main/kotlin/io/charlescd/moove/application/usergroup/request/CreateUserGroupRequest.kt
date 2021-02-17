@@ -21,16 +21,18 @@ import io.charlescd.moove.domain.UserGroup
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 
 data class CreateUserGroupRequest(
     @field:NotBlank
+    @field:Size(max = 64)
     val name: String
 ) {
 
     fun toUserGroup(user: User): UserGroup {
         return UserGroup(
             id = UUID.randomUUID().toString(),
-            name = name,
+            name = name.trim(),
             author = user,
             users = emptyList(),
             createdAt = LocalDateTime.now()

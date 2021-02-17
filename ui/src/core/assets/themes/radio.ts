@@ -49,5 +49,19 @@ export const dark = {
       color: COLOR_SANTAS_GREY,
       checkmark: COLOR_SANTAS_GREY
     }
+  },
+  default: {
+    checked: {
+      background: COLOR_WHITE,
+      border: COLOR_CHETWODE_BLUE,
+      color: COLOR_WHITE,
+      checkmark: COLOR_CHETWODE_BLUE
+    },
+    unchecked: {
+      background: COLOR_BASTILLE,
+      border: COLOR_CHETWODE_BLUE,
+      color: COLOR_SANTAS_GREY,
+      checkmark: COLOR_CHETWODE_BLUE
+    }
   }
 };

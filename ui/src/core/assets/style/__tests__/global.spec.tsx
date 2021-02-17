@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { renderWithTheme } from 'unit-test/testUtils';
 import GlobalStyle from '../global';
 

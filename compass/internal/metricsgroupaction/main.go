@@ -21,24 +21,24 @@ package metricsgroupaction
 import (
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"io"
 )
 
 type UseCases interface {
-	ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) []util.ErrorUtil
-	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, error)
-	FindGroupActionById(id string) (MetricsGroupAction, error)
-	SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
-	ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, error)
-	UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
-	DeleteGroupAction(id string) error
-	SetExecutionFailed(actionExecutionID string, executionLog string) (ActionsExecutions, error)
-	SetExecutionSuccess(actionExecutionID string, executionLog string) (ActionsExecutions, error)
+	ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) errors.ErrorList
+	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, errors.Error)
+	FindGroupActionById(id string) (MetricsGroupAction, errors.Error)
+	SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)
+	ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, errors.Error)
+	UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)
+	DeleteGroupAction(id string) errors.Error
+	SetExecutionFailed(actionExecutionID string, executionLog string) (ActionsExecutions, errors.Error)
+	SetExecutionSuccess(actionExecutionID string, executionLog string) (ActionsExecutions, errors.Error)
 	ValidateActionCanBeExecuted(metricsGroupAction MetricsGroupAction) bool
-	CreateNewExecution(groupActionID string) (ActionsExecutions, error)
+	CreateNewExecution(groupActionID string) (ActionsExecutions, errors.Error)
 }
 
 type Main struct {

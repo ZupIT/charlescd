@@ -19,8 +19,9 @@ import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { login, circleMatcher } from 'core/providers/auth';
 import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
-import { useUser } from 'modules/Users/hooks';
+import { useUser, useWorkspacesByUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
+import { useWorkspaces } from 'modules/Settings/hooks';
 
 interface CircleMatcherResponse {
   circles: {
@@ -66,15 +67,26 @@ export const useLogin = (): {
   const [, , getSession] = useFetch<AuthResponse>(login);
   const { getCircleId } = useCircleMatcher();
   const { findByEmail, user } = useUser();
+  const { findWorkspacesByUser, workspaces } = useWorkspacesByUser();
+  const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (user) {
-      saveProfile(user);
+    if (workspaces) {
+      saveProfile({ ...user, workspaces });
+
       setStatus('resolved');
     }
-  }, [user]);
+  }, [user, workspaces]);
+
+  useEffect(() => {
+    if (loadWorkspacesResponse) {
+      saveProfile({ ...user, workspaces: loadWorkspacesResponse?.content });
+
+      setStatus('resolved');
+    }
+  }, [user, loadWorkspacesResponse]);
 
   const doLogin = useCallback(
     async (email: string, password: string) => {
@@ -84,14 +96,19 @@ export const useLogin = (): {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);
         await getCircleId({ username: email });
-        findByEmail(email);
+        const { id, root } = await findByEmail(email);
+        if (root) {
+          await loadWorkspaces();
+        } else {
+          await findWorkspacesByUser(id);
+        }
       } catch (e) {
         const errorMessage = e.message || `${e.status}: ${e.statusText}`;
         setError(errorMessage);
         setStatus('rejected');
       }
     },
-    [getSession, getCircleId, findByEmail]
+    [getSession, getCircleId, findByEmail, findWorkspacesByUser, loadWorkspaces]
   );
 
   return {

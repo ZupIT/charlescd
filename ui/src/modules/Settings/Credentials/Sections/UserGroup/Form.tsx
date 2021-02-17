@@ -20,9 +20,8 @@ import isEmpty from 'lodash/isEmpty';
 import debounce from 'debounce-promise';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
-import Card from 'core/components/Card';
 import Button from 'core/components/Button';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import { CHARLES_DOC } from 'core/components/Popover';
 import { Option } from 'core/components/Form/Select/interfaces';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { getWorkspaceId } from 'core/utils/workspace';
@@ -51,9 +50,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
   } = useRole();
   const { control, getValues, watch } = useForm<UserGroup>();
   const watchedRoleId = watch('roleId');
-  const [isDisableAdd, setIsDisableAdd] = useState(true);
   const [isDisableSave, setIsDisableSave] = useState(true);
-  const [form, setForm] = useState(false);
   const [roleOptions, setRoleOptions] = useState(null);
   const [group, setGroup] = useState(null);
 
@@ -76,23 +73,15 @@ const FormUserGroup = ({ onFinish }: Props) => {
   }, [onFinish, responseSave]);
 
   useEffect(() => {
-    if (form) getAllRoles();
-  }, [getAllRoles, form]);
+    getAllRoles();
+  }, [getAllRoles]);
 
   useEffect(() => {
     setIsDisableSave(isEmpty(watchedRoleId));
   }, [watchedRoleId]);
 
   const onSelectGroup = (option: Option) => {
-    setIsDisableAdd(!option);
     setGroup(option);
-  };
-
-  const onRemove = () => {
-    setGroup(null);
-    setForm(false);
-    setIsDisableAdd(true);
-    setIsDisableSave(true);
   };
 
   const onSubmit = () => {
@@ -102,14 +91,6 @@ const FormUserGroup = ({ onFinish }: Props) => {
       roleId
     });
   };
-
-  const renderSelectedGroup = () => (
-    <Card.Config
-      icon="info"
-      description={group.label}
-      onClose={() => onRemove()}
-    />
-  );
 
   const renderRoles = () =>
     loadingRolesAll ? (
@@ -129,7 +110,6 @@ const FormUserGroup = ({ onFinish }: Props) => {
 
   const renderForm = () => (
     <>
-      {renderSelectedGroup()}
       <Styled.Description>
         <Text.h5 color="dark">
           Select permissions for the group selected above.
@@ -165,15 +145,6 @@ const FormUserGroup = ({ onFinish }: Props) => {
         loadOptions={loadUserGroups}
         onChange={group => onSelectGroup(group)}
       />
-      <Button.Default
-        id="add"
-        isLoading={loadingAll}
-        isDisabled={isDisableAdd}
-        size="EXTRA_SMALL"
-        onClick={() => setForm(true)}
-      >
-        Add
-      </Button.Default>
     </Styled.Fields>
   );
 
@@ -183,15 +154,23 @@ const FormUserGroup = ({ onFinish }: Props) => {
         <Text.h2 weight="bold" color="light">
           Add user group
         </Text.h2>
-        <Popover
-          title="How does a user group work?"
-          icon="info"
-          link={`${CHARLES_DOC}/reference/users-group`}
-          linkLabel="View documentation"
-          description="With the user group you have more control over the entire application. You can choose which accesses this group will have in this workspace. Consult the our documentation for further details."
-        />
       </Styled.Title>
-      {form ? renderForm() : renderFields()}
+      <Styled.Description>
+        <Text.h4 color="dark" data-testid="user-group-help-text">
+          With the user group you have more control over the entire application.
+          You can choose which accesses this group will have in this workspace.
+          Consult the our{' '}
+          <Styled.DocumentationLink
+            target="_blank"
+            href={`${CHARLES_DOC}/reference/users-group`}
+          >
+            documentation
+          </Styled.DocumentationLink>{' '}
+          for further details.
+        </Text.h4>
+      </Styled.Description>
+      {renderFields()}
+      {group && renderForm()}
       <Button.Default
         id="save"
         type="submit"

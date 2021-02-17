@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -32,7 +31,7 @@ type AccessToken = {
   id?: string;
   name?: string;
   email?: string;
-  isRoot?: boolean;
+  root?: boolean;
   workspaces?: {
     id: string;
     roles: string[];
@@ -66,7 +65,7 @@ export const getAccessTokenDecoded = (): AccessToken => {
 };
 
 export const isRoot = () => {
-  const isRoot = getProfileByKey('isRoot');
+  const isRoot = getProfileByKey('root');
   return isRoot || false;
 };
 

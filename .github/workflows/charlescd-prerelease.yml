@@ -4,125 +4,232 @@ on:
   release:
     types:
       - prereleased
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build_and_push_release_butler:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      
-    - name: Get the version
-      id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      - uses: actions/checkout@v2
 
-    - uses: actions/cache@v1
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-          
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - run: npm ci
-      working-directory: ./butler
-      
-    - run: npm run build --if-present
-      working-directory: ./butler
-      env:
-        CI: true
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
-      with:
-        path: ./butler
-        username: ${{secrets.DOCKERHUB_USERNAME}}
-        password: ${{secrets.DOCKERHUB_PASSWORD}}
-        repository: zupcharles/charlescd-butler
-        dockerfile: ./butler/Dockerfile
-        tags: latest,${{ steps.get_version.outputs.VERSION }}
-        tag_with_ref: false
-        tag_with_sha: false
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - run: npm ci
+        working-directory: ./butler
+
+      - run: npm run build --if-present
+        working-directory: ./butler
+        env:
+          CI: true
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.0.1
+        with:
+          path: ./butler
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+          repository: zupcharles/charlescd-butler
+          dockerfile: ./butler/Dockerfile
+          tags: latest,${{ steps.get_version.outputs.VERSION }}
+          tag_with_ref: false
+          tag_with_sha: false
 
   build_and_push_release_circle_matcher:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      
-    - name: Get the version
-      id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - name: Set up JDK 1.11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.11
+      - uses: actions/checkout@v2
+      - name: Set up GraalVM
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: '21.0.0.java11'
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-          
-    - name: Build with Maven
-      working-directory: ./circle-matcher
-      run: mvn -B clean install
+      - name: Build with Maven
+        working-directory: ./circle-matcher
+        run: mvn -B clean install -Djfr.unsupported.vm=true
 
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
-      with:
-        path: ./circle-matcher
-        username: ${{secrets.DOCKERHUB_USERNAME}}
-        password: ${{secrets.DOCKERHUB_PASSWORD}}
-        repository: zupcharles/charlescd-circle-matcher
-        dockerfile: ./circle-matcher/Dockerfile
-        tags: latest,${{ steps.get_version.outputs.VERSION }}
-        tag_with_ref: false
-        tag_with_sha: false
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.0.1
+        with:
+          path: ./circle-matcher
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+          repository: zupcharles/charlescd-circle-matcher
+          dockerfile: ./circle-matcher/Dockerfile
+          tags: latest,${{ steps.get_version.outputs.VERSION }}
+          tag_with_ref: false
+          tag_with_sha: false
 
   build_and_push_release_moove:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      
-    - name: Get the version
-      id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      - uses: actions/checkout@v2
 
-    - name: Set up JDK 1.11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.11
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-          
-    - name: Build with Maven
-      working-directory: ./moove
-      run: mvn -B clean install
+      - name: Set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
 
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
-      with:
-        path: ./moove/web
-        username: ${{secrets.DOCKERHUB_USERNAME}}
-        password: ${{secrets.DOCKERHUB_PASSWORD}}
-        repository: zupcharles/charlescd-moove
-        dockerfile: ./moove/web/Dockerfile
-        tags: latest,${{ steps.get_version.outputs.VERSION }}
-        tag_with_ref: false
-        tag_with_sha: false
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        working-directory: ./moove
+        run: mvn -B clean install
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.0.1
+        with:
+          path: ./moove/web
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+          repository: zupcharles/charlescd-moove
+          dockerfile: ./moove/web/Dockerfile
+          tags: latest,${{ steps.get_version.outputs.VERSION }}
+          tag_with_ref: false
+          tag_with_sha: false
 
   build_and_push_release_octopipe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.14.2'
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.0.1
+        with:
+          path: ./octopipe
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+          repository: zupcharles/charlescd-octopipe
+          dockerfile: ./octopipe/Dockerfile
+          tags: latest,${{ steps.get_version.outputs.VERSION }}
+          tag_with_ref: false
+          tag_with_sha: false
+
+  build_and_push_release_ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - run: yarn install
+        working-directory: ./ui
+      - run: yarn build:all
+        working-directory: ./ui
+        env:
+          CI: true
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.0.1
+        with:
+          path: ./ui
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+          repository: zupcharles/charlescd-ui
+          dockerfile: ./ui/Dockerfile
+          tags: latest,${{ steps.get_version.outputs.VERSION }}
+          tag_with_ref: false
+          tag_with_sha: false
+
+  build_and_push_release_villager:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('./villager/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        working-directory: ./villager
+        run: mvn -B clean install
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.0.1
+        with:
+          path: ./villager
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+          repository: zupcharles/charlescd-villager
+          dockerfile: ./villager/Dockerfile
+          tags: latest,${{ steps.get_version.outputs.VERSION }}
+          tag_with_ref: false
+          tag_with_sha: false
+
+  build_and_push_release_compass:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -145,16 +252,16 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
-        path: ./octopipe
+        path: ./compass
         username: ${{secrets.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_PASSWORD}}
-        repository: zupcharles/charlescd-octopipe
-        dockerfile: ./octopipe/Dockerfile
+        repository: zupcharles/charlescd-compass
+        dockerfile: ./compass/Dockerfile
         tags: latest,${{ steps.get_version.outputs.VERSION }}
         tag_with_ref: false
         tag_with_sha: false
 
-  build_and_push_release_ui:
+  build_and_push_release_matcher_s3_sync:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -166,7 +273,7 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
           
@@ -175,58 +282,44 @@ jobs:
       with:
         node-version: 12.x
 
-    - run: yarn install
-      working-directory: ./ui
-    - run: yarn build:all
-      working-directory: ./ui
+    - run: npm ci
+      working-directory: ./utils/matcher-s3-sync
+      
+    - run: npm run build --if-present
+      working-directory: ./utils/matcher-s3-sync
       env:
         CI: true
 
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
-        path: ./ui
+        path: ./utils/matcher-s3-sync
         username: ${{secrets.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_PASSWORD}}
-        repository: zupcharles/charlescd-ui
-        dockerfile: ./ui/Dockerfile
+        repository: zupcharles/matcher-s3-sync
+        dockerfile: ./utils/matcher-s3-sync/Dockerfile
         tags: latest,${{ steps.get_version.outputs.VERSION }}
         tag_with_ref: false
         tag_with_sha: false
-
-  build_and_push_release_villager:
+  
+  build_and_push_release_keycloak:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      
-    - name: Set up JDK 1.11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.11
+    - name: QEMU
+      uses: docker/setup-qemu-action@v1
 
-    - name: Get the version 
-      id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
-
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('./villager/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-          
-    - name: Build with Maven
-      working-directory: ./villager
-      run: mvn -B clean install
+    - name: Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
-        path: ./villager
+        path: ./keycloak
         username: ${{secrets.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_PASSWORD}}
-        repository: zupcharles/charlescd-villager
-        dockerfile: ./villager/Dockerfile
+        repository: zupcharles/charlescd-keycloak
+        dockerfile: ./keycloak/Dockerfile
         tags: latest,${{ steps.get_version.outputs.VERSION }}
         tag_with_ref: false
         tag_with_sha: false
@@ -238,7 +331,8 @@ jobs:
              build_and_push_release_moove, 
              build_and_push_release_octopipe, 
              build_and_push_release_ui, 
-             build_and_push_release_villager
+             build_and_push_release_villager,
+             build_and_push_release_compass
     ]
     steps:
     - uses: actions/checkout@v2
@@ -290,20 +384,15 @@ jobs:
 
     - name: Zup Settings dev
       run: |
-        git checkout .
-        sed -i -E "s/(http:\/\/charles\.info\.example)/https:\/\/${{ secrets.HOST_DEV }}/" ./install/helm-chart/values.yaml &&
-        sed -i -E "s/(charlescd-postgresql)/${{ secrets.PG_HOST_DEV }}/" ./install/helm-chart/values.yaml &&
-        sed -i -E "/name: DB_USER/N;s/(name: DB_USER.*value: \")(keycloak\")/\1charlesadmin\"/" ./install/helm-chart/values.yaml &&
-        sed -i -E "s/DCWYW66Mq2ca6w8u/firstpassword/" ./install/helm-chart/values.yaml &&
-        sed -i -E "/postgresql:/N;s/(postgresql:.*enabled: )(true)/\1false/" ./install/helm-chart/values.yaml &&
-        sed -i -E "/nginx:/N;s/(nginx:.*enabled: )(true)/\1false/" ./install/helm-chart/values.yaml &&
-        sed -i -E "s/name: charlescd_(.*)/name: charlescd\1/" ./install/helm-chart/values.yaml &&
-        sed -i -E "s/user: charlescd_(.*)/user: charlesadmin/" ./install/helm-chart/values.yaml &&
-        sed -i -E "s/password: (.*)/password: firstpassword/" ./install/helm-chart/values.yaml &&
-        sed -i -E "/redis:/{N;N;N;s/firstpassword/hb2Fj9MGKjBkZ6zV/}" ./install/helm-chart/values.yaml
+        cat <<-EOF > values-charles-dev.yaml
+        ${{ secrets.VALUES_CHARLES_DEV }}
+        EOF
+        cat <<-EOF > ./install/helm-chart/templates/nginx-cert.yaml
+        ${{ secrets.NGINX_CERT }}
+        EOF
 
     - name: Deploy dev
       uses: WyriHaximus/github-action-helm3@v1.0.0
       with:
-        exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./install/helm-chart/values.yaml
+        exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./values-charles-dev.yaml
         kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'

@@ -15,34 +15,53 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen } from 'unit-test/testUtils';
+import { fireEvent, render, screen, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Menu from '../index';
-import workspaces from '../../../../../stub/workspaces/mock';
+import { workspaces } from './fixtures';
 
 const props = {
-  items: workspaces.workspaces.content,
+  items: workspaces.content,
   onSearch: jest.fn()
 };
 
 test('renders Workspace menu', async () => {
-  const { getByTestId, getAllByText } = render(
+  render(
     <Menu
       items={props.items}
       onSearch={props.onSearch}
       selectedWorkspace={jest.fn()}
     />
   );
-  const createButton = getByTestId('labeledIcon-plus-circle');
-  const searchInput = getByTestId('input-text-search');
-  const workspacesArray = getAllByText(/Workspace/);
+  const createButton = screen.getByTestId('labeledIcon-plus-circle');
+  const searchInput = screen.getByTestId('input-text-search');
+  const workspacesArray = screen.getAllByText(/Workspace/);
 
   expect(createButton).toBeInTheDocument();
   expect(searchInput).toBeInTheDocument();
   expect(workspacesArray.length).toBe(5);
 });
 
+test('renders Workspace menu without any results', async () => {
+  const search = jest.fn();
+  render(
+    <Menu
+      items={[]}
+      onSearch={search}
+      selectedWorkspace={jest.fn()}
+    />
+  );
+
+  const inputSearch = screen.getByTestId('input-text-search');
+
+  userEvent.type(inputSearch, 'unknown');
+
+  await waitFor(() => expect(screen.getByText('No workspace was found')).toBeInTheDocument());
+
+});
+
 test('renders Workspace menu on loading', () => {
-  const { getByText } = render(
+  render(
     <Menu
       items={props.items}
       onSearch={props.onSearch}
@@ -50,7 +69,7 @@ test('renders Workspace menu on loading', () => {
       isLoading
     />
   );
-  expect(getByText('Loading...')).toBeInTheDocument();
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
 });
 
 test('should click Workspace item', () => {

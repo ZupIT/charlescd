@@ -5,6 +5,7 @@
 /.pnp
 /.vscode
 /.idea
+.eslintcache
 .pnp.js
 
 
@@ -19,7 +20,6 @@
 # misc
 .DS_Store
 .env.development
-.env.local
 .env.development.local
 .env.test.local
 .env
