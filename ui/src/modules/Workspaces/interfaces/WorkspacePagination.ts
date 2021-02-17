@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
- // TODO refactor names
-interface Users {
+interface User {
   id: string;
   name: string;
   email: string;
@@ -25,7 +24,7 @@ interface Users {
 export interface WorkspacePaginationItem {
   id: string;
   name: string;
-  users: Users;
+  user: User[];
   status?: string;
 }
 
