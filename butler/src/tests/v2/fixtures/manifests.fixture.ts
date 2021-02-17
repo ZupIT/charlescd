@@ -57,7 +57,9 @@ export const routesManifests: KubernetesManifest[] = [
     metadata: {
       name: 'hello-kubernetes',
       namespace: 'namespace',
-      circles: ['b46fd548-0082-4021-ba80-a50703c44a3b']
+      annotations: {
+        circles: '["b46fd548-0082-4021-ba80-a50703c44a3b"]'
+      }
     },
     spec: {
       host: 'hello-kubernetes',
@@ -79,7 +81,9 @@ export const routesManifests: KubernetesManifest[] = [
     metadata: {
       name: 'hello-kubernetes',
       namespace: 'namespace',
-      circles: ['b46fd548-0082-4021-ba80-a50703c44a3b']
+      annotations: {
+        circles: '["b46fd548-0082-4021-ba80-a50703c44a3b"]'
+      }
     },
     spec: {
       gateways: [

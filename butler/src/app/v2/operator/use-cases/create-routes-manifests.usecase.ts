@@ -48,7 +48,7 @@ export class CreateRoutesManifestsUseCase {
       specs = specs.concat(proxySpecs)
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
-    await this.updateHealthStatus(healthStatus)
+    await this.updateRouteStatus(healthStatus)
     return { children: specs, resyncAfterSeconds: 5 }
   }
 
@@ -64,7 +64,7 @@ export class CreateRoutesManifestsUseCase {
     })
   }
 
-  public async updateHealthStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
+  public async updateRouteStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
     const components = groupBy(componentStatus, 'circle')
     const results =  await Promise.all(Object.entries(components).flatMap(async c => {
       const circleId = c[0]

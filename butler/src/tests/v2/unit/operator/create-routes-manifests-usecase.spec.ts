@@ -70,6 +70,7 @@ describe('Hook Routes Manifest Creation', () => {
 
   it('generate route manifest correctly', async() => {
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+    jest.spyOn(componentsRepository, 'findHealthyActiveComponents').mockImplementation(async() => deployComponentsFixture)
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,

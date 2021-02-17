@@ -34,7 +34,7 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .where({ id: id })
       .returning('id')
       .execute()
-    return this.findOneOrFail(updated.raw[0].id)
+    return await this.findOneOrFail(updated.raw[0].id)
   }
 
   public async updateRouteStatus(circleId: string, status: boolean): Promise<DeploymentEntityV2> {
@@ -44,7 +44,7 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .where({ circleId: circleId, current: true })
       .returning('id')
       .execute()
-    return this.findOneOrFail(updated.raw[0].id)
+    return await this.findOneOrFail(updated.raw[0].id)
   }
 
   public async findWithComponentsAndConfig(deploymentId: string): Promise<DeploymentEntityV2> {

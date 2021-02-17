@@ -11,7 +11,7 @@ import { TestSetupUtils } from '../test-setup-utils'
 describe('Routes manifest use case', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let repo: DeploymentRepositoryV2
+  let deploymentRepository: DeploymentRepositoryV2
   let routeUseCase: CreateRoutesManifestsUseCase
   let manager: EntityManager
 
@@ -29,7 +29,7 @@ describe('Routes manifest use case', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    repo = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
+    deploymentRepository = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
     routeUseCase = app.get<CreateRoutesManifestsUseCase>(CreateRoutesManifestsUseCase)
     manager = fixtureUtilsService.connection.manager
   })
@@ -47,7 +47,8 @@ describe('Routes manifest use case', () => {
     const configuration = await manager.save(cdConfigurationFixture)
     deploymentFixture.cdConfiguration = configuration
     deploymentFixture.circleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-    await repo.save(deploymentFixture)
+    deploymentFixture.current = true
+    await deploymentRepository.save(deploymentFixture)
 
     const params = [
       {
@@ -76,7 +77,7 @@ describe('Routes manifest use case', () => {
       }
     ]
 
-    const result = await routeUseCase.updateHealthStatus(params)
+    const result = await routeUseCase.updateRouteStatus(params)
     expect(result.map(r => r.routed)).toEqual([true])
   })
 
@@ -84,7 +85,8 @@ describe('Routes manifest use case', () => {
     const configuration = await manager.save(cdConfigurationFixture)
     deploymentFixture.cdConfiguration = configuration
     deploymentFixture.circleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
-    await repo.save(deploymentFixture)
+    deploymentFixture.current = true
+    await deploymentRepository.save(deploymentFixture)
 
     const params = [
       {
@@ -113,7 +115,7 @@ describe('Routes manifest use case', () => {
       }
     ]
 
-    const result = await routeUseCase.updateHealthStatus(params)
+    const result = await routeUseCase.updateRouteStatus(params)
     expect(result.map(r => r.routed)).toEqual([false])
   })
 
@@ -125,12 +127,12 @@ describe('Routes manifest use case', () => {
     const secondDeployment = deploymentFixture
     firstDeployment.cdConfiguration = configuration
     firstDeployment.circleId = firstCircleId
-    await repo.save(firstDeployment)
+    await deploymentRepository.save(firstDeployment)
 
     secondDeployment.cdConfiguration = configuration
     secondDeployment.circleId = secondCircleId
     secondDeployment.id = 'a7d08a07-f29d-452e-a667-7a39820f3262'
-    await repo.save(secondDeployment)
+    await deploymentRepository.save(secondDeployment)
 
     const params = [
       {
@@ -171,7 +173,7 @@ describe('Routes manifest use case', () => {
       }
     ]
 
-    const result = await routeUseCase.updateHealthStatus(params)
+    const result = await routeUseCase.updateRouteStatus(params)
     expect(result.map(r => ({ circle: r.circleId, routed: r.routed }))).toEqual(
       [
         { circle: firstCircleId, routed: true },
