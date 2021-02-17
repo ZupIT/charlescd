@@ -27,13 +27,13 @@ public class PercentageValidator implements ConstraintValidator<PercentageConstr
         if (segmentation.getType() != SegmentationType.PERCENTAGE) {
             return true;
         }
-       var sumPercentage = this.keyMetadataRepository.findByWorkspaceId(segmentation.getWorkspaceId()).stream().parallel().filter(
+       var sumPercentageWorkspace = this.keyMetadataRepository.findByWorkspaceId(segmentation.getWorkspaceId()).stream().parallel().filter(
                keyMetadata -> keyMetadata.isPercentage() && keyMetadata.isActive()
        ).map(
                KeyMetadata::getPercentage
-       ).reduce( (sum,value) -> sum+value);
-       if (sumPercentage.isPresent()) {
-           if (sumPercentage.get() + segmentation.getPercentage() > 100) {
+       ).reduce(Integer::sum);
+       if (sumPercentageWorkspace.isPresent()) {
+           if (sumPercentageWorkspace.get() + segmentation.getPercentage() > 100) {
                return false;
            } else {
                return segmentation.hasValidPercentage();

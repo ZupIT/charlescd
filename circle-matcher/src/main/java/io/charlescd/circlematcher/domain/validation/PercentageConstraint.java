@@ -13,7 +13,7 @@ import javax.validation.Payload;
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PercentageConstraint {
-    String message() default "Percentage must be between 0 and 100";
+    String message() default "Invalid percentage";
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
