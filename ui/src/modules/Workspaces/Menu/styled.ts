@@ -40,8 +40,7 @@ const ListItem = styled(LabeledIcon)`
 `;
 
 const Content = styled.div`
-  height: calc(100vh - 200px);
-  overflow-y: auto;
+  height: calc(100vh - 250px);
 `;
 
 const Actions = styled.div`
