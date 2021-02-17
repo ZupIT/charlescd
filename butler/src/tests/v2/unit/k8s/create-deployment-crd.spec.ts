@@ -77,6 +77,6 @@ it('must generate the correct CharlesDeployment custom resource object', () => {
   }
 
   expect(
-    CrdBuilder.buildDeploymentCrdManifest(deploymentWith3Components)
+    CrdBuilder.buildDeploymentCrdManifest(deploymentWith3Components, 'namespace')
   ).toEqual(expectedDeploymentCrd)
 })

@@ -115,7 +115,7 @@ describe('Deployment on existing circle', () => {
         }
       }
     ]
-    const concat = reconcile.concatWithPrevious(previousDeployment, currentComponents)
+    const concat = reconcile.concatWithPrevious(previousDeployment, currentComponents, cdConfig)
     const expected = [
       {
         kind: 'Deployment',
