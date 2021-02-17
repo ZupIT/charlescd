@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-interface User {
+interface Users {
   id: string;
   name: string;
   email: string;
@@ -24,7 +24,7 @@ interface User {
 export interface WorkspacePaginationItem {
   id: string;
   name: string;
-  user: User[];
+  users: Users;
   status?: string;
 }
 
