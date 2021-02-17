@@ -42,7 +42,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
                 build,
                 deployment.circle.id,
                 isDefaultCircle,
-                configuration
+                configuration,
+                deployment.metadata
             )
         )
     }
@@ -65,6 +66,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         circleId: String,
         isDefault: Boolean,
         deploymentConfiguration: DeploymentConfiguration
+        metadata: Map<String, String>?
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
@@ -73,7 +75,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             namespace = deploymentConfiguration.namespace,
             components = buildComponentsDeployRequest(build),
             circle = CircleRequest(circleId, isDefault),
-            git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider)
+            git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider),
+            metadata = metadata
         )
     }
 
