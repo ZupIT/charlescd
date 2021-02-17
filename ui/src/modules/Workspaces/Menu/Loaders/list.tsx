@@ -18,11 +18,10 @@ import React from 'react';
 import ContentLoader from 'react-content-loader';
 
 export type Props = {
-  className?: string;
+  classname?: string;
 };
 
-// TODO classname
-export const Loader = ({className}: Props) => (
+export const Loader = ({classname}: Props) => (
   <ContentLoader
     speed={4}
     width={200}
@@ -30,7 +29,7 @@ export const Loader = ({className}: Props) => (
     viewBox="0 0 200 200"
     backgroundColor="#3a393c"
     foregroundColor="#2c2b2e"
-    className={className}
+    className={classname}
   >
     <rect x="0" y="0" rx="4" ry="4" width="260" height="15" />
     <rect x="0" y="35" rx="4" ry="4" width="260" height="15" />

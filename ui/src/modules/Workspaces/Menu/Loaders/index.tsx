@@ -17,9 +17,8 @@
 import React from 'react';
 import { Loader as LoaderList, Props as ListProps } from './list';
 
-// TODO remove?
 const Loader = {
-  List: ({className}: ListProps) => <LoaderList className={className} />
+  List: ({classname}: ListProps) => <LoaderList classname={classname} />
 };
 
 export default Loader;
