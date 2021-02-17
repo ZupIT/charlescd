@@ -18,7 +18,7 @@ import React from 'react';
 import { Loader as LoaderList, Props as ListProps } from './list';
 
 const Loader = {
-  List: ({classname}: ListProps) => <LoaderList classname={classname} />
+  List: ({className}: ListProps) => <LoaderList className={className} />
 };
 
 export default Loader;
