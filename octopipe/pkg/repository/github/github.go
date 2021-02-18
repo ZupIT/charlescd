@@ -38,11 +38,16 @@ func NewGithubRepository(url, token string) GithubRepository {
 }
 
 func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) (string, string, error) {
-	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_GIT_HTTPS_VALIDATION"))
-	if errParse != nil {
-		return "", "", customerror.New("Get chart by github failed", errParse.Error(), map[string]string{
-			"validOptions": "1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False",
-		}, "github.GetTemplateAndValueByName.ParseBool")
+	envSkipHttpsValidation := os.Getenv("SKIP_GIT_HTTPS_VALIDATION")
+	var skipTLS bool
+	var errParse error
+	if envSkipHttpsValidation != "" {
+		skipTLS, errParse = strconv.ParseBool(envSkipHttpsValidation)
+		if errParse != nil {
+			return "", "", customerror.New("Get chart by gitlab failed", errParse.Error(), map[string]string{
+				"validOptions": "1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False",
+			}, "gitlab.GetTemplateAndValueByName.ParseBool")
+		}
 	}
 
 	basePathSplit := strings.Split(githubRepository.Url, "?")
