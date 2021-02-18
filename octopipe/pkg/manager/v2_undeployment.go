@@ -2,7 +2,9 @@ package manager
 
 import (
 	"context"
+	"octopipe/pkg/customerror"
 
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"k8s.io/klog"
 )
@@ -53,12 +55,12 @@ func (manager Manager) runV2Undeployments(v2Pipeline V2UndeploymentPipeline) err
 }
 
 func (manager Manager) handleV2ProxyUndeploymentError(v2Pipeline V2UndeploymentPipeline, err error, incomingCircleId string) {
-
+	log.WithFields(customerror.WithLogFields(err)).Error()
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 
 }
 
 func (manager Manager) handleV2UndeploymentError(v2Pipeline V2UndeploymentPipeline, err error, incomingCircleId string) {
-
+	log.WithFields(customerror.WithLogFields(err)).Error()
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 }
