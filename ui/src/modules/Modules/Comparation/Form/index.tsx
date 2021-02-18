@@ -147,7 +147,7 @@ const FormModule = ({ module, onChange }: Props) => {
           <Styled.Input
             label="Insert url"
             name="helmGitlabUrl"
-            ref={helmRegister({ required: true })}
+            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization" ) })}
           />
         </Styled.FieldPopover>
       )}
@@ -163,7 +163,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert repository"
           name="helmRepository"
-          ref={helmRegister({ required: true, validate: value => validateSlash(value, "helm repository") })}
+          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm repository") })}
           error={helmErrors?.helmRepository?.message}
 
         />
