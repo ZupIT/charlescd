@@ -13,12 +13,14 @@ const (
 	notEnqueued     = "NOT_ENQUEUED"
 	delivered       = "DELIVERED"
 	deliveredFailed = "DELIVERED_FAILED"
+	errorLog        = "ERROR"
 	successLog      = "SUCCESS"
 )
 
 type UseCases interface {
 	Publish(stopPub chan bool) error
 	Consume(stopSub chan bool)
+	ConsumeDeliveredFail(stopSup chan bool)
 }
 
 type Main struct {
