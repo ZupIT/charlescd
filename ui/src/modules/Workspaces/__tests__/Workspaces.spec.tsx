@@ -136,7 +136,7 @@ test('render Workspace with isIDMEnabled enabled and search', async () => {
 test('should search a workspace by name', async () => {
   const workspaceRequest = jest.fn();
 
-  jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => true);
+  jest.spyOn(authUtils, 'isIDMEnabled').mockImplementation(() => true);
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
   jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
   jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
