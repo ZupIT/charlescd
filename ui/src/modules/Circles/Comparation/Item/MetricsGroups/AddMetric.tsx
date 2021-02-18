@@ -49,7 +49,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     handleSubmit,
     register,
     control,
-    setError,
     errors,
     watch,
     formState: { isValid }
@@ -59,7 +58,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [loadingProviders, setLoadingProviders] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const { getAllDataSourceMetrics } = useProviderMetrics();
-  const { saveMetric, status: creatingStatus, validationError } = useSaveMetric(
+  const { saveMetric, status: creatingStatus } = useSaveMetric(
     metric?.id
   );
   const [providerOptions, setProviderOptions] = useState<Option[]>();
@@ -69,14 +68,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [metrics, setMetrics] = useState<Option[]>();
   const watchDataSourceId = watch('dataSourceId');
   const canShowForm = watchDataSourceId || metric?.id;
-
-  useEffect(() => {
-    if (validationError?.errors?.length) {
-      validationError.errors.forEach(({ field, error }) => {
-        setError(field, { message: error });
-      });
-    }
-  }, [validationError, setError]);
 
   useEffect(() => {
     if (metric) {
