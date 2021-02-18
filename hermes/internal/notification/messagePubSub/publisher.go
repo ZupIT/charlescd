@@ -46,15 +46,15 @@ func (main *Main) publish() {
 	for i, msg := range messages {
 		logrus.WithFields(logrus.Fields{
 			"Messages ready to publish": len(messages) - i,
-			"Time": time.Now(),
+			"Time":                      time.Now(),
 		}).Println()
 
-		 main.sendMessage(msg, getQueue(msg.LastStatus))
+		main.sendMessage(msg, getQueue(msg.LastStatus))
 	}
 }
 
 func getQueue(status string) string {
-	if status == "NOT_ENQUEUED"{
+	if status == "NOT_ENQUEUED" {
 		return configuration.GetConfiguration("AMQP_MESSAGE_QUEUE")
 	}
 	return configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE")
@@ -69,7 +69,7 @@ func (main *Main) sendMessage(message payloads.MessageResponse, queue string) er
 		}).Errorln()
 	}
 
-	err = main.amqpClient.Push(pushMsg,queue)
+	err = main.amqpClient.Push(pushMsg, queue)
 	if err != nil {
 		main.updateMessageStatus(message, notEnqueued, err.Error())
 		return err

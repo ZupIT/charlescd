@@ -34,14 +34,14 @@ import (
 
 type Subscription struct {
 	util.BaseModel
-	ExternalId  uuid.UUID       `json:"externalId"`
-	Url         string          `json:"url"`
-	Description string          `json:"description"`
-	ApiKey      []byte          `json:"apiKey" gorm:"type:bytea"`
-	Events      string          `json:"events"`
-	CreatedBy   string          `json:"createdBy"`
-	DeletedBy   string          `json:"-"`
-	DeletedAt   *time.Time      `json:"-"`
+	ExternalId  uuid.UUID  `json:"externalId"`
+	Url         string     `json:"url"`
+	Description string     `json:"description"`
+	ApiKey      []byte     `json:"apiKey" gorm:"type:bytea"`
+	Events      string     `json:"events"`
+	CreatedBy   string     `json:"createdBy"`
+	DeletedBy   string     `json:"-"`
+	DeletedAt   *time.Time `json:"-"`
 }
 
 func (main Main) Validate(subscription Request) errors.ErrorList {

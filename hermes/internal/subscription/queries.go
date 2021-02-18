@@ -45,13 +45,7 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 
 }
 
-var decryptedSubscriptionQuery = fmt.Sprintf(`SELECT id,
-						description,
-       					external_id,
-       					url,
-						PGP_SYM_DECRYPT(api_key, '%s'),
-						events
-					FROM subscriptions
-					WHERE id = ?
-					AND deleted_at IS NULL`, "Yjg0NDVkMDUtMzliOC00YTkxLWEwOWMtZDRhN2VkOGRlZmRj")
-
+var decryptedSubscriptionQuery = fmt.Sprintf(`SELECT id, description, external_id, url, PGP_SYM_DECRYPT(api_key, '%s'), events
+								FROM subscriptions
+								WHERE id = ?
+								AND deleted_at IS NULL`, configuration.GetConfiguration("ENCRYPTION_KEY"))

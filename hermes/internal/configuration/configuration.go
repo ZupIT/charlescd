@@ -86,7 +86,7 @@ func GetConfigurationAsInt64(configuration string) int64 {
 		}).Warnln()
 	}
 
-	envAsInt64, err:= strconv.ParseInt(env, 10, 64)
+	envAsInt64, err := strconv.ParseInt(env, 10, 64)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": fmt.Sprintf("%s parse error", err),
@@ -103,7 +103,7 @@ func GetConfigurationAsInt(configuration string) int {
 		}).Warnln()
 	}
 
-	envAsInt, err:= strconv.Atoi(env)
+	envAsInt, err := strconv.Atoi(env)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": fmt.Sprintf("%s parse error", err),

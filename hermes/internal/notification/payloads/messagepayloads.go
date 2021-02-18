@@ -24,14 +24,12 @@ import (
 	"time"
 )
 
-//published
 type Request struct {
 	SubscriptionId uuid.UUID       `json:"subscriptionId"`
 	EventType      string          `json:"eventType"`
 	Event          json.RawMessage `json:"event"`
 }
 
-// moove -> hermes
 type PayloadRequest struct {
 	ExternalId uuid.UUID       `json:"externalId"` //workspace-id
 	EventType  string          `json:"eventType"`
