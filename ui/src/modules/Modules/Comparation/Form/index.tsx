@@ -147,7 +147,8 @@ const FormModule = ({ module, onChange }: Props) => {
           <Styled.Input
             label="Insert url"
             name="helmGitlabUrl"
-            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization" ) })}
+            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm gitlab url" ) })}
+            error={helmErrors?.helmGitlabUrl?.message}
           />
         </Styled.FieldPopover>
       )}
