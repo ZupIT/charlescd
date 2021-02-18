@@ -57,11 +57,10 @@ func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 			return
 		}
 
-
-		if subscriptionsCount >= configuration.GetConfigurationAsInt64("SUBSCRIPTION_REGISTER_LIMIT") {
+		subscriptionLimit := configuration.GetConfigurationAsInt64("SUBSCRIPTION_REGISTER_LIMIT")
+		if subscriptionLimit > 0 && subscriptionsCount >= subscriptionLimit {
 			restutil.NewResponse(w, http.StatusUnprocessableEntity, "subscription limit reached to externalId")
 			return
-
 		}
 
 		createdSubscription, err := subscriptionMain.Save(request)
