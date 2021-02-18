@@ -7,7 +7,7 @@ CREATE TABLE SUBSCRIPTIONS
     external_id varchar(36)                         NOT NULL,
     url         varchar(256)                        NOT NULL,
     api_key     bytea,
-    events      jsonb                               NOT NULL,
+    events      text[]                                   NOT NULL,
     created_by  varchar(100)                        NOT NULL,
     created_at  timestamp default clock_timestamp() NOT NULL,
     deleted_by  varchar(100),
@@ -20,7 +20,7 @@ CREATE TABLE MESSAGES
     subscription_id varchar(36)                         NOT NULL,
     event_type      varchar(50),
     last_status     varchar(50),
-    event           jsonb                               NOT NULL,
+    event           text                               NOT NULL,
     created_at      timestamp default clock_timestamp() NOT NULL,
     CONSTRAINT FK_subscription_id_messages_executions FOREIGN KEY (subscription_id) REFERENCES SUBSCRIPTIONS (ID)
 );

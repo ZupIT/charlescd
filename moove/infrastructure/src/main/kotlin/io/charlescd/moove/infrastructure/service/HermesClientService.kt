@@ -20,9 +20,14 @@ import com.google.gson.Gson
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.service.HermesService
-import io.charlescd.moove.infrastructure.service.client.*
-import io.charlescd.moove.infrastructure.service.client.request.*
-import io.charlescd.moove.infrastructure.service.client.response.*
+import io.charlescd.moove.infrastructure.service.client.HermesClient
+import io.charlescd.moove.infrastructure.service.client.HermesPublisherClient
+import io.charlescd.moove.infrastructure.service.client.request.HermesCreateSubscriptionRequest
+import io.charlescd.moove.infrastructure.service.client.request.HermesPublishSubscriptionEventRequest
+import io.charlescd.moove.infrastructure.service.client.request.HermesUpdateSubscriptionRequest
+import io.charlescd.moove.infrastructure.service.client.response.HermesHealthCheckSubscriptionResponse
+import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionEventHistoryResponse
+import io.charlescd.moove.infrastructure.service.client.response.HermesSubscriptionResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -107,7 +112,7 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
             url = subscription.url,
             description = subscription.description,
             workspaceId = subscription.externalId,
-            events = subscription.events
+            events = subscription.events.split(",").map { it.trim() }
         )
     }
 
@@ -141,7 +146,7 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
                         it.loggedAt
                     )
                 }
-        ) }
+            ) }
     }
 
     private fun buildWebhookSubscriptionInfo(authorEmail: String, subscriptionId: String): WebhookSubscriptionInfo {

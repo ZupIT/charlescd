@@ -29,27 +29,55 @@ class WebhookEventService(
     private val hermesService: HermesService,
     private val buildService: BuildService
 ) {
-
-    fun notifyDeploymentEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment) {
-        hermesService.notifySubscriptionEvent(
-            buildWebhookDeploymentEventType(simpleWebhookEvent, deployment))
+    fun notifyDeploymentEvent(
+        workspaceId: String,
+        eventType: WebhookEventTypeEnum,
+        eventSubType: WebhookEventSubTypeEnum,
+        status: WebhookEventStatusEnum,
+        deployment: Deployment? = null,
+        error: String? = null
+    ) {
+        val simpleWebhookEvent = SimpleWebhookEvent(workspaceId, eventType, eventSubType, status)
+        val hermesEvent = buildHermesEvent(simpleWebhookEvent, deployment, error)
+        hermesService.notifySubscriptionEvent(hermesEvent)
     }
 
-    private fun buildWebhookDeploymentEventType(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment): WebhookDeploymentEventType {
+    private fun buildHermesEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment?, error: String?): WebhookEvent {
+        if (deployment == null) {
+            return buildWebhookNotFoundErrorEventType(simpleWebhookEvent, error!!)
+        }
+        return buildWebhookDeploymentEventType(simpleWebhookEvent, deployment)
+    }
+
+    private fun buildWebhookDeploymentEventType(
+        simpleWebhookEvent: SimpleWebhookEvent,
+        deployment: Deployment,
+        error: String? = null
+    ): WebhookDeploymentEventType {
         return WebhookDeploymentEventType(
             simpleWebhookEvent.workspaceId,
             simpleWebhookEvent.eventType,
             simpleWebhookEvent.eventStatus,
+            error,
             buildWebhookDeploymentEvent(deployment, simpleWebhookEvent)
+        )
+    }
+
+    private fun buildWebhookNotFoundErrorEventType(simpleWebhookEvent: SimpleWebhookEvent, errorMessage: String): WebhookNotFoundErrorEventType {
+        return WebhookNotFoundErrorEventType(
+            simpleWebhookEvent.workspaceId,
+            simpleWebhookEvent.eventType,
+            simpleWebhookEvent.eventStatus,
+            errorMessage
         )
     }
 
     private fun buildWebhookDeploymentEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): WebhookDeploymentEvent {
         return WebhookDeploymentEvent(
             workspaceId = deployment.workspaceId,
-            type = simpleWebhookEvent.eventType,
+            type = simpleWebhookEvent.eventSubType,
             status = simpleWebhookEvent.eventStatus,
-            date = getDeploymentDateEvent(deployment, simpleWebhookEvent.eventType),
+            date = getDeploymentDateEvent(deployment, simpleWebhookEvent.eventSubType),
             timeExecution = getTimeExecutionEvent(deployment, simpleWebhookEvent),
             author = getAuthorEvent(deployment),
             circle = getCircleEvent(deployment),
@@ -58,7 +86,7 @@ class WebhookEventService(
     }
 
     private fun getTimeExecutionEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): Long? {
-        if (simpleWebhookEvent.eventType == WebhookEventTypeEnum.FINISH_DEPLOY &&
+        if (simpleWebhookEvent.eventSubType == WebhookEventSubTypeEnum.FINISH_DEPLOY &&
             simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS) {
             return ChronoUnit.SECONDS.between(deployment.deployedAt, deployment.createdAt)
         }
@@ -109,12 +137,12 @@ class WebhookEventService(
         )
     }
 
-    private fun getDeploymentDateEvent(deployment: Deployment, webhookEventType: WebhookEventTypeEnum): LocalDateTime? {
-        return when (webhookEventType) {
-            WebhookEventTypeEnum.START_DEPLOY -> deployment.createdAt
-            WebhookEventTypeEnum.START_UNDEPLOY -> LocalDateTime.now()
-            WebhookEventTypeEnum.FINISH_DEPLOY -> getFinishDeployDate(deployment)
-            WebhookEventTypeEnum.FINISH_UNDEPLOY -> getFinishUndeployDate(deployment)
+    private fun getDeploymentDateEvent(deployment: Deployment, webhookEventSubType: WebhookEventSubTypeEnum): LocalDateTime? {
+        return when (webhookEventSubType) {
+            WebhookEventSubTypeEnum.START_DEPLOY -> deployment.createdAt
+            WebhookEventSubTypeEnum.START_UNDEPLOY -> LocalDateTime.now()
+            WebhookEventSubTypeEnum.FINISH_DEPLOY -> getFinishDeployDate(deployment)
+            WebhookEventSubTypeEnum.FINISH_UNDEPLOY -> getFinishUndeployDate(deployment)
         }
     }
 

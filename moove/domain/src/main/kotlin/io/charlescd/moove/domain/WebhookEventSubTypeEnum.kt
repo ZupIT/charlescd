@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import Page from 'core/components/Page';
-import LoaderMenuComponent from './Menu/Loaders';
+package io.charlescd.moove.domain
 
-const ScrollableX = styled(Page.Content)`
-  overflow-y: hidden;
-  overflow-x: auto;
-`;
-
-const LoaderMenu = styled(LoaderMenuComponent.List)`
-  margin-left: 16px;
-`;
-
-export default {
-  ScrollableX,
-  LoaderMenu
-};
+enum class WebhookEventSubTypeEnum {
+    START_DEPLOY,
+    START_UNDEPLOY,
+    FINISH_DEPLOY,
+    FINISH_UNDEPLOY
+}

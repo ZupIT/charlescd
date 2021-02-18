@@ -38,7 +38,7 @@ type Subscription struct {
 	Url         string          `json:"url"`
 	Description string          `json:"description"`
 	ApiKey      []byte          `json:"apiKey" gorm:"type:bytea"`
-	Events      json.RawMessage `json:"events" gorm:"type:jsonb"`
+	Events      string          `json:"events"`
 	CreatedBy   string          `json:"createdBy"`
 	DeletedBy   string          `json:"-"`
 	DeletedAt   *time.Time      `json:"-"`
@@ -157,7 +157,7 @@ func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
 func (main Main) FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error) {
 	var res []ExternalIdResponse
 
-	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND events = ? AND deleted_at IS NULL", externalId.String(), map[string]interface{}{"event": event})
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND events like ? AND deleted_at IS NULL", externalId.String(), "%"+event+"%")
 	if q.Error != nil {
 		return []ExternalIdResponse{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
 			WithOperations("FindAllByExternalIdAndEvent.QuerySubscription")

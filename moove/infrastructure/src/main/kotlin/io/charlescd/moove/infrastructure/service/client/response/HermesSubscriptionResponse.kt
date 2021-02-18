@@ -22,5 +22,5 @@ data class HermesSubscriptionResponse(
     val apiKey: String? = null,
     val externalId: String,
     val description: String,
-    val events: List<String>
+    val events: String
 )

@@ -35,7 +35,7 @@ func (main *Main) Publish(stopPub chan bool) error {
 }
 
 func (main *Main) publish() {
-	messages, err := main.messageMain.FindAllNotEnqueued()
+	messages, err := main.messageMain.FindAllNotEnqueuedAndDeliveredFail()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": errors.NewError("Cannot start publisher", "Could not find active messages").
@@ -48,11 +48,19 @@ func (main *Main) publish() {
 			"Messages ready to publish": len(messages) - i,
 			"Time": time.Now(),
 		}).Println()
-		 main.sendMessage(msg)
+
+		 main.sendMessage(msg, getQueue(msg.LastStatus))
 	}
 }
 
-func (main *Main) sendMessage(message payloads.MessageResponse) error {
+func getQueue(status string) string {
+	if status == "NOT_ENQUEUED"{
+		return configuration.GetConfiguration("AMQP_MESSAGE_QUEUE")
+	}
+	return configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE")
+}
+
+func (main *Main) sendMessage(message payloads.MessageResponse, queue string) error {
 	pushMsg, err := json.Marshal(message)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -61,14 +69,13 @@ func (main *Main) sendMessage(message payloads.MessageResponse) error {
 		}).Errorln()
 	}
 
-	err = main.amqpClient.Push(pushMsg)
+	err = main.amqpClient.Push(pushMsg,queue)
 	if err != nil {
 		main.updateMessageStatus(message, notEnqueued, err.Error())
 		return err
 	}
 
 	main.updateMessageStatus(message, enqueued, successLog)
-
 	return nil
 }
 

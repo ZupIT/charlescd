@@ -63,6 +63,8 @@ func main() {
 	go messagePubSubMain.Publish(stopPub)
 	stopSub := make(chan bool, 0)
 	go messagePubSubMain.Consume(stopSub)
+	stopFailSub := make(chan bool, 0)
+	go messagePubSubMain.ConsumeDeliveredFail(stopFailSub)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)

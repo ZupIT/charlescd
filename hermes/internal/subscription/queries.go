@@ -19,14 +19,14 @@
 package subscription
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	"gorm.io/gorm/clause"
 	"hermes/internal/configuration"
+	"strings"
 )
 
-func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events json.RawMessage) map[string]interface{} {
+func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events []string) map[string]interface{} {
 	return map[string]interface{}{
 		"id":          id,
 		"ExternalId":  externalId,
@@ -39,7 +39,7 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
 			},
 		},
-		"Events":    string(events),
+		"Events":    strings.Join(events, ","),
 		"CreatedBy": createdBy,
 	}
 

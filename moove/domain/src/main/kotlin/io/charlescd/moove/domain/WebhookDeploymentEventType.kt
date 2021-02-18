@@ -22,15 +22,17 @@ data class WebhookDeploymentEventType(
     override val externalId: String,
     override val eventType: WebhookEventTypeEnum,
     override val eventStatus: WebhookEventStatusEnum,
+    override val error: String? = null,
     val event: WebhookDeploymentEvent
 ) : WebhookEvent(
     externalId,
     eventType,
-    eventStatus
+    eventStatus,
+    error
 )
 
 data class WebhookDeploymentEvent(
-    val type: WebhookEventTypeEnum,
+    val type: WebhookEventSubTypeEnum,
     val status: WebhookEventStatusEnum,
     val date: LocalDateTime?,
     val workspaceId: String,
