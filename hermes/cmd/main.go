@@ -47,8 +47,8 @@ func main() {
 
 	goChan := make(chan os.Signal, 1)
 	amqpClient := rabbitClient.NewClient(
-		configuration.GetConfiguration("AMQP_LISTEN_QUEUE"),
-		configuration.GetConfiguration("AMQP_PUSH_QUEUE"),
+		configuration.GetConfiguration("AMQP_MESSAGE_QUEUE"),
+		configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"),
 		configuration.GetConfiguration("AMQP_URL"),
 		logrus.New(),
 		goChan,

@@ -144,7 +144,7 @@ func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
 func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
 	res := Response{}
 
-	err := main.db.Set("gorm:auto_preload", true).Raw(decryptedSubscriptionQuery, subscriptionId).Row().
+	err := main.db.Set("gorm:auto_preload", true).Raw(decryptedSubscriptionQuery(), subscriptionId).Row().
 		Scan(&res.ID, &res.Description, &res.ExternalId, &res.Url, &res.ApiKey, &res.Events)
 	if err != nil {
 		return Response{}, errors.NewError("Find Subscription error", err.Error()).

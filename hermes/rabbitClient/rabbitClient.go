@@ -36,7 +36,7 @@ type Client struct {
 	wg                 *sync.WaitGroup
 }
 
-func NewClient(pushQueue, deliveredFailQueue, addr string, l *logrus.Logger, done chan os.Signal) *Client {
+func NewClient(messageQueue, deliveredFailQueue, addr string, l *logrus.Logger, done chan os.Signal) *Client {
 	threads := runtime.GOMAXPROCS(0)
 	if numCPU := runtime.NumCPU(); numCPU > threads {
 		threads = numCPU
@@ -45,7 +45,7 @@ func NewClient(pushQueue, deliveredFailQueue, addr string, l *logrus.Logger, don
 	client := Client{
 		logger:             l,
 		threads:            threads,
-		messageQueue:       pushQueue,
+		messageQueue:       messageQueue,
 		deliveredFailQueue: deliveredFailQueue,
 		done:               done,
 		alive:              true,
