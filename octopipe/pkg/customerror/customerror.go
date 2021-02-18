@@ -11,10 +11,10 @@ import (
 
 type customerror struct {
 	ID         uuid.UUID
-	Title      string
-	Detail     string
-	Operations []string
-	Meta       map[string]string
+	Title      string            `json:"title"`
+	Detail     string            `json:"detail"`
+	Operations []string          `json:"operations"`
+	Meta       map[string]string `json:"meta"`
 }
 
 func (err customerror) Error() string {
@@ -66,7 +66,8 @@ func New(title string, detail string, meta map[string]string, operations ...stri
 			"timestamp": time.Now().String(),
 		}
 	} else {
-		meta["timestamp"] = time.Now().String()
+		newMeta = meta
+		newMeta["timestamp"] = time.Now().String()
 	}
 
 	return customerror{

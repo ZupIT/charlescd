@@ -6,12 +6,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
-	"k8s.io/klog"
-	"k8s.io/klog/klogr"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
+	"octopipe/pkg/customerror"
+
+	"github.com/argoproj/gitops-engine/pkg/utils/kube"
+	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
+	"github.com/sirupsen/logrus"
+	"k8s.io/klog"
+	"k8s.io/klog/klogr"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -117,10 +120,20 @@ func (manager Manager) triggerV2Callback(callbackUrl string, callbackType string
 	callbackData := V2CallbackData{callbackType, status}
 	request, err := manager.mountV2WebhookRequest(callbackUrl, callbackData, incomingCircleId)
 	if err != nil {
+		logrus.WithFields(customerror.WithLogFields(customerror.New("Mount webhook request", err.Error(), map[string]string{
+			"url":          callbackUrl,
+			"status":       status,
+			"callbackType": callbackType,
+		}))).Error()
 		return
 	}
 	_, err = client.Do(request)
 	if err != nil {
+		logrus.WithFields(customerror.WithLogFields(customerror.New("Request error", err.Error(), map[string]string{
+			"url":          callbackUrl,
+			"status":       status,
+			"callbackType": callbackType,
+		}))).Error()
 		return
 	}
 }
