@@ -29,18 +29,45 @@ class WebhookEventService(
     private val hermesService: HermesService,
     private val buildService: BuildService
 ) {
-
-    fun notifyDeploymentEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment) {
-        hermesService.notifySubscriptionEvent(
-            buildWebhookDeploymentEventType(simpleWebhookEvent, deployment))
+    fun notifyDeploymentEvent(
+        workspaceId: String,
+        eventType: WebhookEventTypeEnum,
+        status: WebhookEventStatusEnum,
+        deployment: Deployment? = null,
+        error: String? = null
+    ) {
+            val simpleWebhookEvent = SimpleWebhookEvent(workspaceId, eventType, status)
+            val hermesEvent = buildHermesEvent(simpleWebhookEvent, deployment, error)
+            hermesService.notifySubscriptionEvent(hermesEvent)
     }
 
-    private fun buildWebhookDeploymentEventType(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment): WebhookDeploymentEventType {
+    private fun buildHermesEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment?, error: String?): WebhookEvent {
+        if (deployment == null) {
+            return buildWebhookNotFoundErrorEventType(simpleWebhookEvent, error!!)
+        }
+        return buildWebhookDeploymentEventType(simpleWebhookEvent, deployment)
+    }
+
+    private fun buildWebhookDeploymentEventType(
+        simpleWebhookEvent: SimpleWebhookEvent,
+        deployment: Deployment,
+        error: String? = null
+    ): WebhookDeploymentEventType {
         return WebhookDeploymentEventType(
             simpleWebhookEvent.workspaceId,
             simpleWebhookEvent.eventType,
             simpleWebhookEvent.eventStatus,
+            error,
             buildWebhookDeploymentEvent(deployment, simpleWebhookEvent)
+        )
+    }
+
+    private fun buildWebhookNotFoundErrorEventType(simpleWebhookEvent: SimpleWebhookEvent, errorMessage: String): WebhookNotFoundErrorEventType {
+        return WebhookNotFoundErrorEventType(
+            simpleWebhookEvent.workspaceId,
+            simpleWebhookEvent.eventType,
+            simpleWebhookEvent.eventStatus,
+            errorMessage
         )
     }
 
@@ -59,7 +86,8 @@ class WebhookEventService(
 
     private fun getTimeExecutionEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): Long? {
         if (simpleWebhookEvent.eventType == WebhookEventTypeEnum.FINISH_DEPLOY &&
-            simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS) {
+            simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS
+        ) {
             return ChronoUnit.SECONDS.between(deployment.deployedAt, deployment.createdAt)
         }
         return null

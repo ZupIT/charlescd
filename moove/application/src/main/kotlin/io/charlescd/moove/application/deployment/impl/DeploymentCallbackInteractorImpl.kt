@@ -74,8 +74,7 @@ open class DeploymentCallbackInteractorImpl(
     private fun notifyEvent(request: DeploymentCallbackRequest, deployment: Deployment) {
         val webhookEventType = getWebhookEventType(request, deployment)
         val webhookEventStatus = getWebhookEventStatus(request)
-        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, webhookEventType, webhookEventStatus)
-        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
+        webhookEventService.notifyDeploymentEvent(deployment.workspaceId, webhookEventType, webhookEventStatus, deployment)
     }
 
     private fun getWebhookEventType(callbackRequest: DeploymentCallbackRequest, deployment: Deployment): WebhookEventTypeEnum {

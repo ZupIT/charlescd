@@ -38,9 +38,9 @@ open class UndeployInteractorImpl @Inject constructor(
 
     @Transactional
     override fun execute(workspaceId: String, authorization: String, id: String) {
-        val deployment: Deployment = deploymentService.findByIdAndWorkspace(id, workspaceId)
+        val deployment: Deployment = getDeployment(id, workspaceId)
         updateDeploymentStatus(deployment)
-        undeploy(id, authorization, deployment)
+        undeploy(authorization, deployment)
     }
 
     private fun updateDeploymentStatus(deployment: Deployment): Deployment {
@@ -51,17 +51,30 @@ open class UndeployInteractorImpl @Inject constructor(
         return userService.findByAuthorizationToken(authorization).id
     }
 
-    private fun notifyEvent(status: WebhookEventStatusEnum, deployment: Deployment) {
-        val simpleWebhookEvent = SimpleWebhookEvent(deployment.workspaceId, WebhookEventTypeEnum.START_UNDEPLOY, status)
-        webhookEventService.notifyDeploymentEvent(simpleWebhookEvent, deployment)
+    private fun undeploy(authorization: String, deployment: Deployment) {
+        try {
+            deployService.undeploy(deployment.id, getAuthorId(authorization))
+            notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.SUCCESS, deployment)
+        } catch (ex: Exception) {
+            notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.FAIL, deployment, ex.message!!)
+            throw ex
+        }
     }
 
-    private fun undeploy(id: String, authorization: String, deployment: Deployment) {
+    private fun notifyEvent(
+        workspaceId: String,
+        status: WebhookEventStatusEnum,
+        deployment: Deployment? = null,
+        error: String? = null
+    ) {
+            webhookEventService.notifyDeploymentEvent(workspaceId, WebhookEventTypeEnum.START_UNDEPLOY, status, deployment, error)
+    }
+
+    private fun getDeployment(deploymentId: String, workspaceId: String): Deployment {
         try {
-            deployService.undeploy(id, getAuthorId(authorization))
-            notifyEvent(WebhookEventStatusEnum.SUCCESS, deployment)
+            return deploymentService.findByIdAndWorkspace(deploymentId, workspaceId)
         } catch (ex: Exception) {
-            notifyEvent(WebhookEventStatusEnum.FAIL, deployment)
+            notifyEvent(workspaceId, WebhookEventStatusEnum.FAIL, null, ex.message!!)
             throw ex
         }
     }
