@@ -100,7 +100,7 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Service',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          name: 'abobora',
           namespace: 'my-namespace'
         }
       },
@@ -114,7 +114,7 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Service',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          name: 'jilo',
           namespace: 'my-namespace'
         }
       }
@@ -131,7 +131,7 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Service',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          name: 'abobora',
           namespace: 'my-namespace'
         }
       },
@@ -145,7 +145,7 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Service',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          name: 'jilo',
           namespace: 'my-namespace'
         }
       },
@@ -159,7 +159,7 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Service',
         metadata: {
-          name: 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          name: 'batata',
           namespace: 'my-namespace'
         }
       }

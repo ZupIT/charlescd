@@ -16,8 +16,10 @@ export class Reconcile {
 
   public addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2, configuration: CdConfiguration) : KubernetesManifest[] {
     return spec.map((s: KubernetesManifest) => {
-      if (s.metadata) {
+      if (s.metadata && s.kind === 'Deployment') {
         s.metadata.name = `${s.metadata.name}-${deployment.circleId}`
+      }
+      if (s.metadata) {
         s.metadata.namespace = configuration.configurationData.namespace
       }
       if (s.metadata?.labels) {
