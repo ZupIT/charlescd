@@ -28,6 +28,20 @@ class KeycloakManagementUserSecurityServiceTest extends Specification {
         keycloackManagementUserSecurityService = new KeycloakManagementUserSecurityService(keycloakService)
     }
 
+    def 'should get email by token'() {
+        given:
+        def email = "john.doe@zup.com.br"
+        def authorization = "Bearer xpto"
+
+        when:
+        keycloackManagementUserSecurityService.getUserEmail(authorization)
+
+        then:
+        1 * keycloakService.getEmailByAccessToken(authorization) >> email
+
+        notThrown()
+    }
+
     def 'should create a new user'() {
         given:
         def email = "john.doe@zup.com.br"
