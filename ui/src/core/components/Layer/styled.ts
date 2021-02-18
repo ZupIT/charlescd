@@ -22,7 +22,7 @@ const Layer = styled.div`
   margin-top: 40px;
 
   :last-child {
-    padding-bottom: 235px;
+    padding-bottom: 50px;
   }
 `;
 

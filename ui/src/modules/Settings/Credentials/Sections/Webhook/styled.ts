@@ -33,15 +33,10 @@ const Content = styled.div`
   }
 `;
 
-const Form = styled.form`
-  width: 310px;
-
-  > :first-child {
-    margin-bottom: 20px;
-  }
-`;
+const Form = styled.form``;
 
 const Fields = styled.div`
+  width: 310px;
   margin: 19px 0 20px 0;
 
   > * {
