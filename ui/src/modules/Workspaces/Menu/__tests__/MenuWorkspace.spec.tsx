@@ -30,9 +30,9 @@ const props = {
 test('renders Workspace menu', async () => {
   const workspaceRequest = jest.fn();
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValueOnce({
+  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValue({
       list: {
         content: [
           {
@@ -60,16 +60,14 @@ test('renders Workspace menu', async () => {
 
   const workspacesArray = screen.getAllByText(/ws/);
   expect(workspacesArray.length).toBe(2);
-
-  useGlobalStateSpy.mockRestore();
 });
 
 test('renders Workspace menu without any results', async () => {
   const workspaceRequest = jest.fn();
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValueOnce({
+  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValue({
       list: {
         content: []
       }
@@ -83,14 +81,27 @@ test('renders Workspace menu without any results', async () => {
   );
 
   await waitFor(() => expect(screen.getByText('No workspace was found')).toBeInTheDocument());
-
-  useGlobalStateSpy.mockRestore();
 });
 
-test('renders Workspace menu on loading', () => {
+test('renders Workspace menu on loading', async () => {
   const workspaceRequest = jest.fn();
-  const useGlobalStateSpy = jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), true]);
-  
+  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), true]);
+  jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValue({
+      list: {
+        content: [
+          {
+            id: 1,
+            name: 'ws1'
+          },
+          {
+            id: 2,
+            name: 'ws2'
+          }
+        ]
+      }
+    })
+
   render(
     <Menu
       onCreate={props.onCreate}
@@ -98,17 +109,15 @@ test('renders Workspace menu on loading', () => {
     />
   );
 
-  expect(screen.getByText('Loading...')).toBeInTheDocument();
-
-  useGlobalStateSpy.mockRestore();
+  await waitFor(() => expect(screen.getByText('Loading...')).toBeInTheDocument());
 });
 
-test.only('should click Workspace item', async () => {
+test('should click Workspace item', async () => {
   const selectedWorkspace = jest.fn();
   const workspaceRequest = jest.fn();
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
+  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  jest.spyOn(StateHooks, 'useGlobalState')
     .mockReturnValue({
       list: {
         content: [
@@ -135,6 +144,4 @@ test.only('should click Workspace item', async () => {
   await act(async () => userEvent.click(item));
 
   await waitFor(() => expect(selectedWorkspace).toHaveBeenCalled());
-
-  useGlobalStateSpy.mockRestore();
 });
