@@ -28,7 +28,7 @@ public class PercentageValidator implements ConstraintValidator<PercentageConstr
             return true;
         }
        var sumPercentageWorkspace = this.keyMetadataRepository.findByWorkspaceId(segmentation.getWorkspaceId()).stream().parallel().filter(
-               keyMetadata -> keyMetadata.isPercentage() && keyMetadata.isActive()
+               keyMetadata -> keyMetadata.isPercentage() && keyMetadata.isActive() && !keyMetadata.getReference().equals(segmentation.getReference())
        ).map(
                KeyMetadata::getPercentage
        ).reduce(Integer::sum);

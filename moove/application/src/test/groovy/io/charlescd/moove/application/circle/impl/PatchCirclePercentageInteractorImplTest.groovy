@@ -82,17 +82,19 @@ class PatchCirclePercentageInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _ ) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def active = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Men"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert active
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -145,17 +147,19 @@ class PatchCirclePercentageInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def active = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.percentage == 30
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert active
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -206,17 +210,19 @@ class PatchCirclePercentageInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def active = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Men"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert !active
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> []
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> []
         0 * buildRepository.findById(_)
 
         assert response != null

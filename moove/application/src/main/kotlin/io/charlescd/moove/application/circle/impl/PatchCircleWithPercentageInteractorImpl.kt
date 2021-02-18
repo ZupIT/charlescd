@@ -88,6 +88,7 @@ open class PatchCircleWithPercentageInteractorImpl(
         updated: Circle
     ) {
         val workspace = workspaceService.find(circle.workspaceId)
-        this.circleMatcherService.update(updated, circle.reference, workspace.circleMatcherUrl!!)
+        val activeDeployments = deploymentService.findActiveList(circle.id)
+        this.circleMatcherService.update(updated, circle.reference, workspace.circleMatcherUrl!!, activeDeployments.isNotEmpty())
     }
 }
