@@ -7,9 +7,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=gate
-      - POSTGRES_USER=gate
-      - POSTGRES_PASSWORD=gate
+      - POSTGRES_DB=charles
+      - POSTGRES_USER=charles
+      - POSTGRES_PASSWORD=charles
       - MAX_CONNECTIONS=300
     networks:
       - development

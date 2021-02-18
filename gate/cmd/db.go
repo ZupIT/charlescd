@@ -17,33 +17,40 @@ type persistenceManager struct {
 }
 
 func prepareDatabase() (persistenceManager, error) {
-	db, err := connectDatabase()
+	sqlDB, gormDB, err := connectDatabase()
 	if err != nil {
 		return persistenceManager{}, err
 	}
 
-	/*
-	//TODO: delete this comment after creating the migrations' scripts
 	err = runMigrations(sqlDB)
 	if err != nil {
 		return persistenceManager{}, err
 	}
-	 */
 
-	return loadPersistenceManager(db)
+	return loadPersistenceManager(gormDB)
 }
 
-func connectDatabase() (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+func connectDatabase() (*sql.DB, *gorm.DB, error) {
+	db, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		configuration.Get("DB_USER"),
+		configuration.Get("DB_PASSWORD"),
 		configuration.Get("DB_HOST"),
 		configuration.Get("DB_PORT"),
-		configuration.Get("DB_USER"),
 		configuration.Get("DB_NAME"),
-		configuration.Get("DB_PASSWORD"),
 		configuration.Get("DB_SSL"),
-	)), &gorm.Config{})
+	))
+	if err != nil {
+		return nil, nil, err
+	}
 
-	return db, err
+	gormDb, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return db, gormDb, nil
 }
 
 func runMigrations(sqlDb *sql.DB) error {
