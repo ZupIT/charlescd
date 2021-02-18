@@ -28,7 +28,6 @@ const SearchInput = styled(SearchInputComponent)`
 const Actions = styled.div`
   display: flex;
   justify-content: space-between;
-
   > * + * {
     margin-left: 20px;
   }
@@ -50,7 +49,6 @@ const List = styled.ul`
   margin: 0;
   padding: 0;
   list-style-type: none;
-
   > * {
     padding: 0 16px;
   }

@@ -278,14 +278,14 @@ export const useResetPassword = (): {
   return { resetPassword, response, status };
 };
 
-export const useUsers = (): [Function, Function, boolean] => {
+export const useUsers = (): [Function, UserPagination, boolean] => {
   const dispatch = useDispatch();
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response, error, loading } = usersData;
 
-  const getAll = useCallback(
-    (name: string) => {
-      getUsers({ name });
+  const filterUsers = useCallback(
+    (name: string, page: number) => {
+      getUsers({ name, page });
     },
     [getUsers]
   );
@@ -298,7 +298,7 @@ export const useUsers = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [getAll, getUsers, loading];
+  return [filterUsers, response, loading];
 };
 
 export default useUsers;

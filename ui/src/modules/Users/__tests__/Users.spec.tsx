@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import Page from 'core/components/Page';
-import LoaderMenuComponent from './Menu/Loaders';
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import Users from '..';
 
-const ScrollableX = styled(Page.Content)`
-  overflow-y: hidden;
-  overflow-x: auto;
-`;
+test('should render Users', async () => {
+  render(<Users />);
 
-const LoaderMenu = styled(LoaderMenuComponent.List)`
-  margin-left: 16px;
-`;
-
-export default {
-  ScrollableX,
-  LoaderMenu
-};
+  expect(screen.getByTestId('page')).toBeInTheDocument();
+  expect(screen.getByTestId('page-menu')).toBeInTheDocument();
+  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
+  expect(screen.getByText('Create user')).toBeInTheDocument();
+});
