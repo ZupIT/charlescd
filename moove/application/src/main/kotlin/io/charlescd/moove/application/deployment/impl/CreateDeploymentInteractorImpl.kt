@@ -91,7 +91,6 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         error: String? = null
     ) {
             webhookEventService.notifyDeploymentEvent(workspaceId, WebhookEventTypeEnum.DEPLOY, WebhookEventSubTypeEnum.START_DEPLOY, status, deployment, error)
-
     }
 
     private fun deploy(deployment: Deployment, build: Build, workspace: Workspace) {

@@ -67,7 +67,12 @@ open class UndeployInteractorImpl @Inject constructor(
         deployment: Deployment? = null,
         error: String? = null
     ) {
-            webhookEventService.notifyDeploymentEvent(workspaceId, WebhookEventTypeEnum.UNDEPLOY, WebhookEventSubTypeEnum.START_UNDEPLOY, status, deployment, error)
+            webhookEventService.notifyDeploymentEvent(
+                workspaceId,
+                WebhookEventTypeEnum.UNDEPLOY,
+                WebhookEventSubTypeEnum.START_UNDEPLOY,
+                status, deployment, error
+            )
     }
 
     private fun getDeployment(deploymentId: String, workspaceId: String): Deployment {
