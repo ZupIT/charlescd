@@ -157,7 +157,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="user">
-          {isRoot() ? (
+          {isRoot() && !isIDMEnabled() ? (
             <>
               <InputTitle
                 key={currentUser.name}
