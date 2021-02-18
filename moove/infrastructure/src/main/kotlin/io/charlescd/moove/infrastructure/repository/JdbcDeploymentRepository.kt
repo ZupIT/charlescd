@@ -18,6 +18,9 @@
 
 package io.charlescd.moove.infrastructure.repository
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.*
@@ -37,6 +40,8 @@ class JdbcDeploymentRepository(
 
 ) : DeploymentRepository {
 
+    private val objectMapper =
+        ObjectMapper().registerModule(JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     companion object {
         const val BASE_QUERY_STATEMENT = """
                 SELECT deployments.id                        AS deployment_id,
@@ -141,7 +146,7 @@ class JdbcDeploymentRepository(
                 "build_id," +
                 "workspace_id," +
                 "metadata) VALUES (" +
-                "?,?,?,?,?,?,?,?,?)"
+                "?,?,?,?,?,?,?,?,to_json(?::jsonb))"
 
         this.jdbcTemplate.update(
             statement,
@@ -153,7 +158,7 @@ class JdbcDeploymentRepository(
             deployment.circle.id,
             deployment.buildId,
             deployment.workspaceId,
-            deployment.metadata
+            objectMapper.writeValueAsString(deployment.metadata)
         )
     }
 

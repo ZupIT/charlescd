@@ -81,7 +81,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                    deployments.build_id                     AS deployment_build_id,
                    deployments.workspace_id                 AS deployment_workspace_id,
                    deployments.undeployed_at                AS deployment_undeployed_at,
-                   deployments.metadata                  AS deployment_metadata,
+                   deployments.metadata                     AS deployment_metadata,
                    deployment_user.id                       AS deployment_user_id,
                    deployment_user.name                     AS deployment_user_name,
                    deployment_user.email                    AS deployment_user_email,
