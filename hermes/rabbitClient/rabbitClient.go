@@ -130,10 +130,7 @@ func (c *Client) connect(addr string) bool {
 		false, // Delete when unused
 		false, // Exclusive
 		false, // No-wait
-		amqp.Table{
-			// When the message expires, send the message to the retry exchange
-			"x-dead-letter-exchange":"retry",
-		},   // Arguments
+		nil,
 	)
 	if err != nil {
 		c.logger.Printf("failed to declare push queue: %v", err)
@@ -223,11 +220,6 @@ func (c *Client) Stream(response chan payloads.MessageResponse) {
 	if err != nil {
 		logrus.Error(err)
 	}
-
-	logrus.WithFields(logrus.Fields{
-		"[Consumer] - waiting messages on queue": c.streamQueue,
-		"Time":             time.Now(),
-	}).Println()
 
 	go func() {
 		for msg := range messages {

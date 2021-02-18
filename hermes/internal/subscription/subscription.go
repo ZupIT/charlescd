@@ -144,9 +144,10 @@ func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
 func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
 	res := Response{}
 
-	q := main.db.Model(&Subscription{}).First(&res, "id = ? AND deleted_at IS NULL", subscriptionId.String())
-	if q.Error != nil {
-		return Response{}, errors.NewError("Find Subscription error", q.Error.Error()).
+	err := main.db.Set("gorm:auto_preload", true).Raw(decryptedSubscriptionQuery, subscriptionId).Row().
+		Scan(&res.ID, &res.Description, &res.ExternalId, &res.Url, &res.ApiKey, &res.Events)
+	if err != nil {
+		return Response{}, errors.NewError("Find Subscription error", err.Error()).
 			WithOperations("FindById.QuerySubscription")
 	}
 
@@ -225,7 +226,7 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 
 	defer res.Body.Close()
 	resBody, err := ioutil.ReadAll(res.Body)
-	fmt.Printf("%d: %s\n", res.StatusCode, resBody)
+	fmt.Printf("[Webhook] Status: %d - Body: %s\n", res.StatusCode, resBody)
 
 	return nil
 }
