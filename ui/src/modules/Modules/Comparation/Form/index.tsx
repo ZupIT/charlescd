@@ -155,7 +155,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert organization"
           name="helmOrganization"
-          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helmOrganization" ) })}
+          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization" ) })}
           error={helmErrors?.helmOrganization?.message}
         />
       </Styled.FieldPopover>
@@ -163,7 +163,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert repository"
           name="helmRepository"
-          ref={helmRegister({ required: true, validate: value => validateSlash(value, "helmRepository") })}
+          ref={helmRegister({ required: true, validate: value => validateSlash(value, "helm repository") })}
           error={helmErrors?.helmRepository?.message}
 
         />
@@ -172,7 +172,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert path (Optional)"
           name="helmPath"
-          ref={helmRegister({ validate: value => validateSlash(value, "helmPath") })}
+          ref={helmRegister({ validate: value => validateSlash(value, "helm path") })}
           error={helmErrors?.helmPath?.message}
 
         />
@@ -181,7 +181,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert branch (Optional, Default=main)"
           name="helmBranch"
-          ref={helmRegister({ validate: value => validateSlash(value, "helmBranch") })}
+          ref={helmRegister({ validate: value => validateSlash(value, "helm branch") })}
           error={helmErrors?.helmBranch?.message}
         />
       </Styled.FieldPopover>
