@@ -16,7 +16,7 @@ export class Reconcile {
 
   public addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2, configuration: CdConfiguration) : KubernetesManifest[] {
     return spec.map((s: KubernetesManifest) => {
-      if (s.metadata && s.kind === 'Deployment') {
+      if (s.metadata && s.kind === 'Deployment') { //TODO what about other resources such as StatefulSet, CronJob etc?
         s.metadata.name = `${s.metadata.name}-${deployment.circleId}`
       }
       if (s.metadata) {
