@@ -8,6 +8,6 @@ databaseChangeLog:
             tableName: deployments
             column:
               name: metadata
-              type: jsonb
+              type: JSONB
               constraints:
                 nullable: true
