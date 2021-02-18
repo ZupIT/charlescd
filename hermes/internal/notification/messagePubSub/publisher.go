@@ -39,7 +39,7 @@ func (main *Main) publish() {
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": errors.NewError("Cannot start publisher", "Could not find active messages").
-				WithOperations("publish.FindAllNotEnqueued"),
+				WithOperations("publish.FindAllNotEnqueuedAndDeliveredFail"),
 		}).Errorln()
 	}
 
@@ -54,7 +54,7 @@ func (main *Main) publish() {
 }
 
 func getQueue(status string) string {
-	if status == "NOT_ENQUEUED" {
+	if status == "NOT_ENQUEUED" || status == "" {
 		return configuration.GetConfiguration("AMQP_MESSAGE_QUEUE")
 	}
 	return configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE")
@@ -74,7 +74,6 @@ func (main *Main) sendMessage(message payloads.MessageResponse, queue string) er
 		main.updateMessageStatus(message, notEnqueued, err.Error())
 		return err
 	}
-
 	main.updateMessageStatus(message, enqueued, successLog)
 	return nil
 }

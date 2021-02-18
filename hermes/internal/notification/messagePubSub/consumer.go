@@ -18,11 +18,10 @@ func (main *Main) Consume(stopSub chan bool) {
 			err := main.subscriptionMain.SendWebhookEvent(msg)
 			if err != nil {
 				logrus.Error(err)
-				main.updateMessageStatus(payloads.MessageResponse{}, deliveredFailed, err.Error().Detail)
+				main.updateMessageStatus(msg, deliveredFailed, err.Error().Detail)
 			} else {
-				main.updateMessageStatus(payloads.MessageResponse{}, delivered, successLog)
+				main.updateMessageStatus(msg, delivered, successLog)
 			}
-
 		}
 	}()
 
@@ -51,15 +50,10 @@ func (main *Main) ConsumeDeliveredFail(stopSub chan bool) {
 					err := main.subscriptionMain.SendWebhookEvent(msg)
 					if err != nil {
 						logrus.Error(err)
-						if msg.Attempts >= configuration.GetConfigurationAsInt("DELIVERED_FAIL_RETRY") {
-							main.updateMessageStatus(payloads.MessageResponse{}, errorLog, "Limit attempts exceeded")
-						} else {
-							main.updateMessageStatus(payloads.MessageResponse{}, deliveredFailed, err.Error().Detail)
-						}
+						main.updateMessageStatus(msg, deliveredFailed, err.Error().Detail)
 					} else {
-						main.updateMessageStatus(payloads.MessageResponse{}, delivered, successLog)
+						main.updateMessageStatus(msg, delivered, successLog)
 					}
-
 				}
 			}()
 		case <-stopSub:
