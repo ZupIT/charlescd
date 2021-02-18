@@ -32,12 +32,14 @@ import {
   createGitApi,
   validFields,
   findGitProvider,
-  destructHelmUrl
+  destructHelmUrl,
+  validateSlash
 } from './helpers';
 import Styled from './styled';
 import Select from 'core/components/Form/Select/Single/Select';
 import { gitProviders } from 'modules/Settings/Credentials/Sections/CDConfiguration/constants';
 import { Option } from 'core/components/Form/Select/interfaces';
+import { isRequired } from 'core/utils/validations';
 
 interface Props {
   module: Module;
@@ -81,12 +83,16 @@ const FormModule = ({ module, onChange }: Props) => {
   const {
     register: helmRegister,
     getValues: getHelmValues,
-    setValue: setHelmValue
-  } = useForm<Helm>();
+    setValue: setHelmValue,
+    errors: helmErrors,
+    watch: helmWatch
+  } = useForm<Helm>({mode: "onChange"});
   const { register, control, getValues, handleSubmit, watch } = form;
   const fieldArray = useFieldArray({ control, name: 'components' });
   const watchFields = watch();
+  const watchHelmFields = helmWatch();
   const [helmGitProvider, setHelmGitProvider] = useState<Option>(null);
+
 
   useEffect(() => {
     const form = getValues();
@@ -97,8 +103,8 @@ const FormModule = ({ module, onChange }: Props) => {
       helmRepository: module?.helmRepository
     };
 
-    setIsDisabled(isEqual(mod, form) || isInvalid);
-  }, [watchFields, getValues, module]);
+    setIsDisabled(isEqual(mod, form) || isInvalid || !!Object.keys(helmErrors).length );
+  }, [watchFields, getValues, module, watchHelmFields, helmErrors]);
 
   useEffect(() => {
     if (updateStatus === 'resolved') {
@@ -149,28 +155,34 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert organization"
           name="helmOrganization"
-          ref={helmRegister({ required: true })}
+          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helmOrganization" ) })}
+          error={helmErrors?.helmOrganization?.message}
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert repository"
           name="helmRepository"
-          ref={helmRegister({ required: true })}
+          ref={helmRegister({ required: true, validate: value => validateSlash(value, "helmRepository") })}
+          error={helmErrors?.helmRepository?.message}
+
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert path (Optional)"
           name="helmPath"
-          ref={helmRegister()}
+          ref={helmRegister({ validate: value => validateSlash(value, "helmPath") })}
+          error={helmErrors?.helmPath?.message}
+
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert branch (Optional, Default=main)"
           name="helmBranch"
-          ref={helmRegister()}
+          ref={helmRegister({ validate: value => validateSlash(value, "helmBranch") })}
+          error={helmErrors?.helmBranch?.message}
         />
       </Styled.FieldPopover>
     </>

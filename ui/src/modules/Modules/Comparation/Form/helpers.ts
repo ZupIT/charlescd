@@ -157,3 +157,14 @@ export const findGitProvider = (url: string) => {
     return gitlabProvider;
   }
 };
+
+export const validateSlash = (input: string, name: string ) => {
+  if (input[0] === "/") {
+    return `the ${name} field should not start with "/"`
+  } else if(input.slice(-1) === "/") {
+    return `the ${name} field should not ends with "/"`
+  }
+  return true
+}
+
+
