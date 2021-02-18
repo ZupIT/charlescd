@@ -54,7 +54,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 new WebhookEventService(hermesService, new BuildService(buildRepository)))
     }
 
-    def 'when build does not exist, should throw exception'() {
+    def 'when build does not exist, should throw exception and notify hermes'() {
         given:
         def circleId = TestUtils.circle.id
         def buildId = "5d4c95b4-6f83-11ea-bc55-0242ac130003"
@@ -69,7 +69,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(buildId, workspaceId) >> Optional.empty()
         0 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        0 * hermesService.notifySubscriptionEvent(_)
+        1 * hermesService.notifySubscriptionEvent(_)
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "build"

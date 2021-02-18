@@ -16,17 +16,14 @@
 
 package io.charlescd.moove.domain
 
-abstract class WebhookEvent(
-    open val externalId: String,
-    open val eventType: WebhookEventTypeEnum,
-    open val eventStatus: WebhookEventStatusEnum,
-    open val error: String? = null
-)
-
-data class SimpleWebhookEvent(
-    val workspaceId: String,
-    val eventType: WebhookEventTypeEnum,
-    val eventSubType: WebhookEventSubTypeEnum,
-    val eventStatus: WebhookEventStatusEnum,
-    val error: String? = null
+data class WebhookNotFoundErrorEventType(
+    override val externalId: String,
+    override val eventType: WebhookEventTypeEnum,
+    override val eventStatus: WebhookEventStatusEnum,
+    override val error: String
+) : WebhookEvent(
+    externalId,
+    eventType,
+    eventStatus,
+    error
 )
