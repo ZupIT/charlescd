@@ -96,7 +96,7 @@ test('render Workspace with isIDMAuthFlow disabled and search', async () => {
 
   jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => false);
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  const useWorkspaceSpy = jest.spyOn(WorkspaceHooks, 'useWorkspace')
+  const useWorkspaceSpy = jest.spyOn(WorkspaceHooks, 'useWorkspaces')
     .mockImplementation(() => [workspaceRequest, jest.fn(), false]);
   
   useWorkspaceSpy.mockRestore();
@@ -114,7 +114,7 @@ test('render Workspace with isIDMAuthFlow enabled and search', async () => {
 
   jest.spyOn(authUtils, 'isIDMAuthFlow').mockImplementation(() => true);
   jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
   
   render(<Workspace selectedWorkspace={jest.fn()} />);
   
