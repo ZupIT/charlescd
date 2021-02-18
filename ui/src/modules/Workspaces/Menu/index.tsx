@@ -58,20 +58,11 @@ const WorkspaceMenu = ({
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
-      console.log('IDMFLOW');
       onIDMFlow();
     }
   }, [onIDMFlow]);
 
-  // TODO remove?
-  // useEffect(() => {
-  //   if (isRoot()) {
-  //     filterWorkspace(name);
-  //   }
-  // }, [name, filterWorkspace]);
-
   const onChange = useCallback(() => {
-    console.log('ONCHANGE');
     const page = 0;
     dispatch(resetContentAction());
     filterWorkspace(name, page);
