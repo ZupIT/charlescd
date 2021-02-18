@@ -30,4 +30,5 @@ export interface Module {
   components?: Component[];
   gitRepositoryAddress: string;
   helmRepository: string;
+  createdAt?: string;
 }
