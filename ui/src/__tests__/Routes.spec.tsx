@@ -77,12 +77,11 @@ test('render with a valid session token', async () => {
 
   render(
     <BrowserRouter basename="/">
-      <Routes />
+        <Routes />
     </BrowserRouter>
   );
 
-  const sidebar = await screen.findByTestId('sidebar');
-  expect(sidebar).toBeInTheDocument();
+  await waitFor(async () => expect(screen.getByTestId('sidebar')).toBeInTheDocument());
 
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
