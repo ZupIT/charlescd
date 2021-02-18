@@ -170,7 +170,6 @@ func TestActionFailed(t *testing.T) {
 	)
 
 	err := deployment.Do()
-	fmt.Println(err)
 	if err != nil && !strings.Contains(err.Error(), "Not recognize deploy action") {
 		t.Error(err)
 	}
@@ -190,9 +189,11 @@ func TestCreateResource(t *testing.T) {
 		&kubetest.MockKubectlCmd{},
 	)
 
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
+
 	err := deployment.Do()
-	if err != nil {
-		t.Fatal(err)
+	if err != nil && !strings.Contains(err.Error(), "Timeout") {
+		t.Error(err)
 	}
 
 	client.Fake.ClearActions()
@@ -223,7 +224,7 @@ func TestUpdateResource(t *testing.T) {
 	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
 
 	err = deployment.Do()
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "Timeout") {
 		t.Error(err)
 	}
 }
