@@ -97,7 +97,8 @@ class CircleMatcherClientService(
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
             active = isActive,
-            createdAt = circle.createdAt
+            createdAt = circle.createdAt,
+            percentage = circle.percentage
         )
 
     private fun createMatcherRequest(circle: Circle, isActive: Boolean, previousReference: String? = null): CircleMatcherRequest =

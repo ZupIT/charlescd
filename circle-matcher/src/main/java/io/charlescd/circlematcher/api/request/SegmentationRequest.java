@@ -148,6 +148,6 @@ public abstract class SegmentationRequest {
     }
 
     public boolean hasValidPercentage() {
-        return this.getPercentage() >= 0 && this.getPercentage() <= 100;
+        return this.percentage >= 0 && this.percentage <= 100;
     }
 }
