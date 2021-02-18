@@ -51,7 +51,7 @@ const initialFilter = {
 export const findAll = (filter: Filter = initialFilter) => {
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
-    name: filter?.name
+    name: filter?.name || ''
   });
 
   return baseRequest(`${endpoint}?${params}`);
