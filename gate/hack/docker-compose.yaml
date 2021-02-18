@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:11.8-alpine
+    container_name: charles-gate-db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=gate
+      - POSTGRES_USER=gate
+      - POSTGRES_PASSWORD=gate
+      - MAX_CONNECTIONS=300
+    networks:
+      - development
+
+networks:
+  development:
+    driver: bridge
