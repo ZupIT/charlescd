@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-import React, { Fragment } from 'react';
+import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
-import map from 'lodash/map';
-import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import routes from 'core/constants/routes';
-import { UserPaginationItem } from '../interfaces/UserPagination';
-import MenuItem from './MenuItem';
 import Styled from './styled';
-import Loader from './Loaders';
 import useQueryStrings from 'core/utils/query';
 import { addParam, delParam } from 'core/utils/path';
 import { isIDMEnabled } from 'core/utils/auth';
 
 interface Props {
-  items: UserPaginationItem[];
   onSearch: (name: string) => void;
-  isLoading: boolean;
+  children: ReactNode;
 }
 
-const UserMenu = ({ items, onSearch, isLoading }: Props) => {
+const UserMenu = ({ onSearch, children }: Props) => {
   const history = useHistory();
   const query = useQueryStrings();
 
@@ -46,25 +40,8 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
       ? delParam('user', routes.usersComparation, history, id)
       : addParam('user', routes.usersComparation, history, id);
 
-  const renderUsers = () =>
-    isEmpty(items) ? (
-      <Text.h3 data-testid={'empty-result-user'} color="dark">
-        No User was found
-      </Text.h3>
-    ) : (
-      map(items, ({ email, name }: UserPaginationItem) => (
-        <MenuItem
-          key={email}
-          id={email}
-          name={name}
-          isActive={isActive(email)}
-          onSelect={() => toggleUser(email)}
-        />
-      ))
-    );
-
   return (
-    <Fragment>
+    <>
       {!isIDMEnabled() && (
         <Styled.Actions>
           <Styled.Button onClick={() => toggleUser('create')} isActive={false}>
@@ -74,13 +51,9 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
           </Styled.Button>
         </Styled.Actions>
       )}
-      <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} maxLength={64} />
-        <Styled.List>
-          {isEmpty(items) && isLoading ? <Loader.List /> : renderUsers()}
-        </Styled.List>
-      </Styled.Content>
-    </Fragment>
+      <Styled.SearchInput resume onSearch={onSearch} />
+      <Styled.Content>{children}</Styled.Content>
+    </>
   );
 };
 

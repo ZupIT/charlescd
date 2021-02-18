@@ -74,11 +74,20 @@ const Button = styled.button<ActionProps>`
 `;
 
 const Link = styled.button<ActionProps>`
+  width: 100%;
+  display: block;
+  padding: 0 16px;
   background: none;
   border: none;
   text-decoration: none;
   background-color: ${({ isActive }) =>
     isActive ? COLOR_BLACK_MARLIN : 'transparent'};
+
+  span {
+    width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 const A = styled.a`
