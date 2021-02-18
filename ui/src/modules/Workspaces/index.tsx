@@ -40,17 +40,23 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
 
   const onIDMFlow = useCallback(() => {
     if (isRoot()) {
-      filterWorkspace(name);
+      filterWorkspace();
     } else {
       findWorkspacesByUser(userId);
     }
-  }, [filterWorkspace, findWorkspacesByUser, name, userId]);
+  }, [filterWorkspace, findWorkspacesByUser, userId]);
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
       onIDMFlow();
     }
   }, [onIDMFlow]);
+
+  useEffect(() => {
+    if (isRoot()) {
+      filterWorkspace(name);
+    }
+  }, [name, filterWorkspace]);
 
   useEffect(() => {
     if (!email) logout();
