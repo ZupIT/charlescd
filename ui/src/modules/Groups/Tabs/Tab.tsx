@@ -64,7 +64,7 @@ const Tab = ({ param }: Props) => {
   useEffect(() => {
     if (memberStatus === 'resolved' || editStatus === 'resolved') {
       getUserGroup(id);
-      getAllUserGroups();
+      // getAllUserGroups();
     }
   }, [getUserGroup, getAllUserGroups, id, memberStatus, editStatus]);
 

@@ -18,9 +18,10 @@ import { UserGroupPagination } from '../interfaces/UserGroupsPagination';
 import { UserGroup } from '../interfaces/UserGroups';
 
 export enum ACTION_TYPES {
-  loadedUserGroups = 'USER_GROUPS/LOADED_USERS_GROUPS',
-  loadedUserGroup = 'USER_GROUPS/GET_USER_GROUP',
-  resetUserGroups = 'USER_GROUPS/RESET_USERS_GROUPS'
+  loadedUserGroups = 'USERS_GROUP/LOADED_USERS_GROUP',
+  loadedUserGroup = 'USERS_GROUP/GET_USERS_GROUP',
+  updateUserGroup = 'USERS_GROUP/EDIT_USERS_GROUP',
+  resetUserGroups = 'USERS_GROUP/RESET_USERS_GROUP'
 }
 
 interface ListUserGroupsActionType {
@@ -30,6 +31,10 @@ interface ListUserGroupsActionType {
 
 interface GetUserGroupActionType {
   type: typeof ACTION_TYPES.loadedUserGroup;
+  payload: UserGroup;
+}
+interface UpdateUserGroupActionType {
+  type: typeof ACTION_TYPES.updateUserGroup;
   payload: UserGroup;
 }
 
@@ -58,4 +63,5 @@ export const resetUserGroupsAction = (): UserGroupsActionTypes => ({
 export type UserGroupsActionTypes =
   | ListUserGroupsActionType
   | GetUserGroupActionType
+  | UpdateUserGroupActionType
   | ResetUserGroupsType;
