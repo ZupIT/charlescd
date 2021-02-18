@@ -1,26 +1,12 @@
 package io.charlescd.villager.infrastructure.integration.registry.configuration;
 
-import io.charlescd.villager.infrastructure.integration.registry.DockerRegistryHttpApiV2Client;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import org.checkerframework.checker.units.qual.A;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.mock;
-
 class ConfigsTest {
-
-    private AwsConfig awsConfig;
-
-    @BeforeEach
-    void setUp() {
-        awsConfig = new AwsConfig();
-
-    }
 
     @Test
     void whenConfigureAwsWithAuthProviderShouldBeSuccessfullConfigured() {
