@@ -4,8 +4,14 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
+import java.util.Optional;
 import java.util.UUID;
-import static org.mockito.Mockito.mock;
+
+import static org.mockito.Mockito.*;
 
 class DockerRegistryHttpApiV2ClientTest {
 
@@ -14,6 +20,7 @@ class DockerRegistryHttpApiV2ClientTest {
     @BeforeEach
     void setUp() {
         dockerRegistry = new DockerRegistryHttpApiV2Client(false);
+
     }
 
     @Test
@@ -27,6 +34,8 @@ class DockerRegistryHttpApiV2ClientTest {
         RegistryType regitryType = RegistryType.AWS;
 
         //WHEN
+
+
         dockerRegistry.configureAuthentication(regitryType, data, "");
     }
 
