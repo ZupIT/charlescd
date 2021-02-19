@@ -28,6 +28,7 @@ import (
 	"hermes/internal/subscription"
 	"hermes/web/restutil"
 	"net/http"
+	"strconv"
 )
 
 func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
@@ -158,7 +159,20 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			"EventValue": r.URL.Query().Get("eventValue"),
 		}
 
-		result, err := messageMain.FindAllBySubscriptionId(subscriptionId, qp)
+
+		page, atoiErr := strconv.Atoi(r.URL.Query().Get("page"))
+		if atoiErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, atoiErr)
+			return
+		}
+
+		size, atoiErr := strconv.Atoi(r.URL.Query().Get("size"))
+		if atoiErr != nil {
+			restutil.NewResponse(w, http.StatusInternalServerError, atoiErr)
+			return
+		}
+
+		result, err := messageMain.FindAllBySubscriptionId(subscriptionId, qp, page, size)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return

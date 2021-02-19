@@ -28,6 +28,8 @@ import { Props } from '../interfaces';
 import { EVENTS } from './constants';
 import { useWebhook } from './hooks';
 import Styled from './styled';
+import { CHARLES_DOC } from 'core/components/Popover';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
   const { status, save, edit } = useWebhook();
@@ -38,6 +40,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
     formState: { isValid }
   } = useForm<Webhook>({ mode: 'onChange' });
 
+  const isCreateMode = isEmpty(data?.id);
   const isEditMode = !isEmpty(data?.id);
   const watchEventType = watch('eventType');
 
@@ -83,8 +86,15 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
       <Text.h5 color="dark">
         Webhooks allow external services to be notified when certain events
         happen. When the specified events happen, we’ll send a POST request to
-        each of the URLs you provide. Consult our documentation for further
-        details.
+        each of the URLs you provide.
+      </Text.h5>
+      <Text.h5 color="dark">
+        Consult our {' '}
+          <DocumentationLink
+            text="documentation"
+            documentationLink={`${CHARLES_DOC}/reference/webhooks`}
+          />{' '}
+        for further details.
       </Text.h5>
       <Styled.Fields>
         <Form.Input
@@ -117,14 +127,14 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           name="eventType"
           value="everything"
           label="Send me everything"
-          defaultChecked={size(data?.events) === size(EVENTS)}
+          defaultChecked={size(data?.events) === size(EVENTS) || isCreateMode}
         />
         <Form.Radio
           ref={register({ required: true })}
           name="eventType"
           value="individual"
           label="Let me select individual events"
-          defaultChecked={size(data?.events) < size(EVENTS)}
+          defaultChecked={size(data?.events) < size(EVENTS) && isEditMode}
         />
         {watchEventType === 'individual' && renderOptions()}
         <Button.Default
