@@ -21,7 +21,6 @@ import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import {
   cdConfigurationFixture, deployComponentsFixture,
-  deployComponentsWithManifestsFixture,
   deploymentWithManifestFixture
 } from '../../fixtures/deployment-entity.fixture'
 import { HookParams } from '../../../../app/v2/operator/params.interface'
@@ -144,7 +143,7 @@ describe('Reconcile deployment usecase spec', () => {
     }
   })
 
-  it('generate reconcile deployment object with the correct metadata changes', async() => {
+  it('should generate reconcile deployment object with the correct metadata changes', async() => {
     console.log(deployComponentsWithManifestsFixture)
     const expectedReconcileObj = {
       children: [
