@@ -48,7 +48,6 @@ const WorkspaceMenu = ({
   const isRenderEmpty = isEmpty(list?.content || workspaces) && !loading;
 
   const onIDMFlow = useCallback(() => {
-    
     if (isRoot()) {
       filterWorkspace();
     } else {
@@ -59,8 +58,10 @@ const WorkspaceMenu = ({
   useEffect(() => {
     if (isIDMAuthFlow()) {
       onIDMFlow();
+    } else {
+      findWorkspacesByUser(userId);
     }
-  }, [onIDMFlow]);
+  }, [onIDMFlow, findWorkspacesByUser, userId]);
 
   const onChange = useCallback(() => {
     const page = 0;
