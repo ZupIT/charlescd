@@ -77,7 +77,7 @@ test('render with a valid session token', async () => {
 
   render(
     <BrowserRouter basename="/">
-        <Routes />
+      <Routes />
     </BrowserRouter>
   );
 
