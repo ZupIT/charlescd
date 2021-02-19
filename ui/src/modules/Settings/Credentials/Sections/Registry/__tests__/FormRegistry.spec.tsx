@@ -18,13 +18,10 @@ import React from 'react';
 import { render, act, screen, waitFor } from 'unit-test/testUtils';
 import FormRegistry from '../Form';
 import { FetchMock } from 'jest-fetch-mock';
-import MutationObserver from 'mutation-observer';
 import { Props as AceEditorprops } from 'core/components/Form/AceEditor';
 import { Controller as MockController } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
-
-(global as any).MutationObserver = MutationObserver;
 
 const mockOnFinish = jest.fn();
 beforeEach(() => {
@@ -63,9 +60,6 @@ test('render Registry form default component', () => {
 
   const addRegistryText = screen.getByText('Add Registry');
   expect(addRegistryText).toBeInTheDocument();
-
-  const infoIcon = screen.getByTestId('icon-info');
-  expect(infoIcon).toBeInTheDocument();
 
   const chooseRegistryText = screen.getByText('Choose which one you want to add:');
   expect(chooseRegistryText).toBeInTheDocument();
@@ -354,8 +348,8 @@ test('should render Registry form without AWS secret input', async () => {
     render(<FormRegistry onFinish={mockOnFinish}/>);
   
     const registryLabel = screen.getByText('Choose which one you want to add:');
-    selectEvent.select(registryLabel, 'AWS');
-    
+    await act(() => selectEvent.select(registryLabel, 'AWS'));
+        
     const text = screen.queryByText('Enter the access key');
     expect(text).not.toBeInTheDocument();
 });

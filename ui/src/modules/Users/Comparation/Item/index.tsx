@@ -28,9 +28,11 @@ import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
+import Icon from 'core/components/Icon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
-import { isRoot } from 'core/utils/auth';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
+import { isRequired, maxLength } from 'core/utils/validations';
 import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';
@@ -48,11 +50,13 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const [isOpenModalPassword, toggleModalPassword] = useState(false);
   const [action, setAction] = useState('');
   const [currentUser, setCurrentUser] = useState<User>();
-  const { register, handleSubmit } = useForm<User>();
+  const { register, handleSubmit, errors } = useForm<User>({
+    mode: 'onChange'
+  });
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
+  const isAbleToReset = !isIDMEnabled() && loggedUserId !== user?.id;
   const { updateNameById, user: userUpdated, status } = useUpdateName();
-  const isAbleToReset = loggedUserId !== user?.id;
 
   useEffect(() => {
     if (user) {
@@ -109,11 +113,13 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         name="Copy link"
         onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
-      <Dropdown.Item
-        icon="delete"
-        name="Delete"
-        onClick={() => setAction('Delete')}
-      />
+      {!isIDMEnabled() && (
+        <Dropdown.Item
+          icon="delete"
+          name="Delete"
+          onClick={() => setAction('Delete')}
+        />
+      )}
     </Dropdown>
   );
 
@@ -151,15 +157,26 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="user">
-          {isRoot() ? (
-            <InputTitle
-              key={currentUser.name}
-              name="name"
-              resume
-              ref={register({ required: true })}
-              defaultValue={currentUser.name}
-              onClickSave={handleSubmit(onSubmit)}
-            />
+          {isRoot() && !isIDMEnabled() ? (
+            <>
+              <InputTitle
+                key={currentUser.name}
+                name="name"
+                resume
+                ref={register({
+                  required: isRequired(),
+                  maxLength: maxLength()
+                })}
+                defaultValue={currentUser.name}
+                onClickSave={handleSubmit(onSubmit)}
+              />
+              {errors.name && (
+                <Styled.FieldErrorWrapper>
+                  <Icon name="error" color="error" />
+                  <Text.h6 color="error">{errors.name.message}</Text.h6>
+                </Styled.FieldErrorWrapper>
+              )}
+            </>
           ) : (
             <Text.h2 color="light">{currentUser.name}</Text.h2>
           )}

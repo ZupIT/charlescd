@@ -19,7 +19,7 @@ import * as ActionNotification from 'core/components/Notification/state/actions'
 import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useGit } from '../hooks';
- 
+
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
@@ -27,11 +27,6 @@ beforeEach(() => {
 jest.mock('core/state/hooks', () => ({
   useDispatch: () => jest.fn()
 }));
-
-jest.mock('core/components/Notification/state/actions', () => ({
-  toogleNotification: () => jest.fn()
-}));
-
 
 const error404 = {
   status: 404,
@@ -46,7 +41,7 @@ test('to save new git', async () => {
       address: 'https://github.com',
       accessToken: '1a2b3c4d5e6f7g',
       serviceProvider: 'GitHub'
-    } 
+    }
   };
 
   (fetch as FetchMock).mockResponse(JSON.stringify({}));
@@ -61,7 +56,7 @@ test('to save new git', async () => {
 });
 
 test('to save new git and trigger error', async () => {
-  const toogleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
+  const toggleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
 
   const git = {
     name: 'git',
@@ -70,7 +65,7 @@ test('to save new git and trigger error', async () => {
       address: 'https://github.com',
       accessToken: '1a2b3c4d5e6f7g',
       serviceProvider: 'GitHub'
-    } 
+    }
   };
 
   (fetch as FetchMock).mockRejectedValue(error404);
@@ -81,11 +76,11 @@ test('to save new git and trigger error', async () => {
     await result.current.save(git);
   });
 
-  waitFor(() => expect(toogleNotificationSpy).toBeCalled());
+  await waitFor(() => expect(toggleNotificationSpy).toBeCalled());
 });
 
 test('to save new git and trigger error on add', async () => {
-  const toogleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
+  const toggleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
 
   const git = {
     name: 'git',
@@ -94,7 +89,7 @@ test('to save new git and trigger error on add', async () => {
       address: 'https://github.com',
       accessToken: '1a2b3c4d5e6f7g',
       serviceProvider: 'GitHub'
-    } 
+    }
   };
 
   (fetch as FetchMock)
@@ -107,7 +102,7 @@ test('to save new git and trigger error on add', async () => {
     await result.current.save(git);
   });
 
-  waitFor(() => expect(toogleNotificationSpy).toBeCalled());
+  await waitFor(() => expect(toggleNotificationSpy).toBeCalled());
 });
 
 test('to remove a git', async () => {

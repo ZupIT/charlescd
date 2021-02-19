@@ -17,16 +17,15 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
 import Page from 'core/components/Page';
 import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
-import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
+import { isRequired, maxLength } from 'core/utils/validations';
 import Menu from './Menu';
 import Tabs from './Tabs';
-import { addParamUserGroup, getSelectedUserGroups } from './helpers';
-import { useFindAllUserGroup, useCreateUserGroup } from './hooks';
+import { addParamUserGroup } from './helpers';
+import { useCreateUserGroup } from './hooks';
 import Styled from './styled';
 
 export enum FormAction {
@@ -37,26 +36,20 @@ export enum FormAction {
 const UserGroups = () => {
   const profileName = getProfileByKey('name');
   const history = useHistory();
-  const [search, setSearch] = useState('');
   const [toggleModal, setToggleModal] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [getUserGroups, loading] = useFindAllUserGroup();
-  const { list } = useGlobalState(state => state.userGroups);
-  const { register, watch, handleSubmit } = useForm();
-  const watchName = watch('name');
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({
+    mode: 'onChange'
+  });
   const {
     createUserGroup,
     response: userGroupResponse,
     loading: loadingCreate
   } = useCreateUserGroup();
-
-  useEffect(() => {
-    setIsDisabled(isEmpty(watchName));
-  }, [watchName]);
-
-  useEffect(() => {
-    getUserGroups(search);
-  }, [search, getUserGroups]);
 
   useEffect(() => {
     if (userGroupResponse) {
@@ -75,12 +68,16 @@ const UserGroups = () => {
         <Styled.Modal.Input
           name="name"
           label="Type a name"
-          ref={register({ required: true })}
+          error={errors?.name?.message}
+          ref={register({
+            required: isRequired(),
+            maxLength: maxLength()
+          })}
         />
         <Styled.Modal.Button
-          type="submit"
           id="user-group"
-          isDisabled={isDisabled}
+          type="submit"
+          isDisabled={!isValid}
           isLoading={loadingCreate}
         >
           Create user group
@@ -94,13 +91,9 @@ const UserGroups = () => {
       {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
-          items={list?.content}
-          isLoading={loading}
-          selectedItems={getSelectedUserGroups()}
           onSelect={id =>
             addParamUserGroup(history, `${id}~${FormAction.view}`)
           }
-          onSearch={setSearch}
           onCreate={() => setToggleModal(true)}
         />
       </Page.Menu>

@@ -88,15 +88,15 @@ func (main Main) Validate(metric Metric) errors.ErrorList {
 		ers.Append(err)
 	}
 
-	if metric.Nickname != "" && len(metric.Nickname) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in Nickname").
+	if metric.Nickname != "" && len(metric.Nickname) > 64 {
+		err := errors.NewError("Invalid data", "64 Maximum length in Nickname").
 			WithMeta("field", "nickname").
 			WithOperations("Validate.NicknameLen")
 		ers.Append(err)
 	}
 
-	if metric.Metric != "" && len(metric.Metric) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in Metric").
+	if metric.Metric != "" && len(metric.Metric) > 64 {
+		err := errors.NewError("Invalid data", "64 Maximum length in Metric").
 			WithMeta("field", "metric").
 			WithOperations("Validate.MetricLen")
 		ers.Append(err)
@@ -213,9 +213,9 @@ func (main Main) SaveMetric(metric Metric) (Metric, errors.Error) {
 	return metric, nil
 }
 
-func (main Main) UpdateMetric(id string, metric Metric) (Metric, errors.Error) {
+func (main Main) UpdateMetric(metric Metric) (Metric, errors.Error) {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
-		db := main.db.Where("id = ?", id).Save(&metric).Association("Filters").Replace(metric.Filters)
+		db := main.db.Save(&metric).Association("Filters").Replace(metric.Filters)
 		if db.Error != nil {
 			logger.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
 			return db.Error

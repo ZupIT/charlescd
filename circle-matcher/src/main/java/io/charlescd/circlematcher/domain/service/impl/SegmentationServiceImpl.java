@@ -31,7 +31,6 @@ import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepositor
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -119,6 +118,7 @@ public class SegmentationServiceImpl implements SegmentationService {
                     item.isConvertibleToKv() ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
                     segmentationRequest.getWorkspaceId(),
                     segmentationRequest.getIsDefault(),
+                    segmentationRequest.isActive(),
                     segmentationRequest.getCreatedAt())));
 
             return segmentation;
