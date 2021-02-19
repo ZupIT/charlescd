@@ -122,6 +122,22 @@ class DockerRegistryHttpApiV2ClientTest {
     }
 
     @Test
+    void whenGetImageWithOrganizationEmptyAndCredentialsIsInvalidShouldBeThrowException() {
+        //GIVEN
+        final String address = "127.0.0.1";
+        final String userName = "teste";
+        final String organization = "";
+        final String password = "password";
+        var data = new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(address, organization, userName, password);
+        RegistryType regitryType = RegistryType.DOCKER_HUB;
+
+        //WHEN
+
+        dockerRegistry.configureAuthentication(regitryType, data, "tagName");
+        Assertions.assertThrows(Exception.class, () -> dockerRegistry.getImage("name", "tagName", data));
+    }
+
+    @Test
     void whenGetPathAndCredentialsIsInvalidShouldBeThrowException() {
         //GIVEN
         final String address = "127.0.0.1";

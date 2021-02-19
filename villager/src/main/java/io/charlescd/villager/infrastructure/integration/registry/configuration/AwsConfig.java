@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 
 public final class AwsConfig {
 
+    private AwsConfig() {}
+
     public static Object execute(ConfigParameters config) {
         var awsConfig =
                 (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config.getConfiguration();
