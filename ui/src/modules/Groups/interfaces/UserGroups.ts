@@ -26,7 +26,7 @@ export interface Author {
 export interface UserGroup {
   id: string;
   name: string;
-  author: Author;
-  createdAt: string;
+  author?: Author;
+  createdAt?: string;
   users: User[];
 }

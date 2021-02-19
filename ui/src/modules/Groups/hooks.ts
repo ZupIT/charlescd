@@ -28,7 +28,7 @@ import {
   removeMemberToUserGroup
 } from 'core/providers/user-group';
 import { UserGroupPagination } from './interfaces/UserGroupsPagination';
-import { loadUserGroupsAction, resetUserGroupsAction } from './state/actions';
+import { loadUserGroupsAction, resetUserGroupsAction, updateUserGroupAction } from './state/actions';
 import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -131,6 +131,7 @@ export const useCreateUserGroup = (): {
 };
 
 export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
+  const dispatch = useDispatch();
   const [data, update] = useFetch<UserGroup>(updateUserGroup);
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const { response, error } = data;
@@ -146,8 +147,9 @@ export const useUpdateUserGroup = (): [Function, UserGroup, string] => {
   useEffect(() => {
     if (response) {
       setStatus('resolved');
+      dispatch(updateUserGroupAction(response));
     }
-  }, [setStatus, response]);
+  }, [dispatch, setStatus, response]);
 
   useEffect(() => {
     if (error) {

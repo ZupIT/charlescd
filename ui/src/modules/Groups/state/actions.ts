@@ -56,6 +56,13 @@ export const loadUserGroupAction = (
   payload
 });
 
+export const updateUserGroupAction = (
+  payload: UserGroup
+): UserGroupsActionTypes => ({
+  type: ACTION_TYPES.updateUserGroup,
+  payload
+});
+
 export const resetUserGroupsAction = (): UserGroupsActionTypes => ({
   type: ACTION_TYPES.resetUserGroups
 });
