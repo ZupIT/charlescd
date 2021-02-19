@@ -247,7 +247,7 @@ class DeployClientServiceTest extends Specification {
     private static Deployment getDummyDeployment(String id, DeploymentStatusEnum deploymentStatus, User author, Circle circle, String workspaceId) {
         def undeployedAt = deploymentStatus == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
         new Deployment(id, author, LocalDateTime.now().minusDays(1),
-                LocalDateTime.now(), deploymentStatus, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, undeployedAt)
+                LocalDateTime.now(), deploymentStatus, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, [:] ,undeployedAt)
     }
 
     private static ModuleSnapshot getDummyModuleSnapshot(String id, String moduleId, String name, String featureSnapshotId,
