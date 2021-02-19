@@ -17,8 +17,8 @@
 package incluster
 
 import (
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
+	"octopipe/pkg/customerror"
 )
 
 type InCluster struct{}
@@ -27,15 +27,19 @@ func NewInCluster() *InCluster {
 	return &InCluster{}
 }
 
-func (inCluster *InCluster) GetClient() (dynamic.Interface, error) {
+func (inCluster *InCluster) GetClient() (*rest.Config, error) {
 	config, err := inCluster.getRestConfig()
 	if err != nil {
-		return nil, err
+		return nil, customerror.WithOperation(err, "incluster.GetClient.getRestConfig")
 	}
 
-	return dynamic.NewForConfig(config)
+	return config, nil
 }
 
 func (inCluster *InCluster) getRestConfig() (*rest.Config, error) {
-	return rest.InClusterConfig()
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return nil, customerror.New("", err.Error(), nil, "incluster.getClientKey.InClusterConfig")
+	}
+	return config, nil
 }

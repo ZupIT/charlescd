@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package deployment
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import Users from '..';
 
-import (
-	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"k8s.io/client-go/rest"
-)
+test('should render Users', async () => {
+  render(<Users />);
 
-type MainUseCases interface {
-	NewDeployment(
-		action string,
-		update bool,
-		namespace string,
-		manifest map[string]interface{},
-		config *rest.Config,
-		kubectl kube.Kubectl,
-	) UseCases
-}
-
-type DeploymentMain struct{}
-
-func NewDeploymentMain() MainUseCases {
-	return &DeploymentMain{}
-}
+  expect(screen.getByTestId('page')).toBeInTheDocument();
+  expect(screen.getByTestId('page-menu')).toBeInTheDocument();
+  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
+  expect(screen.getByText('Create user')).toBeInTheDocument();
+});

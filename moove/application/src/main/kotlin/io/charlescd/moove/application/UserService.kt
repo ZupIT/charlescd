@@ -44,9 +44,7 @@ class UserService(private val userRepository: UserRepository, private val manage
     }
 
     fun findByEmail(email: String): User {
-        return this.userRepository.findByEmail(
-            email
-        ).orElseThrow {
+        return this.userRepository.findByEmail(email).orElseThrow {
             NotFoundException("user", email)
         }
     }
@@ -67,11 +65,7 @@ class UserService(private val userRepository: UserRepository, private val manage
     }
 
     fun findByAuthorizationToken(authorization: String): User {
-        val email = getEmailFromToken(authorization)
-        return userRepository
-            .findByEmail(email).orElseThrow {
-                NotFoundException("user", email)
-            }
+        return findByEmail(getEmailFromToken(authorization))
     }
 
     fun getEmailFromToken(authorization: String): String {
