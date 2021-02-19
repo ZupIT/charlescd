@@ -2,12 +2,12 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE SUBSCRIPTIONS
 (
-    id          varchar(36) PRIMARY KEY,
+    id          varchar(36)                         PRIMARY KEY,
     description varchar(256)                        NOT NULL,
     external_id varchar(36)                         NOT NULL,
     url         varchar(256)                        NOT NULL,
     api_key     bytea,
-    events      varchar(256)                        NOT NULL,
+    events      text[]                              NOT NULL,
     created_by  varchar(100)                        NOT NULL,
     created_at  timestamp default clock_timestamp() NOT NULL,
     deleted_by  varchar(100),
@@ -16,7 +16,7 @@ CREATE TABLE SUBSCRIPTIONS
 
 CREATE TABLE MESSAGES
 (
-    id              varchar(36) PRIMARY KEY,
+    id              varchar(36)                          PRIMARY KEY,
     subscription_id varchar(36)                          NOT NULL,
     event_type      varchar(50),
     last_status     varchar(50),
@@ -27,7 +27,7 @@ CREATE TABLE MESSAGES
 
 CREATE TABLE MESSAGES_EXECUTIONS_HISTORIES
 (
-    id            varchar(36) PRIMARY KEY,
+    id            varchar(36)                         PRIMARY KEY,
     execution_id  varchar(36)                         NOT NULL,
     execution_log varchar(100),
     status        varchar(36)                         NOT NULL,

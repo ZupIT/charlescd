@@ -23,6 +23,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"hermes/util"
@@ -34,14 +35,14 @@ import (
 
 type Subscription struct {
 	util.BaseModel
-	ExternalId  uuid.UUID  `json:"externalId"`
-	Url         string     `json:"url"`
-	Description string     `json:"description"`
-	ApiKey      []byte     `json:"apiKey" gorm:"type:bytea"`
-	Events      string     `json:"events"`
-	CreatedBy   string     `json:"createdBy"`
-	DeletedBy   string     `json:"-"`
-	DeletedAt   *time.Time `json:"-"`
+	ExternalId  uuid.UUID      `json:"externalId"`
+	Url         string         `json:"url"`
+	Description string         `json:"description"`
+	ApiKey      []byte         `json:"apiKey" gorm:"type:bytea"`
+	Events      pq.StringArray `json:"events" gorm:"type:text[]"`
+	CreatedBy   string         `json:"createdBy"`
+	DeletedBy   string         `json:"-"`
+	DeletedAt   *time.Time     `json:"-"`
 }
 
 func (main Main) Validate(subscription Request) errors.ErrorList {
@@ -157,7 +158,7 @@ func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
 func (main Main) FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error) {
 	var res []ExternalIdResponse
 
-	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND events like ? AND deleted_at IS NULL", externalId.String(), "%"+event+"%")
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND ? = any(events) AND deleted_at IS NULL", externalId.String(), event)
 	if q.Error != nil {
 		return []ExternalIdResponse{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
 			WithOperations("FindAllByExternalIdAndEvent.QuerySubscription")

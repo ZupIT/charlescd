@@ -21,12 +21,12 @@ package subscription
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"gorm.io/gorm/clause"
 	"hermes/internal/configuration"
-	"strings"
 )
 
-func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events []string) map[string]interface{} {
+func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events pq.StringArray) map[string]interface{} {
 	return map[string]interface{}{
 		"id":          id,
 		"ExternalId":  externalId,
@@ -39,7 +39,7 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
 			},
 		},
-		"Events":    strings.Join(events, ","),
+		"Events":    events,
 		"CreatedBy": createdBy,
 	}
 
