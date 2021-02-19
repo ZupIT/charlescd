@@ -33,6 +33,11 @@ export class CreateDeploymentRequestDto {
   public deploymentId: string
 
   @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  public authorId: string
+
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   public callbackUrl: string
@@ -67,6 +72,7 @@ export class CreateDeploymentRequestDto {
 
   constructor(
     deploymentId: string,
+    authorId: string,
     callbackUrl: string,
     cdConfigurationId: string,
     circle: CreateCircleDeploymentDto,
@@ -76,6 +82,7 @@ export class CreateDeploymentRequestDto {
     metadata: Record<string, string>
   ) {
     this.deploymentId = deploymentId,
+    this.authorId = authorId,
     this.callbackUrl = callbackUrl
     this.cdConfigurationId = cdConfigurationId
     this.circle = circle

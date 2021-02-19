@@ -31,6 +31,9 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
 
+  @Column({ name: 'author_id' })
+  public authorId!: string
+
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
@@ -61,6 +64,7 @@ export class DeploymentEntityV2 implements Deployment {
 
   constructor(
     deploymentId: string,
+    authorId: string,
     circleId: string,
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
@@ -69,6 +73,7 @@ export class DeploymentEntityV2 implements Deployment {
     metadata: Record<string, string>
   ) {
     this.id = deploymentId
+    this.authorId = authorId
     this.circleId = circleId
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
@@ -86,6 +91,7 @@ export class DeploymentEntityV2 implements Deployment {
   private getCircleDto(circleId: string): ReadDeploymentDto {
     return {
       id: this.id,
+      authorId: this.authorId,
       applicationName: this.cdConfiguration.id,
       callbackUrl: this.callbackUrl,
       circle: { headerValue: circleId },
@@ -99,6 +105,7 @@ export class DeploymentEntityV2 implements Deployment {
   private getDefaultDto(): ReadDeploymentDto {
     return {
       id: this.id,
+      authorId: this.authorId,
       applicationName: this.cdConfiguration.id,
       callbackUrl: this.callbackUrl,
       circle: undefined,

@@ -19,6 +19,8 @@ import { CdConfiguration, Component } from './'
 export interface Deployment {
     id: string
 
+    authorId: string
+
     callbackUrl: string
 
     createdAt: Date

@@ -21,6 +21,8 @@ export class ReadDeploymentDto {
 
   public readonly id: string
 
+  public readonly authorId: string
+
   public readonly applicationName: string
 
   public readonly modulesDeployments: ReadModuleDeploymentDto[]
@@ -37,9 +39,9 @@ export class ReadDeploymentDto {
 
   constructor(
     id: string,
+    authorId: string,
     applicationName: string,
     modulesDeployments: ReadModuleDeploymentDto[],
-    authorId: string,
     description: string,
     callbackUrl: string,
     defaultCircle: boolean,
@@ -47,6 +49,7 @@ export class ReadDeploymentDto {
     circle?: ReadCircleDeploymentDto
   ) {
     this.id = id
+    this.authorId = authorId
     this.applicationName = applicationName
     this.modulesDeployments = modulesDeployments
     this.description = description
