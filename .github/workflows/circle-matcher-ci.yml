@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: "0"
     - name: Set up GraalVM
       uses: DeLaGuardo/setup-graalvm@master
       with:
