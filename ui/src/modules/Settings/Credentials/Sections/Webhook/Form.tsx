@@ -92,7 +92,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         Consult our {' '}
           <DocumentationLink
             text="documentation"
-            documentationLink={`${CHARLES_DOC}/reference/webhook`}
+            documentationLink={`${CHARLES_DOC}/reference/webhooks`}
           />{' '}
         for further details.
       </Text.h5>
