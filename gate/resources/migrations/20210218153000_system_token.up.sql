@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS system_tokens(
     created_at TIMESTAMP NOT NULL,
     revoked_at TIMESTAMP,
     last_used_at TIMESTAMP,
-    author_id varchar(36) REFERENCES users(id)
+    author_email varchar(128) REFERENCES users(email)
 );
 
 CREATE TABLE IF NOT EXISTS system_tokens_permissions(

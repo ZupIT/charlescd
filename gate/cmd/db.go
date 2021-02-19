@@ -31,7 +31,7 @@ func prepareDatabase() (persistenceManager, error) {
 }
 
 func connectDatabase() (*sql.DB, *gorm.DB, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
+	sqlDb, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		configuration.Get("DB_USER"),
 		configuration.Get("DB_PASSWORD"),
 		configuration.Get("DB_HOST"),
@@ -44,13 +44,13 @@ func connectDatabase() (*sql.DB, *gorm.DB, error) {
 	}
 
 	gormDb, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: db,
+		Conn: sqlDb,
 	}), &gorm.Config{})
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return db, gormDb, nil
+	return sqlDb, gormDb, nil
 }
 
 func runMigrations(sqlDb *sql.DB) error {
