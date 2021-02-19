@@ -143,8 +143,7 @@ describe('Reconcile deployment usecase spec', () => {
     }
   })
 
-  it('should generate reconcile deployment object with the correct metadata changes', async() => {
-    console.log(deployComponentsWithManifestsFixture)
+  it('should generate the reconcile deployment object with the correct metadata changes', async() => {
     const expectedReconcileObj = {
       children: [
         {
