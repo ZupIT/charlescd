@@ -34,7 +34,7 @@ data class CreateDeploymentRequest(
     @field:NotBlank
     val buildId: String,
 
-    val metadata: Map<String, String>?
+    val metadata: Map<String, String>? = null
 
 ) {
     fun toDeployment(workspaceId: String, user: User, circle: Circle): Deployment {

@@ -100,10 +100,10 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -144,10 +144,11 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def circle = getCircle(true)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                buildId, workspaceId, null)
+
+                buildId, workspaceId, null, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -185,10 +186,10 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def circle = getCircle(false)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -225,10 +226,11 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def circle = getCircle(false)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                buildId, workspaceId, null)
+
+                buildId, workspaceId, null, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -263,9 +265,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
 
         def circle = getCircle(false)
-
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), LocalDateTime.now(), DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null )
+
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -304,7 +306,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def circle = getCircle(false)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -344,7 +346,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def circle = getCircle(true)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -373,9 +375,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -422,7 +424,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -464,7 +466,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -496,7 +498,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -525,7 +527,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -571,9 +573,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", false, null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -668,7 +670,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def deployments = new ArrayList<Deployment>()
 
         def deployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, status, circle,
-                buildId, workspaceId, null)
+                buildId, workspaceId, null, null)
 
         deployments.add(deployment)
         return deployments
