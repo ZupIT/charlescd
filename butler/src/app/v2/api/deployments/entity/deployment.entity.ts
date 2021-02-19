@@ -84,6 +84,7 @@ export class DeploymentEntityV2 implements Deployment {
     metadata: Record<string, string>
   ) {
     this.id = deploymentId
+    this.authorId = authorId
     this.circleId = circleId
     this.callbackUrl = callbackUrl
     this.components = components
