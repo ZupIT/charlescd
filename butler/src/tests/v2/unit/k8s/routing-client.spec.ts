@@ -193,4 +193,15 @@ describe('Routing CRD client apply method', () => {
     await expect(k8sClient.applyRoutingCustomResource(activeComponents))
       .rejects.toEqual(expectedError)
   })
+
+  it('should call the routing crd builder method with the correct activeComponents and namespace', async() => {
+    const builderSpy = jest.spyOn(CrdBuilder, 'buildRoutingCrdManifest')
+    jest.spyOn(k8sClient.client, 'read')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+    jest.spyOn(k8sClient.client, 'patch')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+
+    await k8sClient.applyRoutingCustomResource(activeComponents)
+    expect(builderSpy).toHaveBeenCalledWith(activeComponents, butlerNamespace)
+  })
 })

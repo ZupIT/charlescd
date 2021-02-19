@@ -166,4 +166,15 @@ describe('Deployment CRD client apply method', () => {
       .rejects.toEqual(expectedError)
     expect(createSpy).not.toHaveBeenCalled()
   })
+
+  it('should call the deployment crd builder method with the correct deployment and namespace', async() => {
+    const builderSpy = jest.spyOn(CrdBuilder, 'buildDeploymentCrdManifest')
+    jest.spyOn(k8sClient.client, 'read')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+    jest.spyOn(k8sClient.client, 'patch')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+
+    await k8sClient.applyDeploymentCustomResource(deployment)
+    await expect(builderSpy).toHaveBeenCalledWith(deployment, butlerNamespace)
+  })
 })

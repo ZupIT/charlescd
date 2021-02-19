@@ -9,12 +9,14 @@ import { Reconcile } from '../../../../app/v2/operator/reconcile'
 import { reconcileFixtures, reconcileFixturesParams } from './params'
 
 describe('Deployment on existing circle', () => {
+
   it('returns empty array for the first reconcile loop on same circle that already had deployments', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const currentDeployment = reconcileFixtures.currentDeploymentId
     const reconcile = new Reconcile()
     expect(reconcile.specsByDeployment(params, currentDeployment)).toEqual([])
   })
+
   it('returns list of previous deployment specs', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const previousDeployment = reconcileFixtures.previousDeploymentId

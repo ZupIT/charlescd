@@ -8,6 +8,7 @@ import { K8sClient } from '../core/integrations/k8s/client'
 import { ConsoleLoggerService } from '../core/logs/console/console-logger.service'
 import { HookParams } from './params.interface'
 import { Reconcile } from './reconcile'
+import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
 
 @Controller('/')
 export class DeploymentsHookController {
@@ -16,48 +17,14 @@ export class DeploymentsHookController {
     private readonly k8sClient: K8sClient,
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
-    private readonly configurationRepository: CdConfigurationsRepository,
-    private readonly consoleLoggerService: ConsoleLoggerService
+    private readonly reconcileDeploymentUsecase: ReconcileDeploymentUsecase,
   ) { }
 
   @Post('/v2/operator/deployment/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    const reconcile = new Reconcile()
-    const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
-    const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
-    const rawSpecs = deployment.components.flatMap(c => c.manifests)
-    const specs = reconcile.addMetadata(rawSpecs, deployment, decryptedConfig)
-
-    if (isEmpty(params.children['Deployment.apps/v1'])) {
-      return { children: specs, resyncAfterSeconds: 5 }
-    }
-    const currentDeploymentSpecs = reconcile.specsByDeployment(params, deployment.id)
-
-    const allReady = reconcile.checkConditions(currentDeploymentSpecs)
-    if (allReady === false) {
-      const previousDeploymentId = deployment.previousDeploymentId
-
-      if (previousDeploymentId === null) {
-        await this.deploymentRepository.updateHealthStatus(deployment.id, false)
-        return { children: specs, resyncAfterSeconds: 5 }
-      }
-      const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = reconcile.concatWithPrevious(previousDeployment, specs, decryptedConfig)
-      return { children: currentAndPrevious, resyncAfterSeconds: 5 }
-    }
-
-    const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
-    try {
-      await this.k8sClient.applyRoutingCustomResource(activeComponents)
-    } catch (error) {
-      this.consoleLoggerService.error('DEPLOYMENT_RECONCILE:APPLY_ROUTE_CRD_ERROR', error)
-      await this.deploymentRepository.updateHealthStatus(deployment.id, false)
-      return { children: specs, resyncAfterSeconds: 5 }
-    }
-    await this.deploymentRepository.updateHealthStatus(deployment.id, true)
-    return { children: specs }
+    return await this.reconcileDeploymentUsecase.execute(params)
   }
 
   @Post('/v2/operator/deployment/hook/finalize')
