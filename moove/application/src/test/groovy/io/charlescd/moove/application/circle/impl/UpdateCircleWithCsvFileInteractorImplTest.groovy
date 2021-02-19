@@ -255,7 +255,6 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         0 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
         0 * buildRepository.findById(deployment.buildId) >> Optional.of(build)
         thrown(NotFoundException)
-
     }
 
     def "not should update a circle when keyname && content not null"() {
@@ -307,10 +306,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         0 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
         0 * buildRepository.findById(deployment.buildId) >> Optional.of(build)
         thrown(NotFoundException)
-
     }
-
-
 
     private static Deployment getDummyDeployment(String deploymentId, User user, Circle circle, String buildId, String workspaceId) {
         new Deployment(
