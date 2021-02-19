@@ -41,7 +41,7 @@ jobs:
           go test -v -coverpkg ./internal/action,./internal/datasource,./internal/dispatcher,./internal/health,./internal/metric,./internal/metricsgroup,./internal/metricsgroupaction,./internal/moove,./internal/plugin ./internal/tests/ -coverprofile=coverage.cov
 
       - name: Tests coverage
-        uses: codecov/codecov-action@v1.0.13
+        uses: codecov/codecov-action@v1
         with:
           file: ./compass/coverage.cov
           flags: compass
