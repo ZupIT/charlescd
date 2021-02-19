@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
+import { Helm } from 'modules/Modules/interfaces/Helm';
 import Can from 'containers/Can';
 import { updateParam } from 'core/utils/path';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -26,7 +27,17 @@ import routes from 'core/constants/routes';
 import isEmpty from 'lodash/isEmpty';
 import Components from './Components';
 import { component } from './constants';
+import {
+  createGitApi,
+  findGitProvider,
+  destructHelmUrl,
+  validateSlash
+} from './helpers';
 import Styled from './styled';
+import Select from 'core/components/Form/Select/Single/Select';
+import { gitProviders } from 'modules/Settings/Credentials/Sections/CDConfiguration/constants';
+import { Option } from 'core/components/Form/Select/interfaces';
+import { isRequired } from 'core/utils/validations';
 
 interface Props {
   module: Module;
@@ -41,19 +52,42 @@ const formDefaultValues = {
   components: [component]
 };
 
+const buildFormDefaultValues = (isEdit: boolean, module: Module) => {
+  if (isEdit) {
+    return {
+      id: module.id,
+      name: module.name,
+      gitRepositoryAddress: module.gitRepositoryAddress,
+      helmRepository: module.helmRepository,
+      components: [...module.components]
+    };
+  } else {
+    return formDefaultValues;
+  }
+};
+
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
   const isEditing = !isEmpty(module);
+  const [helmUrl, setHelmUrl] = useState('');
   const history = useHistory();
 
   const form = useForm<Module>({
-    defaultValues: module ?? formDefaultValues,
+    defaultValues: buildFormDefaultValues(isEditing, module),
     mode:  'onChange'
   });
 
-  const { register, control, handleSubmit, formState: { isValid } } = form;
+  const {
+    register: helmRegister,
+    getValues: getHelmValues,
+    setValue: setHelmValue,
+    errors: helmErrors
+  } = useForm<Helm>({mode: "onChange"});
+  const { register, control, handleSubmit,  formState: { isValid } } = form;
   const fieldArray = useFieldArray({ control, name: 'components' });
+  const [helmGitProvider, setHelmGitProvider] = useState<Option>(null);
+
 
   useEffect(() => {
     if (updateStatus === 'resolved') {
@@ -61,13 +95,82 @@ const FormModule = ({ module, onChange }: Props) => {
     }
   }, [updateStatus, onChange]);
 
+  useEffect(() => {
+    if (isEditing && !helmGitProvider) {
+      const optionGit = findGitProvider(module.helmRepository);
+      setHelmGitProvider(optionGit);
+      setHelmUrl(module.helmRepository);
+    }
+  }, [setHelmValue, helmGitProvider, module, setHelmUrl, isEditing]);
+
+  useEffect(() => {
+    if (isEditing && helmUrl) {
+      destructHelmUrl(module?.helmRepository, helmGitProvider, setHelmValue);
+    }
+  }, [setHelmValue, helmUrl, helmGitProvider, module, isEditing]);
+
   const onSubmit = (data: Module) => {
     if (isEditing) {
-      updateModule(module?.id, data);
+      updateModule(module?.id, {
+        ...data,
+        helmRepository: createGitApi(getHelmValues(), helmGitProvider)
+      });
     } else {
-      saveModule({ ...data });
+      saveModule({
+        ...data,
+        helmRepository: createGitApi(getHelmValues(), helmGitProvider)
+      });
     }
   };
+
+  const renderGitHelm = () => (
+    <>
+      {helmGitProvider.value !== 'GITHUB' && (
+        <Styled.FieldPopover>
+          <Styled.Input
+            label="Insert url"
+            name="helmGitlabUrl"
+            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm gitlab url" ) })}
+            error={helmErrors?.helmGitlabUrl?.message}
+          />
+        </Styled.FieldPopover>
+      )}
+      <Styled.FieldPopover>
+        <Styled.Input
+          label="Insert organization"
+          name="helmOrganization"
+          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization" ) })}
+          error={helmErrors?.helmOrganization?.message}
+        />
+      </Styled.FieldPopover>
+      <Styled.FieldPopover>
+        <Styled.Input
+          label="Insert repository"
+          name="helmRepository"
+          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm repository") })}
+          error={helmErrors?.helmRepository?.message}
+
+        />
+      </Styled.FieldPopover>
+      <Styled.FieldPopover>
+        <Styled.Input
+          label="Insert path (Optional)"
+          name="helmPath"
+          ref={helmRegister({ validate: value => validateSlash(value, "helm path") })}
+          error={helmErrors?.helmPath?.message}
+
+        />
+      </Styled.FieldPopover>
+      <Styled.FieldPopover>
+        <Styled.Input
+          label="Insert branch (Optional, Default=main)"
+          name="helmBranch"
+          ref={helmRegister({ validate: value => validateSlash(value, "helm branch") })}
+          error={helmErrors?.helmBranch?.message}
+        />
+      </Styled.FieldPopover>
+    </>
+  );
 
   return (
     <Styled.Content>
@@ -114,22 +217,22 @@ const FormModule = ({ module, onChange }: Props) => {
             ref={register({ required: true })}
           />
           {!isEditing && <Components fieldArray={fieldArray} />}
-          <Styled.FieldPopover>
-            <Styled.Input
-              label="Insert a helm repository link"
-              name="helmRepository"
-              defaultValue={module?.helmRepository}
-              ref={register({ required: true })}
+          <Styled.HelmWrapper>
+            <Styled.Title color="light">
+              {!isEditing
+                ? 'Add helm chart repository'
+                : 'Edit helm chart repository'}
+            </Styled.Title>
+          </Styled.HelmWrapper>
+          <Styled.FieldWrapper>
+            <Select
+              placeholder="Git provider"
+              options={gitProviders}
+              value={helmGitProvider}
+              onChange={option => setHelmGitProvider(option)}
             />
-            <Styled.Popover
-              title="Helm"
-              icon="info"
-              size="20px"
-              link="https://helm.sh/docs/"
-              linkLabel="View documentation"
-              description="Helm helps you manage Kubernetes applications"
-            />
-          </Styled.FieldPopover>
+          </Styled.FieldWrapper>
+          {helmGitProvider && renderGitHelm()}
           <Can I="write" a="modules" isDisabled={!isValid} passThrough>
             <Styled.Button
               type="submit"

@@ -32,7 +32,7 @@ jobs:
         run: mvn -B clean install -Djfr.unsupported.vm=true
         working-directory: ./circle-matcher
       - name: Tests coverage
-        uses: codecov/codecov-action@v1.0.13
+        uses: codecov/codecov-action@v1
         with:
           file: ./circle-matcher/target/site/jacoco/jacoco.xml
           flags: circlematcher
