@@ -12,7 +12,6 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'circle-matcher/**'
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,3 +46,4 @@ jobs:
       run: |
         curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
         horusec start -p ./
+

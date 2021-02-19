@@ -14,66 +14,90 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { Fragment, useEffect, useState, useCallback } from 'react';
 import map from 'lodash/map';
-import some from 'lodash/some';
-import method from 'lodash/method';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
+import InfiniteScroll from 'core/components/InfiniteScroll';
+import { useDispatch, useGlobalState } from 'core/state/hooks';
 import MenuItem from './MenuItem';
 import Styled from './styled';
-import Loader from './Loaders';
-
+import { isActiveById } from '../helpers';
+import { useFindAllUserGroup } from '../hooks';
 import { UserGroupPaginationItem } from '../interfaces/UserGroupsPagination';
+import { resetUserGroupsAction } from '../state/actions';
 
-interface ListProps {
-  items: UserGroupPaginationItem[];
-  selectedItems: string[];
+interface Props {
+  onCreate: () => void;
   onSelect: (id: string) => void;
 }
 
-interface Props extends ListProps {
-  onSearch: (name: string) => void;
-  onCreate: () => void;
-  isLoading: boolean;
-}
+const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
+  const dispatch = useDispatch();
+  const [name, setName] = useState<string>('');
+  const [getUserGroups, loading] = useFindAllUserGroup();
+  const { list } = useGlobalState(({ userGroups }) => userGroups);
+  const isRenderEmpty = isEmpty(list.content) && !loading;
 
-const UserGroupList = ({ items, selectedItems, onSelect }: ListProps) => (
-  <>
-    {map(items, item => (
-      <MenuItem
-        key={item.id}
-        id={item.id}
-        name={item.name}
-        isActive={some(selectedItems, method('includes', item.id))}
-        onSelect={onSelect}
-      />
-    ))}
-  </>
-);
+  const onChange = useCallback(() => {
+    const page = 0;
+    dispatch(resetUserGroupsAction());
+    getUserGroups(name, page);
+  }, [dispatch, getUserGroups, name]);
 
-const UserGroupMenu = ({ onSearch, onCreate, isLoading, ...rest }: Props) => {
+  useEffect(() => {
+    onChange();
+  }, [name, onChange]);
+
+  const loadMore = (page: number) => {
+    getUserGroups(name, page);
+  };
+
+  const renderItem = ({ id, name }: UserGroupPaginationItem) => (
+    <MenuItem
+      key={id}
+      id={id}
+      name={name}
+      isActive={isActiveById(id)}
+      onSelect={onSelect}
+    />
+  );
+
+  const renderEmpty = () => (
+    <Styled.Empty>
+      <Text.h3 color="dark">No User group was found</Text.h3>
+    </Styled.Empty>
+  );
+
+  const renderList = (data: UserGroupPaginationItem[]) =>
+    map(data, item => renderItem(item))
+
+  const renderContent = () => (
+    <InfiniteScroll
+      hasMore={!list.last}
+      loadMore={loadMore}
+      isLoading={loading}
+      loader={<Styled.Loader />}
+    >
+      {isRenderEmpty ? renderEmpty() : renderList(list.content)}
+    </InfiniteScroll>
+  );
+
   return (
-    <>
-      <Styled.Actions>
-        <Styled.Button onClick={onCreate}>
+    <Fragment>
+      <Styled.Actions data-testid="user-groups-action">
+        <Styled.Button onClick={onCreate} id="create-user-group">
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create user group</Text.h5>
           </LabeledIcon>
         </Styled.Button>
       </Styled.Actions>
-      <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
-        <Styled.List data-testid="user-group-menu">
-          {isEmpty(rest.items) && isLoading ? (
-            <Loader.List />
-          ) : (
-            <UserGroupList {...rest} />
-          )}
-        </Styled.List>
+      <Styled.Content data-testid="user-groups-menu">
+        <Styled.SearchInput resume onSearch={setName} maxLength={64} />
+        {renderContent()}
       </Styled.Content>
-    </>
+    </Fragment>
   );
 };
 

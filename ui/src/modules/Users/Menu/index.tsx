@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
-import map from 'lodash/map';
-import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import routes from 'core/constants/routes';
-import { UserPaginationItem } from '../interfaces/UserPagination';
-import MenuItem from './MenuItem';
 import Styled from './styled';
-import Loader from './Loaders';
 import useQueryStrings from 'core/utils/query';
 import { addParam, delParam } from 'core/utils/path';
+import { isIDMEnabled } from 'core/utils/auth';
 
 interface Props {
-  items: UserPaginationItem[];
   onSearch: (name: string) => void;
-  isLoading: boolean;
+  children: ReactNode;
 }
 
-const UserMenu = ({ items, onSearch, isLoading }: Props) => {
+const UserMenu = ({ onSearch, children }: Props) => {
   const history = useHistory();
   const query = useQueryStrings();
 
@@ -45,32 +40,19 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
       ? delParam('user', routes.usersComparation, history, id)
       : addParam('user', routes.usersComparation, history, id);
 
-  const renderUsers = () =>
-    map(items, ({ email, name }: UserPaginationItem) => (
-      <MenuItem
-        key={email}
-        id={email}
-        name={name}
-        isActive={isActive(email)}
-        onSelect={() => toggleUser(email)}
-      />
-    ));
-
   return (
     <>
-      <Styled.Actions>
-        <Styled.Link onClick={() => toggleUser('create')} isActive={false}>
-          <LabeledIcon icon="plus-circle" marginContent="5px">
-            <Text.h5 color="dark">Create user</Text.h5>
-          </LabeledIcon>
-        </Styled.Link>
-      </Styled.Actions>
-      <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
-        <Styled.List>
-          {isEmpty(items) && isLoading ? <Loader.List /> : renderUsers()}
-        </Styled.List>
-      </Styled.Content>
+      {!isIDMEnabled() && (
+        <Styled.Actions>
+          <Styled.Button onClick={() => toggleUser('create')} isActive={false}>
+            <LabeledIcon icon="plus-circle" marginContent="5px">
+              <Text.h5 color="dark">Create user</Text.h5>
+            </LabeledIcon>
+          </Styled.Button>
+        </Styled.Actions>
+      )}
+      <Styled.SearchInput resume onSearch={onSearch} />
+      <Styled.Content>{children}</Styled.Content>
     </>
   );
 };

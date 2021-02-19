@@ -38,14 +38,14 @@ class CircleMatcherClientService(
 ) : CircleMatcherService {
 
     override fun create(circle: Circle, matcherUri: String) {
-        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle))
+        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, false))
     }
 
-    override fun update(circle: Circle, previousReference: String, matcherUri: String) {
+    override fun update(circle: Circle, previousReference: String, matcherUri: String, isActive: Boolean) {
         this.circleMatcherClient.update(
             URI(matcherUri),
             previousReference,
-            createMatcherRequest(circle, previousReference)
+            createMatcherRequest(circle, isActive, previousReference)
         )
     }
 
@@ -56,12 +56,12 @@ class CircleMatcherClientService(
     override fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String) {
         this.circleMatcherClient.createImport(
             URI(matcherUri),
-            createImportRequest(nodes, circle)
+            createImportRequest(nodes, circle, null, false)
         )
     }
 
-    override fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String) {
-        this.circleMatcherClient.updateImport(URI(matcherUri), createImportRequest(nodes, circle, previousReference))
+    override fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String, active: Boolean) {
+        this.circleMatcherClient.updateImport(URI(matcherUri), createImportRequest(nodes, circle, previousReference, active))
     }
 
     override fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle> {
@@ -77,12 +77,13 @@ class CircleMatcherClientService(
     private fun createImportRequest(
         nodes: List<JsonNode>,
         circle: Circle,
-        previousReference: String? = null
+        previousReference: String? = null,
+        active: Boolean
     ): List<CircleMatcherRequest> {
-        return nodes.map { createImportMatcherRequest(circle, it, previousReference) }
+        return nodes.map { createImportMatcherRequest(circle, it, previousReference, active) }
     }
 
-    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode, previousReference: String? = null) =
+    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode, previousReference: String? = null, isActive: Boolean) =
         CircleMatcherRequest(
             name = circle.name,
             reference = circle.reference,
@@ -95,10 +96,11 @@ class CircleMatcherClientService(
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
+            active = isActive,
             createdAt = circle.createdAt
         )
 
-    private fun createMatcherRequest(circle: Circle, previousReference: String? = null) =
+    private fun createMatcherRequest(circle: Circle, isActive: Boolean, previousReference: String? = null): CircleMatcherRequest =
         CircleMatcherRequest(
             name = circle.name,
             reference = circle.reference,
@@ -113,6 +115,7 @@ class CircleMatcherClientService(
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
+            active = isActive,
             createdAt = circle.createdAt
         )
 }

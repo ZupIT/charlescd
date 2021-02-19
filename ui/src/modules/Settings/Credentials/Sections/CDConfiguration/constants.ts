@@ -14,29 +14,37 @@
  * limitations under the License.
  */
 
-import { RadioButton } from 'core/components/Radio/Buttons';
+import { RadioButtonProps } from 'core/components/Radio/Buttons';
 
 export const FORM_CD_CONFIGURATION = 'cd-configuration';
 
-export const radios: RadioButton[] = [
+export const radios: RadioButtonProps[] = [
   { icon: 'charlescd', name: 'CharlesCD', value: 'OCTOPIPE' },
   { icon: 'spinnaker', name: 'Spinnaker', value: 'SPINNAKER' }
 ];
 
+export const githubProvider = {
+  value: 'GITHUB',
+  label: 'GitHub',
+  icon: 'github'
+};
+
+export const gitlabProvider = {
+  value: 'GITLAB',
+  label: 'GitLab',
+  icon: 'gitlab'
+};
+
 export const gitProviders = [
   {
-    value: 'GITHUB',
-    label: 'GitHub',
-    icon: 'github'
+    ...githubProvider
   },
   {
-    value: 'GITLAB',
-    label: 'GitLab',
-    icon: 'gitlab'
+    ...gitlabProvider
   }
 ];
 
-export const providers: RadioButton[] = [
+export const providers: RadioButtonProps[] = [
   {
     name: 'Default',
     value: 'DEFAULT'

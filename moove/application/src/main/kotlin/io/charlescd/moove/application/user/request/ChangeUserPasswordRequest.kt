@@ -17,12 +17,15 @@
 package io.charlescd.moove.application.user.request
 
 import javax.validation.constraints.Pattern
+import javax.validation.constraints.Size
 
 data class ChangeUserPasswordRequest(
+    @field:Size(max = 100)
     val oldPassword: String,
     @field:Pattern(
         regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{10,}\$",
         message = "Your password must fill our minimum security requirements."
     )
+    @field:Size(max = 100)
     val newPassword: String
 )
