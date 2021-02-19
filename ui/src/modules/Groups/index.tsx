@@ -20,13 +20,12 @@ import { useForm } from 'react-hook-form';
 import Page from 'core/components/Page';
 import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
-import { useGlobalState } from 'core/state/hooks';
 import { getProfileByKey } from 'core/utils/profile';
 import { isRequired, maxLength } from 'core/utils/validations';
 import Menu from './Menu';
 import Tabs from './Tabs';
-import { addParamUserGroup, getSelectedUserGroups } from './helpers';
-import { useFindAllUserGroup, useCreateUserGroup } from './hooks';
+import { addParamUserGroup } from './helpers';
+import { useCreateUserGroup } from './hooks';
 import Styled from './styled';
 
 export enum FormAction {
@@ -37,10 +36,7 @@ export enum FormAction {
 const UserGroups = () => {
   const profileName = getProfileByKey('name');
   const history = useHistory();
-  const [search, setSearch] = useState('');
   const [toggleModal, setToggleModal] = useState(false);
-  const [getUserGroups, loading] = useFindAllUserGroup();
-  const { list } = useGlobalState(state => state.userGroups);
   const {
     register,
     handleSubmit,
@@ -54,10 +50,6 @@ const UserGroups = () => {
     response: userGroupResponse,
     loading: loadingCreate
   } = useCreateUserGroup();
-
-  useEffect(() => {
-    getUserGroups(search);
-  }, [search, getUserGroups]);
 
   useEffect(() => {
     if (userGroupResponse) {
@@ -99,13 +91,9 @@ const UserGroups = () => {
       {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
-          items={list?.content}
-          isLoading={loading}
-          selectedItems={getSelectedUserGroups()}
           onSelect={id =>
             addParamUserGroup(history, `${id}~${FormAction.view}`)
           }
-          onSearch={setSearch}
           onCreate={() => setToggleModal(true)}
         />
       </Page.Menu>

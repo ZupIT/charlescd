@@ -37,8 +37,10 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
 import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
-import { saveProfile, getProfile } from 'core/utils/profile';
 import { isIDMAuthFlow } from 'core/utils/auth';
+import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
+import { WorkspacePagination } from 'modules/Workspaces/interfaces/WorkspacePagination';
+import { getProfile, saveProfile } from 'core/utils/profile';
 
 export const useUser = (): {
   findByEmail: Function;
@@ -92,18 +94,20 @@ export const useWorkspacesByUser = (): {
   const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  useEffect(() => {
-    if (workspaces) {
-      saveProfile({ ...getProfile(), workspaces });
-    }
-  }, [workspaces]);
-
   const findWorkspacesByUser = useCallback(
     async (id: Pick<User, 'id'>) => {
       try {
         if (id) {
           const res = await getWorkspacesByUser(id);
           setWorkspaces(res);
+          saveProfile({ ...getProfile(), workspaces: res });
+          dispatch(loadedWorkspacesAction({
+            content: res,
+            page: 0,
+            size: res?.length,
+            totalPages: 1,
+            last: true
+          } as WorkspacePagination));
 
           return res;
         }
@@ -274,14 +278,14 @@ export const useResetPassword = (): {
   return { resetPassword, response, status };
 };
 
-export const useUsers = (): [Function, Function, boolean] => {
+export const useUsers = (): [Function, UserPagination, boolean] => {
   const dispatch = useDispatch();
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response, error, loading } = usersData;
 
-  const getAll = useCallback(
-    (name: string) => {
-      getUsers({ name });
+  const filterUsers = useCallback(
+    (name: string, page: number) => {
+      getUsers({ name, page });
     },
     [getUsers]
   );
@@ -294,7 +298,7 @@ export const useUsers = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [getAll, getUsers, loading];
+  return [filterUsers, response, loading];
 };
 
 export default useUsers;
