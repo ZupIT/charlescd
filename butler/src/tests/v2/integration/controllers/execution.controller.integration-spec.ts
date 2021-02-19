@@ -293,7 +293,8 @@ const createDeploymentAndExecution = async(params: any, namespace: string, manif
     components,
     params.defaultCircle,
     namespace,
-    5
+    5,
+    {}
   ))
 
   const execution : Execution = await manager.save(new Execution(

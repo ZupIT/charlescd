@@ -96,7 +96,8 @@ it('new deployment with active components on default circle', async() => {
     activeOnCircle,
     false,
     'default',
-    5
+    5,
+    {}
   )
   const defaultDeployment = new DeploymentEntityV2(
     'deployment-id-2',
@@ -106,7 +107,8 @@ it('new deployment with active components on default circle', async() => {
     activeOnDefault,
     true,
     'default',
-    5
+    5,
+    {}
   )
 
   activeOnDefault = activeOnDefault.map(c => {
@@ -160,7 +162,8 @@ it('new deployment with active components on default circle', async() => {
     newComponents,
     false,
     'default',
-    5
+    5,
+    {}
   )
 
   newComponents = newComponents.map(c => {

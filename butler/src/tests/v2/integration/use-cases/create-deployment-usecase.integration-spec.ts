@@ -150,7 +150,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       true,
       'my-namespace',
-      60
+      60,
+      {}
     )
     sameCircleActiveDeployment.current = true
 
@@ -183,7 +184,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       false,
       'my-namespace',
-      60
+      60,
+      {}
     )
     diffCircleActiveDeployment.current = true
 
@@ -216,7 +218,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       false,
       'my-namespace',
-      60
+      60,
+      {}
     )
     normalCircleActiveDeployment.current = true
 

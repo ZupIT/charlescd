@@ -21,10 +21,10 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.*
 import java.sql.ResultSet
-import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.stereotype.Component
 import java.util.*
 import kotlin.collections.HashSet
+import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.stereotype.Component
 
 @Component
 class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtractor<Set<Build>> {
@@ -202,8 +202,8 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
     )
 
     private fun getMetadata(metadata: Any?): Map<String, String>? {
-        return metadata?.let{
-            return it as Map<String,String>
+        return metadata?.let {
+            return it as Map<String, String>
         }
     }
 
