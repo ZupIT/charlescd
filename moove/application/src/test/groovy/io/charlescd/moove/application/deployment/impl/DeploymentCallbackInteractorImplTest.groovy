@@ -467,7 +467,6 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, workspaceId, null, null)
-
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -528,7 +527,6 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
-
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -574,8 +572,6 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
-        def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
