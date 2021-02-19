@@ -87,6 +87,7 @@ open class PatchCircleInteractorImpl(
         updated: Circle
     ) {
         val workspace = workspaceService.find(circle.workspaceId)
-        this.circleMatcherService.update(updated, circle.reference, workspace.circleMatcherUrl!!)
+        val activeDeploymentsCircle = this.deploymentService.findActiveList(circle.id)
+        this.circleMatcherService.update(updated, circle.reference, workspace.circleMatcherUrl!!, activeDeploymentsCircle.isNotEmpty())
     }
 }
