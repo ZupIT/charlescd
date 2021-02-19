@@ -22,6 +22,7 @@ import routes from 'core/constants/routes';
 import Styled from './styled';
 import useQueryStrings from 'core/utils/query';
 import { addParam, delParam } from 'core/utils/path';
+import { isIDMEnabled } from 'core/utils/auth';
 
 interface Props {
   onSearch: (name: string) => void;
@@ -41,13 +42,15 @@ const UserMenu = ({ onSearch, children }: Props) => {
 
   return (
     <>
-      <Styled.Actions>
-        <Styled.Button onClick={() => toggleUser('create')}>
-          <LabeledIcon icon="plus-circle" marginContent="5px">
-            <Text.h5 color="dark">Create user</Text.h5>
-          </LabeledIcon>
-        </Styled.Button>
-      </Styled.Actions>
+      {!isIDMEnabled() && (
+        <Styled.Actions>
+          <Styled.Button onClick={() => toggleUser('create')} isActive={false}>
+            <LabeledIcon icon="plus-circle" marginContent="5px">
+              <Text.h5 color="dark">Create user</Text.h5>
+            </LabeledIcon>
+          </Styled.Button>
+        </Styled.Actions>
+      )}
       <Styled.SearchInput resume onSearch={onSearch} />
       <Styled.Content>{children}</Styled.Content>
     </>
