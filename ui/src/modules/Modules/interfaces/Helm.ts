@@ -14,26 +14,10 @@
  * limitations under the License.
  */
 
-package deployment
-
-import (
-	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"k8s.io/client-go/rest"
-)
-
-type MainUseCases interface {
-	NewDeployment(
-		action string,
-		update bool,
-		namespace string,
-		manifest map[string]interface{},
-		config *rest.Config,
-		kubectl kube.Kubectl,
-	) UseCases
-}
-
-type DeploymentMain struct{}
-
-func NewDeploymentMain() MainUseCases {
-	return &DeploymentMain{}
+export interface Helm {
+  helmOrganization: string;
+  helmRepository: string;
+  helmPath?: string;
+  helmGitlabUrl?: string;
+  helmBranch?: string;
 }

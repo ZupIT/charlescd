@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, logout, isRoot } from 'core/utils/auth';
+import { getAccessTokenDecoded, isRoot, logout } from 'core/utils/auth';
 import Menu from './Menu';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
