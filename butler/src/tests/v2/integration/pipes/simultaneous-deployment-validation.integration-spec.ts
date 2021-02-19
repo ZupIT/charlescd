@@ -180,7 +180,7 @@ describe('DeploymentCleanupHandler', () => {
       DeploymentStatusEnum.CREATED,
       [modules],
       defaultCircle,
-        {}
+      {}
     )
 
     return createDeploymentDto
@@ -218,7 +218,7 @@ describe('DeploymentCleanupHandler', () => {
       params.callbackUrl,
       components,
       params.defaultCircle,
-        {}
+      {}
     ))
 
     await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, null, status))

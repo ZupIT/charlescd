@@ -116,7 +116,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto],
       false,
-        {}
+      {}
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -216,7 +216,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto],
       false,
-        {}
+      {}
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -317,7 +317,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.SUCCEEDED,
       [modulesDto],
       false,
-        {}
+      {}
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
@@ -418,7 +418,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.SUCCEEDED,
       [modulesDto],
       false,
-        {}
+      {}
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
