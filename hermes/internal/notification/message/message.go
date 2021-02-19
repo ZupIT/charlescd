@@ -109,14 +109,14 @@ func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 	return response, nil
 }
 
-func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string) ([]payloads.FullMessageResponse, errors.Error) {
+func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error) {
 	var cond interface{} = ""
 
 	if parameters["EventValue"] != "" && parameters["EventField"] != "" {
 		cond = datatypes.JSONQuery("event").Equals(parameters["EventValue"], parameters["EventField"])
 	}
 
-	query, response := main.buildQuery(subscriptionId, cond, parameters)
+	query, response := main.buildQuery(subscriptionId, cond, parameters, page, size)
 	if query.Error != nil {
 		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionId Message error", query.Error.Error()).
 			WithOperations("FindAllBySubscriptionId.Query")
@@ -125,7 +125,7 @@ func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters ma
 	return response, nil
 }
 
-func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params map[string]string) (*gorm.DB, []payloads.FullMessageResponse) {
+func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params map[string]string, page int, size int) (*gorm.DB, []payloads.FullMessageResponse) {
 	var response []payloads.FullMessageResponse
 
 	if params["EventType"] != "" && params["Status"] != "" {
@@ -146,7 +146,7 @@ func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params m
 			Find(&response, cond), response
 	}
 
-	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Find(&response, cond), response
+	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Offset(page).Limit(size).Find(&response, cond), response
 }
 
 func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusResponse, errors.Error) {

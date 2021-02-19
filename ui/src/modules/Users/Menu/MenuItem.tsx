@@ -51,4 +51,5 @@ const MenuItem = ({ id, name, email }: Props) => {
     </Styled.Link>
   );
 };
+
 export default MenuItem;
