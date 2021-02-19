@@ -1,5 +1,6 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
+import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,8 +102,40 @@ class DockerRegistryHttpApiV2ClientTest {
         RegistryType regitryType = RegistryType.UNSUPPORTED;
 
         //WHEN
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            dockerRegistry.configureAuthentication(regitryType, data, "");
-        });
+        Assertions.assertThrows(IllegalArgumentException.class, () -> dockerRegistry.configureAuthentication(regitryType, data, ""));
     }
+
+    @Test
+    void whenGetImageAndCredentialsIsInvalidShouldBeThrowException() {
+        //GIVEN
+        final String address = "127.0.0.1";
+        final String userName = "teste";
+        final String organization = "Zup";
+        final String password = "password";
+        var data = new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(address, organization, userName, password);
+        RegistryType regitryType = RegistryType.DOCKER_HUB;
+
+        //WHEN
+
+        dockerRegistry.configureAuthentication(regitryType, data, "tagName");
+        Assertions.assertThrows(Exception.class, () -> dockerRegistry.getImage("name", "tagName", data));
+    }
+
+    @Test
+    void whenGetPathAndCredentialsIsInvalidShouldBeThrowException() {
+        //GIVEN
+        final String address = "127.0.0.1";
+        final String userName = "teste";
+        final String organization = "Zup";
+        final String password = "password";
+        var data = new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(address, organization, userName, password);
+        RegistryType regitryType = RegistryType.DOCKER_HUB;
+
+        //WHEN
+
+        dockerRegistry.configureAuthentication(regitryType, data, "tagName");
+        Assertions.assertThrows(Exception.class, () -> dockerRegistry.getV2Path(data));
+
+    }
+
 }

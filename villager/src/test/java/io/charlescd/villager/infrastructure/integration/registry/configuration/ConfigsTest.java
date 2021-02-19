@@ -24,7 +24,7 @@ class ConfigsTest {
 
     @Test
     void whenConfigureAwsWithoutAuthProviderShouldBeSuccessfullConfigured() {
-        //GIVEn
+        //GIVEN
         final String address = "127.0.0.1";
         final String accessKey = "";
         final String secretKey = "";
