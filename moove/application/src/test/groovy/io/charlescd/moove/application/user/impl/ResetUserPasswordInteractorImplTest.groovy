@@ -52,7 +52,10 @@ class ResetUserPasswordInteractorImplTest extends Specification {
     private static final String PASSWORD_CHECK = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$^*()_])(?=\\S+\$).{8,}\$"
 
     void setup() {
-        resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(new UserPasswordGeneratorService(), new UserService(userRepository, managementUserSecurityService))
+        resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(
+                new UserPasswordGeneratorService(),
+                new UserService(userRepository, managementUserSecurityService),
+                true)
     }
 
     def "should generate a valid password"() {
@@ -125,6 +128,31 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         1 * userRepository.findById(userId.toString()) >> Optional.of(user)
         def ex = thrown(BusinessException)
         ex.errorCode == MooveErrorCode.CANNOT_RESET_YOUR_OWN_PASSWORD
+    }
+
+    def "when using external idm should throw exception"() {
+        given:
+        def userId = UUID.randomUUID()
+        def authorization = "authorization"
+        def user = new User(userId.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
+                [], false, LocalDateTime.now())
+        def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
+                [], false, LocalDateTime.now())
+
+        resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(
+                new UserPasswordGeneratorService(),
+                new UserService(userRepository, managementUserSecurityService),
+                false)
+
+        when:
+        resetUserPasswordInteractor.execute(authorization, userId)
+
+        then:
+        0 * userRepository.findById(userId.toString()) >> Optional.of(user)
+        0 * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
+
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.EXTERNAL_IDM_FORBIDDEN
     }
 
     def "should not reset password when not user root"() {

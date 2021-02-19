@@ -5,7 +5,7 @@ import io.charlescd.villager.infrastructure.integration.registry.authentication.
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import org.apache.commons.lang.StringUtils;
 
-public class AwsConfig {
+public final class AwsConfig {
 
     public static Object execute(ConfigParameters config) {
         var awsConfig =
