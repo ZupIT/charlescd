@@ -16,12 +16,18 @@
 
 import styled from 'styled-components';
 import Page from 'core/components/Page';
+import LoaderMenuComponent from './Menu/Loaders';
 
 const ScrollableX = styled(Page.Content)`
   overflow-y: hidden;
   overflow-x: auto;
 `;
 
+const LoaderMenu = styled(LoaderMenuComponent.List)`
+  margin-left: 16px;
+`;
+
 export default {
-  ScrollableX
+  ScrollableX,
+  LoaderMenu
 };
