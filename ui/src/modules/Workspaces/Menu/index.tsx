@@ -19,7 +19,7 @@ import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
-import { isRoot, isIDMAuthFlow } from 'core/utils/auth';
+import { isRoot, isIDMEnabled } from 'core/utils/auth';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 import { useWorkspaces } from '../hooks';
@@ -56,7 +56,7 @@ const WorkspaceMenu = ({
   }, [filterWorkspace, findWorkspacesByUser, userId]);
 
   useEffect(() => {
-    if (isIDMAuthFlow()) {
+    if (isIDMEnabled()) {
       onIDMFlow();
     } else {
       findWorkspacesByUser(userId);
