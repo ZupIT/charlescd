@@ -17,8 +17,9 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useCreateUser, useUpdateName, useUser, useWorkspacesByUser } from '../hooks';
+import { useCreateUser, useUpdateName, useUser, useWorkspacesByUser, useUsers } from '../hooks';
 import { NewUser, User } from '../interfaces/User';
+import {userPagination} from './fixtures';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -173,4 +174,36 @@ test('should throw an error in userWorkspacesByUser', async () => {
   });
 
   expect(response).toBeUndefined();
+});
+
+// TODO hooks.spec.tsx to .ts
+// TODO no test usergroup, colocar data em fixture file
+test('should find all users', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify(userPagination));
+
+  const { result } = renderHook(() => useUsers());
+
+  const name = '';
+  const page = 0;
+
+  await act(async () => {
+    await result.current[0](name, page);
+  });
+
+  await waitFor(() => expect(result.current[1]).toMatchObject(userPagination));
+});
+
+test('should get an error when finding all users', async () => {
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
+
+  const { result } = renderHook(() => useUsers());
+
+  const name = '';
+  const page = 0;
+
+  await act(async () => {
+    await result.current[0](name, page);
+  });
+
+  await waitFor(() => expect(result.current[1]).toBeUndefined());
 });
