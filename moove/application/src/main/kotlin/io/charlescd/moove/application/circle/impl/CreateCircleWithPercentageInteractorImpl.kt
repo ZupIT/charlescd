@@ -39,7 +39,6 @@ open class CreateCircleWithPercentageInteractorImpl(
 
     @Transactional
     override fun execute(request: CreateCircleWithPercentageRequest, workspaceId: String): CircleResponse {
-        circleService.checkIfLimitOfPercentageReached(request.percentage, workspaceId)
         val circle = circleService.save(createCircle(request, workspaceId))
         createCircleOnCircleMatcher(workspaceId, circle)
         return CircleResponse.from(circle)
