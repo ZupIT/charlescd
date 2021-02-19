@@ -95,6 +95,7 @@ export class CreateDeploymentRequestDto {
   public toCircleEntity(): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
+      this.authorId,
       this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,
@@ -107,6 +108,7 @@ export class CreateDeploymentRequestDto {
   public toDefaultEntity(activeComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
+      this.authorId,
       this.circle.headerValue,
       this.cdConfiguration,
       this.callbackUrl,

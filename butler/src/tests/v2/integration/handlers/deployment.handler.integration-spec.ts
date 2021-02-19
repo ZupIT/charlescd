@@ -304,7 +304,8 @@ describe('DeploymentHandler', () => {
           null
         )
       ],
-      true
+      true,
+        {}
     )
     defaultCircleActiveDeploymentDiffCdConfig.active = true
     await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
@@ -344,7 +345,8 @@ describe('DeploymentHandler', () => {
           null
         )
       ],
-      true
+      true,
+        {}
     )
     defaultCircleActiveDeploymentSameCdConfig.active = true
     await manager.save(defaultCircleActiveDeploymentSameCdConfig)
@@ -366,7 +368,8 @@ describe('DeploymentHandler', () => {
           null
         )
       ],
-      true
+      true,
+        {}
     ))
 
     const execution : Execution = await manager.save(new Execution(
@@ -449,7 +452,8 @@ describe('DeploymentHandler', () => {
           null
         )
       ],
-      true
+      true,
+        {}
     )
     defaultCircleActiveDeploymentDiffCdConfig.active = true
     await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
@@ -477,7 +481,7 @@ describe('DeploymentHandler', () => {
           'C',
           '3fef6041-9aef-4bfd-ad3b-ef20080a23dd',
           null,
-          null
+          null,
         ),
         new ComponentEntity(
           'http://localhost:2222/helm',
@@ -489,7 +493,8 @@ describe('DeploymentHandler', () => {
           null
         )
       ],
-      true
+      true,
+        {}
     )
     defaultCircleActiveDeploymentSameCdConfig.active = true
     defaultCircleActiveDeploymentSameCdConfig = await manager.save(defaultCircleActiveDeploymentSameCdConfig)
@@ -559,7 +564,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
     cdConfiguration,
     params.callbackUrl,
     components,
-    params.defaultCircle
+    params.defaultCircle,
+    {}
   ))
 
   const execution : Execution = await manager.save(new Execution(

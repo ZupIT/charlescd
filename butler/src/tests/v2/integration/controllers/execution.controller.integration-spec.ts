@@ -252,7 +252,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
     cdConfiguration,
     params.callbackUrl,
     components,
-    params.defaultCircle
+    params.defaultCircle,
+      {}
   ))
 
   const execution : Execution = await manager.save(new Execution(

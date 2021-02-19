@@ -59,7 +59,6 @@ class DeploymentExtractor(private val objectMapper: ObjectMapper) : ResultSetExt
         createdAt = resultSet.getTimestamp("deployment_user_created_at").toLocalDateTime()
     )
 
-
     private fun mapDeploymentCircle(resultSet: ResultSet) = Circle(
         id = resultSet.getString("deployment_circle_id"),
         name = resultSet.getString("deployment_circle_name"),
@@ -84,7 +83,7 @@ class DeploymentExtractor(private val objectMapper: ObjectMapper) : ResultSetExt
     )
 
     private fun getMetadata(metadata: String?): Map<String, String>? {
-        return metadata?.let{
+        return metadata?.let {
             return objectMapper.readValue(metadata, Map::class.java) as Map<String, String>
         }
     }
