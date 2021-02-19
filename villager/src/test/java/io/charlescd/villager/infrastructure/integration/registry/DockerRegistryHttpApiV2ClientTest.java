@@ -1,18 +1,14 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.exceptions.ThirdPartyIntegrationException;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
-import java.util.Optional;
+import java.io.IOException;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 class DockerRegistryHttpApiV2ClientTest {
 
@@ -148,10 +144,23 @@ class DockerRegistryHttpApiV2ClientTest {
         RegistryType regitryType = RegistryType.DOCKER_HUB;
 
         //WHEN
-
         dockerRegistry.configureAuthentication(regitryType, data, "tagName");
         Assertions.assertThrows(Exception.class, () -> dockerRegistry.getV2Path(data));
 
     }
 
+    @Test
+    void whenConfigureIgnoringSSLShouldBeSuccessful() {
+        //GIVEN
+        final String address = "127.0.0.1";
+        final String accessKey = UUID.randomUUID().toString();
+        final String secretKey = UUID.randomUUID().toString();
+        final String region = "us-east-1";
+        var data = new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData(address, accessKey, secretKey, region);
+        RegistryType regitryType = RegistryType.AWS;
+        var dockerRegistryIgnoreSSl = new DockerRegistryHttpApiV2Client(false);
+        //WHEN
+
+        dockerRegistryIgnoreSSl.configureAuthentication(regitryType, data, "");
+    }
 }
