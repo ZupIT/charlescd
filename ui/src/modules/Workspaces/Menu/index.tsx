@@ -59,9 +59,9 @@ const WorkspaceMenu = ({
     if (isIDMEnabled()) {
       onIDMFlow();
     } else {
-      findWorkspacesByUser(userId);
+      filterWorkspace();
     }
-  }, [onIDMFlow, findWorkspacesByUser, userId]);
+  }, [onIDMFlow, filterWorkspace, userId]);
 
   const onChange = useCallback(() => {
     const page = 0;
