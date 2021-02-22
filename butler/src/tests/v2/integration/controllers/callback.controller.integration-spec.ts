@@ -116,7 +116,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto],
       false,
-      {}
+      null
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -160,7 +160,7 @@ describe('CallbackController v2', () => {
         priority: 0,
         active: true,
         defaultCircle: false,
-        metadata: {}
+        metadata: null
       },
       type: 'DEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -216,7 +216,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto],
       false,
-      {}
+      null
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
@@ -261,7 +261,7 @@ describe('CallbackController v2', () => {
         priority: 0,
         active: false,
         defaultCircle: false,
-        metadata: {}
+        metadata: null
       },
       type: 'DEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -317,7 +317,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.SUCCEEDED,
       [modulesDto],
       false,
-      {}
+      null
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
@@ -362,7 +362,7 @@ describe('CallbackController v2', () => {
         priority: 0,
         active: false,
         defaultCircle: false,
-        metadata: {}
+        metadata: null
       },
       type: 'UNDEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -418,7 +418,7 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.SUCCEEDED,
       [modulesDto],
       false,
-      {}
+      null
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.active = true
@@ -463,7 +463,7 @@ describe('CallbackController v2', () => {
         priority: 0,
         active: true,
         defaultCircle: false,
-        metadata: {}
+        metadata: null
       },
       type: 'UNDEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',

@@ -153,7 +153,7 @@ describe('CreateDeploymentUsecase v2', () => {
         )
       ],
       true,
-      {}
+      null
     )
     sameCircleActiveDeployment.active = true
 
@@ -184,7 +184,7 @@ describe('CreateDeploymentUsecase v2', () => {
         )
       ],
       true,
-      {}
+      null
     )
     diffCircleActiveDeployment.active = true
 
@@ -215,7 +215,7 @@ describe('CreateDeploymentUsecase v2', () => {
         )
       ],
       false,
-      {}
+      null
     )
     normalCircleActiveDeployment.active = true
 

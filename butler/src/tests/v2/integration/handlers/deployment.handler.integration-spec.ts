@@ -305,7 +305,7 @@ describe('DeploymentHandler', () => {
         )
       ],
       true,
-      {}
+      null
     )
     defaultCircleActiveDeploymentDiffCdConfig.active = true
     await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
@@ -346,7 +346,7 @@ describe('DeploymentHandler', () => {
         )
       ],
       true,
-      {}
+      null
     )
     defaultCircleActiveDeploymentSameCdConfig.active = true
     await manager.save(defaultCircleActiveDeploymentSameCdConfig)
@@ -369,7 +369,7 @@ describe('DeploymentHandler', () => {
         )
       ],
       true,
-      {}
+      null
     ))
 
     const execution : Execution = await manager.save(new Execution(
@@ -453,7 +453,7 @@ describe('DeploymentHandler', () => {
         )
       ],
       true,
-      {}
+      null
     )
     defaultCircleActiveDeploymentDiffCdConfig.active = true
     await manager.save(defaultCircleActiveDeploymentDiffCdConfig)
@@ -494,7 +494,7 @@ describe('DeploymentHandler', () => {
         )
       ],
       true,
-      {}
+      null
     )
     defaultCircleActiveDeploymentSameCdConfig.active = true
     defaultCircleActiveDeploymentSameCdConfig = await manager.save(defaultCircleActiveDeploymentSameCdConfig)
@@ -565,7 +565,7 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
     params.callbackUrl,
     components,
     params.defaultCircle,
-    {}
+    null
   ))
 
   const execution : Execution = await manager.save(new Execution(
