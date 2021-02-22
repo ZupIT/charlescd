@@ -18,5 +18,6 @@ import { KubernetesManifest } from '../integrations/interfaces/k8s-manifest.inte
 import { ManifestConfig } from './manifest.interface'
 
 export interface Manifest {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   generate(config: ManifestConfig): Promise<KubernetesManifest[]>
 }
