@@ -19,7 +19,8 @@ import { User } from '../interfaces/User';
 
 export enum ACTION_TYPES {
   loadedUsers = 'USERS/LOADED_USERS',
-  loadedUser = 'USERS/LOADED_USER'
+  loadedUser = 'USERS/LOADED_USER',
+  resetContent = 'USERS/RESET_CONTENT'
 }
 
 interface LoadedUsersActionType {
@@ -43,5 +44,15 @@ export const LoadedUserAction = (payload: User): UsersActionTypes => ({
   type: ACTION_TYPES.loadedUser,
   payload
 });
+interface ResetContentActionType {
+  type: typeof ACTION_TYPES.resetContent;
+}
 
-export type UsersActionTypes = LoadedUsersActionType | LoadedUserActionType;
+export const resetContentAction = (): ResetContentActionType => ({
+  type: ACTION_TYPES.resetContent
+});
+
+export type UsersActionTypes =
+  | LoadedUsersActionType
+  | LoadedUserActionType
+  | ResetContentActionType;

@@ -20,6 +20,5 @@ export interface PaginatedExecutions {
   executions: Execution[]
   page: number
   size: number
-  totalPages: number
   last: boolean
 }

@@ -74,10 +74,12 @@ const Input = React.forwardRef(
     const isTip = !isEmpty(tipTitle) && !isEmpty(tipDescription);
     const [isFocused, setIsFocused] = useState(true);
 
+    const value = inputRef?.current?.value;
+
     useEffect(() => {
       const isEmptyValue = isEmpty(inputRef.current.value);
       setIsFocused(!isEmptyValue || disabled);
-    }, [rest.defaultValue, disabled]);
+    }, [rest.defaultValue, disabled, value]);
 
     const renderTip = () => (
       <Popover title={tipTitle} icon="info" description={tipDescription} />

@@ -31,6 +31,17 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
 
+  public async findHealthyActiveComponents(cdConfigurationId: string): Promise<ComponentEntityV2[]> {
+    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
+    return this.createQueryBuilder('v2components')
+      .leftJoinAndSelect('v2components.deployment', 'deployment')
+      .where('deployment.current = true')
+      .andWhere('deployment.healthy = true')
+      .andWhere('deployment.cd_configuration_id = :cdConfigurationId', { cdConfigurationId })
+      .orderBy('deployment.created_at', 'DESC')
+      .getMany()
+  }
+
   public async findDefaultActiveComponents(defaultCircleId: string): Promise<ComponentEntityV2[]> {
     // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
