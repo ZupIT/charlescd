@@ -16,13 +16,15 @@
 
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
+import {DeploymentEntityV2 as DeploymentEntity} from '../entity/deployment.entity'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
-import { CreateComponentRequestDto } from './create-component-request.dto'
-import { CreateGitDeploymentDto } from './create-git-request.dto'
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 
+import { MetadataSizeValidation } from "../validations/metadata-size.validation"
+import { Metadata } from "../interfaces/deployment.interface"
+import { CreateGitDeploymentDto } from './create-git-request.dto'
+import { CreateComponentRequestDto } from './create-component-request.dto'
 
 export class CreateDeploymentRequestDto {
 
@@ -56,7 +58,8 @@ export class CreateDeploymentRequestDto {
   public readonly components: CreateComponentRequestDto[]
 
   @ApiProperty()
-  public metadata: Record<string, string>
+  @Validate(MetadataSizeValidation)
+  public metadata: Metadata
 
   constructor(
     deploymentId: string,
@@ -68,7 +71,7 @@ export class CreateDeploymentRequestDto {
     namespace: string,
     git: CreateGitDeploymentDto,
     timeoutInSeconds: number,
-    metadata: Record<string, string>
+    metadata: Metadata
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
