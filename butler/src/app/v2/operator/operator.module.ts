@@ -29,7 +29,7 @@ import { ReconcileDeployment } from './use-cases/reconcile-deployments.usecase'
   providers: [
     K8sClient,
     CreateRoutesManifestsUseCase,
-    ReconcileDeploymentUsecase
+    ReconcileDeploymentUsecase,
     ReconcileDeployment
   ]
 })
