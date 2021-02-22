@@ -26,7 +26,7 @@ import (
 	"hermes/internal/notification/messagePubSub"
 	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/subscription"
-	"hermes/rabbitClient"
+	"hermes/rabbitclient"
 	"hermes/web/api"
 	"log"
 	"os"
@@ -46,7 +46,7 @@ func main() {
 	}
 
 	goChan := make(chan os.Signal, 1)
-	amqpClient := rabbitClient.NewClient(
+	amqpClient := rabbitclient.NewClient(
 		configuration.GetConfiguration("AMQP_MESSAGE_QUEUE"),
 		configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"),
 		configuration.GetConfiguration("AMQP_URL"),

@@ -5,7 +5,7 @@ import (
 	"hermes/internal/notification/message"
 	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/subscription"
-	"hermes/rabbitClient"
+	"hermes/rabbitclient"
 )
 
 const (
@@ -20,12 +20,12 @@ const (
 type UseCases interface {
 	Publish(stopPub chan bool) error
 	Consume(stopSub chan bool)
-	ConsumeDeliveredFail(stopSup chan bool)
+	ConsumeDeliveredFail(stopFailSub chan bool)
 }
 
 type Main struct {
 	db               *gorm.DB
-	amqpClient       *rabbitClient.Client
+	amqpClient       *rabbitclient.Client
 	messageMain      message.UseCases
 	executionMain    messageexecutionhistory.UseCases
 	subscriptionMain subscription.UseCases
@@ -33,7 +33,7 @@ type Main struct {
 
 func NewMain(
 	db *gorm.DB,
-	amqpClient *rabbitClient.Client,
+	amqpClient *rabbitclient.Client,
 	messageMain message.UseCases,
 	executionMain messageexecutionhistory.UseCases,
 	subscriptionMain subscription.UseCases) UseCases {

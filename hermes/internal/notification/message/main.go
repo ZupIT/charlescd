@@ -24,7 +24,7 @@ import (
 	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
-	"hermes/rabbitClient"
+	"hermes/rabbitclient"
 	"io"
 )
 
@@ -39,10 +39,10 @@ type UseCases interface {
 
 type Main struct {
 	db            *gorm.DB
-	amqpClient    *rabbitClient.Client
+	amqpClient    *rabbitclient.Client
 	executionMain messageexecutionhistory.UseCases
 }
 
-func NewMain(db *gorm.DB, amqpClient *rabbitClient.Client, executionMain messageexecutionhistory.UseCases) UseCases {
+func NewMain(db *gorm.DB, amqpClient *rabbitclient.Client, executionMain messageexecutionhistory.UseCases) UseCases {
 	return Main{db, amqpClient, executionMain}
 }

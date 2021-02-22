@@ -1,4 +1,4 @@
-package rabbitClient
+package rabbitclient
 
 import (
 	"encoding/json"

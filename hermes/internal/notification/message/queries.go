@@ -14,5 +14,5 @@ where (m.last_status ilike 'NOT_ENQUEUED'
 				or meh.status ilike 'DELIVERED_FAILED'
 				or (meh.status = '') is not false
 			group by m.id) as g
-	where total < 2);
+	where total < ?);
 `
