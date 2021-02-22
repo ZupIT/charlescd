@@ -21,7 +21,7 @@ const Main = styled.main<{ isSidebarExpanded: boolean }>`
   grid-template-areas:
     'nav content'
     'footer footer';
-  grid-template-rows: 'calc(100vh - 35px)';
+  grid-template-rows: calc(100vh - 35px);
   transition: all 0.2s;
   grid-template-columns: ${({ isSidebarExpanded }) =>
     isSidebarExpanded ? '140px' : '60px'};
