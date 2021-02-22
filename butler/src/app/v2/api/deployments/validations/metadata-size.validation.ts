@@ -15,7 +15,7 @@
  */
 
 import { ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator'
-import { MetadataTypeEnum } from '../enums/metadata-type.enum'
+import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
 import { BadRequestException } from '@nestjs/common'
 import { Metadata } from '../interfaces/deployment.interface'
 
@@ -24,17 +24,17 @@ import { Metadata } from '../interfaces/deployment.interface'
 export class MetadataSizeValidation implements ValidatorConstraintInterface {
 
   public validate(metadata: Metadata): boolean {
-    if(!metadata) {
+    if (!metadata) {
       return true
     }
-    if (metadata.type == MetadataTypeEnum.DATABASE) {
+    if (metadata.scope == MetadataScopeEnum.APPLICATION || metadata.scope == MetadataScopeEnum.CLUSTER) {
       const invalidMetadata = Object.keys(metadata.content).map(
         key => this.isValidKeyAndValue(key, metadata.content[key])
       ).filter(valid => !valid)
 
-      return invalidMetadata.length === 0
+      return  Object.keys(metadata.content).length > 0 && invalidMetadata.length === 0
     } else {
-      throw new BadRequestException('Cluster metadata not yet implemented')
+      throw new BadRequestException('Invalid metadata scope')
     }
   }
 

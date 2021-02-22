@@ -17,7 +17,7 @@
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { componentsToBeRemoved } from '../../../../app/v2/core/integrations/utils/deployment.utils'
-import { MetadataTypeEnum } from '../../../../app/v2/api/deployments/enums/metadata-type.enum'
+import { MetadataScopeEnum } from '../../../../app/v2/api/deployments/enums/metadata-scope.enum'
 
 it('new deployment with active components on default circle', async() => {
 
@@ -98,10 +98,7 @@ it('new deployment with active components on default circle', async() => {
     false,
     'default',
     5,
-    {
-      type: MetadataTypeEnum.DATABASE,
-      content: {}
-    }
+    null
   )
   const defaultDeployment = new DeploymentEntityV2(
     'deployment-id-2',
@@ -112,10 +109,7 @@ it('new deployment with active components on default circle', async() => {
     true,
     'default',
     5,
-    {
-      type: MetadataTypeEnum.DATABASE,
-      content: {}
-    }
+    null
   )
 
   activeOnDefault = activeOnDefault.map(c => {
@@ -168,12 +162,10 @@ it('new deployment with active components on default circle', async() => {
     'www.callback.com',
     newComponents,
     false,
+
     'default',
     5,
-    {
-      type: MetadataTypeEnum.DATABASE,
-      content: {}
-    }
+    null
   )
 
   newComponents = newComponents.map(c => {

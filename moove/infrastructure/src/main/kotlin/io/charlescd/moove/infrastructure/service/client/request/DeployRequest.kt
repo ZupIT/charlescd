@@ -17,6 +17,7 @@
 package io.charlescd.moove.infrastructure.service.client.request
 
 import io.charlescd.moove.domain.GitProviderEnum
+import io.charlescd.moove.domain.Metadata
 
 data class DeployRequest(
     val deploymentId: String,
@@ -26,7 +27,7 @@ data class DeployRequest(
     val components: List<DeployComponentRequest>,
     val git: GitRequest,
     val circle: CircleRequest,
-    val metadata: Map<String, String>?
+    val metadata: Metadata?
 )
 
 data class DeployComponentRequest(
