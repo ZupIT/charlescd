@@ -94,20 +94,3 @@ func GetConfigurationAsInt64(configuration string) int64 {
 	}
 	return envAsInt64
 }
-
-func GetConfigurationAsInt(configuration string) int {
-	env := os.Getenv(configuration)
-	if env == "" {
-		logrus.WithFields(logrus.Fields{
-			"err": fmt.Sprintf("%s key not found in the .env file", configuration),
-		}).Warnln()
-	}
-
-	envAsInt, err := strconv.Atoi(env)
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": fmt.Sprintf("%s parse error", err),
-		}).Warnln()
-	}
-	return envAsInt
-}
