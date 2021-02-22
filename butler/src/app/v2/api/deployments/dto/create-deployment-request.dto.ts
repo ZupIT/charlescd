@@ -15,15 +15,17 @@
  */
 
 import { Type } from 'class-transformer'
-import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
+import {IsBoolean, IsNotEmpty, IsString, IsUUID, Validate, ValidateNested} from 'class-validator'
 import { flatten } from 'lodash'
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import {DeploymentEntityV2 as DeploymentEntity} from '../entity/deployment.entity'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
 import { CreateModuleDeploymentDto } from './create-module-request.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ApiProperty } from '@nestjs/swagger'
 import { CdConfigurationEntity } from '../../configurations/entity/cd-configuration.entity'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
+import {MetadataSizeValidation} from "../validations/metadata-size.validation";
+import {Metadata} from "../interfaces/deployment.interface";
 
 export class CreateDeploymentRequestDto {
 
@@ -68,7 +70,8 @@ export class CreateDeploymentRequestDto {
   public readonly modules: CreateModuleDeploymentDto[]
 
   @ApiProperty()
-  public metadata: Record<string, string>
+  @Validate(MetadataSizeValidation)
+  public metadata: Metadata
 
   constructor(
     deploymentId: string,
@@ -79,7 +82,7 @@ export class CreateDeploymentRequestDto {
     status: DeploymentStatusEnum,
     modules: CreateModuleDeploymentDto[],
     defaultCircle: boolean,
-    metadata: Record<string, string>
+    metadata: Metadata
   ) {
     this.deploymentId = deploymentId,
     this.authorId = authorId,

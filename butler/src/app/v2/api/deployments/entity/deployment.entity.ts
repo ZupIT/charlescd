@@ -21,6 +21,7 @@ import { ReadModuleDeploymentDto } from '../dto/read-module-deployment.dto'
 import { Deployment } from '../interfaces'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
+import { Metadata } from '../interfaces/deployment.interface'
 
 @Entity('v2deployments')
 export class DeploymentEntityV2 implements Deployment {
@@ -60,7 +61,7 @@ export class DeploymentEntityV2 implements Deployment {
   public defaultCircle!: boolean
 
   @Column({ type: 'jsonb', name: 'metadata', nullable: true })
-  public metadata!: Record<string, string>
+  public metadata!: Metadata
 
   constructor(
     deploymentId: string,
@@ -70,7 +71,7 @@ export class DeploymentEntityV2 implements Deployment {
     callbackUrl: string,
     components: ComponentEntity[],
     defaultCircle: boolean,
-    metadata: Record<string, string>
+    metadata: Metadata
   ) {
     this.id = deploymentId
     this.authorId = authorId

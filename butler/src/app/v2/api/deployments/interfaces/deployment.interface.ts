@@ -15,6 +15,7 @@
  */
 
 import { CdConfiguration, Component } from './'
+import { MetadataTypeEnum } from '../enums/metadata-type.enum'
 
 export interface Deployment {
     id: string
@@ -32,6 +33,13 @@ export interface Deployment {
     components?: DeploymentComponent[]
 
     defaultCircle: boolean
+
+    metadata: Metadata
+}
+
+export interface Metadata {
+    type: MetadataTypeEnum
+    content: Record<string, string>
 }
 
 export type DeploymentComponent = Omit<Component, 'deployment'>
