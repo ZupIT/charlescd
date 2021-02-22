@@ -72,7 +72,8 @@ test('form should be valid', async () => {
   await act(() => userEvent.type(versionInput, 'image-1.0.0'));
 
   await waitFor(() =>
-    expect(screen.getByTestId('button-default-submit')).not.toBeDisabled()
+    expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
+    { timeout: 700 }
   );
 });
 

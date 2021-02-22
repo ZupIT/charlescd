@@ -500,7 +500,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        exact: 'circle-id'
+                        'exact': 'circle-id'
                       }
                     }
                   }

@@ -20,7 +20,7 @@ import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
 import {
   getAccessTokenDecoded,
-  isIDMAuthFlow,
+  isIDMEnabled,
   redirectToIDM,
   saveSessionData
 } from 'core/utils/auth';
@@ -38,8 +38,8 @@ const NotFound404 = lazy(() => import('modules/Error/404'));
 const Routes = () => {
   const { getCircleId } = useCircleMatcher();
   const [enabledRoutes, setEnabledRoutes] = useState(false);
-  const isEnabledRoutes = enabledRoutes || !isIDMAuthFlow();
-  
+  const isEnabledRoutes = enabledRoutes || !isIDMEnabled();
+
   const { findByEmail, user, error } = useUser();
   const { getTokens, grants } = useAuth();
   const { create, newUser } = useCreateUser();
@@ -47,7 +47,7 @@ const Routes = () => {
   useEffect(() => {
     const { email } = getAccessTokenDecoded();
 
-    if (isIDMAuthFlow()) {
+    if (isIDMEnabled()) {
       const code = getParam('code');
 
       if (code) {
