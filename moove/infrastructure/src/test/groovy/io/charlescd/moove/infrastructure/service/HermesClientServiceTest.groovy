@@ -159,7 +159,7 @@ class HermesClientServiceTest extends Specification {
 
     private static HermesSubscriptionResponse getHermesSubscriptionResponse() {
         return new HermesSubscriptionResponse("subscriptionId",'https://mywebhook.com.br', 'secret', 'workspaceId',
-                'My Webhook', "DEPLOY")
+                'My Webhook', events)
     }
 
     private static HermesHealthCheckSubscriptionResponse getHermesHealthCheckSubscriptionResponse() {

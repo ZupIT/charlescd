@@ -112,7 +112,7 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
             url = subscription.url,
             description = subscription.description,
             workspaceId = subscription.externalId,
-            events = subscription.events.split(",").map { it.trim() }
+            events = subscription.events
         )
     }
 
