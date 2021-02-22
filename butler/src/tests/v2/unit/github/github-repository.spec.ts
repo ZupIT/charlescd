@@ -24,6 +24,7 @@ import { AxiosResponse } from 'axios'
 
 import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
+import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
 
 describe('Download resources from github', () => {
   const contents = getStubContents()
@@ -69,6 +70,23 @@ describe('Download resources from github', () => {
 
     const template = resource.children?.[2]
     expect(template?.children).toHaveLength(2)
+  })
+
+  it('Should invoke the github api service with the correct configuration object', async() => {
+    const githubToken = 'github-auth-token123'
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
+    const expectedRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${githubToken}`
+      },
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
+    }
+
+    const getSpy = jest.spyOn(httpService, 'get')
+
+    await repository.getResource({ url: url, token: githubToken, resourceName: 'helm-chart', branch: 'feature' })
+    expect(getSpy).toHaveBeenCalledWith(expect.anything(), expectedRequestConfig)
   })
 })
 

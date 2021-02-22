@@ -34,7 +34,7 @@ export class GitHubRepository implements Repository {
     return this.downloadResource(urlResource, requestConfig.resourceName, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': requestConfig.token
+        'Authorization': `Bearer ${requestConfig.token}`
       },
       timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
     })

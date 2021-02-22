@@ -20,7 +20,8 @@ export const expectedDeploymentCrd: CharlesDeployment = {
   apiVersion: 'charlescd.io/v1',
   kind: 'CharlesDeployment',
   metadata: {
-    name: 'circle-id'
+    name: 'circle-id',
+    namespace: 'namespace'
   },
   spec: {
     deploymentId: 'deployment-id',
