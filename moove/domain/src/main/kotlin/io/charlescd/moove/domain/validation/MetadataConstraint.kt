@@ -6,11 +6,12 @@ import javax.validation.Payload
 import kotlin.reflect.KClass
 
 @Documented
-@Constraint(validatedBy =[MetadataValidator::class])
-    @Target( AnnotationTarget.FIELD)
+@Constraint(validatedBy = [MetadataValidator::class])
+    @Target(AnnotationTarget.FIELD)
     @Retention(AnnotationRetention.RUNTIME)
+
     annotation class MetadataConstraint(
-    val message: String = "Invalid metadata",
-    val groups: Array<KClass<Any>> = [],
-    val payload: Array<KClass<Payload>> = []
-)
+        val message: String = "Invalid metadata",
+        val groups: Array<KClass<Any>> = [],
+        val payload: Array<KClass<Payload>> = []
+    )

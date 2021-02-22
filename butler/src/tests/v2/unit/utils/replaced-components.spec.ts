@@ -5,7 +5,6 @@ import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/de
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { componentsToBeRemoved } from '../../../../app/v2/core/integrations/utils/deployment.utils'
-import { MetadataScopeEnum } from '../../../../app/v2/api/deployments/enums/metadata-scope.enum'
 
 it('new deployment with active components on default circle', async() => {
   const cdConfiguration = new CdConfigurationEntity(

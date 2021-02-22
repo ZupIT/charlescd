@@ -27,7 +27,6 @@ import io.charlescd.moove.domain.validation.MetadataConstraint
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 data class CreateDeploymentRequest(
 

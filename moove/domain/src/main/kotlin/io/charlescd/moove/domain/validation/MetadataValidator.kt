@@ -1,11 +1,11 @@
 package io.charlescd.moove.domain.validation
 
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 import io.charlescd.moove.domain.Metadata
 import io.charlescd.moove.domain.MetadataScopeEnum
+import javax.validation.ConstraintValidator
+import javax.validation.ConstraintValidatorContext
 
-class MetadataValidator: ConstraintValidator<MetadataConstraint, Metadata> {
+class MetadataValidator : ConstraintValidator<MetadataConstraint, Metadata> {
 
     override fun isValid(metadata: Metadata?, context: ConstraintValidatorContext?): Boolean {
 
@@ -22,7 +22,7 @@ class MetadataValidator: ConstraintValidator<MetadataConstraint, Metadata> {
 
     private fun hasValidContent(content: Map<String, String>): Boolean {
 
-       val invalidMetadata = content.entries.filter {
+        val invalidMetadata = content.entries.filter {
             !this.hasValidLength(it.key, 63) && this.hasValidLength(it.value, 253)
         }
         return hasKeys(content) && invalidMetadata.isEmpty()
