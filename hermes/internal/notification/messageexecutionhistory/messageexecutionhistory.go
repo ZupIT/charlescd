@@ -30,6 +30,7 @@ type MessagesExecutionsHistory struct {
 	ExecutionId  uuid.UUID `json:"executionId"`
 	ExecutionLog string    `json:"executionLog"`
 	Status       string    `json:"status"`
+	HttpStatus   int       `json:"httpStatus"`
 	LoggedAt     time.Time `json:"-"`
 }
 
@@ -40,6 +41,18 @@ func (main Main) FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullM
 	if query.Error != nil {
 		return []payloads.FullMessageExecutionResponse{}, errors.NewError("FindAllByExecutionId History error", query.Error.Error()).
 			WithOperations("FindAllByExecutionId.Result")
+	}
+
+	return response, nil
+}
+
+func (main Main) FindLastByExecutionId(executionId uuid.UUID) (payloads.FullMessageExecutionResponse, errors.Error) {
+	var response payloads.FullMessageExecutionResponse
+
+	query := main.db.Model(&MessagesExecutionsHistory{}).Where("execution_id = ?", executionId).Order("logged_at desc").Find(&response).Limit(1)
+	if query.Error != nil {
+		return payloads.FullMessageExecutionResponse{}, errors.NewError("FindLastByExecution History error", query.Error.Error()).
+			WithOperations("FindLastByExecution.Result")
 	}
 
 	return response, nil

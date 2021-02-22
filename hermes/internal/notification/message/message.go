@@ -152,17 +152,30 @@ func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params m
 func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusResponse, errors.Error) {
 	r := payloads.FullMessageResponse{}
 
-	q := main.db.Model(&Message{}).Select("last_status").Where("subscription_id = ?", subscriptionId).Order("created_at desc").Limit(1).Find(&r)
+	q := main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Order("created_at desc").Limit(1).Find(&r)
 	if q.Error != nil {
 		return payloads.StatusResponse{}, errors.NewError("FindAllNotEnqueued Message error", q.Error.Error()).
 			WithOperations("FindAllNotEnqueued.Query")
 	}
 
-	if r.LastStatus != "ENQUEUED" {
-		return payloads.StatusResponse{Status: 503, Details: "Service unavailable"}, nil
+
+	if r.LastStatus == "DELIVERED" {
+		return payloads.StatusResponse{Status: 200, Details: "Webhook available, last message was successfully sent"}, nil
 	}
 
-	return payloads.StatusResponse{Status: 200, Details: "Webhook available, last message was successfully enqueued"}, nil
+	if r.LastStatus == "DELIVERED_FAILED" {
+		lastExecution, err := main.executionMain.FindLastByExecutionId(r.Id)
+			if err != nil {
+			return payloads.StatusResponse{Status: 418, Details: "Webhook message not sent yet"}, nil
+		}
+
+		if lastExecution.HttpStatus != 0 {
+			return payloads.StatusResponse{Status: lastExecution.HttpStatus, Details: lastExecution.ExecutionLog}, nil
+		}
+
+	}
+
+	return payloads.StatusResponse{Status: 418, Details: "Webhook message not sent yet"}, nil
 }
 
 func requestToEntity(r payloads.Request) Message {

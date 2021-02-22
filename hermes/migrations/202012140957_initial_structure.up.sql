@@ -31,6 +31,7 @@ CREATE TABLE MESSAGES_EXECUTIONS_HISTORIES
     execution_id  varchar(36)                         NOT NULL,
     execution_log varchar(100),
     status        varchar(36)                         NOT NULL,
+    http_status   int,
     logged_at     timestamp default clock_timestamp() NOT NULL,
     CONSTRAINT FK_execution_id_history FOREIGN KEY (execution_id) REFERENCES MESSAGES (ID)
 );
