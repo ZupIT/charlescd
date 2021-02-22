@@ -25,12 +25,13 @@ import { uniqBy } from 'lodash'
 
 export class CrdBuilder {
 
-  public static buildDeploymentCrdManifest(deployment: Deployment): CharlesDeployment {
+  public static buildDeploymentCrdManifest(deployment: Deployment, namespace: string): CharlesDeployment {
     return {
       apiVersion: 'charlescd.io/v1',
       kind: 'CharlesDeployment',
       metadata: {
-        name: deployment.circleId
+        name: deployment.circleId,
+        namespace: namespace
       },
       spec: {
         deploymentId: deployment.id,
@@ -42,12 +43,13 @@ export class CrdBuilder {
     }
   }
 
-  public static buildRoutingCrdManifest(namespace: string, activeComponents: Component[]): CharlesRoutes {
+  public static buildRoutingCrdManifest(activeComponents: Component[], namespace: string): CharlesRoutes {
     return {
       apiVersion: 'charlescd.io/v1',
       kind: 'CharlesRoutes',
       metadata: {
-        name: `${namespace}-routes`
+        name: `${namespace}-routes`,
+        namespace: namespace
       },
       spec: {
         circles: CrdBuilder.getRoutingCrdComponents(activeComponents)

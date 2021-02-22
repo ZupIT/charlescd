@@ -24,6 +24,7 @@ import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder'
+import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -133,9 +134,10 @@ const activeComponents: Component[] = [
 describe('Routing CRD client apply method', () => {
 
   let k8sClient: K8sClient
+  const butlerNamespace = 'butler-namespace'
 
   beforeEach(async() => {
-    k8sClient = new K8sClient(new ConsoleLoggerService())
+    k8sClient = new K8sClient(new ConsoleLoggerService(), { butlerNamespace: butlerNamespace } as IEnvConfiguration)
   })
 
   it('should call the read method with the correct arguments', async() => {
@@ -144,8 +146,8 @@ describe('Routing CRD client apply method', () => {
     jest.spyOn(k8sClient.client, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    const expectedManifest = CrdBuilder.buildRoutingCrdManifest(cdConfigurationId, activeComponents)
-    await k8sClient.applyRoutingCustomResource(cdConfigurationId, activeComponents)
+    const expectedManifest = CrdBuilder.buildRoutingCrdManifest(activeComponents, butlerNamespace)
+    await k8sClient.applyRoutingCustomResource(activeComponents)
     expect(readSpy).toHaveBeenCalledWith(expectedManifest)
   })
 
@@ -155,8 +157,8 @@ describe('Routing CRD client apply method', () => {
     const patchSpy = jest.spyOn(k8sClient.client, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    const expectedManifest = CrdBuilder.buildRoutingCrdManifest(cdConfigurationId, activeComponents)
-    await k8sClient.applyRoutingCustomResource(cdConfigurationId, activeComponents)
+    const expectedManifest = CrdBuilder.buildRoutingCrdManifest(activeComponents, butlerNamespace)
+    await k8sClient.applyRoutingCustomResource(activeComponents)
     expect(patchSpy).toHaveBeenCalledWith(
       expectedManifest,
       undefined,
@@ -175,7 +177,7 @@ describe('Routing CRD client apply method', () => {
     const patchSpy = jest.spyOn(k8sClient.client, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    await expect(k8sClient.applyRoutingCustomResource(cdConfigurationId, activeComponents))
+    await expect(k8sClient.applyRoutingCustomResource(activeComponents))
       .rejects.toEqual(expectedError)
     expect(patchSpy).not.toHaveBeenCalled()
   })
@@ -188,7 +190,18 @@ describe('Routing CRD client apply method', () => {
     jest.spyOn(k8sClient.client, 'patch')
       .mockImplementation(() => Promise.reject(expectedError))
 
-    await expect(k8sClient.applyRoutingCustomResource(cdConfigurationId, activeComponents))
+    await expect(k8sClient.applyRoutingCustomResource(activeComponents))
       .rejects.toEqual(expectedError)
+  })
+
+  it('should call the routing crd builder method with the correct activeComponents and namespace', async() => {
+    const builderSpy = jest.spyOn(CrdBuilder, 'buildRoutingCrdManifest')
+    jest.spyOn(k8sClient.client, 'read')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+    jest.spyOn(k8sClient.client, 'patch')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+
+    await k8sClient.applyRoutingCustomResource(activeComponents)
+    expect(builderSpy).toHaveBeenCalledWith(activeComponents, butlerNamespace)
   })
 })

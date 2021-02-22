@@ -24,6 +24,7 @@ import { Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -66,9 +67,10 @@ const deployment: Deployment = {
 describe('Undeployment CRD client apply method', () => {
 
   let k8sClient: K8sClient
+  const butlerNamespace = 'butler-namespace'
 
   beforeEach(async() => {
-    k8sClient = new K8sClient(new ConsoleLoggerService())
+    k8sClient = new K8sClient(new ConsoleLoggerService(), { butlerNamespace: butlerNamespace } as IEnvConfiguration)
   })
 
   it('should call the read method with the correct arguments', async() => {
@@ -77,7 +79,7 @@ describe('Undeployment CRD client apply method', () => {
     jest.spyOn(k8sClient.client, 'delete')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
     await k8sClient.applyUndeploymentCustomResource(deployment)
     expect(readSpy).toHaveBeenCalledWith(expectedManifest)
   })
@@ -88,7 +90,7 @@ describe('Undeployment CRD client apply method', () => {
     const deleteSpy = jest.spyOn(k8sClient.client, 'delete')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
     await k8sClient.applyUndeploymentCustomResource(deployment)
     expect(deleteSpy).toHaveBeenCalledWith(expectedManifest)
   })

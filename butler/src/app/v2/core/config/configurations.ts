@@ -58,6 +58,7 @@ export const Configuration: IEnvConfiguration = {
     retentionDays: 7
   },
 
-  butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL
+  butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL,
 
+  butlerNamespace: process.env.BUTLER_NAMESPACE || ConfigurationConstants.BUTLER_NAMESPACE
 }

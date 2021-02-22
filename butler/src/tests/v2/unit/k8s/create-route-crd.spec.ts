@@ -192,7 +192,8 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
     apiVersion: 'charlescd.io/v1',
     kind: 'CharlesRoutes',
     metadata: {
-      name: 'namespace-routes'
+      name: 'namespace-routes',
+      namespace: 'namespace'
     },
     spec: {
       circles: [
@@ -239,6 +240,6 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
   }
 
   expect(
-    CrdBuilder.buildRoutingCrdManifest('namespace', activeComponents)
+    CrdBuilder.buildRoutingCrdManifest(activeComponents, 'namespace')
   ).toEqual(expectedRouteCrd)
 })

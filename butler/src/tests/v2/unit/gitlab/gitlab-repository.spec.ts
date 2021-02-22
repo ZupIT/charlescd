@@ -24,6 +24,7 @@ import { AxiosResponse } from 'axios'
 
 import { GitLabRepository } from '../../../../app/v2/core/integrations/gitlab/gitlab-repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
+import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
 
 describe('Download resources from gitlab', () => {
   const contents = getStubContents()
@@ -69,6 +70,23 @@ describe('Download resources from gitlab', () => {
 
     const template = resource.children?.[2]
     expect(template?.children).toHaveLength(2)
+  })
+
+  it('Should invoke the gitlab api service with the correct configuration object', async() => {
+    const gitlabToken = 'gitlab-auth-token123'
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
+    const expectedRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+        'PRIVATE-TOKEN': gitlabToken
+      },
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
+    }
+
+    const getSpy = jest.spyOn(httpService, 'get')
+
+    await repository.getResource({ url: url, token: gitlabToken, resourceName: 'helm-chart', branch: 'feature' })
+    expect(getSpy).toHaveBeenCalledWith(expect.anything(), expectedRequestConfig)
   })
 })
 

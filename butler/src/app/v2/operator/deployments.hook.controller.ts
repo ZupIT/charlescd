@@ -7,7 +7,7 @@ import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest
 import { K8sClient } from '../core/integrations/k8s/client'
 import { ConsoleLoggerService } from '../core/logs/console/console-logger.service'
 import { HookParams } from './params.interface'
-import { ReconcileDeployment } from './use-cases/reconcile-deployments.usecase'
+import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
 
 @Controller('/')
 export class DeploymentsHookController {
@@ -16,48 +16,14 @@ export class DeploymentsHookController {
     private readonly k8sClient: K8sClient,
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
-    private readonly configurationRepository: CdConfigurationsRepository,
-    private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly reconcileUseCase: ReconcileDeployment
+    private readonly reconcileDeploymentUsecase: ReconcileDeploymentUsecase,
   ) { }
 
   @Post('/v2/operator/deployment/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
-    const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
-    const rawSpecs = deployment.components.flatMap(c => c.manifests)
-    const specs = this.reconcileUseCase.addMetadata(rawSpecs, deployment)
-
-    if (isEmpty(params.children['Deployment.apps/v1'])) {
-      return { children: specs, resyncAfterSeconds: 5 }
-    }
-    const currentDeploymentSpecs = this.reconcileUseCase.specsByDeployment(params, deployment.id)
-
-    const allReady = this.reconcileUseCase.checkConditions(currentDeploymentSpecs)
-    if (allReady === false) {
-      const previousDeploymentId = deployment.previousDeploymentId
-
-      if (previousDeploymentId === null) {
-        await this.deploymentRepository.updateHealthStatus(deployment.id, false)
-        return { children: specs, resyncAfterSeconds: 5 }
-      }
-      const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = this.reconcileUseCase.concatWithPrevious(previousDeployment, specs)
-      return { children: currentAndPrevious, resyncAfterSeconds: 5 }
-    }
-
-    const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
-    try {
-      await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
-    } catch (error) {
-      this.consoleLoggerService.error('DEPLOYMENT_RECONCILE:APPLY_ROUTE_CRD_ERROR', error)
-      await this.deploymentRepository.updateHealthStatus(deployment.id, false)
-      return { children: specs, resyncAfterSeconds: 5 }
-    }
-    await this.deploymentRepository.updateHealthStatus(deployment.id, true)
-    return { children: specs }
+    return await this.reconcileDeploymentUsecase.execute(params)
   }
 
   @Post('/v2/operator/deployment/hook/finalize')
@@ -65,10 +31,9 @@ export class DeploymentsHookController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: [], finalized: boolean, resyncAfterSeconds?: number }> {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
-    const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const finalized = true
     const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
-    await this.k8sClient.applyRoutingCustomResource(decryptedConfig.configurationData.namespace, activeComponents)
+    await this.k8sClient.applyRoutingCustomResource(activeComponents)
 
     // we cant trust that everything went well instantly, we need to keep returning finalized = true until we are sure there are no more routes to this deployment
     // const currentRoutes = this.k8sClient.getRoutingResource()

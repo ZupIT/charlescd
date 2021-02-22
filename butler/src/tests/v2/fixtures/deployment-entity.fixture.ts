@@ -4,6 +4,7 @@ import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/compon
 import { GitProvidersEnum } from '../../../app/v2/core/configuration/interfaces'
 import { ClusterProviderEnum } from '../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
+import { customManifests } from './manifests.fixture'
 
 export const cdConfigurationFixture = new CdConfigurationEntity(
   CdTypeEnum.OCTOPIPE,
@@ -78,3 +79,25 @@ function createDeployComponent() {
   )
   return component
 }
+
+export const deploymentWithManifestFixture = new DeploymentEntityV2(
+  'b7d08a07-f29d-452e-a667-7a39820f3262',
+  'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+  'b46fd548-0082-4021-ba80-a50703c44a3b',
+  cdConfigurationFixture,
+  'http://localhost:8883/deploy/notifications/deployment',
+  [
+    new ComponentEntityV2(
+      'http://localhost:8883/repos/charlescd-fake/helm-chart',
+      'build-image-tag',
+      'build-image-url.com',
+      'hello-kubernetes',
+      'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
+      null,
+      null,
+      customManifests('hello-kubernetes', 'namespace', 'build-image-tag'),
+      false
+    )
+  ],
+  true,
+)

@@ -5,16 +5,18 @@ import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/com
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 import { reconcileFixtures, reconcileFixturesParams } from './params'
+import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 
 describe('Deployment on existing circle', () => {
+
   it('returns empty array for the first reconcile loop on same circle that already had deployments', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const currentDeployment = reconcileFixtures.currentDeploymentId
     const reconcile = new ReconcileDeployment()
     expect(reconcile.specsByDeployment(params, currentDeployment)).toEqual([])
   })
+
   it('returns list of previous deployment specs', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const previousDeployment = reconcileFixtures.previousDeploymentId
@@ -55,25 +57,25 @@ describe('Deployment on existing circle', () => {
           {
             kind: 'Deployment',
             metadata: {
-              name: 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              name: 'batata'
             }
           },
           {
             kind: 'Service',
             metadata: {
-              name: 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              name: 'batata'
             }
           },
           {
             kind: 'Deployment',
             metadata: {
-              name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              name: 'jilo'
             }
           },
           {
             kind: 'Service',
             metadata: {
-              name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+              name: 'jilo'
             }
           }
         ]
@@ -93,64 +95,74 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Deployment',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'abobora',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Deployment',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'jilo',
+          namespace: 'my-namespace'
         }
       }
     ]
-    const concat = reconcile.concatWithPrevious(previousDeployment, currentComponents)
+    const concat = reconcile.concatWithPrevious(previousDeployment, currentComponents, cdConfig)
     const expected = [
       {
         kind: 'Deployment',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'abobora',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Deployment',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'jilo',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Deployment',
         metadata: {
-          name: 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace'
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          name: 'batata',
+          namespace: 'my-namespace'
         }
       }
     ]

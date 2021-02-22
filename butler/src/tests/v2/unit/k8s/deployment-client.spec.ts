@@ -24,6 +24,7 @@ import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import * as http from 'http'
 import * as k8s from '@kubernetes/client-node'
+import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -66,9 +67,10 @@ const deployment: Deployment = {
 describe('Deployment CRD client apply method', () => {
 
   let k8sClient: K8sClient
+  const butlerNamespace = 'butler-namespace'
 
   beforeEach(async() => {
-    k8sClient = new K8sClient(new ConsoleLoggerService())
+    k8sClient = new K8sClient(new ConsoleLoggerService(), { butlerNamespace: butlerNamespace } as IEnvConfiguration)
   })
 
   it('should call the read method with the correct arguments', async() => {
@@ -79,7 +81,7 @@ describe('Deployment CRD client apply method', () => {
     jest.spyOn(k8sClient.client, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
     Object.assign(expectedManifest.metadata, { labels: { deployment_id: deployment.id } })
     await k8sClient.applyDeploymentCustomResource(deployment)
     expect(readSpy).toHaveBeenCalledWith(expectedManifest)
@@ -93,7 +95,7 @@ describe('Deployment CRD client apply method', () => {
     const createSpy = jest.spyOn(k8sClient.client, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
     Object.assign(expectedManifest.metadata, { labels: { deployment_id: deployment.id } })
     await k8sClient.applyDeploymentCustomResource(deployment)
     expect(patchSpy).toHaveBeenCalledWith(
@@ -115,7 +117,7 @@ describe('Deployment CRD client apply method', () => {
     const createSpy = jest.spyOn(k8sClient.client, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
-    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment)
+    const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
     Object.assign(expectedManifest.metadata, { labels: { deployment_id: deployment.id } })
     await k8sClient.applyDeploymentCustomResource(deployment)
     expect(createSpy).toHaveBeenCalledWith(expectedManifest)
@@ -163,5 +165,16 @@ describe('Deployment CRD client apply method', () => {
     await expect(k8sClient.applyDeploymentCustomResource(deployment))
       .rejects.toEqual(expectedError)
     expect(createSpy).not.toHaveBeenCalled()
+  })
+
+  it('should call the deployment crd builder method with the correct deployment and namespace', async() => {
+    const builderSpy = jest.spyOn(CrdBuilder, 'buildDeploymentCrdManifest')
+    jest.spyOn(k8sClient.client, 'read')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+    jest.spyOn(k8sClient.client, 'patch')
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
+
+    await k8sClient.applyDeploymentCustomResource(deployment)
+    await expect(builderSpy).toHaveBeenCalledWith(deployment, butlerNamespace)
   })
 })
