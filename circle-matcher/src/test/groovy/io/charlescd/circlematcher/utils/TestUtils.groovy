@@ -74,7 +74,7 @@ class TestUtils {
                 LocalDateTime.now())
     }
 
-    static createSegmentationRequest(Node node, SegmentationType type, Integer percentage) {
+    static createSegmentationRequest(Node node, SegmentationType type, Integer percentage, active) {
         def createSegmentationRequest = new CreateSegmentationRequest()
         createSegmentationRequest.name = "Men"
         createSegmentationRequest.node = node
@@ -82,7 +82,7 @@ class TestUtils {
         createSegmentationRequest.circleId = "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85"
         createSegmentationRequest.type = type
         createSegmentationRequest.isDefault = false
-        createSegmentationRequest.active = true
+        createSegmentationRequest.active = active
         createSegmentationRequest.createdAt = LocalDateTime.now()
         createSegmentationRequest.percentage = percentage
         return createSegmentationRequest
@@ -126,5 +126,10 @@ class TestUtils {
         request.isDefault = true
         request.createdAt = LocalDateTime.now()
         return request
+    }
+
+
+    static createKeyMetadata(String key, Segmentation segmentation) {
+        return new KeyMetadata(key, segmentation);
     }
 }

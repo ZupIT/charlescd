@@ -33,7 +33,7 @@ public class PercentageValidator implements ConstraintValidator<PercentageConstr
         ).map(
                 KeyMetadata::getPercentage
         ).reduce(Integer::sum);
-        if (sumPercentageWorkspace.isPresent()) {
+        if (sumPercentageWorkspace.isPresent() && segmentation.isActive()) {
             if (sumPercentageWorkspace.get() + segmentation.getPercentage() > 100) {
                 return false;
             } else {
