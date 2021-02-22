@@ -33,7 +33,7 @@ type UseCases interface {
 	CountMetrics(metrics []Metric) (int, int, int)
 	FindMetricById(id string) (Metric, errors.Error)
 	SaveMetric(metric Metric) (Metric, errors.Error)
-	UpdateMetric(id string, metric Metric) (Metric, errors.Error)
+	UpdateMetric(metric Metric) (Metric, errors.Error)
 	RemoveMetric(id string) errors.Error
 	Query(metric Metric, period, interval datasourcePKG.Period) (interface{}, errors.Error)
 	ResultQuery(metric Metric) (float64, errors.Error)
