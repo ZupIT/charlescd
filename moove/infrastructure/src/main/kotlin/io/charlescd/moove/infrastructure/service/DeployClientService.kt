@@ -65,7 +65,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         circleId: String,
         cdConfigurationId: String,
         isDefault: Boolean,
-        metadata: Map<String, String>?
+        metadata: Metadata?
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,

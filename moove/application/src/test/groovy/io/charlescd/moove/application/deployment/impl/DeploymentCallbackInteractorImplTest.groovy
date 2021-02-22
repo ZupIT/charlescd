@@ -96,10 +96,10 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -141,10 +141,10 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -184,10 +184,10 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -229,7 +229,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -269,7 +269,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -307,7 +307,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -336,9 +336,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -383,9 +383,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -426,9 +426,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -458,9 +458,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -496,9 +496,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, new ObjectMapper().valueToTree(clauses), null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -553,9 +553,9 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", [:], null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 

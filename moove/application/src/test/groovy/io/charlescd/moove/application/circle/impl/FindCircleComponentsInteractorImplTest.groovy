@@ -216,7 +216,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
                 circle,
                 buildId,
                 workspaceId,
-                [:],
+                null,
                 null
         )
     }
@@ -270,7 +270,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
         deploymentList.add(new Deployment('f8296aea-6ae1-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(1),
-                LocalDateTime.now(), deploymentStatusEnum, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, [:], undeployedAt))
+                LocalDateTime.now(), deploymentStatusEnum, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, null, undeployedAt))
 
         def build = new Build(UUID.randomUUID().toString(), author, LocalDateTime.now(), featureSnapshotList,
                 'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', buildStatusEnum,

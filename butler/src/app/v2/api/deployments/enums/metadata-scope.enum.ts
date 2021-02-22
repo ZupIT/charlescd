@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export enum MetadataTypeEnum {
-    DATABASE = 'DATABASE',
+export enum MetadataScopeEnum {
+    APPLICATION = 'APPLICATION',
     CLUSTER = 'CLUSTER'
 }

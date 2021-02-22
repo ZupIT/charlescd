@@ -27,9 +27,14 @@ data class Deployment(
     val circle: Circle,
     val buildId: String,
     val workspaceId: String,
-    val metadata: Map<String, String>?,
+    val metadata: Metadata?,
     val undeployedAt: LocalDateTime?
 ) {
     fun isActive(): Boolean =
         (this.status == DeploymentStatusEnum.DEPLOYED || this.status == DeploymentStatusEnum.DEPLOYING) && !this.circle.isDefaultCircle()
 }
+
+data class Metadata(
+    val scope: MetadataScopeEnum,
+    val content: Map<String, String>
+)

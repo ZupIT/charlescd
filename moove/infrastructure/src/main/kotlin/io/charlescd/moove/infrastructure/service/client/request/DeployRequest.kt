@@ -16,6 +16,8 @@
 
 package io.charlescd.moove.infrastructure.service.client.request
 
+import io.charlescd.moove.domain.Metadata
+
 data class DeployRequest(
     val deploymentId: String,
     val applicationName: String,
@@ -26,7 +28,7 @@ data class DeployRequest(
     val callbackUrl: String,
     val cdConfigurationId: String,
     val defaultCircle: Boolean,
-    val metadata: Map<String, String>?
+    val metadata: Metadata?
 )
 
 data class DeployModuleRequest(

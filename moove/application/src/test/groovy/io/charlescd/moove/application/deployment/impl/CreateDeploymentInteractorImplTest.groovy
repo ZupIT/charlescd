@@ -407,6 +407,6 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     private static Deployment getDeployment(DeploymentStatusEnum status, LocalDateTime deployedAt, LocalDateTime undeployAt, Boolean isDefaultCircle) {
         return new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', TestUtils.user,
-                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle), buildId, TestUtils.workspaceId, [:], undeployAt)
+                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle), buildId, TestUtils.workspaceId, null, undeployAt)
     }
 }

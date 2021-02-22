@@ -14,32 +14,9 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from './'
-import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
+package io.charlescd.moove.domain
 
-export interface Deployment {
-    id: string
-
-    authorId: string
-
-    callbackUrl: string
-
-    createdAt: Date
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string
-
-    components?: DeploymentComponent[]
-
-    defaultCircle: boolean
-
-    metadata: Metadata | null
+enum class MetadataScopeEnum {
+    APPLICATION,
+    CLUSTER
 }
-
-export interface Metadata {
-    scope: MetadataScopeEnum
-    content: Record<string, string>
-}
-
-export type DeploymentComponent = Omit<Component, 'deployment'>
