@@ -75,7 +75,7 @@ const FormModule = ({ module, onChange }: Props) => {
 
   const form = useForm<Module>({
     defaultValues: buildFormDefaultValues(isEditing, module),
-    mode:  'onChange'
+    mode: 'onChange'
   });
 
   const {
@@ -83,8 +83,8 @@ const FormModule = ({ module, onChange }: Props) => {
     getValues: getHelmValues,
     setValue: setHelmValue,
     errors: helmErrors
-  } = useForm<Helm>({mode: "onChange"});
-  const { register, control, handleSubmit,  formState: { isValid } } = form;
+  } = useForm<Helm>({ mode: "onChange" });
+  const { register, control, handleSubmit, formState: { isValid } } = form;
   const fieldArray = useFieldArray({ control, name: 'components' });
   const [helmGitProvider, setHelmGitProvider] = useState<Option>(null);
 
@@ -130,7 +130,7 @@ const FormModule = ({ module, onChange }: Props) => {
           <Styled.Input
             label="Insert url"
             name="helmGitlabUrl"
-            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm gitlab url" ) })}
+            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm gitlab url") })}
             error={helmErrors?.helmGitlabUrl?.message}
           />
         </Styled.FieldPopover>
@@ -139,7 +139,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert organization"
           name="helmOrganization"
-          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization" ) })}
+          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization") })}
           error={helmErrors?.helmOrganization?.message}
         />
       </Styled.FieldPopover>
