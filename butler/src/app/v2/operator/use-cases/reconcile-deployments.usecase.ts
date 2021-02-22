@@ -1,30 +1,25 @@
+import { Injectable } from '@nestjs/common'
 import { uniqWith } from 'lodash'
-import { DeploymentEntityV2 } from '../api/deployments/entity/deployment.entity'
-import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
-import { HookParams, SpecMetadata, SpecStatus } from './params.interface'
-import { CdConfiguration } from '../api/deployments/interfaces'
+import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
+import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
+import { HookParams, SpecMetadata, SpecStatus } from '../params.interface'
 
-
-export class Reconcile {
-  public concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[], configuration: CdConfiguration) : KubernetesManifest[] {
+@Injectable()
+export class ReconcileDeployment {
+  public concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]) : KubernetesManifest[] {
     const rawSpecs = previousDeployment.components.flatMap(c => c.manifests)
-    const previousSpecs = this.addMetadata(rawSpecs, previousDeployment, configuration)
+    const previousSpecs = this.addMetadata(rawSpecs, previousDeployment)
     const allSpecs = specs.concat(previousSpecs)
     const uniqByNameAndKind = uniqWith(allSpecs, (a, b) => a.metadata?.name === b.metadata?.name && a.kind === b.kind)
     return uniqByNameAndKind
   }
 
-  public addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2, configuration: CdConfiguration) : KubernetesManifest[] {
+  public addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2) : KubernetesManifest[] {
     return spec.map((s: KubernetesManifest) => {
-      if (s.metadata && s.kind === 'Deployment') { //TODO what about other resources such as StatefulSet, CronJob etc?
-        s.metadata.name = `${s.metadata.name}-${deployment.circleId}`
-      }
-      if (s.metadata) {
-        s.metadata.namespace = configuration.configurationData.namespace
-      }
       if (s.metadata?.labels) {
         s.metadata.labels['deployment_id'] = deployment.id
         s.metadata.labels['circle_id'] = deployment.circleId
+        s.metadata.name = `${s.metadata.name}-${deployment.circleId}`
       }
       return s
     })

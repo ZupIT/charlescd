@@ -7,7 +7,6 @@ import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest
 import { K8sClient } from '../core/integrations/k8s/client'
 import { ConsoleLoggerService } from '../core/logs/console/console-logger.service'
 import { HookParams } from './params.interface'
-import { Reconcile } from './reconcile'
 import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
 
 @Controller('/')

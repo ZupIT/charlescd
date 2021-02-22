@@ -3,7 +3,10 @@ export const noRepeatedDefaultCircleDr = {
   kind: 'DestinationRule',
   metadata: {
     name: 'A',
-    namespace: 'sandbox'
+    namespace: 'sandbox',
+    annotations: {
+      circles: '["default-circle-id","normal-circle-id"]'
+    }
   },
   spec: {
     host: 'A',

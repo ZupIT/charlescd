@@ -10,6 +10,7 @@ import { DeploymentsHookController } from './deployments.hook.controller'
 import { RoutesHookController } from './routes.hook.controller'
 import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
 import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
+import { ReconcileDeployment } from './use-cases/reconcile-deployments.usecase'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.use
     K8sClient,
     CreateRoutesManifestsUseCase,
     ReconcileDeploymentUsecase
+    ReconcileDeployment
   ]
 })
 export class OperatorModule {

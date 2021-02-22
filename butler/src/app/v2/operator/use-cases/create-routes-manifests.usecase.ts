@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
-import { isEmpty, isEqual } from 'lodash'
+import { groupBy, isEmpty } from 'lodash'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { Component } from '../../api/deployments/interfaces'
@@ -26,7 +25,8 @@ import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manif
 import { DeploymentUtils } from '../../core/integrations/utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../../core/integrations/utils/istio-deployment-manifests.utils'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { RouteChildren, RouteHookParams } from '../params.interface'
+import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../params.interface'
+import { PartialRouteHookParams, SpecsUnion } from '../partial-params.interface'
 
 @Injectable()
 export class CreateRoutesManifestsUseCase {
@@ -40,28 +40,85 @@ export class CreateRoutesManifestsUseCase {
 
   public async execute(hookParams: RouteHookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     this.consoleLoggerService.log('START:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
-    const specs = Promise.all(hookParams.parent.spec.circles.flatMap(async c => {
+    let specs : (VirtualServiceSpec | DestinationRuleSpec)[]= []
+    for (const c of hookParams.parent.spec.circles) {
       const deployment = await this.retriveDeploymentFor(c.id)
-      const activeComponents = await this.componentsRepository.findActiveComponents(deployment.cdConfiguration.id)
+      const activeComponents = await this.componentsRepository.findHealthyActiveComponents(deployment.cdConfiguration.id)
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
-      this.consoleLoggerService.log('FINISH:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
-      return proxySpecs
-    })).then(s => {
-
-      console.log({
-        observed: JSON.stringify(hookParams.children),
-        desired: JSON.stringify(s.flat())
-      })
-
-      return { children: s.flat() }
+      specs = specs.concat(proxySpecs)
     }
-    )
-    return specs
+    const healthStatus = this.getRoutesStatus(hookParams, specs)
+    await this.updateRouteStatus(healthStatus)
+    return { children: specs, resyncAfterSeconds: 5 }
   }
 
-  public checkRoutes(observed: RouteChildren, desired: KubernetesManifest[]): boolean {
-    const o = Object.values(observed).flat().filter( (o:  KubernetesManifest) => !isEmpty(o))
-    return isEqual(o, desired)
+  public getRoutesStatus(observed: PartialRouteHookParams, desired: SpecsUnion[]): {circle: string, component: string, status: boolean, kind: string}[] {
+    if (desired.length === 0) {
+      return []
+    }
+    return desired.flatMap(spec => {
+      const circles : string[] = JSON.parse(spec.metadata.annotations.circles)
+      return circles.flatMap(desiredCircleId => {
+        return this.handleSpecStatus(observed, spec, desiredCircleId)
+      })
+    })
+  }
+
+  public async updateRouteStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
+    const components = groupBy(componentStatus, 'circle')
+    const results =  await Promise.all(Object.entries(components).flatMap(async c => {
+      const circleId = c[0]
+      const status = c[1]
+      if (status.every(s => s.status === true)) {
+        return await this.deploymentRepository.updateRouteStatus(circleId, true)
+      } else {
+        return await this.deploymentRepository.updateRouteStatus(circleId, false)
+      }
+    }))
+
+    return results
+  }
+
+  private handleSpecStatus(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): { circle: string, component: string, status: boolean, kind: string } {
+    const baseResponse = {
+      circle: circleId,
+      component: spec.metadata.name,
+      kind: spec.kind,
+      status: false
+    }
+
+    if (this.checkEmptySpecs(observed) === true) {
+      baseResponse.status = false
+      return baseResponse
+    }
+
+    if (this.checkComponentExistsOnObserved(observed, spec, circleId)) {
+      baseResponse.status = true
+      return baseResponse
+    } else {
+      baseResponse.status = false
+      return baseResponse
+    }
+  }
+
+  private checkEmptySpecs(observed: PartialRouteHookParams): boolean {
+    const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1beta1'])
+    const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1beta1'])
+    if (emptyDestinationRules || emptyVirtualServices) {
+      return true
+    }
+    return false
+  }
+
+  private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
+    const destionRulesCircles : string[] = JSON.parse(observed.children['DestinationRule.networking.istio.io/v1beta1'][spec.metadata.name].metadata.annotations.circles)
+    const desiredDestinationRulePresent = destionRulesCircles.includes(circleId)
+    const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1beta1'][spec.metadata.name].metadata.annotations.circles)
+    const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
+    if (desiredDestinationRulePresent && desiredVirtualServicePresent) {
+      return true
+    }
+    return false
   }
 
   private async retriveDeploymentFor(id: string): Promise<DeploymentEntityV2> {
@@ -74,8 +131,8 @@ export class CreateRoutesManifestsUseCase {
     return deployment
   }
 
-  private createProxySpecsFor(deployment: DeploymentEntityV2, activeComponents: Component[]): KubernetesManifest[] {
-    const proxySpecs: KubernetesManifest[] = []
+  private createProxySpecsFor(deployment: DeploymentEntityV2, activeComponents: Component[]): (VirtualServiceSpec | DestinationRuleSpec)[] {
+    const proxySpecs: (VirtualServiceSpec | DestinationRuleSpec)[] = []
     deployment.components.forEach(component => {
       const manifests = this.createIstioProxiesManifestsFor(deployment, component, activeComponents)
       manifests.forEach(m => proxySpecs.push(m))
@@ -86,7 +143,7 @@ export class CreateRoutesManifestsUseCase {
   private createIstioProxiesManifestsFor(deployment: DeploymentEntityV2,
     newComponent: Component,
     activeComponents: Component[]
-  ): [KubernetesManifest, KubernetesManifest] {
+  ): (VirtualServiceSpec | DestinationRuleSpec)[] {
     const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, newComponent.name)
     const destinationRules = IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, newComponent, activeByName)
     const virtualService = IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, newComponent, activeByName)

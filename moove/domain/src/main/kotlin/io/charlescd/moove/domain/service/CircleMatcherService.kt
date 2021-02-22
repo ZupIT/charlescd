@@ -27,13 +27,13 @@ interface CircleMatcherService {
 
     fun create(circle: Circle, matcherUri: String)
 
-    fun update(circle: Circle, previousReference: String, matcherUri: String)
+    fun update(circle: Circle, previousReference: String, matcherUri: String, active: Boolean)
 
     fun delete(reference: String, matcherUri: String)
 
     fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String)
 
-    fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String)
+    fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String, active: Boolean)
 
     fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle>
 }

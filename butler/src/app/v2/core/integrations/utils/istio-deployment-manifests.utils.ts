@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
+import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
 
 const IstioDeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
+  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        annotations: {
+          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+        }
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -41,13 +45,16 @@ const IstioDeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
+  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        annotations: {
+          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+        }
       },
       spec: {
         host: component.name,

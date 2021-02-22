@@ -5,7 +5,7 @@ import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/com
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { Reconcile } from '../../../../app/v2/operator/reconcile'
+import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 import { reconcileFixtures, reconcileFixturesParams } from './params'
 
 describe('Deployment on existing circle', () => {
@@ -13,14 +13,14 @@ describe('Deployment on existing circle', () => {
   it('returns empty array for the first reconcile loop on same circle that already had deployments', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const currentDeployment = reconcileFixtures.currentDeploymentId
-    const reconcile = new Reconcile()
+    const reconcile = new ReconcileDeployment()
     expect(reconcile.specsByDeployment(params, currentDeployment)).toEqual([])
   })
 
   it('returns list of previous deployment specs', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const previousDeployment = reconcileFixtures.previousDeploymentId
-    const reconcile = new Reconcile()
+    const reconcile = new ReconcileDeployment()
     const ids = reconcile.specsByDeployment(params, previousDeployment).map(s => s.metadata.labels.deployment_id)
     expect(ids).toEqual([previousDeployment, previousDeployment])
   })
@@ -29,7 +29,7 @@ describe('Deployment on existing circle', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const previousDeployment = reconcileFixtures.previousDeploymentId
     const currentDeployment = reconcileFixtures.currentDeploymentId
-    const reconcile = new Reconcile()
+    const reconcile = new ReconcileDeployment()
     const currentSpecs = reconcile.specsByDeployment(params, currentDeployment)
     const previousSpecs = reconcile.specsByDeployment(params, previousDeployment)
     expect(reconcile.checkConditions(currentSpecs)).toEqual(false)
@@ -37,7 +37,7 @@ describe('Deployment on existing circle', () => {
   })
 
   it('concatenates deployments and services from previous and current deployment', () => {
-    const reconcile = new Reconcile()
+    const reconcile = new ReconcileDeployment()
     const cdConfig = new CdConfigurationEntity(
       CdTypeEnum.OCTOPIPE,
       { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },

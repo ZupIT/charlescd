@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { useGlobalState, useDispatch } from '../hooks';
 import { AllTheProviders as wrapper } from 'unit-test/testUtils';
 import { circlesInitialState } from 'modules/Circles/state/reducer';
+import { userInitialState } from 'modules/Users/state/reducer';
 
-test('useGlobalState', () => {
+test('circle: useGlobalState', () => {
   const { result } = renderHook(() => useGlobalState(state => state.circles), {
     wrapper
   });
@@ -28,7 +28,21 @@ test('useGlobalState', () => {
   expect(result.current).toEqual(circlesInitialState);
 });
 
-test('useDispatch', () => {
+test('circle: useDispatch', () => {
+  const { result } = renderHook(() => useDispatch(), { wrapper });
+
+  expect(result.current).toEqual(expect.any(Function));
+});
+
+test('users: useGlobalState', () => {
+  const { result } = renderHook(() => useGlobalState(state => state.users), {
+    wrapper
+  });
+
+  expect(result.current).toEqual(userInitialState);
+});
+
+test('users: useDispatch', () => {
   const { result } = renderHook(() => useDispatch(), { wrapper });
 
   expect(result.current).toEqual(expect.any(Function));
