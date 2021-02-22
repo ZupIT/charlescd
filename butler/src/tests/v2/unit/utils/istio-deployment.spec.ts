@@ -37,6 +37,7 @@ it('must not insert two default circle subsets', () => {
     },
     circleId: 'default-circle-id',
     defaultCircle: true,
+    metadata: null,
     createdAt: new Date(),
     components: [
       newComponent
@@ -73,7 +74,8 @@ it('must not insert two default circle subsets', () => {
           createdAt: new Date(),
           deployments: null
         },
-        defaultCircle: true
+        defaultCircle: true,
+        metadata: null,
       }
     },
     {
@@ -106,7 +108,8 @@ it('must not insert two default circle subsets', () => {
           createdAt: new Date(),
           deployments: null
         },
-        defaultCircle: false
+        defaultCircle: false,
+        metadata: null,
       }
     }
   ]
@@ -148,6 +151,7 @@ it('must not insert two subsets for the same circle', () => {
     },
     circleId: 'normal-circle-id',
     defaultCircle: true,
+    metadata: null,
     createdAt: new Date(),
     components: [
       newComponent
@@ -184,7 +188,8 @@ it('must not insert two subsets for the same circle', () => {
           createdAt: new Date(),
           deployments: null
         },
-        defaultCircle: true
+        defaultCircle: true,
+        metadata: null,
       }
     },
     {
@@ -217,7 +222,8 @@ it('must not insert two subsets for the same circle', () => {
           createdAt: new Date(),
           deployments: null
         },
-        defaultCircle: false
+        defaultCircle: false,
+        metadata: null
       }
     }
   ]

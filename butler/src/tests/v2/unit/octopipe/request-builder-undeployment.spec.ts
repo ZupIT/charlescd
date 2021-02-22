@@ -50,6 +50,7 @@ const deploymentWith2Components: Deployment = {
   },
   circleId: 'circle-id',
   defaultCircle: false,
+  metadata: null,
   createdAt: new Date(),
   components: [
     {
@@ -96,6 +97,7 @@ const deploymentWith2ComponentsHostnameGateway: Deployment = {
   },
   circleId: 'circle-id',
   defaultCircle: false,
+  metadata: null,
   createdAt: new Date(),
   components: [
     {
@@ -146,6 +148,8 @@ const deploymentWith2ComponentsEKS: Deployment = {
   },
   circleId: 'circle-id',
   defaultCircle: false,
+  metadata: null,
+
   createdAt: new Date(),
   components: [
     {
@@ -196,6 +200,7 @@ const deploymentWith2ComponentsGENERIC: Deployment = {
   },
   circleId: 'circle-id',
   defaultCircle: false,
+  metadata: null,
   createdAt: new Date(),
   components: [
     {
@@ -241,6 +246,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -274,6 +280,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -308,6 +315,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.OCTOPIPE,
@@ -340,6 +348,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -373,6 +382,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -416,6 +426,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -449,6 +460,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -492,6 +504,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -525,6 +538,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -558,6 +572,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -592,6 +607,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.OCTOPIPE,
@@ -634,6 +650,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -667,6 +684,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -700,6 +718,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -733,6 +752,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -776,6 +796,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -809,6 +830,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -842,6 +864,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -875,6 +898,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -908,6 +932,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -941,6 +966,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id3',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -984,6 +1010,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1017,6 +1044,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1050,6 +1078,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1083,6 +1112,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1116,6 +1146,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1149,6 +1180,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id3',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1194,6 +1226,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1227,6 +1260,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1260,6 +1294,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1293,6 +1328,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1326,6 +1362,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1369,6 +1406,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1402,6 +1440,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1435,6 +1474,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1469,6 +1509,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.OCTOPIPE,
@@ -1501,6 +1542,7 @@ describe('V2 Octopipe Undeployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',

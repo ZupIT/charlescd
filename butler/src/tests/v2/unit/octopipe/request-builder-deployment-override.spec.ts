@@ -48,6 +48,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
       defaultCircle: false,
       circleId: 'circle-id',
       createdAt: new Date(),
+      metadata: null,
       components: [
         {
           id: 'component-id-1',
@@ -113,7 +114,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-          defaultCircle: false
+          defaultCircle: false,
+          metadata: null
         }
       },
       {
@@ -146,7 +148,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
+          metadata: null
         }
       },
       {
@@ -179,7 +182,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
+          metadata: null
         }
       },
       {
@@ -212,7 +216,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-          defaultCircle: true
+          defaultCircle: true,
+          metadata: null
         }
       },
       {
@@ -245,7 +250,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-          defaultCircle: true
+          defaultCircle: true,
+          metadata: null
         }
       },
       {
@@ -278,7 +284,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-          defaultCircle: true
+          defaultCircle: true,
+          metadata: null
         }
       }
     ]

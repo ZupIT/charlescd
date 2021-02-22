@@ -45,6 +45,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder - override deployments', () =
       },
       defaultCircle: false,
       circleId: 'circle-id',
+      metadata: null,
       createdAt: new Date(),
       components: [
         {
@@ -96,6 +97,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder - override deployments', () =
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -129,6 +131,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder - override deployments', () =
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -162,6 +165,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder - override deployments', () =
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -195,6 +199,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder - override deployments', () =
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -228,6 +233,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder - override deployments', () =
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -261,6 +267,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder - override deployments', () =
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: 'default-circle-id',
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,

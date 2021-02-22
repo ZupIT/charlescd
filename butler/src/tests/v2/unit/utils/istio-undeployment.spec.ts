@@ -37,6 +37,7 @@ it('must not insert two default circle subsets', () => {
     },
     circleId: 'default-circle-id',
     defaultCircle: true,
+    metadata: null,
     createdAt: new Date(),
     components: [
       newComponent
@@ -57,6 +58,7 @@ it('must not insert two default circle subsets', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'default-circle-id',
+        metadata: null,
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
@@ -90,6 +92,7 @@ it('must not insert two default circle subsets', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'normal-circle-id',
+        metadata: null,
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
@@ -148,6 +151,7 @@ it('must not insert two subsets for the same circle', () => {
     },
     circleId: 'normal-circle-id',
     defaultCircle: true,
+    metadata: null,
     createdAt: new Date(),
     components: [
       newComponent
@@ -184,7 +188,8 @@ it('must not insert two subsets for the same circle', () => {
           createdAt: new Date(),
           deployments: null
         },
-        defaultCircle: true
+        defaultCircle: true,
+        metadata: null
       }
     },
     {
@@ -217,7 +222,8 @@ it('must not insert two subsets for the same circle', () => {
           createdAt: new Date(),
           deployments: null
         },
-        defaultCircle: false
+        defaultCircle: false,
+        metadata: null
       }
     }
   ]

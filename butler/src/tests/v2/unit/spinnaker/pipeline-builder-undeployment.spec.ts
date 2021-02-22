@@ -45,6 +45,7 @@ const deploymentWith2Components: Deployment = {
     deployments: null
   },
   defaultCircle: true,
+  metadata: null,
   circleId: 'circle-id',
   createdAt: new Date(),
   components: [
@@ -92,6 +93,7 @@ const deploymentWith2ComponentsHostnameGateway: Deployment = {
   },
   circleId: 'circle-id',
   defaultCircle: false,
+  metadata: null,
   createdAt: new Date(),
   components: [
     {
@@ -137,6 +139,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -170,6 +173,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -203,6 +207,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -236,6 +241,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -269,6 +275,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -311,6 +318,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -344,6 +352,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -387,6 +396,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -420,6 +430,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -454,6 +465,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -487,6 +499,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -529,6 +542,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -562,6 +576,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -596,6 +611,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -629,6 +645,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -672,6 +689,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -705,6 +723,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -738,6 +757,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -771,6 +791,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
           defaultCircle: true,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -803,6 +824,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -837,6 +859,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id3',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -880,6 +903,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -912,6 +936,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
+          metadata: null,
           defaultCircle: false,
           createdAt: new Date(),
           cdConfiguration: {
@@ -945,6 +970,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
+          metadata: null,
           defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
@@ -978,6 +1004,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
+          metadata: null,
           defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
@@ -1011,6 +1038,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1043,6 +1071,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
+          metadata: null,
           circleId: 'circle-id3',
           defaultCircle: false,
           createdAt: new Date(),
