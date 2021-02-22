@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import Can from 'containers/Can';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -24,28 +25,21 @@ import Text from 'core/components/Text';
 import { addParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { isParamExists } from 'core/utils/path';
+import InfiniteScroll from 'core/components/InfiniteScroll';
+import { useDispatch, useGlobalState } from 'core/state/hooks';
+import { resetModulesAction } from '../state/actions';
 import { useFindAllModules } from '../hooks/module';
 import { Module } from '../interfaces/Module';
 import MenuItem from './MenuItem';
-import Loader from './Loaders';
 import Styled from './styled';
 
-interface MenuProps {
-  items: Module[];
-  isLoading?: boolean;
-}
-
-const ModuleList = ({ items }: MenuProps) => (
-  <>
-    {map(items, item => (
-      <MenuItem key={item.id} id={item.id} name={item.name} />
-    ))}
-  </>
-);
-
-const ModuleMenu = ({ items, isLoading }: MenuProps) => {
-  const { getAllModules } = useFindAllModules();
+const ModulesMenu = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
+  const [name, setName] = useState<string>('');
+  const { getAllModules, loading } = useFindAllModules();
+  const { list } = useGlobalState(({ modules }) => modules);
+  const isEmptyList = isEmpty(list?.content) && !loading;
 
   const openNewModule = () => {
     if (!isParamExists('module', NEW_TAB)) {
@@ -53,12 +47,50 @@ const ModuleMenu = ({ items, isLoading }: MenuProps) => {
     }
   };
 
-  const onSearch = (search: string) => {
-    getAllModules(search);
+  const onChange = useCallback(() => {
+    const page = 0;
+    dispatch(resetModulesAction());
+    getAllModules(name, page);
+  }, [dispatch, getAllModules, name]);
+
+  useEffect(() => {
+    onChange();
+  }, [name, onChange]);
+
+  const loadMore = (page: number) => {
+    getAllModules(name, page);
   };
 
+  const renderItem = ({ id, name }: Module) => (
+    <MenuItem
+      key={id}
+      id={id}
+      name={name}
+    />
+  );
+
+  const renderEmpty = () => (
+    <Styled.Empty>
+      <Text.h3 color="dark">No Modules was found</Text.h3>
+    </Styled.Empty>
+  );
+
+  const renderList = (data: Module[]) =>
+    map(data, item => renderItem(item))
+
+  const renderContent = () => (
+    <InfiniteScroll
+      hasMore={!list?.last}
+      loadMore={loadMore}
+      isLoading={loading}
+      loader={<Styled.Loader />}
+    >
+      {isEmptyList ? renderEmpty() : renderList(list?.content)}
+    </InfiniteScroll>
+  );
+
   return (
-    <>
+    <Fragment>
       <Styled.Actions>
         <Can I="write" a="modules" passThrough>
           <Styled.Button onClick={openNewModule}>
@@ -69,13 +101,11 @@ const ModuleMenu = ({ items, isLoading }: MenuProps) => {
         </Can>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
-        <Styled.List>
-          {isLoading ? <Loader.List /> : <ModuleList items={items} />}
-        </Styled.List>
+        <Styled.SearchInput resume onSearch={setName} />
+        {renderContent()}
       </Styled.Content>
-    </>
+    </Fragment>
   );
 };
 
-export default ModuleMenu;
+export default ModulesMenu;

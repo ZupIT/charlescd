@@ -22,20 +22,11 @@ import ButtonComponent from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
+import LoaderMenuComponent from './Loaders';
 
 const SearchInput = styled(SearchInputComponent)`
   margin: 15px 0;
   padding: 0 16px;
-`;
-
-const List = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-
-  > * {
-    padding: 0 16px;
-  }
 `;
 
 const ListItem = styled(LabeledIcon)`
@@ -45,8 +36,7 @@ const ListItem = styled(LabeledIcon)`
 `;
 
 const Content = styled.div`
-  height: calc(100vh - 200px);
-  overflow-y: auto;
+  height: calc(100vh - 250px);
 `;
 
 const Actions = styled.div`
@@ -68,6 +58,8 @@ const Link = styled('button')<LinkProps>`
   background: none;
   border: none;
   text-decoration: none;
+  width: 100%;
+  padding: 0 16px;
   background-color: ${({ isActive }) =>
     isActive ? COLOR_BLACK_MARLIN : 'transparent'};
 `;
@@ -98,15 +90,24 @@ const ButtonModal = styled(ButtonComponent.Default)`
   margin-top: 20px;
 `;
 
+const Loader = styled(LoaderMenuComponent.List)`
+  padding: 0 16px;
+`;
+
+const Empty = styled.div`
+  padding: 0 16px;
+`;
+
 export default {
   SearchInput,
-  List,
   ListItem,
   Content,
   Actions,
   Icon,
   Link,
   Button,
+  Loader,
+  Empty,
   Modal: {
     Input: ModalInput,
     Title: ModalTitle,
