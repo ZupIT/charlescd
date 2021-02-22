@@ -17,279 +17,14 @@
 import 'jest'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
-import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
-import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { OctopipeRequestBuilder } from '../../../../app/v2/core/integrations/octopipe/request-builder'
-import { completeOctopipeDeploymentWithOverrides } from './fixtures/deployment/complete-request-override'
-import { completeRequestWithUnusedRoutes } from './fixtures/deployment/complete-request-override-remove-unused-routes'
+import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
+import { completeWithOverridesAndDeleteProxy } from './fixtures/deployment/deployment-complete-with-overrides-and-delete-proxy'
+import { completeWithOverridesAndDeleteProxyForCircle } from './fixtures/deployment/deployment-complete-with-overrides-and-delete-proxy-circle'
 
-describe('V2 Octopipe Deployment Request Builder', () => {
 
-  it('Should undeploy A:v1 and B:v1 but keep C:v2 when new deploy is A:v2, B:V2 and C:v2 and current components are A:v1, B:V1 and C:v2', async() => {
+describe('V2 Spinnaker Deployment Pipeline Builder - remove unused proxy rules', () => {
 
-    const deploymentWith3Components: Deployment = {
-      id: 'deployment-id',
-      authorId: 'user-1',
-      callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-      cdConfiguration: {
-        id: 'cd-configuration-id',
-        type: CdTypeEnum.OCTOPIPE,
-        configurationData: {
-          gitProvider: GitProvidersEnum.GITHUB,
-          gitToken: 'git-token',
-          provider: ClusterProviderEnum.DEFAULT,
-          namespace: 'sandbox'
-        },
-        name: 'octopipeconfiguration',
-        authorId: 'user-2',
-        workspaceId: 'workspace-id',
-        createdAt: new Date(),
-        deployments: null
-      },
-      defaultCircle: false,
-      circleId: 'circle-id',
-      createdAt: new Date(),
-      components: [
-        {
-          id: 'component-id-1',
-          helmUrl: 'http://localhost:2222/helm',
-          imageTag: 'v2',
-          imageUrl: 'https://repository.com/A:v2',
-          name: 'A',
-          running: false,
-          gatewayName: null,
-          hostValue: null
-        },
-        {
-          id: 'component-id-2',
-          helmUrl: 'http://localhost:2222/helm',
-          imageTag: 'v2',
-          imageUrl: 'https://repository.com/B:v2',
-          name: 'B',
-          running: false,
-          gatewayName: null,
-          hostValue: null
-        },
-        {
-          id: 'component-id-3',
-          helmUrl: 'http://localhost:2222/helm',
-          imageTag: 'v2',
-          imageUrl: 'https://repository.com/C:v2',
-          name: 'C',
-          running: false,
-          gatewayName: null,
-          hostValue: null
-        }
-      ]
-    }
-
-    const activeComponents: Component[] = [
-      {
-        id: 'component-id-4',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v1',
-        imageUrl: 'https://repository.com/A:v1',
-        name: 'A',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id4',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
-          circleId: 'circle-id',
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'octopipeconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          },
-          defaultCircle: false
-        }
-      },
-      {
-        id: 'component-id-5',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v1',
-        imageUrl: 'https://repository.com/B:v1',
-        name: 'B',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id5',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
-          circleId: 'circle-id',
-          defaultCircle: false,
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'octopipeconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          }
-        }
-      },
-      {
-        id: 'component-id-66',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v2',
-        imageUrl: 'https://repository.com/C:v2',
-        name: 'C',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'component-id-66',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
-          circleId: 'circle-id',
-          defaultCircle: false,
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'octopipeconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          }
-        }
-      },
-      {
-        id: 'component-id-6',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v0',
-        imageUrl: 'https://repository.com/A:v0',
-        name: 'A',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id6',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle-id',
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'octopipeconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          },
-          defaultCircle: true
-        }
-      },
-      {
-        id: 'component-id-7',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v0',
-        imageUrl: 'https://repository.com/B:v0',
-        name: 'B',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id7',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle-id',
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'octopipeconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          },
-          defaultCircle: true
-        }
-      },
-      {
-        id: 'component-id-8',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v0',
-        imageUrl: 'https://repository.com/C:v0',
-        name: 'C',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id8',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle-id',
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'octopipeconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          },
-          defaultCircle: true
-        }
-      }
-    ]
-
-    expect(
-      new OctopipeRequestBuilder().buildDeploymentRequest(deploymentWith3Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(completeOctopipeDeploymentWithOverrides)
-  })
-
-  it('Should undeploy updated components from circle and remove component that is not present on deployment request', async() => {
+  it('should remove unused deployments, services and istio routes when deploying on same circle but keep the components still in use on default circle', async() => {
 
     const deploymentWith3Components: Deployment = {
       id: 'deployment-id',
@@ -297,14 +32,14 @@ describe('V2 Octopipe Deployment Request Builder', () => {
       callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
       cdConfiguration: {
         id: 'cd-configuration-id',
-        type: CdTypeEnum.OCTOPIPE,
+        type: CdTypeEnum.SPINNAKER,
         configurationData: {
-          gitProvider: GitProvidersEnum.GITHUB,
-          gitToken: 'git-token',
-          provider: ClusterProviderEnum.DEFAULT,
-          namespace: 'sandbox'
+          gitAccount: 'github-artifact',
+          account: 'default',
+          namespace: 'sandbox',
+          url: 'spinnaker-url'
         },
-        name: 'octopipeconfiguration',
+        name: 'spinnakerconfiguration',
         authorId: 'user-2',
         workspaceId: 'workspace-id',
         createdAt: new Date(),
@@ -365,14 +100,14 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
+            type: CdTypeEnum.SPINNAKER,
             configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
             },
-            name: 'octopipeconfiguration',
+            name: 'spinnakerconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -399,19 +134,19 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
+            type: CdTypeEnum.SPINNAKER,
             configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
             },
-            name: 'octopipeconfiguration',
+            name: 'spinnakerconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -432,19 +167,19 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
+            type: CdTypeEnum.SPINNAKER,
             configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
             },
-            name: 'octopipeconfiguration',
+            name: 'spinnakerconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          }
+          },
         }
       },
       {
@@ -464,14 +199,14 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
+            type: CdTypeEnum.SPINNAKER,
             configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
             },
-            name: 'octopipeconfiguration',
+            name: 'spinnakerconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -497,14 +232,14 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
+            type: CdTypeEnum.SPINNAKER,
             configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
             },
-            name: 'octopipeconfiguration',
+            name: 'spinnakerconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -530,14 +265,14 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
-            type: CdTypeEnum.OCTOPIPE,
+            type: CdTypeEnum.SPINNAKER,
             configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
             },
-            name: 'octopipeconfiguration',
+            name: 'spinnakerconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
@@ -549,8 +284,170 @@ describe('V2 Octopipe Deployment Request Builder', () => {
     ]
 
     expect(
-      new OctopipeRequestBuilder().buildDeploymentRequest(deploymentWith3Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(completeRequestWithUnusedRoutes)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(completeWithOverridesAndDeleteProxy)
   })
+  it('should remove unused deployments, services and istio routes when deploying on same circle', async() => {
 
+    const deploymentWith3Components: Deployment = {
+      id: 'deployment-id',
+      authorId: 'user-1',
+      callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
+      cdConfiguration: {
+        id: 'cd-configuration-id',
+        type: CdTypeEnum.SPINNAKER,
+        configurationData: {
+          gitAccount: 'github-artifact',
+          account: 'default',
+          namespace: 'sandbox',
+          url: 'spinnaker-url'
+        },
+        name: 'spinnakerconfiguration',
+        authorId: 'user-2',
+        workspaceId: 'workspace-id',
+        createdAt: new Date(),
+        deployments: null
+      },
+      defaultCircle: false,
+      circleId: 'circle-id',
+      createdAt: new Date(),
+      components: [
+        {
+          id: 'component-id-1',
+          helmUrl: 'http://localhost:2222/helm',
+          imageTag: 'v2',
+          imageUrl: 'https://repository.com/A:v2',
+          name: 'A',
+          running: false,
+          gatewayName: null,
+          hostValue: null
+        },
+        {
+          id: 'component-id-2',
+          helmUrl: 'http://localhost:2222/helm',
+          imageTag: 'v2',
+          imageUrl: 'https://repository.com/B:v2',
+          name: 'B',
+          running: false,
+          gatewayName: null,
+          hostValue: null
+        },
+        {
+          id: 'component-id-3',
+          helmUrl: 'http://localhost:2222/helm',
+          imageTag: 'v2',
+          imageUrl: 'https://repository.com/D:v2',
+          name: 'D',
+          running: false,
+          gatewayName: null,
+          hostValue: null
+        }
+      ]
+    }
+
+    const activeComponents: Component[] = [
+      {
+        id: 'component-id-4',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v1',
+        imageUrl: 'https://repository.com/A:v1',
+        name: 'A',
+        running: true,
+        gatewayName: null,
+        hostValue: null,
+        deployment: {
+          id: 'deployment-id4',
+          authorId: 'user-1',
+          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
+          circleId: 'circle-id',
+          createdAt: new Date(),
+          cdConfiguration: {
+            id: 'cd-configuration-id',
+            type: CdTypeEnum.SPINNAKER,
+            configurationData: {
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
+            },
+            name: 'spinnakerconfiguration',
+            authorId: 'user-2',
+            workspaceId: 'workspace-id',
+            createdAt: new Date(),
+            deployments: null
+          },
+          defaultCircle: false
+        }
+      },
+      {
+        id: 'component-id-5',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v1',
+        imageUrl: 'https://repository.com/B:v1',
+        name: 'B',
+        running: true,
+        gatewayName: null,
+        hostValue: null,
+        deployment: {
+          id: 'deployment-id5',
+          authorId: 'user-1',
+          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
+          circleId: 'circle-id',
+          defaultCircle: false,
+          createdAt: new Date(),
+          cdConfiguration: {
+            id: 'cd-configuration-id',
+            type: CdTypeEnum.SPINNAKER,
+            configurationData: {
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
+            },
+            name: 'spinnakerconfiguration',
+            authorId: 'user-2',
+            workspaceId: 'workspace-id',
+            createdAt: new Date(),
+            deployments: null
+          },
+        }
+      },
+      {
+        id: 'component-id-66',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v2',
+        imageUrl: 'https://repository.com/C:v2',
+        name: 'C',
+        running: true,
+        gatewayName: null,
+        hostValue: null,
+        deployment: {
+          id: 'component-id-66',
+          authorId: 'user-1',
+          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
+          circleId: 'circle-id',
+          defaultCircle: false,
+          createdAt: new Date(),
+          cdConfiguration: {
+            id: 'cd-configuration-id',
+            type: CdTypeEnum.SPINNAKER,
+            configurationData: {
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
+            },
+            name: 'spinnakerconfiguration',
+            authorId: 'user-2',
+            workspaceId: 'workspace-id',
+            createdAt: new Date(),
+            deployments: null
+          },
+        }
+      }
+    ]
+    expect(
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(completeWithOverridesAndDeleteProxyForCircle)
+  })
 })
