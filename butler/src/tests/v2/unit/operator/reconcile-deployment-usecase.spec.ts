@@ -27,6 +27,7 @@ import { HookParams } from '../../../../app/v2/operator/params.interface'
 import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-cases/reconcile-deployment.usecase'
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
+import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 
 describe('Reconcile deployment usecase spec', () => {
 
@@ -36,6 +37,7 @@ describe('Reconcile deployment usecase spec', () => {
   const cdConfigurationsRepository = new CdConfigurationsRepository()
   const consoleLoggerService = new ConsoleLoggerService()
   const k8sClient = new K8sClient(consoleLoggerService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
+  const reconcileDeployment = new ReconcileDeployment()
 
   let hookParams: HookParams
 
@@ -265,7 +267,8 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       cdConfigurationsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      reconcileDeployment
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParams)

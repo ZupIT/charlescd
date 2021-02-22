@@ -5,8 +5,8 @@ import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/com
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 import { reconcileFixtures, reconcileFixturesParams } from './params'
+import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 
 describe('Deployment on existing circle', () => {
 
