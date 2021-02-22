@@ -16,7 +16,7 @@ CharlesApplications:
       port: 3000
       initialDelay: 60
     image:
-      repository: zupcharles
+      registry: zupcharles
       application: charlescd-butler
     imagePullSecrets: false
     pullPolicy: Always
@@ -50,7 +50,7 @@ CharlesApplications:
       port: 8080
       initialDelay: 180
     image:
-      repository: zupcharles
+      registry: zupcharles
       application: charlescd-moove
     imagePullSecrets: false
     pullPolicy: Always
@@ -91,7 +91,7 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      repository: zupcharles
+      registry: zupcharles
       application: charlescd-villager
     imagePullSecrets: false
     pullPolicy: Always
@@ -126,7 +126,7 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      repository: zupcharles
+      registry: zupcharles
       application: charlescd-octopipe
     imagePullSecrets: false
     pullPolicy: Always
@@ -156,7 +156,7 @@ CharlesApplications:
       port: 3000
       initialDelay: 20
     image:
-      repository: zupcharles
+      registry: zupcharles
       application: charlescd-ui
     imagePullSecrets: false
     pullPolicy: Always
@@ -192,7 +192,7 @@ CharlesApplications:
       port: 8080
       initialDelay: 120
     image:
-      repository: zupcharles
+      registry: zupcharles
       application: charlescd-circle-matcher
     imagePullSecrets: false
     pullPolicy: Always
@@ -234,7 +234,7 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      repository: zupcharles
+      registry: zupcharles
       application: charlescd-compass
     imagePullSecrets: false
     pullPolicy: Always
