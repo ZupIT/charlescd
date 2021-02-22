@@ -32,6 +32,7 @@ type V2DeploymentPipeline struct {
 	Deployments 	 	[]V2Deployment				`json:"deployments"`
 	UnusedDeployments 	[]V2Deployment				`json:"unusedDeployments"`
 	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
+	UnusedProxyDeployments 	[]map[string]interface{}    `json:"unusedProxyDeployments"`
 	CallbackUrl   		string           			`json:"callbackUrl"`
 	ClusterConfig    	cloudprovider.Cloudprovider `json:"clusterConfig"`
 }
