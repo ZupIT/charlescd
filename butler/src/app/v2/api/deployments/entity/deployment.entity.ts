@@ -71,7 +71,7 @@ export class DeploymentEntityV2 implements Deployment {
   public defaultCircle!: boolean
 
   @Column({ type: 'jsonb', name: 'metadata', nullable: true })
-  public metadata!: Metadata
+  public metadata!: Metadata | null
 
   constructor(
     deploymentId: string,
@@ -82,7 +82,7 @@ export class DeploymentEntityV2 implements Deployment {
     defaultCircle: boolean,
     namespace: string,
     timeoutInSeconds: number,
-    metadata: Metadata
+    metadata: Metadata | null
   ) {
     this.id = deploymentId
     this.authorId = authorId

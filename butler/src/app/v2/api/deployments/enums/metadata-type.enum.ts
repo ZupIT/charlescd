@@ -14,33 +14,7 @@
  * limitations under the License.
  */
 
-import { Component } from './'
-
-import { MetadataTypeEnum } from '../enums/metadata-type.enum'
-
-export interface Deployment {
-    id: string
-
-    authorId: string
-
-    callbackUrl: string
-
-    createdAt: Date
-
-    circleId: string
-
-    components?: DeploymentComponent[]
-
-    defaultCircle: boolean
-
-    namespace: string
-
-    metadata: Metadata | null
+export enum MetadataTypeEnum {
+    DATABASE = 'DATABASE',
+    CLUSTER = 'CLUSTER'
 }
-
-export interface Metadata {
-    type: MetadataTypeEnum
-    content: Record<string, string>
-}
-
-export type DeploymentComponent = Omit<Component, 'deployment'>

@@ -181,6 +181,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
+      metadata: null
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -673,6 +674,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       true,
       'default',
       120,
+      null
     )
     sameNamespaceActiveDeployment.current = true
 
@@ -767,6 +769,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       true,
       'test2',
       120,
+      null
     )
     differentNamespaceActiveDeployment.current = true
 
@@ -842,6 +845,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       false,
       'default',
       120,
+      null
     )
     differentNamespaceActiveDeployment.current = true
 
@@ -970,6 +974,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       true,
       'default',
       120,
+      null
     )
     sameCircleDiffNamespaceActiveDeployment.current = true
 
