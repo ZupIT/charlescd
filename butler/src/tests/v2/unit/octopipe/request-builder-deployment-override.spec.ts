@@ -319,6 +319,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
       },
       defaultCircle: false,
       circleId: 'circle-id',
+      metadata: null,
       createdAt: new Date(),
       components: [
         {
@@ -385,7 +386,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-          defaultCircle: false
+          defaultCircle: false,
+          metadata: null,
         }
       },
       {
@@ -403,6 +405,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -436,6 +439,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           defaultCircle: false,
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -469,6 +473,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'default-circle-id',
           createdAt: new Date(),
+          metadata: null,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.OCTOPIPE,
@@ -501,6 +506,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: 'default-circle-id',
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -534,6 +540,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: 'default-circle-id',
+          metadata: null,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',

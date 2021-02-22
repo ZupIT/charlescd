@@ -37,6 +37,7 @@ it('should not perform cleanup when no components where overriden', () => {
         circleId: 'circle-id',
         defaultCircle: false,
         createdAt: new Date(),
+        metadata: null,
         cdConfiguration: {
           id: 'cd-configuration-id',
           type: CdTypeEnum.SPINNAKER,
@@ -77,6 +78,7 @@ it('should not perform cleanup when no components where overriden', () => {
     },
     circleId: 'another-circle-id',
     defaultCircle: false,
+    metadata: null,
     createdAt: new Date(),
     components: [
       {
@@ -119,6 +121,7 @@ it('should not perform cleanup when no new component is deployed', () => {
       deployments: null
     },
     defaultCircle: false,
+    metadata: null,
     circleId: 'circle-id',
     createdAt: new Date(),
     components: [
@@ -170,6 +173,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id',
+        metadata: null,
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
@@ -204,6 +208,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id',
         defaultCircle: false,
+        metadata: null,
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
@@ -237,6 +242,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id',
         defaultCircle: false,
+        metadata: null,
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
@@ -269,6 +275,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
         circleId: 'default-circle-id',
+        metadata: null,
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
@@ -303,6 +310,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
         circleId: 'default-circle-id',
         createdAt: new Date(),
+        metadata: null,
         cdConfiguration: {
           id: 'cd-configuration-id',
           type: CdTypeEnum.SPINNAKER,
@@ -335,6 +343,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
         circleId: 'default-circle-id',
+        metadata: null,
         createdAt: new Date(),
         cdConfiguration: {
           id: 'cd-configuration-id',
@@ -382,6 +391,7 @@ it('should perform override when there is only one component active in circle', 
     defaultCircle: false,
     circleId: 'circle-id',
     createdAt: new Date(),
+    metadata: null,
     components: [
       {
         id: 'component-id-1',
@@ -412,6 +422,7 @@ it('should perform override when there is only one component active in circle', 
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id',
         createdAt: new Date(),
+        metadata: null,
         cdConfiguration: {
           id: 'cd-configuration-id',
           type: CdTypeEnum.SPINNAKER,
@@ -424,6 +435,7 @@ it('should perform override when there is only one component active in circle', 
           name: 'spinnakerconfiguration',
           authorId: 'user-2',
           workspaceId: 'workspace-id',
+
           createdAt: new Date(),
           deployments: null
         },
