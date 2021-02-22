@@ -7,7 +7,7 @@ import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest
 import { K8sClient } from '../core/integrations/k8s/client'
 import { ConsoleLoggerService } from '../core/logs/console/console-logger.service'
 import { HookParams } from './params.interface'
-import { Reconcile } from './reconcile'
+import { ReconcileDeployment } from './use-cases/reconcile-deployments.usecase'
 
 @Controller('/')
 export class DeploymentsHookController {
@@ -17,25 +17,25 @@ export class DeploymentsHookController {
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
     private readonly configurationRepository: CdConfigurationsRepository,
-    private readonly consoleLoggerService: ConsoleLoggerService
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly reconcileUseCase: ReconcileDeployment
   ) { }
 
   @Post('/v2/operator/deployment/hook/reconcile')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    const reconcile = new Reconcile()
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const rawSpecs = deployment.components.flatMap(c => c.manifests)
-    const specs = reconcile.addMetadata(rawSpecs, deployment)
+    const specs = this.reconcileUseCase.addMetadata(rawSpecs, deployment)
 
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
     }
-    const currentDeploymentSpecs = reconcile.specsByDeployment(params, deployment.id)
+    const currentDeploymentSpecs = this.reconcileUseCase.specsByDeployment(params, deployment.id)
 
-    const allReady = reconcile.checkConditions(currentDeploymentSpecs)
+    const allReady = this.reconcileUseCase.checkConditions(currentDeploymentSpecs)
     if (allReady === false) {
       const previousDeploymentId = deployment.previousDeploymentId
 
@@ -44,7 +44,7 @@ export class DeploymentsHookController {
         return { children: specs, resyncAfterSeconds: 5 }
       }
       const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = reconcile.concatWithPrevious(previousDeployment, specs)
+      const currentAndPrevious = this.reconcileUseCase.concatWithPrevious(previousDeployment, specs)
       return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
 

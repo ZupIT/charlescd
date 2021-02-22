@@ -1,10 +1,11 @@
+import { Injectable } from '@nestjs/common'
 import { uniqWith } from 'lodash'
-import { DeploymentEntityV2 } from '../api/deployments/entity/deployment.entity'
-import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
-import { HookParams, SpecMetadata, SpecStatus } from './params.interface'
+import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
+import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
+import { HookParams, SpecMetadata, SpecStatus } from '../params.interface'
 
-
-export class Reconcile {
+@Injectable()
+export class ReconcileDeployment {
   public concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]) : KubernetesManifest[] {
     const rawSpecs = previousDeployment.components.flatMap(c => c.manifests)
     const previousSpecs = this.addMetadata(rawSpecs, previousDeployment)
