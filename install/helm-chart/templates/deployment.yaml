@@ -9,20 +9,20 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     app: {{ .name }}
-    version: {{ $.Chart.Version }}
+    version: {{ .name }}
 spec:
   replicas: {{ .replicaCount }}
   selector:
     matchLabels:
       app: {{ .name }}
-      version: {{ $.Chart.Version }}
+      version: {{ .name }}
   template:
     metadata:
       annotations:
         sidecar.istio.io/inject: '{{ .sidecarIstio.enabled }}' 
       labels:
         app: {{ .name }}
-        version: {{ $.Chart.Version }}
+        version: {{ .name }}
     spec:
     {{- if .serviceAccountName }}
       serviceAccountName: {{ .serviceAccountName }}
