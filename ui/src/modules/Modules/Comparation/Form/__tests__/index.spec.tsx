@@ -17,6 +17,7 @@
 import React, { ReactElement } from "react";
 import { render, waitFor, screen, act } from "@testing-library/react";
 import FormModule from "../";
+import * as UpdateModuleHook from '../../../hooks/module';
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
 import { Module, Author } from "modules/Modules/interfaces/Module";
@@ -150,4 +151,22 @@ test("Should render the form and select a GIT provider", async () => {
   userEvent.type(branchInput, 'feature/zup');
 
   expect(screen.getByText('Add helm chart repository')).toBeInTheDocument();
+});
+
+test("Should render submit button", async () => {
+  const updateModuleSpy = jest.spyOn(UpdateModuleHook, 'useUpdateModule');
+
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={fakeGitlabModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  await act(() => userEvent.click(screen.getByTestId('button-default-undefined')));
+  
+  expect(updateModuleSpy).toHaveBeenCalled();
 });

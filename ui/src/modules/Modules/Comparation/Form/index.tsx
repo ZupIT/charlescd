@@ -85,7 +85,7 @@ const FormModule = ({ module, onChange }: Props) => {
     errors: helmErrors
   } = useForm<Helm>({ mode: "onChange" });
   const { register, control, handleSubmit, formState: { isValid } } = form;
-  const fieldArray = useFieldArray({ control, name: 'components' });
+  const fieldArray = useFieldArray({ control, name: 'components', keyName: 'fieldId' });
   const [helmGitProvider, setHelmGitProvider] = useState<Option>(null);
 
 
