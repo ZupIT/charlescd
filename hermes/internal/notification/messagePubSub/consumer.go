@@ -23,6 +23,7 @@ import (
 	"hermes/internal/configuration"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
+	"strconv"
 	"time"
 )
 
@@ -36,9 +37,9 @@ func (main *Main) Consume(stopSub chan bool) {
 			err := main.subscriptionMain.SendWebhookEvent(msg)
 			if err != nil {
 				logrus.Error(err)
-				main.updateMessageStatus(msg, deliveredFailed, err.Error().Detail)
+				main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
 			} else {
-				main.updateMessageStatus(msg, delivered, successLog)
+				main.updateMessageInfo(msg, delivered, successLog, 200)
 			}
 		}
 	}()
@@ -68,9 +69,9 @@ func (main *Main) ConsumeDeliveredFail(stopSub chan bool) {
 					err := main.subscriptionMain.SendWebhookEvent(msg)
 					if err != nil {
 						logrus.Error(err)
-						main.updateMessageStatus(msg, deliveredFailed, err.Error().Detail)
+						main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
 					} else {
-						main.updateMessageStatus(msg, delivered, successLog)
+						main.updateMessageInfo(msg, delivered, successLog, 200)
 					}
 				}
 			}()
@@ -78,4 +79,12 @@ func (main *Main) ConsumeDeliveredFail(stopSub chan bool) {
 			return
 		}
 	}
+}
+
+func extractHttpStatus(err errors.Error) int {
+	httpStatus,aErr := strconv.Atoi(err.Error().Meta["http-status"])
+	if aErr != nil {
+		logrus.Error(aErr)
+	}
+	return httpStatus
 }

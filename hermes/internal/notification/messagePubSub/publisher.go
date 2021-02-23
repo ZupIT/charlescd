@@ -96,12 +96,13 @@ func (main *Main) sendMessage(message payloads.MessageResponse, queue string) er
 	return nil
 }
 
-func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, log string) {
+func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, log string, httpStatus int) {
 	data := messageexecutionhistory.MessagesExecutionsHistory{
 		ID:           uuid.New(),
 		ExecutionId:  message.Id,
 		ExecutionLog: log,
 		Status:       status,
+		HttpStatus: httpStatus,
 		LoggedAt:     time.Now(),
 	}
 
@@ -128,4 +129,8 @@ func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, 
 
 		return nil
 	})
+}
+
+func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, log string) {
+	main.updateMessageInfo(message, status, log, 0)
 }

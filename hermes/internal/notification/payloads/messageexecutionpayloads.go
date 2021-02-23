@@ -27,6 +27,7 @@ type FullMessageExecutionResponse struct {
 	Id           uuid.UUID `json:"-"`
 	ExecutionId  uuid.UUID `json:"-"`
 	ExecutionLog string    `json:"executionLog"`
+	HttpStatus   int       `json:"httpStatus"`
 	Status       string    `json:"status"`
 	LoggedAt     time.Time `json:"loggedAt"`
 }

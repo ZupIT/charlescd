@@ -31,7 +31,6 @@ const (
 	notEnqueued     = "NOT_ENQUEUED"
 	delivered       = "DELIVERED"
 	deliveredFailed = "DELIVERED_FAILED"
-	errorLog        = "ERROR"
 	successLog      = "SUCCESS"
 )
 

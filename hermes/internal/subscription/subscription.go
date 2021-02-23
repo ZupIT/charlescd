@@ -30,6 +30,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -220,9 +221,17 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 	}
 
 	res, err := http.DefaultClient.Do(req)
+
+	if res == nil {
+		return httpErrorHandler(404, sub.Url, "Invalid url")
+	}
+
 	if err != nil {
-		return errors.NewError("Error calling http request: ", err.Error()).
-			WithOperations(sub.Url)
+		return httpErrorHandler(res.StatusCode, sub.Url, err.Error())
+	}
+
+	if res.StatusCode < 200 || res.StatusCode > 226 {
+		return httpErrorHandler(res.StatusCode, sub.Url, res.Status)
 	}
 
 	defer res.Body.Close()
@@ -230,4 +239,10 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 	fmt.Printf("[Webhook] Status: %d - Body: %s\n", res.StatusCode, resBody)
 
 	return nil
+}
+
+func httpErrorHandler(httpStatus int, url, error string) *errors.AdvancedError {
+	return errors.NewError("Error calling http request: ", error).
+		WithOperations(url).
+		WithMeta("http-status",  strconv.Itoa(httpStatus))
 }
