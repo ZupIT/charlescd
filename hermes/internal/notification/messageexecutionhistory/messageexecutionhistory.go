@@ -51,7 +51,7 @@ func (main Main) FindLastByExecutionId(executionId uuid.UUID) (payloads.FullMess
 
 	query := main.db.Model(&MessagesExecutionsHistory{}).Where("execution_id = ?", executionId).Order("logged_at desc").Find(&response).Limit(1)
 	if query.Error != nil {
-		return payloads.FullMessageExecutionResponse{}, errors.NewError("FindLastByExecution History error", query.Error.Error()).
+		return payloads.FullMessageExecutionResponse{}, errors.NewError("FindLastByExecutionId History error", query.Error.Error()).
 			WithOperations("FindLastByExecution.Result")
 	}
 

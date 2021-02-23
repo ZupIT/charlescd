@@ -165,14 +165,13 @@ func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusRespon
 
 	if r.LastStatus == "DELIVERED_FAILED" {
 		lastExecution, err := main.executionMain.FindLastByExecutionId(r.Id)
-			if err != nil {
-			return payloads.StatusResponse{Status: 418, Details: "Webhook message not sent yet"}, nil
+		if err != nil {
+			return payloads.StatusResponse{Status: 500, Details: err.Error().Detail}, nil
 		}
 
 		if lastExecution.HttpStatus != 0 {
 			return payloads.StatusResponse{Status: lastExecution.HttpStatus, Details: lastExecution.ExecutionLog}, nil
 		}
-
 	}
 
 	return payloads.StatusResponse{Status: 418, Details: "Awaiting first delivery"}, nil
