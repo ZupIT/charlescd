@@ -39,13 +39,14 @@ const WorkspaceMenu = ({
   selectedWorkspace
 }: Props) => {
   const [filterWorkspace, , loading] = useWorkspaces();
-  const { findWorkspacesByUser } = useWorkspacesByUser();
+  const { findWorkspacesByUser, status } = useWorkspacesByUser();
   const userId = getProfileByKey('id');
   const workspaces = getProfileByKey('workspaces');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
   const [name, setName] = useState('');
   const dispatch = useDispatch();
-  const isRenderEmpty = isEmpty(list?.content || workspaces) && !loading;
+  const showEmpty = isRoot() ? !loading : status !== 'pending';
+  const isRenderEmpty = isEmpty(list?.content || workspaces) && showEmpty;
 
   const onIDMFlow = useCallback(() => {
     if (isRoot()) {

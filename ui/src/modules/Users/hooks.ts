@@ -88,15 +88,18 @@ export const useWorkspacesByUser = (): {
   findWorkspacesByUser: Function;
   workspaces: Workspace[];
   error: ResponseError;
+  status: FetchStatuses;
 } => {
   const dispatch = useDispatch();
   const getWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
   const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
   const [error, setError] = useState<ResponseError>(null);
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const findWorkspacesByUser = useCallback(
     async (id: Pick<User, 'id'>) => {
       try {
+        setStatus('pending');
         if (id) {
           const res = await getWorkspacesByUser(id);
           setWorkspaces(res);
@@ -109,9 +112,11 @@ export const useWorkspacesByUser = (): {
             last: true
           } as WorkspacePagination));
 
+          setStatus('resolved');
           return res;
         }
       } catch (e) {
+        setStatus('rejected');
         setError(e);
 
         if (!isIDMEnabled()) {
@@ -130,7 +135,8 @@ export const useWorkspacesByUser = (): {
   return {
     findWorkspacesByUser,
     workspaces,
-    error
+    error,
+    status
   };
 };
 
