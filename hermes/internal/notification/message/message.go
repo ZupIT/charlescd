@@ -175,7 +175,7 @@ func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusRespon
 
 	}
 
-	return payloads.StatusResponse{Status: 418, Details: "Webhook message not sent yet"}, nil
+	return payloads.StatusResponse{Status: 418, Details: "Awaiting first delivery"}, nil
 }
 
 func requestToEntity(r payloads.Request) Message {
