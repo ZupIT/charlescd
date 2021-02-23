@@ -32,7 +32,6 @@ import {
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
-import Icon from 'core/components/Icon';
 
 type Props = {
   id: string;
