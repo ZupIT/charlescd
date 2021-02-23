@@ -59,14 +59,22 @@ const WorkspaceMenu = ({
     if (isIDMEnabled()) {
       onIDMFlow();
     } else {
-      filterWorkspace();
+      if(isRoot()) {
+        filterWorkspace();
+      }
+      else {
+        dispatch(resetContentAction());
+        findWorkspacesByUser(userId);
+      }
     }
   }, [onIDMFlow, filterWorkspace, userId]);
 
   const onChange = useCallback(() => {
-    const page = 0;
-    dispatch(resetContentAction());
-    filterWorkspace(name, page);
+    if(isRoot()) {
+      const page = 0;
+      dispatch(resetContentAction());
+      filterWorkspace(name, page);
+    }
   }, [dispatch, filterWorkspace, name]);
 
   useEffect(() => {
@@ -74,7 +82,8 @@ const WorkspaceMenu = ({
   }, [name, onChange]);
 
   const loadMore = (page: number) => {
-    filterWorkspace(name, page);
+    if(isRoot())
+      filterWorkspace(name, page);
   };
 
   const renderList = (data: WorkspacePaginationItem[]) =>
