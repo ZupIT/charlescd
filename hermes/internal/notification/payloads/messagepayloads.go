@@ -31,7 +31,7 @@ type Request struct {
 }
 
 type PayloadRequest struct {
-	ExternalId uuid.UUID       `json:"externalId"` //workspace-id
+	ExternalId uuid.UUID       `json:"externalId"`
 	EventType  string          `json:"eventType"`
 	Event      json.RawMessage `json:"event"`
 }
