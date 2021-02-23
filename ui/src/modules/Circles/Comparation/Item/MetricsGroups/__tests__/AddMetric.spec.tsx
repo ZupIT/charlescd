@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act, waitFor, waitForElementToBeRemoved } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import AddMetric from '../AddMetric';
