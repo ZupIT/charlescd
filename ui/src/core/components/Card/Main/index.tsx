@@ -19,7 +19,7 @@ import Card from 'core/components/Card';
 import Styled from './styled';
 
 export interface Props {
-  color?: 'error' | 'success' | 'dark';
+  color?: 'error' | 'success' | 'dark' | 'primary';
   title: string;
   description: string;
   width?: string;

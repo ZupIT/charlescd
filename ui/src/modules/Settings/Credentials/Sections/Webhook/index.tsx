@@ -23,7 +23,7 @@ import Dropdown from 'core/components/Dropdown';
 import Icon from 'core/components/Icon';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { isErrorCode } from 'core/utils/http';
+import { themeByHttpCode } from 'core/utils/http';
 import { useWebhook } from './hooks';
 import { FORM_WEBHOOK } from './constants';
 import FormWebhook from './Form';
@@ -84,9 +84,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
               width="237px"
               title={`${webhook.lastDelivery?.status}`}
               description={webhook.lastDelivery?.details}
-              color={
-                isErrorCode(webhook.lastDelivery?.status) ? 'error' : 'success'
-              }
+              color={themeByHttpCode(webhook.lastDelivery?.status)}
             />
           </Card.Main>
         ))}
