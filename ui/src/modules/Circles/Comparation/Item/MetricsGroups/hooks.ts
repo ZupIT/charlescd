@@ -353,15 +353,12 @@ export const useMetricQuery = () => {
 
         return metricByQueryResponse;
       } catch (responseError) {
-        responseError.json().then((error: DetailedErrorResponse) => {
-          const errorMessage = error?.errors?.[0]?.detail;
-          dispatch(
-            toogleNotification({
-              text: errorMessage ?? 'Error on loading metric chart data',
-              status: 'error'
-            })
-          );
-        });
+        dispatch(
+          toogleNotification({
+            text: 'Error on loading metric chart data',
+            status: 'error'
+          })
+        );
       }
     },
     [getMetricByQueryRequest, dispatch]
