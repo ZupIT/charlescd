@@ -49,6 +49,8 @@ jobs:
       working-directory: ./butler
     - run: docker-compose -f docker-compose-ci.yml exec -T -- app sh -c "npm run test:all:cov"
       working-directory: ./butler
+    - run: docker cp butler_app_1:/opt/darwin-deploy/coverage/ ./coverage/
+      working-directory: ./butler
     - uses: codecov/codecov-action@v1
       with:
         fail_ci_if_error: true
