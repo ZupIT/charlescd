@@ -31,6 +31,7 @@ import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 import { defaultManifests } from '../../fixtures/manifests.fixture'
+import { UrlConstants } from '../test-constants'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication
@@ -86,7 +87,7 @@ describe('DeploymentCleanupHandler', () => {
       circle: circleId,
       components: [
         {
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -94,7 +95,7 @@ describe('DeploymentCleanupHandler', () => {
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
       defaultCircle: false
     }
@@ -114,7 +115,7 @@ describe('DeploymentCleanupHandler', () => {
       circle: circleId,
       components: [
         {
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -122,7 +123,7 @@ describe('DeploymentCleanupHandler', () => {
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af',
       defaultCircle: false
     }

@@ -28,6 +28,7 @@ import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-d
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { UrlConstants } from '../test-constants'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -74,7 +75,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -87,14 +88,14 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
 
     const expectedResponse : ReadDeploymentDto = {
       applicationName: cdConfiguration.id,
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       circle: { 'headerValue': '333365f8-bb29-49f7-bf2b-3ec956a71583' },
       createdAt: expect.any(String),
       defaultCircle: false,
@@ -105,7 +106,7 @@ describe('DeploymentController v2', () => {
           id: 'dummy-id',
           moduleId: 'dummy-module-id',
           createdAt: expect.any(String),
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           componentsDeployments: [
             {
               id: expect.any(String),
@@ -140,7 +141,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -153,7 +154,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: '067765f8-aa29-49f7-bf2b-3ec676a71583',
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
     await request(app.getHttpServer())
@@ -213,7 +214,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -226,7 +227,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
     const response = await request(app.getHttpServer())
@@ -257,7 +258,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -300,7 +301,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
     const errorMessages = [
@@ -342,13 +343,13 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
     const errorMessages = [
       'components should not be null or empty'
     ]
-    
+
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
@@ -376,7 +377,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -391,7 +392,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
     await request(app.getHttpServer())
@@ -423,7 +424,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -438,7 +439,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: true
     }
 
@@ -474,7 +475,7 @@ describe('DeploymentController v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -495,7 +496,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: true
     }
 

@@ -30,6 +30,7 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { defaultManifests } from '../../fixtures/manifests.fixture'
+import { UrlConstants } from '../test-constants'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -77,7 +78,7 @@ describe('DeploymentController v2', () => {
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
       components: [
         {
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -86,7 +87,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
       defaultCircle: false
     }
@@ -168,7 +169,7 @@ describe('DeploymentController v2', () => {
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
       components: [
         {
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -179,7 +180,7 @@ describe('DeploymentController v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
       defaultCircle: false
     }
@@ -190,7 +191,7 @@ describe('DeploymentController v2', () => {
       deployment: {
         current: false,
         author_id: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-        callback_url: 'http://localhost:8883/deploy/notifications/deployment',
+        callback_url: UrlConstants.deploymentCallbackUrl,
         cd_configuration_id: expect.any(String),
         circle_id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
         components: [

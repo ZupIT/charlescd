@@ -28,6 +28,7 @@ import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/dep
 import { customManifests } from '../../fixtures/manifests.fixture'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
+import { UrlConstants } from '../test-constants'
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -75,7 +76,7 @@ describe('CreateDeploymentUsecase v2', () => {
       modules: [
         {
           moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          helmRepository: UrlConstants.helmRepository,
           components: [
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -88,12 +89,12 @@ describe('CreateDeploymentUsecase v2', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: true
     }
 
     const component1 = new ComponentEntity(
-      'http://localhost:8883/repos/charlescd-fake/helm-chart',
+      UrlConstants.helmRepository,
       'v2',
       'imageurl.com',
       'A',
@@ -106,7 +107,7 @@ describe('CreateDeploymentUsecase v2', () => {
     component1.id = expect.anything()
     component1.merged = false
     const component2 = new ComponentEntity(
-      'http://localhost:8883/repos/charlescd-fake/helm-chart',
+      UrlConstants.helmRepository,
       'v1',
       'https://repository.com/B:v1',
       'B',
@@ -132,7 +133,7 @@ describe('CreateDeploymentUsecase v2', () => {
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/A:v1',
           'A',
@@ -142,7 +143,7 @@ describe('CreateDeploymentUsecase v2', () => {
           customManifests('A', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/B:v1',
           'B',
@@ -164,7 +165,7 @@ describe('CreateDeploymentUsecase v2', () => {
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/C:v1',
           'C',
@@ -174,7 +175,7 @@ describe('CreateDeploymentUsecase v2', () => {
           customManifests('C', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/D:v1',
           'D',
@@ -196,7 +197,7 @@ describe('CreateDeploymentUsecase v2', () => {
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/E:v1',
           'E',
@@ -206,7 +207,7 @@ describe('CreateDeploymentUsecase v2', () => {
           customManifests('E', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:8883/repos/charlescd-fake/helm-chart',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/F:v1',
           'F',

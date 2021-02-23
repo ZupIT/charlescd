@@ -1,0 +1,245 @@
+# MOOVE
+
+- request:
+    method: GET
+    url: ^/moove/credentials/k8s/.*
+    headers:
+      x-organization: zup
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "value": {
+          "namespace": "k8sNamespace",
+          "account": "k8sAccount"
+        }
+      }
+
+- request:
+    method: POST
+    url: ^/moove/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+# NOTIFICATION
+
+- request:
+    method: POST
+    url: ^/deploy/notifications/deployment
+  response: 201
+
+# CONSUL
+
+- request:
+    method: GET
+    url: .*/kv/config/darwin-deploy/data$
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "Value": {
+            "postgresHost": "localhost",
+            "postgresPort": 5432,
+            "postgresUser": "darwin",
+            "postgresPass": "darwin",
+            "postgresDbName": "darwin",
+            "mooveUrl": "http://stubby4j:8883/moove",
+            "darwinDeploymentCallbackUrl": "http://stubby4j:8883/deploy/notifications",
+            "darwinUndeploymentCallbackUrl": "http://stubby4j:8883/deploy/notifications",
+          }
+        }
+      ]
+
+# GITHUB
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/contents/([a-zA-Z\\-]+)$
+    query:
+      ref: master
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "name": "Chart.yaml",
+          "path": "helm-chart/Chart.yaml",
+          "sha": "ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+          "size": 103,
+          "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/Chart.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/Chart.yaml",
+          "git_url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/Chart.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/Chart.yaml?ref=master",
+            "git": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/Chart.yaml"
+          }
+        },
+        {
+          "name": "<% url.1 %>.yaml",
+          "path": "helm-chart/<% url.1 %>.yaml",
+          "sha": "845fdfb7268757643309685e2a70fc5f887076ef",
+          "size": 337,
+          "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/helm-chart.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/helm-chart.yaml",
+          "git_url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/helm-chart.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/helm-chart.yaml?ref=master",
+            "git": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/helm-chart.yaml"
+          }
+        },
+        {
+          "name": "templates",
+          "path": "helm-chart/templates",
+          "sha": "28ee07d6d2ed359ecde7c9f51862d570158f8306",
+          "size": 0,
+          "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/tree/master/helm-chart/templates",
+          "git_url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/trees/28ee07d6d2ed359ecde7c9f51862d570158f8306",
+          "download_url": null,
+          "type": "dir",
+          "_links": {
+            "self": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates?ref=master",
+            "git": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/trees/28ee07d6d2ed359ecde7c9f51862d570158f8306",
+            "html": "https://github.com/charlescd-fake/helm-chart/tree/master/helm-chart/templates"
+          }
+        }
+      ]
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODpiYTNjYmFhMDlhOWM0NDgzMGFmZmU1ZDZiNjY0NGEyNzUxZjdmMjNk",
+        "size": 103,
+        "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+        "content": "YXBpVmVyc2lvbjogdjEKYXBwVmVyc2lvbjogIjEuMCIKZGVzY3JpcHRpb246\nIERyYWdvbmJvYXJkaW5nIGFwcApuYW1lOiBkcmFnb25ib2FyZGluZwp2ZXJz\naW9uOiAnZGFyd2luJw==\n",
+        "encoding": "base64"
+      }
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "845fdfb7268757643309685e2a70fc5f887076ef",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODo4NDVmZGZiNzI2ODc1NzY0MzMwOTY4NWUyYTcwZmM1Zjg4NzA3NmVm",
+        "size": 337,
+        "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef",
+        "content": "ZW5hYmxlZDogdHJ1ZQpuYW1lOiBkcmFnb25ib2FyZGluZwpyZXBsaWNhQ291\nbnQ6IDEKaW1hZ2U6CiAgcmVwb3NpdG9yeTogZHJhZ29uYm9hcmRpbmcKICB0\nYWc6IGxhdGVzdAogIHB1bGxQb2xpY3k6IEFsd2F5cwpzZXJ2aWNlOgogIG5h\nbWU6IGRyYWdvbmJvYXJkaW5nCiAgdHlwZTogQ2x1c3RlcklQCiAgcG9ydHM6\nCiAgICAtIG5hbWU6IGh0dHAKICAgICAgcG9ydDogODAKcmVzb3VyY2VzOgog\nIGxpbWl0czoKICAgIGNwdTogMTI4bQogICAgbWVtb3J5OiAxMjhNaQogIHJl\ncXVlc3RzOgogICAgY3B1OiA2NG0KICAgIG1lbW9yeTogNjRNaQpzaWRlY2Fy\nSXN0aW86CiAgZW5hYmxlZDogdHJ1ZQ==\n",
+        "encoding": "base64"
+      }
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/contents/.*/templates$
+    query:
+      ref: master
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "name": "deployment.yaml",
+          "path": "helm-chart/templates/deployment.yaml",
+          "sha": "b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+          "size": 1651,
+          "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/deployment.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/deployment.yaml",
+          "git_url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/templates/deployment.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/deployment.yaml?ref=master",
+            "git": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/deployment.yaml"
+          }
+        },
+        {
+          "name": "service.yaml",
+          "path": "helm-chart/templates/service.yaml",
+          "sha": "ea34109e14d019bd33db8db914adf1bfa31546fe",
+          "size": 417,
+          "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/service.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/service.yaml",
+          "git_url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/templates/service.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/service.yaml?ref=master",
+            "git": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/service.yaml"
+          }
+        }
+      ]
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODpiMTkwM2QzYTk5MzdjOGE5MDhhOTc4Y2ZhZTdjMTJmOGMxMDg3MmJj",
+        "size": 1651,
+        "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+        "content": "YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBEZXBsb3ltZW50Cm1ldGFkYXRh\nOgogIG5hbWU6IHt7IC5SZWxlYXNlLk5hbWUgfX0KICBuYW1lc3BhY2U6IHt7\nIC5SZWxlYXNlLk5hbWVzcGFjZSB9fQogIGxhYmVsczoKICAgIGFwcDoge3sg\nLlZhbHVlcy5uYW1lIH19CiAgICB2ZXJzaW9uOiB7eyAuVmFsdWVzLm5hbWUg\nfX0Kc3BlYzoKICByZXBsaWNhczoge3sgLlZhbHVlcy5yZXBsaWNhQ291bnQg\nfX0KICBzZWxlY3RvcjoKICAgIG1hdGNoTGFiZWxzOgogICAgICBhcHA6IHt7\nIC5WYWx1ZXMubmFtZSB9fQogICAgICB2ZXJzaW9uOiB7eyAuUmVsZWFzZS5O\nYW1lIH19CiAgdGVtcGxhdGU6CiAgICBtZXRhZGF0YToKICAgICAgYW5ub3Rh\ndGlvbnM6CiAgICAgICAgc2lkZWNhci5pc3Rpby5pby9pbmplY3Q6ICd7eyAu\nVmFsdWVzLnNpZGVjYXJJc3Rpby5lbmFibGVkIH19JyAKICAgICAgbGFiZWxz\nOgogICAgICAgIGFwcDoge3sgLlZhbHVlcy5uYW1lIH19CiAgICAgICAgdmVy\nc2lvbjoge3sgLlJlbGVhc2UuTmFtZSB9fQogICAgc3BlYzoKICAgICAgY29u\ndGFpbmVyczoKICAgICAgICAtIG5hbWU6IHt7IC5WYWx1ZXMubmFtZSB9fQog\nICAgICAgICAgaW1hZ2U6IHt7IC5WYWx1ZXMuaW1hZ2UudGFnIH19CiAgICAg\nICAgICBsaXZlbmVzc1Byb2JlOgogICAgICAgICAgICBmYWlsdXJlVGhyZXNo\nb2xkOiAzCiAgICAgICAgICAgIGh0dHBHZXQ6CiAgICAgICAgICAgICAgcGF0\naDogLwogICAgICAgICAgICAgIHBvcnQ6IDgwCiAgICAgICAgICAgICAgc2No\nZW1lOiBIVFRQCiAgICAgICAgICAgIGluaXRpYWxEZWxheVNlY29uZHM6IDMw\nCiAgICAgICAgICAgIHBlcmlvZFNlY29uZHM6IDIwCiAgICAgICAgICAgIHN1\nY2Nlc3NUaHJlc2hvbGQ6IDEKICAgICAgICAgICAgdGltZW91dFNlY29uZHM6\nIDEKICAgICAgICAgIHJlYWRpbmVzc1Byb2JlOgogICAgICAgICAgICBmYWls\ndXJlVGhyZXNob2xkOiAzCiAgICAgICAgICAgIGh0dHBHZXQ6CiAgICAgICAg\nICAgICAgcGF0aDogLwogICAgICAgICAgICAgIHBvcnQ6IDgwCiAgICAgICAg\nICAgICAgc2NoZW1lOiBIVFRQICAKICAgICAgICAgICAgaW5pdGlhbERlbGF5\nU2Vjb25kczogMzAKICAgICAgICAgICAgcGVyaW9kU2Vjb25kczogMjAKICAg\nICAgICAgICAgc3VjY2Vzc1RocmVzaG9sZDogMQogICAgICAgICAgICB0aW1l\nb3V0U2Vjb25kczogMSAKICAgICAgICAgIGltYWdlUHVsbFBvbGljeToge3sg\nLlZhbHVlcy5pbWFnZS5wdWxsUG9saWN5IH19CiAgICAgICAgICByZXNvdXJj\nZXM6Cnt7IHRvWWFtbCAuVmFsdWVzLnJlc291cmNlcyB8IGluZGVudCAxMiB9\nfQogICAgICBpbWFnZVB1bGxTZWNyZXRzOgogICAgICAgIC0gbmFtZTogcmVh\nbHdhdmVsYWItcmVnaXN0cnkKICAgIHt7LSB3aXRoIC5WYWx1ZXMubm9kZVNl\nbGVjdG9yIH19CiAgICAgIG5vZGVTZWxlY3RvcjoKe3sgdG9ZYW1sIC4gfCBp\nbmRlbnQgOCB9fQogICAge3stIGVuZCB9fQogICAge3stIHdpdGggLlZhbHVl\ncy5hZmZpbml0eSB9fQogICAgICBhZmZpbml0eToKe3sgdG9ZYW1sIC4gfCBp\nbmRlbnQgOCB9fQogICAge3stIGVuZCB9fQogICAge3stIHdpdGggLlZhbHVl\ncy50b2xlcmF0aW9ucyB9fQogICAgICB0b2xlcmF0aW9uczoKe3sgdG9ZYW1s\nIC4gfCBpbmRlbnQgOCB9fQogICAge3stIGVuZCB9fQ==\n",
+        "encoding": "base64"
+      }
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "ea34109e14d019bd33db8db914adf1bfa31546fe",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODplYTM0MTA5ZTE0ZDAxOWJkMzNkYjhkYjkxNGFkZjFiZmEzMTU0NmZl",
+        "size": 417,
+        "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe",
+        "content": "YXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZQptZXRhZGF0YToKICBsYWJl\nbHM6CiAgICBhcHA6IHt7IC5WYWx1ZXMubmFtZSB9fQogICAgc2VydmljZTog\ne3sgLlZhbHVlcy5uYW1lIH19CiAgbmFtZToge3sgLlZhbHVlcy5uYW1lIH19\nCiAgbmFtZXNwYWNlOiB7eyAuUmVsZWFzZS5OYW1lc3BhY2UgfX0Kc3BlYzoK\nICBwb3J0czoKICAgIHt7IHJhbmdlICRpLCAkdmFyIDo9IC5WYWx1ZXMuc2Vy\ndmljZS5wb3J0cyAtfX0KICAgIC0gbmFtZToge3sgJHZhci5uYW1lIH19CiAg\nICAgIHBvcnQ6IHt7ICR2YXIucG9ydCB9fQogICAgICB0YXJnZXRQb3J0OiB7\neyAkdmFyLnBvcnQgfX0KICAgIHt7IGVuZCB9fQogIHNlbGVjdG9yOgogICAg\nYXBwOiB7eyAuVmFsdWVzLm5hbWUgfX0KICB0eXBlOiB7eyAuVmFsdWVzLnNl\ncnZpY2UudHlwZX19\n",
+        "encoding": "base64"
+      }

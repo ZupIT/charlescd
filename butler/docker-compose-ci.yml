@@ -1,0 +1,44 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres:11.8-alpine
+    ports:
+    - 5432:5432
+    environment:
+    - POSTGRES_DB=darwin
+    - POSTGRES_USER=darwin
+    - POSTGRES_PASSWORD=darwin
+    - MAX_CONNECTIONS=300
+    - TZ=America/Sao_Paulo
+
+  stubby4j:
+    image: sandokandias/stubby4j-docker
+    depends_on:
+      - postgres
+    ports:
+    - 8883:8883
+    environment:
+      STUBBY_PORT: 8883
+    volumes:
+      - ./src/resources/stubby/integrations-ci.yml:/usr/local/stubby.yml
+
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - stubby4j
+    entrypoint: sh -c 'while sleep 3600; do :; done'
+    environment:
+        TZ: America/Sao_Paulo
+        DEPLOYMENT_EXPIRE_TIME: 25
+        DATABASE_HOST: postgres
+        MOOVE_URL: http://stubby4j:8883/moove
+        DARWIN_NOTIFICATION_URL: http://stubby4j:8883/deploy/notifications
+        DARWIN_UNDEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/undeployment
+        DARWIN_DEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/deployment
+        DARWIN_ISTIO_DEPLOYMENT_CALLBACK:  http://stubby4j:8883/deploy/notifications/istio-deployment
+        HELM_TEMPLATE_URL: http://stubby4j:8883/helm
+        HELM_PREFIX_URL: http://stubby4j:8883/helm
+        FAKE_HELM_URL: http://stubby4j:8883/helm/repos/charlescd-fake/helm-chart

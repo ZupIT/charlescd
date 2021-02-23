@@ -7,6 +7,7 @@ import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfac
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { reconcileFixtures, reconcileFixturesParams } from './params'
 import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
+import { UrlConstants } from '../../integration/test-constants'
 
 describe('Deployment on existing circle', () => {
 
@@ -46,7 +47,7 @@ describe('Deployment on existing circle', () => {
       'some-id')
     const previousComponents = [
       new ComponentEntityV2(
-        'http://localhost:8883/repos/charlescd-fake/helm-chart',
+        UrlConstants.helmRepository,
         'v1',
         'https://repository.com/B:v1',
         'B',
