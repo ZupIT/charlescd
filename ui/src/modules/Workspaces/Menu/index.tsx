@@ -45,8 +45,8 @@ const WorkspaceMenu = ({
   const { list } = useGlobalState(({ workspaces }) => workspaces);
   const [name, setName] = useState('');
   const dispatch = useDispatch();
-  const showEmpty = isRoot() ? !loading : status !== 'pending';
-  const isRenderEmpty = isEmpty(list?.content || workspaces) && showEmpty;
+  const isNotLoading = isRoot() ? !loading : status !== 'pending';
+  const isRenderEmpty = isEmpty(list?.content || workspaces) && isNotLoading;
 
   const onIDMFlow = useCallback(() => {
     if (isRoot()) {
