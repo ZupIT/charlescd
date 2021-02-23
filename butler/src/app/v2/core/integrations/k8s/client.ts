@@ -22,6 +22,8 @@ import { KubernetesManifest } from '../interfaces/k8s-manifest.interface'
 import { ConsoleLoggerService } from '../../logs/console'
 import { IoCTokensConstants } from '../../constants/ioc'
 import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
+import { KubernetesObject } from '@kubernetes/client-node'
+import { IncomingMessage } from 'http'
 
 @Injectable()
 export class K8sClient {
@@ -84,7 +86,7 @@ export class K8sClient {
     }
   }
 
-  private async patchResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
+  private async patchResource(manifest: KubernetesManifest): Promise<{ body: KubernetesObject; response: IncomingMessage; }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:PATCH_RESOURCE_MANIFEST')
       const res = await this.client.patch(
@@ -96,17 +98,19 @@ export class K8sClient {
         { headers: { 'Content-type': 'application/merge-patch+json' } }
       )
       this.consoleLoggerService.log('GET:PATCH_RESOURCE_RESPONSE')
+      return res
     } catch(error) {
       this.consoleLoggerService.log('ERROR:PATCH_RESOURCE_MANIFEST', { error })
       throw error
     }
   }
 
-  private async createResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
+  private async createResource(manifest: KubernetesManifest): Promise<{ body: KubernetesObject; response: IncomingMessage; }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:CREATE_RESOURCE_MANIFEST')
       const res = await this.client.create(manifest)
       this.consoleLoggerService.log('GET:CREATE_RESOURCE_RESPONSE')
+      return res
     } catch(error) {
       this.consoleLoggerService.log('ERROR:CREATE_RESOURCE_MANIFEST', { error })
       throw error
@@ -123,11 +127,12 @@ export class K8sClient {
     }
   }
 
-  private async deleteResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
+  private async deleteResource(manifest: KubernetesManifest): Promise<{ body: KubernetesObject; response: IncomingMessage; }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:DELETE_RESOURCE_MANIFEST')
       const res = await this.client.delete(manifest)
       this.consoleLoggerService.log('GET:DELETE_RESOURCE_RESPONSE')
+      return res
     } catch(error) {
       this.consoleLoggerService.log('ERROR:DELETE_RESOURCE_MANIFEST', { error })
       throw error

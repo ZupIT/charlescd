@@ -24,7 +24,7 @@ export interface RequestConfig {
 export enum ResourceType {
   FILE = 'file',
   DIR = 'directory'
-} 
+}
 
 export interface Resource {
   name: string,
@@ -34,5 +34,6 @@ export interface Resource {
 }
 
 export interface Repository {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getResource(config: RequestConfig): Promise<Resource>
 }

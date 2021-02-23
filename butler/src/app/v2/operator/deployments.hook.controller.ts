@@ -1,11 +1,8 @@
 import { Body, Controller, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common'
-import { isEmpty } from 'lodash'
-import { CdConfigurationsRepository } from '../api/configurations/repository/cd-configurations.repository'
 import { ComponentsRepositoryV2 } from '../api/deployments/repository/component.repository'
 import { DeploymentRepositoryV2 } from '../api/deployments/repository/deployment.repository'
 import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../core/integrations/k8s/client'
-import { ConsoleLoggerService } from '../core/logs/console/console-logger.service'
 import { HookParams } from './params.interface'
 import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
 

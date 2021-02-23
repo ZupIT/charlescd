@@ -28,7 +28,6 @@ import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
-const cdConfigurationId = 'cd-configuration-id'
 const activeComponents: Component[] = [
   {
     id: 'component-id-6',
