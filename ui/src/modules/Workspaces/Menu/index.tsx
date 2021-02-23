@@ -78,10 +78,6 @@ const WorkspaceMenu = ({
     }
   }, [dispatch, filterWorkspace, name]);
 
-  useEffect(() => {
-    onChange();
-  }, [name, onChange]);
-
   const loadMore = (page: number) => {
     if(isRoot())
       filterWorkspace(name, page);
@@ -133,7 +129,7 @@ const WorkspaceMenu = ({
       <Styled.Content>
         <Styled.SearchInput
           resume
-          onSearch={setName}
+          onSearch={() => onChange()}
           disabled={!isRoot()}
           maxLength={64}
         />
