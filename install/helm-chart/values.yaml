@@ -273,18 +273,6 @@ CharlesApplications:
         password: 7Qs2KuM9gYzw48BS
 
 
-
-
-
-# postgresqlInit:
-#   enabled: true
-#   database:
-#     host:
-#     port:
-#     user:
-#     password:
-#     name:
-
 postgresql:
   enabled: true
   fullnameOverride: *postgresHost
@@ -292,6 +280,7 @@ postgresql:
 
 redis:
   enabled: true
+  fullnameOverride: charlescd-redis
   password: "hb2Fj9MGKjBkZ6zV"
   cluster:
     enabled: false
@@ -300,21 +289,27 @@ keycloak:
   enabled: true
   postgresql:
     enabled: false
+  database:
+    <<: *postgresInfo
+    name: keycloak
+    user: keycloak
+    password: DCWYW66Mq2ca6w8u
+  charlesHost: *hostGlobal
   extraEnv: |
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"
     - name: DB_USER
-      value: "keycloak"
+      value: "{{ .Values.database.user }}"
     - name: DB_PASSWORD
-      value: "DCWYW66Mq2ca6w8u"
+      value: "{{ .Values.database.password }}"
     - name: DB_VENDOR
       value: "POSTGRES"
     - name: DB_PORT
-      value: "5432"
+      value: "{{ .Values.database.port }}"
     - name: DB_ADDR
-      value: charlescd-postgresql
+      value: "{{ .Values.database.host }}"
     - name: DB_DATABASE
-      value: "keycloak"
+      value: "{{ .Values.database.name }}"
     - name: DB_SCHEMA
       value: "public"
     - name: JAVA_OPTS
@@ -340,7 +335,7 @@ keycloak:
       /subsystem=undertow/server=default-server/host=default-host:write-attribute(name=default-web-module,value=keycloak-server.war)
       {{- end }}
       {{- end }}
-      /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
+      /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="{{ .Values.charlesHost }}{{ .Values.contextPath }}")
       run-batch
       stop-embedded-server
 
@@ -362,7 +357,7 @@ keycloak:
     - name: check-db-ready
       image: postgres:9.6.5
       command: ['sh', '-c', 
-        'until pg_isready -h charlescd-postgresql -p 5432; 
+        'until pg_isready -h {{ .Values.database.host }} -p {{ .Values.database.port }}; 
         do echo waiting for database; sleep 2; done;']
   auth:
     adminPassword: firstpassword
