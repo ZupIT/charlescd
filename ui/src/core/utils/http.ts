@@ -17,3 +17,13 @@
 import inRange from 'lodash/inRange';
 
 export const isErrorCode = (httpCode: number) => inRange(httpCode, 400, 599);
+
+export const themeByHttpCode = (httpCode: number) => {
+  if (httpCode === 418) {
+    return 'primary'
+  } else if (isErrorCode(httpCode)) {
+    return 'error'
+  } else {
+    return 'success'
+  }
+};

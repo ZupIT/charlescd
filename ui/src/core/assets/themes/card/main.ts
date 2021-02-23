@@ -17,13 +17,15 @@
 import {
   COLOR_MOUNTAIN_MEADOW,
   COLOR_BASTILLE,
-  COLOR_RED_ORANGE
+  COLOR_RED_ORANGE,
+  COLOR_PURPLE_HEART
 } from 'core/assets/colors';
 
 export const light = {};
 
 export const dark = {
   success: COLOR_MOUNTAIN_MEADOW,
+  primary: COLOR_PURPLE_HEART,
   dark: COLOR_BASTILLE,
   error: COLOR_RED_ORANGE
 } as Record<string, string>;
