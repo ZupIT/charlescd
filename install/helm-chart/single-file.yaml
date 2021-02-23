@@ -2919,7 +2919,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.5.1
+          image: zupcharles/charlescd-butler:0.5.7
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3001,7 +3001,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.5.1
+          image: zupcharles/charlescd-circle-matcher:0.5.7
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3075,7 +3075,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.5.1
+          image: zupcharles/charlescd-compass:0.5.7
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3184,7 +3184,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.5.1
+          image: zupcharles/charlescd-moove:0.5.7
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3273,7 +3273,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.5.1
+          image: zupcharles/charlescd-ui:0.5.7
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -3351,7 +3351,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.5.1
+          image: zupcharles/charlescd-villager:0.5.7
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -4021,13 +4021,13 @@ webhooks:
         name: charlescd-ingress-nginx-controller-admission
         path: /networking/v1beta1/ingresses
 ---
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: charlescd-ingress-nginx-admission-patch
+  name: charlescd-ingress-nginx-admission-create
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     helm.sh/chart: ingress-nginx-3.15.2
@@ -4039,7 +4039,7 @@ metadata:
 spec:
   template:
     metadata:
-      name: charlescd-ingress-nginx-admission-patch
+      name: charlescd-ingress-nginx-admission-create
       labels:
         helm.sh/chart: ingress-nginx-3.15.2
         app.kubernetes.io/name: ingress-nginx
@@ -4049,16 +4049,14 @@ spec:
         app.kubernetes.io/component: admission-webhook
     spec:
       containers:
-        - name: patch
+        - name: create
           image: "docker.io/jettech/kube-webhook-certgen:v1.5.0"
           imagePullPolicy: IfNotPresent
           args:
-            - patch
-            - --webhook-name=charlescd-ingress-nginx-admission
+            - create
+            - --host=charlescd-ingress-nginx-controller-admission,charlescd-ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
             - --namespace=$(POD_NAMESPACE)
-            - --patch-mutating=false
             - --secret-name=charlescd-ingress-nginx-admission
-            - --patch-failure-policy=Fail
           env:
             - name: POD_NAMESPACE
               valueFrom:
@@ -4069,46 +4067,6 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 2000
----
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-ingress-nginx-admission
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  labels:
-    helm.sh/chart: ingress-nginx-3.15.2
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: charlescd
-    app.kubernetes.io/version: "0.41.2"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: admission-webhook
----
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: charlescd-ingress-nginx-admission
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  labels:
-    helm.sh/chart: ingress-nginx-3.15.2
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: charlescd
-    app.kubernetes.io/version: "0.41.2"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: admission-webhook
-rules:
-  - apiGroups:
-      - admissionregistration.k8s.io
-    resources:
-      - validatingwebhookconfigurations
-    verbs:
-      - get
-      - update
 ---
 # Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -4158,6 +4116,46 @@ subjects:
     name: charlescd-ingress-nginx-admission
     namespace: charles
 ---
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: charlescd-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.15.2
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+rules:
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - update
+---
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.15.2
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+---
 # Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -4182,13 +4180,13 @@ subjects:
     name: charlescd-ingress-nginx-admission
     namespace: charles
 ---
-# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
+# Source: Charles-CD/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: charlescd-ingress-nginx-admission-create
+  name: charlescd-ingress-nginx-admission-patch
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     helm.sh/chart: ingress-nginx-3.15.2
@@ -4200,7 +4198,7 @@ metadata:
 spec:
   template:
     metadata:
-      name: charlescd-ingress-nginx-admission-create
+      name: charlescd-ingress-nginx-admission-patch
       labels:
         helm.sh/chart: ingress-nginx-3.15.2
         app.kubernetes.io/name: ingress-nginx
@@ -4210,14 +4208,16 @@ spec:
         app.kubernetes.io/component: admission-webhook
     spec:
       containers:
-        - name: create
+        - name: patch
           image: "docker.io/jettech/kube-webhook-certgen:v1.5.0"
           imagePullPolicy: IfNotPresent
           args:
-            - create
-            - --host=charlescd-ingress-nginx-controller-admission,charlescd-ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
+            - patch
+            - --webhook-name=charlescd-ingress-nginx-admission
             - --namespace=$(POD_NAMESPACE)
+            - --patch-mutating=false
             - --secret-name=charlescd-ingress-nginx-admission
+            - --patch-failure-policy=Fail
           env:
             - name: POD_NAMESPACE
               valueFrom:
