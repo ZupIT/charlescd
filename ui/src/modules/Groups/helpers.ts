@@ -17,6 +17,8 @@
 import without from 'lodash/without';
 import { History } from 'history';
 import map from 'lodash/map';
+import some from 'lodash/some';
+import method from 'lodash/method';
 import routes from 'core/constants/routes';
 import getQueryStrings from 'core/utils/query';
 import includes from 'lodash/includes';
@@ -58,3 +60,6 @@ export const addParamUserGroup = (history: History, usergroupId: string) => {
     search: query.toString()
   });
 };
+
+export const isActiveById = (id: string) =>
+  some(getSelectedUserGroups(), method('includes', id));

@@ -28,7 +28,7 @@ import {
   removeMemberToUserGroup
 } from 'core/providers/user-group';
 import { UserGroupPagination } from './interfaces/UserGroupsPagination';
-import { listUserGroupsAction } from './state/actions';
+import { loadUserGroupsAction, resetUserGroupsAction } from './state/actions';
 import { UserPagination } from 'modules/Users/interfaces/UserPagination';
 import { findAllUsers } from 'core/providers/users';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -48,15 +48,15 @@ export const useFindAllUserGroup = (): [
   const { response, loading } = userGroupData;
 
   const loadUserGroupList = useCallback(
-    (name: string) => {
-      getUserGroups({ name });
+    (name: string, page = 0) => {
+      getUserGroups({ name, page });
     },
     [getUserGroups]
   );
 
   useEffect(() => {
     if (response) {
-      dispatch(listUserGroupsAction(response));
+      dispatch(loadUserGroupsAction(response));
     }
   }, [response, dispatch]);
 
@@ -96,8 +96,9 @@ export const useCreateUserGroup = (): {
   loading: boolean;
   response: UserGroup;
 } => {
+  const dispatch = useDispatch();
   const history = useHistory();
-  const [listUserGroups] = useFindAllUserGroup();
+  const [getAllUserGroups, , userGroups] = useFindAllUserGroup();
   const [usersData, save] = useFetch<UserGroup>(saveUserGroup);
   const { response, loading } = usersData;
 
@@ -109,11 +110,18 @@ export const useCreateUserGroup = (): {
   );
 
   useEffect(() => {
+    if (userGroups) {
+      dispatch(resetUserGroupsAction());
+      dispatch(loadUserGroupsAction(userGroups));
+    }
+  }, [dispatch, userGroups]);
+
+  useEffect(() => {
     if (response) {
-      listUserGroups();
+      getAllUserGroups();
       addParamUserGroup(history, `${response?.id}~${FormAction.edit}`);
     }
-  }, [response, listUserGroups, history]);
+  }, [response, getAllUserGroups, history]);
 
   return {
     createUserGroup,
@@ -172,9 +180,11 @@ export const useDeleteUserGroup = (): [Function, UserGroup, boolean] => {
 
   useEffect(() => {
     if (userGroups) {
+      dispatch(resetUserGroupsAction());
+      dispatch(loadUserGroupsAction(userGroups));
       setIsFinished(true);
     }
-  }, [userGroups]);
+  }, [dispatch, userGroups]);
 
   useEffect(() => {
     if (error) {

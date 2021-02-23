@@ -25,18 +25,19 @@ class CreateUserInteractorImpl @Inject constructor(
     override fun execute(createUserRequest: CreateUserRequest, authorization: String): UserResponse {
         val newUser = createUserRequest.toUser()
         val password = createUserRequest.password
-        val userFromToken = getUserFromToken(authorization)
-        userFromToken.ifPresentOrElse({
-            createUserWhenUserFromTokenExists(it, newUser, password)
+        val email = userService.getEmailFromToken(authorization)
+        val authenticatedUser = getUserFromEmail(email)
+        authenticatedUser.ifPresentOrElse({
+            createUserWhenAuthenticatedUserIsRoot(it, newUser, password)
         }, {
-            createOwnUser(userService.getEmailFromToken(authorization), newUser, password)
+            createOwnUser(email, newUser, password)
         })
         return UserResponse.from(newUser)
     }
 
-    private fun getUserFromToken(authorization: String): Optional<User> {
+    private fun getUserFromEmail(email: String): Optional<User> {
         return try {
-            val user = userService.findByAuthorizationToken(authorization)
+            val user = userService.findByEmail(email)
             Optional.of(user)
         } catch (ex: NotFoundException) {
             Optional.empty()
@@ -51,7 +52,7 @@ class CreateUserInteractorImpl @Inject constructor(
         }
     }
 
-    private fun createUserWhenUserFromTokenExists(it: User, newUser: User, password: String?) {
+    private fun createUserWhenAuthenticatedUserIsRoot(it: User, newUser: User, password: String?) {
         if (it.root) {
             saveUser(newUser, password)
         } else {
@@ -78,7 +79,7 @@ class CreateUserInteractorImpl @Inject constructor(
                 password
             )
         } catch (exception: Exception) {
-            throw BusinessException.of(MooveErrorCode.UNEXPECTED_IDM_ERROR)
+            throw BusinessException.of(MooveErrorCode.IDM_UNEXPECTED_ERROR)
         }
     }
 }
