@@ -145,14 +145,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               label="Type a nickname for the metric"
               maxLength={100}
             />
-            {!!errors.nickname && (
-              <Styled.FieldErrorWrapper>
-                <Icon name="error" color="error" />
-                <Text.h6 color="error">
-                  {errors.nickname.message || 'Type a valid nickname'}
-                </Text.h6>
-              </Styled.FieldErrorWrapper>
-            )}
             {!loadingProviders && (
               <Styled.Select
                 control={control}
@@ -205,14 +197,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                             metrics
                           )}
                         />
-                        {!!errors.metric && (
-                          <Styled.FieldErrorWrapper>
-                            <Icon name="error" color="error" />
-                            <Text.h6 color="error">
-                              {errors.metric.message}
-                            </Text.h6>
-                          </Styled.FieldErrorWrapper>
-                        )}
                       </>
                     )}
                     <BasicQueryForm />
@@ -229,16 +213,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         label="Type a query"
                       />
                     </Styled.AdvancedQueryWrapper>
-                    {!!errors.query && (
-                      <Styled.FieldErrorWrapper>
-                        <Icon name="error" color="error" />
-                        <Text.h6 color="error">
-                          {errors.query.message
-                            ? errors.query.message
-                            : 'Type a valid query'}
-                        </Text.h6>
-                      </Styled.FieldErrorWrapper>
-                    )}
                   </>
                 )}
 

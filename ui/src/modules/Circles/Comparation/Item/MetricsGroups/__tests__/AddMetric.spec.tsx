@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act, waitFor } from 'unit-test/testUtils';
+import { render, screen, act, waitFor, waitForElementToBeRemoved } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import AddMetric from '../AddMetric';
@@ -118,4 +118,43 @@ test('should handle submit error and show errors from API', async () => {
   });
 
   toggleNotificationSpy.mockRestore();
+});
+
+test('should switch between Basic/advanced query', async () => {
+  render(
+    <AddMetric
+      id={'1'}
+      onGoBack={jest.fn()}
+      metric={{ ...metricsData, filters: undefined }}
+    />
+  );
+
+  const basicButton = screen.getByText('Basic');
+  const advancedButton = screen.getByText('Advanced');
+
+  userEvent.click(basicButton);
+  userEvent.click(advancedButton);
+
+  expect(await screen.findByText('Type a query')).toBeInTheDocument();
+
+});
+
+test('should toggle add threshold', async () => {
+  render(
+    <AddMetric
+      id={'1'}
+      onGoBack={jest.fn()}
+      metric={{ ...metricsData, metric: undefined, query: '', filters: undefined }}
+    />
+  );
+
+  expect(screen.getByText('Conditional')).toBeInTheDocument();
+  expect(screen.getByText('Equal')).toBeInTheDocument();
+
+  userEvent.click(screen.getByTestId('icon-trash'));
+  expect(await screen.findByText('Add threshold')).toBeInTheDocument();
+
+  userEvent.click(screen.getByTestId('icon-add'));
+  expect(screen.queryByText('Add threshold')).not.toBeInTheDocument();
+  expect(await screen.findByText('Conditional')).toBeInTheDocument();
 });
