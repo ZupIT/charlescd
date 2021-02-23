@@ -56,12 +56,15 @@ export const useUserGroup = (): FetchProps => {
 
   useEffect(() => {
     if (errorSave) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorSave.status}] User Group could not be saved.`,
-          status: 'error'
-        })
-      );
+      (async () => {
+        const e = await errorSave.json();
+        dispatch(
+          toogleNotification({
+            text: `[${e?.status}] ${e?.text}`,
+            status: 'error'
+          })
+        );
+      })();
     }
   }, [errorSave, dispatch]);
 
