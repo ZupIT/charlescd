@@ -68,7 +68,7 @@ const WorkspaceMenu = ({
         findWorkspacesByUser(userId);
       }
     }
-  }, [onIDMFlow, filterWorkspace, userId]);
+  }, [onIDMFlow, filterWorkspace, findWorkspacesByUser, dispatch, userId]);
 
   const onChange = useCallback(() => {
     if(isRoot()) {
