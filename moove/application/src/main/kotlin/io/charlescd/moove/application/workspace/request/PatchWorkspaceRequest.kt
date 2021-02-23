@@ -56,13 +56,13 @@ data class PatchWorkspaceRequest(override val patches: List<PatchOperation>) : B
 
     private fun validateValues() {
         patches.forEach { patch ->
-            when (patch.path) {
-                "/name" -> {
+            when {
+                patch.path == "/name" && (patch.op == OpCodeEnum.ADD || patch.op == OpCodeEnum.REPLACE) -> {
                     Assert.notNull(patch.value, "Name cannot be null.")
                     Assert.isTrue((patch.value as String).isNotBlank(), "Name cannot be blank.")
                     Assert.isTrue(((patch.value as String).length in 1..50), "Name minimum size is 1 and maximum is 50.")
                 }
-                "/circleMatcherUrl" -> {
+                patch.path == "/circleMatcherUrl" && (patch.op == OpCodeEnum.ADD || patch.op == OpCodeEnum.REPLACE) -> {
                     Assert.notNull(patch.value, "Circle Matcher URL cannot be null.")
                     Assert.isTrue((patch.value as String).isNotBlank(), "Circle Matcher URL cannot be blank.")
                     Assert.isTrue(((patch.value as String).length in 1..256), "Circle Matcher URL minimum size is 1 and maximum is 256.")
