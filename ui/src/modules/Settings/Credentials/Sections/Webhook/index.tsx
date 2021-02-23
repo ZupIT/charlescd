@@ -17,6 +17,7 @@
 import React, { useState } from 'react';
 import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
+import toString from 'lodash/toString';
 import filter from 'lodash/filter';
 import Card from 'core/components/Card';
 import Dropdown from 'core/components/Dropdown';
@@ -39,6 +40,10 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
   const [webhooks, setWebhooks] = useState<Webhook[]>(data);
   const [webhook, setWebhook] = useState<Webhook>();
   const { remove } = useWebhook();
+
+  const getStatus = (status: number): string => (
+    status === 418 ? '' : toString(status)
+  )
 
   const onDelete = async (id: string) => {
     await remove(id);
@@ -82,7 +87,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
           >
             <Card.Main
               width="237px"
-              title={`${webhook.lastDelivery?.status}`}
+              title={getStatus(webhook.lastDelivery?.status)}
               description={webhook.lastDelivery?.details}
               color={themeByHttpCode(webhook.lastDelivery?.status)}
             />

@@ -32,6 +32,10 @@ const Description = styled(Text.h5)`
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-top: 10px;
+
+  :only-child {
+    margin-top: 0;
+  }
 `;
 
 const Content = styled.div`
