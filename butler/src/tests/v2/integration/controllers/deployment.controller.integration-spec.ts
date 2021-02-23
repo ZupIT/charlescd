@@ -27,6 +27,7 @@ import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { MetadataScopeEnum } from '../../../../app/v2/api/deployments/enums/metadata-scope.enum'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -355,6 +356,217 @@ describe('DeploymentController v2', () => {
       'components should not be null or empty'
     ]
     
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+      })
+  })
+
+  it('returns error for defined metadata and empty metadata keys/values', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: [{
+            componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+            buildImageUrl: 'imageurl.com',
+            buildImageTag: 'tag1',
+            componentName: 'component-name'
+          }]
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false,
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {}
+      }
+    }
+    const errorMessages = [
+      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
+    ]
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+      })
+  })
+
+  it('returns error for defined metadata key is empty', async() => {
+
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: [
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
+            }
+          ]
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false,
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          '': 'value',
+        }
+      }
+    }
+    const errorMessages = [
+      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
+    ]
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+      })
+  })
+
+  it('returns error for defined metadata when metadata value is too long', async() => {
+
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: [
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
+            }
+          ]
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false,
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'key': `very-long-value${'4'.repeat(245)}`,
+        }
+      }
+    }
+    const errorMessages = [
+      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
+    ]
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+      })
+  })
+
+  it('returns error for defined metadata when metadata key is too long', async() => {
+
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: [
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
+            }
+          ]
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false,
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'too-big-key-that-overcome-the-sixty-three-characters-limit-of-keys': 'some-value'
+        }
+      }
+    }
+    const errorMessages = [
+      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
+    ]
+
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
