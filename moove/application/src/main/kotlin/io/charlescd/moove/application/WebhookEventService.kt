@@ -32,13 +32,14 @@ class WebhookEventService(
     fun notifyDeploymentEvent(
         workspaceId: String,
         eventType: WebhookEventTypeEnum,
+        eventSubType: WebhookEventSubTypeEnum,
         status: WebhookEventStatusEnum,
         deployment: Deployment? = null,
         error: String? = null
     ) {
-            val simpleWebhookEvent = SimpleWebhookEvent(workspaceId, eventType, status)
-            val hermesEvent = buildHermesEvent(simpleWebhookEvent, deployment, error)
-            hermesService.notifySubscriptionEvent(hermesEvent)
+        val simpleWebhookEvent = SimpleWebhookEvent(workspaceId, eventType, eventSubType, status)
+        val hermesEvent = buildHermesEvent(simpleWebhookEvent, deployment, error)
+        hermesService.notifySubscriptionEvent(hermesEvent)
     }
 
     private fun buildHermesEvent(simpleWebhookEvent: SimpleWebhookEvent, deployment: Deployment?, error: String?): WebhookEvent {
@@ -74,9 +75,9 @@ class WebhookEventService(
     private fun buildWebhookDeploymentEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): WebhookDeploymentEvent {
         return WebhookDeploymentEvent(
             workspaceId = deployment.workspaceId,
-            type = simpleWebhookEvent.eventType,
+            type = simpleWebhookEvent.eventSubType,
             status = simpleWebhookEvent.eventStatus,
-            date = getDeploymentDateEvent(deployment, simpleWebhookEvent.eventType),
+            date = getDeploymentDateEvent(deployment, simpleWebhookEvent.eventSubType),
             timeExecution = getTimeExecutionEvent(deployment, simpleWebhookEvent),
             author = getAuthorEvent(deployment),
             circle = getCircleEvent(deployment),
@@ -85,9 +86,8 @@ class WebhookEventService(
     }
 
     private fun getTimeExecutionEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): Long? {
-        if (simpleWebhookEvent.eventType == WebhookEventTypeEnum.FINISH_DEPLOY &&
-            simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS
-        ) {
+        if (simpleWebhookEvent.eventSubType == WebhookEventSubTypeEnum.FINISH_DEPLOY &&
+            simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS) {
             return ChronoUnit.SECONDS.between(deployment.deployedAt, deployment.createdAt)
         }
         return null
@@ -137,12 +137,12 @@ class WebhookEventService(
         )
     }
 
-    private fun getDeploymentDateEvent(deployment: Deployment, webhookEventType: WebhookEventTypeEnum): LocalDateTime? {
-        return when (webhookEventType) {
-            WebhookEventTypeEnum.START_DEPLOY -> deployment.createdAt
-            WebhookEventTypeEnum.START_UNDEPLOY -> LocalDateTime.now()
-            WebhookEventTypeEnum.FINISH_DEPLOY -> getFinishDeployDate(deployment)
-            WebhookEventTypeEnum.FINISH_UNDEPLOY -> getFinishUndeployDate(deployment)
+    private fun getDeploymentDateEvent(deployment: Deployment, webhookEventSubType: WebhookEventSubTypeEnum): LocalDateTime? {
+        return when (webhookEventSubType) {
+            WebhookEventSubTypeEnum.START_DEPLOY -> deployment.createdAt
+            WebhookEventSubTypeEnum.START_UNDEPLOY -> LocalDateTime.now()
+            WebhookEventSubTypeEnum.FINISH_DEPLOY -> getFinishDeployDate(deployment)
+            WebhookEventSubTypeEnum.FINISH_UNDEPLOY -> getFinishUndeployDate(deployment)
         }
     }
 

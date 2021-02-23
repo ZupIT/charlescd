@@ -97,10 +97,10 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 	return response, nil
 }
 
-func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error) {
+func (main Main) FindAllNotEnqueuedAndDeliveredFail() ([]payloads.MessageResponse, errors.Error) {
 	var response []payloads.MessageResponse
 
-	query := main.db.Raw(FindAllNotEnqueuedQuery, configuration.GetConfiguration("PUBLISHER_RETRY")).Scan(&response)
+	query := main.db.Raw(FindAllNotEnqueuedAndDeliveredFailQuery, configuration.GetConfiguration("PUBLISHER_RETRY")).Scan(&response)
 	if query.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("FindAllNotEnqueued Message error", query.Error.Error()).
 			WithOperations("FindAllNotEnqueued.Query")

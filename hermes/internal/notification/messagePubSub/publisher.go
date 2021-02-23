@@ -1,4 +1,22 @@
-package publisher
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+package messagePubSub
 
 import (
 	"encoding/json"
@@ -12,13 +30,7 @@ import (
 	"time"
 )
 
-const (
-	enqueued    = "ENQUEUED"
-	notEnqueued = "NOT_ENQUEUED"
-	successLog  = "SUCCESS"
-)
-
-func (main *Main) Start(stopChan chan bool) error {
+func (main *Main) Publish(stopPub chan bool) error {
 	interval, err := time.ParseDuration(configuration.GetConfiguration("PUBLISHER_TIME"))
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -33,7 +45,7 @@ func (main *Main) Start(stopChan chan bool) error {
 		select {
 		case <-ticker.C:
 			main.publish()
-		case <-stopChan:
+		case <-stopPub:
 			return nil
 		}
 	}
@@ -41,25 +53,32 @@ func (main *Main) Start(stopChan chan bool) error {
 }
 
 func (main *Main) publish() {
-	messages, err := main.messageMain.FindAllNotEnqueued()
+	messages, err := main.messageMain.FindAllNotEnqueuedAndDeliveredFail()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start publish", "Could not find active messages").
-				WithOperations("publish.FindAllNotEnqueued"),
+			"err": errors.NewError("Cannot start publisher", "Could not find active messages").
+				WithOperations("publish.FindAllNotEnqueuedAndDeliveredFail"),
 		}).Errorln()
 	}
 
-	logrus.WithFields(logrus.Fields{
-		"Messages ready to publish": len(messages),
-		"Time": time.Now(),
-	}).Println()
+	for i, msg := range messages {
+		logrus.WithFields(logrus.Fields{
+			"Messages ready to publish": len(messages) - i,
+			"Time":                      time.Now(),
+		}).Println()
 
-	for _, msg := range messages {
-		 main.sendMessage(msg)
+		main.sendMessage(msg, getQueue(msg.LastStatus))
 	}
 }
 
-func (main *Main) sendMessage(message payloads.MessageResponse) error {
+func getQueue(status string) string {
+	if status == "NOT_ENQUEUED" || status == "" {
+		return configuration.GetConfiguration("AMQP_MESSAGE_QUEUE")
+	}
+	return configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE")
+}
+
+func (main *Main) sendMessage(message payloads.MessageResponse, queue string) error {
 	pushMsg, err := json.Marshal(message)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -68,14 +87,12 @@ func (main *Main) sendMessage(message payloads.MessageResponse) error {
 		}).Errorln()
 	}
 
-	err = main.amqpClient.Push(pushMsg)
+	err = main.amqpClient.Push(pushMsg, queue)
 	if err != nil {
 		main.updateMessageStatus(message, notEnqueued, err.Error())
 		return err
 	}
-
 	main.updateMessageStatus(message, enqueued, successLog)
-
 	return nil
 }
 

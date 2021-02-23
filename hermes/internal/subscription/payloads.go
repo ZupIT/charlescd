@@ -19,23 +19,23 @@
 package subscription
 
 import (
-	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"hermes/util"
 )
 
 type Request struct {
 	util.BaseModel
-	ExternalId  uuid.UUID       `json:"externalId"`
-	Url         string          `json:"url"`
-	Description string          `json:"description"`
-	ApiKey      string          `json:"apiKey"`
-	Events      json.RawMessage `json:"events"`
-	CreatedBy   string          `json:"createdBy"`
+	ExternalId  uuid.UUID      `json:"externalId"`
+	Url         string         `json:"url"`
+	Description string         `json:"description"`
+	ApiKey      string         `json:"apiKey"`
+	Events      pq.StringArray `json:"events"`
+	CreatedBy   string         `json:"createdBy"`
 }
 
 type UpdateRequest struct {
-	Events json.RawMessage `json:"events"`
+	Events pq.StringArray `json:"events"`
 }
 
 type SaveResponse struct {
@@ -43,11 +43,12 @@ type SaveResponse struct {
 }
 
 type Response struct {
-	ID          uuid.UUID       `json:"id"`
-	ExternalId  uuid.UUID       `json:"externalId"`
-	Url         string          `json:"url"`
-	Description string          `json:"description"`
-	Events      json.RawMessage `json:"events"`
+	ID          uuid.UUID      `json:"id"`
+	ExternalId  uuid.UUID      `json:"externalId"`
+	ApiKey      []byte         `json:"apiKey" gorm:"type:bytea"`
+	Url         string         `json:"url"`
+	Description string         `json:"description"`
+	Events      pq.StringArray `json:"events" gorm:"type:text[]"`
 }
 
 type ExternalIdResponse struct {

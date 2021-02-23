@@ -100,7 +100,7 @@ class HermesClientServiceTest extends Specification {
 
     def 'when publish subscription deployment event, should do it successfully'() {
         def deploymentEvent = new WebhookDeploymentEvent(
-                WebhookEventTypeEnum.START_DEPLOY,
+                WebhookEventSubTypeEnum.START_DEPLOY,
                 WebhookEventStatusEnum.SUCCESS,
                 LocalDateTime.now(),
                 "workspaceId",
@@ -112,7 +112,7 @@ class HermesClientServiceTest extends Specification {
 
         def event = new WebhookDeploymentEventType(
                 "workspaceId",
-                WebhookEventTypeEnum.START_DEPLOY,
+                WebhookEventTypeEnum.DEPLOY,
                 WebhookEventStatusEnum.SUCCESS,
                 null,
                 deploymentEvent

@@ -26,6 +26,7 @@ abstract class WebhookEvent(
 data class SimpleWebhookEvent(
     val workspaceId: String,
     val eventType: WebhookEventTypeEnum,
+    val eventSubType: WebhookEventSubTypeEnum,
     val eventStatus: WebhookEventStatusEnum,
     val error: String? = null
 )

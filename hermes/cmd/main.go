@@ -23,10 +23,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"hermes/internal/configuration"
 	"hermes/internal/notification/message"
+	"hermes/internal/notification/messagePubSub"
 	"hermes/internal/notification/messageexecutionhistory"
-	"hermes/internal/notification/publisher"
 	"hermes/internal/subscription"
-	"hermes/queueprotocol"
+	"hermes/rabbitclient"
 	"hermes/web/api"
 	"log"
 	"os"
@@ -46,9 +46,9 @@ func main() {
 	}
 
 	goChan := make(chan os.Signal, 1)
-	amqpClient := queueprotocol.NewClient(
-		configuration.GetConfiguration("AMQP_LISTEN_QUEUE"),
-		configuration.GetConfiguration("AMQP_PUSH_QUEUE"),
+	amqpClient := rabbitclient.NewClient(
+		configuration.GetConfiguration("AMQP_MESSAGE_QUEUE"),
+		configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"),
 		configuration.GetConfiguration("AMQP_URL"),
 		logrus.New(),
 		goChan,
@@ -57,10 +57,14 @@ func main() {
 	subscriptionMain := subscription.NewMain(db)
 	messageExecutionMain := messageexecutionhistory.NewMain(db)
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
-	messagePublisher := publisher.NewMain(db, amqpClient, messageMain, messageExecutionMain)
+	messagePubSubMain := messagePubSub.NewMain(db, amqpClient, messageMain, messageExecutionMain, subscriptionMain)
 
-	stopChan := make(chan bool, 0)
-	go messagePublisher.Start(stopChan)
+	stopPub := make(chan bool, 0)
+	go messagePubSubMain.Publish(stopPub)
+	stopSub := make(chan bool, 0)
+	go messagePubSubMain.Consume(stopSub)
+	stopFailSub := make(chan bool, 0)
+	go messagePubSubMain.ConsumeDeliveredFail(stopFailSub)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)

@@ -19,14 +19,14 @@
 package subscription
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"gorm.io/gorm/clause"
 	"hermes/internal/configuration"
 )
 
-func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events json.RawMessage) map[string]interface{} {
+func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events pq.StringArray) map[string]interface{} {
 	return map[string]interface{}{
 		"id":          id,
 		"ExternalId":  externalId,
@@ -39,8 +39,15 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
 			},
 		},
-		"Events":    string(events),
+		"Events":    events,
 		"CreatedBy": createdBy,
 	}
 
+}
+
+func decryptedSubscriptionQuery() string {
+	return fmt.Sprintf(`SELECT id, description, external_id, url, PGP_SYM_DECRYPT(api_key, '%s'), events
+								FROM subscriptions
+								WHERE id = ?
+								AND deleted_at IS NULL`, configuration.GetConfiguration("ENCRYPTION_KEY"))
 }

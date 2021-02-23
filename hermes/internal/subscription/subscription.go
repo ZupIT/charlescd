@@ -19,24 +19,30 @@
 package subscription
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
+	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"hermes/util"
 	"io"
+	"io/ioutil"
+	"net/http"
 	"time"
 )
 
 type Subscription struct {
 	util.BaseModel
-	ExternalId  uuid.UUID       `json:"externalId"`
-	Url         string          `json:"url"`
-	Description string          `json:"description"`
-	ApiKey      []byte          `json:"apiKey" gorm:"type:bytea"`
-	Events      json.RawMessage `json:"events" gorm:"type:jsonb"`
-	CreatedBy   string          `json:"createdBy"`
-	DeletedBy   string          `json:"-"`
-	DeletedAt   *time.Time      `json:"-"`
+	ExternalId  uuid.UUID      `json:"externalId"`
+	Url         string         `json:"url"`
+	Description string         `json:"description"`
+	ApiKey      []byte         `json:"apiKey" gorm:"type:bytea"`
+	Events      pq.StringArray `json:"events" gorm:"type:text[]"`
+	CreatedBy   string         `json:"createdBy"`
+	DeletedBy   string         `json:"-"`
+	DeletedAt   *time.Time     `json:"-"`
 }
 
 func (main Main) Validate(subscription Request) errors.ErrorList {
@@ -139,9 +145,10 @@ func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
 func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
 	res := Response{}
 
-	q := main.db.Model(&Subscription{}).First(&res, "id = ? AND deleted_at IS NULL", subscriptionId.String())
-	if q.Error != nil {
-		return Response{}, errors.NewError("Find Subscription error", q.Error.Error()).
+	err := main.db.Set("gorm:auto_preload", true).Raw(decryptedSubscriptionQuery(), subscriptionId).Row().
+		Scan(&res.ID, &res.Description, &res.ExternalId, &res.Url, &res.ApiKey, &res.Events)
+	if err != nil {
+		return Response{}, errors.NewError("Find Subscription error", err.Error()).
 			WithOperations("FindById.QuerySubscription")
 	}
 
@@ -151,7 +158,7 @@ func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
 func (main Main) FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error) {
 	var res []ExternalIdResponse
 
-	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND events = ? AND deleted_at IS NULL", externalId.String(), map[string]interface{}{"event": event})
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND ? = any(events) AND deleted_at IS NULL", externalId.String(), event)
 	if q.Error != nil {
 		return []ExternalIdResponse{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
 			WithOperations("FindAllByExternalIdAndEvent.QuerySubscription")
@@ -182,4 +189,45 @@ func (main Main) CountAllByExternalId(externalId uuid.UUID) (int64, errors.Error
 	}
 
 	return count, nil
+}
+
+func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
+	sub, e := main.FindById(msg.SubscriptionId)
+	if e != nil {
+		return e
+	}
+
+	msgEvent, err := msg.Event.MarshalJSON()
+	if err != nil {
+		return errors.NewError("Error marshaling message event: ", err.Error()).
+			WithOperations(msg.Id.String())
+	}
+
+	type eventBody struct {
+		Content string `json:"content"`
+	}
+	reqBody, err := json.Marshal(eventBody{Content: string(msgEvent)})
+
+	req, err := http.NewRequest("POST", sub.Url, bytes.NewBuffer(reqBody))
+	if err != nil {
+		return errors.NewError("Error creating http request: ", err.Error()).
+			WithOperations(sub.Url)
+	}
+
+	req.Header.Add("Content-type", "application/json")
+	if string(sub.ApiKey) != "" {
+		req.Header.Add("x-application-key", string(sub.ApiKey))
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return errors.NewError("Error calling http request: ", err.Error()).
+			WithOperations(sub.Url)
+	}
+
+	defer res.Body.Close()
+	resBody, err := ioutil.ReadAll(res.Body)
+	fmt.Printf("[Webhook] Status: %d - Body: %s\n", res.StatusCode, resBody)
+
+	return nil
 }
