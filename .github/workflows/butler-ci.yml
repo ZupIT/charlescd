@@ -45,7 +45,7 @@ jobs:
       working-directory: ./butler
     - run: npm run lint
       working-directory: ./butler
-    - run: docker-compose up -d --build
+    - run: docker-compose -f docker-compose-ci.yml up -d --build
       working-directory: ./butler
     - run: docker-compose -f docker-compose-ci.yml exec -T -- app sh -c "npm run test:all:cov"
       working-directory: ./butler
