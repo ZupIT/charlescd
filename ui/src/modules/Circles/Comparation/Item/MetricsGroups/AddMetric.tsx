@@ -117,9 +117,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
           onGoBack();
         }
       })
-      .catch(error => {
-        console.log(error);
-      });
   };
 
   return (

@@ -27,13 +27,14 @@ const BasicQueryForm = () => {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'filters'
+    name: 'filters',
+    keyName: 'fieldId'
   });
 
   return (
     <>
       {fields.map((field, index) => (
-        <Styled.RuleWrapper key={field.id}>
+        <Styled.RuleWrapper key={field.fieldId}>
           <StyledRule.Rule data-testid="segments-rules">
             <StyledRule.RuleTrash>
               <StyledRule.Button.Icon
@@ -47,7 +48,7 @@ const BasicQueryForm = () => {
               type="hidden"
               ref={register()}
               name={`filters[${index}].id`}
-              defaultValue={field.id} 
+              defaultValue={field.id}
             />
             <StyledRule.Input
               label="Filter"

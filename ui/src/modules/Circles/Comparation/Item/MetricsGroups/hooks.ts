@@ -411,9 +411,8 @@ export const useSaveAction = (actionId?: string) => {
 
         dispatch(
           toogleNotification({
-            text: `The action ${actionGroupPayload.nickname} was successfully ${
-              actionId ? `edit` : `added`
-            }`,
+            text: `The action ${actionGroupPayload.nickname} was successfully ${actionId ? `edit` : `added`
+              }`,
             status: 'success'
           })
         );
@@ -423,9 +422,8 @@ export const useSaveAction = (actionId?: string) => {
         status.rejected();
         dispatch(
           toogleNotification({
-            text: `An error occurred while trying to create the ${
-              actionGroupPayload.nickname
-            } ${actionId ? `edit` : `added`}`,
+            text: `An error occurred while trying to create the ${actionGroupPayload.nickname
+              } ${actionId ? `edit` : `added`}`,
             status: 'error'
           })
         );
