@@ -18,7 +18,7 @@ import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enum
 import { DeploymentStatusEnum } from '../../../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces/spinnaker-pipeline.interface'
 
-export const completeWithOverrides : SpinnakerPipeline = {
+export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -105,18 +105,18 @@ export const completeWithOverrides : SpinnakerPipeline = {
     {
       defaultArtifact: {
         artifactAccount: 'github-artifact',
-        id: 'template-C-default-artifact',
-        name: 'template-C',
-        reference: 'http://localhost:2222/helm/C/C-darwin.tgz',
+        id: 'template-D-default-artifact',
+        name: 'template-D',
+        reference: 'http://localhost:2222/helm/D/D-darwin.tgz',
         type: 'github/file',
         version: 'master'
       },
       displayName: 'template',
-      id: 'template - C',
+      id: 'template - D',
       matchArtifact: {
         artifactAccount: 'github-artifact',
         id: 'useless-template',
-        name: 'template-C',
+        name: 'template-D',
         type: 'github/file'
       },
       useDefaultArtifact: true,
@@ -125,18 +125,18 @@ export const completeWithOverrides : SpinnakerPipeline = {
     {
       defaultArtifact: {
         artifactAccount: 'github-artifact',
-        id: 'value-C-default-artifact',
-        name: 'value-C',
-        reference: 'http://localhost:2222/helm/C/C.yaml',
+        id: 'value-D-default-artifact',
+        name: 'value-D',
+        reference: 'http://localhost:2222/helm/D/D.yaml',
         type: 'github/file',
         version: 'master'
       },
       displayName: 'value',
-      id: 'value - C',
+      id: 'value - D',
       matchArtifact: {
         artifactAccount: 'github-artifact',
         id: 'useless-value',
-        name: 'value-C',
+        name: 'value-D',
         type: 'github/file'
       },
       useDefaultArtifact: true,
@@ -317,7 +317,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
           id: 'deployment - v2',
           matchArtifact: {
             id: 'useless - deployment - v2 - match',
-            name: 'C-v2',
+            name: 'D-v2',
             type: 'embedded/base64'
           },
           useDefaultArtifact: false,
@@ -328,20 +328,20 @@ export const completeWithOverrides : SpinnakerPipeline = {
       inputArtifacts: [
         {
           account: 'github-artifact',
-          id: 'template - C'
+          id: 'template - D'
         },
         {
           account: 'github-artifact',
-          id: 'value - C'
+          id: 'value - D'
         }
       ],
-      name: 'Bake C v2',
+      name: 'Bake D v2',
       namespace: 'sandbox',
-      outputName: 'C-v2',
+      outputName: 'D-v2',
       overrides: {
-        'image.tag': 'https://repository.com/C:v2',
-        deploymentName: 'C-v2-circle-id',
-        component: 'C',
+        'image.tag': 'https://repository.com/D:v2',
+        deploymentName: 'D-v2-circle-id',
+        component: 'D',
         tag: 'v2',
         circleId: 'circle-id'
       },
@@ -364,7 +364,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       moniker: {
         app: 'default'
       },
-      name: 'Deploy C v2',
+      name: 'Deploy D v2',
       refId: '6',
       requisiteStageRefIds: [
         '5'
@@ -372,7 +372,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       skipExpressionEvaluation: false,
       source: 'artifact',
       stageEnabled: {
-        expression: '${ #stage(\'Bake C v2\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Bake D v2\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       trafficManagement: {
@@ -408,14 +408,6 @@ export const completeWithOverrides : SpinnakerPipeline = {
                   circleId: 'circle-id'
                 },
                 name: 'circle-id'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
               }
             ]
           }
@@ -500,7 +492,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        'exact': 'circle-id'
+                        exact: 'circle-id'
                       }
                     }
                   }
@@ -520,28 +512,6 @@ export const completeWithOverrides : SpinnakerPipeline = {
                       response: {
                         set: {
                           'x-circle-source': 'circle-id'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'default-circle-id'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'default-circle-id'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'default-circle-id'
                         }
                       }
                     }
@@ -599,14 +569,6 @@ export const completeWithOverrides : SpinnakerPipeline = {
                   circleId: 'circle-id'
                 },
                 name: 'circle-id'
-              },
-              {
-                labels: {
-                  component: 'B',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
               }
             ]
           }
@@ -716,28 +678,6 @@ export const completeWithOverrides : SpinnakerPipeline = {
                     }
                   }
                 ]
-              },
-              {
-                route: [
-                  {
-                    destination: {
-                      host: 'B',
-                      subset: 'default-circle-id'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'default-circle-id'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'default-circle-id'
-                        }
-                      }
-                    }
-                  }
-                ]
               }
             ]
           }
@@ -777,27 +717,19 @@ export const completeWithOverrides : SpinnakerPipeline = {
           apiVersion: 'networking.istio.io/v1alpha3',
           kind: 'DestinationRule',
           metadata: {
-            name: 'C',
+            name: 'D',
             namespace: 'sandbox'
           },
           spec: {
-            host: 'C',
+            host: 'D',
             subsets: [
               {
                 labels: {
-                  component: 'C',
+                  component: 'D',
                   tag: 'v2',
                   circleId: 'circle-id'
                 },
                 name: 'circle-id'
-              },
-              {
-                labels: {
-                  component: 'C',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
               }
             ]
           }
@@ -806,7 +738,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       moniker: {
         app: 'default'
       },
-      name: 'Deploy Destination Rules C',
+      name: 'Deploy Destination Rules D',
       refId: '11',
       requisiteStageRefIds: [
         '13'
@@ -837,13 +769,13 @@ export const completeWithOverrides : SpinnakerPipeline = {
           apiVersion: 'networking.istio.io/v1alpha3',
           kind: 'VirtualService',
           metadata: {
-            name: 'C',
+            name: 'D',
             namespace: 'sandbox'
           },
           spec: {
             gateways: [],
             hosts: [
-              'C'
+              'D'
             ],
             http: [
               {
@@ -859,7 +791,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
                 route: [
                   {
                     destination: {
-                      host: 'C',
+                      host: 'D',
                       subset: 'circle-id'
                     },
                     headers: {
@@ -890,7 +822,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
                 route: [
                   {
                     destination: {
-                      host: 'C',
+                      host: 'D',
                       subset: 'circle-id'
                     },
                     headers: {
@@ -907,28 +839,6 @@ export const completeWithOverrides : SpinnakerPipeline = {
                     }
                   }
                 ]
-              },
-              {
-                route: [
-                  {
-                    destination: {
-                      host: 'C',
-                      subset: 'default-circle-id'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'default-circle-id'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'default-circle-id'
-                        }
-                      }
-                    }
-                  }
-                ]
               }
             ]
           }
@@ -937,7 +847,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       moniker: {
         app: 'default'
       },
-      name: 'Deploy Virtual Service C',
+      name: 'Deploy Virtual Service D',
       refId: '12',
       requisiteStageRefIds: [
         '11'
@@ -945,7 +855,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       skipExpressionEvaluation: false,
       source: 'text',
       stageEnabled: {
-        expression: '${ #stage(\'Deploy Destination Rules C\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Deploy Destination Rules D\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       trafficManagement: {
@@ -973,7 +883,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       variables: [
         {
           key: 'deploymentResult',
-          value: '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy B v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy C v2\').status.toString() == \'SUCCEEDED\'}'
+          value: '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy B v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy D v2\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
@@ -990,7 +900,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       variables: [
         {
           key: 'proxyDeploymentsResult',
-          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
+          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service D\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
@@ -1112,6 +1022,57 @@ export const completeWithOverrides : SpinnakerPipeline = {
             key: 'component',
             kind: 'EQUALS',
             values: [
+              'D'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Deployment D v2',
+      options: {
+        cascading: true
+      },
+      refId: '17',
+      requisiteStageRefIds: [
+        '13'
+      ],
+      stageEnabled: {
+        expression: '${!deploymentResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
               'A'
             ]
           },
@@ -1138,7 +1099,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '17',
+      refId: '18',
       requisiteStageRefIds: [
         '14'
       ],
@@ -1190,7 +1151,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '18',
+      refId: '19',
       requisiteStageRefIds: [
         '14'
       ],
@@ -1199,6 +1160,162 @@ export const completeWithOverrides : SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
+    },
+    {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'C'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment C v2',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '20',
+      requisiteStageRefIds: [
+        '14'
+      ],
+      stageEnabled: {
+        expression: '${proxyDeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
+      account: 'default',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'DestinationRule',
+          metadata: {
+            name: 'C',
+            namespace: 'sandbox'
+          },
+          spec: {
+            host: 'C',
+            subsets: []
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Destination Rules C',
+      refId: '21',
+      requisiteStageRefIds: [
+        '14'
+      ],
+      skipExpressionEvaluation: false,
+      source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
+    },
+    {
+      account: 'default',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'VirtualService',
+          metadata: {
+            name: 'C',
+            namespace: 'sandbox'
+          },
+          spec: {
+            gateways: [],
+            hosts: [
+              'C'
+            ],
+            http: [
+              {
+                match: [
+                  {
+                    headers: {
+                      'unreachable-cookie-name': {
+                        exact: 'unreachable-cookie - value'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'unreachable-app-name'
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Virtual Service C',
+      refId: '22',
+      requisiteStageRefIds: [
+        '21'
+      ],
+      skipExpressionEvaluation: false,
+      source: 'text',
+      stageEnabled: {
+        expression: '${ #stage(\'Undeploy Destination Rules C\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
     },
     {
       completeOtherBranchesThenFail: false,
@@ -1213,7 +1330,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '19',
+      refId: '23',
       requisiteStageRefIds: [
         '13',
         '14'
@@ -1239,7 +1356,7 @@ export const completeWithOverrides : SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '20',
+      refId: '24',
       requisiteStageRefIds: [
         '13',
         '14'
