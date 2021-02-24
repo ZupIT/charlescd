@@ -353,12 +353,12 @@ jobs:
           sed -i -E "s/(zupcharles\/.*:)(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml
 
       - name: Update helm dependencies
-        uses: WyriHaximus/github-action-helm3@v1.0.0
+        uses: WyriHaximus/github-action-helm3@v2.1.3
         with:
           exec: helm dependency update ./install/helm-chart
 
       - name: Generate single file
-        uses: WyriHaximus/github-action-helm3@v1.0.0
+        uses: WyriHaximus/github-action-helm3@v2.1.3
         with:
           exec: helm template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
 
@@ -389,17 +389,17 @@ jobs:
             auto generated PR
             Signed-off-by: Charles CD Bot <charlescdbot@users.noreply.github.com>
 
-      - name: Zup Settings
-        run: |
-          cat <<-EOF > values-charles.yaml
-          ${{ secrets.VALUES_CHARLES }}
-          EOF
+      # - name: Zup Settings
+      #   run: |
+      #     cat <<-EOF > values-charles.yaml
+      #     ${{ secrets.VALUES_CHARLES }}
+      #     EOF
 
-      - name: Deploy
-        uses: WyriHaximus/github-action-helm3@v1.0.0
-        with:
-          exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --namespace=charles --values=./values-charles.yaml
-          kubeconfig: '${{ secrets.KUBECONFIG }}'
+      # - name: Deploy
+      #   uses: WyriHaximus/github-action-helm3@v2.1.3
+      #   with:
+      #     exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --namespace=charles --values=./values-charles.yaml
+      #     kubeconfig: '${{ secrets.KUBECONFIG }}'
 
       - name: Zup Settings dev
         run: |
@@ -411,7 +411,7 @@ jobs:
           EOF
 
       - name: Deploy dev
-        uses: WyriHaximus/github-action-helm3@v1.0.0
+        uses: WyriHaximus/github-action-helm3@v2.1.3
         with:
           exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./values-charles-dev.yaml
           kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
