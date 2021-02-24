@@ -29,14 +29,18 @@ import {
   patchProfileById,
   findUserByEmail,
   createNewUser,
-  deleteUserById
+  deleteUserById,
+  findWorkspacesByUserId
 } from 'core/providers/users';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, NewUser, NewPassword } from './interfaces/User';
-import { isIDMAuthFlow } from 'core/utils/auth';
+import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
+import { saveProfile, getProfile } from 'core/utils/profile';
+import { isIDMEnabled } from 'core/utils/auth';
+import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
+import { WorkspacePagination } from 'modules/Workspaces/interfaces/WorkspacePagination';
 
 export const useUser = (): {
   findByEmail: Function;
@@ -53,7 +57,6 @@ export const useUser = (): {
       try {
         if (email) {
           const res = await getUserByEmail(email);
-
           setUser(res);
 
           return res;
@@ -61,7 +64,7 @@ export const useUser = (): {
       } catch (e) {
         setError(e);
 
-        if (!isIDMAuthFlow()) {
+        if (!isIDMEnabled()) {
           dispatch(
             toogleNotification({
               text: `Error when trying to fetch the user info for ${email}`,
@@ -77,6 +80,56 @@ export const useUser = (): {
   return {
     findByEmail,
     user,
+    error
+  };
+};
+
+export const useWorkspacesByUser = (): {
+  findWorkspacesByUser: Function;
+  workspaces: Workspace[];
+  error: ResponseError;
+} => {
+  const dispatch = useDispatch();
+  const getWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
+  const [error, setError] = useState<ResponseError>(null);
+
+  const findWorkspacesByUser = useCallback(
+    async (id: Pick<User, 'id'>) => {
+      try {
+        if (id) {
+          const res = await getWorkspacesByUser(id);
+          setWorkspaces(res);
+          saveProfile({ ...getProfile(), workspaces: res });
+          dispatch(loadedWorkspacesAction({
+            content: res,
+            page: 0,
+            size: res?.length,
+            totalPages: 1,
+            last: true
+          } as WorkspacePagination));
+
+          return res;
+        }
+      } catch (e) {
+        setError(e);
+
+        if (!isIDMEnabled()) {
+          dispatch(
+            toogleNotification({
+              text: `Error when trying to fetch workspaces for current user`,
+              status: 'error'
+            })
+          );
+        }
+      }
+    },
+    [dispatch, getWorkspacesByUser]
+  );
+
+  return {
+    findWorkspacesByUser,
+    workspaces,
     error
   };
 };
@@ -225,14 +278,14 @@ export const useResetPassword = (): {
   return { resetPassword, response, status };
 };
 
-export const useUsers = (): [Function, Function, boolean] => {
+export const useUsers = (): [Function, UserPagination, boolean] => {
   const dispatch = useDispatch();
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response, error, loading } = usersData;
 
-  const getAll = useCallback(
-    (name: string) => {
-      getUsers({ name });
+  const filterUsers = useCallback(
+    (name: string, page: number) => {
+      getUsers({ name, page });
     },
     [getUsers]
   );
@@ -245,7 +298,7 @@ export const useUsers = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [getAll, getUsers, loading];
+  return [filterUsers, response, loading];
 };
 
 export default useUsers;

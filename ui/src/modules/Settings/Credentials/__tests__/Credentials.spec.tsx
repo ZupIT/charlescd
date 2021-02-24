@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, fireEvent, wait, screen, act, waitFor } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
@@ -38,60 +38,74 @@ interface fakeCanProps {
 jest.mock('containers/Can', () => {
   return {
     __esModule: true,
-    default:  ({children}: fakeCanProps) => {
+    default: ({ children }: fakeCanProps) => {
       return <div>{children}</div>;
     }
   };
 });
 
+beforeEach(() => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+})
+
 test('render Credentials default component', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
+
   render(<Credentials />);
 
   const credentialsElement = await screen.findByTestId("credentials");
   expect(credentialsElement).toBeInTheDocument();
 });
 
-test('render Credentials items', async () => {
+test('should render Credentials items', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
-  
+
   render(<Credentials />);
 
   await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
-  expect(screen.getByTestId('contentIcon-users')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-git')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-server')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-cd-configuration')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-circle-matcher')).toBeInTheDocument();
-  expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
+  expect(screen.getByText('Registry')).toBeInTheDocument();
+  expect(screen.getByText('CD Configuration')).toBeInTheDocument();
+  expect(screen.getByText('Circle Matcher')).toBeInTheDocument();
+  expect(screen.getByText('Datasources')).toBeInTheDocument();
+  expect(screen.getByText('Metric Action')).toBeInTheDocument();
+  expect(screen.getByText('Git')).toBeInTheDocument();
+  expect(screen.getByText('User group')).toBeInTheDocument();
+});
+
+test('should render Credentials items in the right order', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
+
+  const itemsRightOrder = ['Registry', 'CD Configuration', 'Circle Matcher', 'Datasources', 'Metric Action', 'Git', 'User group'];
+
+  render(<Credentials />);
+
+  const items = await screen.findAllByTestId(/contentIcon-.*/);
+  const itemsFiltered = items.slice(1);
+  itemsFiltered.forEach((item, index) => {
+    expect(item.textContent).toBe(itemsRightOrder[index]);
+  })
 });
 
 test('render User Group credentials', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
-  
-  jest.spyOn(MetricProviderHooks, 'useDatasource').mockImplementation(() => ({
+  const useDatasourceSpy = jest.spyOn(MetricProviderHooks, 'useDatasource').mockImplementation(() => ({
     responseAll: [...Datasources],
     getAll: jest.fn
   }));
 
   render(<Credentials />);
-  
+
   const content = screen.getByTestId('contentIcon-users');
   expect(content).toBeInTheDocument();
 
@@ -100,71 +114,46 @@ test('render User Group credentials', async () => {
 
   const backButton = screen.getByTestId('icon-arrow-left');
   expect(backButton).toBeInTheDocument();
-  
+
   await act(async () => userEvent.click(backButton));
   expect(backButton).not.toBeInTheDocument();
+
+  useDatasourceSpy.mockRestore();
 });
 
 test('render Git Credentials', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
   render(<Credentials />);
 
   const addGitButton = await screen.findByText(/Add Git/);
-  userEvent.click(addGitButton);
+
+  await act(async () => userEvent.click(addGitButton));
 
   const backButton = screen.getByTestId('icon-arrow-left');
   expect(backButton).toBeInTheDocument();
 });
 
 test('render CD Configuration Credentials', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
   render(<Credentials />);
 
   const addCDConfigButton = await screen.findByText('Add CD Configuration');
 
-  userEvent.click(addCDConfigButton);
+  await act(async () => userEvent.click(addCDConfigButton));
 
   const backButton = screen.getByTestId('icon-arrow-left');
   expect(backButton).toBeInTheDocument();
 });
 
-test('render Circle Matcher Credentials', async() => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
+test('render Circle Matcher Credentials', async () => {
   render(<Credentials />);
 
   const addCircleMatcherButton = await screen.findByText('Add Circle Matcher');
-  userEvent.click(addCircleMatcherButton);
+  await act(async () => userEvent.click(addCircleMatcherButton));
 
   const backButton = screen.getByTestId('icon-arrow-left');
   expect(backButton).toBeInTheDocument();
 });
 
 test('click to copy to clipboard', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123-workspace',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
 
   const copyToClipboardSpy = jest.spyOn(clipboardUtils, 'copyToClipboard');
 
@@ -173,10 +162,34 @@ test('click to copy to clipboard', async () => {
   const dropdownElement = await screen.findByTestId('icon-vertical-dots');
   userEvent.click(dropdownElement);
   const copyIDElement = screen.getByText('Copy ID');
-  
+
   expect(copyIDElement).toBeInTheDocument();
-  
+
   act(() => userEvent.click(copyIDElement));
 
   expect(copyToClipboardSpy).toBeCalled();
+});
+
+test('should render Credentials items with the right type: Required or Optional', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
+  );
+
+  const configurationItems = [
+    { name: 'Registry', type: 'Required' },
+    { name: 'CD Configuration', type: 'Required' },
+    { name: 'Circle Matcher', type: 'Required' },
+    { name: 'Datasources', type: 'Optional' },
+    { name: 'Metric Action', type: 'Optional' },
+    { name: 'Git', type: 'Optional' },
+    { name: 'User group', type: 'Optional' },
+  ];
+
+  render(<Credentials />);
+
+  const types = await screen.findAllByTestId(/configuration-type.*/);
+
+  types.forEach((type, index) => {
+    expect(type.textContent).toBe(configurationItems[index].type);
+  })
 });

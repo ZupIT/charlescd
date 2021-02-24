@@ -1,6 +1,11 @@
 package tests
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
@@ -8,10 +13,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 type SuiteMoove struct {
@@ -19,7 +20,7 @@ type SuiteMoove struct {
 	DB   *gorm.DB
 	mock sqlmock.Sqlmock
 
-	repository moove.APIClient
+	repository moove.ApiUseCases
 	server     *httptest.Server
 }
 
@@ -59,10 +60,10 @@ func TestInitMoove(t *testing.T) {
 func (s *SuiteMoove) TestGetMooveComponentsError() {
 	s.server.Close()
 	_, err := s.repository.GetMooveComponents("", "", uuid.New())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *SuiteMoove) TestGetMooveComponentsStatusError() {
 	_, err := s.repository.GetMooveComponents("", "", uuid.New())
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }

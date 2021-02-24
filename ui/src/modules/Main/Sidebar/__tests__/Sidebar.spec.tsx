@@ -20,11 +20,15 @@ import userEvent from '@testing-library/user-event';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
-import { FetchMock } from 'jest-fetch-mock/types';
 import * as utilsAuth from 'core/utils/auth';
+import { saveProfile } from 'core/utils/profile';
 
 const originalWindow = { ...window };
 const openDocumentation = jest.fn();
+
+beforeAll(() => {
+  saveProfile({ id: '1', name: 'charlesadmin', email: 'charlesadmin@admin', workspaces: [{id: '1', name: 'test'}]});
+});
 
 beforeEach(() => {
   delete window.location;
@@ -63,19 +67,7 @@ test('renders sidebar component with selected workspace', async () => {
     ...window.location,
     pathname: routes.credentials
   };
-
-  (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify({
-      content: [
-        {
-          id: 1,
-          name: 'workspace',
-          status: 'COMPLETE'
-        }
-      ]
-    })
-  );
-
+  
   jest.spyOn(utilsAuth, 'isRoot').mockReturnValue(true);
 
   render(

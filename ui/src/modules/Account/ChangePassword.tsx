@@ -17,8 +17,8 @@
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
-import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
+import { isRequired } from 'core/utils/validations';
 import { validationResolver } from 'core/components/CheckPassword';
 import { useChangePassword } from './hooks/useChangePassword';
 import Styled from './styled';
@@ -27,7 +27,7 @@ type Props = {
   onSubmit?: () => void;
 };
 
-type FormData = {
+type FormState = {
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
@@ -41,8 +41,8 @@ const ChangePassword = ({ onSubmit }: Props) => {
     errors,
     formState,
     getValues
-  } = useForm<FormData>({
-    mode: 'onBlur',
+  } = useForm<FormState>({
+    mode: 'onChange',
     resolver: validationResolver
   });
   const newPassword = watch('newPassword') as string;
@@ -69,7 +69,10 @@ const ChangePassword = ({ onSubmit }: Props) => {
       <Styled.Password
         label="Enter your current password"
         name="oldPassword"
-        ref={register({ required: true })}
+        error={errors?.oldPassword?.message}
+        ref={register({
+          required: isRequired()
+        })}
       />
       <Styled.Modal.Info color="dark">
         Your new password must be at least 10 characters long, uppercase,
@@ -78,25 +81,19 @@ const ChangePassword = ({ onSubmit }: Props) => {
       <Styled.Password
         label="New password"
         name="newPassword"
-        ref={register({ required: true })}
-        hasError={!isEmpty(errors?.newPassword)}
+        error={errors?.newPassword?.message}
+        ref={register({
+          required: isRequired()
+        })}
       />
-      {errors?.newPassword && (
-        <Styled.Error color="error" data-testid="error-newPassword">
-          {errors.newPassword.message}
-        </Styled.Error>
-      )}
       <Styled.Password
         label="Confirm new password"
         name="confirmPassword"
-        ref={register({ required: true })}
-        hasError={!isEmpty(errors?.confirmPassword)}
+        error={errors?.confirmPassword?.message}
+        ref={register({
+          required: isRequired()
+        })}
       />
-      {errors?.confirmPassword && (
-        <Styled.Error color="error" data-testid="error-confirmPassword">
-          {errors.confirmPassword.message}
-        </Styled.Error>
-      )}
       <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
       <Button.Default
         id="change-password"

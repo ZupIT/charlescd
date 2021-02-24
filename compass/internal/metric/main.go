@@ -21,27 +21,27 @@ package metric
 import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"io"
 
 	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
-	ParseMetric(metric io.ReadCloser) (Metric, error)
+	ParseMetric(metric io.ReadCloser) (Metric, errors.Error)
 	CountMetrics(metrics []Metric) (int, int, int)
-	FindMetricById(id string) (Metric, error)
-	SaveMetric(metric Metric) (Metric, error)
-	UpdateMetric(id string, metric Metric) (Metric, error)
-	RemoveMetric(id string) error
-	Query(metric Metric, period, interval datasourcePKG.Period) (interface{}, error)
-	ResultQuery(metric Metric) (float64, error)
-	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
-	FindAllMetricExecutions() ([]MetricExecution, error)
-	Validate(metric Metric) []util.ErrorUtil
+	FindMetricById(id string) (Metric, errors.Error)
+	SaveMetric(metric Metric) (Metric, errors.Error)
+	UpdateMetric(metric Metric) (Metric, errors.Error)
+	RemoveMetric(id string) errors.Error
+	Query(metric Metric, period, interval datasourcePKG.Period) (interface{}, errors.Error)
+	ResultQuery(metric Metric) (float64, errors.Error)
+	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, errors.Error)
+	FindAllMetricExecutions() ([]MetricExecution, errors.Error)
+	Validate(metric Metric) errors.ErrorList
 	ValidateIfExecutionReached(metric MetricExecution) bool
-	FindAllByGroup(metricGroupID string) ([]Metric, error)
+	FindAllByGroup(metricGroupID string) ([]Metric, errors.Error)
 }
 
 type Main struct {

@@ -24,12 +24,15 @@ const endpointWorkspaces = '/moove/v2/workspaces/users';
 const v1Endpoint = '/moove/users';
 
 export interface UserFilter {
+  id?: string;
   name?: string;
   email?: string;
+  page?: number;
 }
 
 const initialUserFilter = {
-  email: ''
+  name: '',
+  page: 0
 };
 
 export const findAllWorkspaceUsers = (
@@ -48,10 +51,9 @@ export const findAllWorkspaceUsers = (
 };
 
 export const findAllUsers = (filter: UserFilter = initialUserFilter) => {
-  const defaultPage = 0;
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
-    page: `${defaultPage}`
+    page: `${filter.page ?? 0}`
   });
 
   if (filter?.name) params.append('name', filter?.name);
@@ -83,6 +85,10 @@ export const findUserByEmail = (email: string) => {
   const decodeEmail = btoa(email);
 
   return baseRequest(`${endpoint}/${decodeEmail}`);
+};
+
+export const findWorkspacesByUserId = (id: string) => {
+  return baseRequest(`${endpoint}/${id}/workspaces`);
 };
 
 export const deleteUserById = (id: string) =>

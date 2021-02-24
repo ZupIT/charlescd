@@ -17,9 +17,11 @@
 package helm
 
 import (
+	"bytes"
 	"encoding/json"
-	"errors"
 	"io/ioutil"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"octopipe/pkg/customerror"
 	"strings"
 
 	"github.com/tidwall/sjson"
@@ -29,9 +31,7 @@ import (
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/engine"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/kubernetes/scheme"
-
-	log "github.com/sirupsen/logrus"
+	kubeyaml "k8s.io/apimachinery/pkg/util/yaml"
 )
 
 type HelmTemplate struct {
@@ -47,20 +47,17 @@ func (helmTemplate HelmTemplate) GetManifests(templateContent, valueContent stri
 
 	chartTemplate, chartValues, err := helmTemplate.getHelmChartAndValues(templateContent, valueContent, helmTemplate.OverrideValues)
 	if err != nil {
-
-		return nil, err
+		return nil, customerror.WithOperation(err)
 	}
 
 	manifests, err := helmTemplate.renderManifest(chartTemplate, chartValues)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "GetManifests"}).Error("It was not possible to render the manifest using helm template. Error: " + err.Error())
-		return nil, err
+		return nil, customerror.WithOperation(err)
 	}
 
 	encodedManifests, err := helmTemplate.encodeManifests(manifests)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "GetManifests"}).Error("It was not possible to transform the manifest into a valid json. Error: " + err.Error())
-		return nil, err
+		return nil, customerror.WithOperation(err)
 	}
 
 	return encodedManifests, nil
@@ -70,7 +67,7 @@ func (helmTemplate HelmTemplate) renderManifest(chart chart.Chart, values chartu
 	templateRender, err := engine.Render(&chart, values)
 
 	if err != nil {
-		return nil, err
+		return nil, customerror.New("Helm engine render failed", err.Error(), nil)
 	}
 
 	return templateRender, nil
@@ -80,56 +77,72 @@ func (helmTemplate HelmTemplate) getHelmChartAndValues(templateContent, valueCon
 
 	newChart, err := loader.LoadArchive(strings.NewReader(templateContent))
 	if err != nil {
-		return chart.Chart{}, nil, errors.New("Error load chart archive. Error: " + err.Error())
+		return chart.Chart{}, nil, customerror.New("Failed load archive template value", err.Error(), nil)
 	}
 
 	values, err := chartutil.ReadValues([]byte(valueContent))
 	if err != nil {
-		return chart.Chart{}, nil, errors.New("Error load chart values. Error: " + err.Error())
+		return chart.Chart{}, nil, customerror.New("Failed read chart value", err.Error(), nil)
 	}
 
-	renderedValues, err := chartutil.ToRenderValues(newChart, values.AsMap(), chartutil.ReleaseOptions{}, nil)
+	renderedHelmObjects, err := chartutil.ToRenderValues(newChart, values.AsMap(), chartutil.ReleaseOptions{}, nil)
 	if err != nil {
 		return chart.Chart{}, nil, err
 	}
 
-	overridedValues, err := helmTemplate.overrideValues(renderedValues.AsMap(), overrideValues)
+	renderedValues, err := helmTemplate.getValuesHelmObject(renderedHelmObjects)
 	if err != nil {
-		return chart.Chart{}, nil, errors.New("Error override values in template. Error: " + err.Error())
+		return chart.Chart{}, nil, customerror.WithOperation(err)
 	}
 
-	return *newChart, overridedValues, nil
+	overridedValues, err := helmTemplate.overrideValues(renderedValues, overrideValues)
+	if err != nil {
+		return chart.Chart{}, nil, customerror.WithOperation(err)
+	}
 
+	renderedHelmObjects["Values"] = overridedValues
+
+	return *newChart, renderedHelmObjects, nil
+
+}
+
+func (helmTemplate HelmTemplate) getValuesHelmObject(renderedHelmObjects chartutil.Values) (map[string]interface{}, error) {
+	var values map[string]interface{}
+	valuesBytes, err := json.Marshal(renderedHelmObjects["Values"])
+	if err != nil {
+		return nil, customerror.New("Failed marshal values", err.Error(), nil)
+	}
+	err = json.Unmarshal(valuesBytes, &values)
+	if err != nil {
+		return nil, customerror.New("Failed unmarshal values", err.Error(), nil)
+	}
+	return values, nil
 }
 
 func (helmTemplate HelmTemplate) overrideValues(
 	chartValues map[string]interface{}, overrideValues map[string]string,
 ) (map[string]interface{}, error) {
-	overridedChartValues := map[string]interface{}{}
+	chartValuesBytes, _ := json.Marshal(chartValues)
 
-	for chartValueKey, chartValue := range chartValues {
-		chartValueBytes, _ := json.Marshal(chartValue)
-
-		newChartValueBytes, err := helmTemplate.overrideValueInChartValueBytes(chartValueBytes, overrideValues)
-		if err != nil {
-			return nil, err
-		}
-
-		newChartValue, err := helmTemplate.chartValueBytesToStructure(newChartValueBytes)
-		if err != nil {
-			return nil, err
-		}
-		overridedChartValues[chartValueKey] = newChartValue
+	newChartValueBytes, err := helmTemplate.overrideValueInChartValueBytes(chartValuesBytes, overrideValues)
+	if err != nil {
+		return nil, customerror.WithOperation(err)
+	}
+	newChartValue, err := helmTemplate.chartValueBytesToStructure(newChartValueBytes)
+	if err != nil {
+		return nil, customerror.WithOperation(err)
 	}
 
-	return overridedChartValues, nil
+	return newChartValue, nil
 }
 
 func (helmTemplate HelmTemplate) chartValueBytesToStructure(chartValueBytes []byte) (map[string]interface{}, error) {
 	var newChartValue map[string]interface{}
 	err := json.Unmarshal(chartValueBytes, &newChartValue)
 	if err != nil {
-		return nil, err
+		return nil, customerror.New("Failed unmarshal chart value", err.Error(), map[string]string{
+			"body": string(chartValueBytes),
+		})
 	}
 
 	return newChartValue, nil
@@ -143,7 +156,9 @@ func (helmTemplate HelmTemplate) overrideValueInChartValueBytes(
 	for keyPath, value := range overrideValues {
 		manifestStringOverrided, err := sjson.Set(string(newChartValueBytes), keyPath, value)
 		if err != nil {
-			return nil, err
+			return nil, customerror.New("Failed sjson set", err.Error(), map[string]string{
+				"body": string(newChartValueBytes),
+			})
 		}
 
 		newChartValueBytes = []byte(manifestStringOverrided)
@@ -160,22 +175,25 @@ func (helmTemplate HelmTemplate) encodeManifests(manifests map[string]string) (m
 			continue
 		}
 
-		decode := scheme.Codecs.UniversalDeserializer().Decode
-		obj, _, err := decode([]byte(manifest), nil, nil)
-		if err != nil {
+		d := kubeyaml.NewYAMLOrJSONDecoder(bytes.NewReader([]byte(manifest)), 4096)
+		ext := runtime.RawExtension{}
+		if err := d.Decode(&ext); err != nil {
 			return nil, err
 		}
 
-		if obj == nil {
-			return nil, errors.New("Codec universal deserializer nil")
+		ext.Raw = bytes.TrimSpace(ext.Raw)
+		if len(ext.Raw) == 0 || bytes.Equal(ext.Raw, []byte("null")) {
+			continue
 		}
 
-		unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
-		if err != nil {
-			return nil, err
+		u := &unstructured.Unstructured{}
+		if err := kubeyaml.Unmarshal(ext.Raw, u); err != nil {
+			return nil, customerror.New("Failed encode manifest", err.Error(), map[string]string{
+				"body": manifest,
+			})
 		}
 
-		encodedManifests[key] = unstructuredObj
+		encodedManifests[key] = u.Object
 	}
 
 	return encodedManifests, nil

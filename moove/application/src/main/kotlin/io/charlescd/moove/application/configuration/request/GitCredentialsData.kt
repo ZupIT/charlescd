@@ -20,12 +20,17 @@ import io.charlescd.moove.domain.GitCredentials
 import io.charlescd.moove.domain.GitServiceProvider
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 data class GitCredentialsData(
     @field:NotBlank
+    @field:Size(max = 2048)
     val address: String,
+    @field:Size(max = 100)
     val username: String? = null,
+    @field:Size(max = 100)
     val password: String? = null,
+    @field:Size(max = 256)
     val accessToken: String? = null,
     @field:NotNull
     val serviceProvider: GitServiceProvider

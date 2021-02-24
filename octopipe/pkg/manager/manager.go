@@ -20,6 +20,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/argoproj/gitops-engine/pkg/utils/kube"
+	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
+	"k8s.io/klog/klogr"
 	pipelinePKG "octopipe/pkg/pipeline"
 
 	log "github.com/sirupsen/logrus"
@@ -155,12 +158,17 @@ func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipel
 		return err
 	}
 
+	kubectl := &kube.KubectlCmd{
+		Log:    klogr.New(),
+		Tracer: tracing.NopTracer{},
+	}
 	deployment := manager.deploymentMain.NewDeployment(
 		step.Action,
 		false,
 		pipeline.Namespace,
 		manifest,
 		config,
+		kubectl,
 	)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeManifest", "error": err.Error()}).Error("Failed in deployment creation")

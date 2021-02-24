@@ -27,7 +27,8 @@ import Placeholder from 'core/components/Placeholder';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
-import { isRoot } from 'core/utils/auth';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
+import { isRequired, maxLength } from 'core/utils/validations';
 import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateName } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
@@ -37,12 +38,20 @@ import ChangePassword from './ChangePassword';
 import Styled from './styled';
 import Menu from './Menu';
 import Loader from './Loaders';
+import Icon from 'core/components/Icon';
 
 const Account = () => {
   const name = getProfileByKey('name');
   const email = getProfileByKey('email');
   const [currentUser, setCurrentUser] = useState<User>();
-  const { register, handleSubmit } = useForm<User>();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm<User>({
+    mode: 'onChange'
+  });
   const { findByEmail, user } = useUser();
   const { updateNameById, user: userUpdated, status } = useUpdateName();
   const [toggleModal, setToggleModal] = useState(false);
@@ -86,14 +95,26 @@ const Account = () => {
       <Styled.Layer>
         <ContentIcon icon="user">
           {isRoot() ? (
-            <InputTitle
-              key={currentUser.name}
-              name="name"
-              resume
-              ref={register({ required: true })}
-              defaultValue={user.name}
-              onClickSave={handleSubmit(onSubmit)}
-            />
+            <>
+              <InputTitle
+                key={currentUser.name}
+                name="name"
+                resume
+                ref={register({
+                  required: isRequired(),
+                  maxLength: maxLength()
+                })}
+                defaultValue={user.name}
+                onClickSave={handleSubmit(onSubmit)}
+                isDisabled={!isValid}
+              />
+              {errors.name && (
+                <Styled.FieldErrorWrapper>
+                  <Icon name="error" color="error" />
+                  <Text.h6 color="error">{errors.name.message}</Text.h6>
+                </Styled.FieldErrorWrapper>
+              )}
+            </>
           ) : (
             <Text.h2 color="light">{user.name}</Text.h2>
           )}
@@ -115,13 +136,15 @@ const Account = () => {
 
   const renderTabActions = () => (
     <Styled.Actions>
-      <LabeledIcon
-        icon="account"
-        marginContent="5px"
-        onClick={() => setToggleModal(true)}
-      >
-        <Text.h5 color="dark">Change password</Text.h5>
-      </LabeledIcon>
+      {!isIDMEnabled() && (
+        <LabeledIcon
+          icon="account"
+          marginContent="5px"
+          onClick={() => setToggleModal(true)}
+        >
+          <Text.h5 color="dark">Change password</Text.h5>
+        </LabeledIcon>
+      )}
     </Styled.Actions>
   );
 

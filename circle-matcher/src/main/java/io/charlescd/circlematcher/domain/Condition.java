@@ -53,7 +53,7 @@ public enum Condition {
         }
     },
 
-    LESS_THAN("toNumber(%s) < toNumber(%s)") {
+    LOWER_THAN("toNumber(%s) < toNumber(%s)") {
         public String expression(String key, List<String> values) {
             return defaultExpression(key, values);
         }
