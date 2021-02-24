@@ -1,0 +1,2 @@
+-- name: create
+INSERT INTO system_tokens VALUES (?, ?, ?, ?, ?, ?, ?, ?);
