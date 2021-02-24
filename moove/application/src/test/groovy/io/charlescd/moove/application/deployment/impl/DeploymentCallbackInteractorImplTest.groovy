@@ -16,6 +16,14 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.charlescd.moove.application.CsvSegmentationService
+import io.charlescd.moove.application.WebhookService
+import io.charlescd.moove.application.WorkspaceService
+import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.WebhookEventService
@@ -27,8 +35,10 @@ import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.domain.service.HermesService
+import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.CircleMatcherService
 import spock.lang.Specification
-
 import java.time.LocalDateTime
 
 class DeploymentCallbackInteractorImplTest extends Specification {
@@ -38,9 +48,29 @@ class DeploymentCallbackInteractorImplTest extends Specification {
     private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
     private HermesService hermesService = Mock(HermesService)
     private BuildRepository buildRepository = Mock(BuildRepository)
+    private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private UserRepository userRepository = Mock(UserRepository)
+
+    private CircleMatcherService circleMatcherService
+    private WorkspaceService workspaceService
+    private CsvSegmentationService csvSegmentationService
+    private WebhookEventService webhookEventService
+    private DeploymentService deploymentService
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
 
     void setup() {
-        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(new DeploymentService(deploymentRepository), new WebhookEventService(hermesService, new BuildService(buildRepository)))
+        this.workspaceService = new WorkspaceService(workspaceRepository, userRepository)
+        this.circleMatcherService = Mock(CircleMatcherService)
+        this.webhookEventService = new WebhookEventService(hermesService, new BuildService(buildRepository))
+        this.deploymentService = new DeploymentService(deploymentRepository)
+        this.csvSegmentationService = new CsvSegmentationService(objectMapper);
+        this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(
+                deploymentService,
+                webhookEventService,
+                circleMatcherService,
+                workspaceService,
+                csvSegmentationService
+        )
     }
 
     def "when deployment does not exists should throw an exception"() {
@@ -65,6 +95,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.SUCCEEDED)
 
+        def circle = getCircle(false)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
 
@@ -81,9 +113,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.deploymentRepository.updateStatus(previousDeployment.id, DeploymentStatusEnum.NOT_DEPLOYED)
 
-        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
 
         1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * circleMatcherService.update(_, _ , _, _)
 
         1 * this.deploymentRepository.update(_) >> { arguments ->
             def deployment = arguments[0]
@@ -103,14 +139,14 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         given:
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.SUCCEEDED)
 
-        def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "1a58c78a-6acb-11ea-bc55-0242ac130003")
-
+        def circle = getCircle(true
+        )
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
                 buildId, workspaceId, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
@@ -121,7 +157,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         0 * this.deploymentRepository.updateStatus(previousDeployment.id, DeploymentStatusEnum.NOT_DEPLOYED)
 
-        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
 
         1 * this.hermesService.notifySubscriptionEvent(_)
 
@@ -144,11 +180,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         given:
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.FAILED)
 
+        def circle = getCircle(false)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                buildId, workspaceId, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
@@ -160,7 +198,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         0 * this.deploymentRepository.updateStatus(previousDeployment.id, DeploymentStatusEnum.NOT_DEPLOYED)
 
-        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOY_FAILED))
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOY_FAILED, circle))
 
         1 * this.hermesService.notifySubscriptionEvent(_)
 
@@ -182,8 +220,10 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         given:
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.TIMED_OUT)
 
+        def circle = getCircle(false)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                buildId, workspaceId, null)
 
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
                 "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
@@ -198,7 +238,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         0 * this.deploymentRepository.updateStatus(previousDeployment.id, DeploymentStatusEnum.NOT_DEPLOYED)
 
-        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOY_FAILED))
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOY_FAILED, circle))
 
         1 * this.hermesService.notifySubscriptionEvent(_)
 
@@ -220,21 +260,23 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         given:
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
 
+        def circle = getCircle(false)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), LocalDateTime.now(), DeploymentStatusEnum.UNDEPLOYING, circle,
-                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+                buildId, workspaceId, null)
 
         when:
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
         then:
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
 
         0 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED)
 
         0 * this.deploymentRepository.updateStatus(_ as String, _ as DeploymentStatusEnum)
 
-        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
 
         1 * this.hermesService.notifySubscriptionEvent(_)
 
@@ -257,6 +299,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         given:
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOY_FAILED)
 
+        def circle = getCircle(false)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, workspaceId, null)
 
@@ -270,9 +314,11 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         0 * this.deploymentRepository.updateStatus(_ as String, _ as DeploymentStatusEnum)
 
-        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED))
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
 
         1 * this.hermesService.notifySubscriptionEvent(_)
+
+        0 * this.circleMatcherService.update(_, _, _,_)
 
         1 * this.deploymentRepository.update(_) >> { arguments ->
             def deployment = arguments[0]
@@ -286,6 +332,232 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         }
 
         notThrown()
+    }
+
+    def 'when callback is in default circle should not update status in circle matcher'() {
+        given:
+
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.SUCCEEDED)
+
+        def circle = getCircle(true)
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                buildId, workspaceId, null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+        1 * this.deploymentRepository.update(_)
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.UNDEPLOYING, circle))
+        0 * circleMatcherService.update(_, _, _, _)
+        1 * this.hermesService.notifySubscriptionEvent(_)
+    }
+
+    def 'when callback of deploy is SUCCEEDED should update status to active in circle matcher'() {
+        given:
+        def deploymentId = "314d7293-47d0-4d68-900c-02b834a15cef"
+
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.SUCCEEDED)
+
+        def circle = getCircle(false)
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                buildId, workspaceId, null)
+        def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null)
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
+
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED) >> Optional.of(previousDeployment)
+
+        1 * this.deploymentRepository.update(_)
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def matcherUrl = arguments[2]
+            def active = arguments[3]
+
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
+            assert matcherUrl.toString() == workspace.circleMatcherUrl
+            assert reference == circle.reference
+            assert active == true
+        }
+
+    }
+
+    def 'when callback of deploy is UNDEPLOYED should update status to inactive in circle matcher'() {
+        given:
+
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
+
+        def circle = getCircle(false)
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                buildId, workspaceId, null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
+
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def matcherUrl = arguments[2]
+            def active = arguments[3]
+
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
+            assert matcherUrl.toString() == workspace.circleMatcherUrl
+            assert reference == circle.reference
+            assert active == false
+        }
+    }
+
+    def 'when callback of deploy is FAILED should not update status in circle matcher'() {
+        given:
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.FAILED)
+
+        def circle = getCircle(false)
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                buildId, workspaceId, null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        0 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        0 * this.circleMatcherService.update(_, _, _, _)
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
+
+    }
+
+    def 'when callback of deploy is UNDEPLOY_FAILED should not update status in circle matcher'() {
+        given:
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOY_FAILED)
+
+        def circle = getCircle(false)
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                buildId, workspaceId, null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        0 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        0 * this.circleMatcherService.update(_, _, _, )
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
+    }
+
+    def "when callback is of a circle created with csv should create the correct list of nodes "() {
+        given:
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
+
+        def circle = getCircle(false)
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * this.deploymentRepository.update(_)
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
+
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def matcherUrl = arguments[2]
+            def active = arguments[3]
+
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
+            assert matcherUrl.toString() == workspace.circleMatcherUrl
+            assert reference == circle.reference
+            assert active == false
+        }
+
+    }
+
+    def "when callback is of a circle created with csv and rules are empty should create a empty list of nodes "() {
+        given:
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.SUCCEEDED)
+
+        def workspaceId = workspaceId
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
+        def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "Circle", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
+                LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
+        def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
+                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        1 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED) >> Optional.of(previousDeployment)
+
+        1 * this.deploymentRepository.update(_)
+
+        1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
+
+        0 * this.circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
+        }
+
     }
 
     private static getDeploymentId() {
@@ -337,19 +609,27 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
     }
 
-    private static getCircle() {
+    private static getCircle(boolean defaultCircle) {
         return new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, workspaceId)
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, defaultCircle, workspaceId)
 
     }
 
-    private static getBuild(DeploymentStatusEnum status) {
+    private static getBuild(DeploymentStatusEnum status, Circle circle) {
         return new Build(buildId, author, LocalDateTime.now(), listFeatureSnapshot(),
                 'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', BuildStatusEnum.BUILT,
-                workspaceId, listDeployment(status))
+                workspaceId, listDeployment(status, circle))
     }
 
-    private static listDeployment(DeploymentStatusEnum status) {
+    private static getWorkspace() {
+        return  new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
+    }
+
+    private static listDeployment(DeploymentStatusEnum status, Circle circle) {
         def deployments = new ArrayList<Deployment>()
 
         def deployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, status, circle,
@@ -359,14 +639,4 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         return deployments
     }
 
-//    private static getCurrentDeployment() {
-//        return new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
-//                buildId, workspaceId, null)
-//    }
-//
-//    private static getPreviousDeployment() {
-//        return new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
-//                "6ba1d6f1-d443-42d9-b9cc-89097d76ab70", workspaceId, null)
-//
-//    }
 }

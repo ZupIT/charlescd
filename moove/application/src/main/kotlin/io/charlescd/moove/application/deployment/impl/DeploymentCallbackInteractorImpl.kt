@@ -16,12 +16,15 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import io.charlescd.moove.application.CsvSegmentationService
 import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.WebhookEventService
+import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.service.CircleMatcherService
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.transaction.Transactional
@@ -29,9 +32,11 @@ import javax.transaction.Transactional
 @Named
 open class DeploymentCallbackInteractorImpl(
     private val deploymentService: DeploymentService,
-    private val webhookEventService: WebhookEventService
-) :
-    DeploymentCallbackInteractor {
+    private val webhookEventService: WebhookEventService,
+    private val circleMatcherService: CircleMatcherService,
+    private val workspaceService: WorkspaceService,
+    private val csvSegmentationService: CsvSegmentationService
+) : DeploymentCallbackInteractor {
 
     @Transactional
     override fun execute(id: String, request: DeploymentCallbackRequest) {
@@ -39,6 +44,7 @@ open class DeploymentCallbackInteractorImpl(
         if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
             updateStatusOfPreviousDeployment(deployment.circle.id)
         }
+        updateStatusInCircleMatcher(deployment.circle, request)
         deploymentService.update(deployment)
         notifyEvent(request, deployment)
     }
@@ -69,6 +75,25 @@ open class DeploymentCallbackInteractorImpl(
                     DeploymentStatusEnum.NOT_DEPLOYED
                 )
             }
+    }
+
+    private fun updateStatusInCircleMatcher(circle: Circle, request: DeploymentCallbackRequest) {
+        if (isSuccessCallback(request.deploymentStatus) && !circle.defaultCircle) {
+            val workspace = this.workspaceService.find(circle.workspaceId)
+            val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
+            if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
+                val jsonList = csvSegmentationService.createJsonNodeList(circle.rules)
+                jsonList.chunked(100).map {
+                    this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
+                }
+            } else {
+                this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
+            }
+        }
+    }
+
+    private fun isSuccessCallback(deploymentStatus: DeploymentRequestStatus): Boolean {
+        return deploymentStatus === DeploymentRequestStatus.SUCCEEDED || deploymentStatus === DeploymentRequestStatus.UNDEPLOYED
     }
 
     private fun notifyEvent(request: DeploymentCallbackRequest, deployment: Deployment) {

@@ -109,14 +109,14 @@ class ConditionTest extends Specification {
         assert expression == "toStr(getPath(input, 'region')).endsWith(toStr('north'))"
     }
 
-    def "Less than expression should parse to number and then compare only the first value"() {
+    def "Lower than expression should parse to number and then compare only the first value"() {
 
         given:
         def key = "age"
         def values = ["43", "32"]
         when:
 
-        def expression = Condition.LESS_THAN.expression(OpUtils.inputValue(key), values)
+        def expression = Condition.LOWER_THAN.expression(OpUtils.inputValue(key), values)
 
         then:
 
