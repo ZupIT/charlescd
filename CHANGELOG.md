@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0 (24/02/2021)
+- [#883](https://github.com/ZupIT/charlescd/pull/883) Helm chart refactor
+- [#870](https://github.com/ZupIT/charlescd/pull/870) CI Update of charts and changelog
+- [#928](https://github.com/ZupIT/charlescd/pull/928) Enhancement/hermes tests
+- [#925](https://github.com/ZupIT/charlescd/pull/925) Resources whitelist adr
+- [#929](https://github.com/ZupIT/charlescd/pull/929) refactoring last status health check endpoint
+- [#927](https://github.com/ZupIT/charlescd/pull/927) Removing mem param from dockerfile.
+- [#920](https://github.com/ZupIT/charlescd/pull/920) Hermes - rabbit consumer
+
+---
+
 ## 0.5.7 (23/02/2021)
 - [#915](https://github.com/ZupIT/charlescd/pull/915) Fix butler operator namespace issues
 - [#831](https://github.com/ZupIT/charlescd/pull/831) Fix override clean routes
@@ -471,10 +482,3 @@
 - [#369](https://github.com/ZupIT/charlescd/pull/369) Merge default deployments
 - [#377](https://github.com/ZupIT/charlescd/pull/377) validate image url to match k8s format and length
 - [#376](https://github.com/ZupIT/charlescd/pull/376) validate unique components per on deploy
-
----
-
-## 0.3.2 (07/08/2020)
-- [#368](https://github.com/ZupIT/charlescd/pull/368) extract functions
-- [#343](https://github.com/ZupIT/charlescd/pull/343) remove quiz app workflow
-- [#367](https://github.com/ZupIT/charlescd/pull/367) Fixing octopipe dockerfile path 
