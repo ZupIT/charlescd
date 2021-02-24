@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
@@ -71,17 +71,13 @@ const WorkspaceMenu = ({
   }, [onIDMFlow, filterWorkspace, findWorkspacesByUser, dispatch, userId]);
 
   const onChange = useCallback((value: string) => {
-    if(isRoot()) {
       const page = 0;
       dispatch(resetContentAction());
       filterWorkspace(value, page);
-    }
   }, [dispatch, filterWorkspace]);
 
   const loadMore = (page: number) => {
-    if(isRoot()) {
-      filterWorkspace('', page);
-    }
+    filterWorkspace('', page);
   };
 
   const renderList = (data: WorkspacePaginationItem[]) =>
