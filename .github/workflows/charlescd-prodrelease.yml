@@ -389,17 +389,17 @@ jobs:
             auto generated PR
             Signed-off-by: Charles CD Bot <charlescdbot@users.noreply.github.com>
 
-      - name: Zup Settings
-        run: |
-          cat <<-EOF > values-charles.yaml
-          ${{ secrets.VALUES_CHARLES }}
-          EOF
+      # - name: Zup Settings
+      #   run: |
+      #     cat <<-EOF > values-charles.yaml
+      #     ${{ secrets.VALUES_CHARLES }}
+      #     EOF
 
-      - name: Deploy
-        uses: WyriHaximus/github-action-helm3@v1.0.0
-        with:
-          exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --namespace=charles --values=./values-charles.yaml
-          kubeconfig: '${{ secrets.KUBECONFIG }}'
+      # - name: Deploy
+      #   uses: WyriHaximus/github-action-helm3@v1.0.0
+      #   with:
+      #     exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --namespace=charles --values=./values-charles.yaml
+      #     kubeconfig: '${{ secrets.KUBECONFIG }}'
 
       - name: Zup Settings dev
         run: |

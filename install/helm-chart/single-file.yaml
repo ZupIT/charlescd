@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "OW93UXBaSVBDMQ=="
-  postgresql-password: "cmJCekxBU0tROA=="
+  postgresql-postgres-password: "amNhT1plbjVzNg=="
+  postgresql-password: "Mm0xTzBreEVXdQ=="
 ---
 # Source: test/charts/redis/templates/secret.yaml
 apiVersion: v1
