@@ -60,7 +60,7 @@ export const useUserGroup = (): FetchProps => {
         const e = await errorSave.json();
         dispatch(
           toogleNotification({
-            text: `[${e?.status}] ${e?.text}`,
+            text: `[${e?.code}] ${e?.message}`,
             status: 'error'
           })
         );
