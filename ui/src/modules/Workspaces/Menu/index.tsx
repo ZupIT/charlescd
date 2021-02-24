@@ -61,6 +61,7 @@ const WorkspaceMenu = ({
       onIDMFlow();
     } else {
       if(isRoot()) {
+        dispatch(resetContentAction());
         filterWorkspace();
       }
       else {
@@ -70,17 +71,18 @@ const WorkspaceMenu = ({
     }
   }, [onIDMFlow, filterWorkspace, findWorkspacesByUser, dispatch, userId]);
 
-  const onChange = useCallback(() => {
+  const onChange = useCallback((value: string) => {
     if(isRoot()) {
       const page = 0;
       dispatch(resetContentAction());
-      filterWorkspace(name, page);
+      filterWorkspace(value, page);
     }
-  }, [dispatch, filterWorkspace, name]);
+  }, [dispatch, filterWorkspace]);
 
   const loadMore = (page: number) => {
-    if(isRoot())
+    if(isRoot()) {
       filterWorkspace(name, page);
+    }
   };
 
   const renderList = (data: WorkspacePaginationItem[]) =>
@@ -129,7 +131,7 @@ const WorkspaceMenu = ({
       <Styled.Content>
         <Styled.SearchInput
           resume
-          onSearch={() => onChange()}
+          onSearch={(value) => onChange(value)}
           disabled={!isRoot()}
           maxLength={64}
         />
