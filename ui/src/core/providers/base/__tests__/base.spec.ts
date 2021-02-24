@@ -42,6 +42,6 @@ test('base request reject', async () => {
 
   await baseRequest('/test')({})
     .catch(async err =>
-      expect(error).toEqual(error)
+      expect(err).toEqual(error)
     );
 });
