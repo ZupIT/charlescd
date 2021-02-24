@@ -42,7 +42,7 @@ spec:
       containers:
         - name: {{ .name }}
           {{ $appEnvs | indent 10 }}
-          image: {{ .image.registry }}/{{ .image.application }}:{{-  .image.tag | default $.Chart.Version }}
+          image: {{ .image.registry }}/{{ .image.application }}:{{-  .image.tag | default $.Chart.AppVersion }}
           imagePullPolicy: {{ .pullPolicy }}
           ports:
             - name: http
