@@ -42,16 +42,19 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           label="Enter name"
           name={`components[${index}].name`}
           ref={register(isRequiredAndNotBlank)}
+          defaultValue={field.name}
         />
         <Styled.Components.Number
           name={`components[${index}].latencyThreshold`}
           label="Latency Threshold (ms)"
           ref={register(isRequiredAndNotBlank)}
+          defaultValue={field.latencyThreshold}
         />
         <Styled.Components.Number
           name={`components[${index}].errorThreshold`}
           label="Http Error Threshold (%)"
           ref={register(isRequiredAndNotBlank)}
+          defaultValue={field.errorThreshold}
         />
       </Styled.Components.Wrapper>
       <Styled.Subtitle onClick={() => handleMoreOptions(index)} color="dark">
@@ -66,6 +69,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
               label="Insert a host for virtual service use"
               name={`components[${index}].hostValue`}
               ref={register(isRequiredAndNotBlank)}
+              defaultValue={field.hostValue}
             />
             <Styled.Popover
               title="Host name"
@@ -81,6 +85,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
               label="Insert a ingress name if necessary"
               name={`components[${index}].gatewayName`}
               ref={register(isRequiredAndNotBlank)}
+              defaultValue={field.gatewayName}
             />
             <Styled.Popover
               title="Istio ingress"

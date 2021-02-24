@@ -32,7 +32,6 @@ import {
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
-import Icon from 'core/components/Icon';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 type Props = {
@@ -50,7 +49,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     handleSubmit,
     register,
     control,
-    setError,
     errors,
     watch,
     formState: { isValid }
@@ -60,7 +58,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [loadingProviders, setLoadingProviders] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const { getAllDataSourceMetrics } = useProviderMetrics();
-  const { saveMetric, status: creatingStatus, validationError } = useSaveMetric(
+  const { saveMetric, status: creatingStatus } = useSaveMetric(
     metric?.id
   );
   const [providerOptions, setProviderOptions] = useState<Option[]>();
@@ -70,14 +68,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [metrics, setMetrics] = useState<Option[]>();
   const watchDataSourceId = watch('dataSourceId');
   const canShowForm = watchDataSourceId || metric?.id;
-
-  useEffect(() => {
-    if (validationError?.errors?.length) {
-      validationError.errors.forEach(({ field, error }) => {
-        setError(field, { message: error });
-      });
-    }
-  }, [validationError, setError]);
 
   useEffect(() => {
     if (metric) {
@@ -127,9 +117,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
           onGoBack();
         }
       })
-      .catch(error => {
-        console.log(error);
-      });
   };
 
   return (
@@ -158,14 +145,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               label="Type a nickname for the metric"
               maxLength={100}
             />
-            {!!errors.nickname && (
-              <Styled.FieldErrorWrapper>
-                <Icon name="error" color="error" />
-                <Text.h6 color="error">
-                  {errors.nickname.message || 'Type a valid nickname'}
-                </Text.h6>
-              </Styled.FieldErrorWrapper>
-            )}
             {!loadingProviders && (
               <Styled.Select
                 control={control}
@@ -218,14 +197,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                             metrics
                           )}
                         />
-                        {!!errors.metric && (
-                          <Styled.FieldErrorWrapper>
-                            <Icon name="error" color="error" />
-                            <Text.h6 color="error">
-                              {errors.metric.message}
-                            </Text.h6>
-                          </Styled.FieldErrorWrapper>
-                        )}
                       </>
                     )}
                     <BasicQueryForm />
@@ -242,16 +213,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         label="Type a query"
                       />
                     </Styled.AdvancedQueryWrapper>
-                    {!!errors.query && (
-                      <Styled.FieldErrorWrapper>
-                        <Icon name="error" color="error" />
-                        <Text.h6 color="error">
-                          {errors.query.message
-                            ? errors.query.message
-                            : 'Type a valid query'}
-                        </Text.h6>
-                      </Styled.FieldErrorWrapper>
-                    )}
                   </>
                 )}
 

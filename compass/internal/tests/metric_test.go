@@ -203,7 +203,7 @@ func (s *SuiteMetric) TestUpdateMetric() {
 
 	metricStruct.Metric = "Name"
 
-	res, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
+	res, err := s.repository.UpdateMetric(metricStruct)
 
 	require.Nil(s.T(), err)
 
@@ -306,7 +306,7 @@ func (s *SuiteMetric) TestUpdateMetricError() {
 
 	metricStruct.Metric = "Name"
 
-	_, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
+	_, err := s.repository.UpdateMetric(metricStruct)
 
 	require.NotNil(s.T(), err)
 }

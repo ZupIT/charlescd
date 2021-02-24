@@ -32,7 +32,8 @@ export interface OctopipeDeploymentRequest {
   namespace: string;
   deployments: OctopipeDeployment[],
   unusedDeployments: OctopipeDeployment[],
-  proxyDeployments: K8sManifest[]
+  proxyDeployments: K8sManifest[],
+  unusedProxyDeployments: K8sManifest[],
   callbackUrl: string
   clusterConfig?: IEKSClusterConfig | IGenericClusterConfig | null
 }

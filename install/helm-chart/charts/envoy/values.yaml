@@ -14,7 +14,7 @@ cors:
   enabled: true
   hosts: []
 idm:
-  endpoint: charlescd-keycloak-http
+  endpoint: example-keycloak-http
   port: 80
   path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo
   protocol: http

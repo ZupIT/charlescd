@@ -19,8 +19,6 @@ package template
 import (
 	"errors"
 	"octopipe/pkg/template/helm"
-
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -39,10 +37,8 @@ type Template struct {
 func (main TemplateMain) NewTemplate(template Template) (UseCases, error) {
 	switch template.Type {
 	case HelmType:
-		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("Selected helm template")
 		return helm.NewHelmTemplate(template.HelmTemplate), nil
 	default:
-		log.WithFields(log.Fields{"function": "NewTemplate"}).Error("No template selected")
 		return nil, errors.New("Template not found")
 	}
 }
