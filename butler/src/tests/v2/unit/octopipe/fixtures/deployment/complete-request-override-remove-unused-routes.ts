@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces/git-providers.type'
 import { OctopipeDeploymentRequest } from '../../../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-deployment.interface'
-import { GitProvidersEnum } from '../../../../../../app/v2/core/configuration/interfaces'
 
-export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
+export const completeRequestWithUnusedRoutes: OctopipeDeploymentRequest = {
   namespace: 'sandbox',
   deployments: [
     {
@@ -57,9 +57,65 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       rollbackIfFailed: true
     },
     {
-      componentName: 'C',
+      componentName: 'D',
       helmRepositoryConfig: {
         type: GitProvidersEnum.GITHUB,
+        url: 'http://localhost:2222/helm',
+        token: 'git-token'
+      },
+      helmConfig: {
+        overrideValues: {
+          'image.tag': 'https://repository.com/D:v2',
+          deploymentName: 'D-v2-circle-id',
+          component: 'D',
+          tag: 'v2',
+          circleId: 'circle-id'
+        }
+      },
+      rollbackIfFailed: true
+    }
+  ],
+  unusedDeployments: [
+    {
+      componentName: 'A',
+      helmRepositoryConfig: {
+        type: GitProvidersEnum.GITHUB,
+        url: 'http://localhost:2222/helm',
+        token: 'git-token'
+      },
+      helmConfig: {
+        overrideValues: {
+          'image.tag': 'https://repository.com/A:v1',
+          deploymentName: 'A-v1-circle-id',
+          component: 'A',
+          tag: 'v1',
+          circleId: 'circle-id'
+        }
+      },
+      rollbackIfFailed: false
+    },
+    {
+      componentName: 'B',
+      helmRepositoryConfig: {
+        type: GitProvidersEnum.GITHUB,
+        url: 'http://localhost:2222/helm',
+        token: 'git-token'
+      },
+      helmConfig: {
+        overrideValues: {
+          'image.tag': 'https://repository.com/B:v1',
+          deploymentName: 'B-v1-circle-id',
+          component: 'B',
+          tag: 'v1',
+          circleId: 'circle-id'
+        }
+      },
+      rollbackIfFailed: false
+    },
+    {
+      componentName: 'C',
+      helmRepositoryConfig: {
+        type: 'GITHUB',
         url: 'http://localhost:2222/helm',
         token: 'git-token'
       },
@@ -72,10 +128,9 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: true
+      rollbackIfFailed: false
     }
   ],
-  unusedDeployments: [],
   proxyDeployments: [
     {
       apiVersion: 'networking.istio.io/v1alpha3',
@@ -339,27 +394,19 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
       metadata: {
-        name: 'C',
+        name: 'D',
         namespace: 'sandbox'
       },
       spec: {
-        host: 'C',
+        host: 'D',
         subsets: [
           {
             labels: {
-              component: 'C',
+              component: 'D',
               tag: 'v2',
               circleId: 'circle-id'
             },
             name: 'circle-id'
-          },
-          {
-            labels: {
-              component: 'C',
-              tag: 'v0',
-              circleId: 'default-circle-id'
-            },
-            name: 'default-circle-id'
           }
         ]
       }
@@ -368,13 +415,13 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'VirtualService',
       metadata: {
-        name: 'C',
+        name: 'D',
         namespace: 'sandbox'
       },
       spec: {
         gateways: [],
         hosts: [
-          'C'
+          'D'
         ],
         http: [
           {
@@ -390,7 +437,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
             route: [
               {
                 destination: {
-                  host: 'C',
+                  host: 'D',
                   subset: 'circle-id'
                 },
                 headers: {
@@ -421,7 +468,7 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
             route: [
               {
                 destination: {
-                  host: 'C',
+                  host: 'D',
                   subset: 'circle-id'
                 },
                 headers: {
@@ -438,7 +485,46 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
                 }
               }
             ]
-          },
+          }
+        ]
+      }
+    }
+  ],
+  unusedProxyDeployments: [
+    {
+      apiVersion: 'networking.istio.io/v1alpha3',
+      kind: 'DestinationRule',
+      metadata: {
+        name: 'C',
+        namespace: 'sandbox'
+      },
+      spec: {
+        host: 'C',
+        subsets: [
+          {
+            labels: {
+              component: 'C',
+              tag: 'v0',
+              circleId: 'default-circle-id'
+            },
+            name: 'default-circle-id'
+          }
+        ]
+      }
+    },
+    {
+      apiVersion: 'networking.istio.io/v1alpha3',
+      kind: 'VirtualService',
+      metadata: {
+        name: 'C',
+        namespace: 'sandbox'
+      },
+      spec: {
+        gateways: [],
+        hosts: [
+          'C'
+        ],
+        http: [
           {
             route: [
               {
@@ -465,7 +551,6 @@ export const noUnusedOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       }
     }
   ],
-  unusedProxyDeployments: [],
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null
 }
