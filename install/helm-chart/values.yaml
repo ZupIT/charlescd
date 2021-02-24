@@ -335,7 +335,7 @@ keycloak:
       /subsystem=undertow/server=default-server/host=default-host:write-attribute(name=default-web-module,value=keycloak-server.war)
       {{- end }}
       {{- end }}
-      /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="{{ .Values.charlesHost }}{{ .Values.contextPath }}")
+      /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="{{ .Values.charlesHost }}/{{ .Values.contextPath }}")
       run-batch
       stop-embedded-server
 
