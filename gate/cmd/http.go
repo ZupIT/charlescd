@@ -73,9 +73,16 @@ func buildCustomValidator() *CustomValidator {
 }
 
 func (server server) registerRoutes() {
-	api := server.httpServer.Group("")
+	api := server.httpServer.Group("/api")
 	{
 		api.GET("/health", handlers.Health())
 		api.GET("/metrics", handlers.Metrics())
+		v1 := api.Group("/v1")
+		{
+			st := v1.Group("/system-token")
+			{
+
+			}
+		}
 	}
 }
