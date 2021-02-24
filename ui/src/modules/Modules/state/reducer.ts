@@ -39,7 +39,10 @@ export const modulesReducer = (
     case ACTION_TYPES.loadModules: {
       return {
         ...state,
-        list: action.payload
+        list: {
+          ...action.payload,
+          content: [...state.list.content, ...(action?.payload?.content ?? [])]
+        }
       };
     }
     case ACTION_TYPES.loadModule: {
@@ -61,6 +64,12 @@ export const modulesReducer = (
       return {
         ...state,
         item: modulesInitialState.item
+      };
+    }
+    case ACTION_TYPES.resetModules: {
+      return {
+        ...state,
+        list: modulesInitialState.list
       };
     }
     default: {
