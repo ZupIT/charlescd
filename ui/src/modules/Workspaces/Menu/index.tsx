@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
@@ -46,6 +46,7 @@ const WorkspaceMenu = ({
   const dispatch = useDispatch();
   const isNotLoading = isRoot() ? !loading : status !== 'pending';
   const isRenderEmpty = isEmpty(list?.content || workspaces) && isNotLoading;
+  const [name, setName] = useState('');
 
   const onIDMFlow = useCallback(() => {
     if (isRoot()) {
@@ -71,13 +72,14 @@ const WorkspaceMenu = ({
   }, [onIDMFlow, filterWorkspace, findWorkspacesByUser, dispatch, userId]);
 
   const onChange = useCallback((value: string) => {
+      setName(value);
       const page = 0;
       dispatch(resetContentAction());
       filterWorkspace(value, page);
   }, [dispatch, filterWorkspace]);
 
   const loadMore = (page: number) => {
-    filterWorkspace('', page);
+    filterWorkspace(name, page);
   };
 
   const renderList = (data: WorkspacePaginationItem[]) =>
