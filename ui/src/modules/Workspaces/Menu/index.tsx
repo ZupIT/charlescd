@@ -43,7 +43,6 @@ const WorkspaceMenu = ({
   const userId = getProfileByKey('id');
   const workspaces = getProfileByKey('workspaces');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
-  const [name, setName] = useState('');
   const dispatch = useDispatch();
   const isNotLoading = isRoot() ? !loading : status !== 'pending';
   const isRenderEmpty = isEmpty(list?.content || workspaces) && isNotLoading;
@@ -81,7 +80,7 @@ const WorkspaceMenu = ({
 
   const loadMore = (page: number) => {
     if(isRoot()) {
-      filterWorkspace(name, page);
+      filterWorkspace('', page);
     }
   };
 
