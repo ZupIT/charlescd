@@ -1,17 +1,21 @@
-package tracking
+package logging
 
 import (
 	"fmt"
-	"github.com/google/uuid"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type CustomError struct {
 	ID         uuid.UUID         `json:"id"`
-	Title      string            `json:"title"`
+	Message    string            `json:"message"`
 	Detail     string            `json:"-"`
 	Operations []string          `json:"-"`
+	Timestamp  string            `json:"timestamp"`
 	Meta       map[string]string `json:"meta"`
 }
 
@@ -42,20 +46,30 @@ func Unwrap(err error) CustomError {
 	return *customErr
 }
 
-func NewError(title string, err error, meta map[string]string, operations ...string) error {
-	if meta == nil {
-		meta = map[string]string{
-			"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
-		}
-	} else {
-		meta["timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
-	}
-
+func NewError(message string, err error, meta map[string]string, operations ...string) error {
 	return &CustomError{
 		ID:         uuid.New(),
-		Title:      title,
+		Message:    message,
 		Meta:       meta,
 		Detail:     err.Error(),
 		Operations: operations,
+		Timestamp:  strconv.FormatInt(time.Now().Unix(), 10),
+	}
+}
+
+func NewValidationError(validationError error, uniTranslator *ut.UniversalTranslator) error {
+	errors := validationError.(validator.ValidationErrors)
+	translator, _ := uniTranslator.GetTranslator("en")
+	meta := make(map[string]string, 0)
+
+	for _, validErr := range errors {
+		meta[validErr.Namespace()] = validErr.Translate(translator)
+	}
+
+	return &CustomError{
+		ID:        uuid.New(),
+		Message:   "Invalid Inputs",
+		Meta:      meta,
+		Timestamp: strconv.FormatInt(time.Now().Unix(), 10),
 	}
 }
