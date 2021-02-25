@@ -38,7 +38,7 @@ export class ExecutionQuery {
   @IsBooleanString()
   public active: boolean
 
-  constructor(size: number, page: number, active: boolean) {
+  constructor(size = 20, page = 0, active: boolean) {
     this.size = size
     this.page = page
     this.active = active

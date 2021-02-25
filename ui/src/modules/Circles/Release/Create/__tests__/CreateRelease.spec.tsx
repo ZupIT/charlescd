@@ -21,6 +21,10 @@ import selectEvent from 'react-select-event';
 import { FetchMock } from 'jest-fetch-mock';
 import CreateRelease from '../index';
 
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
 const mockGetModules = JSON.stringify({
   content: [
     {
@@ -69,7 +73,7 @@ test('form should be valid', async () => {
 
   await waitFor(() =>
     expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
-    { timeout: 500 }
+    { timeout: 700 }
   );
 });
 

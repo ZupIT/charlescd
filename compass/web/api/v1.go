@@ -72,7 +72,7 @@ func (api *Api) newV1Api(router *mux.Router) {
 	{
 		path := "/metrics-groups"
 		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics", path), metric.Create(api.metricMain, api.metricsGroupMain)).Methods("POST")
-		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Update(api.metricMain, api.metricsGroupMain)).Methods("PUT")
+		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Update(api.metricMain)).Methods("PUT")
 		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Delete(api.metricMain)).Methods("DELETE")
 	}
 	{
