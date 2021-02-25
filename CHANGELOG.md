@@ -20,7 +20,8 @@
 - [#923](https://github.com/ZupIT/charlescd/pull/923) Creating gate domain
 - [#913](https://github.com/ZupIT/charlescd/pull/913) Update Metrics Bug
 - [#779](https://github.com/ZupIT/charlescd/pull/779) Added new validation in the createModuleRequest
-- [#611](https://github.com/ZupIT/charlescd/pull/611) Identify only active circles
+- [#611](https://github.com/ZupIT/charlescd/pull/611) Identify only active circles  
+**Obs:By default all the circles created before this release will be returned on the /identify endpoint in matcher, after any operations on these circles (update, deploy) their state will be synchronized and will only be returned if they have active deployments associated**
 - [#613](https://github.com/ZupIT/charlescd/pull/613) User flow with external IDM
 - [#884](https://github.com/ZupIT/charlescd/pull/884) Bug fixes and improvements.
 - [#919](https://github.com/ZupIT/charlescd/pull/919) fix codecov version
