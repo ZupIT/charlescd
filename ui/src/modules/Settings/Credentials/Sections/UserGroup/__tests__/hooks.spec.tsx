@@ -20,7 +20,7 @@ import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useUserGroup } from '../hooks';
 import { UserGroup } from '../interfaces';
-import { ALREADY_ASSOCIATED_MESSAGE } from '../constants';
+import { ALREADY_ASSOCIATED_CODE, ALREADY_ASSOCIATED_MESSAGE } from '../constants';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -36,8 +36,7 @@ const error404 = {
 };
 
 const error422 = {
-  status: 422,
-  json: () => ({ message: ALREADY_ASSOCIATED_MESSAGE })
+  json: () => ({ code: ALREADY_ASSOCIATED_CODE, message: ALREADY_ASSOCIATED_MESSAGE })
 };
 
 const userGroup: UserGroup = {
@@ -82,4 +81,9 @@ test('to save new userGroup and trigger error 422', async () => {
   });
 
   await waitFor(() => expect(toggleNotificationSpy).toBeCalled());
+
+  expect(toggleNotificationSpy).toHaveBeenCalledWith({
+    status: 'error',
+    text: '[422] Group already associated to this workspace'
+  });
 });
