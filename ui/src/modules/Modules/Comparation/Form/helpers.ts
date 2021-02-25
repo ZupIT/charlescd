@@ -15,6 +15,7 @@
  */
 
 import { Option } from 'core/components/Form/Select/interfaces';
+import { isNotBlank, isRequired, trimValue } from 'core/utils/validations';
 import forEach from 'lodash/forEach';
 import { Helm } from 'modules/Modules/interfaces/Helm';
 import {
@@ -158,13 +159,22 @@ export const findGitProvider = (url: string) => {
   }
 };
 
-export const validateSlash = (input: string, name: string ) => {
+export const validateSlash = (input: string, name: string) => {
   if (input[0] === "/") {
     return `the ${name} field should not start with "/"`
-  } else if(input.slice(-1) === "/") {
+  } else if (input.slice(-1) === "/") {
     return `the ${name} field should not ends with "/"`
   }
   return true
 }
 
+
+export const getHelmFieldsValidations = (name: string) => ({
+  required: isRequired(),
+  validate: {
+    validSlash: (value: string) => validateSlash(value, name),
+    notBlank: isNotBlank
+  },
+  setValueAs: trimValue
+})
 

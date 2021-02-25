@@ -23,6 +23,7 @@ import isEmpty from 'lodash/isEmpty';
 import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 interface Props {
   index: number;
@@ -135,7 +136,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
         />
         <Styled.Module.Input
           name={`${prefixName}.version`}
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           // eslint-disable-next-line react-hooks/exhaustive-deps
           onChange={useCallback(debounce(onSearchTag, 700), [])}
           isLoading={status.isPending}
