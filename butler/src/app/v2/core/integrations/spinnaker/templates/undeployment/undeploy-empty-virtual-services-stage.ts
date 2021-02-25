@@ -22,7 +22,8 @@ import { DeploymentComponent } from '../../../../../api/deployments/interfaces/d
 export const getUndeploymentEmptyVirtualServiceStage = (
   component: DeploymentComponent,
   deployment: Deployment,
-  stageId: number
+  stageId: number,
+  evalStageId?: number
 ): Stage => ({
 
   account: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).account}`,
@@ -69,7 +70,7 @@ export const getUndeploymentEmptyVirtualServiceStage = (
   },
   name: `Undeploy Virtual Service ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: [],
+  requisiteStageRefIds: evalStageId ?  [`${evalStageId}`] : [],
   skipExpressionEvaluation: false,
   source: 'text',
   trafficManagement: {

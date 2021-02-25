@@ -24,7 +24,8 @@ export const getUndeploymentVirtualServiceStage = (
   component: DeploymentComponent,
   deployment: Deployment,
   activeComponents: Component[],
-  stageId: number
+  stageId: number,
+  evalStageId?: number
 ): Stage => ({
 
   account: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).account}`,
@@ -40,7 +41,7 @@ export const getUndeploymentVirtualServiceStage = (
   },
   name: `Undeploy Virtual Service ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: [],
+  requisiteStageRefIds: evalStageId ?  [`${evalStageId}`] : [],
   skipExpressionEvaluation: false,
   source: 'text',
   trafficManagement: {

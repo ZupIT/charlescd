@@ -1222,45 +1222,6 @@ export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = 
       manifests: [
         {
           apiVersion: 'networking.istio.io/v1alpha3',
-          kind: 'DestinationRule',
-          metadata: {
-            name: 'C',
-            namespace: 'sandbox'
-          },
-          spec: {
-            host: 'C',
-            subsets: []
-          }
-        }
-      ],
-      moniker: {
-        app: 'default'
-      },
-      name: 'Undeploy Destination Rules C',
-      refId: '21',
-      requisiteStageRefIds: [
-        '14'
-      ],
-      skipExpressionEvaluation: false,
-      source: 'text',
-      trafficManagement: {
-        enabled: false,
-        options: {
-          enableTraffic: false,
-          services: []
-        }
-      },
-      type: 'deployManifest'
-    },
-    {
-      account: 'default',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      manifests: [
-        {
-          apiVersion: 'networking.istio.io/v1alpha3',
           kind: 'VirtualService',
           metadata: {
             name: 'C',
@@ -1298,16 +1259,55 @@ export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = 
         app: 'default'
       },
       name: 'Undeploy Virtual Service C',
+      refId: '21',
+      requisiteStageRefIds: [
+          '14'
+      ],
+      skipExpressionEvaluation: false,
+      source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
+    },
+    {
+      account: 'default',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'DestinationRule',
+          metadata: {
+            name: 'C',
+            namespace: 'sandbox'
+          },
+          spec: {
+            host: 'C',
+            subsets: []
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Destination Rules C',
       refId: '22',
       requisiteStageRefIds: [
         '21'
       ],
-      skipExpressionEvaluation: false,
-      source: 'text',
       stageEnabled: {
-        expression: '${ #stage(\'Undeploy Destination Rules C\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Undeploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
+      skipExpressionEvaluation: false,
+      source: 'text',
       trafficManagement: {
         enabled: false,
         options: {
