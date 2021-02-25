@@ -305,7 +305,6 @@ env:
     value: "{{ .RangeContext.subscriptionRegisterLimit}}"
 {{- end -}}
 
-
 {{/*
 Create chart name and version as used by the chart label.
 */}}

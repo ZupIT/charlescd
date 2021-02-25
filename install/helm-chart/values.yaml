@@ -9,7 +9,7 @@ CharlesApplications:
   butler:
     enabled: true
     name: charlescd-butler
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /healthcheck
@@ -43,7 +43,7 @@ CharlesApplications:
   moove:
     enabled: true
     name: charlescd-moove
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /actuator/health
@@ -84,7 +84,7 @@ CharlesApplications:
   villager:
     enabled: true
     name: charlescd-villager
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /health
@@ -119,7 +119,7 @@ CharlesApplications:
     enabled: true
     serviceAccountName: charlescd-octopipe
     name: charlescd-octopipe
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /api/v1/health
@@ -149,7 +149,7 @@ CharlesApplications:
   ui:
     enabled: true
     name: charlescd-ui
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /
@@ -185,7 +185,7 @@ CharlesApplications:
   circleMatcher:
     enabled: true
     name: charlescd-circle-matcher
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /actuator/health
@@ -227,7 +227,7 @@ CharlesApplications:
   compass:
     enabled: true
     name: charlescd-compass
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /health
@@ -360,7 +360,7 @@ keycloak:
         -Dkeycloak.migration.strategy=IGNORE_EXISTING
 
   securityContext:
-    runAsUser: 0   
+    runAsUser: 0
     runAsNonRoot: false
 
   contextPath: keycloak/auth
@@ -396,12 +396,12 @@ keycloak:
   extraInitContainers: |
     - name: check-db-ready
       image: postgres:9.6.5
-      command: ['sh', '-c', 
-        'until pg_isready -h {{ .Values.database.host }} -p {{ .Values.database.port }}; 
+      command: ['sh', '-c',
+        'until pg_isready -h {{ .Values.database.host }} -p {{ .Values.database.port }};
         do echo waiting for database; sleep 2; done;']
   auth:
     adminPassword: firstpassword
-  
+
   extraVolumes: |
     - name: realm-secret
       configMap:

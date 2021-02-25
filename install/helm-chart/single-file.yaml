@@ -207,7 +207,7 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-hermes
-                  
+
                   - match:
                       prefix: "/"
                     route:
@@ -336,7 +336,7 @@ data:
                   socket_address:
                     address: charlescd-compass
                     port_value: 8080
-      
+
       - name: charlescd-hermes
         connect_timeout: 0.25s
         type: strict_dns
@@ -1816,19 +1816,19 @@ data:
     /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
     run-batch
     stop-embedded-server
-    
+
   keycloak.cli: |
     embed-server --server-config=standalone-ha.xml --std-out=echo
     batch
-    
+
     echo Configuring node identifier
-    
+
     ## Sets the node identifier to the node name (= pod name). Node identifiers have to be unique. They can have a
     ## maximum length of 23 characters. Thus, the chart's fullname template truncates its length accordingly.
     /subsystem=transactions:write-attribute(name=node-identifier, value=${jboss.node.name})
     
     echo Finished configuring node identifier
-    
+
     run-batch
     stop-embedded-server
 ---
@@ -6251,7 +6251,7 @@ spec:
     - name: http-stats
       port: 15672
       targetPort: stats
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: charlescd
 ---
@@ -6285,7 +6285,7 @@ spec:
       port: 15672
       targetPort: stats
       nodePort: null
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: charlescd
 ---
@@ -6324,7 +6324,7 @@ metadata:
     heritage: Helm
 spec:
   type: ClusterIP
-  
+
   ports:
     - name: redis
       port: 6379
@@ -6345,9 +6345,6 @@ spec:
     - name: http
       port: 3000
       targetPort: 3000
-    
-  selector:
-    app: charlescd-butler
 ---
 # Source: charlescd/templates/service.yaml
 apiVersion: v1
@@ -6390,7 +6387,7 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-    
+
   selector:
     app: charlescd-hermes
 ---
@@ -6420,7 +6417,7 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-    
+
   selector:
     app: charlescd-octopipe
 ---
@@ -6450,7 +6447,7 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-    
+
   selector:
     app: charlescd-villager
 ---
@@ -6642,12 +6639,12 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-                    
+
           env:
           - name: DATABASE_HOST
             value: charlescd-postgresql
@@ -6659,7 +6656,7 @@ spec:
             value: "3f2Yq8R4HhDCnefR"
           - name: DATABASE_NAME
             value: charlescd_butler
-          
+
           - name: MOOVE_URL
             value: "http://charlescd-moove:8080"
           - name: DARWIN_NOTIFICATION_URL
@@ -6719,14 +6716,14 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-                    
+
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: redis-standalone
-          
+
           - name: SPRING_REDIS_HOST
             value: charlescd-redis-master
-          
+
           - name: SPRING_REDIS_PORT
             value: "6379"
           - name: SPRING_REDIS_PASSWORD
@@ -6780,12 +6777,12 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-                    
+
           env:
             - name: DB_HOST
               value: "charlescd-postgresql"
@@ -6869,7 +6866,7 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: 'true'
       labels:
         app: charlescd-hermes
         version: charlescd-hermes
@@ -6877,12 +6874,12 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-hermes
-                    
+
           env:
             - name: DB_HOST
               value: "charlescd-postgresql"
@@ -6958,12 +6955,12 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-                    
+
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: "k8s"
@@ -6975,10 +6972,10 @@ spec:
             value: "7Qs2KuM9gYzw48BS"
           - name: KEYCLOCK_REALM
             value: "charlescd"
-          
+
           - name: KEYCLOAK_SERVER_URL
             value: "http://charlescd-keycloak-http/keycloak/auth"
-          
+
           - name: KEYCLOAK_PUBLIC_CLIENT_ID
             value: "realm-charlescd"
           - name: KEYCLOAK_CLIENT_ID
@@ -7037,7 +7034,7 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: 'true'
       labels:
         app: charlescd-octopipe
         version: charlescd-octopipe
@@ -7045,7 +7042,7 @@ spec:
       serviceAccountName: charlescd-octopipe
       containers:
         - name: charlescd-octopipe
-                    
+
           env:
             - name: APP_PORT
               value: "8080"
@@ -7099,7 +7096,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-                    
+
           env:
             - name: REACT_APP_API_URI
               value: http://charles.info.example
@@ -7162,12 +7159,12 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-                    
+
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
@@ -7235,10 +7232,10 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
-        
+
       containers:
         - name: keycloak
           securityContext:
@@ -7273,7 +7270,7 @@ spec:
                 -Dkeycloak.migration.provider=singleFile
                 -Dkeycloak.migration.file=/realm/keycloak.json
                 -Dkeycloak.migration.strategy=IGNORE_EXISTING
-            
+
           envFrom:
           ports:
             - name: http
@@ -7313,7 +7310,7 @@ spec:
             - name: realm-secret
               mountPath: "/realm/"
               readOnly: false
-            
+
       serviceAccountName: charlescd-keycloak
       securityContext:
         fsGroup: 1000
@@ -7396,7 +7393,7 @@ spec:
     spec:      
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -7410,7 +7407,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
       containers:
@@ -7541,11 +7538,11 @@ spec:
         checksum/config: cefd48a7bdc5d27ebbbb3cec3ba8633667894291ab320066430a07fd64077b5c
         checksum/secret: eb840fe925e30bd5dce7497b075d3d392c5a8ee5a7c20ee6c581c24bfdd31e12
     spec:
-      
+
       serviceAccountName: charlescd-rabbitmq
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -7558,7 +7555,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -7717,7 +7714,7 @@ spec:
         checksum/configmap: 82bd7784b1b3d4c09a0ca0731226e3c773fdffef6da3a1255b025b83506b342b
         checksum/secret: b250dfc5d956ed4a8c05d5f818c114b96b8e809b91551f0151e9ce197a5e6585
     spec:
-      
+
       securityContext:
         fsGroup: 1001
       serviceAccountName: default
@@ -7778,7 +7775,7 @@ spec:
               mountPath: /health
             - name: redis-data
               mountPath: /data
-              subPath: 
+              subPath:
             - name: config
               mountPath: /opt/bitnami/redis/mounted-etc
             - name: redis-tmp-conf
