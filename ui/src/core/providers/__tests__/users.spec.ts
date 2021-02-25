@@ -15,7 +15,7 @@
  */
 
 import { FetchMock } from 'jest-fetch-mock';
-import { createNewUser, patchProfileById, changePassword, findWorkspacesByUserId, findUserByEmail } from '../users';
+import { createNewUser, patchProfileById, changePassword, findAllWorkspaceUsers, findWorkspacesByUserId, findUserByEmail  } from '../users';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -67,6 +67,22 @@ test('update a user password provider request', async () => {
   const data = await response.json();
 
   expect(data).toEqual({ message: 'password updated' });
+});
+
+test('find user workspaces', async () => {
+  const filters = {
+    name: 'name',
+    email: 'charles@zup.com.br',
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({})
+  );
+
+  const response = await findAllWorkspaceUsers(filters)({});
+  const data = await response.json();
+
+  expect(data).toEqual({});
 });
 
 test('should get workspaces of some user', async () => {

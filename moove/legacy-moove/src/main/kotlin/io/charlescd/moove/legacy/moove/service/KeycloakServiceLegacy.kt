@@ -35,7 +35,7 @@ class KeycloakServiceLegacy(private val keycloak: Keycloak) {
             .delete(id)
     }
 
-    fun getEmailByToken(authorization: String): String {
+    fun getEmailByAuthorizationToken(authorization: String): String {
         val token = authorization.substringAfter("Bearer").trim()
         return TokenVerifier.create(token, AccessToken::class.java).token.email
     }

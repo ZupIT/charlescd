@@ -46,7 +46,7 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
 
     private fun createBuild(request: CreateComposedBuildRequest, workspaceId: String, user: User): Build {
 
-        val modules = findModules(request)
+        val modules = findModules(request, workspaceId)
 
         val buildId = UUID.randomUUID().toString()
         val featureId = UUID.randomUUID().toString()
@@ -85,10 +85,10 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
         buildId = buildId
     )
 
-    private fun findModules(request: CreateComposedBuildRequest): List<Module> {
+    private fun findModules(request: CreateComposedBuildRequest, workspaceId: String): List<Module> {
         val ids = request.modules.map { it.id }
 
-        val modules = moduleService.findByIds(ids)
+        val modules = moduleService.findByIdsAndWorkspaceId(ids, workspaceId)
         val difference = ids.minus(modules.map { it.id })
 
         if (difference.isNotEmpty()) {
