@@ -63,7 +63,7 @@ const Clause = ({
           <Styled.InputOperator
             readOnly
             type="text"
-            ref={register}
+            ref={register()}
             name={logicalOperatorName}
             onClick={() => changeOperatorValue(logicalOperatorName, form)}
             defaultValue={clauses?.logicalOperator?.toString()}
@@ -72,7 +72,7 @@ const Clause = ({
       )}
       <Styled.Input
         type="hidden"
-        ref={register}
+        ref={register()}
         name={`${prefixName}.type`}
         defaultValue="CLAUSE"
       />
