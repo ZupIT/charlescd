@@ -16,7 +16,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import isEqual from 'lodash/isEqual';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
@@ -30,7 +29,6 @@ import Components from './Components';
 import { component } from './constants';
 import {
   createGitApi,
-  validFields,
   findGitProvider,
   destructHelmUrl,
   validateSlash
@@ -43,7 +41,7 @@ import { isRequired } from 'core/utils/validations';
 
 interface Props {
   module: Module;
-  onChange: Function;
+  onChange: () => void;
 }
 
 const formDefaultValues = {
@@ -71,40 +69,25 @@ const buildFormDefaultValues = (isEdit: boolean, module: Module) => {
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
-  const isEdit = !isEmpty(module);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const isEditing = !isEmpty(module);
   const [helmUrl, setHelmUrl] = useState('');
   const history = useHistory();
 
   const form = useForm<Module>({
-    defaultValues: buildFormDefaultValues(isEdit, module)
+    defaultValues: buildFormDefaultValues(isEditing, module),
+    mode: 'onChange'
   });
 
   const {
     register: helmRegister,
     getValues: getHelmValues,
     setValue: setHelmValue,
-    errors: helmErrors,
-    watch: helmWatch
-  } = useForm<Helm>({mode: "onChange"});
-  const { register, control, getValues, handleSubmit, watch } = form;
-  const fieldArray = useFieldArray({ control, name: 'components' });
-  const watchFields = watch();
-  const watchHelmFields = helmWatch();
+    errors: helmErrors
+  } = useForm<Helm>({ mode: "onChange" });
+  const { register, control, handleSubmit, formState: { isValid } } = form;
+  const fieldArray = useFieldArray({ control, name: 'components', keyName: 'fieldId' });
   const [helmGitProvider, setHelmGitProvider] = useState<Option>(null);
 
-
-  useEffect(() => {
-    const form = getValues();
-    const isInvalid = !validFields(form);
-    const mod = {
-      name: module?.name,
-      gitRepositoryAddress: module?.gitRepositoryAddress,
-      helmRepository: module?.helmRepository
-    };
-
-    setIsDisabled(isEqual(mod, form) || isInvalid || !!Object.keys(helmErrors).length );
-  }, [watchFields, getValues, module, watchHelmFields, helmErrors]);
 
   useEffect(() => {
     if (updateStatus === 'resolved') {
@@ -113,21 +96,21 @@ const FormModule = ({ module, onChange }: Props) => {
   }, [updateStatus, onChange]);
 
   useEffect(() => {
-    if (isEdit && !helmGitProvider) {
+    if (isEditing && !helmGitProvider) {
       const optionGit = findGitProvider(module.helmRepository);
       setHelmGitProvider(optionGit);
       setHelmUrl(module.helmRepository);
     }
-  }, [setHelmValue, helmGitProvider, module, setHelmUrl, isEdit]);
+  }, [setHelmValue, helmGitProvider, module, setHelmUrl, isEditing]);
 
   useEffect(() => {
-    if (isEdit && helmUrl) {
+    if (isEditing && helmUrl) {
       destructHelmUrl(module?.helmRepository, helmGitProvider, setHelmValue);
     }
-  }, [setHelmValue, helmUrl, helmGitProvider, module, isEdit]);
+  }, [setHelmValue, helmUrl, helmGitProvider, module, isEditing]);
 
   const onSubmit = (data: Module) => {
-    if (isEdit) {
+    if (isEditing) {
       updateModule(module?.id, {
         ...data,
         helmRepository: createGitApi(getHelmValues(), helmGitProvider)
@@ -147,7 +130,7 @@ const FormModule = ({ module, onChange }: Props) => {
           <Styled.Input
             label="Insert url"
             name="helmGitlabUrl"
-            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm gitlab url" ) })}
+            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm gitlab url") })}
             error={helmErrors?.helmGitlabUrl?.message}
           />
         </Styled.FieldPopover>
@@ -156,7 +139,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert organization"
           name="helmOrganization"
-          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization" ) })}
+          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization") })}
           error={helmErrors?.helmOrganization?.message}
         />
       </Styled.FieldPopover>
@@ -191,7 +174,7 @@ const FormModule = ({ module, onChange }: Props) => {
 
   return (
     <Styled.Content>
-      {isEdit && (
+      {isEditing && (
         <Styled.Icon
           name="arrow-left"
           color="dark"
@@ -207,7 +190,7 @@ const FormModule = ({ module, onChange }: Props) => {
         />
       )}
       <Styled.Title color="light">
-        {isEdit ? 'Edit module' : 'Create module'}
+        {isEditing ? 'Edit module' : 'Create module'}
         <Popover
           title="How to create a module?"
           icon="info"
@@ -233,10 +216,10 @@ const FormModule = ({ module, onChange }: Props) => {
             defaultValue={module?.gitRepositoryAddress}
             ref={register({ required: true })}
           />
-          {!isEdit && <Components fieldArray={fieldArray} />}
+          {!isEditing && <Components fieldArray={fieldArray} />}
           <Styled.HelmWrapper>
             <Styled.Title color="light">
-              {!isEdit
+              {!isEditing
                 ? 'Add helm chart repository'
                 : 'Edit helm chart repository'}
             </Styled.Title>
@@ -250,13 +233,13 @@ const FormModule = ({ module, onChange }: Props) => {
             />
           </Styled.FieldWrapper>
           {helmGitProvider && renderGitHelm()}
-          <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
+          <Can I="write" a="modules" isDisabled={!isValid} passThrough>
             <Styled.Button
               type="submit"
               size="EXTRA_SMALL"
               isLoading={saveLoading || updateStatus === 'pending'}
             >
-              {isEdit ? 'Edit module' : 'Create module'}
+              {isEditing ? 'Edit module' : 'Create module'}
             </Styled.Button>
           </Can>
         </Styled.Form>
