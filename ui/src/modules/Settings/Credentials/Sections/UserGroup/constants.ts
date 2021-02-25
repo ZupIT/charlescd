@@ -15,3 +15,6 @@
  */
 
 export const FORM_USER_GROUP = 'user-group';
+
+export const ALREADY_ASSOCIATED_CODE = 'USER_GROUP_ALREADY_ASSOCIATED';
+export const ALREADY_ASSOCIATED_MESSAGE = 'user.group.already.associated';

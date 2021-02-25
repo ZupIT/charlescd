@@ -20,6 +20,7 @@ import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useUserGroup } from '../hooks';
 import { UserGroup } from '../interfaces';
+import { ALREADY_ASSOCIATED_MESSAGE } from '../constants';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -32,6 +33,11 @@ jest.mock('core/state/hooks', () => ({
 const error404 = {
   status: 404,
   json: () => ({ message: 'Error' })
+};
+
+const error422 = {
+  status: 422,
+  json: () => ({ message: ALREADY_ASSOCIATED_MESSAGE })
 };
 
 const userGroup: UserGroup = {
@@ -54,6 +60,20 @@ test('to save new userGroup and trigger error', async () => {
   const toggleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
 
   (fetch as FetchMock).mockRejectedValue(error404);
+
+  const { result } = renderHook(() => useUserGroup());
+
+  await act(async () => {
+    await result.current.save(userGroup);
+  });
+
+  await waitFor(() => expect(toggleNotificationSpy).toBeCalled());
+});
+
+test('to save new userGroup and trigger error 422', async () => {
+  const toggleNotificationSpy = jest.spyOn(ActionNotification, 'toogleNotification');
+
+  (fetch as FetchMock).mockRejectedValue(error422);
 
   const { result } = renderHook(() => useUserGroup());
 
