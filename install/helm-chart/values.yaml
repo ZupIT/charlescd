@@ -278,7 +278,7 @@ CharlesApplications:
     sidecarIstio:
       enabled: true
     healthCheck:
-      path: /api/health
+      path: /health
       port: 8080
       initialDelay: 60
     image:
@@ -305,7 +305,7 @@ CharlesApplications:
       password: aGVybWVz
       name: charlescd_hermes
     amqp:
-      url: amqp://charlescd_hermes:aGVybWVz@rabbitmq:5672/
+      url: amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/
       messageQueue: queue-message
       deliveredFailQueue: queue-fail
     publisher:
@@ -451,10 +451,9 @@ ingress-nginx:
     service:
       annotations: {}
 
-
-
 rabbitmq:
   enabled: true
+  fullnameOverride: charlescd-rabbitmq
   auth:
     username: charlescd_hermes
     password: aGVybWVz

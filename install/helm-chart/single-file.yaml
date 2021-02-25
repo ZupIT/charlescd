@@ -60,8 +60,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "eDNwRWJsczFneg=="
-  postgresql-password: "YVRBVlk4ZXRTMg=="
+  postgresql-postgres-password: "NjZ6QmJtOFFWTw=="
+  postgresql-password: "YVlTZk15emI0MQ=="
 ---
 # Source: charlescd/charts/rabbitmq/templates/secrets.yaml
 apiVersion: v1
@@ -77,7 +77,7 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "YUdWeWJXVno="
-  rabbitmq-erlang-cookie: "ZHJMMUg1TEFVN1FnRlZPRllLU1FhYnpJckJkRHVpa2M="
+  rabbitmq-erlang-cookie: "Nkt1MENWdDRxcFFDQ0dsMkVKcHNpdFZyU2NmTFZQYU8="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -6902,7 +6902,7 @@ spec:
                   name: "hermes-aes256-key"
                   key: "encryption-key"
             - name: AMQP_URL
-              value: "amqp://charlescd_hermes:aGVybWVz@rabbitmq:5672/"
+              value: "amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/"
             - name: AMQP_MESSAGE_QUEUE
               value: "queue-message"
             - name: AMQP_DELIVERED_FAIL_QUEUE
@@ -6921,12 +6921,12 @@ spec:
               protocol: TCP
           livenessProbe:
               httpGet:
-                path: /api/health
+                path: /health
                 port: 8080
               initialDelaySeconds: 60
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /health
               port: 8080
             initialDelaySeconds: 60
           resources:
@@ -7539,7 +7539,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: cefd48a7bdc5d27ebbbb3cec3ba8633667894291ab320066430a07fd64077b5c
-        checksum/secret: 073b1348d0ad5ed8d3baa2104c2fd111c565af7600ba65ae20eff9a98c95b8ea
+        checksum/secret: eb840fe925e30bd5dce7497b075d3d392c5a8ee5a7c20ee6c581c24bfdd31e12
     spec:
       
       serviceAccountName: charlescd-rabbitmq
