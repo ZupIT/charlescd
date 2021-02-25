@@ -1325,7 +1325,7 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       name: 'Undeploy Virtual Service C',
       refId: '21',
       requisiteStageRefIds: [
-          '14'
+        '14'
       ],
       skipExpressionEvaluation: false,
       source: 'text',
