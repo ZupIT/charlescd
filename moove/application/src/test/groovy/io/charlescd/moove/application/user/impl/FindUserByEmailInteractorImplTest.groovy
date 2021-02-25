@@ -21,7 +21,6 @@ import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.exceptions.ForbiddenException
@@ -36,7 +35,6 @@ class FindUserByEmailInteractorImplTest extends Specification {
     private FindUserByEmailInteractor findUserByEmailInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
-
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
