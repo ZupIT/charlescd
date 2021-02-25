@@ -28,7 +28,25 @@ export const metricsData: Metric = {
   execution: Execution,
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   dataSourceId: 'abc123',
-  metric: 'metric xyz'
+  metric: 'metric xyz',
+  filters: [
+    {
+      id: '1',
+      field: 'field 1',
+      operator: '=',
+      value: 'value 1'
+    },
+    {
+      field: 'field 2',
+      operator: '!=',
+      value: 'value 2'
+    },
+    {
+      field: 'field 3',
+      operator: '!~',
+      value: 'value 3'
+    }
+  ]
 };
 
 export const actionData: Action = {
@@ -138,7 +156,7 @@ export const dataFormatted = [{
       x: 1000
     }
   ]
-},{
+}, {
   name: 'test 2',
   data: [
     {

@@ -1,5 +1,5 @@
 ---
-# Source: test/charts/ingress-nginx/templates/controller-serviceaccount.yaml
+# Source: charlescd/charts/ingress-nginx/templates/controller-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/component: controller
   name: charlescd-ingress-nginx
 ---
-# Source: test/charts/keycloak/templates/serviceaccount.yaml
+# Source: charlescd/charts/keycloak/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -26,7 +26,7 @@ metadata:
 imagePullSecrets:
     []
 ---
-# Source: test/templates/service-account.yaml
+# Source: charlescd/templates/service-account.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -34,7 +34,7 @@ metadata:
   name: charlescd-octopipe
   namespace: charles
 ---
-# Source: test/charts/postgresql/templates/secrets.yaml
+# Source: charlescd/charts/postgresql/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -46,10 +46,10 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "amNhT1plbjVzNg=="
-  postgresql-password: "Mm0xTzBreEVXdQ=="
+  postgresql-postgres-password: "OFUyUkNuMG9DWg=="
+  postgresql-password: "SURDMXFQS3BHSw=="
 ---
-# Source: test/charts/redis/templates/secret.yaml
+# Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -64,7 +64,7 @@ type: Opaque
 data:
   redis-password: "aGIyRmo5TUdLakJrWjZ6Vg=="
 ---
-# Source: test/templates/charlescd-secrets.yaml
+# Source: charlescd/templates/charlescd-secrets.yaml
 apiVersion: v1
 data:
   encryption-key: QzYzOUE1NzJFMTRENTA3NUM1MjZGRERENDNFNEVDRjZCMDk1RUExNzc4M0QzMkVGM0QyNzEwQUY5RjM1OURENA==
@@ -73,7 +73,7 @@ metadata:
   name: deploy-aes256-key
 type: Opaque
 ---
-# Source: test/templates/charlescd-secrets.yaml
+# Source: charlescd/templates/charlescd-secrets.yaml
 apiVersion: v1
 data:
   encryption-key: NmRkZGU0MTAtM2YxYi0xMWViLWIzNzgtMDI0MmFjMTMwMDAy
@@ -82,7 +82,7 @@ metadata:
   name: compass-aes256-key
 type: Opaque
 ---
-# Source: test/templates/charlescd-secrets.yaml
+# Source: charlescd/templates/charlescd-secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -91,7 +91,7 @@ type: Opaque
 data:
   encryption-key: OGVhMzY4OGYtYmUxOS00YWU2LTljNmMtZDFhNjAzNjAyYTJm
 ---
-# Source: test/charts/envoy/templates/envoy-conf.yml
+# Source: charlescd/charts/envoy/templates/envoy-conf.yml
 apiVersion: v1
 data:
   envoy.yaml: |-
@@ -301,7 +301,7 @@ kind: ConfigMap
 metadata:
   name: confenvoy
 ---
-# Source: test/charts/envoy/templates/lua-conf.yml
+# Source: charlescd/charts/envoy/templates/lua-conf.yml
 apiVersion: v1
 data:
   luajit-init.lua: |-
@@ -1723,7 +1723,7 @@ kind: ConfigMap
 metadata:
   name: conflua
 ---
-# Source: test/charts/ingress-nginx/templates/controller-configmap.yaml
+# Source: charlescd/charts/ingress-nginx/templates/controller-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1737,7 +1737,7 @@ metadata:
   name: charlescd-ingress-nginx-controller
 data:
 ---
-# Source: test/charts/keycloak/templates/configmap-startup.yaml
+# Source: charlescd/charts/keycloak/templates/configmap-startup.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1772,7 +1772,7 @@ data:
     run-batch
     stop-embedded-server
 ---
-# Source: test/charts/redis/templates/configmap-scripts.yaml
+# Source: charlescd/charts/redis/templates/configmap-scripts.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1803,7 +1803,7 @@ data:
     ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
     exec /run.sh "${ARGS[@]}"
 ---
-# Source: test/charts/redis/templates/configmap.yaml
+# Source: charlescd/charts/redis/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1831,7 +1831,7 @@ data:
     rename-command FLUSHDB ""
     rename-command FLUSHALL ""
 ---
-# Source: test/charts/redis/templates/health-configmap.yaml
+# Source: charlescd/charts/redis/templates/health-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1912,7 +1912,7 @@ data:
     "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
     exit $exit_status
 ---
-# Source: test/templates/keycloak.yaml
+# Source: charlescd/templates/keycloak.yaml
 apiVersion: v1
 data:
   keycloak.json: |-
@@ -5652,7 +5652,7 @@ kind: ConfigMap
 metadata:
   name: keycloak-realm
 ---
-# Source: test/templates/postgres-cm.yaml
+# Source: charlescd/templates/postgres-cm.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5683,7 +5683,7 @@ data:
     psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
     psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
 ---
-# Source: test/charts/ingress-nginx/templates/clusterrole.yaml
+# Source: charlescd/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -5753,7 +5753,7 @@ rules:
       - list
       - watch
 ---
-# Source: test/templates/cluster-role.yaml
+# Source: charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -5766,7 +5766,7 @@ rules:
   verbs:
   - "*"
 ---
-# Source: test/charts/ingress-nginx/templates/clusterrolebinding.yaml
+# Source: charlescd/charts/ingress-nginx/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -5786,7 +5786,7 @@ subjects:
     name: charlescd-ingress-nginx
     namespace: charles
 ---
-# Source: test/templates/cluster-role-binding.yaml
+# Source: charlescd/templates/cluster-role-binding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -5801,7 +5801,7 @@ subjects:
   name: charlescd-octopipe
   namespace: charles
 ---
-# Source: test/charts/ingress-nginx/templates/controller-role.yaml
+# Source: charlescd/charts/ingress-nginx/templates/controller-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -5895,7 +5895,7 @@ rules:
       - create
       - patch
 ---
-# Source: test/charts/ingress-nginx/templates/controller-rolebinding.yaml
+# Source: charlescd/charts/ingress-nginx/templates/controller-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -5916,7 +5916,7 @@ subjects:
     name: charlescd-ingress-nginx
     namespace: charles
 ---
-# Source: test/charts/envoy/templates/envoy-service.yml
+# Source: charlescd/charts/envoy/templates/envoy-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5933,7 +5933,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: test/charts/ingress-nginx/templates/controller-service-webhook.yaml
+# Source: charlescd/charts/ingress-nginx/templates/controller-service-webhook.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5956,7 +5956,7 @@ spec:
     app.kubernetes.io/instance: charlescd
     app.kubernetes.io/component: controller
 ---
-# Source: test/charts/ingress-nginx/templates/controller-service.yaml
+# Source: charlescd/charts/ingress-nginx/templates/controller-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5985,7 +5985,7 @@ spec:
     app.kubernetes.io/instance: charlescd
     app.kubernetes.io/component: controller
 ---
-# Source: test/charts/keycloak/templates/service-headless.yaml
+# Source: charlescd/charts/keycloak/templates/service-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6009,7 +6009,7 @@ spec:
     app.kubernetes.io/name: keycloak
     app.kubernetes.io/instance: charlescd
 ---
-# Source: test/charts/keycloak/templates/service-http.yaml
+# Source: charlescd/charts/keycloak/templates/service-http.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6040,7 +6040,7 @@ spec:
     app.kubernetes.io/name: keycloak
     app.kubernetes.io/instance: charlescd
 ---
-# Source: test/charts/postgresql/templates/svc-headless.yaml
+# Source: charlescd/charts/postgresql/templates/svc-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6070,7 +6070,7 @@ spec:
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/instance: charlescd
 ---
-# Source: test/charts/postgresql/templates/svc.yaml
+# Source: charlescd/charts/postgresql/templates/svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6092,7 +6092,7 @@ spec:
     app.kubernetes.io/instance: charlescd
     role: primary
 ---
-# Source: test/charts/redis/templates/headless-svc.yaml
+# Source: charlescd/charts/redis/templates/headless-svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6114,7 +6114,7 @@ spec:
     app: redis
     release: charlescd
 ---
-# Source: test/charts/redis/templates/redis-master-svc.yaml
+# Source: charlescd/charts/redis/templates/redis-master-svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6137,7 +6137,7 @@ spec:
     release: charlescd
     role: master
 ---
-# Source: test/templates/service.yaml
+# Source: charlescd/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6152,7 +6152,7 @@ spec:
   selector:
     app: charlescd-butler
 ---
-# Source: test/templates/service.yaml
+# Source: charlescd/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6167,7 +6167,7 @@ spec:
   selector:
     app: charlescd-circle-matcher
 ---
-# Source: test/templates/service.yaml
+# Source: charlescd/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6182,7 +6182,7 @@ spec:
   selector:
     app: charlescd-compass
 ---
-# Source: test/templates/service.yaml
+# Source: charlescd/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6197,7 +6197,7 @@ spec:
   selector:
     app: charlescd-moove
 ---
-# Source: test/templates/service.yaml
+# Source: charlescd/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6212,7 +6212,7 @@ spec:
   selector:
     app: charlescd-octopipe
 ---
-# Source: test/templates/service.yaml
+# Source: charlescd/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6227,7 +6227,7 @@ spec:
   selector:
     app: charlescd-ui
 ---
-# Source: test/templates/service.yaml
+# Source: charlescd/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6242,7 +6242,7 @@ spec:
   selector:
     app: charlescd-villager
 ---
-# Source: test/charts/envoy/templates/envoy-deployment.yml
+# Source: charlescd/charts/envoy/templates/envoy-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6291,7 +6291,7 @@ spec:
           configMap:
             name: conflua
 ---
-# Source: test/charts/ingress-nginx/templates/controller-deployment.yaml
+# Source: charlescd/charts/ingress-nginx/templates/controller-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6404,7 +6404,7 @@ spec:
           secret:
             secretName: charlescd-ingress-nginx-admission
 ---
-# Source: test/templates/deployment.yaml
+# Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6463,7 +6463,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.5.7
+          image: zupcharles/charlescd-butler:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6482,7 +6482,7 @@ spec:
           resources:
               {}
 ---
-# Source: test/templates/deployment.yaml
+# Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6523,7 +6523,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.5.7
+          image: zupcharles/charlescd-circle-matcher:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6542,7 +6542,7 @@ spec:
           resources:
               {}
 ---
-# Source: test/templates/deployment.yaml
+# Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6620,7 +6620,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.5.7
+          image: zupcharles/charlescd-compass:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6639,7 +6639,7 @@ spec:
           resources:
               {}
 ---
-# Source: test/templates/deployment.yaml
+# Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6707,7 +6707,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.5.7
+          image: zupcharles/charlescd-moove:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6726,7 +6726,7 @@ spec:
           resources:
               {}
 ---
-# Source: test/templates/deployment.yaml
+# Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6762,7 +6762,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.5.7
+          image: zupcharles/charlescd-octopipe:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6781,7 +6781,7 @@ spec:
           resources:
               {}
 ---
-# Source: test/templates/deployment.yaml
+# Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6824,7 +6824,7 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
-          image: zupcharles/charlescd-ui:0.5.7
+          image: zupcharles/charlescd-ui:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6843,7 +6843,7 @@ spec:
           resources:
               {}
 ---
-# Source: test/templates/deployment.yaml
+# Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6890,7 +6890,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.5.7
+          image: zupcharles/charlescd-villager:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6909,7 +6909,7 @@ spec:
           resources:
               {}
 ---
-# Source: test/charts/keycloak/templates/statefulset.yaml
+# Source: charlescd/charts/keycloak/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -7068,7 +7068,7 @@ spec:
           configMap:
             name: keycloak-realm
 ---
-# Source: test/charts/postgresql/templates/statefulset.yaml
+# Source: charlescd/charts/postgresql/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -7216,7 +7216,7 @@ spec:
           requests:
             storage: "8Gi"
 ---
-# Source: test/charts/redis/templates/redis-master-statefulset.yaml
+# Source: charlescd/charts/redis/templates/redis-master-statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -7345,7 +7345,7 @@ spec:
   updateStrategy:
     type: RollingUpdate
 ---
-# Source: test/templates/ingress.yaml
+# Source: charlescd/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -7364,7 +7364,7 @@ spec:
           serviceName: envoy-proxy
           servicePort: 80
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml
 # before changing this value, check the required kubernetes version
 # https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#prerequisites
 apiVersion: admissionregistration.k8s.io/v1
@@ -7402,7 +7402,7 @@ webhooks:
         name: charlescd-ingress-nginx-controller-admission
         path: /networking/v1beta1/ingresses
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -7418,7 +7418,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: admission-webhook
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -7442,7 +7442,7 @@ rules:
       - get
       - update
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -7466,7 +7466,7 @@ subjects:
     name: charlescd-ingress-nginx-admission
     namespace: charles
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -7490,7 +7490,7 @@ rules:
       - get
       - create
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -7514,7 +7514,7 @@ subjects:
     name: charlescd-ingress-nginx-admission
     namespace: charles
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -7561,7 +7561,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 2000
 ---
-# Source: test/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
+# Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:

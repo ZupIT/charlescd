@@ -348,9 +348,9 @@ jobs:
         run: |
           mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
           cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
-          echo -e "\r\nappVersion: ${{ steps.get_version.outputs.VERSION }}\r\n" >> ./install/helm-chart/Chart.yaml &&
-          cat ./install/helm-chart/Chart.yaml &&
-          sed -i -E "s/(zupcharles\/.*:)(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml
+          echo -e "appVersion: ${{ steps.get_version.outputs.VERSION }}" >> ./install/helm-chart/Chart.yaml &&
+          rm -f ./install/helm-chart/Chart.old.yaml &&
+          cat ./install/helm-chart/Chart.yaml
 
       - name: Update helm dependencies
         uses: WyriHaximus/github-action-helm3@v2.1.3
