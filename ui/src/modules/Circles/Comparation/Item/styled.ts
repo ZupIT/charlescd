@@ -15,7 +15,6 @@
  */
 
 import styled from 'styled-components';
-import { ReactComponent as SortSVG } from 'core/assets/svg/sort-left.svg';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import InputTitleComponent from 'core/components/Form/InputTitle';
 import Dropdown from 'core/components/Dropdown';
@@ -68,33 +67,6 @@ const Content = styled.div`
 
 const Link = styled.a`
   text-decoration: none;
-`;
-
-const MetricsControl = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-content: right;
-  font-size: 12px;
-`;
-
-const MetricsLabel = styled.div`
-  margin-right: 10px;
-`;
-
-const SortLeft = styled(SortSVG)`
-  cursor: pointer;
-  margin-right: 10px;
-  transform: rotate(90deg);
-`;
-
-const SortRight = styled(SortSVG)`
-  cursor: pointer;
-  transform: rotate(-90deg);
-`;
-
-const MetricsTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 const InputTitle = styled(InputTitleComponent)`
@@ -188,11 +160,6 @@ export default {
   Layer,
   Release,
   Wrapper,
-  MetricsControl,
-  MetricsLabel,
-  SortLeft,
-  SortRight,
-  MetricsTitle,
   InputTitle,
   MetricsGroupsContent,
   MetricsGroupsHeader,

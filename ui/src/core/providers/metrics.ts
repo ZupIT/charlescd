@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
 import { ReleaseHistoryRequest } from 'modules/Metrics/Deploys/interfaces';
 import { baseRequest, postRequest } from './base';
 
@@ -24,7 +23,7 @@ const circlesEndpoint = '/moove/v2/circles';
 
 const deploymentEndpoint = '/moove/v2/deployments';
 
-export const findCircleMetrics = (data: CircleMetrics) => {
+export const findCircleMetrics = (data: any) => {
   const params = new URLSearchParams({ ...data });
   return baseRequest(`${endpoint}/?${params}`);
 };
