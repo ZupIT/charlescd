@@ -99,7 +99,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
         def response = this.findCircleComponentsInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.deploymentRepository.findActiveByCircleId(circleId) >> [deploymentOne, deploymentTwo]
+        1 * this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> [deploymentOne, deploymentTwo]
         1 * this.buildRepository.findById(buildOne.id) >> Optional.of(buildOne)
         1 * this.buildRepository.findById(buildTwo.id) >> Optional.of(buildTwo)
 
@@ -171,7 +171,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
         def response = this.findCircleComponentsInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.deploymentRepository.findActiveByCircleId(circleId) >> [deploymentOne, deploymentTwo]
+        1 * this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> [deploymentOne, deploymentTwo]
         1 * this.buildRepository.findById(buildOne.id) >> Optional.of(buildOne)
         1 * this.buildRepository.findById(buildTwo.id) >> Optional.of(buildTwo)
 
@@ -199,7 +199,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
         def response = this.findCircleComponentsInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.deploymentRepository.findActiveByCircleId(circleId) >> []
+        1 * this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> []
 
         assert response != null
         assert response.size() == 0

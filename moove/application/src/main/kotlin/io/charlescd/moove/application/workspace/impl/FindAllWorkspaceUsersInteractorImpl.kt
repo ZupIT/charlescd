@@ -19,27 +19,40 @@
 package io.charlescd.moove.application.workspace.impl
 
 import io.charlescd.moove.application.ResourcePageResponse
+import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.application.workspace.FindAllWorkspaceUsersInteractor
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.WorkspacePermissions
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
 class FindAllWorkspaceUsersInteractorImpl @Inject constructor(
-    private val workspaceService: WorkspaceService
+    private val workspaceService: WorkspaceService,
+    private val userService: UserService
 ) : FindAllWorkspaceUsersInteractor {
 
     override fun execute(
+        authorization: String,
         workspaceId: String,
         name: String?,
         email: String?,
         pageRequest: PageRequest
     ): ResourcePageResponse<UserResponse> {
+        validateWorkspace(authorization, workspaceId)
         return convert(workspaceService.findAllUsers(workspaceId, name, email, pageRequest))
+    }
+
+    private fun validateWorkspace(authorization: String, workspaceId: String) {
+        val user = userService.findByAuthorizationToken(authorization)
+        if (!user.workspaces.map(WorkspacePermissions::id).contains(workspaceId)) {
+            throw NotFoundException("workspace", workspaceId)
+        }
     }
 
     private fun convert(page: Page<User>): ResourcePageResponse<UserResponse> {

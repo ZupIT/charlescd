@@ -75,7 +75,7 @@ class CreateBuildInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * hypothesisRepository.findById(hypothesisId) >> Optional.empty()
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesisId, workspaceId) >> Optional.empty()
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         def ex = thrown(NotFoundException)
@@ -176,7 +176,7 @@ class CreateBuildInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * buildRepository.save(_) >> { argument ->
@@ -258,12 +258,56 @@ class CreateBuildInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
 
         def exception = thrown(BusinessException)
         assert exception.message == "some.of.informed.features.does.not.exist.or.are.not.ready.to.go"
+    }
+
+    def 'should throw an exception where git is not configured in workspace'() {
+        given:
+        def authorization = TestUtils.authorization
+        def workspaceId = TestUtils.workspaceId
+        def author = TestUtils.user
+        def createBuildRequest = new CreateBuildRequest(featureList, "tagName", "7a973eed-599b-428d-89f0-9ef6db8fd392")
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", null,
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
+        when:
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+
+        then:
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+
+        thrown(BusinessException)
+    }
+
+    def 'should throw an exception where registry is not configured in workspace'() {
+        given:
+        def authorization = TestUtils.authorization
+        def workspaceId = TestUtils.workspaceId
+        def author = TestUtils.user
+        def createBuildRequest = new CreateBuildRequest(featureList, "tagName", "7a973eed-599b-428d-89f0-9ef6db8fd392")
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, null,
+                "http://matcher-uri.com.br", "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
+        when:
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+
+        then:
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+
+        thrown(BusinessException)
     }
 
     private static GitConfiguration getDummyGitConfiguration(User author, String workspaceId) {
