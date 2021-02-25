@@ -25,3 +25,14 @@ func UserDomainToModel(user domain.User) User {
 		CreatedAt: user.CreatedAt,
 	}
 }
+
+func UserModelToDomain(user User) domain.User {
+	return domain.User{
+		ID:        user.ID,
+		Name:      user.Name,
+		PhotoUrl:  user.PhotoUrl,
+		Email:     user.Email,
+		IsRoot:    user.IsRoot,
+		CreatedAt: user.CreatedAt,
+	}
+}

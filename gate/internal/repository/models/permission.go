@@ -27,3 +27,19 @@ func PermissionsDomainToModels(permissions []domain.Permission) []Permission {
 	}
 	return permissionsModel
 }
+
+func PermissionModelToDomain(permission Permission) domain.Permission {
+	return domain.Permission{
+		ID:        permission.ID,
+		Name:      permission.Name,
+		CreatedAt: permission.CreatedAt,
+	}
+}
+
+func PermissionsModelsToDomains(permissions []Permission) []domain.Permission {
+	var permissionsModel []domain.Permission
+	for _, permission := range permissions {
+		permissionsModel = append(permissionsModel, PermissionModelToDomain(permission))
+	}
+	return permissionsModel
+}

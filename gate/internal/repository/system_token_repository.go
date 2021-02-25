@@ -43,26 +43,14 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 func (systemTokenRepository systemTokenRepository) FindAll() ([]domain.SystemToken, error) {
 	var systemToken []models.SystemToken
 
-	if res := systemTokenRepository.db.Find(&systemToken); res.Error != nil {
+	res := systemTokenRepository.db.Find(&systemToken)
+	if res.Error != nil {
 		return nil, logging.NewError("Find all system tokens failed", res.Error, nil, "repository.FindAll.Find")
 	}
 
 	systemTokenFound := make([]domain.SystemToken, 0)
 	for _, st := range systemToken {
-		var permissionsDomain []domain.Permission
-		for _, permission := range st.Permissions {
-			permissionsDomain = append(permissionsDomain, domain.Permission(permission))
-		}
-		systemTokenFound = append(systemTokenFound, domain.SystemToken{
-			ID:          st.ID,
-			Name:        st.Name,
-			Revoked:     st.Revoked,
-			Permissions: permissionsDomain,
-			CreatedAt:   st.CreatedAt,
-			RevokedAt:   st.RevokedAt,
-			LastUsedAt:  st.LastUsedAt,
-			Author:      domain.User(st.Author),
-		})
+		systemTokenFound = append(systemTokenFound, models.SystemTokenModelToDomain(st))
 	}
 
 	return systemTokenFound, nil
