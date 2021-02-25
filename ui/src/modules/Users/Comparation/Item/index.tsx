@@ -15,7 +15,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
@@ -38,6 +37,7 @@ import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';
 import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
+import useForm from 'core/hooks/useForm';
 
 interface Props {
   email: string;
@@ -167,6 +167,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
                   required: isRequired(),
                   maxLength: maxLength()
                 })}
+                isDisabled={!!errors.name}
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
               />
