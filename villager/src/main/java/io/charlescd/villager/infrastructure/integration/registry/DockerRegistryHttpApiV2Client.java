@@ -16,10 +16,7 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicCredentialsProvider;
-import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;
-import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
-import io.charlescd.villager.infrastructure.integration.registry.authentication.DockerBearerAuthenticator;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.ConfigParameters;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -34,7 +31,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @RequestScoped
@@ -57,42 +53,8 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         this.client = this.customClientBuilder.build();
         this.baseAddress = config.address;
 
-        switch (type) {
-            case AWS:
-                var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config;
-                AWSCustomProviderChainAuthenticator providerChain =
-                        new AWSCustomProviderChainAuthenticator(awsConfig.region);
-                if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {
-                    providerChain.addProviderAsPrimary(
-                            new AWSBasicCredentialsProvider(awsConfig.accessKey, awsConfig.secretKey));
-                }
-                this.client.register(providerChain);
-                break;
-            case AZURE:
-                var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;
-                this.client.register(new CommonBasicAuthenticator(azureConfig.username, azureConfig.password));
-                break;
-            case GCP:
-                var gcpConfig = (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config;
-                this.client.register(new CommonBasicAuthenticator(gcpConfig.username, gcpConfig.jsonKey));
-                break;
-            case DOCKER_HUB:
-                var dockerHubConfig = (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config;
-                this.client.register(
-                        new DockerBearerAuthenticator(dockerHubConfig.organization,
-                                dockerHubConfig.username,
-                                dockerHubConfig.password,
-                                tagName,
-                                "https://auth.docker.io/token",
-                                "registry.docker.io"));
-                break;
-            case HARBOR:
-                var harborConfig = (DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData) config;
-                this.client.register(new CommonBasicAuthenticator(harborConfig.username, harborConfig.password));
-                break;
-            default:
-                throw new IllegalArgumentException("Registry type is not supported!");
-        }
+        ConfigParameters configParameters = new ConfigParameters(config, tagName);
+        this.client.register(type.configure(configParameters));
     }
 
     @Override

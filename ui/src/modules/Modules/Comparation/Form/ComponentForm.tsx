@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Styled from './styled';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { Component } from 'modules/Modules/interfaces/Component';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
@@ -22,8 +23,8 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
       return setEditMoreOptions(!editMoreOptions);
     }
     setEditMoreOptions(!editMoreOptions);
-    register(`components[${index}].hostValue`, { required: true });
-    register(`components[${index}].gatewayName`, { required: true });
+    register(`components[${index}].hostValue`, isRequiredAndNotBlank);
+    register(`components[${index}].gatewayName`, isRequiredAndNotBlank);
   };
 
   return (
@@ -40,19 +41,19 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         <Styled.Components.Input
           label="Enter name"
           name={`components[${index}].name`}
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           defaultValue={field.name}
         />
         <Styled.Components.Number
           name={`components[${index}].latencyThreshold`}
           label="Latency Threshold (ms)"
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           defaultValue={field.latencyThreshold}
         />
         <Styled.Components.Number
           name={`components[${index}].errorThreshold`}
           label="Http Error Threshold (%)"
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           defaultValue={field.errorThreshold}
         />
       </Styled.Components.Wrapper>
@@ -67,7 +68,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
             <Styled.Input
               label="Insert a host for virtual service use"
               name={`components[${index}].hostValue`}
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
               defaultValue={field.hostValue}
             />
             <Styled.Popover
@@ -83,7 +84,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
             <Styled.Input
               label="Insert a ingress name if necessary"
               name={`components[${index}].gatewayName`}
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
               defaultValue={field.gatewayName}
             />
             <Styled.Popover

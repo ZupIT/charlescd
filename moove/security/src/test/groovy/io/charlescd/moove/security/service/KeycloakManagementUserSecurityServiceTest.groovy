@@ -16,17 +16,30 @@
 
 package io.charlescd.moove.security.service
 
-
 import io.charlescd.moove.domain.service.KeycloakService
 import spock.lang.Specification
 
 class KeycloakManagementUserSecurityServiceTest extends Specification {
 
-    private KeycloackManagementUserSecurityService keycloackManagementUserSecurityService
+    private KeycloakManagementUserSecurityService keycloackManagementUserSecurityService
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        keycloackManagementUserSecurityService = new KeycloackManagementUserSecurityService(keycloakService)
+        keycloackManagementUserSecurityService = new KeycloakManagementUserSecurityService(keycloakService)
+    }
+
+    def 'should get email by token'() {
+        given:
+        def email = "john.doe@zup.com.br"
+        def authorization = "Bearer xpto"
+
+        when:
+        keycloackManagementUserSecurityService.getUserEmail(authorization)
+
+        then:
+        1 * keycloakService.getEmailByAccessToken(authorization) >> email
+
+        notThrown()
     }
 
     def 'should create a new user'() {
@@ -57,19 +70,6 @@ class KeycloakManagementUserSecurityServiceTest extends Specification {
         1 * keycloakService.changeUserPassword(email, oldPassword, newPassword) >> {}
         notThrown()
 
-    }
-
-    def 'should delete a user by userId'() {
-        given:
-        def userId = "qwerty"
-
-        when:
-        keycloackManagementUserSecurityService.deleteUser(userId)
-
-        then:
-        1 * keycloakService.deleteUser(userId)
-
-        notThrown()
     }
 
     def 'should reset a user password'() {

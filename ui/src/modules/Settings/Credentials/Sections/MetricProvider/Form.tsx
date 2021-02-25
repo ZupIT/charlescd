@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';

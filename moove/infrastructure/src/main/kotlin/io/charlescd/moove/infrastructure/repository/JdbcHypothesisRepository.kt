@@ -133,6 +133,19 @@ class JdbcHypothesisRepository(
         return this.findById(hypothesis.id).get()
     }
 
+    override fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Hypothesis> {
+        val statement = StringBuilder(BASE_QUERY_STATEMENT)
+            .appendln("AND hypotheses.id = ? AND hypotheses.workspace_id = ?")
+
+        return Optional.ofNullable(
+            this.jdbcTemplate.query(
+                statement.toString(),
+                arrayOf(encryptionKey, id, workspaceId),
+                hypothesisExtractor
+            )?.firstOrNull()
+        )
+    }
+
     override fun findById(id: String): Optional<Hypothesis> {
         return findHypothesisById(id)
     }

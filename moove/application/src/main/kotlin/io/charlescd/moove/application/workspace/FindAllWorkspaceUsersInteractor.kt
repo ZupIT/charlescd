@@ -25,6 +25,7 @@ import io.charlescd.moove.domain.PageRequest
 interface FindAllWorkspaceUsersInteractor {
 
     fun execute(
+        authorization: String,
         workspaceId: String,
         name: String?,
         email: String?,
