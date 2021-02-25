@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/configuration"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
@@ -70,5 +71,13 @@ func runMigrations(sqlDb *sql.DB) error {
 }
 
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
-	return persistenceManager{}, nil
+	queriesPath := configuration.Get("QUERIES_PATH")
+	stRepo, err := repository.NewSystemTokenRepository(db, queriesPath)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
+	}
+
+	return persistenceManager{
+		systemTokenRepository: stRepo,
+	}, nil
 }

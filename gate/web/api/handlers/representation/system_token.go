@@ -29,8 +29,8 @@ func (systemTokenRequest SystemTokenRequest) SystemTokenToDomain(author domain.U
 		Revoked:     false,
 		Permissions: []domain.Permission{},
 		CreatedAt:   time.Now(),
-		RevokedAt:   nil,
-		LastUsedAt:  nil,
+		RevokedAt:   time.Time{},
+		LastUsedAt:  time.Time{},
 		Author:      author,
 	}
 }
