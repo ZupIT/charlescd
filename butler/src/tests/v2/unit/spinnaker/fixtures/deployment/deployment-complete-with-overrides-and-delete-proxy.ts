@@ -1282,6 +1282,56 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       manifests: [
         {
           apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'DestinationRule',
+          metadata: {
+            name: 'C',
+            namespace: 'sandbox'
+          },
+          spec: {
+            host: 'C',
+            subsets: [
+              {
+                labels: {
+                  component: 'C',
+                  tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Destination Rules C',
+      refId: '21',
+      requisiteStageRefIds: [
+        '14'
+      ],
+      stageEnabled: {
+      },
+      skipExpressionEvaluation: false,
+      source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
+    },
+    {
+      account: 'default',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
           kind: 'VirtualService',
           metadata: {
             name: 'C',
@@ -1323,62 +1373,10 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
         app: 'default'
       },
       name: 'Undeploy Virtual Service C',
-      refId: '21',
-      requisiteStageRefIds: [
-        '14'
-      ],
-      skipExpressionEvaluation: false,
-      source: 'text',
-      trafficManagement: {
-        enabled: false,
-        options: {
-          enableTraffic: false,
-          services: []
-        }
-      },
-      type: 'deployManifest'
-    },
-    {
-      account: 'default',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      manifests: [
-        {
-          apiVersion: 'networking.istio.io/v1alpha3',
-          kind: 'DestinationRule',
-          metadata: {
-            name: 'C',
-            namespace: 'sandbox'
-          },
-          spec: {
-            host: 'C',
-            subsets: [
-              {
-                labels: {
-                  component: 'C',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
-              }
-            ]
-          }
-        }
-      ],
-      moniker: {
-        app: 'default'
-      },
-      name: 'Undeploy Destination Rules C',
       refId: '22',
       requisiteStageRefIds: [
         '21'
       ],
-      stageEnabled: {
-        expression: '${ #stage(\'Undeploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
       skipExpressionEvaluation: false,
       source: 'text',
       trafficManagement: {

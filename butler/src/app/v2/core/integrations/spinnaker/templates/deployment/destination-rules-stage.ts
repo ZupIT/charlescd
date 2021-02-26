@@ -25,7 +25,7 @@ export const getDestinationRulesStage = (
   deployment: Deployment,
   activeComponents: Component[],
   stageId: number,
-  evalStageId: number
+  evalStageId?: number
 ): Stage => ({
   account: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).account}`,
   cloudProvider: 'kubernetes',

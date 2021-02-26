@@ -41,7 +41,7 @@ export const getUndeploymentVirtualServiceStage = (
   },
   name: `Undeploy Virtual Service ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: evalStageId ?  [`${evalStageId}`] : [],
+  requisiteStageRefIds: evalStageId ? [`${stageId - 1}`] : [],
   skipExpressionEvaluation: false,
   source: 'text',
   trafficManagement: {

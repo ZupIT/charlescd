@@ -25,6 +25,7 @@ export const getUndeploymentDestinationRulesStage = (
   deployment: Deployment,
   activeComponents: Component[],
   stageId: number,
+  evalStageId?: number
 ): Stage => ({
   account: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).account}`,
   cloudProvider: 'kubernetes',
@@ -39,10 +40,10 @@ export const getUndeploymentDestinationRulesStage = (
   },
   name: `Undeploy Destination Rules ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: [`${stageId - 1}`],
+  requisiteStageRefIds: evalStageId ?  [`${evalStageId}`] : [`${stageId - 1}`],
   skipExpressionEvaluation: false,
   source: 'text',
-  stageEnabled: {
+  stageEnabled: evalStageId  ? {} :  {
     expression: '${ #stage(\'' + `Undeploy Virtual Service ${component.name}` + '\').status.toString() == \'SUCCEEDED\'}',
     type: 'expression'
   },
