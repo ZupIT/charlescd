@@ -96,7 +96,7 @@ describe('DeploymentController v2', () => {
       applicationName: cdConfiguration.id,
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      circle: { 'headerValue': '333365f8-bb29-49f7-bf2b-3ec956a71583' },
+      circle: { headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583' },
       createdAt: expect.any(String),
       defaultCircle: false,
       description: '',
@@ -174,26 +174,83 @@ describe('DeploymentController v2', () => {
 
   it('returns error message for empty payload', async() => {
     const createDeploymentRequest = {}
-    const errorMessages = [
-      'deploymentId should not be empty',
-      'deploymentId must be an UUID',
-      'authorId should not be empty',
-      'authorId must be an UUID',
-      'callbackUrl should not be empty',
-      'callbackUrl must be a string',
-      'cdConfigurationId should not be empty',
-      'cdConfigurationId must be an UUID',
-      'circle should not be empty',
-      'defaultCircle must be a boolean value',
-      'modules should not be empty'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          status: 400,
+          detail: '"deploymentId" is required',
+          source: {
+            pointer: 'deploymentId'
+          },
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          }
+        },
+        {
+          status: 400,
+          detail: '"defaultCircle" is required',
+          source: {
+            pointer: 'defaultCircle'
+          },
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          }
+        },
+        {
+          status: 400,
+          detail: '"modules" is required',
+          source: {
+            pointer: 'modules'
+          },
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          }
+        },
+        {
+          status: 400,
+          detail: '"authorId" is required',
+          source: {
+            pointer: 'authorId'
+          },
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          }
+        },
+        {
+          status: 400,
+          detail: '"cdConfigurationId" is required',
+          source: {
+            pointer: 'cdConfigurationId'
+          },
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          }
+        },
+        {
+          status: 400,
+          detail: '"callbackUrl" is required',
+          source: {
+            pointer: 'callbackUrl'
+          },
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          }
+        }
+      ]
+    }
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
   })
 
@@ -304,19 +361,61 @@ describe('DeploymentController v2', () => {
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
-    const errorMessages = [
-      'modules.0.components.2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      'modules.0.components.3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      'modules.0.components.4.buildImageUrl must be shorter than or equal to 253 characters',
-      'modules.0.Duplicated components with the property \'componentName\''
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          detail: '"buildImageUrl" with value "imageurl.com2 " fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'modules/0/components/2/buildImageUrl'
+          },
+          status: 400
+        },
+        {
+          detail: '"buildImageUrl" with value "imageurl-ends-with-dash.com3-" fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'modules/0/components/3/buildImageUrl'
+          },
+          status: 400
+        },
+        {
+          detail: '"buildImageUrl" length must be less than or equal to 253 characters long',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'modules/0/components/4/buildImageUrl'
+          },
+          status: 400
+        },
+        {
+          detail: '"components" contains a duplicate value',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'modules/0/components/1'
+          },
+          status: 400
+        }
+      ]
+    }
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
   })
 
@@ -346,9 +445,21 @@ describe('DeploymentController v2', () => {
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       defaultCircle: false
     }
-    const errorMessages = [
-      'components should not be null or empty'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          detail: '"components" must contain at least 1 items',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'modules/0/components'
+          },
+          status: 400
+        }
+      ]
+    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -356,7 +467,7 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
   })
 
@@ -399,12 +510,11 @@ describe('DeploymentController v2', () => {
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
-
-    const componentsCount = await manager.findAndCount(ComponentEntity, { where: { deployment: createDeploymentRequest.deploymentId } })
-    expect(componentsCount[1]).toEqual(1)
-    const component = await manager.findOneOrFail(ComponentEntity)
-    expect(component.hostValue).toEqual(createDeploymentRequest.modules[0].components[0].hostValue)
-    expect(component.gatewayName).toEqual(createDeploymentRequest.modules[0].components[0].gatewayName)
+      .expect(201)
+      .expect(response => {
+        expect(response.body.modulesDeployments[0].componentsDeployments[0].hostValue).toEqual('host-value-1')
+        expect(response.body.modulesDeployments[0].componentsDeployments[0].gatewayName).toEqual('gateway-name-1')
+      })
   })
 
   it('validates size of componentName + buildImageTag concatenation', async() => {
@@ -443,9 +553,21 @@ describe('DeploymentController v2', () => {
       defaultCircle: true
     }
 
-    const errorMessages = [
-      'modules.0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          detail: 'Sum of lengths of componentName and buildImageTag cant be greater than 63',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'modules/0/components/0'
+          },
+          status: 400
+        }
+      ]
+    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -453,7 +575,7 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
 
   })
@@ -500,9 +622,21 @@ describe('DeploymentController v2', () => {
       defaultCircle: true
     }
 
-    const errorMessages = [
-      'modules.0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          detail: 'The tag suplied on the buildImageUrl must match the buildImageTag',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'modules/0/components/0'
+          },
+          status: 400
+        }
+      ]
+    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -510,8 +644,7 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
-
   })
 })
