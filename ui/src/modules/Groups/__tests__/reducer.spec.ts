@@ -35,11 +35,20 @@ const userGroupInitialState = {
   item: userGroup
 }
 
+test('paginate a user group', async () => {
+  const userGroup2 = { ...userGroup, name: 'group 2' };
+  const groupReducer = userGroupReducer(
+    userGroupInitialState,
+    { type: ACTION_TYPES.loadedUserGroups, payload: { ...initialListState, content: [ userGroup2 ]} });
+
+  expect(groupReducer.list.content.length).toBe(2);
+});
+
 test('update an user group', async () => {
   const userGroup2 = { ...userGroup, name: 'group 2' };
   const groupReducer = userGroupReducer(
     userGroupInitialState,
     { type: ACTION_TYPES.updateUserGroup, payload: userGroup2 });
 
-  expect(groupReducer.list.content[0]).toBe(userGroup2)
+  expect(groupReducer.list.content[0]).toBe(userGroup2);
 });
