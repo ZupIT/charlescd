@@ -19,7 +19,7 @@ import { UserGroupsActionTypes, ACTION_TYPES } from './actions';
 import { UserGroupPagination } from '../interfaces/UserGroupsPagination';
 import { UserGroupState } from '../interfaces/UserGroupState';
 
-const initialListState: UserGroupPagination = {
+export const initialListState: UserGroupPagination = {
   content: [],
   page: 0,
   size: 0,
