@@ -61,24 +61,7 @@ export class CreateDeploymentValidator {
 
     const validated = schema.validate(this.params, { abortEarly: false, allowUnknown: false })
     if (validated.error === undefined) {
-      const value = validated.value
-      const modules : CreateModuleDeploymentDto[] = value.modules.map((m: {moduleId: string, helmRepository: string, components: Component[]}) => new CreateModuleDeploymentDto(
-        '',
-        m.helmRepository,
-        m.components.map((c: Component) =>
-          new CreateComponentRequestDto(c.componentId, c.buildImageUrl, c.buildImageTag, c.componentName, c.hostValue, c.gatewayName)
-        )
-      ))
-      const dto = new CreateDeploymentRequestDto(
-        value.deploymentId,
-        value.authorId,
-        value.callbackUrl,
-        value.cdConfigurationId,
-        new CreateCircleDeploymentDto(value.circle.headerValue),
-        DeploymentStatusEnum.CREATED,
-        modules,
-        value.defaultCircle
-      )
+      const dto = this.createDto(validated)
       return { valid: true, data: dto }
     }
     return { valid: false, errors: validated.error }
@@ -100,6 +83,27 @@ export class CreateDeploymentValidator {
         }
       })
     }
+  }
+
+  private createDto(validated: Joi.ValidationResult) {
+    const value = validated.value
+    const modules: CreateModuleDeploymentDto[] = value.modules.map((m: { moduleId: string; helmRepository: string; components: Component[]} ) => new CreateModuleDeploymentDto(
+      '',
+      m.helmRepository,
+      m.components.map((c: Component) => new CreateComponentRequestDto(c.componentId, c.buildImageUrl, c.buildImageTag, c.componentName, c.hostValue, c.gatewayName)
+      )
+    ))
+    const dto = new CreateDeploymentRequestDto(
+      value.deploymentId,
+      value.authorId,
+      value.callbackUrl,
+      value.cdConfigurationId,
+      new CreateCircleDeploymentDto(value.circle.headerValue),
+      DeploymentStatusEnum.CREATED,
+      modules,
+      value.defaultCircle
+    )
+    return dto
   }
 
   private deploymentSchema(modulesSchema: Joi.ObjectSchema<unknown>, joiString: Joi.StringSchema) {
@@ -155,8 +159,6 @@ export class CreateDeploymentValidator {
         }
       )
   }
-
-
 
   private extractTag(buildImageTag: string, buildImageUrl: string): string {
     const extractedTag = buildImageUrl.split(':')
