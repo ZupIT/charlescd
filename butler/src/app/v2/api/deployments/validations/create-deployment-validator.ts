@@ -54,10 +54,9 @@ export class CreateDeploymentValidator {
   }
 
   public validate(): {valid: true, data: CreateDeploymentRequestDto} | {valid: false, errors: ValidationError} {
-    const joiString = Joi.string().required().max(255)
-    const componentSchema = this.componentSchema(joiString)
-    const modulesSchema = this.moduleSchema(joiString, componentSchema)
-    const schema = this.deploymentSchema(modulesSchema, joiString)
+    const componentSchema = this.componentSchema()
+    const modulesSchema = this.moduleSchema(componentSchema)
+    const schema = this.deploymentSchema(modulesSchema)
 
     const validated = schema.validate(this.params, { abortEarly: false, allowUnknown: false })
     if (validated.error === undefined) {
@@ -106,7 +105,7 @@ export class CreateDeploymentValidator {
     return dto
   }
 
-  private deploymentSchema(modulesSchema: Joi.ObjectSchema<unknown>, joiString: Joi.StringSchema) {
+  private deploymentSchema(modulesSchema: Joi.ObjectSchema<unknown>) {
     return Joi.object({
       deploymentId: Joi.string().guid().required(),
       defaultCircle: Joi.bool().required(),
@@ -116,24 +115,24 @@ export class CreateDeploymentValidator {
       modules: Joi.array().items(modulesSchema).required(),
       authorId: Joi.string().guid().required(),
       cdConfigurationId: Joi.string().guid().required(),
-      callbackUrl: joiString
+      callbackUrl: Joi.string().required().max(255)
     })
   }
 
-  private moduleSchema(joiString: Joi.StringSchema, componentSchema: Joi.ObjectSchema<unknown>) {
+  private moduleSchema(componentSchema: Joi.ObjectSchema<unknown>) {
     return Joi.object({
       moduleId: Joi.string().guid().optional().label('moduleId'),
-      helmRepository: joiString.label('helmRepository'),
+      helmRepository: Joi.string().required().max(255).label('helmRepository'),
       components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1)
     })
   }
 
-  private componentSchema(joiString: Joi.StringSchema) {
+  private componentSchema() {
     return Joi.object({
       componentId: Joi.string().guid().required().label('componentId'),
-      buildImageUrl: joiString.regex(/^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/).max(253).label('buildImageUrl'),
-      buildImageTag: joiString.label('buildImageTag'),
-      componentName: joiString.label('componentName'),
+      buildImageUrl: Joi.string().required().max(255).regex(/^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/).max(253).label('buildImageUrl'),
+      buildImageTag: Joi.string().required().max(255).label('buildImageTag'),
+      componentName: Joi.string().required().max(255).label('componentName'),
       gatewayName: Joi.string().max(255).optional().label('gatewayName'),
       hostValue: Joi.string().max(255).optional().label('hostValue')
     })
