@@ -21,14 +21,19 @@ import {
   mainMenu,
   workspaceMenu
 } from '../constants';
+import { template } from 'lodash';
 
 export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
 
-export const getItems = () => {
+const clearWorkspaceIdBasedOnPathname = () => {
   if(window.location.pathname === '/workspaces'){
     clearWorkspace()
   }
+}
+
+export const getItems = () => {
+  clearWorkspaceIdBasedOnPathname();
 
   if (getWorkspaceId()) {
     return workspaceMenu;
