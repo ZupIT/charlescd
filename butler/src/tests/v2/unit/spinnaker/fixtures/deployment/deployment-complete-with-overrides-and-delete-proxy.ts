@@ -1379,6 +1379,10 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       ],
       skipExpressionEvaluation: false,
       source: 'text',
+      stageEnabled: {
+        expression: '${ #stage(\'Undeploy Destination Rules C\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
       trafficManagement: {
         enabled: false,
         options: {

@@ -73,6 +73,10 @@ export const getUndeploymentEmptyVirtualServiceStage = (
   requisiteStageRefIds: evalStageId ? [`${stageId-1}`] : [],
   skipExpressionEvaluation: false,
   source: 'text',
+  stageEnabled:  evalStageId ? {
+    expression: '${ #stage(\'Undeploy Destination Rules C\').status.toString() == \'SUCCEEDED\'}',
+    type: 'expression'
+  } : undefined,
   trafficManagement: {
     enabled: false,
     options: {
