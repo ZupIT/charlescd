@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import debounce from 'debounce-promise';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import { CHARLES_DOC } from 'core/components/Popover';
