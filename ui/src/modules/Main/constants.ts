@@ -75,49 +75,6 @@ export const mainMenu = [
   }
 ];
 
-export const rootWorkspaceMenu = [
-  {
-    id: genMenuId(routes.circles),
-    icon: 'circles',
-    text: 'Circles',
-    to: routes.circles,
-    action: 'read',
-    subject: 'circles'
-  },
-  {
-    id: genMenuId(routes.hypotheses),
-    icon: 'hypotheses',
-    text: 'Hypotheses',
-    to: routes.hypotheses,
-    action: 'read',
-    subject: 'hypothesis'
-  },
-  {
-    id: genMenuId(routes.modules),
-    icon: 'modules',
-    text: 'Modules',
-    to: routes.modules,
-    action: 'read',
-    subject: 'modules'
-  },
-  {
-    id: genMenuId(routes.metrics),
-    icon: 'metrics',
-    text: 'Metrics',
-    to: routes.metrics,
-    action: 'read',
-    subject: 'circles'
-  },
-  {
-    id: genMenuId(routes.settings),
-    icon: 'settings',
-    text: 'Settings',
-    to: routes.credentials,
-    action: 'write',
-    subject: 'maintenance'
-  }
-];
-
 export const rootMainMenu = [
   {
     id: genMenuId(routes.workspaces),

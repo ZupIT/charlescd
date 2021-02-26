@@ -18,7 +18,6 @@ import { clearWorkspace, getWorkspaceId } from 'core/utils/workspace';
 import { isRoot } from 'core/utils/auth';
 import {
   rootMainMenu,
-  rootWorkspaceMenu,
   mainMenu,
   workspaceMenu
 } from '../constants';
@@ -26,14 +25,13 @@ import {
 export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
 
-// TODO remove rootworkspacemenu
 export const getItems = () => {
   if(window.location.pathname === '/workspaces'){
     clearWorkspace()
   }
 
   if (getWorkspaceId()) {
-    return isRoot() ? rootWorkspaceMenu : workspaceMenu;
+    return workspaceMenu;
   } else {
     return isRoot() ? rootMainMenu : mainMenu;
   }
