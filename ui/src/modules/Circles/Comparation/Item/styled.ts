@@ -152,6 +152,16 @@ const MetricsGroupsCard = styled.div`
   height: 40px;
 `;
 
+const FieldErrorWrapper = styled.div`
+  display: flex;
+  margin-top: 2px;
+
+  span {
+    margin-left: 5px;
+    margin-top: 2px;
+  }
+`;
+
 export default {
   Link,
   Actions,
@@ -167,5 +177,6 @@ export default {
   MetricsGroupsCard,
   MetricsGroupsNameContent,
   MetricsGroupsCountContent,
-  MetricsGroupsThresholdsContent
+  MetricsGroupsThresholdsContent,
+  FieldErrorWrapper
 };

@@ -1,10 +1,12 @@
 package io.charlescd.moove.security.filter
 
 import feign.FeignException
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.UserRepository
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -64,6 +66,23 @@ class CharlesSecurityFilterTest extends Specification {
 
         then:
         1 * userRepository.findByEmail(user.email) >> Optional.of(user)
+        notThrown()
+    }
+
+    def "should allow open path"(){
+        given:
+        def request = new MockHttpServletRequest()
+        request.addHeader("Authorization", dummyToken())
+        request.setRequestURI(" /api/rectangle")
+        request.setMethod(HttpMethod.GET.name())
+
+        def response = new MockHttpServletResponse()
+        def filterChain = new MockFilterChain()
+
+        when:
+        charlesSecurityFilter.doFilter(request, response, filterChain)
+
+        then:
         notThrown()
     }
 
@@ -223,6 +242,61 @@ class CharlesSecurityFilterTest extends Specification {
         1 * userRepository.findByEmail(user.email) >> Optional.of(user)
         assert response.status == HttpStatus.FORBIDDEN.value()
     }
+
+    def "should not allow any user when other service called throw BusinessException"() {
+        given:
+        def workspaceId = "b659094f-999c-4d24-90b3-26c5e173b7ec"
+
+        def author = new User("user-id", "User", "user@zup.com.br", "", [], true, LocalDateTime.now())
+        def permission = new Permission("permission-id", "circles_read", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions(workspaceId, "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+        def user = new User("user-id", "User", "user@zup.com.br", "", [workspacePermission], false, LocalDateTime.now())
+
+        def request = new MockHttpServletRequest()
+        request.addHeader("Authorization", dummyToken())
+        request.addHeader("x-workspace-id", workspaceId)
+        request.setRequestURI("/api/circle/123456789")
+        request.setMethod(HttpMethod.GET.name())
+
+        def response = new MockHttpServletResponse()
+        def filterChain = Mock(FilterChain)
+
+        when:
+        charlesSecurityFilter.doFilter(request, response, filterChain)
+
+        then:
+        1 * userRepository.findByEmail(user.email) >> Optional.of(user)
+        1 * filterChain.doFilter(request, response) >>  { throw new BusinessException(MooveErrorCode.FORBIDDEN, "")}
+        assert response.status == HttpStatus.FORBIDDEN.value()
+    }
+
+    def "should not allow any user when other service called throw any other Exception"() {
+        given:
+        def workspaceId = "b659094f-999c-4d24-90b3-26c5e173b7ec"
+
+        def author = new User("user-id", "User", "user@zup.com.br", "", [], true, LocalDateTime.now())
+        def permission = new Permission("permission-id", "circles_read", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions(workspaceId, "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+        def user = new User("user-id", "User", "user@zup.com.br", "", [workspacePermission], false, LocalDateTime.now())
+
+        def request = new MockHttpServletRequest()
+        request.addHeader("Authorization", dummyToken())
+        request.addHeader("x-workspace-id", workspaceId)
+        request.setRequestURI("/api/circle/123456789")
+        request.setMethod(HttpMethod.GET.name())
+
+        def response = new MockHttpServletResponse()
+        def filterChain = Mock(FilterChain)
+
+        when:
+        charlesSecurityFilter.doFilter(request, response, filterChain)
+
+        then:
+        1 * userRepository.findByEmail(user.email) >> Optional.of(user)
+        1 * filterChain.doFilter(request, response) >>  { throw new Exception()}
+        assert response.status == HttpStatus.UNAUTHORIZED.value()
+    }
+
 
     def dummyToken() {
         return "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIwMzc4YmVjZS1lYzU4LTQ2MTAtODc2Ny0zYWJhZDE5NjY4" +

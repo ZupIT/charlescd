@@ -31,13 +31,13 @@ import {
   createGitApi,
   findGitProvider,
   destructHelmUrl,
-  validateSlash
+  getHelmFieldsValidations
 } from './helpers';
 import Styled from './styled';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 import Select from 'core/components/Form/Select/Single/Select';
 import { gitProviders } from 'modules/Settings/Credentials/Sections/CDConfiguration/constants';
 import { Option } from 'core/components/Form/Select/interfaces';
-import { isRequired } from 'core/utils/validations';
 
 interface Props {
   module: Module;
@@ -130,7 +130,7 @@ const FormModule = ({ module, onChange }: Props) => {
           <Styled.Input
             label="Insert url"
             name="helmGitlabUrl"
-            ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm gitlab url") })}
+            ref={helmRegister(getHelmFieldsValidations('helm gitlab url'))}
             error={helmErrors?.helmGitlabUrl?.message}
           />
         </Styled.FieldPopover>
@@ -139,7 +139,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert organization"
           name="helmOrganization"
-          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm organization") })}
+          ref={helmRegister(getHelmFieldsValidations("helm organization"))}
           error={helmErrors?.helmOrganization?.message}
         />
       </Styled.FieldPopover>
@@ -147,7 +147,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert repository"
           name="helmRepository"
-          ref={helmRegister({ required: isRequired(), validate: value => validateSlash(value, "helm repository") })}
+          ref={helmRegister(getHelmFieldsValidations("helm repository"))}
           error={helmErrors?.helmRepository?.message}
 
         />
@@ -156,7 +156,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert path (Optional)"
           name="helmPath"
-          ref={helmRegister({ validate: value => validateSlash(value, "helm path") })}
+          ref={helmRegister(getHelmFieldsValidations("helm path"))}
           error={helmErrors?.helmPath?.message}
 
         />
@@ -165,7 +165,7 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert branch (Optional, Default=main)"
           name="helmBranch"
-          ref={helmRegister({ validate: value => validateSlash(value, "helm branch") })}
+          ref={helmRegister(getHelmFieldsValidations("helm branch"))}
           error={helmErrors?.helmBranch?.message}
         />
       </Styled.FieldPopover>
@@ -208,13 +208,13 @@ const FormModule = ({ module, onChange }: Props) => {
             label="Name the module"
             name="name"
             defaultValue={module?.name}
-            ref={register({ required: true })}
+            ref={register(isRequiredAndNotBlank)}
           />
           <Styled.Input
             label="URL git"
             name="gitRepositoryAddress"
             defaultValue={module?.gitRepositoryAddress}
-            ref={register({ required: true })}
+            ref={register(isRequiredAndNotBlank)}
           />
           {!isEditing && <Components fieldArray={fieldArray} />}
           <Styled.HelmWrapper>
