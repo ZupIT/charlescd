@@ -14,7 +14,10 @@ require (
 	github.com/leebenson/conform v1.2.2
 	github.com/nleof/goyesql v1.0.1
 	github.com/prometheus/client_golang v1.9.0
+	github.com/stretchr/testify v1.6.0
+	github.com/vektra/mockery/v2 v2.6.0
 	go.uber.org/zap v1.13.0
 	gorm.io/driver/postgres v1.0.8
 	gorm.io/gorm v1.20.12
+
 )

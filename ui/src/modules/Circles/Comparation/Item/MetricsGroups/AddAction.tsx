@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button/Default';
 import isUndefined from 'lodash/isUndefined';
 import Styled from './styled';

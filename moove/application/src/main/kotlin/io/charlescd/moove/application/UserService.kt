@@ -44,9 +44,7 @@ class UserService(private val userRepository: UserRepository, private val manage
     }
 
     fun findByEmail(email: String): User {
-        return this.userRepository.findByEmail(
-            email
-        ).orElseThrow {
+        return this.userRepository.findByEmail(email).orElseThrow {
             NotFoundException("user", email)
         }
     }
@@ -62,16 +60,8 @@ class UserService(private val userRepository: UserRepository, private val manage
         return this.userRepository.save(user)
     }
 
-    fun delete(id: String) {
-        this.userRepository.delete(id)
-    }
-
     fun findByAuthorizationToken(authorization: String): User {
-        val email = getEmailFromToken(authorization)
-        return userRepository
-            .findByEmail(email).orElseThrow {
-                NotFoundException("user", email)
-            }
+        return findByEmail(getEmailFromToken(authorization))
     }
 
     fun getEmailFromToken(authorization: String): String {
@@ -88,10 +78,6 @@ class UserService(private val userRepository: UserRepository, private val manage
 
     fun createUserOnKeycloak(email: String, name: String, password: String) {
         return managementUserSecurityService.createUser(email, name, password)
-    }
-
-    fun deleteUserOnKeycloak(id: String) {
-        this.managementUserSecurityService.deleteUser(id)
     }
 
     fun update(user: User): User {

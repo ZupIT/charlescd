@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 import React from 'react';
 import { ArrayField, useFormContext } from 'react-hook-form';
 import options from './conditional.options';
@@ -63,13 +64,13 @@ const Rule = ({
       </Styled.RuleTrash>
       <Styled.Input
         type="hidden"
-        ref={register}
+        ref={register()}
         name={`${prefixName}.type`}
         defaultValue="RULE"
       />
       <Styled.Input
         label="Key"
-        ref={register({ required: true })}
+        ref={register(isRequiredAndNotBlank)}
         disabled={viewMode}
         name={`${prefixName}.content.key`}
         defaultValue={rule?.content?.key}
@@ -85,7 +86,7 @@ const Rule = ({
       />
       <Styled.Input
         label="Value"
-        ref={register}
+        ref={register(isRequiredAndNotBlank)}
         disabled={viewMode}
         name={`${prefixName}.content.value[0]`}
         defaultValue={rule?.content?.value}

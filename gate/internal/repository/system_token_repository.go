@@ -5,6 +5,7 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
+	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
 	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
@@ -13,6 +14,7 @@ import (
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
 	FindAll(page int, size int) (domain.PageSystemToken, error)
+	FindById(id uuid.UUID) (domain.SystemToken, error)
 }
 
 type systemTokenRepository struct {
@@ -31,12 +33,11 @@ func NewSystemTokenRepository(db *gorm.DB, queriesPath string) (SystemTokenRepos
 
 func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken) (domain.SystemToken, error) {
 	systemToken.ID = uuid.New()
-	systemTokenToSave := models.SystemTokenDomainToModel(systemToken)
+	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken)
 
 	if res := systemTokenRepository.db.Save(&systemTokenToSave); res.Error != nil {
-		return domain.SystemToken{}, logging.NewError("Save system token failed", res.Error, nil, "repository.Create.Save")
+		return domain.SystemToken{}, handlerError("Save system token failed", "unit.Create.Save", res.Error, "")
 	}
-
 	return systemToken, nil
 }
 
@@ -45,12 +46,15 @@ func (systemTokenRepository systemTokenRepository) FindAll(page int, size int) (
 
 	res := systemTokenRepository.db.Offset(page).Limit(size).Find(&systemToken)
 	if res.Error != nil {
-		return domain.PageSystemToken{}, logging.NewError("Find all system tokens failed", res.Error, nil, "repository.FindAll.Find")
+		if res.Error.Error() == "record not found" {
+			return domain.PageSystemToken{}, handlerError("Not found token", "unit.GetById.First", res.Error, logging.NotFoundError)
+		}
+		return domain.PageSystemToken{}, handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
 	}
 
 	systemTokenFound := make([]domain.SystemToken, 0)
 	for _, st := range systemToken {
-		systemTokenFound = append(systemTokenFound, models.SystemTokenModelToDomain(st))
+		systemTokenFound = append(systemTokenFound, mapper.SystemTokenModelToDomain(st))
 	}
 
 	return domain.PageSystemToken{
@@ -58,4 +62,21 @@ func (systemTokenRepository systemTokenRepository) FindAll(page int, size int) (
 		Page:    page,
 		Size:    size,
 	}, nil
+}
+
+func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error)  {
+	var systemToken models.SystemToken
+
+	res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).First(&systemToken)
+	if res.Error != nil {
+		if res.Error.Error() == "record not found" {
+			return domain.SystemToken{}, handlerError("Not found token", "unit.GetById.First", res.Error, logging.NotFoundError)
+		}
+		return domain.SystemToken{}, handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
+	}
+	return mapper.SystemTokenModelToDomain(systemToken), nil
+}
+
+func handlerError(message string, operation string, err error, errType string) (error) {
+	return logging.NewError(message, err, errType,nil, operation)
 }

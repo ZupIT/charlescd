@@ -18,6 +18,7 @@ package main
 
 import (
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"log"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
@@ -28,6 +29,8 @@ import (
 )
 
 func main() {
+
+	logrus.SetFormatter(&logrus.JSONFormatter{PrettyPrint: true})
 
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")

@@ -22,6 +22,7 @@ package io.charlescd.moove.application.configuration.impl
 import io.charlescd.moove.application.metric.impl.WorkspaceMetricConfigurationConnectionStatusInteractorImpl
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
 import io.charlescd.moove.metrics.connector.MetricServiceFactory
 import io.charlescd.moove.metrics.connector.prometheus.PrometheusConnectionStatusResponse
@@ -82,5 +83,24 @@ class WorkspaceMetricConfigurationConnectionStatusInteractorImplUnitTest extends
 
         result != null
         result.status == "FAILED"
+    }
+
+    def 'should return failed when dont find metric for workspace'() {
+        given:
+        def prometheusReadinessResponse = new PrometheusConnectionStatusResponse(
+                "FAILED", 500, "Prometheus is not Ready")
+
+        when:
+        def result = workspaceMetricConfigurationConnectionStatusInteractorImpl.execute(workspaceId, providerId)
+
+        then:
+        1 * metricConfigurationRepository.find(providerId, workspaceId) >> Optional.empty()
+        0 * serviceFactory.getConnector(metricConfiguration.provider) >> providerService
+        0 * providerService.readinessCheck(url) >> prometheusReadinessResponse
+        0 * _
+
+        def ex = thrown(NotFoundException)
+        ex.resourceName == "Metric configuration for Workspace"
+
     }
 }

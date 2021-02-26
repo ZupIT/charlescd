@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func ListAllSystemTokens(findAllSystemToken systemTokenInteractor.FindAllSystemToken) echo.HandlerFunc {
+func GetAllSystemTokens(findAllSystemToken systemTokenInteractor.FindAllSystemToken) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()

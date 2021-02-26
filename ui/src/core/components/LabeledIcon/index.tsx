@@ -34,7 +34,7 @@ const LabeledIcon = ({
   className,
   size = '15px',
   isActive,
-  marginContent = '5px',
+  marginContent = '8px',
   onClick
 }: Props) => {
   return (

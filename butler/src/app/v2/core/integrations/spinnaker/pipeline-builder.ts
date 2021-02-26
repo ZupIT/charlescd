@@ -39,7 +39,7 @@ import {
 import { DeploymentTemplateUtils } from './utils/deployment-template.utils'
 import { UndeploymentTemplateUtils } from './utils/undeployment-template.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
-import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
+import { componentsToBeRemoved, DeploymentUtils, unusedComponentProxy } from '../utils/deployment.utils'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 export class SpinnakerPipelineBuilder {
@@ -87,6 +87,7 @@ export class SpinnakerPipelineBuilder {
       ...this.getProxyDeploymentsEvaluationStage(deployment.components),
       ...this.getRollbackDeploymentsStage(deployment, activeComponents),
       ...this.getUnusedVersions(deployment, activeComponents),
+      ...this.getProxyUnusedStages(deployment, activeComponents),
       ...this.getFailureWebhookStage(deployment, configuration),
       ...this.getSuccessWebhookStage(deployment, configuration)
     ]
@@ -139,6 +140,34 @@ export class SpinnakerPipelineBuilder {
         getUndeploymentEmptyVirtualServiceStage(component, deployment, this.currentStageId++)
       )
     })
+    return proxyStages
+  }
+
+  private getProxyUnusedStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    if (!deployment?.components) {
+      return []
+    }
+
+    if (deployment.defaultCircle) {
+      return []
+    }
+    const unusedComponentsProxies = unusedComponentProxy(deployment, activeComponents)
+
+    if (unusedComponentsProxies.length === 0) {
+      return []
+    }
+    const proxyStages: Stage[] = []
+    const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
+
+    unusedComponentsProxies.forEach(component => {
+      const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
+      proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++, evalStageId))
+      proxyStages.push(activeByName.length > 1 ?
+        getUndeploymentVirtualServiceStage(component, deployment, activeByName, this.currentStageId++) :
+        getUndeploymentEmptyVirtualServiceStage(component, deployment, this.currentStageId++)
+      )
+    })
+
     return proxyStages
   }
 

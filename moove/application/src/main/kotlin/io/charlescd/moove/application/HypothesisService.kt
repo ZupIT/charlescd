@@ -24,9 +24,9 @@ import javax.inject.Named
 @Named
 class HypothesisService(private val hypothesisRepository: HypothesisRepository) {
 
-    fun find(id: String): Hypothesis {
-        return this.hypothesisRepository.findById(
-            id
+    fun find(id: String, workspaceId: String): Hypothesis {
+        return this.hypothesisRepository.findByIdAndWorkspaceId(
+            id, workspaceId
         ).orElseThrow {
             NotFoundException("hypothesis", id)
         }
