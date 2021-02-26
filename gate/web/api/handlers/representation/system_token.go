@@ -22,6 +22,13 @@ type SystemTokenResponse struct {
 	Author string `json:"author"`
 }
 
+type PageSystemTokenResponse struct {
+	Content []SystemTokenResponse `json:"content"`
+	Page int `json:"page"`
+	Size int `json:"size"`
+
+}
+
 func (systemTokenRequest SystemTokenRequest) SystemTokenToDomain(author domain.User) domain.SystemToken {
 	return domain.SystemToken{
 		ID:          uuid.New(),
@@ -44,5 +51,21 @@ func SystemTokenToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 		RevokedAt: systemToken.RevokedAt,
 		LastUsedAt: systemToken.LastUsedAt,
 		Author: systemToken.Author.Email,
+	}
+}
+
+func SystemTokensToResponse(systemTokens []domain.SystemToken) []SystemTokenResponse {
+	var systemTokenResponse []SystemTokenResponse
+	for _, permission := range systemTokens {
+		systemTokenResponse = append(systemTokenResponse, SystemTokenToResponse(permission))
+	}
+	return systemTokenResponse
+}
+
+func PageSystemTokenToPageResponse(pageSystemToken domain.PageSystemToken) PageSystemTokenResponse {
+	return PageSystemTokenResponse{
+		Content: SystemTokensToResponse(pageSystemToken.Content),
+		Page:    pageSystemToken.Page,
+		Size:    pageSystemToken.Size,
 	}
 }

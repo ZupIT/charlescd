@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
 	"github.com/casbin/casbin/v2"
@@ -82,7 +82,7 @@ func (server server) registerRoutes() {
 		{
 			st := v1.Group("/system-token")
 			{
-				st.GET("", handlers.ListSystemTokens(system_token.NewFindAllSystemToken(server.persistenceManager.systemTokenRepository)))
+				st.GET("", handlers.ListAllSystemTokens(systemTokenInteractor.NewFindAllSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 		}
 	}

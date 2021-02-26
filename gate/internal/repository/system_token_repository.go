@@ -12,7 +12,7 @@ import (
 
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
-	FindAll() ([]domain.SystemToken, error)
+	FindAll(page int, size int) (domain.PageSystemToken, error)
 }
 
 type systemTokenRepository struct {
@@ -40,12 +40,12 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 	return systemToken, nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindAll() ([]domain.SystemToken, error) {
+func (systemTokenRepository systemTokenRepository) FindAll(page int, size int) (domain.PageSystemToken, error) {
 	var systemToken []models.SystemToken
 
-	res := systemTokenRepository.db.Find(&systemToken)
+	res := systemTokenRepository.db.Offset(page).Limit(size).Find(&systemToken)
 	if res.Error != nil {
-		return nil, logging.NewError("Find all system tokens failed", res.Error, nil, "repository.FindAll.Find")
+		return domain.PageSystemToken{}, logging.NewError("Find all system tokens failed", res.Error, nil, "repository.FindAll.Find")
 	}
 
 	systemTokenFound := make([]domain.SystemToken, 0)
@@ -53,5 +53,9 @@ func (systemTokenRepository systemTokenRepository) FindAll() ([]domain.SystemTok
 		systemTokenFound = append(systemTokenFound, models.SystemTokenModelToDomain(st))
 	}
 
-	return systemTokenFound, nil
+	return domain.PageSystemToken{
+		Content: systemTokenFound,
+		Page:    page,
+		Size:    size,
+	}, nil
 }

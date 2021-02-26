@@ -15,3 +15,9 @@ type SystemToken struct {
 	LastUsedAt  time.Time
 	Author      User
 }
+
+type PageSystemToken struct {
+	Content []SystemToken
+	Page    int
+	Size    int
+}

@@ -6,23 +6,30 @@ import (
 	"github.com/ZupIT/charlescd/gate/web/api/handlers/representation"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
-func ListSystemTokens(findAllSystemToken systemTokenInteractor.FindAllSystemToken) echo.HandlerFunc {
+func ListAllSystemTokens(findAllSystemToken systemTokenInteractor.FindAllSystemToken) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
-		systemTokens, err := findAllSystemToken.Execute()
+
+		page, err := strconv.Atoi(echoCtx.QueryParam("page"))
+		if err != nil {
+			return echoCtx.JSON(http.StatusBadRequest, err)
+		}
+
+		size, err := strconv.Atoi(echoCtx.QueryParam("size"))
+		if err != nil {
+			return echoCtx.JSON(http.StatusBadRequest, err)
+		}
+
+		systemTokens, err := findAllSystemToken.Execute(page, size)
 		if err != nil {
 			logging.LogErrorFromCtx(ctx, err)
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		systemTokensResponse := make([]representation.SystemTokenResponse, 0)
-		for _, systemToken := range systemTokens {
-			systemTokensResponse = append(systemTokensResponse, representation.SystemTokenToResponse(systemToken))
-		}
-
-		return echoCtx.JSON(http.StatusOK, nil)
+		return echoCtx.JSON(http.StatusOK, representation.PageSystemTokenToPageResponse(systemTokens))
 	}
 }
