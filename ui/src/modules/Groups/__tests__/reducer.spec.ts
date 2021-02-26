@@ -52,3 +52,12 @@ test('update an user group', async () => {
 
   expect(groupReducer.list.content[0]).toBe(userGroup2);
 });
+
+test('do not update an user group', async () => {
+  const userGroup2 = { ...userGroup, id: '456', name: 'group 2' };
+  const groupReducer = userGroupReducer(
+    userGroupInitialState,
+    { type: ACTION_TYPES.updateUserGroup, payload: userGroup2 });
+
+  expect(groupReducer.list.content[0]).toBe(userGroup);
+});
