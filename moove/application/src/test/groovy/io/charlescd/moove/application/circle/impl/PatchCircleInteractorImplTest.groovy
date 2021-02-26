@@ -71,10 +71,10 @@ class PatchCircleInteractorImplTest extends Specification {
         def build = getDummyBuild(workspaceId, user, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
 
         when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
+        def response = this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
-        1 * this.circleRepository.findById(_) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.workspaceRepository.find(_) >> Optional.of(workspace)
         1 * this.circleRepository.update(_) >> { arguments ->
             def patchedCircle = arguments[0]
@@ -84,17 +84,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Men"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive == true
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -140,10 +142,10 @@ class PatchCircleInteractorImplTest extends Specification {
         def build = getDummyBuild(workspaceId, user, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
 
         when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
+        def response = this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
-        1 * this.circleRepository.findById(_) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.workspaceRepository.find(_) >> Optional.of(workspace)
         1 * this.circleRepository.update(_) >> { arguments ->
             def patchedCircle = arguments[0]
@@ -153,17 +155,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Women"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -205,10 +209,10 @@ class PatchCircleInteractorImplTest extends Specification {
         def build = getDummyBuild(workspaceId, user, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
 
         when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
+        def response = this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
-        1 * this.circleRepository.findById(_) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.workspaceRepository.find(_) >> Optional.of(workspace)
         1 * this.circleRepository.update(_) >> { arguments ->
             def patchedCircle = arguments[0]
@@ -218,17 +222,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Women"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -265,10 +271,10 @@ class PatchCircleInteractorImplTest extends Specification {
         def workspace = getDummyWorkspace(workspaceId, user)
 
         when:
-        def response = this.patchCircleInteractor.execute(circleId, request)
+        def response = this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
-        1 * this.circleRepository.findById(_) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
         1 * this.workspaceRepository.find(_) >> Optional.of(workspace)
         1 * this.circleRepository.update(_) >> { arguments ->
             def patchedCircle = arguments[0]
@@ -278,17 +284,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Men"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive == false
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> []
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> []
         0 * buildRepository.findById(_)
 
         assert response != null
@@ -318,10 +326,10 @@ class PatchCircleInteractorImplTest extends Specification {
         def circle = getDummyCircle(circleId, user, nodePart, workspaceId, true)
 
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
-        1 * this.circleRepository.findById(_) >> Optional.of(circle)
+        1 * this.circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
 
         def exception = thrown(BusinessException)
         exception.message == message
@@ -333,54 +341,55 @@ class PatchCircleInteractorImplTest extends Specification {
 
     def "should throw an exception when the value of allowed paths is null"() {
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
         def exception = thrown(IllegalArgumentException)
         exception.message == message
 
         where:
-        circleId                               | request                                                                      | message
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/name", null)])  | "Name cannot be null."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/rules", null)]) | "Rules cannot be null."
+        circleId                               | request                                                                      | message                 | workspaceId
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/name", null)])  | "Name cannot be null."  | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/rules", null)]) | "Rules cannot be null." | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
     }
 
     def "should throw an exception when the patch operation is equal to REMOVE"() {
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
         def exception = thrown(IllegalArgumentException)
         exception.message == message
 
         where:
-        circleId                               | request                                                                        | message
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.REMOVE, "/name", null)]) | "Remove operation not allowed."
+        circleId                               | request                                                                        | message                           | workspaceId
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.REMOVE, "/name", null)]) | "Remove operation not allowed."   | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
     }
 
     def "should throw an exception when one patch path is not allowed list"() {
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
         def exception = thrown(IllegalArgumentException)
         exception.message == message
 
         where:
-        circleId                               | request                                                                                                               | message
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/id", "5rED80951-94b1-4894-b784-c0b069994888")])          | "Path /id is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/reference", "5rED80951-94b1-4894-b784-c0b069994888")])   | "Path /reference is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/author", null)])                                         | "Path /author is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/createdAt", LocalDateTime.now())])                       | "Path /createdAt is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/matcherType", MatcherTypeEnum.REGULAR)])                 | "Path /matcherType is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/importedKvRecords", 0)])                                 | "Path /importedKvRecords is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/importedAt", LocalDateTime.now())])                      | "Path /importedAt is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/defaultCircle", false)])                                 | "Path /defaultCircle is not allowed."
-        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/workspaceId", "5rED80951-94b1-4894-b784-c0b069994888")]) | "Path /workspaceId is not allowed."
+        circleId                               | request                                                                                                               | message                                    | workspaceId
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/id", "5rED80951-94b1-4894-b784-c0b069994888")])          | "Path /id is not allowed."                 | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/reference", "5rED80951-94b1-4894-b784-c0b069994888")])   | "Path /reference is not allowed."          | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/author", null)])                                         | "Path /author is not allowed."             | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/createdAt", LocalDateTime.now())])                       | "Path /createdAt is not allowed."          | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/matcherType", MatcherTypeEnum.REGULAR)])                 | "Path /matcherType is not allowed."        | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/importedKvRecords", 0)])                                 | "Path /importedKvRecords is not allowed."  | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/importedAt", LocalDateTime.now())])                      | "Path /importedAt is not allowed."         | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/defaultCircle", false)])                                 | "Path /defaultCircle is not allowed."      | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
+        "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/workspaceId", "5rED80951-94b1-4894-b784-c0b069994888")]) | "Path /workspaceId is not allowed."        | "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
     }
 
     def "should throw an exception when clauses is null"() {
         given:
+        def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, null)
 
@@ -388,7 +397,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def request = new PatchCircleRequest(patches)
 
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
         def exception = thrown(IllegalArgumentException)
@@ -398,6 +407,7 @@ class PatchCircleInteractorImplTest extends Specification {
     def "should throw an exception when key is null"() {
         given:
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
+        def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
         def rulePart = new NodePart.RulePart(null, NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
         def rules = new NodePart(NodePart.NodeTypeRequest.CLAUSE, null, [rule], null)
@@ -407,7 +417,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def request = new PatchCircleRequest(patches)
 
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
         def exception = thrown(IllegalArgumentException)
@@ -417,6 +427,7 @@ class PatchCircleInteractorImplTest extends Specification {
     def "should throw an exception when key is blank"() {
         given:
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
+        def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
         def rulePart = new NodePart.RulePart("", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
         def rules = new NodePart(NodePart.NodeTypeRequest.CLAUSE, null, [rule], null)
@@ -426,7 +437,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def request = new PatchCircleRequest(patches)
 
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
         def exception = thrown(IllegalArgumentException)
@@ -435,6 +446,7 @@ class PatchCircleInteractorImplTest extends Specification {
 
     def "should throw an exception when condition is null"() {
         given:
+        def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
         def rulePart = new NodePart.RulePart("username", null, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
@@ -445,7 +457,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def request = new PatchCircleRequest(patches)
 
         when:
-        this.patchCircleInteractor.execute(circleId, request)
+        this.patchCircleInteractor.execute(circleId, request, workspaceId)
 
         then:
         def exception = thrown(IllegalArgumentException)

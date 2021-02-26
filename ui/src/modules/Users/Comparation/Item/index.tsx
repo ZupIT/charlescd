@@ -15,7 +15,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
@@ -31,13 +30,14 @@ import Modal from 'core/components/Modal';
 import Icon from 'core/components/Icon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
 import { isRequired, maxLength } from 'core/utils/validations';
-import { isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';
 import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
+import useForm from 'core/hooks/useForm';
 
 interface Props {
   email: string;
@@ -55,8 +55,8 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   });
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
+  const isAbleToReset = !isIDMEnabled() && loggedUserId !== user?.id;
   const { updateNameById, user: userUpdated, status } = useUpdateName();
-  const isAbleToReset = loggedUserId !== user?.id;
 
   useEffect(() => {
     if (user) {
@@ -113,11 +113,13 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         name="Copy link"
         onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
-      <Dropdown.Item
-        icon="delete"
-        name="Delete"
-        onClick={() => setAction('Delete')}
-      />
+      {!isIDMEnabled() && (
+        <Dropdown.Item
+          icon="delete"
+          name="Delete"
+          onClick={() => setAction('Delete')}
+        />
+      )}
     </Dropdown>
   );
 
@@ -155,7 +157,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="user">
-          {isRoot() ? (
+          {isRoot() && !isIDMEnabled() ? (
             <>
               <InputTitle
                 key={currentUser.name}
@@ -165,6 +167,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
                   required: isRequired(),
                   maxLength: maxLength()
                 })}
+                isDisabled={!!errors.name}
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
               />

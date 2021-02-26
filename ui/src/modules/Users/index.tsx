@@ -18,13 +18,17 @@ import React, { lazy, useState, useEffect, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import Page from 'core/components/Page';
-import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import getQueryStrings from 'core/utils/query';
 import Menu from './Menu';
 import { useUsers } from './hooks';
 import Styled from './styled';
+import InfiniteScroll from 'core/components/InfiniteScroll';
+import { useDispatch, useGlobalState } from 'core/state/hooks';
+import { resetContentAction } from './state/actions';
+import map from 'lodash/map';
+import MenuItem from './Menu/MenuItem';
 
 const UsersComparation = lazy(() => import('./Comparation'));
 
@@ -32,19 +36,25 @@ const CreateUser = lazy(() => import('./Create'));
 
 const Users = () => {
   const profileName = getProfileByKey('name');
-  const [getAll, , loading] = useUsers();
+  const [filterUsers, , loading] = useUsers();
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const { list } = useGlobalState(({ users }) => users);
   const query = getQueryStrings();
   const users = query.getAll('user');
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getAll(name);
-    if (message === 'Deleted' || message === 'Created') {
-      getAll(name);
+    const page = 0;
+    dispatch(resetContentAction());
+    if (message === '' || message === 'Deleted') {
+      filterUsers(name, page);
     }
-  }, [name, getAll, message]);
+  }, [name, message, filterUsers, dispatch]);
+
+  const loadMore = (page: number) => {
+    filterUsers(name, page);
+  };
 
   const renderPlaceholder = () => (
     <Page.Placeholder
@@ -54,10 +64,24 @@ const Users = () => {
     />
   );
 
+  const renderUsers = () =>
+    map(list?.content, ({ email, name }) => (
+      <MenuItem key={email} id={email} name={name} email={email} />
+    ));
+
   return (
     <Page>
       <Page.Menu>
-        <Menu items={list?.content} isLoading={loading} onSearch={setName} />
+        <Menu onSearch={setName}>
+          <InfiniteScroll
+            hasMore={!list.last}
+            loadMore={loadMore}
+            isLoading={loading}
+            loader={<Styled.LoaderMenu />}
+          >
+            {renderUsers()}
+          </InfiniteScroll>
+        </Menu>
       </Page.Menu>
       <Suspense fallback="">
         <Switch>

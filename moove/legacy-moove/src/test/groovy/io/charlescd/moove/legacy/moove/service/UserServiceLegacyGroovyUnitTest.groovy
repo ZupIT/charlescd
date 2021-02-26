@@ -16,9 +16,10 @@
 
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.representation.UserRepresentation
-import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
@@ -69,7 +70,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.delete("81861b6f-2b6e-44a1-a745-83e298a550c9", authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
         1 * repository.findByEmail("email@email.com") >> Optional.of(root)
         1 * repository.findById("81861b6f-2b6e-44a1-a745-83e298a550c9") >> Optional.of(user)
         1 * keycloakService.deleteUserById(_)
@@ -85,7 +86,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.delete("1123", authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
         1 * repository.findByEmail("email@email.com") >> Optional.of(user)
         1 * repository.findById(user.id) >> Optional.of(user)
         0 * repository.findById("1123") >> Optional.of(user)
@@ -102,14 +103,14 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         service.delete("test", authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> "test"
+        1 * keycloakService.getEmailByAuthorizationToken(   authorization) >> "test"
         1 * repository.findByEmail("test") >> Optional.empty()
         def ex = thrown(NotFoundExceptionLegacy)
         ex.resourceName == "user"
         ex.id == "test"
     }
 
-    def "should delete user and shouldnt delete on keycloak"() {
+    def "shouldn't delete user cause using external idm"() {
         given:
         service = new UserServiceLegacy(repository, keycloakService, false)
 
@@ -117,15 +118,14 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.delete(representation.id, authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
-        1 * repository.findByEmail("email@email.com") >> Optional.of(user)
-        1 * repository.findById(representation.id) >> Optional.of(user)
+        0 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
+        0 * repository.findByEmail("email@email.com") >> Optional.of(user)
+        0 * repository.findById(representation.id) >> Optional.of(user)
         0 * keycloakService.deleteUserById(_)
-        1 * repository.delete(user)
-        response.id == representation.id
-        response.name == representation.name
-        response.photoUrl == representation.photoUrl
-        notThrown()
+        0 * repository.delete(user)
+
+        def exception = thrown(BusinessExceptionLegacy)
+        exception.errorCode == MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN
     }
 
     def "should get user by id"() {
@@ -180,23 +180,23 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> user.email
         1 * repository.findByEmail(user.email) >> Optional.of(user)
         response.id == representation.id
     }
 
-    def "should throw NotFoundException when get invalid user by auth roken"() {
+    def "should throw NotFoundException when get invalid user by auth token"() {
 
         when:
         service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> user.email
         1 * repository.findByEmail(user.email) >> Optional.empty()
         thrown(NotFoundExceptionLegacy)
     }
 
-        private String getAuthorization() {
+    private static String getAuthorization() {
         return  "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3";
     }
 }

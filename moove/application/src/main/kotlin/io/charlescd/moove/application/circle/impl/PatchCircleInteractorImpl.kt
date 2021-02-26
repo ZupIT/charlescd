@@ -44,9 +44,9 @@ open class PatchCircleInteractorImpl(
 ) : PatchCircleInteractor {
 
     @Transactional
-    override fun execute(id: String, request: PatchCircleRequest): CircleResponse {
+    override fun execute(id: String, request: PatchCircleRequest, workspaceId: String): CircleResponse {
         request.validate()
-        val circle = circleService.find(id)
+        val circle = circleService.findByIdAndWorkspaceId(id, workspaceId)
         canBeUpdated(circle)
         val updatedCircle = updateCircle(request, circle)
         updateCircleOnCircleMatcher(circle, updatedCircle)
@@ -87,6 +87,7 @@ open class PatchCircleInteractorImpl(
         updated: Circle
     ) {
         val workspace = workspaceService.find(circle.workspaceId)
-        this.circleMatcherService.update(updated, circle.reference, workspace.circleMatcherUrl!!)
+        val activeDeploymentsCircle = this.deploymentService.findActiveList(circle.id)
+        this.circleMatcherService.update(updated, circle.reference, workspace.circleMatcherUrl!!, activeDeploymentsCircle.isNotEmpty())
     }
 }
