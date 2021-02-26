@@ -46,7 +46,7 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 	res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).First(&systemToken)
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
-			return handlerError("Not found token", "unit.GetById.First", res.Error, logging.NotFoundError)
+			return handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
 		}
 		return handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
 	}
