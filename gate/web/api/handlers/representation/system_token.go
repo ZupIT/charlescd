@@ -22,20 +22,20 @@ type SystemTokenResponse struct {
 	Author string `json:"author"`
 }
 
-func (systemTokenRequest SystemTokenRequest) SystemTokenToDomain(author domain.User) domain.SystemToken {
+func (systemTokenRequest SystemTokenRequest) RequestToDomain(author domain.User) domain.SystemToken {
 	return domain.SystemToken{
 		ID:          uuid.New(),
 		Name:        systemTokenRequest.Name,
 		Revoked:     false,
 		Permissions: []domain.Permission{},
 		CreatedAt:   time.Now(),
-		RevokedAt:   nil,
-		LastUsedAt:  nil,
+		RevokedAt:   time.Time{},
+		LastUsedAt:  time.Time{},
 		Author:      author,
 	}
 }
 
-func SystemTokenToResponse(systemToken domain.SystemToken) SystemTokenResponse {
+func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 	return SystemTokenResponse{
 		ID: systemToken.ID,
 		Name: systemToken.Name,
