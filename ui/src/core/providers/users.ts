@@ -87,8 +87,15 @@ export const findUserByEmail = (email: string) => {
   return baseRequest(`${endpoint}/${decodeEmail}`);
 };
 
-export const findWorkspacesByUserId = (id: string) => {
-  return baseRequest(`${endpoint}/${id}/workspaces`);
+export const findWorkspacesByUserId = (id: string, { name }: { name: string }) => {
+  const params = new URLSearchParams({
+    size: `${DEFAULT_PAGE_SIZE}`,
+    name,
+    page: '0',
+    sort: 'createdAt,desc'
+  });
+
+  return baseRequest(`${endpoint}/${id}/workspaces?${params}`);
 };
 
 export const deleteUserById = (id: string) =>

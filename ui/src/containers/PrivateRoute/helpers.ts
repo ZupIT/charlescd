@@ -17,9 +17,10 @@
 import { getRoles } from 'core/utils/auth';
 import includes from 'lodash/includes';
 import forEach from 'lodash/forEach';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
-export const isAllowed = (allowedRoles: string[]) => {
-  const roles = getRoles();
+export const isAllowed = (allowedRoles: string[], workspace: Workspace) => {
+  const roles = getRoles(workspace);
   let status = false;
 
   forEach(allowedRoles, role => {

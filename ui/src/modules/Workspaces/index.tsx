@@ -14,63 +14,35 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { getProfileByKey } from 'core/utils/profile';
+import React, { useState, useEffect } from 'react';
 import Page from 'core/components/Page';
-import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, isIDMEnabled, isRoot, logout } from 'core/utils/auth';
-import { useWorkspacesByUser } from 'modules/Users/hooks';
-import { useWorkspace } from './hooks';
+import { getAccessTokenDecoded, logout } from 'core/utils/auth';
+import { useWorkspaces } from './hooks';
 import Menu from './Menu';
 
-interface Props {
-  selectedWorkspace: (name: string) => void;
-}
-
-const Workspaces = ({ selectedWorkspace }: Props) => {
+const Workspaces = () => {
   const { name: profileName, email } = getAccessTokenDecoded();
-  const workspaces = getProfileByKey('workspaces');
-  const userId = getProfileByKey('id');
-  const [filterWorkspace, , loading] = useWorkspace();
-  const { findWorkspacesByUser } = useWorkspacesByUser();
+  const { getWorkspaces, workspaces, status } = useWorkspaces();
   const [name, setName] = useState('');
-  const { list } = useGlobalState(({ workspaces }) => workspaces);
-
-  const onIDMFlow = useCallback(() => {
-    if (isRoot()) {
-      filterWorkspace();
-    } else {
-      findWorkspacesByUser(userId);
-    }
-  }, [filterWorkspace, findWorkspacesByUser, userId]);
 
   useEffect(() => {
-    if (isIDMEnabled()) {
-      onIDMFlow();
-    }
-  }, [onIDMFlow]);
-
-  useEffect(() => {
-    if (isRoot()) {
-      filterWorkspace(name);
-    }
-  }, [name, filterWorkspace]);
+    getWorkspaces(name);
+  }, [getWorkspaces, name]);
 
   useEffect(() => {
     if (!email) logout();
   }, [email]);
 
-  const handleOnSearch = (name: string) => !loading && setName(name);
+  const handleOnSearch = (name: string) => status !== 'pending' && setName(name);
 
   return (
     <Page>
       <Page.Menu>
         <Menu
-          items={list?.content || workspaces}
-          isLoading={loading}
+          items={workspaces}
+          isLoading={status === 'pending'}
           onSearch={handleOnSearch}
-          selectedWorkspace={(name: string) => selectedWorkspace(name)}
         />
       </Page.Menu>
       <Page.Content>

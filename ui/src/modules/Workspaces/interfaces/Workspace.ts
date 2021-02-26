@@ -27,6 +27,7 @@ export interface Workspace {
   cdConfiguration?: Configuration;
   metricConfiguration?: MetricConfiguration;
   registryConfiguration?: Configuration;
+  permissions?: string[];
 }
 
 export interface Configuration {

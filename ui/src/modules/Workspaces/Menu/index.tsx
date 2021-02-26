@@ -37,14 +37,12 @@ interface Props {
   items: Workspace[];
   onSearch: (name: string) => void;
   isLoading?: boolean;
-  selectedWorkspace: (name: string) => void;
 }
 
 const WorkspaceMenu = ({
   items,
   onSearch,
-  isLoading,
-  selectedWorkspace
+  isLoading
 }: Props) => {
   const history = useHistory();
   const {
@@ -64,14 +62,8 @@ const WorkspaceMenu = ({
     isEmpty(items) ? (
       <Text.h3 color="dark">No workspace was found</Text.h3>
     ) : (
-      map(items, ({ id, name, status }: Workspace) => (
-        <MenuItem
-          key={id}
-          id={id}
-          name={name}
-          status={status}
-          selectedWorkspace={(name: string) => selectedWorkspace(name)}
-        />
+      map(items, (workspace: Workspace) => (
+        <MenuItem key={workspace?.id} workspace={workspace} />
       ))
     );
 

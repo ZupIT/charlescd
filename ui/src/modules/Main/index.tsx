@@ -37,7 +37,6 @@ export const Metrics = lazy(() => import('modules/Metrics'));
 
 const Main = () => {
   const [isExpanded, setSideExpanded] = useState(getExpandMode());
-  const [selectedWorkspace, setSelectedWorkspace] = useState('');
 
   const onClickExpand = ({ status, persist }: ExpandClick) => {
     const newStatus = isUndefined(status) ? !isExpanded : status;
@@ -50,21 +49,12 @@ const Main = () => {
       <Sidebar
         isExpanded={isExpanded}
         onClickExpand={onClickExpand}
-        selectedWorkspace={selectedWorkspace}
       />
       <Styled.Content data-testid="main-content">
         <React.Suspense fallback="">
           <Switch>
             <Redirect exact from={routes.main} to={routes.workspaces} />
-            <Route
-              path={routes.workspaces}
-              render={() => (
-                <Workspaces
-                  selectedWorkspace={(name: string) =>
-                    setSelectedWorkspace(name)
-                  }
-                />
-              )}
+            <Route path={routes.workspaces} component={Workspaces}
             />
             <Route path={routes.account} component={Account} />
             <PrivateRoute

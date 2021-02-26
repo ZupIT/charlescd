@@ -18,6 +18,7 @@ import { AbilityBuilder, Ability } from '@casl/ability';
 import forEach from 'lodash/forEach';
 import { getRoles } from 'core/utils/auth';
 import { isRoot } from 'core/utils/auth';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
 export type Actions = 'read' | 'write';
 export type Subjects =
@@ -34,7 +35,7 @@ const subjects = ['maintenance', 'deploy', 'circles', 'modules', 'hypothesis'];
 const { build } = new AbilityBuilder<AppAbility>();
 const ability = build();
 
-const setUserAbilities = () => {
+const setUserAbilities = (workspace: Workspace) => {
   const { can, rules } = new AbilityBuilder<AppAbility>();
 
   if (isRoot()) {
@@ -47,7 +48,7 @@ const setUserAbilities = () => {
       });
     });
   } else {
-    const roles = getRoles();
+    const roles = getRoles(workspace);
     forEach(roles, (role: string) => {
       const [sub, act = 'write'] = role.split('_');
       const subject = sub as Subjects;

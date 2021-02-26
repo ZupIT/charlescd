@@ -17,9 +17,8 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
-import isNull from 'lodash/isNull';
 import { copyToClipboard } from 'core/utils/clipboard';
-import { useWorkspace } from 'modules/Settings/hooks';
+import { useWorkspaceUpdateName } from 'modules/Settings/hooks';
 import { useActionData } from './Sections/MetricAction/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
@@ -41,7 +40,7 @@ interface Props {
 const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
-  const [, loadWorkspace, , updateWorkspace] = useWorkspace();
+  const { updateWorkspaceName } = useWorkspaceUpdateName();
   const {
     responseAll: datasources,
     getAll: getAllDatasources
@@ -57,7 +56,7 @@ const Credentials = ({ onClickHelp }: Props) => {
   const { register, handleSubmit } = useForm();
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
-    updateWorkspace(name);
+    updateWorkspaceName(name);
   };
 
   const getActions = () => getActionData();
@@ -71,11 +70,8 @@ const Credentials = ({ onClickHelp }: Props) => {
   }, [getActionData, actionDataStatus]);
 
   useEffect(() => {
-    if (isNull(form)) {
-      loadWorkspace(id);
-    }
     getAllDatasources();
-  }, [id, form, loadWorkspace, getAllDatasources]);
+  }, [getAllDatasources]);
 
   const renderContent = () => (
     <Layer>

@@ -89,7 +89,7 @@ const Element = ({
     const ignoreStatusIf = ['maintenance_write'];
 
     const status =
-      hasPermission('maintenance_write') && !includes(ignoreStatusIf, role)
+      hasPermission('maintenance_write', workspace) && !includes(ignoreStatusIf, role)
         ? workspace?.status
         : WORKSPACE_STATUS.COMPLETE;
 

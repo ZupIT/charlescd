@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 import { ReactNode } from 'react';
 
 interface Users {
@@ -30,7 +31,7 @@ export interface WorkspacePaginationItem {
 }
 
 export interface WorkspacePagination {
-  content: WorkspacePaginationItem[];
+  content: Workspace[];
   page: number;
   size: number;
   totalPages: number;

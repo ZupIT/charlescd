@@ -27,13 +27,12 @@ import {
   statusWorkspaceAction
 } from 'modules/Workspaces/state/actions';
 
-export const useWorkspace = (): [Workspace, Function, Function, Function] => {
+export const useWorkspace = (): { getWorkspace: Function, workspace: Workspace } => {
   const getWorkspaceById = useFetchData<Workspace>(findById);
-  const [workspace, setWorkspace] = useState(null);
-  const [, , updateWorkspace] = useFetch(updateName);
+  const [workspace, setWorkspace] = useState<Workspace>(null);
   const dispatch = useDispatch();
 
-  const loadWorkspace = useCallback(
+  const getWorkspace = useCallback(
     async (id: string) => {
       try {
         dispatch(statusWorkspaceAction('pending'));
@@ -56,11 +55,20 @@ export const useWorkspace = (): [Workspace, Function, Function, Function] => {
     [getWorkspaceById, dispatch]
   );
 
-  const update = useCallback(
+  return {
+    getWorkspace,
+    workspace
+  };
+};
+
+export const useWorkspaceUpdateName = () => {
+  const updateWorkspace = useFetchData(updateName);
+  const dispatch = useDispatch();
+
+  const updateWorkspaceName = useCallback(
     async (name: string) => {
       try {
         await updateWorkspace(name);
-        setWorkspace({ ...workspace, name });
       } catch (error) {
         dispatch(
           toogleNotification({
@@ -70,10 +78,12 @@ export const useWorkspace = (): [Workspace, Function, Function, Function] => {
         );
       }
     },
-    [updateWorkspace, workspace, dispatch]
+    [updateWorkspace, dispatch]
   );
 
-  return [workspace, loadWorkspace, getWorkspaceById, update];
+  return {
+    updateWorkspaceName
+  }
 };
 
 export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {

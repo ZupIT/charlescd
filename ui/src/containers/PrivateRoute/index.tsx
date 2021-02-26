@@ -36,7 +36,7 @@ const PrivateRoute = ({
   ...rest
 }: Props) => {
   const workspaceId = getWorkspaceId();
-  const [, loadWorkspace] = useWorkspace();
+  const { getWorkspace } = useWorkspace();
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
@@ -44,16 +44,16 @@ const PrivateRoute = ({
   useEffect(() => {
     if (
       workspaceId &&
-      hasPermission('maintenance_write') &&
+      hasPermission('maintenance_write', workspace) &&
       (status === 'idle' ||
         (status === 'resolved' && workspaceId !== workspace?.id))
     ) {
-      loadWorkspace(workspaceId);
+      getWorkspace(workspaceId);
     }
-  }, [workspaceId, loadWorkspace, status, workspace]);
+  }, [workspaceId, getWorkspace, status, workspace]);
 
   const isAuthorizedByUser =
-    allowedRoute || isAllowed(allowedRoles) || isRoot();
+    allowedRoute || isAllowed(allowedRoles, workspace) || isRoot();
 
   return (
     <Route

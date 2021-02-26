@@ -15,9 +15,7 @@
  */
 
 import JwtDecode from 'jwt-decode';
-import find from 'lodash/find';
 import includes from 'lodash/includes';
-import { getWorkspaceId } from 'core/utils/workspace';
 import { clearCircleId } from './circle';
 import { clearProfile } from './profile';
 import { clearWorkspace } from './workspace';
@@ -26,6 +24,7 @@ import { redirectTo } from './routes';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import { microfrontendKey } from './microfrontend';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
 type AccessToken = {
   id?: string;
@@ -71,19 +70,12 @@ export const isRoot = () => {
 
 export const isRootRoute = (route: string) => includes(route, 'root');
 
-export const getRoles = () => {
-  try {
-    const id = getWorkspaceId();
-    const workspaces = getProfileByKey('workspaces');
-    const { permissions } = find(workspaces, ['id', id]) || { permissions: [] };
-    return permissions;
-  } catch (e) {
-    return [];
-  }
+export const getRoles = (workspace: Workspace): string[] => {
+  return workspace?.permissions || [];
 };
 
-export const hasPermission = (role: string) => {
-  const roles = getRoles();
+export const hasPermission = (role: string, workspace: Workspace) => {
+  const roles = getRoles(workspace);
   return isRoot() || includes(roles, role);
 };
 
