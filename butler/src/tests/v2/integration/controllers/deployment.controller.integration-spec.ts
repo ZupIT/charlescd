@@ -17,18 +17,17 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
+import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
-import { FixtureUtilsService } from '../fixture-utils.service'
-import { TestSetupUtils } from '../test-setup-utils'
-import { EntityManager } from 'typeorm'
 import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
-import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
