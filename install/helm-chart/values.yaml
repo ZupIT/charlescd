@@ -1,185 +1,376 @@
-butler:
-  enabled: true
-  name: "charlescd-butler"
-  octopipeHost: "http://charlescd-octopipe:8080"
-  database:
-    name: charlescd_butler
-    host: charlescd-postgresql
-    port: "5432"
-    user: charlescd_butler
-    password: 3f2Yq8R4HhDCnefR
-    ssl: false
-  replicaCount: 1
-  image:
-    name: zupcharles/charlescd-butler:0.5.7
-    pullPolicy: Always
-  service:
+postgresqlGlobal: &postgresInfo
+  host: &postgresHost charlescd-postgresql
+  port: &postgresPort 5432
+
+hostGlobal: &hostGlobal http://charles.info.example
+keycloakHost: &keycloakHost http://charles.info.example/keycloak
+
+CharlesApplications:
+  butler:
+    enabled: true
     name: charlescd-butler
-    type: ClusterIP
-    ports:
-      - name: http
-        port: 3000
-  resources:
-    limits:
-      cpu: 128m
-      memory: 256Mi
-    requests:
-      cpu: 128m
-      memory: 128Mi
-
-moove:
-  enabled: true
-  name: "charlescd-moove"
-  allowedOriginHost: "http://charles.info.example"
-  keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
-  internalIdmEnabled: true
-  database:
-    name: charlescd_moove
-    host: charlescd-postgresql
-    port: 5432
-    user: charlescd_moove
-    password: 7Qs2KuM9gYzw48BS
-  replicaCount: 1
-  image:
-    name: zupcharles/charlescd-moove:0.5.7
+    sidecarIstio: 
+      enabled: true
+    healthCheck:
+      path: /healthcheck
+      port: 3000
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-butler
+    imagePullSecrets: false
     pullPolicy: Always
-  service:
+    service:
+      name: charlescd-butler
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 3000
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    postgresqlWait: true
+    #butler envs
+    database:
+      <<: *postgresInfo
+      user: charlescd_butler
+      password: 3f2Yq8R4HhDCnefR
+      name: charlescd_butler
+      ssl: false
+
+  moove:
+    enabled: true
     name: charlescd-moove
-    type: ClusterIP
-    ports:
-      - name: http
-        port: 8080
-  resources:
-    limits:
-      cpu: 1
-      memory: 1024Mi
-    requests:
-      cpu: 128m
-      memory: 128Mi
-
-sidecarIstio:
-  enabled: true
-
-villager:
-  enabled: true
-  name: "charlescd-villager"
-  database:
-    name: charlescd_villager
-    host: charlescd-postgresql
-    port: 5432
-    user: charlescd_villager
-    password: ZkQ67Lnhs2bM3MPN
-
-  replicaCount: 1
-  image:
-    name: zupcharles/charlescd-villager:0.5.7
+    sidecarIstio: 
+      enabled: true
+    healthCheck:
+      path: /actuator/health
+      port: 8080
+      initialDelay: 180
+    image:
+      registry: zupcharles
+      application: charlescd-moove
+    imagePullSecrets: false
     pullPolicy: Always
-  service:
+    service:
+      name: charlescd-moove
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    postgresqlWait: true
+    #moove envs
+    database:
+      <<: *postgresInfo
+      user: charlescd_moove
+      password: 7Qs2KuM9gYzw48BS
+      name: charlescd_moove
+    allowedOriginHost: *hostGlobal
+    keycloak:
+      host: "http://examplename-keycloak-http/keycloak/auth"
+      realm: charlescd
+      publicClientId: charlescd-client
+      clientId: realm-charlescd
+      clientSecret: "441cfd37-8443-4f3d-bf6c-ee9861b04e28"
+    internalIdmEnabled: true
+
+  villager:
+    enabled: true
     name: charlescd-villager
-    type: ClusterIP
-    ports:
-      - name: http
-        port: 8080
-  resources:
-    limits:
-      cpu: 256m
-      memory: 512Mi
-    requests:
-      cpu: 128m
-      memory: 128Mi
-
-ui:
-  enabled: true
-  name: charlescd-ui
-  apiHost: http://charles.info.example
-  authUri: http://charles.info.example/keycloak
-  authRealm: charlescd
-  isIdmEnabled: "0"
-  idmLoginUri: /protocol/openid-connect/auth
-  idmLogoutUri: /protocol/openid-connect/logout
-  idmRedirectHost: http://charles.info.example
-  replicaCount: 1
-  image:
-    name: zupcharles/charlescd-ui:0.5.7
+    sidecarIstio: 
+      enabled: true
+    healthCheck:
+      path: /health
+      port: 8080
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-villager
+    imagePullSecrets: false
     pullPolicy: Always
-  service:
+    service:
+      name: charlescd-villager
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    postgresqlWait: true
+    #villager envs
+    buildTimeout: 15
+    database:
+      <<: *postgresInfo
+      user: charlescd_villager
+      password: ZkQ67Lnhs2bM3MPN
+      name: charlescd_villager
+
+  octopipe:
+    enabled: true
+    serviceAccountName: charlescd-octopipe
+    name: charlescd-octopipe
+    sidecarIstio: 
+      enabled: true
+    healthCheck:
+      path: /api/v1/health
+      port: 8080
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-octopipe
+    imagePullSecrets: false
+    pullPolicy: Always
+    service:
+      name: charlescd-octopipe
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    #octopipe envs
+    limits:
+      timeoutResourceVerification: 300
+      requestBySecond: 10
+
+  ui:
+    enabled: true
     name: charlescd-ui
-    type: ClusterIP
-    ports:
-      - name: http
-        port: 3000
-  resources:
-    limits:
-      cpu: 128m
-      memory: 128Mi
-    requests:
-      cpu: 64m
-      memory: 64Mi
-
-circlematcher:
-  enabled: true
-  name: charlescd-circle-matcher
-  redis:
-    host: charlescd-redis-master
-    port: 6379
-    password: hb2Fj9MGKjBkZ6zV
-    ssl: false
-  allowedOriginHost: http://charles.info.example
-  replicaCount: 1
-  image:
-    name: zupcharles/charlescd-circle-matcher:0.5.7
+    sidecarIstio: 
+      enabled: true
+    healthCheck:
+      path: /
+      port: 3000
+      initialDelay: 20
+    image:
+      registry: zupcharles
+      application: charlescd-ui
+    imagePullSecrets: false
     pullPolicy: Always
-  service:
+    service:
+      name: charlescd-ui
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 3000
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    postgresqlWait: false
+    #ui envs
+    apiHost: *hostGlobal
+    authUri: *keycloakHost
+    authRealm: charlescd
+    authClient: charlescd-client
+    isIdmEnabled: "0"
+    idmLoginUri: /protocol/openid-connect/auth
+    idmLogoutUri: /protocol/openid-connect/logout
+    idmRedirectHost: *hostGlobal
+
+  circleMatcher:
+    enabled: true
     name: charlescd-circle-matcher
-    type: ClusterIP
-    ports:
-      - name: http
-        port: 8080
-  resources:
+    sidecarIstio: 
+      enabled: true
+    healthCheck:
+      path: /actuator/health
+      port: 8080
+      initialDelay: 120
+    image:
+      registry: zupcharles
+      application: charlescd-circle-matcher
+    imagePullSecrets: false
+    pullPolicy: Always
+    service:
+      name: charlescd-circle-matcher
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    #Circle matcher envs
+    allowedOriginHost: *hostGlobal
+    redis:
+    # available: redis-standalone, redis-cluster and redis-sentinel
+      profile: redis-standalone
+      host: charlescd-redis-master
+      port: 6379
+      password: hb2Fj9MGKjBkZ6zV
+      ssl: false
+      cluster:
+        enabled: false
+        nodes: "example"
+      sentinel:
+        enabled: false
+        nodes: "example"
+        master: "example"
+
+  compass:
+    enabled: true
+    name: charlescd-compass
+    sidecarIstio: 
+      enabled: true
+    healthCheck:
+      path: /health
+      port: 8080
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-compass
+    imagePullSecrets: false
+    pullPolicy: Always
+    service:
+      name: charlescd-compass
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    postgresqlWait: true
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    #compass envs
+    database:
+      <<: *postgresInfo
+      name: charlescd_compass
+      user: charlescd_compass
+      password: C1UinUu6N0vc
+    databaseIgnoreSSL: disable
+    pluginsDir: "./plugins"
+    dispatchInterval: "15s"
     limits:
-      cpu: 256m
-      memory: 256Mi
-    requests:
-      cpu: 128m
-      memory: 128Mi
+      requestPerSecond: "4"
+      tokenTTL: "5"
+      headersTTL: "5"
+    moove:
+      user: "Y2hhcmxlc2FkbWluQGFkbWlu"
+      auth: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcXkydE1XY2E1VVhaYjdONXZNSEE0b25NRkZqNkVLandSV0tnaTJvQkhNIn0.eyJleHAiOjE2MTEyNTMzMzcsImlhdCI6MTYxMTI0OTczNywianRpIjoiNmU5OWYyZjUtOTBlMS00OGFjLWFlN2QtYWJkMjIyODIwY2FmIiwiaXNzIjoiaHR0cDovL2NoYXJsZXMuaW5mby5leGFtcGxlL2tleWNsb2FrL2F1dGgvcmVhbG1zL2NoYXJsZXNjZCIsImF1ZCI6ImRhcndpbi1jbGllbnQiLCJzdWIiOiJkYThjYTQ5OC1lNDQ5LTQzMjYtYThkZC00ODM5NDI0Y2JkZDAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjaGFybGVzY2QtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjI5Mzk2ZDZlLWI4ZDctNGU0ZC1hYTI2LWVlYWVlM2M5ODRjNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNSb290Ijp0cnVlLCJuYW1lIjoiY2hhcmxlc2FkbWluQGFkbWluIGNoYXJsZXNhZG1pbkBhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImdpdmVuX25hbWUiOiJjaGFybGVzYWRtaW5AYWRtaW4iLCJmYW1pbHlfbmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImVtYWlsIjoiY2hhcmxlc2FkbWluQGFkbWluIn0.NLzu9222nMb-eyIiKwbznPzSTXe26QQp5cYGWw4MhfTW43gl6bXFAd-YMSXMEz5mmRy73NlW8WWnMKfQpC2FR-3wSKajVTB5_Y2CJC8PTLjXUpcZS2UxvBuV_ANZiINNovGiX87XFNhm9bHZxXzYUhDKqGh2C72G18fZKUTGMCfcTFHhFjxWDx1MEm5AN5JzPNbtcYWmrCMufgTsaQD9pQrHWxr9-8kNgKYff6wMVJLR6YIVpNVy7eHWTTOKwa59BFpw-w45clA3dtcs5cbMQo6GoA52_f5XdyvCZ-llYfvYpT09iPMsekWjG0TTbo2hCA59VKnMZA0r7JtPan9wrQ"
+      database:
+        <<: *postgresInfo
+        name: charlescd_moove
+        user: charlescd_moove
+        password: 7Qs2KuM9gYzw48BS
 
-keycloak:
-  enabled: true
-  keycloak:
-    extraEnv: |
-      - name: PROXY_ADDRESS_FORWARDING
-        value: "true"
-      - name: DB_USER
-        value: "keycloak"
-      - name: DB_PASSWORD
-        value: "DCWYW66Mq2ca6w8u"
-      - name: DB_VENDOR
-        value: "POSTGRES"
-      - name: DB_PORT
-        value: "5432"
-      - name: DB_ADDR
-        value: "charlescd-postgresql"
-      - name: DB_DATABASE
-        value: "keycloak"
-      - name: DB_SCHEMA
-        value: "public"
-
-    replicas: 1
-    persistence:
-      deployPostgres: false
-      existingSecret: false
-    cli:
-      custom: |
-        /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
 
 postgresql:
   enabled: true
-  postgresqlUsername: "postgres"
-  postgresqlPassword: "firstpassword"
+  fullnameOverride: *postgresHost
+  initdbScriptsConfigMap: charles-postgres
 
 redis:
   enabled: true
+  fullnameOverride: charlescd-redis
   password: "hb2Fj9MGKjBkZ6zV"
+  cluster:
+    enabled: false
+
+keycloak:
+  enabled: true
+  postgresql:
+    enabled: false
+  database:
+    <<: *postgresInfo
+    name: keycloak
+    user: keycloak
+    password: DCWYW66Mq2ca6w8u
+  charlesHost: *hostGlobal
+  extraEnv: |
+    - name: PROXY_ADDRESS_FORWARDING
+      value: "true"
+    - name: DB_USER
+      value: "{{ .Values.database.user }}"
+    - name: DB_PASSWORD
+      value: "{{ .Values.database.password }}"
+    - name: DB_VENDOR
+      value: "POSTGRES"
+    - name: DB_PORT
+      value: "{{ .Values.database.port }}"
+    - name: DB_ADDR
+      value: "{{ .Values.database.host }}"
+    - name: DB_DATABASE
+      value: "{{ .Values.database.name }}"
+    - name: DB_SCHEMA
+      value: "public"
+    - name: JAVA_OPTS
+      value: >-
+        -Dkeycloak.migration.action=import
+        -Dkeycloak.migration.provider=singleFile
+        -Dkeycloak.migration.file=/realm/keycloak.json
+        -Dkeycloak.migration.strategy=IGNORE_EXISTING
+
+  securityContext:
+    runAsUser: 0   
+    runAsNonRoot: false
+
+  contextPath: keycloak/auth
+
+  startupScripts:
+    contextPath.cli: |
+      embed-server --server-config=standalone-ha.xml --std-out=echo
+      batch
+      {{- if ne .Values.contextPath "auth" }}
+      /subsystem=keycloak-server/:write-attribute(name=web-context,value={{ if eq .Values.contextPath "" }}/{{ else }}{{ .Values.contextPath }}{{ end }})
+      {{- if eq .Values.contextPath "" }}
+      /subsystem=undertow/server=default-server/host=default-host:write-attribute(name=default-web-module,value=keycloak-server.war)
+      {{- end }}
+      {{- end }}
+      /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="{{ .Values.charlesHost }}/{{ .Values.contextPath }}")
+      run-batch
+      stop-embedded-server
+
+  livenessProbe: |
+    httpGet:
+      path: {{ if ne .Values.contextPath "" }}/{{ .Values.contextPath }}{{ end }}/
+      port: http
+    initialDelaySeconds: 300
+    timeoutSeconds: 5
+
+  readinessProbe: |
+    httpGet:
+      path: {{ if ne .Values.contextPath "" }}/{{ .Values.contextPath }}{{ end }}/realms/master
+      port: http
+    initialDelaySeconds: 30
+    timeoutSeconds: 1
+
+  extraInitContainers: |
+    - name: check-db-ready
+      image: postgres:9.6.5
+      command: ['sh', '-c', 
+        'until pg_isready -h {{ .Values.database.host }} -p {{ .Values.database.port }}; 
+        do echo waiting for database; sleep 2; done;']
+  auth:
+    adminPassword: firstpassword
+  
+  extraVolumes: |
+    - name: realm-secret
+      configMap:
+        name: keycloak-realm
+
+  extraVolumeMounts: |
+    - name: realm-secret
+      mountPath: "/realm/"
+      readOnly: false
 
 envoy:
   enabled: true
@@ -199,10 +390,11 @@ envoy:
     enabled: true
     hosts: []
   idm:
-    endpoint: charlescd-keycloak-http
+    endpoint: "keycloak-http"
     port: 80
     path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo
     protocol: http
+
 
 ingress:
   host: charles.info.example
@@ -216,69 +408,9 @@ ingress-nginx:
   controller:
     service:
       annotations: {}
-##    extraArgs:
-##      default-ssl-certificate: "namespace/secret"
+    
 
-octopipe:
-  enabled: true
-  envVars:
-    - name: APP_PORT
-      value: "8080"
-    - name: KUBECONFIG
-      value: "IN_CLUSTER"
-    - name: TIMEOUT_RESOURCE_VERIFICATION
-      value: "300"
-    - name: LIMIT_REQUESTS_BY_SECOND
-      value: "10"
+    
 
-compass:
-  enabled: true
-  name: "charlescd-compass"
-  database:
-    name: charlescd_compass
-    host: charlescd-postgresql
-    port: 5432
-    user: charlescd_compass
-    password: C1UinUu6N0vc
-  replicaCount: 1
-  envVars:
-    - name: DB_SSL
-      value: "disable"
-    - name: PLUGINS_DIR
-      value: "./plugins"
-    - name: ENV
-      value: "PROD"
-    - name: DISPATCHER_INTERVAL
-      value: "15s"
-    - name: MOOVE_USER
-      value: "Y2hhcmxlc2FkbWluQGFkbWlu"
-    - name: MOOVE_PATH
-      value: "http://charlescd-moove:8080"
-    - name: MOOVE_AUTH
-      value: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpcm9waWVJZS0yVUt5U0dxN1F5Q0J1bmpHR1h3TTVuQmFuQnJrSGtWODJFIn0.eyJleHAiOjE2MDI3MDQxODIsImlhdCI6MTYwMjcwMDU4MiwianRpIjoiMzkzZWZlY2ItMWNiOC00YWUxLWJkODItZmJlYTEzNTA4ODQ0IiwiaXNzIjoiaHR0cHM6Ly9jaGFybGVzLXNhbmRib3guY29udGludW91c3BsYXRmb3JtLmNvbS9rZXljbG9hay9hdXRoL3JlYWxtcy9jaGFybGVzY2QiLCJhdWQiOiJkYXJ3aW4tY2xpZW50Iiwic3ViIjoiZDAwMDkxZDAtMjNkZC00MDUzLTkwOWEtMWI2OWFlY2NkOWE1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2hhcmxlc2NkLWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiI2MzgyMWY4MC1lMjg3LTQ1YjUtOTAzOC1iYTgzODllMjdhN2QiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzUm9vdCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2hhcmxlc2FkbWluQGFkbWluIiwiZW1haWwiOiJjaGFybGVzYWRtaW5AYWRtaW4ifQ.dE2nQm6r9mKmiRX68tjNUspPEdtBf1H3Ae7fIRQY-lVu3HQQqgP9B9ik0RFhpWioQ62itaG_-fTYxVWQiy8ecgAYVW8bIufKlOnFbeeBZ5C1cQKkPAwur8xX980ZgMEeUuQPo_BhzsvuxkOSFXJrR_qFNZg1ChzfWCtAxy8nbXUlg1yijlPsCght5AAn6WWWTgsIjnOc1Hk1hsPD9qJCHXIuyUyMZ2OZRm4ROHyHoupMgSyh54eJ-6EqWNrSItFDwEH0aRu5YXBxTrG8xyjVV8mZKdeBMZ94As61ZrAWjzxmdL043TrW1VqEKISPX28jkx7zchAsFJP3_5h_cnRVpg"
-    - name: REQUESTS_PER_SECOND_LIMIT
-      value: "4"
-    - name: LIMITER_TOKEN_TTL
-      value: "5"
-    - name: LIMITER_HEADERS_TTL
-      value: "5"
-  secretEnvVars:
-    - name: ENCRYPTION_KEY
-      secretName: "compass-aes256-key"
-      secretKey: "encryption-key"
-  image:
-    name: zupcharles/charlescd-compass:0.5.7
-    pullPolicy: Always
-  service:
-    name: charlescd-compass
-    type: ClusterIP
-    ports:
-      - name: http
-        port: 8080
-  resources:
-    limits:
-      cpu: 128m
-      memory: 128Mi
-    requests:
-      cpu: 64m
-      memory: 64Mi
+
+

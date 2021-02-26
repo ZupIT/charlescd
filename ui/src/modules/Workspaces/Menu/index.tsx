@@ -34,6 +34,10 @@ interface Props {
   selectedWorkspace: (name: string) => void;
 }
 
+type FormValues = {
+  name: string;
+};
+
 const WorkspaceMenu = ({
   onCreate,
   selectedWorkspace
