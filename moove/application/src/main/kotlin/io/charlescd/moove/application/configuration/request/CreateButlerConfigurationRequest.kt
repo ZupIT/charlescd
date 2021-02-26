@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 data class CreateButlerConfigurationRequest(
+    val name: String = "Butler Configuration",
+
     @field:NotBlank
     @field:NotNull
     val butlerUrl: String,
@@ -22,6 +24,7 @@ data class CreateButlerConfigurationRequest(
 
     fun toButlerConfiguration(workspaceId: String, author: User) = ButlerConfiguration(
         id = UUID.randomUUID().toString(),
+        name = name,
         author = author,
         workspaceId = workspaceId,
         butlerUrl = butlerUrl,
