@@ -30,7 +30,6 @@ import MenuItem from './Menu/MenuItem';
 import InfiniteScroll from 'core/components/InfiniteScroll';
 import { resetContentAction } from './state/actions';
 
-const CirclesList = lazy(() => import('modules/Circles/List'));
 const CirclesComparation = lazy(() => import('modules/Circles/Comparation'));
 
 const Circles = () => {
@@ -88,11 +87,6 @@ const Circles = () => {
         <Switch>
           <Route exact path={routes.circles}>
             {renderPlaceholder()}
-          </Route>
-          <Route exact path={routes.circlesMetrics}>
-            <Styled.Scrollable>
-              <CirclesList />
-            </Styled.Scrollable>
           </Route>
           <Route exact path={routes.circlesComparation}>
             {isEmpty(circles) ? (
