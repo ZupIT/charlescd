@@ -16,12 +16,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
+import useForm from 'core/hooks/useForm';
 import { isRequired, maxLength } from 'core/utils/validations';
 import routes from 'core/constants/routes';
 import { saveWorkspace } from 'core/utils/workspace';
@@ -39,6 +39,10 @@ interface Props {
   isLoading?: boolean;
 }
 
+type FormValues = {
+  name: string;
+};
+
 const WorkspaceMenu = ({
   items,
   onSearch,
@@ -50,7 +54,7 @@ const WorkspaceMenu = ({
     handleSubmit,
     errors,
     formState: { isValid }
-  } = useForm({ mode: 'onChange' });
+  } = useForm<FormValues>({ mode: 'onChange' });
   const {
     save,
     response: saveWorkspaceResponse,

@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useState, useCallback, Fragment } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import Layer from 'core/components/Layer';
 import Form from 'core/components/Form';

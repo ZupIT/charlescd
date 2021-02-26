@@ -44,9 +44,9 @@ open class PatchCircleInteractorImpl(
 ) : PatchCircleInteractor {
 
     @Transactional
-    override fun execute(id: String, request: PatchCircleRequest): CircleResponse {
+    override fun execute(id: String, request: PatchCircleRequest, workspaceId: String): CircleResponse {
         request.validate()
-        val circle = circleService.find(id)
+        val circle = circleService.findByIdAndWorkspaceId(id, workspaceId)
         canBeUpdated(circle)
         val updatedCircle = updateCircle(request, circle)
         updateCircleOnCircleMatcher(circle, updatedCircle)

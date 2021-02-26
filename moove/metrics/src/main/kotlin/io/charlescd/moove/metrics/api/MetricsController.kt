@@ -16,9 +16,13 @@
 
 package io.charlescd.moove.metrics.api
 
-import io.charlescd.moove.metrics.api.response.*
+import io.charlescd.moove.metrics.api.response.CircleMetricRepresentation
+import io.charlescd.moove.metrics.api.response.CirclesMetricsRepresentation
+import io.charlescd.moove.metrics.api.response.DeploymentMetricsRepresentation
 import io.charlescd.moove.metrics.domain.MetricType
-import io.charlescd.moove.metrics.interactor.*
+import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
+import io.charlescd.moove.metrics.interactor.RetrieveCirclesMetricsInteractor
+import io.charlescd.moove.metrics.interactor.RetrieveDeploymentsMetricsInteractor
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.*
@@ -43,14 +47,12 @@ class MetricsController(
         this.retrieveCirclePeriodMetric.execute(circleId, projectionType, metricType, workspaceId)
 
     @ApiOperation(value = "Get Circles General Metrics")
-    @GetMapping
-    @RequestMapping("/circles")
+    @GetMapping("/circles")
     fun getCircleGeneralMetrics(@RequestHeader("x-workspace-id") workspaceId: String):
             CirclesMetricsRepresentation = this.retrieveCirclesMetricsInteractor.execute(workspaceId)
 
     @ApiOperation(value = "Get Deployments general Metrics")
-    @GetMapping
-    @RequestMapping("/deployments")
+    @GetMapping("/deployments")
     fun getDeploymentsMetrics(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("period") period: PeriodType,

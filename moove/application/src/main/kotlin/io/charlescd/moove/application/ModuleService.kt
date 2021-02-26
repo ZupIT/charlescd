@@ -69,7 +69,7 @@ class ModuleService(private val moduleRepository: ModuleRepository) {
         return moduleRepository.findByWorkspaceId(workspaceId, name, pageRequest)
     }
 
-    fun findByIds(ids: List<String>): List<Module> {
-        return moduleRepository.findByIds(ids)
+    fun findByIdsAndWorkspaceId(ids: List<String>, workspaceId: String): List<Module> {
+        return moduleRepository.findByIdsAndWorkpaceId(ids, workspaceId)
     }
 }
