@@ -30,6 +30,7 @@ import { useWebhook } from './hooks';
 import Styled from './styled';
 import { CHARLES_DOC } from 'core/components/Popover';
 import DocumentationLink from 'core/components/DocumentationLink';
+import { isRequired, maxLength, urlPattern } from 'core/utils/validations';
 
 const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
   const { status, save, edit } = useWebhook();
@@ -37,6 +38,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
     register,
     handleSubmit,
     watch,
+    errors,
     formState: { isValid }
   } = useForm<Webhook>({ mode: 'onChange' });
 
@@ -98,18 +100,27 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
       </Text.h5>
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register({
+            required: isRequired(),
+            maxLength: maxLength(255),
+          })}
           name="description"
           label="Description"
           disabled={isEditMode}
           defaultValue={data?.description}
+          error={errors?.description?.message}
         />
         <Form.Input
-          ref={register({ required: true })}
+          ref={register({
+            required: isRequired(),
+            maxLength: maxLength(1048),
+            pattern: urlPattern()
+          })}
           name="url"
           label="Webhook URL"
           disabled={isEditMode}
           defaultValue={data?.url}
+          error={errors?.url?.message}
         />
         <Form.Password
           ref={register()}
