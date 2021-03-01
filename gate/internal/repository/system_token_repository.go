@@ -54,6 +54,6 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 }
 
 func handlerError(message string, operation string, err error, errType string) (domain.SystemToken, error) {
-	return domain.SystemToken{}, logging.NewError(message, err, errType,nil, operation)
+	return domain.SystemToken{}, logging.NewError(message, err, errType, nil, operation)
 }
 

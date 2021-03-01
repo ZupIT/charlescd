@@ -43,8 +43,6 @@ func (st *SystemTokenSuite) TestErrorGetByIDNotFound() {
 	_, err := st.getSystemToken.Execute(uuid.New())
 	require.Error(st.T(), err)
 	require.Equal(st.T(), logging.NotFoundError, logging.GetErrorType(err))
-
-
 }
 
 func (st *SystemTokenSuite) TestErrorGetByIDInternalError() {
@@ -53,4 +51,3 @@ func (st *SystemTokenSuite) TestErrorGetByIDInternalError() {
 	require.Error(st.T(), err)
 	require.Equal(st.T(), logging.InternalError, logging.GetErrorType(err))
 }
-
