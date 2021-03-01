@@ -1,3 +1,7 @@
 CharlesCD has been installed/upgraded
 
-### Remind to change keycloak default admin password at {{ .Values.keycloakHost }}/auth
+####################################################################################
+####################################################################################
+Remind to change keycloak default admin password at {{ .Values.keycloakHost }}/auth
+####################################################################################
+####################################################################################
