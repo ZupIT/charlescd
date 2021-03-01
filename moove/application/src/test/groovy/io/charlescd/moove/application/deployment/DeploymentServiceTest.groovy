@@ -162,7 +162,8 @@ class DeploymentServiceTest extends Specification {
                 getDummyUser(),
                 LocalDateTime.now(),
                 null,
-                DeploymentStatusEnum.DEPLOYING, getDummyCircle(),  "buildId", "workspaceId", LocalDateTime.now())
+                DeploymentStatusEnum.DEPLOYING, getDummyCircle(),  "buildId", "workspaceId",null, LocalDateTime.now(),
+        )
     }
 
 }
