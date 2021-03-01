@@ -76,7 +76,7 @@ CharlesApplications:
     keycloak:
       host: "http://examplename-keycloak-http/keycloak/auth"
       realm: charlescd
-      publicClientId: realm-charlescd
+      publicClientId: charlescd-client
       clientId: realm-charlescd
       clientSecret: "441cfd37-8443-4f3d-bf6c-ee9861b04e28"
     internalIdmEnabled: true
@@ -295,6 +295,7 @@ keycloak:
     user: keycloak
     password: DCWYW66Mq2ca6w8u
   charlesHost: *hostGlobal
+  fullnameOverride: keycloak
   extraEnv: |
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"

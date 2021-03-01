@@ -46,7 +46,10 @@ export const workspaceReducer = (
     case ACTION_TYPES.loadedWorkspaces: {
       return {
         ...state,
-        list: action.payload
+        list: {
+          ...action.payload,
+          content: [...state.list.content, ...(action?.payload?.content ?? [])]
+        }
       };
     }
     case ACTION_TYPES.loadedWorkspace: {
@@ -60,6 +63,15 @@ export const workspaceReducer = (
         ...state,
         status: action.payload
       };
+    }
+    case ACTION_TYPES.resetContent: {
+      return {
+        ...state,
+        list: {
+          ...state.list,
+          content: []
+        }
+      }
     }
     default: {
       return state;

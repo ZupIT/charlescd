@@ -25,5 +25,7 @@ interface HypothesisRepository {
 
     fun save(hypothesis: Hypothesis): Hypothesis
 
+    fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Hypothesis>
+
     fun findById(id: String): Optional<Hypothesis>
 }

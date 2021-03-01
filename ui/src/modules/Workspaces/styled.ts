@@ -15,6 +15,9 @@
  */
 
 import styled from 'styled-components';
+import Form from 'core/components/Form';
+import Text from 'core/components/Text';
+import ButtonComponent from 'core/components/Button';
 
 const Empty = styled.div`
   margin: 48px 30px 18px 30px;
@@ -28,7 +31,31 @@ const Wrapper = styled.div`
   width: 10%;
 `;
 
+const ModalInput = styled(Form.Input)`
+  width: 315px;
+
+  > input {
+    background-color: ${({ theme }) => theme.modal.default.background};
+  }
+`;
+
+const ModalTitle = styled(Text.h2)`
+  margin-bottom: 20px;
+`;
+
+const ButtonModal = styled(ButtonComponent.Default)`
+  width: 155px;
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 20px;
+`;
+
 export default {
   Empty,
-  Wrapper
+  Wrapper,
+  Modal: {
+    Input: ModalInput,
+    Title: ModalTitle,
+    Button: ButtonModal
+  }
 };
