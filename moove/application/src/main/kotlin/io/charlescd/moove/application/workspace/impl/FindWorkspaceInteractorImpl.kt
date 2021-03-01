@@ -23,12 +23,10 @@ import io.charlescd.moove.application.workspace.FindWorkspaceInteractor
 import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 import io.charlescd.moove.domain.WebhookConfiguration
 import io.charlescd.moove.domain.WebhookConfigurationLastDelivery
-import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.service.HermesService
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.math.log
+import org.slf4j.LoggerFactory
 
 @Named
 class FindWorkspaceInteractorImpl @Inject constructor(
@@ -94,7 +92,7 @@ class FindWorkspaceInteractorImpl @Inject constructor(
         } catch (ex: Exception) {
             logger.error("Failed to get webhook info" + ex.message)
         }
-        return emptyList();
+        return emptyList()
     }
 
     private fun buildWebhookLastDelivery(authorEmail: String, subscriptionId: String): WebhookConfigurationLastDelivery {

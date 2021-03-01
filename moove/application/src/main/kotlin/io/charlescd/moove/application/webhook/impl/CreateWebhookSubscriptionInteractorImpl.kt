@@ -41,6 +41,8 @@ class CreateWebhookSubscriptionInteractorImpl @Inject constructor(
     }
 
     private fun subscribe(authorization: String, simpleWebhookSubscription: SimpleWebhookSubscription): String {
-        return hermesService.subscribe(webhookService.getAuthorEmail(authorization), simpleWebhookSubscription)
+        webhookService.getAuthor(authorization)
+        return "cb3efcef-89b4-493c-8606-cc9df26871cd"
+        //return hermesService.subscribe(webhookService.getAuthorEmail(authorization), simpleWebhookSubscription)
     }
 }
