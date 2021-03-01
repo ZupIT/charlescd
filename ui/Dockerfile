@@ -4,9 +4,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html
 
-COPY build microfrontend/
-
-COPY dist .
+COPY build .
 
 COPY .env .
 
