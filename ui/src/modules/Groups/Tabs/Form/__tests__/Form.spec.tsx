@@ -19,9 +19,6 @@ import { render, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Form from '../index';
 import { mockUserGroup1, mockUserGroup2 } from './fixtures';
-import { act } from 'react-dom/test-utils';
-import { useGlobalState } from 'core/state/hooks';
-import { renderHook } from '@testing-library/react-hooks';
 
 test('render user group Form', () => {
   const { getByTestId } = render(
@@ -76,15 +73,13 @@ test('render user group Form and try to edit', async () => {
   expect(userGroupForm).toBeInTheDocument();
   expect(inputName).toBeInTheDocument();
   
-  act(() => {
-    userEvent.click(inputName);
-    userEvent.type(inputName, 'User Group Edited');
-  });
+  userEvent.click(inputName);
+  userEvent.type(inputName, 'User Group Edited');
   
   const buttonSave = await screen.findByTestId('button-default-submit');
 
   expect(buttonSave).toBeInTheDocument();
-  act(() => userEvent.click(buttonSave));
+  userEvent.click(buttonSave);
 
   waitFor(() => expect(onEditUser).toHaveBeenCalled());
 });

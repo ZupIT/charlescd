@@ -37,7 +37,7 @@ type FormValues = {
 }
 
 const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
-  const { register, handleSubmit, errors } = useForm<FormValues>({ mode: 'onChange' });
+  const { register, handleSubmit, errors } = useForm<FormValues>({ mode: 'onBlur' });
   const [userCounter, setUserCounter] = useState(0);
 
   useEffect(() => {

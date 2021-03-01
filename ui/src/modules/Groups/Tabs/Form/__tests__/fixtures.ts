@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-export const mockUserGroup1 = {
+import { UserGroup } from 'modules/Groups/interfaces/UserGroups'
+
+export const mockUserGroup1: UserGroup = {
   id: '123',
   name: 'User Group 1',
   users: [
@@ -31,7 +33,7 @@ export const mockUserGroup1 = {
   ]
 }
 
-export const mockUserGroup2 = {
+export const mockUserGroup2: UserGroup = {
   id: '456',
   name: 'User Group 2',
   users: [
