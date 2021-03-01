@@ -15,7 +15,7 @@
  */
 
 import React, { Fragment, useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import { useHistory } from 'react-router';
 import Icon from 'core/components/Icon';
 import Form from 'core/components/Form';

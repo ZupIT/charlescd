@@ -46,7 +46,7 @@ open class CreateBuildInteractorImpl @Inject constructor(
         val user = userService.findByAuthorizationToken(authorization)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
-        val hypothesis = hypothesisService.find(request.hypothesisId)
+        val hypothesis = hypothesisService.find(request.hypothesisId, workspaceId)
         val build = createBuildEntity(request, hypothesis, workspaceId, user)
         buildService.save(build)
         createReleaseCandidate(build, workspace)

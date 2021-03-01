@@ -90,7 +90,7 @@ class JdbcWorkspaceRepository(
     }
 
     override fun find(pageRequest: PageRequest, name: String?): Page<Workspace> {
-        return findAllWorkspaces(createParametersMap(name), pageRequest)
+        return findAllWorkspaces(pageRequest, name)
     }
 
     override fun update(workspace: Workspace): Workspace {
@@ -110,7 +110,9 @@ class JdbcWorkspaceRepository(
         deleteAssociation(workspaceId, userGroupId)
     }
 
-    private fun findAllWorkspaces(parameters: Map<String, String>, pageRequest: PageRequest): Page<Workspace> {
+    private fun findAllWorkspaces(pageRequest: PageRequest, name: String?): Page<Workspace> {
+        val parameters = createParametersMap(name)
+
         val result = this.jdbcTemplate.query(
             createQueryStatement(parameters, pageRequest),
             parameters.values.toTypedArray(),
@@ -121,7 +123,7 @@ class JdbcWorkspaceRepository(
             result?.toList() ?: emptyList(),
             pageRequest.page,
             pageRequest.size,
-            executeCountQuery() ?: 0)
+            executeCountQuery(name) ?: 0)
     }
 
     private fun createQueryStatement(
@@ -196,6 +198,12 @@ class JdbcWorkspaceRepository(
         return parameters
     }
 
+    private fun createParametersArray(name: String?): Array<Any> {
+        val parameters = ArrayList<Any>()
+        name?.let { parameters.add("%$name%") }
+        return parameters.toTypedArray()
+    }
+
     private fun appendParameter(parameter: String, query: StringBuilder) {
         when (parameter) {
             "name" -> query.appendln("AND workspaces.$parameter ILIKE ?")
@@ -213,15 +221,23 @@ class JdbcWorkspaceRepository(
         )
     }
 
-    private fun executeCountQuery(): Int? {
-        val countStatement = StringBuilder(
-            """
-               SELECT count(*) AS total
-               FROM workspaces 
-               """
-        )
+    private fun executeCountQuery(name: String?): Int? {
 
-        return this.jdbcTemplate.queryForObject(countStatement.toString()) { resultSet, _ -> resultSet.getInt(1) }
+        val statement = StringBuilder(
+            """
+                SELECT COUNT(*)
+                FROM workspaces w
+                WHERE 1 = 1 
+            """
+        )
+        name?.let { statement.appendln("AND w.name ILIKE ?") }
+
+        return this.jdbcTemplate.queryForObject(
+            statement.toString(),
+            createParametersArray(name)
+        ) { resultSet, _ ->
+            resultSet.getInt(1)
+        }
     }
 
     private fun checkIfWorkspaceExists(id: String): Boolean {
