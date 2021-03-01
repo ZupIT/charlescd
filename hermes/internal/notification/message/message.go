@@ -131,25 +131,25 @@ func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params m
 	if params["EventType"] != "" && params["Status"] != "" {
 		return main.db.Model(&Message{}).
 			Where("subscription_id = ? AND event_type = ? AND last_status =?", subscriptionId, params["EventType"], params["Status"]).
-			Offset(page).Limit(size).
+			Offset(page * size).Limit(size).
 			Find(&response, cond), response
 	}
 
 	if params["EventType"] != "" {
 		return main.db.Model(&Message{}).
 			Where("subscription_id = ? AND event_type = ?", subscriptionId, params["EventType"]).
-			Offset(page).Limit(size).
+			Offset(page * size).Limit(size).
 			Find(&response, cond), response
 	}
 
 	if params["Status"] != "" {
 		return main.db.Model(&Message{}).
 			Where("subscription_id = ? AND last_status = ?", subscriptionId, params["Status"]).
-			Offset(page).Limit(size).
+			Offset(page * size).Limit(size).
 			Find(&response, cond), response
 	}
 
-	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Offset(page).Limit(size).Find(&response, cond), response
+	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Offset(page * size).Limit(size).Find(&response, cond), response
 }
 
 func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusResponse, errors.Error) {
