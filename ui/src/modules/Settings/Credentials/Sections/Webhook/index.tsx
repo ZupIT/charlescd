@@ -29,6 +29,7 @@ import { useWebhook } from './hooks';
 import { FORM_WEBHOOK } from './constants';
 import FormWebhook from './Form';
 import { Webhook } from './interfaces';
+import { HTTP_STATUS } from 'core/enums/HttpStatus';
 
 interface Props {
   form: string;
@@ -42,7 +43,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
   const { remove } = useWebhook();
 
   const getStatus = (status: number): string => (
-    status === 418 ? '' : toString(status)
+    status === HTTP_STATUS.teapot ? '' : toString(status)
   )
 
   const onDelete = async (id: string) => {

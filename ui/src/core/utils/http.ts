@@ -15,11 +15,12 @@
  */
 
 import inRange from 'lodash/inRange';
+import { HTTP_STATUS } from 'core/enums/HttpStatus';
 
 export const isErrorCode = (httpCode: number) => inRange(httpCode, 400, 599);
 
 export const themeByHttpCode = (httpCode: number) => {
-  if (httpCode === 418) {
+  if (httpCode === HTTP_STATUS.teapot) {
     return 'primary'
   } else if (isErrorCode(httpCode)) {
     return 'error'
