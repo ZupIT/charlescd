@@ -253,3 +253,7 @@ databaseChangeLog:
       file: db/changelog/includes/20200721113800_add_unique_constraint_to_artifact_snapshots_table.yaml
   - include:
       file: db/changelog/includes/20200715090400_add_undeployment_date.yaml
+  - include:
+      file: db/changelog/includes/20210301151000_create_table_butler_configurations.yaml
+  - include:
+      file: db/changelog/includes/20210301165000_alter_table_workspaces_add_butler_config_column.yaml

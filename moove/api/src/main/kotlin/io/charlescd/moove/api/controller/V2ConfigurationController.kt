@@ -19,6 +19,7 @@ package io.charlescd.moove.api.controller
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.configuration.*
 import io.charlescd.moove.application.configuration.request.*
+import io.charlescd.moove.application.configuration.response.ButlerConfigurationResponse
 import io.charlescd.moove.application.configuration.response.GitConfigurationResponse
 import io.charlescd.moove.application.configuration.response.GitConnectionResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
@@ -42,7 +43,8 @@ class V2ConfigurationController(
     private val createMetricConfigurationInteractor: CreateMetricConfigurationInteractor,
     private val updateGitConfigurationInteractor: UpdateGitConfigurationInteractor,
     private val gitStatusConfigurationInteractor: GitConnectionStatusConfigurationInteractor,
-    private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor
+    private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor,
+    private val createButlerConfigurationInteractor: CreateButlerConfigurationInteractor
 ) {
 
     @ApiOperation(value = "Create git Configuration")
@@ -153,7 +155,7 @@ class V2ConfigurationController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
         @Valid @RequestBody request: CreateButlerConfigurationRequest
-    ): GitConfigurationResponse {
+    ): ButlerConfigurationResponse {
         return this.createButlerConfigurationInteractor.execute(request, workspaceId, authorization)
     }
 }
