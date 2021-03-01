@@ -123,7 +123,6 @@ test('should show root main menu for root user', () => {
   expect(screen.getByText('Account')).toBeInTheDocument();
 });
 
-// TODO resolve warning
 test('should show workspace menu', () => {
   const onClickExpand = jest.fn();
   const isExpanded = true;
