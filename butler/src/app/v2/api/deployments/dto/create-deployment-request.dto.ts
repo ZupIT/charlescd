@@ -14,55 +14,41 @@
  * limitations under the License.
  */
 
+import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
+import { CdConfigurationEntity } from '../../configurations/entity/cd-configuration.entity'
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
 import { CreateModuleDeploymentDto } from './create-module-request.dto'
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
-import { ApiProperty } from '@nestjs/swagger'
-import { CdConfigurationEntity } from '../../configurations/entity/cd-configuration.entity'
-import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 
 export class CreateDeploymentRequestDto {
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   public deploymentId: string
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   public authorId: string
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   public callbackUrl: string
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   public cdConfigurationId: string
 
   public cdConfiguration!: CdConfigurationEntity
 
   @ApiProperty({ type: () => CreateCircleDeploymentDto })
-  @ValidateNested({ each: true })
-  @IsNotEmpty()
   @Type(() => CreateCircleDeploymentDto)
   public circle: CreateCircleDeploymentDto
 
   public status: DeploymentStatusEnum
 
-  @IsBoolean()
   @ApiProperty()
   public defaultCircle: boolean
 
   @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
-  @IsNotEmpty()
-  @ValidateNested({ each: true })
   @Type(() => CreateModuleDeploymentDto)
   public readonly modules: CreateModuleDeploymentDto[]
 

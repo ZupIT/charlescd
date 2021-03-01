@@ -16,32 +16,18 @@
 
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsOptional, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
-import { ComponentUniqueProp } from '../validations/component-unique-by-name'
-import { ComponentIsNotNull } from '../validations/component-not-empty'
-import { CompositeFieldSize } from '../validations/composite-field-size'
-import { ImageTagValidation } from '../validations/image-tag-validation'
 import { CreateComponentRequestDto } from './create-component-request.dto'
 
 export class CreateModuleDeploymentDto {
 
   @ApiProperty()
-  @IsUUID()
-  @IsOptional()
   public moduleId: string
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   public helmRepository: string
 
   @ApiProperty({ type: () => [CreateComponentRequestDto] })
-  @ValidateNested({ each: true })
   @Type(() => CreateComponentRequestDto)
-  @Validate(ComponentUniqueProp, ['componentName'])
-  @Validate(CompositeFieldSize)
-  @Validate(ImageTagValidation)
-  @Validate(ComponentIsNotNull, { })
   public readonly components: CreateComponentRequestDto[]
 
   constructor(moduleId: string, helmRepository: string, components: CreateComponentRequestDto[]) {

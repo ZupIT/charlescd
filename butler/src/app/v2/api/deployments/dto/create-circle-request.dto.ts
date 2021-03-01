@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import { IsNotEmpty, IsUUID } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCircleDeploymentDto {
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   public readonly headerValue: string
 
   constructor(headerValue: string) {

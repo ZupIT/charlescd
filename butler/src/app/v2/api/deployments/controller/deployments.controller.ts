@@ -24,6 +24,7 @@ import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
+import { JoiValidationPipe } from '../pipes/joi-validation-pipe'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -36,7 +37,7 @@ export class DeploymentsController {
   @Post('/')
   @UsePipes(CdConfigurationExistencePipe)
   @UsePipes(DeploymentUniquenessPipe)
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(new JoiValidationPipe())
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
     @Headers('x-circle-id') incomingCircleId: string | undefined,
