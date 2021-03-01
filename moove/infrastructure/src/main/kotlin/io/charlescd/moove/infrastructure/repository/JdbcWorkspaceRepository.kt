@@ -249,7 +249,6 @@ class JdbcWorkspaceRepository(
                     git_configuration_id      = ?,
                     circle_matcher_url        = ?,
                     registry_configuration_id = ?,
-                    cd_configuration_id       = ?,
                     metric_configuration_id   = ?,
                     butler_configuration_id   = ?
                 WHERE id = ?
@@ -262,7 +261,6 @@ class JdbcWorkspaceRepository(
             workspace.gitConfigurationId,
             workspace.circleMatcherUrl,
             workspace.registryConfigurationId,
-            workspace.cdConfigurationId,
             workspace.metricConfigurationId,
             workspace.butlerConfigurationId,
             workspace.id

@@ -42,17 +42,18 @@ class PatchWorkspaceInteractorImplTest extends Specification {
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
     private CircleRepository circleRepository = Mock(CircleRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
+    private ButlerConfigurationRepository butlerConfigurationRepository = Mock(ButlerConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
 
     def setup() {
         interactor = new PatchWorkspaceInteractorImpl(
                 new GitConfigurationService(gitConfigurationRepository),
-                new CdConfigurationService(deployService),
                 new WorkspaceService(workspaceRepository, userRepository),
                 new RegistryConfigurationService(villagerService),
                 new MetricConfigurationService(metricConfigurationRepository, compassApi),
                 circleMatcherService,
-                new CircleService(circleRepository)
+                new CircleService(circleRepository),
+                new ButlerConfigurationService(butlerConfigurationRepository)
         )
     }
 

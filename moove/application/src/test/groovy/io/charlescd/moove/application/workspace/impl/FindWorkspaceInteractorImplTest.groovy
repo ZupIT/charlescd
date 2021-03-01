@@ -20,6 +20,7 @@ import io.charlescd.moove.application.*
 import io.charlescd.moove.application.workspace.FindWorkspaceInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.ButlerConfigurationRepository
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
 import io.charlescd.moove.domain.repository.UserRepository
@@ -41,6 +42,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
     private DeployService deployService = Mock(DeployService)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
+    private ButlerConfigurationRepository butlerConfigurationRepository = Mock(ButlerConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
 
     def setup() {
@@ -48,8 +50,8 @@ class FindWorkspaceInteractorImplTest extends Specification {
                 new WorkspaceService(workspaceRepository, userRepository),
                 new GitConfigurationService(gitConfigurationRepository),
                 new RegistryConfigurationService(villagerService),
-                new CdConfigurationService(deployService),
-                new MetricConfigurationService(metricConfigurationRepository, compassApi)
+                new MetricConfigurationService(metricConfigurationRepository, compassApi),
+                new ButlerConfigurationService(butlerConfigurationRepository)
         )
     }
 

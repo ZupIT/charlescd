@@ -29,8 +29,8 @@ class FindWorkspaceInteractorImpl @Inject constructor(
     private val workspaceService: WorkspaceService,
     private val gitConfigurationService: GitConfigurationService,
     private val registryConfigurationService: RegistryConfigurationService,
-    private val cdConfigurationService: CdConfigurationService,
-    private val metricConfigurationService: MetricConfigurationService
+    private val metricConfigurationService: MetricConfigurationService,
+    private val butlerConfigurationService: ButlerConfigurationService
 ) : FindWorkspaceInteractor {
 
     override fun execute(workspaceId: String): WorkspaceResponse {
@@ -46,8 +46,8 @@ class FindWorkspaceInteractorImpl @Inject constructor(
             )
         }
 
-        val cdConfiguration = workspace.cdConfigurationId?.let {
-            cdConfigurationService.find(workspace.id, workspace.cdConfigurationId!!)
+        val butlerConfiguration = workspace.butlerConfigurationId?.let {
+            butlerConfigurationService.find(workspace.butlerConfigurationId!!)
         }
 
         val metricConfiguration = workspace.metricConfigurationId?.let {
@@ -58,8 +58,8 @@ class FindWorkspaceInteractorImpl @Inject constructor(
             workspace,
             gitConfiguration,
             registryConfiguration,
-            cdConfiguration,
-            metricConfiguration
+            metricConfiguration,
+            butlerConfiguration
         )
     }
 }

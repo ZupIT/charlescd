@@ -9,4 +9,6 @@ interface ButlerConfigurationRepository {
     fun save(butlerConfiguration: ButlerConfiguration): ButlerConfiguration
 
     fun find(id: String): Optional<ButlerConfiguration>
+
+    fun exists(workspaceId: String, id: String): Boolean
 }

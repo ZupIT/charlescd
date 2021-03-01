@@ -24,12 +24,10 @@ import io.charlescd.moove.application.deployment.request.CreateDeploymentRequest
 import io.charlescd.moove.application.deployment.response.DeploymentResponse
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.ButlerConfigurationRepository
 import io.charlescd.moove.domain.service.DeployService
+import org.springframework.transaction.annotation.Transactional
 import javax.inject.Inject
 import javax.inject.Named
-import org.springframework.transaction.annotation.Transactional
 
 @Named
 open class CreateDeploymentInteractorImpl @Inject constructor(
@@ -39,7 +37,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     private val circleService: CircleService,
     private val deployService: DeployService,
     private val workspaceService: WorkspaceService,
-    private val butlerConfigurationRepository: ButlerConfigurationRepository
+    private val butlerConfigurationService: ButlerConfigurationService
 ) : CreateDeploymentInteractor {
 
     @Transactional
@@ -48,8 +46,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val user = userService.findByAuthorizationToken(authorization)
-        val butlerConfiguration = butlerConfigurationRepository.find(workspace.butlerConfigurationId!!)
-            .orElseThrow { NotFoundException("butlerConfiguration", workspace.butlerConfigurationId!!) }
+        val butlerConfiguration = butlerConfigurationService.find(workspace.butlerConfigurationId!!)
 
         if (build.canBeDeployed()) {
             val deployment = createDeployment(request, workspaceId, user)

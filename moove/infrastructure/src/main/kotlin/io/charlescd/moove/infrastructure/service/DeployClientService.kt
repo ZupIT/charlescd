@@ -52,12 +52,6 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         )
     }
 
-    override fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration? {
-        return deployClient.getCdConfigurations(workspaceId).find { cdConfiguration ->
-            cdConfiguration.id == cdConfigurationId
-        }?.let { CdConfiguration(id = it.id, name = it.name) }
-    }
-
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,

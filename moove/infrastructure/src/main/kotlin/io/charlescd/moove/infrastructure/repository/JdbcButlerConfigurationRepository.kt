@@ -83,4 +83,26 @@ class JdbcButlerConfigurationRepository(
                 ?.firstOrNull()
         )
     }
+
+    override fun exists(workspaceId: String, id: String): Boolean {
+        return checkIfButlerConfigurationExistsByWorkspaceId(workspaceId, id)
+    }
+
+    private fun checkIfButlerConfigurationExistsByWorkspaceId(workspaceId: String, id: String): Boolean {
+        val countStatement = StringBuilder(
+            """
+               SELECT count(*) AS total
+               FROM butler_configurations 
+               WHERE butler_configurations.id = ?
+               AND butler_configurations.workspace_id = ?
+               """
+        )
+
+        val count = this.jdbcTemplate.queryForObject(
+            countStatement.toString(),
+            arrayOf(id, workspaceId)
+        ) { rs, _ -> rs.getInt(1) }
+
+        return count != null && count >= 1
+    }
 }

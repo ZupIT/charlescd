@@ -28,6 +28,4 @@ interface DeployService {
     fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, butlerConfiguration: ButlerConfiguration)
 
     fun undeploy(deploymentId: String, authorId: String)
-
-    fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration?
 }
