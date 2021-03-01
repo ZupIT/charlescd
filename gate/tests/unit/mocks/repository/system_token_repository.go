@@ -35,6 +35,27 @@ func (_m *SystemTokenRepository) Create(systemToken domain.SystemToken) (domain.
 	return r0, r1
 }
 
+// FindAll provides a mock function with given fields: page, size
+func (_m *SystemTokenRepository) FindAll(page int, size int) (domain.PageSystemToken, error) {
+	ret := _m.Called(page, size)
+
+	var r0 domain.PageSystemToken
+	if rf, ok := ret.Get(0).(func(int, int) domain.PageSystemToken); ok {
+		r0 = rf(page, size)
+	} else {
+		r0 = ret.Get(0).(domain.PageSystemToken)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int, int) error); ok {
+		r1 = rf(page, size)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindById provides a mock function with given fields: id
 func (_m *SystemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
 	ret := _m.Called(id)

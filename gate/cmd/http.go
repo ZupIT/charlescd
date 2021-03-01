@@ -82,7 +82,7 @@ func (server server) registerRoutes() {
 		{
 			st := v1.Group("/system-token")
 			{
-				st.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewFindAllSystemToken(server.persistenceManager.systemTokenRepository)))
+				st.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
 				st.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 		}

@@ -15,12 +15,14 @@ import (
 type SystemTokenSuite struct {
 	suite.Suite
 	getSystemToken systemTokenInteractor.GetSystemToken
+	getAllSystemToken systemTokenInteractor.GetAllSystemToken
 	systemTokenRepository      *mocks.SystemTokenRepository
 }
 
 func (st *SystemTokenSuite) SetupSuite() {
 	st.systemTokenRepository = new(mocks.SystemTokenRepository)
 	st.getSystemToken = systemTokenInteractor.NewGetSystemToken(st.systemTokenRepository)
+	st.getAllSystemToken = systemTokenInteractor.NewGetAllSystemToken(st.systemTokenRepository)
 }
 
 func (st *SystemTokenSuite) SetupTest() {

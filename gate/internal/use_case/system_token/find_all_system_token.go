@@ -6,28 +6,28 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 )
 
-type FindAllSystemToken interface {
+type GetAllSystemToken interface {
 	Execute(page int, size int) (domain.PageSystemToken, error)
 }
 
-type findAllSystemToken struct {
+type getAllSystemToken struct {
 	systemTokenRepository repository.SystemTokenRepository
 }
 
-func NewFindAllSystemToken(r repository.SystemTokenRepository) FindAllSystemToken {
-	return findAllSystemToken{
+func NewGetAllSystemToken(r repository.SystemTokenRepository) GetAllSystemToken {
+	return getAllSystemToken{
 		systemTokenRepository: r,
 	}
 }
 
-func (f findAllSystemToken) Execute(page int, size int) (domain.PageSystemToken, error) {
+func (f getAllSystemToken) Execute(page int, size int) (domain.PageSystemToken, error) {
 	systemTokens, err := f.systemTokenRepository.FindAll(page, size)
 	if err != nil {
 		return domain.PageSystemToken{
 			Content: []domain.SystemToken{},
 			Page:    page,
 			Size:    size,
-		}, logging.WithOperation(err, "findAllSystemToken.Execute")
+		}, logging.WithOperation(err, "getAllSystemToken.Execute")
 	}
 
 	return systemTokens, nil

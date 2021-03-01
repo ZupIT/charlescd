@@ -44,10 +44,10 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 func (systemTokenRepository systemTokenRepository) FindAll(page int, size int) (domain.PageSystemToken, error) {
 	var systemToken []models.SystemToken
 
-	res := systemTokenRepository.db.Offset(page).Limit(size).Find(&systemToken)
+	res := systemTokenRepository.db.Order("created_at desc").Offset(page * size).Limit(size).Find(&systemToken)
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
-			return domain.PageSystemToken{}, handlerError("Not found token", "unit.GetById.First", res.Error, logging.NotFoundError)
+			return domain.PageSystemToken{}, handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
 		}
 		return domain.PageSystemToken{}, handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
 	}
@@ -77,6 +77,6 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 	return mapper.SystemTokenModelToDomain(systemToken), nil
 }
 
-func handlerError(message string, operation string, err error, errType string) (error) {
+func handlerError(message string, operation string, err error, errType string) error {
 	return logging.NewError(message, err, errType,nil, operation)
 }

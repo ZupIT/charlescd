@@ -10,25 +10,21 @@ import (
 	"strconv"
 )
 
-func GetAllSystemTokens(findAllSystemToken systemTokenInteractor.FindAllSystemToken) echo.HandlerFunc {
+func GetAllSystemTokens(getAllSystemToken systemTokenInteractor.GetAllSystemToken) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
 
 		page, err := strconv.Atoi(echoCtx.QueryParam("page"))
-		if err != nil {
-			return echoCtx.JSON(http.StatusBadRequest, err)
-		}
-
 		size, err := strconv.Atoi(echoCtx.QueryParam("size"))
 		if err != nil {
-			return echoCtx.JSON(http.StatusBadRequest, err)
+			logging.LogErrorFromCtx(ctx, err)
+			return echoCtx.JSON(http.StatusBadRequest, logging.NewError("Parse id failed", err, logging.ParseError, nil))
 		}
 
-		systemTokens, err := findAllSystemToken.Execute(page, size)
+		systemTokens, err := getAllSystemToken.Execute(page, size)
 		if err != nil {
-			logging.LogErrorFromCtx(ctx, err)
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+			return HandlerError(echoCtx, ctx, err)
 		}
 
 		return echoCtx.JSON(http.StatusOK, representation.PageSystemTokenToPageResponse(systemTokens))
