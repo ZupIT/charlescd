@@ -155,13 +155,8 @@ env:
 env:
 - name: SPRING_PROFILES_ACTIVE
   value: {{ .RangeContext.redis.profile }}
-{{if .ChartContext.Values.redis.enabled}}
-- name: SPRING_REDIS_HOST
-  value: {{ .ChartContext.Release.Name }}-redis-master
-{{ else }}
 - name: SPRING_REDIS_HOST
   value: {{ .RangeContext.redis.host }}
-{{ end}}
 - name: SPRING_REDIS_PORT
   value: "{{ .RangeContext.redis.port }}"
 - name: SPRING_REDIS_PASSWORD
