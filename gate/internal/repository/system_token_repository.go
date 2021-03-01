@@ -44,7 +44,7 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 func (systemTokenRepository systemTokenRepository) FindAll(page int, size int) (domain.PageSystemToken, error) {
 	var systemToken []models.SystemToken
 
-	res := systemTokenRepository.db.Order("created_at desc").Offset(page * size).Limit(size).Find(&systemToken)
+	res := systemTokenRepository.db.Offset(page * size).Limit(size).Find(&systemToken).Where("revoked = false")
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
 			return domain.PageSystemToken{}, handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
