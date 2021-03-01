@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { FetchMock } from 'jest-fetch-mock';
+import {findAll} from '../workspace';
 
-import React from 'react';
-import { Loader as LoaderList, Props as ListProps } from './list';
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
-const Loader = {
-  List: ({className}: ListProps) => <LoaderList className={className} />
-};
+test('should find all workspaces', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ name: 'find all workspaces' })
+  );
 
-export default Loader;
+  const response = await findAll()({});
+  const data = await response.json();
+
+  expect(data).toEqual({ name: 'find all workspaces' });
+});
