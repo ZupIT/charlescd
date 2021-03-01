@@ -20,7 +20,6 @@ import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'c
 import { getProfileByKey, profileKey } from 'core/utils/profile';
 import { FetchMock } from 'jest-fetch-mock';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { setIsMicrofrontend } from 'App';
 import Routes from '../Routes';
 
 const originalWindow = window;
@@ -81,8 +80,7 @@ test('render with a valid session token', async () => {
     </BrowserRouter>
   );
 
-  const sidebar = await screen.findByTestId('sidebar');
-  expect(sidebar).toBeInTheDocument();
+  await waitFor(async () => expect(screen.getByTestId('sidebar')).toBeInTheDocument());
 
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
@@ -100,17 +98,6 @@ test('render with an invalid session token', async () => {
 
   const name = getProfileByKey('name');
   expect(name).toBeUndefined();
-});
-
-test('render main in microfrontend mode', async () => {
-  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '0' } });
-
-  setIsMicrofrontend(true);
-
-  render(<MemoryRouter><Routes /></MemoryRouter>);
-
-  const menuWorkspaces = await screen.findByTestId('menu-workspaces');
-  expect(menuWorkspaces.getAttribute('href')).toContain('/charlescd');
 });
 
 test('render and valid login saving the session', async () => {

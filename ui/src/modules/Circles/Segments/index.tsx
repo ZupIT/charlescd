@@ -54,8 +54,13 @@ export interface Props {
 const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
   const defaultValues =
     viewMode || !isEmpty(rules) ? rules : { ...CLAUSE, clauses: [RULE] };
-  const form = useForm<Rules>({ defaultValues });
-  const { register } = form;
+
+  const form = useForm<Rules>({
+    defaultValues,
+    mode: 'onChange'
+  });
+  const { register, formState: { errors }} = form;
+  
   const fieldArray = useFieldArray({
     control: form.control,
     name: 'clauses'
@@ -122,7 +127,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
               <Styled.InputOperator
                 readOnly
                 type="text"
-                ref={register}
+                ref={register()}
                 name="logicalOperator"
                 onClick={() => changeOperatorValue('logicalOperator', form)}
                 defaultValue={rules?.logicalOperator}
@@ -141,7 +146,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
               id="save"
               type="submit"
               isLoading={isSaving}
-              isDisabled={isSaving}
+              isDisabled={!isEmpty(errors)}
             >
               Save
             </Styled.Button.Submit>

@@ -28,7 +28,17 @@ export const validFields = (fields: object) => {
   return status;
 };
 
-export const isNotBlank = (value: string) => !!value.trim();
+export const isNotBlank = (value: string) => !!value?.trim() || 'No whitespaces';
+
+export const trimValue = (value: string) => value?.trim();
+
+export const isRequiredAndNotBlank = {
+  required: true,
+  validate: {
+    notBlank: isNotBlank
+  },
+  setValueAs: trimValue
+} as const;
 
 export const maxLength = (value = 64, message?: string) => ({
   value: value,

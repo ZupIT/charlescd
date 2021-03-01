@@ -20,6 +20,6 @@ test("should validate a empty field", () => {
   const emptyValue = '   ';
   const nonEmptyValue = 'x';
 
-  expect(isNotBlank(emptyValue)).toBeFalsy();
+  expect(isNotBlank(emptyValue)).toBe('No whitespaces');
   expect(isNotBlank(nonEmptyValue)).toBeTruthy();
 });

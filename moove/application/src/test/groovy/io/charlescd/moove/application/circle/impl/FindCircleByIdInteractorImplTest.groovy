@@ -31,7 +31,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class FindCircleByIdInteractorImplTest extends Specification {
+class   FindCircleByIdInteractorImplTest extends Specification {
 
     private FindCircleByIdInteractor findCircleByIdInteractor
 
@@ -68,9 +68,9 @@ class FindCircleByIdInteractorImplTest extends Specification {
         def response = this.findCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * circleRepository.find(circleId, workspaceId) >> Optional.of(circle)
+        1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
+        1 * deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> [deployment]
 
         1 * buildRepository.findById(buildId) >> Optional.of(build)
 
@@ -111,9 +111,9 @@ class FindCircleByIdInteractorImplTest extends Specification {
         def response = this.findCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * circleRepository.find(circleId, workspaceId) >> Optional.of(circle)
+        1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> []
+        1 * deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> []
 
         0 * buildRepository.findById(_)
 
@@ -140,7 +140,7 @@ class FindCircleByIdInteractorImplTest extends Specification {
         this.findCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * circleRepository.find(circleId, workspaceId) >> Optional.empty()
+        1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.empty()
 
         0 * deploymentRepository.findActiveByCircleId(circleId) >> []
 

@@ -20,7 +20,6 @@ import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.representation.UserRepresentation
-import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
@@ -71,7 +70,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.delete("81861b6f-2b6e-44a1-a745-83e298a550c9", authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
         1 * repository.findByEmail("email@email.com") >> Optional.of(root)
         1 * repository.findById("81861b6f-2b6e-44a1-a745-83e298a550c9") >> Optional.of(user)
         1 * keycloakService.deleteUserById(_)
@@ -87,7 +86,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.delete("1123", authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
         1 * repository.findByEmail("email@email.com") >> Optional.of(user)
         1 * repository.findById(user.id) >> Optional.of(user)
         0 * repository.findById("1123") >> Optional.of(user)
@@ -104,7 +103,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         service.delete("test", authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> "test"
+        1 * keycloakService.getEmailByAuthorizationToken(   authorization) >> "test"
         1 * repository.findByEmail("test") >> Optional.empty()
         def ex = thrown(NotFoundExceptionLegacy)
         ex.resourceName == "user"
@@ -119,7 +118,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.delete(representation.id, authorization)
 
         then:
-        0 * keycloakService.getEmailByToken(authorization) >> "email@email.com"
+        0 * keycloakService.getEmailByAuthorizationToken(authorization) >> "email@email.com"
         0 * repository.findByEmail("email@email.com") >> Optional.of(user)
         0 * repository.findById(representation.id) >> Optional.of(user)
         0 * keycloakService.deleteUserById(_)
@@ -181,7 +180,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def response = service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> user.email
         1 * repository.findByEmail(user.email) >> Optional.of(user)
         response.id == representation.id
     }
@@ -192,7 +191,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         service.findByAuthorizationToken(authorization)
 
         then:
-        1 * keycloakService.getEmailByToken(authorization) >> user.email
+        1 * keycloakService.getEmailByAuthorizationToken(authorization) >> user.email
         1 * repository.findByEmail(user.email) >> Optional.empty()
         thrown(NotFoundExceptionLegacy)
     }
