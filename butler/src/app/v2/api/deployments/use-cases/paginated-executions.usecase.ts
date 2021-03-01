@@ -20,7 +20,7 @@ export class PaginatedExecutionsUseCase {
     const totalPages = Math.round(Math.ceil(total / params.size))
     const response : PaginatedExecutions = {
       executions: executions,
-      size: params.size,
+      size: executions.length,
       page: params.page,
       last: this.isLast(params.page, totalPages)
     }
@@ -32,6 +32,8 @@ export class PaginatedExecutionsUseCase {
   }
 
   private isLast(page: number, totalPages: number): boolean {
-    return page === (totalPages > 0 ? totalPages -1 : 0)
+    return totalPages > 0 ? 
+      page === (totalPages -1) :
+      true
   }
 }
