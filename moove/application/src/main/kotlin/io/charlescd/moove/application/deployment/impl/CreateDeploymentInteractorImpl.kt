@@ -24,6 +24,8 @@ import io.charlescd.moove.application.deployment.request.CreateDeploymentRequest
 import io.charlescd.moove.application.deployment.response.DeploymentResponse
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.ButlerConfigurationRepository
 import io.charlescd.moove.domain.service.DeployService
 import javax.inject.Inject
 import javax.inject.Named
@@ -36,7 +38,8 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     private val userService: UserService,
     private val circleService: CircleService,
     private val deployService: DeployService,
-    private val workspaceService: WorkspaceService
+    private val workspaceService: WorkspaceService,
+    private val butlerConfigurationRepository: ButlerConfigurationRepository
 ) : CreateDeploymentInteractor {
 
     @Transactional
@@ -45,11 +48,13 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val user = userService.findByAuthorizationToken(authorization)
+        val butlerConfiguration = butlerConfigurationRepository.find(workspace.butlerConfigurationId!!)
+            .orElseThrow { NotFoundException("butlerConfiguration", workspace.butlerConfigurationId!!) }
 
         if (build.canBeDeployed()) {
             val deployment = createDeployment(request, workspaceId, user)
             deploymentService.save(deployment)
-            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
+            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), butlerConfiguration)
             return DeploymentResponse.from(deployment, build)
         } else {
             throw BusinessException.of(MooveErrorCode.DEPLOY_INVALID_BUILD).withParameters(build.id)
@@ -57,7 +62,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     }
 
     private fun validateWorkspace(workspace: Workspace) {
-        workspace.cdConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_CD_CONFIGURATION_IS_MISSING)
+        workspace.butlerConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_BUTLER_CONFIGURATION_IS_MISSING)
     }
 
     private fun createDeployment(

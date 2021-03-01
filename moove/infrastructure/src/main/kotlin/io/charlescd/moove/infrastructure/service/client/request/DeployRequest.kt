@@ -18,32 +18,22 @@ package io.charlescd.moove.infrastructure.service.client.request
 
 data class DeployRequest(
     val deploymentId: String,
-    val applicationName: String,
-    val modules: List<DeployModuleRequest>,
+    val components: List<DeployComponentRequest>,
     val authorId: String,
-    val description: String,
-    val circle: DeployCircleRequest,
+    val circleId: String,
     val callbackUrl: String,
-    val cdConfigurationId: String,
-    val defaultCircle: Boolean
-)
-
-data class DeployModuleRequest(
-    val moduleId: String,
-    val helmRepository: String,
-    val components: List<DeployComponentRequest>
+    val defaultCircle: Boolean,
+    val namespace: String,
+    val gitToken: String
 )
 
 data class DeployComponentRequest(
     val componentId: String,
     val componentName: String,
+    val helmRepository: String,
     val buildImageUrl: String,
     val buildImageTag: String,
     val hostValue: String?,
     val gatewayName: String?
 )
 
-data class DeployCircleRequest(
-    val headerValue: String,
-    val removeCircle: Boolean? = null
-)
