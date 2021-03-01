@@ -18,7 +18,23 @@ import React from 'react';
 import { render, fireEvent, screen } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
+import * as utilsAuth from 'core/utils/auth';
 import MenuItems from '../index';
+
+const originalWindow = { ...window };
+
+beforeEach(() => {
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.workspaces
+  };
+});
+
+afterEach(() => {
+  window = originalWindow;
+});
 
 test('renders sidebar menu Items', async () => {
   render(
@@ -78,4 +94,55 @@ test('testing expand menu click', async () => {
   fireEvent.click(links.children[1]);
 
   expect(onClickExpand).toHaveBeenCalled();
+});
+
+test('should show main menu for non-root user', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
+});
+
+test('should show root main menu for root user', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+  jest.spyOn(utilsAuth, 'isRoot').mockReturnValue(true);
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.getByText('Users')).toBeInTheDocument();
+  expect(screen.getByText('User Group')).toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
+});
+
+// TODO resolve warning
+test('should show workspace menu', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.circles
+  };
+
+  localStorage.setItem('workspace', '1234567890');
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Circles')).toBeInTheDocument();
+  expect(screen.getByText('Hypotheses')).toBeInTheDocument();
+  expect(screen.getByText('Modules')).toBeInTheDocument();
+  expect(screen.getByText('Metrics')).toBeInTheDocument();
+  expect(screen.getByText('Settings')).toBeInTheDocument();
 });
