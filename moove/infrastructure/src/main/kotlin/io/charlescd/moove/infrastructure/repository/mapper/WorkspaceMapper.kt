@@ -40,7 +40,8 @@ class WorkspaceMapper(private val objectMapper: ObjectMapper) {
         gitConfigurationId = resultSet.getString("workspace_git_configuration_id"),
         cdConfigurationId = resultSet.getString("workspace_cd_configuration_id"),
         circleMatcherUrl = resultSet.getString("workspace_circle_matcher_url"),
-        metricConfigurationId = resultSet.getString("workspace_metric_configuration_id")
+        metricConfigurationId = resultSet.getString("workspace_metric_configuration_id"),
+        butlerConfigurationId = resultSet.getString("workspace_butler_configuration_id")
     )
 
     fun mapWorkspacePermissions(resultSet: ResultSet) = WorkspacePermissions(

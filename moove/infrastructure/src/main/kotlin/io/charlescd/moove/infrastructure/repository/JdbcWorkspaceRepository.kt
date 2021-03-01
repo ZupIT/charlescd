@@ -51,6 +51,7 @@ class JdbcWorkspaceRepository(
                        workspaces.cd_configuration_id         AS workspace_cd_configuration_id,
                        workspaces.circle_matcher_url          AS workspace_circle_matcher_url,
                        workspaces.metric_configuration_id     AS workspace_metric_configuration_id,
+                       workspaces.butler_configuration_id     AS workspace_butler_configuration_id,
                        workspace_author.id                    AS workspace_author_id,
                        workspace_author.name                  AS workspace_author_name,
                        workspace_author.email                 AS workspace_author_email,
@@ -139,6 +140,7 @@ class JdbcWorkspaceRepository(
                    workspaces.cd_configuration_id         AS workspace_cd_configuration_id,
                    workspaces.circle_matcher_url          AS workspace_circle_matcher_url,
                    workspaces.metric_configuration_id     AS workspace_metric_configuration_id,
+                   workspaces.butler_configuration_id     AS workspace_butler_configuration_id,
                    workspace_author.id                    AS workspace_author_id,
                    workspace_author.name                  AS workspace_author_name,
                    workspace_author.email                 AS workspace_author_email,
@@ -248,7 +250,8 @@ class JdbcWorkspaceRepository(
                     circle_matcher_url        = ?,
                     registry_configuration_id = ?,
                     cd_configuration_id       = ?,
-                    metric_configuration_id   = ?
+                    metric_configuration_id   = ?,
+                    butler_configuration_id   = ?
                 WHERE id = ?
             """
 
@@ -261,6 +264,7 @@ class JdbcWorkspaceRepository(
             workspace.registryConfigurationId,
             workspace.cdConfigurationId,
             workspace.metricConfigurationId,
+            workspace.butlerConfigurationId,
             workspace.id
         )
     }

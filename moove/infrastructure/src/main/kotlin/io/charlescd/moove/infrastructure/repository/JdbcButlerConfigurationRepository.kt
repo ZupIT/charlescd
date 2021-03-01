@@ -79,7 +79,7 @@ class JdbcButlerConfigurationRepository(
             .appendln("AND butler_configurations.id = ?")
 
         return Optional.ofNullable(
-            this.jdbcTemplate.query(statement.toString(), arrayOf(encryptionKey), butlerConfigurationExtractor)
+            this.jdbcTemplate.query(statement.toString(), arrayOf(encryptionKey, id), butlerConfigurationExtractor)
                 ?.firstOrNull()
         )
     }
