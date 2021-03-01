@@ -21,7 +21,6 @@ import {
   mainMenu,
   workspaceMenu
 } from '../constants';
-import { template } from 'lodash';
 
 export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
