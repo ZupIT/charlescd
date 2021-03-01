@@ -16,15 +16,10 @@
 
 package io.charlescd.moove.security.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.Permission
-import io.charlescd.moove.domain.Role
-import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.UserGroup
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.infrastructure.service.client.KeycloakFormEncodedClient
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.resource.RealmResource
@@ -35,15 +30,12 @@ import org.keycloak.representations.idm.UserRepresentation
 import spock.lang.Specification
 
 import javax.ws.rs.core.Response
-import java.time.LocalDateTime
 
 class KeycloakClientServiceTest extends Specification {
 
     private KeycloakClientService keycloakClientService
     private Keycloak keycloakClient = Mock(Keycloak)
     private KeycloakFormEncodedClient keycloakFormEncodedClient = Mock(KeycloakFormEncodedClient)
-
-    private ObjectMapper objectMapper = new ObjectMapper()
 
     private RealmResource realmResource = Mock(RealmResource)
     private UserResource userResource = Mock(UserResource)
@@ -169,6 +161,55 @@ class KeycloakClientServiceTest extends Specification {
 
         notThrown()
 
+    }
+
+    def "when request a email with authorization should return email inside token"(){
+        given:
+        def authorization = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpcm9waWVJZS0yVUt5U0dxN1F5Q0J1bmpHR1h3TTVuQmFuQnJrSGtWODJFIn0.eyJleHAiOjE2MDUwMzE1MzgsImlhdCI6MTYwNTAyNzkzOCwianRpIjoiNmQ5YmVmZmUtYTg4MC00YjNlLWJhMmEtNWNlMDIwMmUwMGRlIiwiaXNzIjoiaHR0cHM6Ly9jaGFybGVzLWRldi5jb250aW51b3VzcGxhdGZvcm0uY29tL2tleWNsb2FrL2F1dGgvcmVhbG1zL2NoYXJsZXNjZCIsImF1ZCI6ImRhcndpbi1jbGllbnQiLCJzdWIiOiI1MzQwYTFmMy02NTgzLTQ1ZTQtYmQwYS1kYmUwYmIxMjcxN2YiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjaGFybGVzY2QtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjNiZjhhNDVmLWQ4YTUtNGJjMy1iYmUwLWRhMTdkMTcyYWMyZSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkRhcnRoVmFkZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJkYXJ0aC52YWRlckBzaXRocy5jb20iLCJnaXZlbl9uYW1lIjoiRGFydGhWYWRlciIsImVtYWlsIjoiZGFydGgudmFkZXJAc2l0aHMuY29tIn0.eY7-okBAFaQlt7gMhsNMTnxB4WraQLzLE9k1DTGssTlaS3eelh2U_Q_pVTR3J3Kh494ND2eUFwISktTfG2stozYF6zpPhzF4qELOYSBQU4ZlaxvHwbUY5ubx1JPGu2HXESkpfIgey9Ixh2TY_udmznmdhh2xZcTsjGwcp5ysET8UnK3xh_ZbP7nHsg0rZ5M_t3Q3KJ4j2MXiVkuscrKe9NaftQgpU3yZ3ZJiCFGjnl7R39QryYXIoHcm07E_bq5YBCqPGJneD5cjMVqXLH-JARsblh0IXtZuYSTGccF22aw4EO_Zr1XkXaIsw_rNlXYmVeXqPbONnQrLhI7fbkH4UQ"
+
+        when:
+        def email = keycloakClientService.getEmailByAccessToken(authorization)
+
+        then:
+        email == "darth.vader@siths.com"
+        notThrown()
+    }
+
+    def "should reset user password"() {
+        given:
+        def userEmail = "charles@email.com"
+        def newPassword = "newPassword"
+        def keycloakUser = new UserRepresentation()
+        keycloakUser.id = "fake-user-id"
+        keycloakUser.firstName = "John"
+        keycloakUser.lastName = "Doe"
+        keycloakUser.email = userEmail
+        keycloakUser.username = userEmail
+        keycloakUser.attributes = [:]
+        def keycloakUsers = new ArrayList()
+        keycloakUsers.add(keycloakUser)
+
+        when:
+        this.keycloakClientService.resetPassword(userEmail, newPassword)
+
+        then:
+        1 * keycloakClient.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.search(userEmail) >> keycloakUsers
+        1 * keycloakClient.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.get(keycloakUser.id) >> userResource
+        1 * userResource.resetPassword(_) >> { arguments ->
+            def updatedKeycloakCredentials = arguments[0]
+
+            assert updatedKeycloakCredentials instanceof CredentialRepresentation
+
+            assert updatedKeycloakCredentials.type == CredentialRepresentation.PASSWORD
+            assert updatedKeycloakCredentials.value == newPassword
+            assert !updatedKeycloakCredentials.isTemporary()
+        }
+
+        notThrown()
     }
 
     def 'should delete a keycloak user by userId'() {

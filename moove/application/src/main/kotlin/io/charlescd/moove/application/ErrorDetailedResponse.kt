@@ -14,4 +14,17 @@
  * limitations under the License.
  */
 
-export const microfrontendKey = 'isMicrofrontend';
+package io.charlescd.moove.application
+
+import com.fasterxml.jackson.annotation.JsonInclude
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class ErrorDetailedResponse(
+    val id: String?,
+    val links: List<String>?,
+    val title: String?,
+    val details: String?,
+    val status: String?,
+    val source: Map<String, String>?,
+    val meta: Map<String, String>?
+)
