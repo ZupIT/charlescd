@@ -2123,14 +2123,6 @@
     "@types/mime" "*"
     "@types/node" "*"
 
-"@types/single-spa-react@^2.12.0":
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/@types/single-spa-react/-/single-spa-react-2.12.0.tgz#3c0968a80bd61c22d506953257a32fa2401f41a3"
-  integrity sha512-FISPO51Cq961trYHVFr30iazZHuGyAJ0ZH38wpxhJdZUZcAwfR7UG19sHGWRtTip1kv3xRshS3L9tzaYcKbPVg==
-  dependencies:
-    "@types/react" "*"
-    "@types/react-dom" "*"
-
 "@types/source-list-map@*":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
@@ -9496,13 +9488,6 @@ react-app-polyfill@^2.0.0:
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
 
-react-app-rewired@^2.1.6:
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/react-app-rewired/-/react-app-rewired-2.1.8.tgz#e192f93b98daf96889418d33d3e86cf863812b56"
-  integrity sha512-wjXPdKPLscA7mn0I1de1NHrbfWdXz4S1ladaGgHVKdn1hTgKK5N6EdGIJM0KrS6bKnJBj7WuqJroDTsPKKr66Q==
-  dependencies:
-    semver "^5.6.0"
-
 react-beautiful-dnd@^13.0.0:
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.0.0.tgz#f70cc8ff82b84bc718f8af157c9f95757a6c3b40"
@@ -10563,11 +10548,6 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-single-spa-react@^3.0.1:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-3.2.0.tgz#97bfcb03e418f7daa2b1bd05eab1c62632351d91"
-  integrity sha512-s8K7AuS26WvN9n81z1NBlnZIe/Hin423P8jYLuG/DCNTYo5JbJMS5+Cb/wQd4ikG6YqoedpV4cb7nAcxvlLyhg==
-
 sisteransi@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
@@ -11158,11 +11138,6 @@ symbol-tree@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
-
-systemjs-webpack-interop@^2.1.2:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/systemjs-webpack-interop/-/systemjs-webpack-interop-2.3.3.tgz#c903b9716e3d4157b74564c5358b97dc34a5ecd2"
-  integrity sha512-Xr97xOHRLelD/F/cpop/YjgIman3fSRUIwivSMqFL26b58Oc0AGYS2pWmv0JnCf1aPz0OIvofkIGxSPe1sC51A==
 
 table@^5.2.3:
   version "5.4.6"
