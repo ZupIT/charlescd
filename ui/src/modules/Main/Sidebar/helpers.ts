@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { clearWorkspace, getWorkspaceId } from 'core/utils/workspace';
+import { getWorkspaceId } from 'core/utils/workspace';
 import { isRoot } from 'core/utils/auth';
 import {
   rootMainMenu,
@@ -25,18 +25,12 @@ import {
 export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
 
-const clearWorkspaceIdBasedOnPathname = () => {
-  if(window.location.pathname === '/workspaces'){
-    clearWorkspace()
-  }
-}
-
 export const getItems = () => {
-  clearWorkspaceIdBasedOnPathname();
-
   if (getWorkspaceId()) {
     return workspaceMenu;
+  } else if(isRoot()) {
+    return rootMainMenu;
   } else {
-    return isRoot() ? rootMainMenu : mainMenu;
+    return mainMenu;
   }
 };

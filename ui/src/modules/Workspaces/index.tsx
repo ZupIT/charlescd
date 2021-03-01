@@ -23,6 +23,7 @@ import { getAccessTokenDecoded, isIDMEnabled, isRoot, logout } from 'core/utils/
 import { useWorkspacesByUser } from 'modules/Users/hooks';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
+import { clearWorkspace } from 'core/utils/workspace';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -60,6 +61,10 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   useEffect(() => {
     if (!email) logout();
   }, [email]);
+
+  useEffect(() => {
+    clearWorkspace();
+  }, []);
 
   const handleOnSearch = (name: string) => !loading && setName(name);
 
