@@ -29,7 +29,7 @@ class JdbcButlerConfigurationRepository(
                            butler_configurations.workspace_id                                              AS butler_configuration_workspace_id,
                            butler_configurations.butler_url                                                AS butler_configuration_butler_url,
                            butler_configurations.namespace                                                 AS butler_configuration_namespace,
-                           PGP_SYM_DECRYPT(butler_configurations.git_token::bytea, ?,'cipher-algo=aes256') AS butler_configuration_git_token
+                           butler_configurations.git_token                                                 AS butler_configuration_git_token
                     FROM butler_configurations
                            INNER JOIN users butler_configuration_user ON butler_configurations.user_id = butler_configuration_user.id
                     WHERE 1 = 1
@@ -79,7 +79,7 @@ class JdbcButlerConfigurationRepository(
             .appendln("AND butler_configurations.id = ?")
 
         return Optional.ofNullable(
-            this.jdbcTemplate.query(statement.toString(), arrayOf(encryptionKey, id), butlerConfigurationExtractor)
+            this.jdbcTemplate.query(statement.toString(), arrayOf(id), butlerConfigurationExtractor)
                 ?.firstOrNull()
         )
     }

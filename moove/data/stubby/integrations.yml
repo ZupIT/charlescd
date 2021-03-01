@@ -35,7 +35,7 @@
 
 - request:
     method: POST
-    url: ^/v2/deployments/
+    url: ^/v2/deployments
 
   response:
     status: 200
