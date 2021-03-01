@@ -361,7 +361,7 @@ class JdbcModuleRepository(
 
     private fun appendParameters(statement: StringBuilder, ids: List<String>, workspaceId: String) {
         statement.appendln(
-            "AND modules.workspace_id = $workspaceId AND modules.id IN(${ids.joinToString(separator = ",") { "'$it'" }})"
+            "AND modules.workspace_id = '$workspaceId' AND modules.id IN(${ids.joinToString(separator = ",") { "'$it'" }})"
         )
     }
 
