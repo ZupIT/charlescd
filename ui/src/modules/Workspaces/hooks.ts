@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { FetchStatuses, useFetch, useFetchData } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { findAll, saveWorkspaceName } from 'core/providers/workspace';
@@ -28,25 +28,29 @@ import { getProfileByKey } from 'core/utils/profile';
 export const useWorkspaces = (): {
   getWorkspaces: Function,
   workspaces: Workspace[],
-  status: FetchStatuses
+  status: FetchStatuses,
+  last: any
 } => {
   const findWorkspaces = useFetchData<WorkspacePagination>(findAll);
-  const findWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
-  const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
+  const findWorkspacesByUser = useFetchData<WorkspacePagination>(findWorkspacesByUserId);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const [last, setLast] = useState<boolean>(false);
 
   const getWorkspaces = useCallback(
-    async (name: string) => {
+    async (name: string, page: string) => {
       try {
         setStatus('pending');
         if (isRoot()) {
-          const res = await findWorkspaces({ name });
-          setWorkspaces(res?.content);
+          const res = await findWorkspaces({ name, page });
+          setWorkspaces([...workspaces, ...res.content]);
+          setLast(res?.last);
 
         } else {
           const userId = getProfileByKey('id');
           const res = await findWorkspacesByUser(userId, { name });
-          setWorkspaces(res);
+          setWorkspaces([...workspaces, ...res?.content]);
+          setLast(res?.last);
 
         }
         setStatus('resolved');
@@ -55,12 +59,13 @@ export const useWorkspaces = (): {
         setStatus('rejected');
       }
 
-    }, [findWorkspaces, findWorkspacesByUser]);
-  
+    }, [findWorkspaces, findWorkspacesByUser, workspaces]);
+
   return {
     getWorkspaces,
     workspaces,
-    status
+    status,
+    last
   }
 };
 

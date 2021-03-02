@@ -27,6 +27,7 @@ export interface WorkspacePaginationItem {
   id: string;
   name: string;
   users: Users;
+  status?: string;
 }
 
 export interface WorkspacePagination {

@@ -28,7 +28,6 @@ import MenuItems from './MenuItems';
 import Styled from './styled';
 import ReactTooltip from 'react-tooltip';
 import { goTo } from 'core/utils/routes';
-import { isMicrofrontend } from 'App';
 
 interface Props {
   isExpanded: boolean;
@@ -74,11 +73,9 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
           />
           <ReactTooltip id="docTooltip">Documentation</ReactTooltip>
         </Styled.Item>
-        {!isMicrofrontend() && (
-          <Styled.Item>
-            <Icon name="logout" color="dark" size="15px" onClick={logout} />
-          </Styled.Item>
-        )}
+        <Styled.Item>
+          <Icon name="logout" color="dark" size="15px" onClick={logout} />
+        </Styled.Item>
       </Styled.Bottom>
     </Styled.Nav>
   );

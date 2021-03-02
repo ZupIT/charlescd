@@ -23,7 +23,6 @@ import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { redirectTo } from './routes';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
-import { microfrontendKey } from './microfrontend';
 import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
 type AccessToken = {
@@ -86,7 +85,6 @@ export const isLogged = () => getAccessToken() && getRefreshToken();
 export const clearSession = () => {
   localStorage.removeItem(accessTokenKey);
   localStorage.removeItem(refreshTokenKey);
-  localStorage.removeItem(microfrontendKey);
   clearCircleId();
   clearProfile();
   clearWorkspace();
