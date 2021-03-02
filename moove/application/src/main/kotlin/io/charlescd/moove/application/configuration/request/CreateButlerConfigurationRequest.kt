@@ -22,7 +22,6 @@ data class CreateButlerConfigurationRequest(
     @field:NotNull
     val gitToken: String,
 
-    @field:NotBlank
     @field:NotNull
     val gitProvider: GitProviderEnum
 ) {

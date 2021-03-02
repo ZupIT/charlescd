@@ -68,8 +68,8 @@ class JdbcButlerConfigurationRepository(
             butlerConfiguration.butlerUrl,
             butlerConfiguration.namespace,
             butlerConfiguration.gitToken,
-            butlerConfiguration.gitProvider,
-            encryptionKey
+            encryptionKey,
+            butlerConfiguration.gitProvider.toString()
         )
     }
 

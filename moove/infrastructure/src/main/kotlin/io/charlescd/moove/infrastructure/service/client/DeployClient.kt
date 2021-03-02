@@ -30,7 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import java.net.URI
 
-@FeignClient(name = "deployClient", configuration = [ SimpleFeignEncoderConfiguration::class])
+// TODO remove url. It is currently needed here because we couldn't find another way to disable Ribbon (https://github.com/Netflix/ribbon).
+@FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface DeployClient {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
