@@ -61,16 +61,15 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	mapUnusedManifests := map[string]interface{}{}
 	for _, deployment := range v2Pipeline.UnusedDeployments {
 		deployment := deployment // https://golang.org/doc/faq#closures_and_goroutines
-		batata := virtualServiceUnusedDeploymentsData[deployment.ComponentName]
-		klog.Info(batata)
-		d, err := yaml.Marshal(&batata)
+		extraVirtualService := virtualServiceUnusedDeploymentsData[deployment.ComponentName]
+		klog.Info(extraVirtualService)
+		d, err := yaml.Marshal(&extraVirtualService)
 		if err != nil {
 			manager.handleV2RenderManifestError(v2Pipeline, err, incomingCircleId)
 			return
 		}
 		manifests, err := manager.getV2HelmManifests(deployment, string(d))
 		mapUnusedManifests[deployment.ComponentName] = manifests
-		return
 	}
 
 	customUnusedVirtualServices, helmUnusedManifests := manager.removeVirtualServiceManifest(mapUnusedManifests)
