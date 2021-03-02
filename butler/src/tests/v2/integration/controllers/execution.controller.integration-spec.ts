@@ -300,6 +300,51 @@ describe('DeploymentController v2', () => {
       })
   })
 
+  it('returns correct page size and last page false', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+
+    const params = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      components: [
+        {
+          helmRepository: 'https://some-helm.repo',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          hostValue: 'host-value',
+          gatewayName: 'gateway-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+      defaultCircle: false
+    }
+
+    await createDeploymentAndExecution(params, cdConfiguration, manager)
+    await createDeploymentAndExecution({ ...params, deploymentId: 'a33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
+    await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
+
+    await request(app.getHttpServer())
+      .get('/v2/executions?size=2&page=0')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(200)
+      .expect(response => {
+        expect(response.body.size).toEqual(2)
+        expect(response.body.last).toEqual(false)
+      })
+  })
+
   it('returns correct page size and last page true', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
