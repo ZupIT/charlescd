@@ -9,10 +9,12 @@ import (
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/customerror"
+	"strings"
 
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
 	"github.com/sirupsen/logrus"
+	"istio.io/api/networking/v1alpha3"
 	"k8s.io/klog"
 	"k8s.io/klog/klogr"
 
@@ -61,24 +63,19 @@ func (manager Manager) applyV2Manifest(
 
 func (manager Manager) executeV2HelmManifests(
 	clusterConfig cloudprovider.Cloudprovider,
-	deployment V2Deployment,
+	manifests map[string]interface{},
 	namespace string,
 	action string,
 ) error {
-	manifests, err := manager.getV2HelmManifests(deployment)
-	if err != nil {
-		return err
-	}
-	err = manager.executeV2Manifests(clusterConfig, manifests, namespace, action)
+	err := manager.executeV2Manifests(clusterConfig, manifests, namespace, action)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (manager Manager) getV2HelmManifests(deployment V2Deployment) (map[string]interface{}, error) {
-	manifests := map[string]interface{}{}
-	manifests, err := manager.getManifestsbyV2Template(deployment)
+func (manager Manager) getV2HelmManifests(deployment V2Deployment, extraValues string) (map[string]interface{}, error) {
+	manifests, err := manager.getManifestsbyV2Template(deployment, extraValues)
 	if err != nil {
 		return nil, err
 	}
@@ -90,12 +87,18 @@ func (manager Manager) getV2HelmManifests(deployment V2Deployment) (map[string]i
 	return manifests, nil
 }
 
-func (manager Manager) getManifestsbyV2Template(deployment V2Deployment) (map[string]interface{}, error) {
+func (manager Manager) getManifestsbyV2Template(deployment V2Deployment, extraValues string) (map[string]interface{}, error) {
 	templateContent, valueContent, err := manager.getFilesFromV2Repository(deployment)
+	var builderString strings.Builder
+	builderString.WriteString(valueContent)
+	builderString.WriteString("\n")
+	builderString.WriteString(extraValues)
+	valueMerged := builderString.String()
+	// klog.Info(valueContent)
 	if err != nil {
 		return nil, err
 	}
-	manifests, err := deployment.HelmConfig.GetManifests(templateContent, valueContent)
+	manifests, err := deployment.HelmConfig.GetManifests(templateContent, valueMerged)
 	if err != nil {
 		return nil, err
 	}
@@ -150,4 +153,71 @@ func (manager Manager) mountV2WebhookRequest(callbackUrl string, payload V2Callb
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("x-circle-id", incomingCircleId)
 	return request, nil
+}
+
+func (manager Manager) removeDataFromProxyDeployments(proxyDeployments []map[string]interface{}) (map[string]VirtualServiceData, []error) {
+	virtualServiceData := map[string]VirtualServiceData{}
+	errList := []error{}
+	for _, proxyDeployment := range proxyDeployments {
+		metadata := proxyDeployment["metadata"].(map[string]interface{})
+		componentName := metadata["name"].(string)
+		trafficCircles := []string{}
+		defaultCircle := DefaultCircle{}
+		unmarshalProxy, err := json.Marshal(proxyDeployment["spec"])
+
+		if err != nil {
+			klog.Info(componentName, err)
+			errList = append(errList, err)
+		}
+
+		if proxyDeployment["kind"] == "DestinationRule" {
+			destinationRule := v1alpha3.DestinationRule{}
+			err := json.Unmarshal(unmarshalProxy, &destinationRule)
+			if err != nil {
+				klog.Info("DestinationRule Error", componentName, err)
+				errList = append(errList, err)
+			}
+			// In the future destination rules spec will be check
+		} else {
+			virtualService := v1alpha3.VirtualService{}
+			err := json.Unmarshal(unmarshalProxy, &virtualService)
+			if err != nil {
+				klog.Info("VirtualService Error", componentName, err)
+				errList = append(errList, err)
+			}
+			for _, httpEntry := range virtualService.Http {
+				if httpEntry.Match != nil && httpEntry.Match[0].Headers["x-circle-id"] != nil {
+					trafficCircles = append(trafficCircles, httpEntry.Route[0].Destination.Subset)
+				} else if httpEntry.Match == nil {
+					defaultCircle.Enabled = true
+					defaultCircle.CircleID = httpEntry.Route[0].Destination.Subset
+				}
+			}
+		}
+		virtualServiceData[componentName] = VirtualServiceData{
+			Traffic:       trafficCircles,
+			DefaultCircle: defaultCircle,
+		}
+	}
+	return virtualServiceData, errList
+}
+
+func (manager Manager) removeVirtualServiceManifest(mapManifests map[string]interface{}) (map[string]interface{}, map[string]interface{}) {
+	mapVirtualServices := map[string]interface{}{}
+	mapHelmManifests := map[string]interface{}{}
+	for key, manifests := range mapManifests {
+		tmpManifests := map[string]interface{}{}
+		tmpVirtualService := map[string]interface{}{}
+		for key, manifest := range manifests.(map[string]interface{}) {
+			manifest := manifest.(map[string]interface{})
+			if manifest["kind"] == "VirtualService" {
+				tmpVirtualService[key] = manifest
+			} else {
+				tmpManifests[key] = manifest
+			}
+		}
+		mapHelmManifests[key] = tmpManifests
+		mapVirtualServices[key] = tmpVirtualService
+	}
+	return mapVirtualServices, mapHelmManifests
 }
