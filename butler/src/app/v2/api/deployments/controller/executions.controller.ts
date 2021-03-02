@@ -17,7 +17,7 @@ export class ExecutionsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async allExecutions(
     @Query() params: ExecutionQuery,
-  ): Promise<PaginatedExecutions> {
+  ): Promise<PaginatedExecutions<Execution>> {
     return await this.paginatedExecutionsUseCase.execute(params)
   }
 

@@ -103,8 +103,8 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
-        expect(response.body.executions.length).toEqual(1)
-        expect(response.body.executions[0].id).toEqual(thirdExecution.id)
+        expect(response.body.items.length).toEqual(1)
+        expect(response.body.items[0].id).toEqual(thirdExecution.id)
         expect(response.body.page).toEqual(0)
         expect(response.body.size).toEqual(1)
         expect(response.body.last).toEqual(false)
@@ -117,8 +117,8 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
-        expect(response.body.executions.length).toEqual(1)
-        expect(response.body.executions[0].id).toEqual(secondExecution.id)
+        expect(response.body.items.length).toEqual(1)
+        expect(response.body.items[0].id).toEqual(secondExecution.id)
         expect(response.body.page).toEqual(1)
         expect(response.body.size).toEqual(1)
         expect(response.body.last).toEqual(false)
@@ -131,8 +131,8 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
-        expect(response.body.executions.length).toEqual(1)
-        expect(response.body.executions[0].id).toEqual(firstExecution.id)
+        expect(response.body.items.length).toEqual(1)
+        expect(response.body.items[0].id).toEqual(firstExecution.id)
         expect(response.body.page).toEqual(2)
         expect(response.body.size).toEqual(1)
         expect(response.body.last).toEqual(true)
@@ -224,7 +224,7 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
-        expect(response.body.executions[0]).toEqual(expectedBody)
+        expect(response.body.items[0]).toEqual(expectedBody)
       })
   })
 
@@ -296,11 +296,11 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
-        expect(response.body.executions[0]).toEqual(expectedBody)
+        expect(response.body.items[0]).toEqual(expectedBody)
       })
   })
 
-  it('returns correct page size and last page', async() => {
+  it('returns correct page size and last page true', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },

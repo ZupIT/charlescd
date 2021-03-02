@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-import { Execution } from '../../entity/execution.entity'
+export class PaginatedExecutions<T> {
 
-export interface PaginatedExecutions {
-  executions: Execution[]
-  page: number
-  size: number
-  last: boolean
+  public readonly last: boolean
+
+  constructor(public readonly items: T[],
+    public readonly size: number,
+    public readonly page: number,
+    totalPages: number) {
+
+    this.last = this.isLast(totalPages)
+  }
+
+  private isLast(totalPages: number): boolean {
+    return totalPages > 0 ? 
+      this.page === (totalPages -1) :
+      true
+  }
 }
