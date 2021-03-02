@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
@@ -14,6 +15,7 @@ import (
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
+	Update(id uuid.UUID, systemToken domain.SystemToken) (domain.SystemToken, error)
 }
 
 type systemTokenRepository struct {
@@ -40,7 +42,7 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 	return systemToken, nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error)  {
+func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
 	var systemToken models.SystemToken
 
 	res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).First(&systemToken)
@@ -53,7 +55,16 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 	return mapper.SystemTokenModelToDomain(systemToken), nil
 }
 
+func (systemTokenRepository systemTokenRepository) Update(id uuid.UUID, systemToken domain.SystemToken) (domain.SystemToken, error) {
+	systemTokenToUpdate := models.SystemToken(systemToken)
+
+	if res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).Updates(&systemTokenToUpdate); res.Error != nil {
+		return handlerError("Update system token failed", "repository.Update.Updates", res.Error, "")
+	}
+
+	return systemToken, nil
+}
+
 func handlerError(message string, operation string, err error, errType string) (domain.SystemToken, error) {
 	return domain.SystemToken{}, logging.NewError(message, err, errType, nil, operation)
 }
-
