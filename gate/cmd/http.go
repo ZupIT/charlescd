@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
@@ -16,8 +17,8 @@ import (
 
 type server struct {
 	persistenceManager persistenceManager
-	httpServer     *echo.Echo
-	enforcer *casbin.Enforcer
+	httpServer         *echo.Echo
+	enforcer           *casbin.Enforcer
 }
 
 type customBinder struct{}
@@ -28,8 +29,8 @@ type CustomValidator struct {
 
 func newServer(pm persistenceManager) (server, error) {
 	return server{
-		persistenceManager:   pm,
-		httpServer: createHttpServerInstance(),
+		persistenceManager: pm,
+		httpServer:         createHttpServerInstance(),
 	}, nil
 }
 
@@ -83,6 +84,7 @@ func (server server) registerRoutes() {
 			st := v1.Group("/system-token")
 			{
 				st.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
+				st.POST("/:id/revoke", handlers.RevokeSytemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 		}
 	}

@@ -44,6 +44,6 @@ func RevokeSytemToken(revokeSystemToken systemTokenInteractor.RevokeSystemToken)
 			return HandlerError(echoCtx, ctx, err)
 		}
 
-		return echoCtx.JSON(http.StatusNoContent)
+		return echoCtx.JSON(http.StatusNoContent, nil)
 	}
 }
