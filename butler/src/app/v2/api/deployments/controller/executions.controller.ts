@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
 import { ExecutionQuery } from '../dto/execution/paginated-execution-query.dto'
-import { PaginatedExecutions } from '../dto/execution/paginated-executions.dto'
+import { PaginatedExecutions } from '../dto/paginated-executions.dto'
 import { Execution } from '../entity/execution.entity'
 import { PaginatedExecutionsUseCase } from '../use-cases/paginated-executions.usecase'
 import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'

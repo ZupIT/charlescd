@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
 import { ExecutionQuery } from '../dto/execution/paginated-execution-query.dto'
-import { PaginatedExecutions } from '../dto/execution/paginated-executions.dto'
+import { PaginatedExecutions } from '../dto/paginated-executions.dto'
 import { Execution } from '../entity/execution.entity'
 import { ExecutionRepository } from '../repository/execution.repository'
 
