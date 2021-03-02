@@ -26,6 +26,5 @@ func (st *SystemTokenSuite) SetupTest() {
 
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(SystemTokenSuite))
-
 }
 

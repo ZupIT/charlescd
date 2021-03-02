@@ -50,16 +50,15 @@ func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Pa
 		Offset(page.Offset()).
 		Limit(page.PageSize).
 		Find(&systemToken)
+	if res.Error != nil {
+		return []domain.SystemToken{}, page, handlerError("Find all tokens failed", "unit.GetAll.Find", res.Error, logging.InternalError)
+	}
 
 	res = systemTokenRepository.db.Table("system_tokens").
 		Where("revoked = false").
 		Count(&page.Total)
-
 	if res.Error != nil {
-		if res.Error.Error() == "record not found" {
-			return []domain.SystemToken{}, page, handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
-		}
-		return []domain.SystemToken{}, page, handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
+		return []domain.SystemToken{}, page, handlerError("Find all tokens failed", "unit.GetAll.Count", res.Error, logging.InternalError)
 	}
 
 	systemTokenFound := make([]domain.SystemToken, 0)
