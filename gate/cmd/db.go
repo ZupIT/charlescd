@@ -11,6 +11,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type persistenceManager struct {
@@ -46,7 +47,9 @@ func connectDatabase() (*sql.DB, *gorm.DB, error) {
 
 	gormDb, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDb,
-	}), &gorm.Config{})
+	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		return nil, nil, err
 	}

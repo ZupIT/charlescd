@@ -7,26 +7,27 @@ import (
 )
 
 type SystemTokenRequest struct {
-	Name string `json:"name" validate:"required,notblank"`
+	Name        string   `json:"name" validate:"required,notblank"`
 	Permissions []string `json:"permissions" validate:"required,notnull"`
-	Author string `json:"author" validate:"required,notblank"`
+	Author      string   `json:"author" validate:"required,notblank"`
 }
 
 type SystemTokenResponse struct {
-	ID uuid.UUID `json:"id"`
-	Name string `json:"name"`
+	ID          uuid.UUID            `json:"id"`
+	Name        string               `json:"name"`
 	Permissions []PermissionResponse `json:"permissions"`
-	CreatedAt time.Time `json:"created_at"`
-	RevokedAt time.Time `json:"revoked_at"`
-	LastUsedAt time.Time `json:"last_used_at"`
-	Author string `json:"author"`
+	CreatedAt   time.Time            `json:"created_at"`
+	RevokedAt   time.Time            `json:"revoked_at"`
+	LastUsedAt  time.Time            `json:"last_used_at"`
+	Author      string               `json:"author"`
 }
 
 type PageSystemTokenResponse struct {
-	Content []SystemTokenResponse `json:"content"`
-	Page int `json:"page"`
-	Size int `json:"size"`
-
+	Content    []SystemTokenResponse `json:"content"`
+	Page       int                   `json:"page"`
+	Size       int                   `json:"size"`
+	Last       bool                  `json:"last"`
+	TotalPages int                   ` json:"totalPages"`
 }
 
 func (systemTokenRequest SystemTokenRequest) SystemTokenToDomain(author domain.User) domain.SystemToken {
@@ -44,13 +45,13 @@ func (systemTokenRequest SystemTokenRequest) SystemTokenToDomain(author domain.U
 
 func SystemTokenToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 	return SystemTokenResponse{
-		ID: systemToken.ID,
-		Name: systemToken.Name,
+		ID:          systemToken.ID,
+		Name:        systemToken.Name,
 		Permissions: PermissionsToResponse(systemToken.Permissions),
-		CreatedAt: systemToken.CreatedAt,
-		RevokedAt: systemToken.RevokedAt,
-		LastUsedAt: systemToken.LastUsedAt,
-		Author: systemToken.Author.Email,
+		CreatedAt:   systemToken.CreatedAt,
+		RevokedAt:   systemToken.RevokedAt,
+		LastUsedAt:  systemToken.LastUsedAt,
+		Author:      systemToken.Author.Email,
 	}
 }
 
@@ -62,10 +63,12 @@ func SystemTokensToResponse(systemTokens []domain.SystemToken) []SystemTokenResp
 	return systemTokenResponse
 }
 
-func PageSystemTokenToPageResponse(pageSystemToken domain.PageSystemToken) PageSystemTokenResponse {
+func SystemTokenToPageResponse(systemToken []domain.SystemToken, page domain.Page) PageSystemTokenResponse {
 	return PageSystemTokenResponse{
-		Content: SystemTokensToResponse(pageSystemToken.Content),
-		Page:    pageSystemToken.Page,
-		Size:    pageSystemToken.Size,
+		Content:    SystemTokensToResponse(systemToken),
+		Page:       page.Page,
+		Size:       page.Size,
+		Last:       page.IsLast(systemToken),
+		TotalPages: page.TotalPages(systemToken),
 	}
 }

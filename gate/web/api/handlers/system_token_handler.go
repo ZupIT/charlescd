@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers/representation"
@@ -16,18 +17,29 @@ func GetAllSystemTokens(getAllSystemToken systemTokenInteractor.GetAllSystemToke
 		ctx := echoCtx.Request().Context()
 
 		page, err := strconv.Atoi(echoCtx.QueryParam("page"))
+		if err != nil {
+			page = 0
+		}
 		size, err := strconv.Atoi(echoCtx.QueryParam("size"))
 		if err != nil {
-			logging.LogErrorFromCtx(ctx, err)
-			return echoCtx.JSON(http.StatusBadRequest, logging.NewError("Parse id failed", err, logging.ParseError, nil))
+			size = 20
+		}
+		sort := echoCtx.QueryParam("sort")
+		if sort == "" {
+			sort = "created_at desc"
+		}
+		pageRequest := domain.Page{
+			Page: page,
+			Size: size,
+			Sort: sort,
 		}
 
-		systemTokens, err := getAllSystemToken.Execute(page, size)
+		systemTokens, pageRequest, err := getAllSystemToken.Execute(pageRequest)
 		if err != nil {
 			return HandlerError(echoCtx, ctx, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, representation.PageSystemTokenToPageResponse(systemTokens))
+		return echoCtx.JSON(http.StatusOK, representation.SystemTokenToPageResponse(systemTokens, pageRequest))
 	}
 }
 
@@ -47,7 +59,3 @@ func GetSystemToken(getSystemToken systemTokenInteractor.GetSystemToken) echo.Ha
 		return echoCtx.JSON(http.StatusOK, representation.SystemTokenToResponse(user))
 	}
 }
-
-
-
-

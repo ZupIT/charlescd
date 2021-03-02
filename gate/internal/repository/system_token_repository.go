@@ -13,7 +13,7 @@ import (
 
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
-	FindAll(page int, size int) (domain.PageSystemToken, error)
+	FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
 }
 
@@ -41,15 +41,24 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 	return systemToken, nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindAll(page int, size int) (domain.PageSystemToken, error) {
+func (systemTokenRepository systemTokenRepository) FindAll(page domain.Page) ([]domain.SystemToken, domain.Page, error) {
 	var systemToken []models.SystemToken
 
-	res := systemTokenRepository.db.Offset(page * size).Limit(size).Find(&systemToken).Where("revoked = false")
+	res := systemTokenRepository.db.Where("revoked = false").
+		Order(page.Sort).
+		Offset(page.Offset()).
+		Limit(page.Size).
+		Find(&systemToken)
+
+	res = systemTokenRepository.db.Table("system_tokens").
+		Where("revoked = false").
+		Count(&page.Total)
+
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
-			return domain.PageSystemToken{}, handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
+			return []domain.SystemToken{}, page, handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
 		}
-		return domain.PageSystemToken{}, handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
+		return []domain.SystemToken{}, page, handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
 	}
 
 	systemTokenFound := make([]domain.SystemToken, 0)
@@ -57,14 +66,10 @@ func (systemTokenRepository systemTokenRepository) FindAll(page int, size int) (
 		systemTokenFound = append(systemTokenFound, mapper.SystemTokenModelToDomain(st))
 	}
 
-	return domain.PageSystemToken{
-		Content: systemTokenFound,
-		Page:    page,
-		Size:    size,
-	}, nil
+	return systemTokenFound, page, nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error)  {
+func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
 	var systemToken models.SystemToken
 
 	res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).First(&systemToken)
@@ -78,5 +83,5 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 }
 
 func handlerError(message string, operation string, err error, errType string) error {
-	return logging.NewError(message, err, errType,nil, operation)
+	return logging.NewError(message, err, errType, nil, operation)
 }
