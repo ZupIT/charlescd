@@ -19,15 +19,29 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 export class AddNamespaceColumnToDeployments20210302120000 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE v2deployments ADD COLUMN namespace Character Varying NOT NULL')
-    await queryRunner.query('ALTER TABLE v2deployments DROP CONSTRAINT fk_v2cd_config_deployments')
-    await queryRunner.query('ALTER TABLE v2deployments ALTER COLUMN cd_configuration_id DROP NOT NULL')
+    await queryRunner.query(`
+      ALTER TABLE v2deployments ADD COLUMN namespace Character Varying;
+
+      with config_data as (
+        select id, PGP_SYM_DECRYPT(configuration_data::bytea, 'undefined', 'cipher-algo=aes256')::jsonb->'namespace' as namespace from cd_configurations
+      )
+
+      update v2deployments
+        set namespace = config_data.namespace
+      from config_data
+      where v2deployments.cd_configuration_id = config_data.id;
+
+      ALTER TABLE v2deployments DROP CONSTRAINT fk_v2cd_config_deployments;
+      ALTER TABLE v2deployments ALTER COLUMN cd_configuration_id DROP NOT NULL;
+      ALTER TABLE v2deployments ALTER COLUMN namespace SET NOT NULL
+    `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE v2deployments DROP COLUMN')
-    await queryRunner.query('ALTER TABLE v2deployments ADD CONSTRAINT "fk_v2cd_config_deployments" FOREIGN KEY ( "cd_configuration_id" ) REFERENCES "public"."cd_configurations" ( "id" )')
-    await queryRunner.query('ALTER TABLE v2deployments ALTER COLUMN cd_configuration_id SET NOT NULL')
-
+    await queryRunner.query(`
+      ALTER TABLE v2deployments DROP COLUMN namespace
+      ALTER TABLE v2deployments ADD CONSTRAINT "fk_v2cd_config_deployments" FOREIGN KEY ( "cd_configuration_id" ) REFERENCES "public"."cd_configurations" ( "id" )
+      ALTER TABLE v2deployments ALTER COLUMN cd_configuration_id SET NOT NULL
+    `)
   }
 }
