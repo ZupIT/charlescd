@@ -56,7 +56,15 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 }
 
 func (systemTokenRepository systemTokenRepository) Update(id uuid.UUID, systemToken domain.SystemToken) (domain.SystemToken, error) {
-	systemTokenToUpdate := models.SystemToken(systemToken)
+	systemTokenToUpdate := &models.SystemToken{
+		ID:         systemToken.ID,
+		Name:       systemToken.Name,
+		Revoked:    systemToken.Revoked,
+		CreatedAt:  systemToken.CreatedAt,
+		RevokedAt:  systemToken.CreatedAt,
+		LastUsedAt: systemToken.LastUsedAt,
+		Author:     models.User(systemToken.Author),
+	}
 
 	if res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).Updates(&systemTokenToUpdate); res.Error != nil {
 		return handlerError("Update system token failed", "repository.Update.Updates", res.Error, "")
