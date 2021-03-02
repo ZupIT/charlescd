@@ -50,7 +50,7 @@ class TestUtils {
         return new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
     }
 
-    static String getCirleId() {
+    static String getCircleId() {
         return "5a0d5b3f-8c28-49ab-a6d0-7b5d1296f610"
     }
 
@@ -105,7 +105,7 @@ class TestUtils {
 
     static Circle getCircle() {
         new Circle(
-                cirleId,
+                circleId,
                 "Women",
                 "9d109f66-351b-426d-ad69-a49bbc329914",
                 user, LocalDateTime.now(),

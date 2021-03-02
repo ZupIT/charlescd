@@ -23,13 +23,13 @@ class MetadataValidator : ConstraintValidator<MetadataConstraint, Metadata> {
     private fun hasValidContent(content: Map<String, String>): Boolean {
 
         val invalidMetadata = content.entries.filter {
-            !this.hasValidLength(it.key, 63) && this.hasValidLength(it.value, 253)
+            !this.hasValidLength(it.key, 64) || !this.hasValidLength(it.value, 254)
         }
         return hasKeys(content) && invalidMetadata.isEmpty()
     }
 
-    private fun hasValidLength(value: String, maxLength: Int): Boolean {
-        return value.length in 1 until maxLength
+    private fun hasValidLength(value: String, exceededLimit: Int): Boolean {
+        return value.length in 1 until exceededLimit
     }
 
     private fun hasKeys(metadata: Map<String, String>): Boolean {
