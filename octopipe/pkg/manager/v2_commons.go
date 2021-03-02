@@ -11,12 +11,9 @@ import (
 	"octopipe/pkg/customerror"
 	"strings"
 
-	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
 	"github.com/sirupsen/logrus"
 	"istio.io/api/networking/v1alpha3"
 	"k8s.io/klog"
-	"k8s.io/klog/klogr"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -49,11 +46,7 @@ func (manager Manager) applyV2Manifest(
 		return err
 	}
 
-	kubectl := &kube.KubectlCmd{
-		Log:    klogr.New(),
-		Tracer: tracing.NopTracer{},
-	}
-	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config, kubectl)
+	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config, manager.kubectl)
 	err = deployment.Do()
 	if err != nil {
 		return err
@@ -155,9 +148,8 @@ func (manager Manager) mountV2WebhookRequest(callbackUrl string, payload V2Callb
 	return request, nil
 }
 
-func (manager Manager) removeDataFromProxyDeployments(proxyDeployments []map[string]interface{}) (map[string]VirtualServiceData, []error) {
+func (manager Manager) removeDataFromProxyDeployments(proxyDeployments []map[string]interface{}) (map[string]VirtualServiceData, error) {
 	virtualServiceData := map[string]VirtualServiceData{}
-	errList := []error{}
 	for _, proxyDeployment := range proxyDeployments {
 		metadata := proxyDeployment["metadata"].(map[string]interface{})
 		componentName := metadata["name"].(string)
@@ -166,24 +158,21 @@ func (manager Manager) removeDataFromProxyDeployments(proxyDeployments []map[str
 		unmarshalProxy, err := json.Marshal(proxyDeployment["spec"])
 
 		if err != nil {
-			klog.Info(componentName, err)
-			errList = append(errList, err)
+			return nil, err
 		}
 
 		if proxyDeployment["kind"] == "DestinationRule" {
 			destinationRule := v1alpha3.DestinationRule{}
 			err := json.Unmarshal(unmarshalProxy, &destinationRule)
 			if err != nil {
-				klog.Info("DestinationRule Error", componentName, err)
-				errList = append(errList, err)
+				return nil, err
 			}
 			// In the future destination rules spec will be check
 		} else {
 			virtualService := v1alpha3.VirtualService{}
 			err := json.Unmarshal(unmarshalProxy, &virtualService)
 			if err != nil {
-				klog.Info("VirtualService Error", componentName, err)
-				errList = append(errList, err)
+				return nil, err
 			}
 			for _, httpEntry := range virtualService.Http {
 				if httpEntry.Match != nil && httpEntry.Match[0].Headers["x-circle-id"] != nil {
@@ -199,7 +188,7 @@ func (manager Manager) removeDataFromProxyDeployments(proxyDeployments []map[str
 			DefaultCircle: defaultCircle,
 		}
 	}
-	return virtualServiceData, errList
+	return virtualServiceData, nil
 }
 
 func (manager Manager) removeVirtualServiceManifest(mapManifests map[string]interface{}) (map[string]interface{}, map[string]interface{}) {

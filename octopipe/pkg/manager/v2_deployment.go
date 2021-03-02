@@ -30,31 +30,14 @@ import (
 func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeline, incomingCircleId string) {
 	klog.Info("START PIPELINE")
 
-	klog.Info("Remove Circle and Default circleIDS")
-	virtualServiceData, errList := manager.removeDataFromProxyDeployments(v2Pipeline.ProxyDeployments)
-	if len(errList) > 0 {
-		manager.handleV2RemoveDataError(v2Pipeline, errList, incomingCircleId)
+	customVirtualServices, helmManifests, err := manager.extractManifests(v2Pipeline)
+	if err != nil {
+		manager.handleV2RenderManifestError(v2Pipeline, err, incomingCircleId)
 		return
 	}
 
-	klog.Info("Render Helm manifests")
-	mapManifests := map[string]interface{}{}
-	for _, deployment := range v2Pipeline.Deployments {
-		deployment := deployment // https://golang.org/doc/faq#closures_and_goroutines
-		extraVirtualServiceValues := virtualServiceData[deployment.ComponentName]
-		d, err := yaml.Marshal(&extraVirtualServiceValues)
-		if err != nil {
-			manager.handleV2RenderManifestError(v2Pipeline, err, incomingCircleId)
-			return
-		}
-		manifests, err := manager.getV2HelmManifests(deployment, string(d))
-		mapManifests[deployment.ComponentName] = manifests
-	}
-
-	customVirtualServices, helmManifests := manager.removeVirtualServiceManifest(mapManifests)
-
 	klog.Info("APPLY COMPONENTS")
-	err := manager.runV2Deployments(v2Pipeline, helmManifests)
+	err = manager.runV2Deployments(v2Pipeline, helmManifests)
 	if err != nil {
 		manager.handleV2DeploymentError(v2Pipeline, err, incomingCircleId, helmManifests)
 		return
@@ -68,9 +51,9 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	}
 
 	klog.Info("Remove Circle and Default circleIDS from unusedProxyDeployments")
-	virtualServiceUnusedDeploymentsData, errList := manager.removeDataFromProxyDeployments(v2Pipeline.UnusedProxyDeployments)
-	if len(errList) > 0 {
-		manager.handleV2RemoveDataError(v2Pipeline, errList, incomingCircleId)
+	virtualServiceUnusedDeploymentsData, err := manager.removeDataFromProxyDeployments(v2Pipeline.UnusedProxyDeployments)
+	if err != nil {
+		manager.handleV2RenderManifestError(v2Pipeline, err, incomingCircleId)
 		return
 	}
 
@@ -113,23 +96,62 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("FINISH:EXECUTE_V2_DEPLOYMENT_PIPELINE")
 }
 
+func (manager Manager) extractManifests(v2Pipeline V2DeploymentPipeline) (map[string]interface{}, map[string]interface{}, error) {
+	klog.Info("Remove Circle and Default circleIDS")
+	virtualServiceData, err := manager.removeDataFromProxyDeployments(v2Pipeline.ProxyDeployments)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	klog.Info("Render Helm manifests")
+	mapManifests := map[string]interface{}{}
+	for _, deployment := range v2Pipeline.Deployments {
+		deployment := deployment // https://golang.org/doc/faq#closures_and_goroutines
+		extraVirtualServiceValues := virtualServiceData[deployment.ComponentName]
+		d, err := yaml.Marshal(&extraVirtualServiceValues)
+		if err != nil {
+
+		}
+		manifests, err := manager.getV2HelmManifests(deployment, string(d))
+		mapManifests[deployment.ComponentName] = manifests
+	}
+
+	customVirtualServices, helmManifests := manager.removeVirtualServiceManifest(mapManifests)
+	return customVirtualServices, helmManifests, nil
+}
+
 func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline, mapManifests map[string]interface{}) error {
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, deployment := range mapManifests {
 		currentDeployment := deployment.(map[string]interface{})
-		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
-		})
+		cloudprovider := manager.cloudproviderMain.NewCloudProvider(v2Pipeline.ClusterConfig)
+		config, err := cloudprovider.GetClient()
+		if err != nil {
+			return err
+		}
+		for _, manifest := range currentDeployment {
+			deployment := manager.deploymentMain.NewDeployment(DEPLOY_ACTION, false, v2Pipeline.Namespace, manifest.(map[string]interface{}), config, manager.kubectl)
+
+			err := deployment.Deploy()
+			if err != nil {
+				return err
+			}
+
+			errs.Go(func() error {
+				return deployment.NewWatcher()
+			})
+		}
 	}
+
 	return errs.Wait()
 }
 
 func (manager Manager) runV2Rollbacks(v2Pipeline V2DeploymentPipeline, mapManifests map[string]interface{}) error {
 	errs, _ := errgroup.WithContext(context.Background())
-	for chave, manifest := range mapManifests {
+	for key, manifest := range mapManifests {
 		rollbackIfFailed := false
 		for _, deployment := range v2Pipeline.Deployments {
-			if deployment.ComponentName == chave && deployment.RollbackIfFailed {
+			if deployment.ComponentName == key && deployment.RollbackIfFailed {
 				rollbackIfFailed = true
 			}
 		}

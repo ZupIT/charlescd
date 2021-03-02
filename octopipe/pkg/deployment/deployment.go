@@ -39,6 +39,9 @@ const (
 
 type UseCases interface {
 	Do() error
+	NewWatcher() error
+	Deploy() error
+	Undeploy() error
 }
 
 type Deployment struct {
@@ -71,9 +74,9 @@ func (main *DeploymentMain) NewDeployment(
 func (deployment *Deployment) Do() error {
 	switch deployment.action {
 	case DeployAction:
-		return deployment.deploy()
+		return deployment.watchDeploy()
 	case UndeployAction:
-		return deployment.undeploy()
+		return deployment.Undeploy()
 	default:
 		return customerror.New("Deploy action failed", "Not recognize deploy action", nil, "deployment.Do")
 	}
@@ -94,7 +97,8 @@ func getTimeoutDuration() time.Duration {
 	return time.Duration(value)
 }
 
-func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) error {
+func (deployment *Deployment) NewWatcher() error {
+	manifest := deployment.getUnstructuredManifest()
 	ticker := time.NewTicker(3 * time.Second)
 	timeout := time.After(getTimeoutDuration() * time.Second)
 	for {
@@ -156,7 +160,21 @@ func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) er
 	}
 }
 
-func (deployment *Deployment) deploy() error {
+func (deployment *Deployment) watchDeploy() error {
+	err := deployment.Deploy()
+	if err != nil {
+		return customerror.WithOperation(err, "deployment.deploy.Deploy")
+	}
+
+	err = deployment.NewWatcher()
+	if err != nil {
+		return customerror.WithOperation(err, "deployment.deploy.NewWatcher")
+	}
+
+	return nil
+}
+
+func (deployment *Deployment) Deploy() error {
 	manifest := deployment.getUnstructuredManifest()
 
 	_, err := deployment.kubectl.ApplyResource(
@@ -168,6 +186,7 @@ func (deployment *Deployment) deploy() error {
 		true,
 		false,
 	)
+
 	if err != nil {
 		return customerror.New(
 			"Deploy failed",
@@ -180,23 +199,19 @@ func (deployment *Deployment) deploy() error {
 		)
 	}
 
-	err = deployment.newWatcher(manifest)
-	if err != nil {
-		return customerror.WithOperation(err, "deployment.deploy.ApplyResource")
-	}
-
 	return nil
 }
+
 func isResourController(resource *unstructured.Unstructured) bool {
 	if resource == nil {
 		return false
 	}
 
-	_, isRsourceController, _ := unstructured.NestedInt64(resource.Object, "status", "replicas")
+	_, isRsourceController, _ := unstructured.NestedInt64(resource.Object, "spec", "replicas")
 	return isRsourceController
 }
 
-func (deployment *Deployment) undeploy() error {
+func (deployment *Deployment) Undeploy() error {
 	manifest := deployment.getUnstructuredManifest()
 	gvk := manifest.GroupVersionKind()
 
@@ -221,7 +236,7 @@ func (deployment *Deployment) undeploy() error {
 		return nil
 	}
 
-	err = deployment.kubectl.DeleteResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace, false)
+	err = deployment.kubectl.DeleteResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace, true)
 	if err != nil && k8sErrors.IsNotFound(err) {
 		return nil
 	}
