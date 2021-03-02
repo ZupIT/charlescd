@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PaginatedExecutions<T> {
+export class PaginatedResponse<T> {
 
   public readonly last: boolean
 
