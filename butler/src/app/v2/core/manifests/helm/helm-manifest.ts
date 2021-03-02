@@ -25,11 +25,12 @@ import * as rimraf from 'rimraf'
 import * as yaml from 'js-yaml'
 
 import { Manifest } from '../manifest'
-import { ManifestConfig } from '../manifest.interface'
 import { Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
 import { KubernetesManifest } from '../../integrations/interfaces/k8s-manifest.interface'
 import { RepositoryStrategyFactory } from '../../integrations/repository-strategy-factory'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
+import { CreateComponentRequestDto } from '../../../api/deployments/dto/create-component-request.dto'
+import { GitProvidersEnum } from '../../configuration/interfaces'
 
 @Injectable()
 export class HelmManifest implements Manifest {
@@ -38,23 +39,24 @@ export class HelmManifest implements Manifest {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly repositoryFactory: RepositoryStrategyFactory) {}
 
-  public async generate(config: ManifestConfig): Promise<KubernetesManifest[]> {
+  public async generate(gitToken: string, gitProvider: GitProvidersEnum, branch: string, helmUrl: string, namespace: string, circleId: string, component: CreateComponentRequestDto): Promise<KubernetesManifest[]> {
     this.consoleLoggerService.log('START:GENERATING MANIFEST USING HELM')
     const requestConfig = {
-      url: config.repo.url,
-      token: config.repo.token,
-      resourceName: config.componentName,
-      branch: config.repo.branch
+      url: helmUrl,
+      token: gitToken,
+      provider: gitProvider,
+      resourceName: component.componentName,
+      branch: branch
     }
-    this.consoleLoggerService.log('GET:CHART FROM REPOSITORY', config.componentName)
-    const repository = this.repositoryFactory.create(config.repo.provider)
+    this.consoleLoggerService.log('GET:CHART FROM REPOSITORY', component.componentName)
+    const repository = this.repositoryFactory.create(gitProvider)
     const chart = await repository.getResource(requestConfig)
     const chartPath = this.getTmpChartDir()
     try {
       this.consoleLoggerService.log('START:SAVING CHART LOCALLY', chartPath)
       await this.saveChartFiles(chartPath, chart)
       this.consoleLoggerService.log('START:GENERATE MANIFEST')
-      const manifest =  await this.template(chartPath, config)
+      const manifest =  await this.template(chartPath, component.componentName, namespace, component.buildImageUrl, circleId)
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
     } finally {
@@ -85,8 +87,8 @@ export class HelmManifest implements Manifest {
     rimraf(dir, (error) => this.consoleLoggerService.error('ERROR:CLEANING FILES UP FAILED', error))
   }
 
-  private async template(chartPath: string, config: ManifestConfig): Promise<KubernetesManifest[]> {
-    const args = this.formatArguments(chartPath, config)
+  private async template(chartPath: string, componentName: string, namespace: string, imageUrl: string, circleId: string): Promise<KubernetesManifest[]> {
+    const args = this.formatArguments(chartPath, componentName, namespace, imageUrl, circleId)
     this.consoleLoggerService.log('HELM COMMAND ARGS', args)
     const manifestString = await this.executeCommand(args)
     this.consoleLoggerService.log('MANIFEST GENERATED', manifestString)
@@ -114,16 +116,16 @@ export class HelmManifest implements Manifest {
     })
   }
 
-  private formatArguments(chartPath: string, config: ManifestConfig) {
-    const chart = `${chartPath}${path.sep}${config.componentName}`
-    const valuesFile = this.getValuesFile(chartPath, config)
-    const command = ['template', config.componentName, chart, '-f', valuesFile]
-    if(config.namespace) {
+  private formatArguments(chartPath: string, componentName: string, namespace: string, imageUrl: string, circleId: string) {
+    const chart = `${chartPath}${path.sep}${componentName}`
+    const valuesFile = this.getValuesFile(chartPath, componentName)
+    const command = ['template', componentName, chart, '-f', valuesFile]
+    if(namespace) {
       command.push('--namespace')
-      command.push(config.namespace)
+      command.push(namespace)
     }
 
-    const overrideValues = this.toStringArray(this.extractCustomValues(config))
+    const overrideValues = this.toStringArray(this.extractCustomValues(componentName, imageUrl, circleId))
     if(overrideValues) {
       command.push('--set')
       command.push(overrideValues)
@@ -131,15 +133,15 @@ export class HelmManifest implements Manifest {
     return command
   }
 
-  private getValuesFile(chartPath: string, config: ManifestConfig): string {
-    return `${chartPath}${path.sep}${config.componentName}${path.sep}${config.componentName}.yaml`
+  private getValuesFile(chartPath: string, componentName: string): string {
+    return `${chartPath}${path.sep}${componentName}${path.sep}${componentName}.yaml`
   }
 
-  private extractCustomValues(config: ManifestConfig): Record<string, string | undefined> {
+  private extractCustomValues(componentName: string, imageUrl: string, circleId: string): Record<string, string | undefined> {
     return {
-      name: config.componentName,
-      'image.tag': config.imageUrl,
-      circleId: config.circleId
+      name: componentName,
+      'image.tag': imageUrl,
+      circleId: circleId
     }
   }
 

@@ -15,7 +15,6 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
@@ -32,16 +31,14 @@ export class ReconcileDeploymentUsecase {
     private readonly k8sClient: K8sClient,
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
-    private readonly configurationRepository: CdConfigurationsRepository,
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly reconcileUseCase: ReconcileDeployment
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
-    const decryptedConfig = await this.configurationRepository.findDecrypted(deployment.cdConfiguration.id)
     const rawSpecs = deployment.components.flatMap(c => c.manifests)
-    const specs = this.reconcileUseCase.addMetadata(rawSpecs, deployment, decryptedConfig)
+    const specs = this.reconcileUseCase.addMetadata(rawSpecs, deployment)
 
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
@@ -57,11 +54,11 @@ export class ReconcileDeploymentUsecase {
         return { children: specs, resyncAfterSeconds: 5 }
       }
       const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = this.reconcileUseCase.concatWithPrevious(previousDeployment, specs, decryptedConfig)
+      const currentAndPrevious = this.reconcileUseCase.concatWithPrevious(previousDeployment, specs)
       return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
 
-    const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
+    const activeComponents = await this.componentRepository.findActiveComponents()
     try {
       await this.k8sClient.applyRoutingCustomResource(activeComponents)
     } catch (error) {

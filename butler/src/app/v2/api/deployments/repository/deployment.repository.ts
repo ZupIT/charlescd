@@ -48,6 +48,6 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
   }
 
   public async findWithComponentsAndConfig(deploymentId: string): Promise<DeploymentEntityV2> {
-    return this.findOneOrFail({ id: deploymentId }, { relations: ['cdConfiguration', 'components'] })
+    return this.findOneOrFail({ id: deploymentId }, { relations: ['components'] })
   }
 }

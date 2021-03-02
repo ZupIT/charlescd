@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import { CreateComponentRequestDto } from '../../api/deployments/dto/create-component-request.dto'
+import { GitProvidersEnum } from '../configuration/interfaces/git-providers.type'
 import { KubernetesManifest } from '../integrations/interfaces/k8s-manifest.interface'
-import { ManifestConfig } from './manifest.interface'
 
 export interface Manifest {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  generate(config: ManifestConfig): Promise<KubernetesManifest[]>
+  generate(gitToken: string, gitProvider: GitProvidersEnum, branch: string, helmUrl: string, namespace: string, circleId: string, component: CreateComponentRequestDto): Promise<KubernetesManifest[]>
 }

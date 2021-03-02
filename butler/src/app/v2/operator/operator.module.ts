@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { CdConfigurationsRepository } from '../api/configurations/repository/cd-configurations.repository'
+
 import { DeploymentEntityV2 } from '../api/deployments/entity/deployment.entity'
 import { ComponentsRepositoryV2 } from '../api/deployments/repository/component.repository'
 import { DeploymentRepositoryV2 } from '../api/deployments/repository/deployment.repository'
@@ -17,8 +17,7 @@ import { ReconcileDeployment } from './use-cases/reconcile-deployments.usecase'
     TypeOrmModule.forFeature([
       DeploymentEntityV2,
       DeploymentRepositoryV2,
-      ComponentsRepositoryV2,
-      CdConfigurationsRepository
+      ComponentsRepositoryV2
     ]),
     LogsModule
   ],

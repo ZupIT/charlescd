@@ -19,9 +19,13 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreateCircleDeploymentDto {
 
   @ApiProperty()
-  public readonly headerValue: string
+  public readonly id: string
 
-  constructor(headerValue: string) {
-    this.headerValue = headerValue
+  @ApiProperty()
+  public readonly default: boolean
+
+  constructor(headerValue: string, isDefault: boolean) {
+    this.id = headerValue
+    this.default = isDefault
   }
 }

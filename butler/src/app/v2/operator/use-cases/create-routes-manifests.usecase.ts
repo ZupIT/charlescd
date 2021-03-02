@@ -16,7 +16,6 @@
 
 import { Injectable } from '@nestjs/common'
 import { groupBy, isEmpty } from 'lodash'
-import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { Component } from '../../api/deployments/interfaces'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
@@ -34,7 +33,6 @@ export class CreateRoutesManifestsUseCase {
   constructor(
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentsRepository: ComponentsRepositoryV2,
-    private readonly cdConfigurationsRepository: CdConfigurationsRepository,
     private readonly consoleLoggerService: ConsoleLoggerService,
   ) { }
 
@@ -43,7 +41,7 @@ export class CreateRoutesManifestsUseCase {
     let specs : (VirtualServiceSpec | DestinationRuleSpec)[]= []
     for (const c of hookParams.parent.spec.circles) {
       const deployment = await this.retriveDeploymentFor(c.id)
-      const activeComponents = await this.componentsRepository.findHealthyActiveComponents(deployment.cdConfiguration.id)
+      const activeComponents = await this.componentsRepository.findHealthyActiveComponents()
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
       specs = specs.concat(proxySpecs)
     }
@@ -122,12 +120,7 @@ export class CreateRoutesManifestsUseCase {
   }
 
   private async retriveDeploymentFor(id: string): Promise<DeploymentEntityV2> {
-    const deployment = await this.deploymentRepository.findOneOrFail({ circleId: id, current: true }, { relations: ['cdConfiguration', 'components'] })
-
-    if (deployment) {
-      deployment.cdConfiguration = await this.cdConfigurationsRepository.findDecrypted(deployment.cdConfiguration.id)
-    }
-
+    const deployment = await this.deploymentRepository.findOneOrFail({ circleId: id, current: true }, { relations: ['components'] })
     return deployment
   }
 

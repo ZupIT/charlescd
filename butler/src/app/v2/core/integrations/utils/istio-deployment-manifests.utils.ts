@@ -15,22 +15,22 @@
  */
 
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
-import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
-import { Component, Deployment } from '../../../api/deployments/interfaces'
+import { Component } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
+import { DeploymentEntityV2 } from '../../../api/deployments/entity/deployment.entity'
 
 const IstioDeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
+  getVirtualServiceManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
         }
@@ -45,13 +45,13 @@ const IstioDeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
+  getDestinationRulesManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
         }

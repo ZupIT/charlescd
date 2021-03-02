@@ -25,7 +25,6 @@ export class JoiValidationPipe implements PipeTransform {
   public transform(value: CreateDeploymentRequestDto) : CreateDeploymentRequestDto{
     const validator = new CreateDeploymentValidator(value)
     const validationResult = validator.validate()
-
     if (!validationResult.valid) {
       throw new BadRequestException(validator.formatErrors(validationResult.errors, HttpStatus.BAD_REQUEST))
     }

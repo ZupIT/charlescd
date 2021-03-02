@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
+
+import { DeploymentEntityV2 } from '../../../api/deployments/entity/deployment.entity'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
@@ -24,13 +25,13 @@ import { IstioManifestsUtils } from './istio-manifests.utilts'
 
 const IstioUndeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
+  getVirtualServiceManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
         }
@@ -43,13 +44,13 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getEmptyVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent): VirtualServiceSpec => {
+  getEmptyVirtualServiceManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent): VirtualServiceSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify([])
         }
@@ -82,14 +83,14 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
+  getDestinationRulesManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
     const istioSubsets = IstioUndeploymentManifestsUtils.getActiveComponentsSubsets(deployment.circleId, activeByName)
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify(istioSubsets.map(s => s.labels.circleId))
         }

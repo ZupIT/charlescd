@@ -22,6 +22,8 @@ import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto
 import { CreateModuleDeploymentDto } from '../dto/create-module-request.dto'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import Joi = require('joi')
+import { GitProvidersEnum } from '../../../core/configuration/interfaces'
+import { CreateGitDeploymentDto } from '../dto/create-git-request.dto'
 
 export interface JsonAPIError {
     errors: {
@@ -37,16 +39,6 @@ export interface JsonAPIError {
     }[]
 }
 
-interface Component {
-  componentId: string,
-  buildImageUrl: string,
-  buildImageTag: string,
-  componentName: string,
-  hostValue?: string,
-  gatewayName?: string
-}
-
-
 export class CreateDeploymentValidator {
   private params
   constructor(params: unknown) {
@@ -55,8 +47,7 @@ export class CreateDeploymentValidator {
 
   public validate(): {valid: true, data: CreateDeploymentRequestDto} | {valid: false, errors: ValidationError} {
     const componentSchema = this.componentSchema()
-    const modulesSchema = this.moduleSchema(componentSchema)
-    const schema = this.deploymentSchema(modulesSchema)
+    const schema = this.deploymentSchema(componentSchema)
 
     const validated = schema.validate(this.params, { abortEarly: false, allowUnknown: false })
     if (validated.error === undefined) {
@@ -86,44 +77,46 @@ export class CreateDeploymentValidator {
 
   private createDto(validated: Joi.ValidationResult) {
     const value = validated.value
-    const modules: CreateModuleDeploymentDto[] = value.modules.map((m: { moduleId: string; helmRepository: string; components: Component[]} ) => new CreateModuleDeploymentDto(
-      '',
-      m.helmRepository,
-      m.components.map((c: Component) => new CreateComponentRequestDto(c.componentId, c.buildImageUrl, c.buildImageTag, c.componentName, c.hostValue, c.gatewayName)
+    const components = value.components.map((c: CreateComponentRequestDto) => {
+      return new CreateComponentRequestDto(
+        c.componentId,
+        c.buildImageUrl,
+        c.buildImageTag,
+        c.componentName,
+        c.hostValue,
+        c.gatewayName,
+        c.helmRepository
       )
-    ))
+    })
+
     const dto = new CreateDeploymentRequestDto(
       value.deploymentId,
       value.authorId,
       value.callbackUrl,
-      value.cdConfigurationId,
-      new CreateCircleDeploymentDto(value.circle.headerValue),
+      new CreateCircleDeploymentDto(value.circle.id, value.circle.default),
       DeploymentStatusEnum.CREATED,
-      modules,
-      value.defaultCircle
+      components,
+      value.namespace,
+      new CreateGitDeploymentDto(value.git.token, value.git.provider)
     )
     return dto
   }
 
-  private deploymentSchema(modulesSchema: Joi.ObjectSchema<unknown>) {
+  private deploymentSchema(componentSchema: Joi.ObjectSchema<unknown>) {
     return Joi.object({
       deploymentId: Joi.string().guid().required(),
-      defaultCircle: Joi.bool().required(),
+      namespace: Joi.string().required().max(255),
       circle: {
-        headerValue: Joi.string().guid().required()
+        id: Joi.string().guid().required(),
+        default: Joi.bool().required()
       },
-      modules: Joi.array().items(modulesSchema).required(),
+      git: {
+        token: Joi.string().required(),
+        provider: Joi.string().allow(GitProvidersEnum.GITHUB, GitProvidersEnum.GITLAB).required()
+      },
+      components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1),
       authorId: Joi.string().guid().required(),
-      cdConfigurationId: Joi.string().guid().required(),
       callbackUrl: Joi.string().required().max(255)
-    })
-  }
-
-  private moduleSchema(componentSchema: Joi.ObjectSchema<unknown>) {
-    return Joi.object({
-      moduleId: Joi.string().guid().optional().label('moduleId'),
-      helmRepository: Joi.string().required().max(255).label('helmRepository'),
-      components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1)
     })
   }
 
@@ -134,7 +127,8 @@ export class CreateDeploymentValidator {
       buildImageTag: Joi.string().required().max(255).label('buildImageTag'),
       componentName: Joi.string().required().max(255).label('componentName'),
       gatewayName: Joi.string().max(255).optional().label('gatewayName'),
-      hostValue: Joi.string().max(255).optional().label('hostValue')
+      hostValue: Joi.string().max(255).optional().label('hostValue'),
+      helmRepository: Joi.string().required().label('helmRepository')
     })
       .custom((obj, helper) => {
         const { buildImageTag, componentName } = obj
