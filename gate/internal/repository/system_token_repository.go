@@ -57,13 +57,14 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 
 func (systemTokenRepository systemTokenRepository) Update(id uuid.UUID, systemToken domain.SystemToken) (domain.SystemToken, error) {
 	systemTokenToUpdate := &models.SystemToken{
-		ID:         systemToken.ID,
-		Name:       systemToken.Name,
-		Revoked:    systemToken.Revoked,
-		CreatedAt:  systemToken.CreatedAt,
-		RevokedAt:  systemToken.CreatedAt,
-		LastUsedAt: systemToken.LastUsedAt,
-		Author:     models.User(systemToken.Author),
+		ID:          systemToken.ID,
+		Name:        systemToken.Name,
+		Revoked:     systemToken.Revoked,
+		CreatedAt:   systemToken.CreatedAt,
+		RevokedAt:   systemToken.CreatedAt,
+		LastUsedAt:  systemToken.LastUsedAt,
+		Author:      models.User(systemToken.Author),
+		Permissions: mapper.PermissionsDomainToModels(systemToken.Permissions),
 	}
 
 	if res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).Updates(&systemTokenToUpdate); res.Error != nil {
