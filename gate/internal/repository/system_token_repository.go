@@ -41,13 +41,14 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 	return systemToken, nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindAll(page domain.Page) ([]domain.SystemToken, domain.Page, error) {
+func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
 	var systemToken []models.SystemToken
+	var page = pageRequest
 
 	res := systemTokenRepository.db.Where("revoked = false").
 		Order(page.Sort).
 		Offset(page.Offset()).
-		Limit(page.Size).
+		Limit(page.PageSize).
 		Find(&systemToken)
 
 	res = systemTokenRepository.db.Table("system_tokens").

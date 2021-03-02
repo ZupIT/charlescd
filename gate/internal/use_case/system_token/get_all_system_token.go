@@ -7,7 +7,7 @@ import (
 )
 
 type GetAllSystemToken interface {
-	Execute(page domain.Page) ([]domain.SystemToken, domain.Page, error)
+	Execute(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
 }
 
 type getAllSystemToken struct {
@@ -20,8 +20,8 @@ func NewGetAllSystemToken(r repository.SystemTokenRepository) GetAllSystemToken 
 	}
 }
 
-func (f getAllSystemToken) Execute(page domain.Page) ([]domain.SystemToken, domain.Page, error) {
-	systemTokens, page, err := f.systemTokenRepository.FindAll(page)
+func (f getAllSystemToken) Execute(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
+	systemTokens, page, err := f.systemTokenRepository.FindAll(pageRequest)
 	if err != nil {
 		return []domain.SystemToken{}, page, logging.WithOperation(err, "getAllSystemToken.Execute")
 	}

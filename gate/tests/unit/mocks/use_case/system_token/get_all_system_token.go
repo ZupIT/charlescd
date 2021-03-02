@@ -12,13 +12,13 @@ type GetAllSystemToken struct {
 	mock.Mock
 }
 
-// Execute provides a mock function with given fields: page
-func (_m *GetAllSystemToken) Execute(page domain.Page) ([]domain.SystemToken, domain.Page, error) {
-	ret := _m.Called(page)
+// Execute provides a mock function with given fields: pageRequest
+func (_m *GetAllSystemToken) Execute(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
+	ret := _m.Called(pageRequest)
 
 	var r0 []domain.SystemToken
 	if rf, ok := ret.Get(0).(func(domain.Page) []domain.SystemToken); ok {
-		r0 = rf(page)
+		r0 = rf(pageRequest)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.SystemToken)
@@ -27,14 +27,14 @@ func (_m *GetAllSystemToken) Execute(page domain.Page) ([]domain.SystemToken, do
 
 	var r1 domain.Page
 	if rf, ok := ret.Get(1).(func(domain.Page) domain.Page); ok {
-		r1 = rf(page)
+		r1 = rf(pageRequest)
 	} else {
 		r1 = ret.Get(1).(domain.Page)
 	}
 
 	var r2 error
 	if rf, ok := ret.Get(2).(func(domain.Page) error); ok {
-		r2 = rf(page)
+		r2 = rf(pageRequest)
 	} else {
 		r2 = ret.Error(2)
 	}

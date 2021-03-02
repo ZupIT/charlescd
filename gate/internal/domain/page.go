@@ -3,25 +3,25 @@ package domain
 import "math"
 
 type Page struct {
-	Page  int
-	Size  int
-	Sort  string
-	Total int64
+	PageNumber int
+	PageSize   int
+	Sort       string
+	Total      int64
 }
 
 func (pg Page) Offset() int {
-	return pg.Page * pg.Size
+	return pg.PageNumber * pg.PageSize
 }
 
-func (pg Page) IsLast(tokens []SystemToken) bool {
-	return pg.Page + 1 >= pg.TotalPages(tokens)
+func (pg Page) IsLast() bool {
+	return pg.PageNumber+ 1 >= pg.TotalPages()
 }
 
-func (pg Page) TotalPages(tokens []SystemToken) int {
-	if len(tokens) == 0 && pg.Total == 0 {
+func (pg Page) TotalPages() int {
+	if pg.Total == 0 {
 		return 1
 	} else {
-		d := float64(pg.Total) / float64(pg.Size)
+		d := float64(pg.Total) / float64(pg.PageSize)
 		return int(math.Ceil(d))
 	}
 }

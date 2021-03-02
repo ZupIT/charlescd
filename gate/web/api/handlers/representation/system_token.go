@@ -66,9 +66,9 @@ func SystemTokensToResponse(systemTokens []domain.SystemToken) []SystemTokenResp
 func SystemTokenToPageResponse(systemToken []domain.SystemToken, page domain.Page) PageSystemTokenResponse {
 	return PageSystemTokenResponse{
 		Content:    SystemTokensToResponse(systemToken),
-		Page:       page.Page,
-		Size:       page.Size,
-		Last:       page.IsLast(systemToken),
-		TotalPages: page.TotalPages(systemToken),
+		Page:       page.PageNumber,
+		Size:       page.PageSize,
+		Last:       page.IsLast(),
+		TotalPages: page.TotalPages(),
 	}
 }
