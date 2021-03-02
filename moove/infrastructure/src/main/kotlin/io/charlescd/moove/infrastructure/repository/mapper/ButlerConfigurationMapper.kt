@@ -1,6 +1,7 @@
 package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.GitProviderEnum
 import io.charlescd.moove.domain.User
 import org.springframework.stereotype.Component
 import java.sql.ResultSet
@@ -19,7 +20,10 @@ class ButlerConfigurationMapper() {
                 workspaceId = resultSet.getString("butler_configuration_workspace_id"),
                 butlerUrl = resultSet.getString("butler_configuration_butler_url"),
                 namespace = resultSet.getString("butler_configuration_namespace"),
-                gitToken = resultSet.getString("butler_configuration_git_token")
+                gitToken = resultSet.getString("butler_configuration_git_token"),
+                gitProvider =  GitProviderEnum.valueOf(
+                    resultSet.getString("butler_configuration_git_provider")
+                )
             )
         } else null
     }

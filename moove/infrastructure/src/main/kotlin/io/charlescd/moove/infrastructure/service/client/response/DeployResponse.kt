@@ -17,6 +17,5 @@
 package io.charlescd.moove.infrastructure.service.client.response
 
 data class DeployResponse(
-    val id: String,
-    val status: String?
+    val id: String
 )

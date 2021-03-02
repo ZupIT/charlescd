@@ -53,3 +53,8 @@ databaseChangeLog:
                   type: text
                   constraints:
                     nullable: false
+              - column:
+                  name: git_provider
+                  type: varchar(64)
+                  constraints:
+                    nullable: false

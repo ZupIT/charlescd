@@ -22,6 +22,7 @@ import io.charlescd.moove.infrastructure.service.client.*
 import io.charlescd.moove.infrastructure.service.client.request.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.net.URI
 
 @Service
 class DeployClientService(private val deployClient: DeployClient) : DeployService {
@@ -33,20 +34,22 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
     }
 
-    override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, butlerConfiguration: ButlerConfiguration) {
+    override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, configuration: ButlerConfiguration) {
         deployClient.deploy(
+            URI.create(configuration.butlerUrl),
             buildDeployRequest(
                 deployment,
                 build,
                 deployment.circle.id,
                 isDefaultCircle,
-                butlerConfiguration
+                configuration
             )
         )
     }
 
-    override fun undeploy(deploymentId: String, authorId: String) {
+    override fun undeploy(deploymentId: String, authorId: String, configuration: ButlerConfiguration) {
         deployClient.undeploy(
+            URI.create(configuration.butlerUrl),
             deploymentId,
             UndeployRequest(authorId)
         )
@@ -61,13 +64,12 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
-            components = buildComponentsDeployRequest(build),
             authorId = deployment.author.id,
-            circleId = circleId,
             callbackUrl = createCallbackUrl(deployment),
-            defaultCircle = isDefault,
             namespace = butlerConfiguration.namespace,
-            gitToken = butlerConfiguration.gitToken
+            components = buildComponentsDeployRequest(build),
+            circle = CircleRequest(circleId, isDefault),
+            git = GitRequest(butlerConfiguration.gitToken, butlerConfiguration.gitProvider)
         )
     }
 

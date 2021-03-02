@@ -28,8 +28,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
+import java.net.URI
 
-@FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
+@FeignClient(name = "deployClient", configuration = [ SimpleFeignEncoderConfiguration::class])
 interface DeployClient {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
@@ -37,7 +38,7 @@ interface DeployClient {
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun deploy(@RequestBody request: DeployRequest): DeployResponse
+    fun deploy(url: URI, @RequestBody request: DeployRequest): DeployResponse
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
@@ -45,5 +46,5 @@ interface DeployClient {
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun undeploy(@PathVariable("deploymentId") deploymentId: String, @RequestBody request: UndeployRequest): UndeployResponse
+    fun undeploy(url: URI, @PathVariable("deploymentId") deploymentId: String, @RequestBody request: UndeployRequest): UndeployResponse
 }

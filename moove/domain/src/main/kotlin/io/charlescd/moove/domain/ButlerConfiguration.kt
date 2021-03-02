@@ -10,5 +10,6 @@ data class ButlerConfiguration(
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val butlerUrl: String,
     val namespace: String,
-    val gitToken: String
+    val gitToken: String,
+    val gitProvider: GitProviderEnum
 )

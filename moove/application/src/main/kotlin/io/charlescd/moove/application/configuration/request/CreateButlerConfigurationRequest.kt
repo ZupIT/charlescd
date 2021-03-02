@@ -1,6 +1,7 @@
 package io.charlescd.moove.application.configuration.request
 
 import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.GitProviderEnum
 import io.charlescd.moove.domain.User
 import java.util.*
 import javax.validation.constraints.NotBlank
@@ -19,7 +20,11 @@ data class CreateButlerConfigurationRequest(
 
     @field:NotBlank
     @field:NotNull
-    val gitToken: String
+    val gitToken: String,
+
+    @field:NotBlank
+    @field:NotNull
+    val gitProvider: GitProviderEnum
 ) {
 
     fun toButlerConfiguration(workspaceId: String, author: User) = ButlerConfiguration(
@@ -29,6 +34,7 @@ data class CreateButlerConfigurationRequest(
         workspaceId = workspaceId,
         butlerUrl = butlerUrl,
         namespace = namespace,
-        gitToken = gitToken
+        gitToken = gitToken,
+        gitProvider = gitProvider
     )
 }
