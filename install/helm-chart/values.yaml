@@ -126,10 +126,11 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      registry: zupcharles
-      application: charlescd-octopipe
+      registry: lukascaska
+      application: octopipe
+      tag: v4
     imagePullSecrets: false
-    pullPolicy: Always
+    pullPolicy: Never
     service:
       name: charlescd-octopipe
       type: ClusterIP
