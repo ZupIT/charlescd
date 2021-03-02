@@ -13,11 +13,11 @@ import (
 type CustomError struct {
 	ID         uuid.UUID         `json:"id"`
 	Message    string            `json:"message"`
-	Detail     string            `json:"-"`
+	Detail     string            `json:"detail"`
 	Operations []string          `json:"-"`
-	Type       string
+	Type       string            `json:"type"`
 	Timestamp  string            `json:"timestamp"`
-	Meta       map[string]string `json:"meta"`
+	Meta       map[string]string `json:"-"`
 }
 
 

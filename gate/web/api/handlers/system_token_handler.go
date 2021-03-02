@@ -52,10 +52,10 @@ func GetSystemToken(getSystemToken systemTokenInteractor.GetSystemToken) echo.Ha
 			return echoCtx.JSON(http.StatusBadRequest, logging.NewError("Parse id failed", parseErr, logging.ParseError, nil))
 		}
 
-		user, err := getSystemToken.Execute(uuid)
+		systemToken, err := getSystemToken.Execute(uuid)
 		if err != nil {
 			return HandlerError(echoCtx, ctx, err)
 		}
-		return echoCtx.JSON(http.StatusOK, representation.SystemTokenToResponse(user))
+		return echoCtx.JSON(http.StatusOK, representation.SystemTokenToResponse(systemToken))
 	}
 }
