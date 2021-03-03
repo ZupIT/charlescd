@@ -39,6 +39,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private CircleRepository circleRepository = Mock(CircleRepository)
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private ButlerConfigurationRepository butlerConfigurationRepository = Mock(ButlerConfigurationRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
@@ -48,7 +49,9 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 new UserService(userRepository, managementUserSecurityService),
                 new CircleService(circleRepository),
                 deployService,
-                new WorkspaceService(workspaceRepository, userRepository))
+                new WorkspaceService(workspaceRepository, userRepository),
+                new ButlerConfigurationService(butlerConfigurationRepository)
+        )
     }
 
     def 'when build does not exist, should throw exception'() {

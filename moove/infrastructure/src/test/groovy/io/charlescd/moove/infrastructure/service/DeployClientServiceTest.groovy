@@ -20,7 +20,6 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.infrastructure.service.client.DeployClient
 import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
-import io.charlescd.moove.infrastructure.service.client.response.GetDeployCdConfigurationsResponse
 import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
@@ -45,40 +44,47 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
+        def butlerConfig = getDummyButlerConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), "f9927ee7-6589-4f17-9d92-e51877aad51b")
+        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), butlerConfig)
 
         then:
-        1 * deployClient.deploy(_) >> { arguments ->
-            def deployRequest = arguments[0]
+        1 * deployClient.deploy(_, _) >> { arguments ->
+            def url = arguments[0]
+            def deployRequest = arguments[1]
+
+            assert url instanceof URI
             assert deployRequest instanceof DeployRequest
 
+            assert url.toString() == butlerConfig.butlerUrl
+
             assert deployRequest.deploymentId == deployment.id
-            assert deployRequest.applicationName == build.workspaceId
             assert deployRequest.authorId == deployment.author.id
-            assert deployRequest.description != null
-            assert deployRequest.circle != null
-            assert deployRequest.circle.headerValue == "w8296aea-6ae1-44ea-bc55-0242ac13000w"
-            assert deployRequest.defaultCircle
             assert deployRequest.callbackUrl.contains('http://localhost:8080/v2/deployments/1fe2b392-726d-11ea-bc55-0242ac130003/callback')
-            assert deployRequest.modules.size() == 2
+            assert deployRequest.namespace == butlerConfig.namespace
 
-            assert deployRequest.modules[0].moduleId == build.features[0].modules[0].moduleId
-            assert deployRequest.modules[0].helmRepository == build.features[0].modules[0].helmRepository
-            assert deployRequest.modules[0].components.size() == 1
-            assert deployRequest.modules[0].components[0].componentId == build.features[0].modules[0].components[0].componentId
-            assert deployRequest.modules[0].components[0].componentName == build.features[0].modules[0].components[0].name
-            assert deployRequest.modules[0].components[0].buildImageTag == build.features[0].modules[0].components[0].artifact.version
-            assert deployRequest.modules[0].components[0].buildImageUrl == build.features[0].modules[0].components[0].artifact.artifact
+            assert deployRequest.components.size() == 2
 
-            assert deployRequest.modules[1].moduleId == build.features[1].modules[0].moduleId
-            assert deployRequest.modules[1].helmRepository == build.features[1].modules[0].helmRepository
-            assert deployRequest.modules[1].components.size() == 1
-            assert deployRequest.modules[1].components[0].componentId == build.features[1].modules[0].components[0].componentId
-            assert deployRequest.modules[1].components[0].componentName == build.features[1].modules[0].components[0].name
-            assert deployRequest.modules[1].components[0].buildImageTag == build.features[1].modules[0].components[0].artifact.version
-            assert deployRequest.modules[1].components[0].buildImageUrl == build.features[1].modules[0].components[0].artifact.artifact
+            assert deployRequest.components[0].componentId == build.features[0].modules[0].components[0].componentId
+            assert deployRequest.components[0].componentName == build.features[0].modules[0].components[0].name
+            assert deployRequest.components[0].helmRepository == build.features[0].modules[0].helmRepository
+            assert deployRequest.components[0].buildImageUrl == build.features[0].modules[0].components[0].artifact.artifact
+            assert deployRequest.components[0].buildImageTag == build.features[0].modules[0].components[0].artifact.version
+
+            assert deployRequest.components[1].componentId == build.features[1].modules[0].components[0].componentId
+            assert deployRequest.components[1].componentName == build.features[1].modules[0].components[0].name
+            assert deployRequest.components[1].helmRepository == build.features[1].modules[0].helmRepository
+            assert deployRequest.components[1].buildImageTag == build.features[1].modules[0].components[0].artifact.version
+            assert deployRequest.components[1].buildImageUrl == build.features[1].modules[0].components[0].artifact.artifact
+
+            assert deployRequest.circle != null
+            assert deployRequest.circle.id == "w8296aea-6ae1-44ea-bc55-0242ac13000w"
+            assert deployRequest.circle.default
+
+            assert deployRequest.git != null
+            assert deployRequest.git.token == butlerConfig.gitToken
+            assert deployRequest.git.provider == butlerConfig.gitProvider
         }
     }
 
@@ -90,81 +96,48 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
+        def butlerConfig = getDummyButlerConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), "f9927ee7-6589-4f17-9d92-e51877aad51b")
+        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), butlerConfig)
 
         then:
-        1 * deployClient.deploy(_) >> { arguments ->
-            def deployRequest = arguments[0]
+        1 * deployClient.deploy(_, _) >> { arguments ->
+            def url = arguments[0]
+            def deployRequest = arguments[1]
+
+            assert url instanceof URI
             assert deployRequest instanceof DeployRequest
 
+            assert url.toString() == butlerConfig.butlerUrl
+
             assert deployRequest.deploymentId == deployment.id
-            assert deployRequest.applicationName == build.workspaceId
             assert deployRequest.authorId == deployment.author.id
-            assert deployRequest.description != null
+            assert deployRequest.callbackUrl.contains('http://localhost:8080/v2/deployments/1fe2b392-726d-11ea-bc55-0242ac130003/callback')
+            assert deployRequest.namespace == butlerConfig.namespace
+
+            assert deployRequest.components.size() == 2
+
+            assert deployRequest.components[0].componentId == build.features[0].modules[0].components[0].componentId
+            assert deployRequest.components[0].componentName == build.features[0].modules[0].components[0].name
+            assert deployRequest.components[0].helmRepository == build.features[0].modules[0].helmRepository
+            assert deployRequest.components[0].buildImageUrl == build.features[0].modules[0].components[0].artifact.artifact
+            assert deployRequest.components[0].buildImageTag == build.features[0].modules[0].components[0].artifact.version
+
+            assert deployRequest.components[1].componentId == build.features[1].modules[0].components[0].componentId
+            assert deployRequest.components[1].componentName == build.features[1].modules[0].components[0].name
+            assert deployRequest.components[1].helmRepository == build.features[1].modules[0].helmRepository
+            assert deployRequest.components[1].buildImageTag == build.features[1].modules[0].components[0].artifact.version
+            assert deployRequest.components[1].buildImageUrl == build.features[1].modules[0].components[0].artifact.artifact
 
             assert deployRequest.circle != null
-            assert deployRequest.circle.headerValue == circle.id
-            assert !deployRequest.defaultCircle
-            assert deployRequest.circle.removeCircle == null
+            assert deployRequest.circle.id == "w8296aea-6ae1-44ea-bc55-0242ac13000w"
+            assert !deployRequest.circle.default
 
-            assert deployRequest.callbackUrl.contains('http://localhost:8080/v2/deployments/1fe2b392-726d-11ea-bc55-0242ac130003/callback')
-            assert deployRequest.modules.size() == 2
-
-            assert deployRequest.modules[0].moduleId == build.features[0].modules[0].moduleId
-            assert deployRequest.modules[0].helmRepository == build.features[0].modules[0].helmRepository
-            assert deployRequest.modules[0].components.size() == 1
-            assert deployRequest.modules[0].components[0].componentId == build.features[0].modules[0].components[0].componentId
-            assert deployRequest.modules[0].components[0].componentName == build.features[0].modules[0].components[0].name
-            assert deployRequest.modules[0].components[0].buildImageTag == build.features[0].modules[0].components[0].artifact.version
-            assert deployRequest.modules[0].components[0].buildImageUrl == build.features[0].modules[0].components[0].artifact.artifact
-
-            assert deployRequest.modules[1].moduleId == build.features[1].modules[0].moduleId
-            assert deployRequest.modules[1].helmRepository == build.features[1].modules[0].helmRepository
-            assert deployRequest.modules[1].components.size() == 1
-            assert deployRequest.modules[1].components[0].componentId == build.features[1].modules[0].components[0].componentId
-            assert deployRequest.modules[1].components[0].componentName == build.features[1].modules[0].components[0].name
-            assert deployRequest.modules[1].components[0].buildImageTag == build.features[1].modules[0].components[0].artifact.version
-            assert deployRequest.modules[1].components[0].buildImageUrl == build.features[1].modules[0].components[0].artifact.artifact
+            assert deployRequest.git != null
+            assert deployRequest.git.token == butlerConfig.gitToken
+            assert deployRequest.git.provider == butlerConfig.gitProvider
         }
-    }
-
-    def 'when getting cd configuration by id, if it exists should return id'() {
-        given:
-        def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
-        def cdConfigurationId = '44446b2a-557b-45c5-91be-1e1db9095556'
-        def cdConfigurationName = "cd-configuration-name"
-        def responseFromDeploy = [new GetDeployCdConfigurationsResponse(cdConfigurationId, cdConfigurationName, "authorId", workspaceId,
-                LocalDateTime.now()), new GetDeployCdConfigurationsResponse("gitConfigurationId", "name2", "authorId2", workspaceId,
-                LocalDateTime.now())]
-
-        when:
-        def response = deployClientService.getCdConfiguration(workspaceId, cdConfigurationId)
-
-        then:
-        1 * deployClient.getCdConfigurations(workspaceId) >> responseFromDeploy
-
-        response != null
-        response.id == cdConfigurationId
-        response.name == cdConfigurationName
-    }
-
-    def 'when getting cd configuration by id, if it does not exist should return null'() {
-        given:
-        def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
-        def cdConfigurationId = '44446b2a-557b-45c5-91be-1e1db9095556'
-        def responseFromDeploy = [new GetDeployCdConfigurationsResponse("cdConfigurationId", "cdConfigurationName", "authorId", workspaceId,
-                LocalDateTime.now()), new GetDeployCdConfigurationsResponse("gitConfigurationId", "name2", "authorId2", workspaceId,
-                LocalDateTime.now())]
-
-        when:
-        def response = deployClientService.getCdConfiguration(workspaceId, cdConfigurationId)
-
-        then:
-        1 * deployClient.getCdConfigurations(workspaceId) >> responseFromDeploy
-
-        response == null
     }
 
     def 'when undeploy should call undeploy client'() {
@@ -172,20 +145,26 @@ class DeployClientServiceTest extends Specification {
         def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
         def user = getDummyUser()
         def circle = getDummyCircle('Default', user, true)
-        def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
         def undeployRequestCompare = new UndeployRequest("author-id")
         def deploymentIdCompare = deployment.id
+        def butlerConfig = getDummyButlerConfiguration(user)
 
         when:
-        deployClientService.undeploy(deployment.id, "author-id")
+        deployClientService.undeploy(deployment.id, "author-id", butlerConfig)
 
         then:
-        1 * deployClient.undeploy(_, _) >> { arguments ->
-            def deploymentId = arguments[0]
-            def undeployRequest = arguments[1]
+        1 * deployClient.undeploy(_, _, _) >> { arguments ->
+            def url = arguments[0]
+            def deploymentId = arguments[1]
+            def undeployRequest = arguments[2]
+
+            assert url instanceof URI
+            assert url.toString() == butlerConfig.butlerUrl
+
             assert deploymentId == deploymentIdCompare
+
             assert undeployRequest instanceof UndeployRequest
             assert undeployRequest.authorId == undeployRequestCompare.authorId
         }
@@ -274,5 +253,11 @@ class DeployClientServiceTest extends Specification {
     private static Circle getDummyCircle(String name, User author, Boolean isDefault) {
         new Circle('w8296aea-6ae1-44ea-bc55-0242ac13000w', name, 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, isDefault, "44446b2a-557b-45c5-91be-1e1db9095556")
+    }
+
+    private static ButlerConfiguration getDummyButlerConfiguration(User author) {
+        new ButlerConfiguration(
+                'id', 'name', author, 'wid', LocalDateTime.now(), 'url', 'namespace', 'token', GitProviderEnum.GITHUB
+        )
     }
 }
