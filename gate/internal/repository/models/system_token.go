@@ -11,8 +11,8 @@ type SystemToken struct {
 	Name        string
 	Revoked     bool
 	Permissions []Permission `gorm:"-"`
-	CreatedAt   time.Time
-	RevokedAt   time.Time
-	LastUsedAt  time.Time
-	Author      User `gorm:"-"`
+	CreatedAt   *time.Time
+	RevokedAt   *time.Time
+	LastUsedAt  *time.Time
+	AuthorEmail string
 }
