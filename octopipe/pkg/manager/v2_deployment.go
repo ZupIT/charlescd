@@ -175,7 +175,10 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline, cu
 			manager.executeV2Manifests(v2Pipeline.ClusterConfig, customProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		}
 		klog.Info("Applying default virtual service")
-		return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		err := manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -192,7 +195,10 @@ func (manager Manager) runV2unusedProxyDeployments(v2Pipeline V2DeploymentPipeli
 			manager.executeV2Manifests(v2Pipeline.ClusterConfig, customProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		}
 
-		return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		err := manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
