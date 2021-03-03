@@ -26,16 +26,18 @@ func (r revokeSystemToken) Execute(id uuid.UUID) error {
 	systemToken, err := r.systemTokenRepository.FindById(id)
 
 	if err != nil {
-		return logging.WithOperation(err, "RevokeSystemToken.Execute.FindSystemToken")
+		return logging.WithOperation(err, "RevokeSystemToken.Execute")
 	}
 
-	systemToken.Revoked = true
-	systemToken.RevokedAt = time.Now()
+	if !systemToken.Revoked {
+		systemToken.Revoked = true
+		systemToken.RevokedAt = time.Now()
 
-	_, updateError := r.systemTokenRepository.Update(id, systemToken)
+		_, updateError := r.systemTokenRepository.Update(systemToken)
 
-	if updateError != nil {
-		return logging.WithOperation(err, "RevokeSystemToken.Execute.UpdateSystemToken")
+		if updateError != nil {
+			return logging.WithOperation(updateError, "RevokeSystemToken.Execute")
+		}
 	}
 
 	return nil
