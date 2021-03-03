@@ -13,25 +13,26 @@ type SystemTokenRequest struct {
 }
 
 type SystemTokenResponse struct {
-	ID uuid.UUID `json:"id"`
-	Name string `json:"name"`
-	Permissions []PermissionResponse `json:"permissions"`
-	CreatedAt time.Time `json:"created_at"`
-	RevokedAt time.Time `json:"revoked_at"`
-	LastUsedAt time.Time `json:"last_used_at"`
-	Author string `json:"author"`
+	ID				uuid.UUID `json:"id"`
+	Name 			string `json:"name"`
+	Permissions 	[]PermissionResponse `json:"permissions"`
+	CreatedAt 		*time.Time `json:"created_at"`
+	RevokedAt  		*time.Time `json:"revoked_at,omitempty"`
+	LastUsedAt 		*time.Time `json:"last_used_atm,omitempty"`
+	Author 			string `json:"author"`
 }
 
-func (systemTokenRequest SystemTokenRequest) RequestToDomain(author domain.User) domain.SystemToken {
+func (systemTokenRequest SystemTokenRequest) RequestToDomain(author string) domain.SystemToken {
+	createdAt := time.Now()
 	return domain.SystemToken{
 		ID:          uuid.New(),
 		Name:        systemTokenRequest.Name,
 		Revoked:     false,
 		Permissions: []domain.Permission{},
-		CreatedAt:   time.Now(),
-		RevokedAt:   time.Time{},
-		LastUsedAt:  time.Time{},
-		Author:      author,
+		CreatedAt:   &createdAt,
+		RevokedAt:   &time.Time{},
+		LastUsedAt:  &time.Time{},
+		AuthorEmail: author,
 	}
 }
 
@@ -43,6 +44,6 @@ func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 		CreatedAt: systemToken.CreatedAt,
 		RevokedAt: systemToken.RevokedAt,
 		LastUsedAt: systemToken.LastUsedAt,
-		Author: systemToken.Author.Email,
+		Author: systemToken.AuthorEmail,
 	}
 }
