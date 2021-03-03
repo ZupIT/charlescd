@@ -14,7 +14,7 @@ func SystemTokenDomainToModel(systemToken domain.SystemToken) models.SystemToken
 		CreatedAt:   systemToken.CreatedAt,
 		RevokedAt:   systemToken.RevokedAt,
 		LastUsedAt:  systemToken.LastUsedAt,
-		Author:      UserDomainToModel(systemToken.Author),
+		AuthorEmail: systemToken.AuthorEmail,
 	}
 }
 
@@ -27,7 +27,7 @@ func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken
 		CreatedAt:   systemToken.CreatedAt,
 		RevokedAt:   systemToken.RevokedAt,
 		LastUsedAt:  systemToken.LastUsedAt,
-		Author:      UserModelToDomain(systemToken.Author),
+		AuthorEmail: systemToken.AuthorEmail,
 	}
 }
 
