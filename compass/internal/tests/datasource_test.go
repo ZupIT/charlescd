@@ -4,7 +4,8 @@
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *  You may obtain a copy of the License atFindAllByWorkspace
+
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -125,7 +126,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 	}
 	s.DB.Create(&dataSourceStruct)
 
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID, "true")
+	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID)
 
 	require.Nil(s.T(), err)
 	require.NotEmpty(s.T(), res)
@@ -133,7 +134,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 
 func (s *Suite) TestFindAllByWorkspaceError() {
 	s.DB.Close()
-	_, err := s.repository.FindAllByWorkspace(uuid.New(), "true")
+	_, err := s.repository.FindAllByWorkspace(uuid.New())
 
 	require.NotNil(s.T(), err)
 }
