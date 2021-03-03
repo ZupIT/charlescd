@@ -66,12 +66,15 @@ func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline
 		currentProxyDeployment["default"] = proxyDeployment
 		proxyDeploymentMetadata := proxyDeployment["metadata"].(map[string]interface{})
 		customProxyDeployment := customProxyDeployments[proxyDeploymentMetadata["name"].(string)].(map[string]interface{})
-		if customProxyDeployment != nil {
+		if customProxyDeployment != nil && proxyDeployment["kind"] != "DestinationRule" {
 			klog.Info("Applying custom virtual service")
 			manager.executeV2Manifests(v2Pipeline.ClusterConfig, customProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		}
 		klog.Info("Applying default virtual service")
-		return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		err := manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
