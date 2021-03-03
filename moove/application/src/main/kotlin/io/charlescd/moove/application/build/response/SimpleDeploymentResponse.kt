@@ -19,6 +19,7 @@ package io.charlescd.moove.application.build.response
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.application.deployment.response.SimpleCircleResponse
 import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.Metadata
 import java.time.LocalDateTime
 
 data class SimpleDeploymentResponse(
@@ -29,6 +30,7 @@ data class SimpleDeploymentResponse(
     val deployedAt: LocalDateTime?,
     val buildId: String,
     val status: String,
+    val metadata: Metadata? = null,
     val circle: SimpleCircleResponse? = null
 ) {
 
@@ -41,6 +43,7 @@ data class SimpleDeploymentResponse(
                 deployedAt = deployment.deployedAt,
                 buildId = deployment.buildId,
                 status = deployment.status.name,
+                metadata = deployment.metadata,
                 circle = SimpleCircleResponse.from(deployment.circle)
             )
         }

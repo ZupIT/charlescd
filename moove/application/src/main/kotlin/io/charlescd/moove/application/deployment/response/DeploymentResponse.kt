@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.domain.Build
 import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.Metadata
 import io.charlescd.moove.domain.ModuleSnapshot
 import java.time.LocalDateTime
 
@@ -34,7 +35,8 @@ data class DeploymentResponse(
     val buildId: String,
     val tag: String,
     val status: String,
-    val artifacts: List<ArtifactResponse> = emptyList()
+    val artifacts: List<ArtifactResponse> = emptyList(),
+    val metadata: Metadata?
 ) {
     companion object {
         fun from(deployment: Deployment, build: Build): DeploymentResponse {
@@ -51,7 +53,8 @@ data class DeploymentResponse(
                 buildId = deployment.buildId,
                 tag = build.tag,
                 status = deployment.status.name,
-                artifacts = createResponse(build)
+                artifacts = createResponse(build),
+                metadata = deployment.metadata
             )
         }
 
