@@ -79,8 +79,8 @@ export class CreateDeploymentUseCase {
       createDeploymentDto.namespace,
       createDeploymentDto.circle.id,
       createDeploymentDto.components,
-      createDeploymentDto.git.gitToken,
-      createDeploymentDto.git.gitProvider
+      createDeploymentDto.git.token,
+      createDeploymentDto.git.provider
     )
     const deployment = createDeploymentDto.toCircleEntity(components)
     deployment.current = true
@@ -116,7 +116,7 @@ export class CreateDeploymentUseCase {
       .filter(component => !requestedComponentsNames.includes(component.name))
       .map(component => component.clone())
     this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
-    const components = await this.getDeploymentComponents(createDeploymentDto.namespace, createDeploymentDto.circle.id, createDeploymentDto.components, createDeploymentDto.git.gitToken, createDeploymentDto.git.gitProvider)
+    const components = await this.getDeploymentComponents(createDeploymentDto.namespace, createDeploymentDto.circle.id, createDeploymentDto.components, createDeploymentDto.git.token, createDeploymentDto.git.provider)
     const deployment = createDeploymentDto.toDefaultEntity(unchangedComponents, components)
     deployment.current = true
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')

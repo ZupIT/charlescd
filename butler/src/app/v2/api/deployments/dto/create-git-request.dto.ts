@@ -20,13 +20,13 @@ import { GitProvidersEnum } from '../../../core/configuration/interfaces/git-pro
 export class CreateGitDeploymentDto {
 
   @ApiProperty()
-  public readonly gitToken: string
+  public readonly token: string
 
   @ApiProperty()
-  public readonly gitProvider: GitProvidersEnum
+  public readonly provider: GitProvidersEnum
 
-  constructor(gitToken: string, gitProvider: GitProvidersEnum) {
-    this.gitToken = gitToken
-    this.gitProvider = gitProvider
+  constructor(token: string, provider: GitProvidersEnum) {
+    this.token = token
+    this.provider = provider
   }
 }
