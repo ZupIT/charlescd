@@ -63,8 +63,7 @@ class SimpleFeignEncoderConfiguration(
     class CustomErrorDecoder : ErrorDecoder {
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
-            val responseMessage: String? = this.extractMessageFromResponse(response)
-            logger.error("RESPONSE MESSAGE IS: $responseMessage")
+            val responseMessage: String? = getMessage(response)
             return when (response?.status()) {
                 400 -> IllegalArgumentException(responseMessage)
                 422 -> BusinessException.of(MooveErrorCode.INVALID_PAYLOAD, responseMessage ?: response.reason())
@@ -72,19 +71,21 @@ class SimpleFeignEncoderConfiguration(
             }
         }
 
+        private fun getMessage(response: Response?): String {
+            val responseMessage = this.extractMessageFromResponse(response)
+            return  responseMessage ?: "Internal server error"
+        }
+
         private fun extractMessageFromResponse(response: Response?): String? {
             var responseAsString: String? = null
             try {
                 responseAsString = response?.body()?.let {
-                    logger.error("PASSOU AQUI S1")
                     StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
                 }
                 return responseAsString?.let {
-                    logger.error("PASSOU AQUI S2")
                     getResponseAsObject(it)
                 }
             } catch (ex: IOException) {
-                logger.error("PASSOU AQUI S3")
                 logger.error(ex.message, ex)
                 return responseAsString ?: "Error reading response of request"
             }
