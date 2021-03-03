@@ -17,7 +17,7 @@ type CustomError struct {
 	Operations []string          `json:"-"`
 	Type       string            `json:"type"`
 	Timestamp  string            `json:"timestamp"`
-	Meta       map[string]string `json:"_"`
+	Meta       map[string]string `json:"-"`
 }
 
 
