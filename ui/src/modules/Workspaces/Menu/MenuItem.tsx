@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
 import { setUserAbilities } from 'core/utils/abilities';
@@ -64,4 +64,4 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   );
 };
 
-export default memo(MenuItem);
+export default MenuItem;
