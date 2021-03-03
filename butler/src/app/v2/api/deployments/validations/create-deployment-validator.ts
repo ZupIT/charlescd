@@ -106,14 +106,14 @@ export class CreateDeploymentValidator {
     return Joi.object({
       deploymentId: Joi.string().guid().required(),
       namespace: Joi.string().required().max(255),
-      circle: {
+      circle: Joi.object({
         id: Joi.string().guid().required(),
         default: Joi.bool().required()
-      },
-      git: {
+      }).required(),
+      git: Joi.object({
         token: Joi.string().required(),
-        provider: Joi.string().allow(GitProvidersEnum.GITHUB, GitProvidersEnum.GITLAB).required()
-      },
+        provider: Joi.string().valid(GitProvidersEnum.GITHUB, GitProvidersEnum.GITLAB).required()
+      }).required(),
       components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1),
       authorId: Joi.string().guid().required(),
       callbackUrl: Joi.string().required().max(255)

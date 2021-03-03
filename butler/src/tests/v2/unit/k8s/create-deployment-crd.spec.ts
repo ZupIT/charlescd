@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder'
 import { expectedDeploymentCrd } from './fixtures/expected-deployment-crd'
@@ -24,21 +23,7 @@ it('must generate the correct CharlesDeployment custom resource object', () => {
     id: 'deployment-id',
     authorId: 'user-1',
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
+    namespace: 'sandbox',
     defaultCircle: false,
     circleId: 'circle-id',
     createdAt: new Date(),

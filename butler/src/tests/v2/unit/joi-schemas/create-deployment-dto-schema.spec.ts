@@ -18,60 +18,72 @@ import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 import { CreateCircleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-circle-request.dto'
 import { CreateComponentRequestDto } from '../../../../app/v2/api/deployments/dto/create-component-request.dto'
 import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
-import { CreateModuleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-module-request.dto'
+import { CreateGitDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-git-request.dto'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { CreateDeploymentValidator, JsonAPIError } from '../../../../app/v2/api/deployments/validations/create-deployment-validator'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
+import { UrlConstants } from '../../integration/test-constants'
 
 it('Returns valid DTO object when params are valid', () => {
   const params = {
     deploymentId: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-    defaultCircle: false,
     circle: {
-      headerValue: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
+      id: 'ed3a2669-34b8-4af2-b42c-acbad2ec6b60',
+      default: 'false'
     },
-    modules: [
+    git: {
+      token: 'abc123-token',
+      provider: GitProvidersEnum.GITHUB
+    },
+    namespace: 'namespace',
+    components: [
       {
-        moduleId: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-        helmRepository: 'http://fake-repo/repos/charlescd-fake/helm-chart',
-        components: [
-          {
-            componentId: 'a82f9bbb-169b-4b11-b48f-7f4fc7561651',
-            buildImageUrl: 'hashicorp/http-echo',
-            buildImageTag: 'latest',
-            componentName: 'abobora'
-          },
-          {
-            componentId: 'a82f9bbb-169b-4b11-b48f-7f4fc7561651',
-            buildImageUrl: 'hashicorp/http-echo',
-            buildImageTag: 'latest',
-            componentName: 'jilo'
-          }
-        ]
+        helmRepository: UrlConstants.helmRepository,
+        componentId: 'a82f9bbb-169b-4b11-b48f-7f4fc7561651',
+        buildImageUrl: 'hashicorp/http-echo',
+        buildImageTag: 'latest',
+        componentName: 'abobora'
+      },
+      {
+        helmRepository: UrlConstants.helmRepository,
+        componentId: 'f22f9bbb-169b-4b11-b48f-7f4fc7561651',
+        buildImageUrl: 'hashicorp/http-echo',
+        buildImageTag: 'latest',
+        componentName: 'jilo'
       }
     ],
-    authorId: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-    cdConfigurationId: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-    callbackUrl: 'http://fake-repo/deploy/notifications/deployment'
+    authorId: 'bc2a1669-34b8-4af2-b42c-acbad2ec6b60',
+    callbackUrl: UrlConstants.deploymentCallbackUrl
   }
   const validator = new CreateDeploymentValidator(params).validate()
   const expectedDto = new CreateDeploymentRequestDto(
     'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-    'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-    'http://fake-repo/deploy/notifications/deployment',
-    'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
-    new CreateCircleDeploymentDto('ad2a1669-34b8-4af2-b42c-acbad2ec6b60'),
+    'bc2a1669-34b8-4af2-b42c-acbad2ec6b60',
+    UrlConstants.deploymentCallbackUrl,
+    new CreateCircleDeploymentDto('ed3a2669-34b8-4af2-b42c-acbad2ec6b60', false),
     DeploymentStatusEnum.CREATED,
     [
-      new CreateModuleDeploymentDto(
-        '',
-        'http://fake-repo/repos/charlescd-fake/helm-chart',
-        [
-          new CreateComponentRequestDto('a82f9bbb-169b-4b11-b48f-7f4fc7561651', 'hashicorp/http-echo', 'latest', 'abobora', undefined, undefined),
-          new CreateComponentRequestDto('a82f9bbb-169b-4b11-b48f-7f4fc7561651', 'hashicorp/http-echo', 'latest', 'jilo', undefined, undefined),
-        ]
+      new CreateComponentRequestDto(
+        'a82f9bbb-169b-4b11-b48f-7f4fc7561651',
+        'hashicorp/http-echo',
+        'latest',
+        'abobora',
+        undefined,
+        undefined,
+        UrlConstants.helmRepository
+      ),
+      new CreateComponentRequestDto(
+        'f22f9bbb-169b-4b11-b48f-7f4fc7561651',
+        'hashicorp/http-echo',
+        'latest',
+        'jilo',
+        undefined,
+        undefined,
+        UrlConstants.helmRepository
       )
     ],
-    false
+    'namespace',
+    new CreateGitDeploymentDto('abc123-token', GitProvidersEnum.GITHUB)
   )
   expect(validator).toEqual({ valid: true, data: expectedDto })
 })
@@ -99,9 +111,9 @@ it('Formats the error to the JSON-API spec', () => {
       },
       {
         'status': HttpStatus.BAD_REQUEST,
-        'detail': '"defaultCircle" is required',
+        'detail': '"namespace" is required',
         'source': {
-          'pointer': 'defaultCircle'
+          'pointer': 'namespace'
         },
         'meta': {
           'component': 'butler',
@@ -110,9 +122,31 @@ it('Formats the error to the JSON-API spec', () => {
       },
       {
         'status': HttpStatus.BAD_REQUEST,
-        'detail': '"modules" is required',
+        'detail': '"circle" is required',
         'source': {
-          'pointer': 'modules'
+          'pointer': 'circle'
+        },
+        'meta': {
+          'component': 'butler',
+          'timestamp': expect.anything()
+        }
+      },
+      {
+        'status': HttpStatus.BAD_REQUEST,
+        'detail': '"git" is required',
+        'source': {
+          'pointer': 'git'
+        },
+        'meta': {
+          'component': 'butler',
+          'timestamp': expect.anything()
+        }
+      },
+      {
+        'status': HttpStatus.BAD_REQUEST,
+        'detail': '"components" is required',
+        'source': {
+          'pointer': 'components'
         },
         'meta': {
           'component': 'butler',
@@ -124,17 +158,6 @@ it('Formats the error to the JSON-API spec', () => {
         'detail': '"authorId" is required',
         'source': {
           'pointer': 'authorId'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"cdConfigurationId" is required',
-        'source': {
-          'pointer': 'cdConfigurationId'
         },
         'meta': {
           'component': 'butler',

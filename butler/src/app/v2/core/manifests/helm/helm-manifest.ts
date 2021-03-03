@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-import { promises as fs } from 'fs'
-import * as uuid from 'uuid'
+import { Injectable } from '@nestjs/common'
 import { spawn } from 'child_process'
+import { promises as fs } from 'fs'
+import * as yaml from 'js-yaml'
 import * as os from 'os'
 import * as path from 'path'
-
-import { Injectable } from '@nestjs/common'
 import * as rimraf from 'rimraf'
-import * as yaml from 'js-yaml'
-
-import { Manifest } from '../manifest'
-import { Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
+import * as uuid from 'uuid'
+import { RequestConfig, Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
 import { KubernetesManifest } from '../../integrations/interfaces/k8s-manifest.interface'
 import { RepositoryStrategyFactory } from '../../integrations/repository-strategy-factory'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
-import { CreateComponentRequestDto } from '../../../api/deployments/dto/create-component-request.dto'
-import { GitProvidersEnum } from '../../configuration/interfaces'
+import { Manifest } from '../manifest'
+import { ManifestConfig } from '../manifest.interface'
 
 @Injectable()
 export class HelmManifest implements Manifest {
@@ -39,24 +36,23 @@ export class HelmManifest implements Manifest {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly repositoryFactory: RepositoryStrategyFactory) {}
 
-  public async generate(gitToken: string, gitProvider: GitProvidersEnum, branch: string, helmUrl: string, namespace: string, circleId: string, component: CreateComponentRequestDto): Promise<KubernetesManifest[]> {
+  public async generate(config: ManifestConfig): Promise<KubernetesManifest[]> {
     this.consoleLoggerService.log('START:GENERATING MANIFEST USING HELM')
-    const requestConfig = {
-      url: helmUrl,
-      token: gitToken,
-      provider: gitProvider,
-      resourceName: component.componentName,
-      branch: branch
+    const requestConfig : RequestConfig = {
+      url: config.repo.url,
+      token: config.repo.token,
+      resourceName: config.componentName,
+      branch: config.repo.branch
     }
-    this.consoleLoggerService.log('GET:CHART FROM REPOSITORY', component.componentName)
-    const repository = this.repositoryFactory.create(gitProvider)
+    this.consoleLoggerService.log('GET:CHART FROM REPOSITORY', config.componentName)
+    const repository = this.repositoryFactory.create(config.repo.provider)
     const chart = await repository.getResource(requestConfig)
     const chartPath = this.getTmpChartDir()
     try {
       this.consoleLoggerService.log('START:SAVING CHART LOCALLY', chartPath)
       await this.saveChartFiles(chartPath, chart)
       this.consoleLoggerService.log('START:GENERATE MANIFEST')
-      const manifest =  await this.template(chartPath, component.componentName, namespace, component.buildImageUrl, circleId)
+      const manifest =  await this.template(chartPath, config.componentName, config.namespace, config.imageUrl, config.circleId)
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
     } finally {

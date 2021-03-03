@@ -30,6 +30,8 @@ export interface Deployment {
     components?: DeploymentComponent[]
 
     defaultCircle: boolean
+
+    namespace: string
 }
 
 export type DeploymentComponent = Omit<Component, 'deployment'>

@@ -28,6 +28,6 @@ export interface ManifestConfig {
   repo: RepoConfig,
   componentName: string,
   imageUrl: string,
-  namespace?: string,
-  circleId?: string
+  namespace: string,
+  circleId: string
 }

@@ -51,10 +51,6 @@ export class CreateDeploymentUseCase {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: createDeploymentDto.deploymentId, incomingCircleId })
     const { deployment, execution } = await getConnection().transaction(async transactionManager => {
       const deploymentEntity = await this.newDeployment(createDeploymentDto)
-      console.log({
-        dtooooooooooo: createDeploymentDto,
-        deploymentEntitydeploymentEntity: deploymentEntity
-      })
       const previousDeployment = await this.deactivateCurrentCircle(createDeploymentDto.circle.id, transactionManager)
       deploymentEntity.previousDeploymentId = previousDeployment
       const deployment = await transactionManager.save(deploymentEntity)
@@ -148,7 +144,18 @@ export class CreateDeploymentUseCase {
     // TODO: utilizar aqui a interface Manifest e obter de um factory
     try {
       this.consoleLoggerService.log('START:GENERATE_MANIFESTS')
-      return this.helmManifest.generate(gitToken, gitProvider, branch, component.helmRepository, namespace, circleId, component)
+      return this.helmManifest.generate({
+        circleId: circleId,
+        componentName: component.componentName,
+        imageUrl: component.buildImageUrl,
+        namespace: namespace,
+        repo: {
+          branch: branch,
+          provider: gitProvider,
+          token: gitToken,
+          url: repoUrl
+        }
+      })
     }catch(err) {
       this.consoleLoggerService.error('ERROR:GENERATE_MANIFESTS', err)
       throw err

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-import { DeploymentEntityV2 } from '../../../api/deployments/entity/deployment.entity'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
@@ -25,7 +23,7 @@ import { IstioManifestsUtils } from './istio-manifests.utilts'
 
 const IstioUndeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
+  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
@@ -44,7 +42,7 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getEmptyVirtualServiceManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent): VirtualServiceSpec => {
+  getEmptyVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent): VirtualServiceSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
@@ -83,7 +81,7 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
+  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
     const istioSubsets = IstioUndeploymentManifestsUtils.getActiveComponentsSubsets(deployment.circleId, activeByName)
     return {
       apiVersion: 'networking.istio.io/v1beta1',

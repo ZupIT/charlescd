@@ -53,7 +53,6 @@ export class ExecutionRepository extends Repository<Execution> {
          'callback_url', d.callback_url,
          'circle_id', d.circle_id,
          'current', d.current,
-         'cd_configuration_id', d.cd_configuration_id,
          'created_at', d.created_at,
          'components', json_agg(
            json_build_object(

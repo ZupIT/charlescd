@@ -15,28 +15,25 @@
  */
 
 import 'jest'
-import { CdConfigurationsRepository } from '../../../../app/v2/api/configurations/repository'
 import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { RouteHookParams } from '../../../../app/v2/operator/params.interface'
 import { PartialRouteHookParams, SpecsUnion } from '../../../../app/v2/operator/partial-params.interface'
 import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
-import { cdConfigurationFixture, deployComponentsFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
+import { deployComponentsFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import { routesManifests } from '../../fixtures/manifests.fixture'
 
 describe('Hook Routes Manifest Creation', () => {
 
   const deploymentRepository = new DeploymentRepositoryV2()
   const componentsRepository = new ComponentsRepositoryV2()
-  const cdConfigurationsRepository = new CdConfigurationsRepository()
   const consoleLoggerService = new ConsoleLoggerService()
 
   let hookParams: RouteHookParams
 
   beforeEach(() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
-    jest.spyOn(cdConfigurationsRepository, 'findDecrypted').mockImplementation(async() => cdConfigurationFixture)
     jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
 
     hookParams = {
@@ -74,7 +71,6 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,
-      cdConfigurationsRepository,
       consoleLoggerService
     )
 
@@ -88,7 +84,6 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,
-      cdConfigurationsRepository,
       consoleLoggerService
     )
 
@@ -103,7 +98,6 @@ describe('Compare observed routes state with desired routes state', () => {
   it('should return empty array when observed and desired states are empty', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
-    const cdConfigurationsRepository = new CdConfigurationsRepository()
     const consoleLoggerService = new ConsoleLoggerService()
 
     const observed : PartialRouteHookParams = {
@@ -136,7 +130,6 @@ describe('Compare observed routes state with desired routes state', () => {
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,
-      cdConfigurationsRepository,
       consoleLoggerService
     )
 
@@ -146,7 +139,6 @@ describe('Compare observed routes state with desired routes state', () => {
   it('should return the objects with status true for all desired components', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
-    const cdConfigurationsRepository = new CdConfigurationsRepository()
     const consoleLoggerService = new ConsoleLoggerService()
 
     const observed : PartialRouteHookParams = {
@@ -176,7 +168,7 @@ describe('Compare observed routes state with desired routes state', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'abobora',
-              namespace: 'default',
+              namespace: 'namespace',
               annotations: {
                 circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
               }
@@ -186,7 +178,7 @@ describe('Compare observed routes state with desired routes state', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'abobora',
-              namespace: 'default',
+              namespace: 'namespace',
               annotations: {
                 circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
               }
@@ -198,7 +190,7 @@ describe('Compare observed routes state with desired routes state', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'abobora',
-              namespace: 'default',
+              namespace: 'namespace',
               annotations: {
                 circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
               }
@@ -208,7 +200,7 @@ describe('Compare observed routes state with desired routes state', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'jilo',
-              namespace: 'default',
+              namespace: 'namespace',
               annotations: {
                 circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
               }
@@ -223,7 +215,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'DestinationRule',
         metadata: {
           name: 'jilo',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -233,7 +225,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'VirtualService',
         metadata: {
           name: 'jilo',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -243,7 +235,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'DestinationRule',
         metadata: {
           name: 'abobora',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -253,7 +245,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'VirtualService',
         metadata: {
           name: 'abobora',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -264,7 +256,6 @@ describe('Compare observed routes state with desired routes state', () => {
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,
-      cdConfigurationsRepository,
       consoleLoggerService
     )
 
@@ -299,7 +290,6 @@ describe('Compare observed routes state with desired routes state', () => {
   it('should return the objects with status false for all desired components when the observed state is does not have the routes', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
-    const cdConfigurationsRepository = new CdConfigurationsRepository()
     const consoleLoggerService = new ConsoleLoggerService()
 
 
@@ -335,7 +325,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'DestinationRule',
         metadata: {
           name: 'jilo',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -345,7 +335,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'VirtualService',
         metadata: {
           name: 'jilo',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -355,7 +345,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'DestinationRule',
         metadata: {
           name: 'abobora',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -365,7 +355,7 @@ describe('Compare observed routes state with desired routes state', () => {
         kind: 'VirtualService',
         metadata: {
           name: 'abobora',
-          namespace: 'default',
+          namespace: 'namespace',
           annotations: {
             circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
           }
@@ -375,7 +365,6 @@ describe('Compare observed routes state with desired routes state', () => {
     const routeUseCase = new CreateRoutesManifestsUseCase(
       deploymentRepository,
       componentsRepository,
-      cdConfigurationsRepository,
       consoleLoggerService
     )
 

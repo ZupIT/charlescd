@@ -1,13 +1,10 @@
 import 'jest'
-import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
-import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
-import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { reconcileFixtures, reconcileFixturesParams } from './params'
 import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 import { UrlConstants } from '../../integration/test-constants'
+import { reconcileFixtures, reconcileFixturesParams } from './params'
+
 
 describe('Deployment on existing circle', () => {
 
@@ -39,12 +36,6 @@ describe('Deployment on existing circle', () => {
 
   it('concatenates deployments and services from previous and current deployment', () => {
     const reconcile = new ReconcileDeployment()
-    const cdConfig = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'my-config',
-      'some-author',
-      'some-id')
     const previousComponents = [
       new ComponentEntityV2(
         UrlConstants.helmRepository,
@@ -86,10 +77,10 @@ describe('Deployment on existing circle', () => {
       reconcileFixtures.previousDeploymentId,
       'some-author',
       'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-      cdConfig,
       'some-url',
       previousComponents,
-      false
+      false,
+      'my-namespace'
     )
 
     const currentComponents = [
@@ -122,7 +113,7 @@ describe('Deployment on existing circle', () => {
         }
       }
     ]
-    const concat = reconcile.concatWithPrevious(previousDeployment, currentComponents, cdConfig)
+    const concat = reconcile.concatWithPrevious(previousDeployment, currentComponents)
     const expected = [
       {
         kind: 'Deployment',

@@ -18,13 +18,12 @@ import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
-import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
-import { DeploymentEntityV2 } from '../../../api/deployments/entity/deployment.entity'
 
 const IstioDeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
+  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'VirtualService',
@@ -45,7 +44,7 @@ const IstioDeploymentManifestsUtils = {
     }
   },
 
-  getDestinationRulesManifest: (deployment: DeploymentEntityV2, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
+  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
     return {
       apiVersion: 'networking.istio.io/v1beta1',
       kind: 'DestinationRule',

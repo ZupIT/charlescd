@@ -15,6 +15,7 @@
  */
 
 import { MigrationInterface, QueryRunner } from 'typeorm'
+import { AppConstants } from '../../app/v2/core/constants'
 
 export class AddNamespaceColumnToDeployments20210302120000 implements MigrationInterface {
 
@@ -23,7 +24,7 @@ export class AddNamespaceColumnToDeployments20210302120000 implements MigrationI
       ALTER TABLE v2deployments ADD COLUMN namespace Character Varying;
 
       with config_data as (
-        select id, PGP_SYM_DECRYPT(configuration_data::bytea, 'undefined', 'cipher-algo=aes256')::jsonb->'namespace' as namespace from cd_configurations
+        select id, PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')::jsonb->'namespace' as namespace from cd_configurations
       )
 
       update v2deployments
@@ -39,9 +40,9 @@ export class AddNamespaceColumnToDeployments20210302120000 implements MigrationI
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      ALTER TABLE v2deployments DROP COLUMN namespace
-      ALTER TABLE v2deployments ADD CONSTRAINT "fk_v2cd_config_deployments" FOREIGN KEY ( "cd_configuration_id" ) REFERENCES "public"."cd_configurations" ( "id" )
-      ALTER TABLE v2deployments ALTER COLUMN cd_configuration_id SET NOT NULL
+      ALTER TABLE v2deployments DROP COLUMN namespace;
+      ALTER TABLE v2deployments ADD CONSTRAINT "fk_v2cd_config_deployments" FOREIGN KEY ( "cd_configuration_id" ) REFERENCES "public"."cd_configurations" ( "id" );
+      ALTER TABLE v2deployments ALTER COLUMN cd_configuration_id SET NOT NULL;
     `)
   }
 }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Component } from '../../../../app/v2/api/deployments/interfaces'
 import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder'
 import { CharlesRoutes } from '../../../../app/v2/core/integrations/k8s/interfaces/charles-routes.interface'
@@ -36,21 +35,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id-1',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: false
       }
     },
@@ -69,21 +54,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id-2',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: true
       }
     },
@@ -102,21 +73,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id-1',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: false
       }
     },
@@ -135,21 +92,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id-2',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: true
       }
     },
@@ -168,21 +111,7 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id-3',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: false
       }
     }
