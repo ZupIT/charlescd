@@ -21,11 +21,11 @@ export class ReadDeploymentDto {
 
   public readonly id: string
 
-  public readonly authorId: string
-
   public readonly applicationName: string
 
   public readonly modulesDeployments: ReadModuleDeploymentDto[]
+
+  public readonly authorId: string
 
   public readonly description: string
 
@@ -39,9 +39,9 @@ export class ReadDeploymentDto {
 
   constructor(
     id: string,
-    authorId: string,
     applicationName: string,
     modulesDeployments: ReadModuleDeploymentDto[],
+    authorId: string,
     description: string,
     callbackUrl: string,
     defaultCircle: boolean,

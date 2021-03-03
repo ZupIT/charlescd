@@ -84,8 +84,8 @@ export class CreateDeploymentRequestDto {
     defaultCircle: boolean,
     metadata: Metadata | null
   ) {
-    this.deploymentId = deploymentId,
-    this.authorId = authorId,
+    this.deploymentId = deploymentId
+    this.authorId = authorId
     this.callbackUrl = callbackUrl
     this.cdConfigurationId = cdConfigurationId
     this.circle = circle
