@@ -1,11 +1,9 @@
 package system_token
 
 import (
-	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"time"
 )
 
 func (st *SystemTokenSuite) TestGetByID() {
@@ -45,15 +43,4 @@ func (st *SystemTokenSuite) TestErrorGetByIDInternalError() {
 	require.Equal(st.T(), logging.InternalError, logging.GetErrorType(err))
 	require.Equal(st.T(), result.ID, uuid.Nil)
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
-}
-
-func getDummySystemToken() domain.SystemToken {
-	createdAt := time.Now()
-	return domain.SystemToken{
-		ID: uuid.New(),
-		Name: "SystemToken Test",
-		AuthorEmail: "joe.doe@email.com",
-		CreatedAt: &createdAt,
-		Revoked: false,
-	}
 }
