@@ -81,7 +81,6 @@ func main() {
 	actionMain := action.NewMain(db, pluginMain)
 	metricsGroupActionMain := metricsgroupaction.NewMain(db, pluginMain, actionMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, metricsGroupActionMain)
-	mooveClient := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
 	metricDispatcher := dispatcher.NewDispatcher(metricMain)
 	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
