@@ -13,13 +13,13 @@ type SystemTokenRequest struct {
 }
 
 type SystemTokenResponse struct {
-	ID				uuid.UUID `json:"id"`
-	Name 			string `json:"name"`
-	Permissions 	[]PermissionResponse `json:"permissions"`
-	CreatedAt 		*time.Time `json:"created_at"`
-	RevokedAt  		*time.Time `json:"revoked_at,omitempty"`
-	LastUsedAt 		*time.Time `json:"last_used_atm,omitempty"`
-	Author 			string `json:"author"`
+	ID          uuid.UUID            `json:"id"`
+	Name        string               `json:"name"`
+	Permissions []PermissionResponse `json:"permissions"`
+	CreatedAt   *time.Time           `json:"created_at"`
+	RevokedAt   *time.Time           `json:"revoked_at,omitempty"`
+	LastUsedAt  *time.Time           `json:"last_used_atm,omitempty"`
+	Author      string               `json:"author"`
 }
 
 type PageSystemTokenResponse struct {
@@ -49,10 +49,10 @@ func SystemTokenToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 		ID:          systemToken.ID,
 		Name:        systemToken.Name,
 		Permissions: PermissionsToResponse(systemToken.Permissions),
-		CreatedAt: systemToken.CreatedAt,
-		RevokedAt: systemToken.RevokedAt,
-		LastUsedAt: systemToken.LastUsedAt,
-		Author: systemToken.AuthorEmail,
+		CreatedAt:   systemToken.CreatedAt,
+		RevokedAt:   systemToken.RevokedAt,
+		LastUsedAt:  systemToken.LastUsedAt,
+		Author:      systemToken.AuthorEmail,
 	}
 }
 

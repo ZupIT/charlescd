@@ -32,9 +32,9 @@ func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken
 }
 
 func SystemTokensModelToDomains(systemToken []models.SystemToken) []domain.SystemToken {
-	systemTokenFound := make([]domain.SystemToken, 0)
+	systemTokens := make([]domain.SystemToken, 0)
 	for _, st := range systemToken {
-		systemTokenFound = append(systemTokenFound, SystemTokenModelToDomain(st))
+		systemTokens = append(systemTokens, SystemTokenModelToDomain(st))
 	}
-	return systemTokenFound
+	return systemTokens
 }
