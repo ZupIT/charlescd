@@ -52,7 +52,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         var message = ex.message
-        if(ex.message == null) {
+        if (ex.message == null) {
             message = "Internal error"
         }
         return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, message)
