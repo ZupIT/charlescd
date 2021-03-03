@@ -60,7 +60,7 @@ const CirclesFilter = ({ status, onSearch, onSelect, children }: Props) => {
           </LabeledIcon>
         </Menu>
         <Styled.A onClick={() => goToCircleComparison(CIRCLE_MATCHER_TAB)}>
-          <Styled.Icon name="circle-matcher" color="dark" size="15px" title={'circle matcher'} />
+          <Styled.Icon name="circle-matcher" color="dark" size="15px" title="circle matcher" />
         </Styled.A>
       </Styled.Actions>
       <Styled.SearchInput resume onSearch={onSearch} />
