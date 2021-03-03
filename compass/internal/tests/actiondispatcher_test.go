@@ -91,7 +91,6 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	datasourceStruct := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
 		WorkspaceID: workspaceID,
 		DeletedAt:   nil,
@@ -164,7 +163,6 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 	datasourceStruct := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
 		WorkspaceID: workspaceID,
 		DeletedAt:   nil,
