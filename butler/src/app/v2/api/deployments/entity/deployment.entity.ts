@@ -31,7 +31,7 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
 
-  @Column({ name: 'authorId' })
+  @Column({ name: 'author_id' })
   public authorId!: string
 
   @CreateDateColumn({ name: 'created_at' })
