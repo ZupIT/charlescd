@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, screen, waitFor, act } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import SectionWebhook from '../';
 import { Webhook } from '../interfaces';
@@ -33,7 +33,7 @@ const data: Webhook[] = [{
   }
 }];
 
-test('should render form', async () => {
+test('should render default section', async () => {
   const form = 'webhook';
   const setForm = jest.fn();
 
@@ -43,7 +43,7 @@ test('should render form', async () => {
   expect(textElement).toBeInTheDocument();
 });
 
-test('render webhook successful', async () => {
+test('should render section with successful webhook card', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
 
   const form = '';
@@ -55,7 +55,7 @@ test('render webhook successful', async () => {
   expect(errorText).not.toBeInTheDocument();
 });
 
-test('should remove/cancel webhook', async () => {
+test('should render section and trigger remove webhook action', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
 
   const form = '';
@@ -65,8 +65,25 @@ test('should remove/cancel webhook', async () => {
   
   let iconVerticalDots = await screen.findByTestId('icon-vertical-dots');
   expect(iconVerticalDots).toBeInTheDocument();
-  await act(async () => userEvent.click(iconVerticalDots));
+  userEvent.click(iconVerticalDots);
 
-  let iconDelete = screen.queryByTestId('icon-delete');
+  let iconDelete = screen.queryByTestId('dropdown-item-delete-Delete');
   expect(iconDelete).toBeInTheDocument();
+});
+
+test('should render section and trigger edit webhook action', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ status: '200' }));
+
+  const form = '';
+  const setForm = jest.fn();
+
+  render(<SectionWebhook form={form} setForm={setForm} data={data} />);
+  
+  let iconVerticalDots = await screen.findByTestId('icon-vertical-dots');
+  expect(iconVerticalDots).toBeInTheDocument();
+  userEvent.click(iconVerticalDots);
+
+  let iconEdit = screen.queryByTestId('dropdown-item-edit-Edit');
+  expect(iconEdit).toBeInTheDocument();
+  userEvent.click(iconEdit);
 });

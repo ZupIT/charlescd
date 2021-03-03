@@ -42,6 +42,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
     formState: { isValid }
   } = useForm<Webhook>({ mode: 'onChange' });
 
+  const isAllEventsChecked = data?.events?.length === EVENTS.length;
   const isCreateMode = isEmpty(data?.id);
   const isEditMode = !isEmpty(data?.id);
   const watchEventType = watch('eventType');
@@ -62,6 +63,12 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
     }
   };
 
+  const renderTitle = () => (
+    isEditMode
+      ? <Text.h2 color="light">Edit Webhook</Text.h2>
+      : <Text.h2 color="light">Add Webhook</Text.h2>
+  )
+
   const renderOptions = () => (
     <Fragment>
       <Form.Checkbox
@@ -69,7 +76,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         name="events"
         label="Deploy"
         value="DEPLOY"
-        defaultChecked={includes(data?.events, 'DEPLOY')}
+        defaultChecked={!isAllEventsChecked && includes(data?.events, 'DEPLOY')}
         description="Deploy started or finished"
       />
       <Form.Checkbox
@@ -77,7 +84,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         name="events"
         label="Undeploy"
         value="UNDEPLOY"
-        defaultChecked={includes(data?.events, 'UNDEPLOY')}
+        defaultChecked={!isAllEventsChecked && includes(data?.events, 'UNDEPLOY')}
         description="Undeploy started or finished"
       />
     </Fragment>
@@ -161,7 +168,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
 
   return (
     <Styled.Content>
-      <Text.h2 color="light">Add Webhook</Text.h2>
+      {renderTitle()}
       {renderForm()}
     </Styled.Content>
   );
