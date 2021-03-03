@@ -1,4 +1,4 @@
-package unit
+package system_token
 
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
@@ -72,11 +72,12 @@ func (st *SystemTokenSuite) TestErrorGetByIDInternalError() {
 }
 
 func getDummySystemToken() domain.SystemToken {
+	createdAt := time.Now()
 	return domain.SystemToken{
 		ID: uuid.New(),
 		Name: "SystemToken Test",
 		AuthorEmail: "joe.doe@email.com",
-		CreatedAt: time.Now(),
+		CreatedAt: &createdAt,
 		Revoked: false,
 	}
 }
