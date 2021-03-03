@@ -39,7 +39,7 @@ func GetAllSystemTokens(getAllSystemToken systemTokenInteractor.GetAllSystemToke
 			return HandlerError(echoCtx, ctx, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, representation.SystemTokenToPageResponse(systemTokens, page))
+		return echoCtx.JSON(http.StatusOK, representation.DomainsToPageResponse(systemTokens, page))
 	}
 }
 
@@ -56,6 +56,6 @@ func GetSystemToken(getSystemToken systemTokenInteractor.GetSystemToken) echo.Ha
 		if err != nil {
 			return HandlerError(echoCtx, ctx, err)
 		}
-		return echoCtx.JSON(http.StatusOK, representation.SystemTokenToResponse(systemToken))
+		return echoCtx.JSON(http.StatusOK, representation.DomainToResponse(systemToken))
 	}
 }

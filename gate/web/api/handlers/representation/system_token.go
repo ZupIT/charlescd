@@ -44,7 +44,7 @@ func (systemTokenRequest SystemTokenRequest) RequestToDomain(author string) doma
 	}
 }
 
-func SystemTokenToResponse(systemToken domain.SystemToken) SystemTokenResponse {
+func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 	return SystemTokenResponse{
 		ID:          systemToken.ID,
 		Name:        systemToken.Name,
@@ -56,17 +56,17 @@ func SystemTokenToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 	}
 }
 
-func SystemTokensToResponse(systemTokens []domain.SystemToken) []SystemTokenResponse {
+func DomainsToResponses(systemTokens []domain.SystemToken) []SystemTokenResponse {
 	var systemTokenResponse []SystemTokenResponse
 	for _, permission := range systemTokens {
-		systemTokenResponse = append(systemTokenResponse, SystemTokenToResponse(permission))
+		systemTokenResponse = append(systemTokenResponse, DomainToResponse(permission))
 	}
 	return systemTokenResponse
 }
 
-func SystemTokenToPageResponse(systemToken []domain.SystemToken, page domain.Page) PageSystemTokenResponse {
+func DomainsToPageResponse(systemToken []domain.SystemToken, page domain.Page) PageSystemTokenResponse {
 	return PageSystemTokenResponse{
-		Content:    SystemTokensToResponse(systemToken),
+		Content:    DomainsToResponses(systemToken),
 		Page:       page.PageNumber,
 		Size:       page.PageSize,
 		Last:       page.IsLast(),
