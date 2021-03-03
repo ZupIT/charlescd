@@ -172,30 +172,6 @@ func (s *Suite) TestSaveDatasourceError() {
 	require.NotNil(s.T(), err)
 }
 
-func (s *Suite) TestSaveDatasourceInserted() {
-	workspaceId := uuid.New()
-	dataSource := datasource2.DataSource{
-		Name:        "DataTest2",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
-
-	dataSourceStruct := datasource2.Request{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-
-	_, err := s.repository.Save(dataSourceStruct)
-	require.NotNil(s.T(), err)
-}
-
 func (s *Suite) TestDelete() {
 	workspaceId := uuid.New()
 	dataSource := datasource2.DataSource{
