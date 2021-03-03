@@ -153,6 +153,35 @@ test("Should render the form and select a GIT provider", async () => {
   expect(screen.getByText('Add helm chart repository')).toBeInTheDocument();
 });
 
+test('should not show required message for optional fields', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const gitProviderSelect = screen.getByText('Git provider');
+  await act(async () => selectEvent.select(gitProviderSelect, 'GitLab'));
+
+  const pathInput = screen.getByTestId('input-text-helmPath');
+  const branchInput = screen.getByTestId('input-text-helmBranch');
+
+  await act(async () => {
+    userEvent.type(pathInput, '/zup');
+    userEvent.type(pathInput, '');
+  })
+  await waitFor(() => expect(screen.queryByText('the field is required.')).not.toBeInTheDocument());
+  
+  userEvent.type(branchInput, 'feature/zup');
+  userEvent.type(branchInput, '');
+  await waitFor(() => expect(screen.queryByText('the field is required.')).not.toBeInTheDocument());
+});
+
+
 test("Should render submit button", async () => {
   const updateModuleSpy = jest.spyOn(UpdateModuleHook, 'useUpdateModule');
 
