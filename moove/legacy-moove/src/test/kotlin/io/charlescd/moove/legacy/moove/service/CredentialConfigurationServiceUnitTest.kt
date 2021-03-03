@@ -234,7 +234,7 @@ class CredentialConfigurationServiceUnitTest {
             authorId = "authorId"
         )
 
-        val villagerResponse = CreateVillagerRegistryConfigurationResponse(
+        CreateVillagerRegistryConfigurationResponse(
             id = "id"
         )
 
@@ -250,8 +250,7 @@ class CredentialConfigurationServiceUnitTest {
         )
         val authorization = getAuthorization()
 
-        val expectedResponse =
-            CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
+        CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
 
         every {
             villagerApi.createRegistryConfiguration(villagerRequest, workspaceId)
@@ -1408,8 +1407,8 @@ class CredentialConfigurationServiceUnitTest {
         val workspaceId = "workspaceId"
 
         every {
-            userServiceLegacy.findUser("authorId")
-        } returns throw NotFoundExceptionLegacy("user", "authorID")
+            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+        } throws NotFoundExceptionLegacy("user", "authorID")
 
         credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
     }

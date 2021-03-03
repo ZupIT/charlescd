@@ -36,7 +36,7 @@ import uk.gov.nationalarchives.csv.validator.api.java.FailMessage
 class CsvSegmentationService(private val objectMapper: ObjectMapper) {
 
     fun validate(input: InputStream, keyName: String) {
-        var outputStream = createOutputStream(input)
+        val outputStream = createOutputStream(input)
 
         val errorMessages = validateCsvFormat(outputStream, createSchemaInputReader(keyName))
 
@@ -109,7 +109,7 @@ class CsvSegmentationService(private val objectMapper: ObjectMapper) {
     }
 
     private fun createOutputStream(input: InputStream): ByteArrayOutputStream {
-        var byteArrayOutputStream = ByteArrayOutputStream()
+        val byteArrayOutputStream = ByteArrayOutputStream()
         IOUtils.copy(input, byteArrayOutputStream)
         return byteArrayOutputStream
     }
@@ -119,9 +119,9 @@ class CsvSegmentationService(private val objectMapper: ObjectMapper) {
         return jsonList
     }
 
-    private fun recursiveNodeExtraction(node: JsonNode?, nodes: MutableList<JsonNode>) {
+    private fun recursiveNodeExtraction(rules: JsonNode?, nodes: MutableList<JsonNode>) {
 
-        val nodePart = node?.let {
+        val nodePart = rules?.let {
             objectMapper.treeToValue(
                 it,
                 NodePart::class.java

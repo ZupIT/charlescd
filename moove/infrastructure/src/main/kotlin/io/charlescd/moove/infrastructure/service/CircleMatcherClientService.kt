@@ -41,11 +41,11 @@ class CircleMatcherClientService(
         this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, false))
     }
 
-    override fun update(circle: Circle, previousReference: String, matcherUri: String, isActive: Boolean) {
+    override fun update(circle: Circle, previousReference: String, matcherUri: String, active: Boolean) {
         this.circleMatcherClient.update(
             URI(matcherUri),
             previousReference,
-            createMatcherRequest(circle, isActive, previousReference)
+            createMatcherRequest(circle, active, previousReference)
         )
     }
 

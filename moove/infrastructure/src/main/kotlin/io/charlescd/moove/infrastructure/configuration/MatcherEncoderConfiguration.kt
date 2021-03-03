@@ -74,17 +74,17 @@ class MatcherEncoderConfiguration {
         }
 
         private fun extractMessageFromResponse(response: Response?): ErrorResponse {
-            var responseAsString: String? = null
-            try {
+            val responseAsString: String?
+            return try {
                 responseAsString = response?.body()?.let {
                     StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
                 }
-                return responseAsString?.let {
+                responseAsString?.let {
                     getResponseAsObject(it)
                 } ?: createErrorResponse("No response body")
             } catch (ex: IOException) {
                 logger.error(ex.message, ex)
-                return createErrorResponse("Error reading response", ex)
+                createErrorResponse("Error reading response", ex)
             }
         }
 
@@ -95,10 +95,10 @@ class MatcherEncoderConfiguration {
         }
 
         private fun getMetaInfo(): Map<String, String>? {
-            var metaInfo = mutableMapOf<String, String>()
+            val metaInfo = mutableMapOf<String, String>()
 
-            metaInfo.put("data", LocalDateTime.now().toString())
-            metaInfo.put("component", "moove")
+            metaInfo["data"] = LocalDateTime.now().toString()
+            metaInfo["component"] = "moove"
             return metaInfo
         }
 

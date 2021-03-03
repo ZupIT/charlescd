@@ -451,7 +451,6 @@ class HypothesisServiceTest {
 
         val name = "Test"
         val description = "Description Test"
-        val authorId = "204a5dfa-0ea1-4a45-bc51-12933ef92d42"
         val labels: List<String> = emptyList()
         val testCreatedHypothesisRequest = CreateHypothesisRequest(name, description, labels)
         val workspaceId = "337da7e5-2ca4-410f-aa78-44c93b2cbb9d"

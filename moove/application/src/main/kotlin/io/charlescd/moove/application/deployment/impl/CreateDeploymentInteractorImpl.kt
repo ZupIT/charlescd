@@ -65,7 +65,6 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         workspaceId: String,
         user: User
     ): Deployment {
-        val user = user
         val circle = circleService.find(request.circleId)
         return request.toDeployment(workspaceId, user, circle)
     }
