@@ -15,7 +15,7 @@ import (
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
-	Update(id uuid.UUID, systemToken domain.SystemToken) (domain.SystemToken, error)
+	Update(systemToken domain.SystemToken) (domain.SystemToken, error)
 }
 
 type systemTokenRepository struct {
@@ -45,7 +45,10 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
 	var systemToken models.SystemToken
 
-	res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).First(&systemToken)
+	res := systemTokenRepository.db.Model(models.SystemToken{}).
+		Where("id = ?", id).
+		First(&systemToken)
+
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
 			return handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
@@ -55,7 +58,7 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 	return mapper.SystemTokenModelToDomain(systemToken), nil
 }
 
-func (systemTokenRepository systemTokenRepository) Update(id uuid.UUID, systemToken domain.SystemToken) (domain.SystemToken, error) {
+func (systemTokenRepository systemTokenRepository) Update(systemToken domain.SystemToken) (domain.SystemToken, error) {
 	systemTokenToUpdate := &models.SystemToken{
 		ID:          systemToken.ID,
 		Name:        systemToken.Name,
@@ -67,7 +70,8 @@ func (systemTokenRepository systemTokenRepository) Update(id uuid.UUID, systemTo
 		Permissions: mapper.PermissionsDomainToModels(systemToken.Permissions),
 	}
 
-	if res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).Updates(&systemTokenToUpdate); res.Error != nil {
+	if res := systemTokenRepository.db.Model(models.SystemToken{}).
+		Where("id = ?", systemToken.ID).Updates(&systemTokenToUpdate); res.Error != nil {
 		return handlerError("Update system token failed", "repository.Update.Updates", res.Error, "")
 	}
 
