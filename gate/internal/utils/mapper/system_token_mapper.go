@@ -30,3 +30,11 @@ func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken
 		Author:      UserModelToDomain(systemToken.Author),
 	}
 }
+
+func SystemTokensModelToDomains(systemToken []models.SystemToken) []domain.SystemToken {
+	systemTokenFound := make([]domain.SystemToken, 0)
+	for _, st := range systemToken {
+		systemTokenFound = append(systemTokenFound, SystemTokenModelToDomain(st))
+	}
+	return systemTokenFound
+}

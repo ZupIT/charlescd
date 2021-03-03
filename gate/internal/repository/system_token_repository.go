@@ -61,12 +61,7 @@ func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Pa
 		return []domain.SystemToken{}, page, handlerError("Find all tokens failed", "unit.GetAll.Count", res.Error, logging.InternalError)
 	}
 
-	systemTokenFound := make([]domain.SystemToken, 0)
-	for _, st := range systemToken {
-		systemTokenFound = append(systemTokenFound, mapper.SystemTokenModelToDomain(st))
-	}
-
-	return systemTokenFound, page, nil
+	return mapper.SystemTokensModelToDomains(systemToken), page, nil
 }
 
 func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
