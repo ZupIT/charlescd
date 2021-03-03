@@ -51,7 +51,11 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseBody
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
-        return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
+        var message = ex.message
+        if(ex.message == null) {
+            message = "Internal error"
+        }
+        return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, message)
     }
 
     @ExceptionHandler(BadRequestClientException::class)
