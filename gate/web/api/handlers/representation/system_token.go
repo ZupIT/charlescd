@@ -7,9 +7,9 @@ import (
 )
 
 type SystemTokenRequest struct {
-	Name string `json:"name" validate:"required,notblank"`
-	Permissions []string `json:"permissions" validate:"required,notnull"`
-	Author string `json:"author" validate:"required,notblank"`
+	Name 			string `json:"name" validate:"required,notblank"`
+	Permissions 	[]string `json:"permissions" validate:"required,notnull"`
+	Author 			string `json:"author" validate:"required,notblank"`
 }
 
 type SystemTokenResponse struct {
@@ -17,8 +17,8 @@ type SystemTokenResponse struct {
 	Name 			string `json:"name"`
 	Permissions 	[]PermissionResponse `json:"permissions"`
 	CreatedAt 		*time.Time `json:"created_at"`
-	RevokedAt  		*time.Time `json:"revoked_at,omitempty"`
-	LastUsedAt 		*time.Time `json:"last_used_atm,omitempty"`
+	RevokedAt  		*time.Time `json:"revoked_at"`
+	LastUsedAt 		*time.Time `json:"last_used_at"`
 	Author 			string `json:"author"`
 }
 
