@@ -156,14 +156,14 @@ const FormModule = ({ module, onChange }: Props) => {
         <Styled.Input
           label="Insert path (Optional)"
           name="helmPath"
-          ref={helmRegister(getHelmFieldsValidations("helm path"))}
+          ref={helmRegister(getHelmFieldsValidations("helm path", false))}
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert branch (Optional, Default=main)"
           name="helmBranch"
-          ref={helmRegister(getHelmFieldsValidations("helm branch"))}
+          ref={helmRegister(getHelmFieldsValidations("helm branch", false))}
         />
       </Styled.FieldPopover>
     </>
