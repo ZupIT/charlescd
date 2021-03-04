@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import { ReadCircleDeploymentDto } from './read-circle-deployment.dto'
-import { ReadComponentDeploymentDto } from './read-component-deployment.dto'
-
 export class ReadDeploymentDto {
 
   public readonly id: string

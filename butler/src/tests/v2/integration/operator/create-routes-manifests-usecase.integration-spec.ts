@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
@@ -13,7 +12,6 @@ describe('Routes manifest use case', () => {
   let app: INestApplication
   let deploymentRepository: DeploymentRepositoryV2
   let routeUseCase: CreateRoutesManifestsUseCase
-  let manager: EntityManager
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -31,7 +29,6 @@ describe('Routes manifest use case', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentRepository = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
     routeUseCase = app.get<CreateRoutesManifestsUseCase>(CreateRoutesManifestsUseCase)
-    manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {

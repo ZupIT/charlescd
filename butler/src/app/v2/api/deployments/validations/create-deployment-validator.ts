@@ -19,7 +19,6 @@ import { ValidationError } from 'joi'
 import { CreateCircleDeploymentDto } from '../dto/create-circle-request.dto'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
-import { CreateModuleDeploymentDto } from '../dto/create-module-request.dto'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import Joi = require('joi')
 import { GitProvidersEnum } from '../../../core/configuration/interfaces'
