@@ -39,9 +39,6 @@ const Settings = () => {
   const [isVeteranUser, setIsVeteranUser] = useState<boolean>(hasWizard);
   const { getWorkspace, data: { workspace, status } } = useWorkspace();
 
-  console.log('SETTINGS:WORKSPACE', workspace);
-  console.log('SETTINGS:STATUS', status);
-
   useEffect(() => {
     if (status === 'idle') {
       getWorkspace(getWorkspaceId());

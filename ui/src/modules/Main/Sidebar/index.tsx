@@ -21,7 +21,7 @@ import routes from 'core/constants/routes';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import {
-  clearWorkspace
+  clearWorkspace, getWorkspace
 } from 'core/utils/workspace';
 import { ExpandClick } from './Types';
 import MenuItems from './MenuItems';
@@ -36,6 +36,7 @@ interface Props {
 
 const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
   const navigate = useHistory();
+  const workspace = getWorkspace();
 
   const handleClick = () => {
     clearWorkspace();
@@ -54,14 +55,18 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
         expandMenu={(state: ExpandClick) => onClickExpand(state)}
       />
       <Styled.Bottom>
-        <Styled.Item>
-          <Styled.LinkIcon name="workspace" size="15px" isActive={false} />
-          {
-            isExpanded && (
-              <Text.h5 color="light">Workspace</Text.h5>
-            )
-          }
-        </Styled.Item>
+        {
+          workspace?.id && (
+            <Styled.Item>
+              <Styled.LinkIcon name="workspace" size="15px" isActive={false} />
+              {
+                isExpanded && (
+                  <Text.h5 color="light">{workspace?.name}</Text.h5>
+                )
+              }
+            </Styled.Item>
+          )
+        }
         <Styled.Item>
           <Icon
             name="help"

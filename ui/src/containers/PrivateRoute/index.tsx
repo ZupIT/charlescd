@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
-import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
-import { hasPermission } from 'core/utils/auth';
-import { useWorkspace } from 'modules/Settings/hooks';
-import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
 
 export interface Props extends RouteProps {
