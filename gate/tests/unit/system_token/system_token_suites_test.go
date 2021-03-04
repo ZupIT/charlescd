@@ -34,11 +34,10 @@ func TestSuite(t *testing.T) {
 func getDummySystemToken() domain.SystemToken {
 	createdAt := time.Now()
 	return domain.SystemToken{
-		ID: uuid.New(),
-		Name: "SystemToken Test",
+		ID:          uuid.New(),
+		Name:        "SystemToken Test",
 		AuthorEmail: "joe.doe@email.com",
-		CreatedAt: &createdAt,
-		Revoked: false,
+		CreatedAt:   &createdAt,
+		Revoked:     false,
 	}
 }
-

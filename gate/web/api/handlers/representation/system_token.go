@@ -27,7 +27,7 @@ type PageSystemTokenResponse struct {
 	Page       int                   `json:"page"`
 	Size       int                   `json:"size"`
 	Last       bool                  `json:"last"`
-	TotalPages int                   ` json:"totalPages"`
+	TotalPages int                   `json:"totalPages"`
 }
 
 func (systemTokenRequest SystemTokenRequest) RequestToDomain(author string) domain.SystemToken {

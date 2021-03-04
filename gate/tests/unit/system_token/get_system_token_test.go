@@ -22,7 +22,7 @@ func (st *SystemTokenSuite) TestErrorGetByIDNotFound() {
 	systemToken := getDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).
-		Return(systemToken, logging.NewError("Not found error", logging.CustomError{} ,  logging.NotFoundError, nil))
+		Return(systemToken, logging.NewError("Not found error", logging.CustomError{}, logging.NotFoundError, nil))
 	result, err := st.getSystemToken.Execute(systemToken.ID)
 
 	require.Error(st.T(), err)

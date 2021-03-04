@@ -16,8 +16,8 @@ import (
 
 type server struct {
 	persistenceManager persistenceManager
-	httpServer     *echo.Echo
-	enforcer *casbin.Enforcer
+	httpServer         *echo.Echo
+	enforcer           *casbin.Enforcer
 }
 
 type customBinder struct{}
@@ -28,8 +28,8 @@ type CustomValidator struct {
 
 func newServer(pm persistenceManager) (server, error) {
 	return server{
-		persistenceManager:   pm,
-		httpServer: createHttpServerInstance(),
+		persistenceManager: pm,
+		httpServer:         createHttpServerInstance(),
 	}, nil
 }
 

@@ -14,7 +14,7 @@ func (pg Page) Offset() int {
 }
 
 func (pg Page) IsLast() bool {
-	return pg.PageNumber+ 1 >= pg.TotalPages()
+	return pg.PageNumber+1 >= pg.TotalPages()
 }
 
 func (pg Page) TotalPages() int {
