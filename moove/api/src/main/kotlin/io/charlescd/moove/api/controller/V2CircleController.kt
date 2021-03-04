@@ -18,19 +18,17 @@ package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.circle.*
-<<<<<<< percentage-strategy
-import io.charlescd.moove.application.circle.request.*
-import io.charlescd.moove.application.circle.response.*
-=======
 import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
+import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageRequest
 import io.charlescd.moove.application.circle.request.PatchCircleRequest
+import io.charlescd.moove.application.circle.request.PatchCirclePercentageRequest
 import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
 import io.charlescd.moove.application.circle.response.CircleComponentResponse
 import io.charlescd.moove.application.circle.response.CircleHistoryResponse
 import io.charlescd.moove.application.circle.response.CircleResponse
+import io.charlescd.moove.application.circle.response.CirclePercentageResponse
 import io.charlescd.moove.application.circle.response.IdentifyCircleResponse
->>>>>>> main
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam

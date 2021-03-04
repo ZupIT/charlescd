@@ -338,12 +338,8 @@ class JdbcCircleRepository(
                 """
         )
 
-<<<<<<< percentage-strategy
         if (isPercentage != null && isPercentage) statement.append("AND MATCHER_TYPE= 'PERCENTAGE'")
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
-=======
-        name?.let { statement.appendln("AND circles.name ILIKE ? ") }
->>>>>>> main
         statement.appendln("AND circles.workspace_id = ?")
         statement.appendln("ORDER BY circles.name")
 

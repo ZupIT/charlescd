@@ -36,6 +36,7 @@ public class KeyMetadata {
 
     private Boolean isDefault;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer percentage;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
