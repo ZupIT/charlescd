@@ -87,39 +87,6 @@ class CredentialConfigurationServiceUnitTest {
     )
 
     @Test
-    fun `when creating spinnaker cd configuration, method should return the correct CredentialConfigurationRepresentation`() {
-
-        val createdAt = LocalDateTime.now()
-        val incomingRequestConfigData =
-            CreateSpinnakerCdConfigurationData("account", "git-account", "namespace", "http://my-spinnaker.com")
-        val incomingRequest = CreateSpinnakerCdConfigurationRequest(incomingRequestConfigData, "name")
-        val deployResponse = CreateDeployCdConfigurationResponse("id", "name", "authorId", "workspaceId", createdAt)
-        val workspaceId = "workspaceId"
-        val user = User(
-            name = "userName",
-            id = "authorId",
-            email = "user@email.com.br",
-            photoUrl = "www.google.com.br",
-            isRoot = false,
-            createdAt = LocalDateTime.now()
-        )
-        val deployRequest = incomingRequest.toDeployRequest(user)
-        val expectedResponse = CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
-
-        every {
-            deployApi.createCdConfiguration(deployRequest, workspaceId)
-        } returns deployResponse
-
-        every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
-        } returns user
-
-        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
-
-        assertEquals(expectedResponse, credentialConfiguration)
-    }
-
-    @Test
     fun `when creating octopipe cd configuration, method should return the correct CredentialConfigurationRepresentation`() {
 
         val createdAt = LocalDateTime.now()

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type"
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = CreateSpinnakerCdConfigurationRequest::class, name = "SPINNAKER"),
     JsonSubTypes.Type(value = CreateOctopipeCdConfigurationRequest::class, name = "OCTOPIPE")
 )
 abstract class CreateCdConfigurationRequest(
@@ -31,6 +30,5 @@ abstract class CreateCdConfigurationRequest(
 )
 
 enum class CdTypeEnum {
-    SPINNAKER,
     OCTOPIPE
 }
