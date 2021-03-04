@@ -71,19 +71,6 @@ interface Labels {
   circleId: string
 }
 
-interface Spec {
-  host?: string
-  subsets?: Subset[]
-  hosts?: string[]
-  http?: Http[]
-  gateways?: string[]
-}
-
-interface ManifestMetadata {
-  name: string
-  namespace: string
-}
-
 export interface Http {
   match?: Match[]
   route: Route[]
@@ -92,13 +79,6 @@ export interface Http {
 export interface Subset {
   labels: Labels
   name: string
-}
-
-export interface K8sManifest {
-  apiVersion: string
-  kind: string
-  metadata: ManifestMetadata
-  spec: Spec
 }
 
 export type KubernetesManifest = KubernetesObject
