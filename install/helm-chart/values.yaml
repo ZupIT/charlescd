@@ -306,7 +306,7 @@ keycloak:
     user: keycloak
     password: DCWYW66Mq2ca6w8u
   charlesHost: *hostGlobal
-  fullnameOverride: keycloak
+  fullnameOverride: charlescd-keycloak
   extraEnv: |
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"
