@@ -342,7 +342,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(metricConfigurationId, workspace.id)
-        0 * deployService.getCdConfiguration(workspace.id, metricConfigurationId)
+        0 * butlerConfigurationRepository.exists(_, _)
         1 * metricConfigurationRepository.exists(metricConfigurationId, workspace.id) >> true
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -354,7 +354,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.status == workspace.status
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
-            assert workspaceUpdated.cdConfigurationId == workspace.cdConfigurationId
+            assert workspaceUpdated.butlerConfigurationId == workspace.butlerConfigurationId
             assert workspaceUpdated.metricConfigurationId == metricConfigurationId
         }
     }
@@ -375,7 +375,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, workspace.gitConfigurationId)
         0 * villagerService.checkIfRegistryConfigurationExists(workspace.registryConfigurationId, workspace.id)
-        0 * deployService.getCdConfiguration(workspace.id, workspace.cdConfigurationId)
+        0 * butlerConfigurationRepository.find(_, _)
         1 * metricConfigurationRepository.exists(metricConfigurationId, workspace.id) >> true
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -386,7 +386,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.author == workspace.author
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
-            assert workspaceUpdated.cdConfigurationId == workspace.cdConfigurationId
+            assert workspaceUpdated.butlerConfigurationId == workspace.butlerConfigurationId
             assert workspaceUpdated.metricConfigurationId == metricConfigurationId
             assert workspaceUpdated.status == WorkspaceStatusEnum.COMPLETE
         }
