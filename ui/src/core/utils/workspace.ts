@@ -43,7 +43,6 @@ export const saveWorkspace = (workspace: Workspace) => {
   clearWorkspace();
 
   if (workspace) {
-    console.log('workspace', workspace);
     localStorage.setItem(WORKSPACE_KEY, JSON.stringify(workspace));
   }
 };
