@@ -91,7 +91,7 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
         assert response.content[0].circleMatcherUrl == workspace.circleMatcherUrl
         assert response.content[0].registryConfiguration == null
         assert response.content[0].gitConfiguration == null
-        assert response.content[0].cdConfiguration == null
+        assert response.content[0].butlerConfiguration == null
         assert response.content[0].createdAt == workspace.createdAt
         assert response.content[0].authorId == workspace.author.id
         assert response.totalPages == 1
