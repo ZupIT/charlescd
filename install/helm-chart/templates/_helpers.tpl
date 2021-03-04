@@ -123,7 +123,7 @@ env:
   value: "{{ .RangeContext.keycloak.realm }}"
 {{ if .ChartContext.Values.keycloak.enabled }}
 - name: KEYCLOAK_SERVER_URL
-  value: "http://{{ .ChartContext.Release.Name }}-keycloak-http/keycloak/auth"
+  value: "http://keycloak-http/keycloak/auth"
 {{ else }}
 - name: KEYCLOAK_SERVER_URL
   value: "{{ .RangeContext.keycloak.host}}"
