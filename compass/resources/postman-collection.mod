@@ -98,7 +98,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginSrc\": \"{{pluginSrc}}\",\n    \"healthy\": true,\n    \"data\": {\n        \"url\": \"http://35.238.107.172:9090\"\n    }\n}",
+							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginSrc\": \"{{pluginSrc}}\",\n    \"data\": {\n        \"url\": \"http://35.238.107.172:9090\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"

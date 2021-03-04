@@ -20,7 +20,6 @@ import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Menu from 'core/components/Menu';
 import Can from 'containers/Can';
-import { Link as LinkRouter } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { menuFilterItems, CIRCLE_MATCHER_TAB } from '../constants';
 import { CIRCLE_STATUS } from '../hooks';
@@ -61,10 +60,7 @@ const CirclesFilter = ({ status, onSearch, onSelect, children }: Props) => {
           </LabeledIcon>
         </Menu>
         <Styled.A onClick={() => goToCircleComparison(CIRCLE_MATCHER_TAB)}>
-          <Styled.Icon name="circle-matcher" color="dark" size="15px" />
-        </Styled.A>
-        <Styled.A as={LinkRouter} to={routes.circlesMetrics}>
-          <Styled.Icon name="activity" color="dark" />
+          <Styled.Icon name="circle-matcher" color="dark" size="15px" title="circle matcher" />
         </Styled.A>
       </Styled.Actions>
       <Styled.SearchInput resume onSearch={onSearch} />

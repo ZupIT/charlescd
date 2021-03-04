@@ -64,7 +64,7 @@ data:
                   - match:
                       prefix: "/keycloak"
                     route:
-                      cluster: charlescd-keycloak-http
+                      cluster: {{ .Release.Name }}-keycloak-http
                     typed_per_filter_config:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
@@ -183,13 +183,13 @@ data:
                     address: charlescd-circle-matcher
                     port_value: 8080
       {{- end}}
-      - name: charlescd-keycloak-http
+      - name: {{ .Release.Name }}-keycloak-http
         connect_timeout: 2.00s
         type: strict_dns
         lb_policy: round_robin
         http_protocol_options: {}
         load_assignment:
-          cluster_name: charlescd-keycloak-http
+          cluster_name: {{ .Release.Name }}-keycloak-http
           endpoints:
           - lb_endpoints:
             - endpoint:

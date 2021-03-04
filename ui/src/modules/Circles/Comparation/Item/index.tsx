@@ -43,7 +43,6 @@ import LayerName from './Layer/Name';
 import LayerSegments from './Layer/Segments';
 import LayerRelease from './Layer/Release';
 import LayerComponents from './Layer/Components';
-import LayerMetrics from './Layer/Metrics';
 import LayerMetricsGroups from './Layer/MetricsGroups';
 import CreateSegments from './CreateSegments';
 import MetricsGroups from './MetricsGroups';
@@ -341,9 +340,6 @@ const CirclesComparationItem = ({
         onClickCreate={() => setActiveSection(SECTIONS.GROUP_METRICS)}
       />
       {renderComponents()}
-      {!isDefaultCircle(circle?.name) && circle?.deployment && (
-        <LayerMetrics id={id} />
-      )}
     </>
   );
 

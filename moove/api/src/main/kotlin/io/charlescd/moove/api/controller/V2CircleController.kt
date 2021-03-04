@@ -18,8 +18,19 @@ package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.circle.*
+<<<<<<< percentage-strategy
 import io.charlescd.moove.application.circle.request.*
 import io.charlescd.moove.application.circle.response.*
+=======
+import io.charlescd.moove.application.circle.request.CreateCircleRequest
+import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
+import io.charlescd.moove.application.circle.request.PatchCircleRequest
+import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
+import io.charlescd.moove.application.circle.response.CircleComponentResponse
+import io.charlescd.moove.application.circle.response.CircleHistoryResponse
+import io.charlescd.moove.application.circle.response.CircleResponse
+import io.charlescd.moove.application.circle.response.IdentifyCircleResponse
+>>>>>>> main
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -102,7 +113,7 @@ class V2CircleController(
         @PathVariable(name = "id") id: String,
         @RequestBody @Valid request: PatchCircleRequest
     ): CircleResponse {
-        return this.patchCircleInteractor.execute(id, request)
+        return this.patchCircleInteractor.execute(id, request, workspaceId)
     }
 
     @ApiOperation(value = "Delete Circle")
