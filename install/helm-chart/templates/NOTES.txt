@@ -1,0 +1,6 @@
+CharlesCD has been installed/upgraded
+
+{{- if .Values.keycloak.enabled }}
+### Warning: You are using the keycloak idm provided with Charles
+### Remind to change keycloak default admin and charlesadmin@admin password at {{ .Values.keycloakHost }}/auth
+{{- end }}

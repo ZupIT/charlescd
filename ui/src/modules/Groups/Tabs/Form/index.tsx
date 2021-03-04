@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Text from 'core/components/Text';
 import ContentIcon from 'core/components/ContentIcon';
 import InputTitle from 'core/components/Form/InputTitle';
@@ -32,8 +32,12 @@ interface Props {
   onAddUser: () => void;
 }
 
+type FormValues = {
+  name: string;
+}
+
 const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
-  const { register, handleSubmit, errors } = useForm({ mode: 'onChange' });
+  const { register, handleSubmit, errors } = useForm<FormValues>({ mode: 'onChange' });
   const [userCounter, setUserCounter] = useState(0);
 
   useEffect(() => {
@@ -74,6 +78,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
               required: isRequired(),
               maxLength: maxLength()
             })}
+            isDisabled={!!errors.name}
             defaultValue={userGroup?.name}
             onClickSave={handleSubmit(handleSaveClick)}
           />

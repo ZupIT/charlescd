@@ -8,8 +8,6 @@ p,maintenance_write,/api/v1/plugins,GET
 p,(circles_write)|(circles_read)|(maintenance_write),/api/v1/circles/{id}/metrics-groups,GET
 p,(circles_write)|(circles_read)|(maintenance_write),/api/v1/datasources/{id}/metrics,GET
 p,(circles_write)|(maintenance_write),/api/v1/datasources/test-connection,POST
-p,(circles_write)|(circles_read)|(maintenance_write),/api/v1/application-health/{id}/components,GET
-p,(circles_write)|(circles_read)|(maintenance_write),/api/v1/application-health/{id}/components/health,GET
 p,(circles_write)|(maintenance_write),/api/v1/metrics-groups/{id}/metrics,POST
 p,(circles_write)|(maintenance_write),/api/v1/metrics-groups/{id}/metrics/{metricId},(PUT)|(DELETE)
 p,(circles_write)|(circles_read)|(maintenance_write),/api/v1/metrics-groups,GET

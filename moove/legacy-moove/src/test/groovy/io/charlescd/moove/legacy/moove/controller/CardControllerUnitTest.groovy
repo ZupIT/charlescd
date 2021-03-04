@@ -174,6 +174,4 @@ class CardControllerUnitTest extends Specification {
         1 * service.addComment(id, request, workspaceId, authorization)
         notThrown()
     }
-
-
 }

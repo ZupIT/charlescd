@@ -120,8 +120,8 @@ class JdbcModuleRepository(
         return findAllModulesByWorkspaceId(workspaceId, name, pageRequest)
     }
 
-    override fun findByIds(ids: List<String>): List<Module> {
-        return findModulesByIdList(ids)
+    override fun findByIdsAndWorkpaceId(ids: List<String>, workspaceId: String): List<Module> {
+        return findModulesByIdList(ids, workspaceId)
     }
 
     private fun deleteModule(id: String, workspaceId: String) {
@@ -290,10 +290,10 @@ class JdbcModuleRepository(
             })
     }
 
-    private fun findModulesByIdList(ids: List<String>): List<Module> {
+    private fun findModulesByIdList(ids: List<String>, workspaceId: String): List<Module> {
         val statement = StringBuilder(BASE_QUERY_STATEMENT)
 
-        appendParameters(statement, ids)
+        appendParameters(statement, ids, workspaceId)
 
         return this.jdbcTemplate.query(
             statement.toString(),
@@ -359,9 +359,9 @@ class JdbcModuleRepository(
         )
     }
 
-    private fun appendParameters(statement: StringBuilder, ids: List<String>) {
+    private fun appendParameters(statement: StringBuilder, ids: List<String>, workspaceId: String) {
         statement.appendln(
-            "AND modules.id IN(${ids.joinToString(separator = ",") { "'$it'" }})"
+            "AND modules.workspace_id = '$workspaceId' AND modules.id IN(${ids.joinToString(separator = ",") { "'$it'" }})"
         )
     }
 
