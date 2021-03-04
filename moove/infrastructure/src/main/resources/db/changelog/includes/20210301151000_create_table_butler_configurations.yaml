@@ -58,3 +58,7 @@ databaseChangeLog:
                   type: varchar(64)
                   constraints:
                     nullable: false
+        - addUniqueConstraint:
+            columnNames: butler_url, namespace
+            constraintName: unique_butler_configurations_butler_url_namespace
+            tableName: butler_configurations
