@@ -203,7 +203,18 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    resources: {}
+    hpa: true
+    autoscaling:
+      minReplicas: 3
+      maxReplicas: 10
+      targetMemoryUtilizationPercentage: 80
+    resources:
+      limits:
+        cpu: 500m
+        memory: 384Mi
+      requests:
+        cpu: 500m
+        memory: 384Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}

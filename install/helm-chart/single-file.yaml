@@ -16,7 +16,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -32,7 +32,7 @@ kind: ServiceAccount
 metadata:
   annotations:
   name: charlescd-octopipe
-  namespace: charles
+  namespace: charlescd
 ---
 # Source: charlescd/charts/postgresql/templates/secrets.yaml
 apiVersion: v1
@@ -46,15 +46,15 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "OFUyUkNuMG9DWg=="
-  postgresql-password: "SURDMXFQS3BHSw=="
+  postgresql-postgres-password: "cElpb0d2ZzY5Rw=="
+  postgresql-password: "R2VOWWRmdFh2cA=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
   name: charlescd-redis
-  namespace: "charles"
+  namespace: "charlescd"
   labels:
     app: redis
     chart: redis-12.6.0
@@ -183,7 +183,7 @@ data:
                       local token = request_handle:headers():get("authorization")
                       local request = require("luajit-init")
                       local response = request.send(
-                        "http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
+                        "http://keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
                         {
                           headers = {
                             authorization = token
@@ -274,7 +274,7 @@ data:
             - endpoint:
                 address:
                   socket_address:
-                    address: charlescd-keycloak-http
+                    address: keycloak-http
                     port_value: 80
       
       - name: charlescd-compass
@@ -1741,7 +1741,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: charlescd-keycloak-startup
+  name: keycloak-startup
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -1777,7 +1777,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: charlescd-redis-scripts
-  namespace: "charles"
+  namespace: "charlescd"
   labels:
     app: redis
     chart: redis-12.6.0
@@ -1808,7 +1808,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: charlescd-redis
-  namespace: "charles"
+  namespace: "charlescd"
   labels:
     app: redis
     chart: redis-12.6.0
@@ -1836,7 +1836,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: charlescd-redis-health
-  namespace: "charles"
+  namespace: "charlescd"
   labels:
     app: redis
     chart: redis-12.6.0
@@ -5757,7 +5757,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: charlescd-octopipe-role-charles
+  name: charlescd-octopipe-role-charlescd
 rules:
 - apiGroups:
   - "*"
@@ -5784,22 +5784,22 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: charlescd-ingress-nginx
-    namespace: charles
+    namespace: charlescd
 ---
 # Source: charlescd/templates/cluster-role-binding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   annotations:
-  name: charlescd-octopipe-role-binding-charles
+  name: charlescd-octopipe-role-binding-charlescd
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: charlescd-octopipe-role-charles
+  name: charlescd-octopipe-role-charlescd
 subjects:
 - kind: ServiceAccount
   name: charlescd-octopipe
-  namespace: charles
+  namespace: charlescd
 ---
 # Source: charlescd/charts/ingress-nginx/templates/controller-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -5914,7 +5914,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: charlescd-ingress-nginx
-    namespace: charles
+    namespace: charlescd
 ---
 # Source: charlescd/charts/envoy/templates/envoy-service.yml
 apiVersion: v1
@@ -5989,7 +5989,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-headless
+  name: keycloak-headless
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6013,7 +6013,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-http
+  name: keycloak-http
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6097,7 +6097,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: charlescd-redis-headless
-  namespace: "charles"
+  namespace: "charlescd"
   labels:
     app: redis
     chart: redis-12.6.0
@@ -6119,7 +6119,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: charlescd-redis-master
-  namespace: "charles"
+  namespace: "charlescd"
   labels:
     app: redis
     chart: redis-12.6.0
@@ -6409,7 +6409,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-butler
-  namespace: charles
+  namespace: charlescd
   labels:
     app: charlescd-butler
     version: charlescd-butler
@@ -6451,13 +6451,13 @@ spec:
           - name: MOOVE_URL
             value: "http://charlescd-moove:8080"
           - name: DARWIN_NOTIFICATION_URL
-            value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
+            value: "http://charlescd-butler.charlescd.svc.cluster.local:3000/notifications"
           - name: DARWIN_CALLBACK
-            value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
+            value: "http://charlescd-butler.charlescd.svc.cluster.local:3000/notifications"
           - name: OCTOPIPE_URL
             value: "http://charlescd-octopipe:8080"
           - name: BUTLER_URL
-            value: "http://charlescd-butler.charles.svc.cluster.local:3000"
+            value: "http://charlescd-butler.charlescd.svc.cluster.local:3000"
           - name: ENCRYPTION_KEY
             valueFrom:
               secretKeyRef:
@@ -6487,7 +6487,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-circle-matcher
-  namespace: charles
+  namespace: charlescd
   labels:
     app: charlescd-circle-matcher
     version: charlescd-circle-matcher
@@ -6511,10 +6511,8 @@ spec:
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: redis-standalone
-          
           - name: SPRING_REDIS_HOST
             value: charlescd-redis-master
-          
           - name: SPRING_REDIS_PORT
             value: "6379"
           - name: SPRING_REDIS_PASSWORD
@@ -6540,14 +6538,19 @@ spec:
               port: 8080
             initialDelaySeconds: 120
           resources:
-              {}
+              limits:
+                cpu: 500m
+                memory: 384Mi
+              requests:
+                cpu: 500m
+                memory: 384Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-compass
-  namespace: charles
+  namespace: charlescd
   labels:
     app: charlescd-compass
     version: charlescd-compass
@@ -6644,7 +6647,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-moove
-  namespace: charles
+  namespace: charlescd
   labels:
     app: charlescd-moove
     version: charlescd-moove
@@ -6684,10 +6687,10 @@ spec:
             value: "charlescd"
           
           - name: KEYCLOAK_SERVER_URL
-            value: "http://charlescd-keycloak-http/keycloak/auth"
+            value: "http://keycloak-http/keycloak/auth"
           
           - name: KEYCLOAK_PUBLIC_CLIENT_ID
-            value: "realm-charlescd"
+            value: "charlescd-client"
           - name: KEYCLOAK_CLIENT_ID
             value: "realm-charlescd"
           - name: RATELIMIT_CAPACITY
@@ -6731,7 +6734,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-octopipe
-  namespace: charles
+  namespace: charlescd
   labels:
     app: charlescd-octopipe
     version: charlescd-octopipe
@@ -6786,7 +6789,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-ui
-  namespace: charles
+  namespace: charlescd
   labels:
     app: charlescd-ui
     version: charlescd-ui
@@ -6848,7 +6851,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-villager
-  namespace: charles
+  namespace: charlescd
   labels:
     app: charlescd-villager
     version: charlescd-villager
@@ -6909,11 +6912,34 @@ spec:
           resources:
               {}
 ---
+# Source: charlescd/templates/hpa.yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: charlescd-circle-matcher
+  labels:
+    app: charlescd-circle-matcher
+    version: charlescd-circle-matcher
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: charlescd-circle-matcher
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
 # Source: charlescd/charts/keycloak/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6926,14 +6952,14 @@ spec:
       app.kubernetes.io/name: keycloak
       app.kubernetes.io/instance: charlescd
   replicas: 1
-  serviceName: charlescd-keycloak-headless
+  serviceName: keycloak-headless
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       annotations:
-        checksum/config-startup: a97b69abc0b894b66147967e7c5977df317359812fef3dd69f46d380b662d817
+        checksum/config-startup: a09cd3a55fe67454f509ec623db5505a7f5a26a87f77b5235e70e02cc86a45da
         checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
       labels:
         app.kubernetes.io/name: keycloak
@@ -7021,7 +7047,7 @@ spec:
               mountPath: "/realm/"
               readOnly: false
             
-      serviceAccountName: charlescd-keycloak
+      serviceAccountName: keycloak
       securityContext:
         fsGroup: 1000
       enableServiceLinks: true
@@ -7057,7 +7083,7 @@ spec:
       volumes:
         - name: startup
           configMap:
-            name: charlescd-keycloak-startup
+            name: keycloak-startup
             defaultMode: 0555
             items:
               - key: contextPath.cli
@@ -7113,7 +7139,7 @@ spec:
                     app.kubernetes.io/instance: charlescd
                     app.kubernetes.io/component: primary
                 namespaces:
-                  - charles
+                  - charlescd
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
@@ -7221,7 +7247,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: charlescd-redis-master
-  namespace: "charles"
+  namespace: "charlescd"
   labels:
     app: redis
     chart: redis-12.6.0
@@ -7242,9 +7268,9 @@ spec:
         release: charlescd
         role: master
       annotations:
-        checksum/health: de4b56cd06533ea0212330f08974c4a88c2af28012401bdc4f465a98e3d22f79
-        checksum/configmap: 82bd7784b1b3d4c09a0ca0731226e3c773fdffef6da3a1255b025b83506b342b
-        checksum/secret: b250dfc5d956ed4a8c05d5f818c114b96b8e809b91551f0151e9ce197a5e6585
+        checksum/health: 2a1e40aeb4aee854d58bfb27218c7aee2107a06e63f6e309d4aed4dcecb17bd7
+        checksum/configmap: bd6b2484e2f5347f750ceaed7d4709a923cc22fc7b77fb5685afb39ece40efc4
+        checksum/secret: 3c9787a4976693f3156eb48166c8c87afc7ab980f21cd78715dc07a94099560d
     spec:
       
       securityContext:
@@ -7398,7 +7424,7 @@ webhooks:
       - v1beta1
     clientConfig:
       service:
-        namespace: charles
+        namespace: charlescd
         name: charlescd-ingress-nginx-controller-admission
         path: /networking/v1beta1/ingresses
 ---
@@ -7464,7 +7490,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: charlescd-ingress-nginx-admission
-    namespace: charles
+    namespace: charlescd
 ---
 # Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -7512,7 +7538,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: charlescd-ingress-nginx-admission
-    namespace: charles
+    namespace: charlescd
 ---
 # Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
 apiVersion: batch/v1
