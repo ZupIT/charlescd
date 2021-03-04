@@ -195,7 +195,7 @@ test("Should render submit button", async () => {
     </AllTheProviders>
   );
 
-  await act(() => userEvent.click(screen.getByTestId('button-default-undefined')));
+  await act(async () => userEvent.click(screen.getByTestId('button-default-undefined')));
   
   expect(updateModuleSpy).toHaveBeenCalled();
 });
