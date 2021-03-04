@@ -138,7 +138,6 @@ func (s *SuiteMetric) TestSaveMetric() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -180,7 +179,6 @@ func (s *SuiteMetric) TestUpdateMetric() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -243,7 +241,6 @@ func (s *SuiteMetric) TestFindMetricById() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -331,7 +328,6 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -399,7 +395,6 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
