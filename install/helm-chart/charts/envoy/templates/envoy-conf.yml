@@ -87,6 +87,13 @@ data:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
                   {{- end}}
+                  {{ if .Values.gate.enabled }}
+                  - match:
+                      prefix: "/gate/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-gate
+                  {{- end}}
               http_filters:
               {{ if .Values.cors.enabled }}
               - name: envoy.filters.http.cors
@@ -211,6 +218,22 @@ data:
                 address:
                   socket_address:
                     address: charlescd-compass
+                    port_value: 8080
+      {{- end}}
+      {{ if .Values.gate.enabled }}
+      - name: charlescd-gate
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-gate
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-gate
                     port_value: 8080
       {{- end}}
     admin:

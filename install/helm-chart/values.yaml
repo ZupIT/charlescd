@@ -272,6 +272,39 @@ CharlesApplications:
         user: charlescd_moove
         password: 7Qs2KuM9gYzw48BS
 
+  gate:
+    enabled: true
+    name: charlescd-gate
+    sidecarIstio:
+      enabled: true
+    healthCheck:
+      path: /health
+      port: 8080
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-gate
+    imagePullSecrets: false
+    pullPolicy: Always
+    service:
+      name: charlescd-gate
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    postgresqlWait: true
+    #gate envs
+    database:
+      <<: *postgresInfo
+      user: charlescd_gate
+      password: Z2F0ZQo=
+      name: charlescd_gate
+    queriesPath: ./internal/repository/queries
 
 postgresql:
   enabled: true
