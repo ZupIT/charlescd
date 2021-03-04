@@ -16,7 +16,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "ckU3SzZqWGJSZQ=="
-  postgresql-password: "VmprdjhMeGZxSw=="
+  postgresql-postgres-password: "ZjJqNGJpd0wwRQ=="
+  postgresql-password: "UXRTeEpSd2NoZQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -1741,7 +1741,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: charlescd-keycloak-startup
+  name: keycloak-startup
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -5989,7 +5989,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-headless
+  name: keycloak-headless
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6013,7 +6013,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-http
+  name: keycloak-http
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6939,7 +6939,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6952,14 +6952,14 @@ spec:
       app.kubernetes.io/name: keycloak
       app.kubernetes.io/instance: charlescd
   replicas: 1
-  serviceName: charlescd-keycloak-headless
+  serviceName: keycloak-headless
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       annotations:
-        checksum/config-startup: a97b69abc0b894b66147967e7c5977df317359812fef3dd69f46d380b662d817
+        checksum/config-startup: a09cd3a55fe67454f509ec623db5505a7f5a26a87f77b5235e70e02cc86a45da
         checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
       labels:
         app.kubernetes.io/name: keycloak
@@ -7047,7 +7047,7 @@ spec:
               mountPath: "/realm/"
               readOnly: false
             
-      serviceAccountName: charlescd-keycloak
+      serviceAccountName: keycloak
       securityContext:
         fsGroup: 1000
       enableServiceLinks: true
@@ -7083,7 +7083,7 @@ spec:
       volumes:
         - name: startup
           configMap:
-            name: charlescd-keycloak-startup
+            name: keycloak-startup
             defaultMode: 0555
             items:
               - key: contextPath.cli
