@@ -22,7 +22,8 @@ export enum ACTION_TYPES {
   loadedWorkspaces = 'WORKSPACES/LOADED_WORKSPACES',
   loadedWorkspace = 'WORKSPACES/LOADED_WORKSPACE',
   statusWorkspace = 'WORKSPACES/STATUS',
-  resetContent = 'WORKSPACES/RESET_CONTENT'
+  resetContent = 'WORKSPACES/RESET_CONTENT',
+  loadedWorkspacePermissions = 'WORKSPACES/LOADED_WORKSPACE_PERMISSIONS'
 }
 
 interface LoadedWorkspacesActionType {
@@ -38,6 +39,11 @@ interface LoadedWorkspaceActionType {
 interface StatusWorkspaceActionType {
   type: typeof ACTION_TYPES.statusWorkspace;
   payload: FetchStatuses;
+}
+
+interface LoadedWorkspacePermissionActionType {
+  type: typeof ACTION_TYPES.loadedWorkspacePermissions;
+  payload: string[];
 }
 
 interface ResetContentActionType {
@@ -58,6 +64,13 @@ export const loadedWorkspaceAction = (
   payload
 });
 
+export const loadedWorkspacePermissionsAction = (
+  payload: string[]
+): LoadedWorkspacePermissionActionType => ({
+  type: ACTION_TYPES.loadedWorkspacePermissions,
+  payload
+});
+
 export const statusWorkspaceAction = (
   payload: FetchStatuses
 ): WorkspacesActionTypes => ({
@@ -73,4 +86,5 @@ export type WorkspacesActionTypes =
   | LoadedWorkspacesActionType
   | LoadedWorkspaceActionType
   | StatusWorkspaceActionType
-  | ResetContentActionType;
+  | ResetContentActionType
+  | LoadedWorkspacePermissionActionType;

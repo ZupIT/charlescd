@@ -25,47 +25,68 @@ import { Workspace } from './interfaces/Workspace';
 import { isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
 
-export const useWorkspaces = (): {
-  getWorkspaces: Function,
+type WorkspaceResponse = {
   workspaces: Workspace[],
   status: FetchStatuses,
-  last: any
+  last: boolean
+}
+
+export const useWorkspaces = (): {
+  getWorkspaces: Function,
+  resetWorkspaces: Function,
+  data: WorkspaceResponse,
 } => {
   const findWorkspaces = useFetchData<WorkspacePagination>(findAll);
-  const findWorkspacesByUser = useFetchData<WorkspacePagination>(findWorkspacesByUserId);
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
-  const [status, setStatus] = useState<FetchStatuses>('idle');
-  const [last, setLast] = useState<boolean>(false);
+  const findWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
+  const reset = useRef<boolean>(false);
+  const [data, setData] = useState<WorkspaceResponse>({
+    workspaces: [],
+    status: 'idle',
+    last: true
+  });
+
+  const resetWorkspaces = () => reset.current = true;
 
   const getWorkspaces = useCallback(
     async (name: string, page: string) => {
       try {
-        setStatus('pending');
+        setData({ ...data, status: 'pending' });
+
         if (isRoot()) {
           const res = await findWorkspaces({ name, page });
-          setWorkspaces([...workspaces, ...res.content]);
-          setLast(res?.last);
+          setData({
+            workspaces: reset.current
+              ? res.content
+              : [...data.workspaces, ...res.content],
+            last: res.last,
+            status: 'resolved'
+          });
 
         } else {
           const userId = getProfileByKey('id');
           const res = await findWorkspacesByUser(userId, { name });
-          setWorkspaces([...workspaces, ...res?.content]);
-          setLast(res?.last);
+          setData({
+            workspaces: reset.current ? res : [...data.workspaces, ...res],
+            last: true,
+            status: 'resolved'
+          });
 
         }
-        setStatus('resolved');
+
+        reset.current = false;
+
       }
       catch (e) {
-        setStatus('rejected');
+        setData({ ...data, status: 'rejected' });
+      
       }
 
-    }, [findWorkspaces, findWorkspacesByUser, workspaces]);
-
+    }, [findWorkspaces, findWorkspacesByUser, data]);
+  
   return {
     getWorkspaces,
-    workspaces,
-    status,
-    last
+    resetWorkspaces,
+    data
   }
 };
 

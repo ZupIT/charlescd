@@ -18,7 +18,7 @@ import React, { useEffect } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
 import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
-import { isRoot, hasPermission } from 'core/utils/auth';
+import { hasPermission } from 'core/utils/auth';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
@@ -35,25 +35,7 @@ const PrivateRoute = ({
   render,
   ...rest
 }: Props) => {
-  const workspaceId = getWorkspaceId();
-  const { getWorkspace } = useWorkspace();
-  const { item: workspace, status } = useGlobalState(
-    ({ workspaces }) => workspaces
-  );
-
-  useEffect(() => {
-    if (
-      workspaceId &&
-      hasPermission('maintenance_write', workspace) &&
-      (status === 'idle' ||
-        (status === 'resolved' && workspaceId !== workspace?.id))
-    ) {
-      getWorkspace(workspaceId);
-    }
-  }, [workspaceId, getWorkspace, status, workspace]);
-
-  const isAuthorizedByUser =
-    allowedRoute || isAllowed(allowedRoles, workspace) || isRoot();
+  const isAuthorizedByUser = allowedRoute || isAllowed(allowedRoles);
 
   return (
     <Route

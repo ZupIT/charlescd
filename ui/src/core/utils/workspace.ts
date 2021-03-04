@@ -18,7 +18,24 @@ import { Workspace } from 'modules/Users/interfaces/User';
 
 const WORKSPACE_KEY = 'workspace';
 
-export const getWorkspaceId = () => localStorage.getItem(WORKSPACE_KEY);
+export const getWorkspace = (): Workspace => {
+  const ws = {
+    id: ''
+  } as Workspace;
+
+  try {
+    const workspace : Workspace = JSON.parse(localStorage.getItem(WORKSPACE_KEY));
+    return workspace || ws;
+  
+  } catch (e) {
+    return ws;
+  }
+}
+
+export const getWorkspaceId = () => {
+  const workspace = getWorkspace();
+  return workspace.id;
+}
 
 export const clearWorkspace = () => localStorage.removeItem(WORKSPACE_KEY);
 
@@ -26,6 +43,7 @@ export const saveWorkspace = (workspace: Workspace) => {
   clearWorkspace();
 
   if (workspace) {
-    localStorage.setItem(WORKSPACE_KEY, workspace?.id);
+    console.log('workspace', workspace);
+    localStorage.setItem(WORKSPACE_KEY, JSON.stringify(workspace));
   }
 };

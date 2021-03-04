@@ -92,7 +92,7 @@ export const findUserByEmail = (email: string) => {
 export const findWorkspacesByUserId = (id: string, { name }: { name: string }) => {
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
-    name,
+    name: name || '',
     page: '0',
     sort: 'createdAt,desc'
   });
