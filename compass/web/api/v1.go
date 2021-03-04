@@ -29,8 +29,6 @@ import (
 
 	"github.com/ZupIT/charlescd/compass/web/api/v1/metric"
 
-	"github.com/ZupIT/charlescd/compass/web/api/v1/health"
-
 	"github.com/ZupIT/charlescd/compass/web/api/v1/circle"
 
 	"github.com/ZupIT/charlescd/compass/web/api/v1/datasource"
@@ -85,11 +83,6 @@ func (api *Api) newV1Api(router *mux.Router) {
 	{
 		path := "/circles"
 		s.HandleFunc(fmt.Sprintf("%s/{circleID}/metrics-groups", path), circle.ListMetricGroupInCircle(api.metricsGroupMain)).Methods("GET")
-	}
-	{
-		path := "/application-health"
-		s.HandleFunc(fmt.Sprintf("%s/{circleID}/components", path), health.Components(api.healthMain)).Methods("GET")
-		s.HandleFunc(fmt.Sprintf("%s/{circleID}/components/health", path), health.ComponentsHealth(api.healthMain)).Methods("GET")
 	}
 	{
 		path := "/plugins"
