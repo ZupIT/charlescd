@@ -9,9 +9,9 @@ type SystemToken struct {
 	ID          uuid.UUID
 	Name        string
 	Revoked     bool
-	Permissions []Permission
-	CreatedAt   time.Time
-	RevokedAt   time.Time
-	LastUsedAt  time.Time
-	Author      User
+	Permissions []Permission `gorm:"-"`
+	CreatedAt   *time.Time
+	RevokedAt   *time.Time
+	LastUsedAt  *time.Time
+	AuthorEmail string
 }
