@@ -16,15 +16,11 @@
 
 package io.charlescd.moove.legacy.moove.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.legacy.moove.api.config.DefaultLegacyErrorDecoderConfiguration
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 
@@ -95,7 +91,7 @@ class DefaultLegacyErrorDecoderConfigurationTest extends Specification {
         then:
         body.asInputStream() >> this.getArrayMessageReturnAsInputStream()
         assert exception instanceof RuntimeException
-        assert exception.message == null
+        assert exception.message == "Internal server error"
     }
 
     def "should return RunTimeException when fails to  read response"() {
