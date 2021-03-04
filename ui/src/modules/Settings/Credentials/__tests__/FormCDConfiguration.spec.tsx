@@ -18,31 +18,157 @@ import React from 'react';
 import { render, act, screen } from 'unit-test/testUtils';
 import FormCDConfiguration from '../Sections/CDConfiguration/Form';
 import userEvent from '@testing-library/user-event';
+import selectEvent from 'react-select-event';
 
-const mockOnFinish = jest.fn();
 
 test('render CD Configuration form for CharlesCD', async () => {
+  const mockOnFinish = jest.fn();
   render(
     <FormCDConfiguration onFinish={mockOnFinish}/>
   );
 
-  const radioButton = await screen.findByTestId('radio-group-cd-configuration-item-OCTOPIPE');
-  act(() => userEvent.click(radioButton));
-  
-  const input = await screen.findByTestId('input-text-name');
+  const nameCdConfiguration = await screen.findByTestId('input-text-name');
+  const namespaceCdConfiguration = await screen.findByTestId('input-text-configurationData.namespace');
+  const gitTokenCdConfiguration = await screen.findByTestId('input-text-configurationData.gitToken');
 
-  expect(input).toBeInTheDocument();
+  expect(nameCdConfiguration).toBeInTheDocument();
+  expect(namespaceCdConfiguration).toBeInTheDocument();
+  expect(gitTokenCdConfiguration).toBeInTheDocument();
+
+
+  const defaultProvider = await screen.findByTestId('radio-group-cd-configuration-provider-item-DEFAULT')
+  await act(async () => {
+    userEvent.type(nameCdConfiguration, "test")
+    userEvent.type(namespaceCdConfiguration, "test")
+    userEvent.type(gitTokenCdConfiguration, "test")
+  })
+
+  const gitProvider = await screen.findByText("Git provider")
+
+  await act(async () => selectEvent.select(gitProvider, 'GitHub'));
+
+  await act(async () =>  userEvent.click(defaultProvider))
+  
+  const buttonProvider = await screen.findByTestId('button-default-cd-configuration-save')
+  await act(async () => userEvent.click(buttonProvider))
+    
+
+  expect(mockOnFinish).toBeCalled();
 });
 
-test('render CD Configuration form for Spinnaker', async () => {
+test('Should not call mockOnFinish with empty fields (gitToken)', async () => {
+  const mockOnFinish = jest.fn();
   render(
     <FormCDConfiguration onFinish={mockOnFinish}/>
   );
 
-  const radioButton = await screen.findByTestId('radio-group-cd-configuration-item-SPINNAKER');
-  act(() => userEvent.click(radioButton));
+  const nameCdConfiguration = await screen.findByTestId('input-text-name');
+  const namespaceCdConfiguration = await screen.findByTestId('input-text-configurationData.namespace');
+  const gitTokenCdConfiguration = await screen.findByTestId('input-text-configurationData.gitToken');
 
-  const input = await screen.findByTestId('input-text-name');
+  expect(nameCdConfiguration).toBeInTheDocument();
+  expect(namespaceCdConfiguration).toBeInTheDocument();
+  expect(gitTokenCdConfiguration).toBeInTheDocument();
 
-  expect(input).toBeInTheDocument();
+
+  const defaultProvider = await screen.findByTestId('radio-group-cd-configuration-provider-item-DEFAULT')
+  await act(async () => {
+    userEvent.type(nameCdConfiguration, "test")
+    userEvent.type(namespaceCdConfiguration, "test")
+  })
+
+  const gitProvider = await screen.findByText("Git provider")
+
+  await act(async () => selectEvent.select(gitProvider, 'GitHub'));
+
+  await act(async () =>  userEvent.click(defaultProvider))
+  
+  const buttonProvider = await screen.findByTestId('button-default-cd-configuration-save')
+  await act(async () => userEvent.click(buttonProvider))
+    
+
+  expect(mockOnFinish).not.toBeCalled();
+});
+
+
+test('Should not call mockOnFinish with empty fields (AWS values)', async () => {
+  const mockOnFinish = jest.fn();
+  render(
+    <FormCDConfiguration onFinish={mockOnFinish}/>
+  );
+
+  const nameCdConfiguration = await screen.findByTestId('input-text-name');
+  const namespaceCdConfiguration = await screen.findByTestId('input-text-configurationData.namespace');
+  const gitTokenCdConfiguration = await screen.findByTestId('input-text-configurationData.gitToken');
+
+  expect(nameCdConfiguration).toBeInTheDocument();
+  expect(namespaceCdConfiguration).toBeInTheDocument();
+  expect(gitTokenCdConfiguration).toBeInTheDocument();
+
+
+  const defaultProvider = await screen.findByTestId('radio-group-cd-configuration-provider-item-EKS')
+  await act(async () => {
+    userEvent.type(nameCdConfiguration, "test")
+    userEvent.type(namespaceCdConfiguration, "test")
+    userEvent.type(gitTokenCdConfiguration, "test")
+  })
+
+  const gitProvider = await screen.findByText("Git provider")
+
+  await act(async () => selectEvent.select(gitProvider, 'GitHub'));
+
+  await act(async () =>  userEvent.click(defaultProvider))
+  
+  const buttonProvider = await screen.findByTestId('button-default-cd-configuration-save')
+  await act(async () => userEvent.click(buttonProvider))
+    
+
+  expect(mockOnFinish).not.toBeCalled();
+
+  const awsClusterNameCdConfiguration = await screen.findByTestId('input-text-configurationData.awsClusterName');
+  const awsRegionCdConfiguration = await screen.findByTestId('input-text-configurationData.awsRegion');
+
+  expect(awsClusterNameCdConfiguration).toBeInTheDocument();
+  expect(awsRegionCdConfiguration).toBeInTheDocument();
+ 
+});
+
+
+test('Should not call mockOnFinish with empty fields (Others values)', async () => {
+  const mockOnFinish = jest.fn();
+  render(
+    <FormCDConfiguration onFinish={mockOnFinish}/>
+  );
+
+  const nameCdConfiguration = await screen.findByTestId('input-text-name');
+  const namespaceCdConfiguration = await screen.findByTestId('input-text-configurationData.namespace');
+  const gitTokenCdConfiguration = await screen.findByTestId('input-text-configurationData.gitToken');
+
+  expect(nameCdConfiguration).toBeInTheDocument();
+  expect(namespaceCdConfiguration).toBeInTheDocument();
+  expect(gitTokenCdConfiguration).toBeInTheDocument();
+
+
+  const defaultProvider = await screen.findByTestId('radio-group-cd-configuration-provider-item-GENERIC')
+  await act(async () => {
+    userEvent.type(nameCdConfiguration, "test")
+    userEvent.type(namespaceCdConfiguration, "test")
+    userEvent.type(gitTokenCdConfiguration, "test")
+  })
+
+  const gitProvider = await screen.findByText("Git provider")
+
+  await act(async () => selectEvent.select(gitProvider, 'GitHub'));
+
+  await act(async () =>  userEvent.click(defaultProvider))
+  
+  const buttonProvider = await screen.findByTestId('button-default-cd-configuration-save')
+  await act(async () => userEvent.click(buttonProvider))
+    
+
+  expect(mockOnFinish).not.toBeCalled();
+
+  const genericHostCdConfiguration = await screen.findByTestId('input-text-configurationData.host');
+
+  expect(genericHostCdConfiguration).toBeInTheDocument();
 });

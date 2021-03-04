@@ -15,15 +15,15 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import useForm from 'core/hooks/useForm';
-import first from 'lodash/first';
+import { useForm } from 'react-hook-form';
+import isEmpty from 'lodash/isEmpty';
 import Button from 'core/components/Button';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import { radios, providers, gitProviders } from './constants';
+import { providers, gitProviders } from './constants';
 import { CDConfiguration } from './interfaces';
 import { Props } from '../interfaces';
 import { useCDConfiguration } from './hooks';
@@ -31,14 +31,9 @@ import Styled from './styled';
 
 const FormCDConfiguration = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingAdd, loadingSave } = useCDConfiguration();
-  const formMethods = useForm<CDConfiguration>({
-    mode: 'onChange'
-  });
-  const { control, register, errors, handleSubmit, formState: { isValid } } = formMethods;
-  const [configType, setConfigType] = useState('');
+  const { control, register, handleSubmit } = useForm<CDConfiguration>();
+  const [configType] = useState('OCTOPIPE');
   const [providerType, setProviderType] = useState('');
-  console.log(isValid);
-  console.log(errors);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -54,10 +49,6 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
       }
     });
   };
-
-  useEffect(() => {
-    if (configType === 'SPINNAKER') setProviderType('');
-  }, [configType]);
 
   const renderOthersFields = () =>
     providerType === 'GENERIC' && (
@@ -137,26 +128,6 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
     </>
   );
 
-  const renderSpinnakerFields = () => (
-    <>
-      <Form.Input
-        ref={register({ required: true })}
-        name="configurationData.url"
-        label="Enter the URL Spinnaker"
-      />
-      <Form.Input
-        ref={register({ required: true })}
-        name="configurationData.gitAccount"
-        label="Enter the git account"
-      />
-      <Form.Input
-        ref={register({ required: true })}
-        name="configurationData.account"
-        label="Enter the kubernetes account"
-      />
-    </>
-  );
-
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Text.h5 color="dark">
@@ -173,13 +144,12 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
           name="configurationData.namespace"
           label="Enter the namespace"
         />
-        {configType === first(radios).value
-          ? renderCDConfigurationFields()
-          : renderSpinnakerFields()}
+        {renderCDConfigurationFields()}
       </Styled.Fields>
       <Button.Default
         type="submit"
-        isDisabled={!isValid}
+        id="cd-configuration-save"
+        isDisabled={isEmpty(providerType)}
         isLoading={loadingAdd || loadingSave}
       >
         Save
@@ -199,15 +169,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
           description="Add your Continuous Deployment (CD) tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. Consult our documentation for further details."
         />
       </Styled.Title>
-      <Styled.Subtitle color="dark">
-        Choose witch one you want to add:
-      </Styled.Subtitle>
-      <Radio.Buttons
-        name="cd-configuration"
-        items={radios}
-        onChange={({ currentTarget }) => setConfigType(currentTarget.value)}
-      />
-      {configType && renderForm()}
+      {renderForm()}
     </Styled.Content>
   );
 };
