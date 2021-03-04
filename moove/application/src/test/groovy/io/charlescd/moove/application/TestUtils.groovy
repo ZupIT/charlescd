@@ -62,6 +62,9 @@ class TestUtils {
         return "charlesadmin@zup.com.br"
     }
 
+    static String getButlerConfigId() {
+        return "5a0d5b3f-8c28-49ab-a6d0-7b5d1296f610"
+    }
 
     static User getUser() {
         new User(
@@ -99,7 +102,7 @@ class TestUtils {
                 "http://circle-matcher.com",
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 "cc3448d8-4421-4aba-99a9-184bdabeq233",
-                null
+                butlerConfigId
         )
     }
 
@@ -120,5 +123,19 @@ class TestUtils {
 
     static String getHypothesisId() {
         return "865758f1-17ea-4f96-8518-3490977fa0ea"
+    }
+
+    static ButlerConfiguration getButlerConfig() {
+        new ButlerConfiguration(
+                butlerConfigId,
+                "butlerConfigName",
+                user,
+                workspaceId,
+                LocalDateTime.now(),
+                "butler-url",
+                "k8s-namespace",
+                "git-token",
+                GitProviderEnum.GITHUB
+        )
     }
 }
