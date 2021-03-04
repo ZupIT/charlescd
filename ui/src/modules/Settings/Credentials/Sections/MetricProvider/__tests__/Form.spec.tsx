@@ -38,11 +38,9 @@ test('render button test connection', async () => {
 
   const datasourcePlugin1 = await screen.findByText('Select a datasource plugin');
   selectEvent.select(datasourcePlugin1, 'Prometheus');
-  const dataSourceHealth = await screen.findByText('Datasource health');
   const dataSourceName = await screen.findByText('Datasource name');
   const dataSourceUrl = await screen.findByText('Url');
 
-  expect(dataSourceHealth).toBeInTheDocument();
   expect(dataSourceName).toBeInTheDocument();
   expect(dataSourceUrl).toBeInTheDocument();
 
@@ -80,7 +78,6 @@ test('render datasource input by datasource change', async () => {
   const datasourcePlugin1 = screen.getByText('Select a datasource plugin');
   await act(async () => selectEvent.select(datasourcePlugin1, 'Prometheus'));
 
-  expect(screen.getByText('Datasource health')).toBeInTheDocument();
   expect(screen.getByText('Datasource name')).toBeInTheDocument();
   expect(screen.getByText('Url')).toBeInTheDocument();
 

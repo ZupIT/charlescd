@@ -117,11 +117,9 @@ test('render CircleComparationItem with release', async () => {
   );
 
   await waitFor(() => {
-    expect(screen.getByTestId('layer-metrics')).toBeInTheDocument();
     expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument();
     expect(screen.getByText('Override release')).toBeInTheDocument();
     expect(screen.getByText('Last release deployed')).toBeInTheDocument();
-    expect(screen.getByText('Add datasource health')).toBeInTheDocument();
   });
 
   useGlobalStateSpy.mockRestore();
@@ -148,7 +146,6 @@ test('should render CircleComparationItem with an Inactive Default Circle', asyn
   await waitFor(() => {
     expect(dropdownActions).toBeInTheDocument();
     expect(screen.queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('layer-metrics')).not.toBeInTheDocument();
   });
 
   const iconEdit = await screen.findByTestId('icon-edit');
