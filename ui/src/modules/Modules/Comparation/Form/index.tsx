@@ -157,6 +157,7 @@ const FormModule = ({ module, onChange }: Props) => {
           label="Insert path (Optional)"
           name="helmPath"
           ref={helmRegister(getHelmFieldsValidations("helm path", false))}
+          error={helmErrors?.helmPath?.message}
         />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
@@ -164,6 +165,7 @@ const FormModule = ({ module, onChange }: Props) => {
           label="Insert branch (Optional, Default=main)"
           name="helmBranch"
           ref={helmRegister(getHelmFieldsValidations("helm branch", false))}
+          error={helmErrors?.helmBranch?.message}
         />
       </Styled.FieldPopover>
     </>
