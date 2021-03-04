@@ -9,7 +9,6 @@ import (
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	mocks "github.com/ZupIT/charlescd/gate/tests/unit/mocks/repository"
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -58,12 +57,7 @@ func (st *SystemTokenSuite) TestErrorGetByIDInternalError() {
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemToken() {
-	systemToken := domain.SystemToken{
-		ID:        uuid.New(),
-		Name:      "Mock",
-		Revoked:   false,
-		CreatedAt: time.Now(),
-	}
+	systemToken := getDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(systemToken, nil).Once()
@@ -72,16 +66,14 @@ func (st *SystemTokenSuite) TestRevokeSystemToken() {
 
 	require.Nil(st.T(), err)
 
-	calls := st.systemTokenRepository.ExpectedCalls
-	assert.Equal(st.T(), 2, len(calls))
+	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
 
-	assert.Equal(st.T(), "FindById", calls[0].Method)
-	assert.Equal(st.T(), "Update", calls[1].Method)
-
-	updatedSystemToken := calls[1].Parent.Calls[1].Arguments.Get(0).(domain.SystemToken)
-	assert.NotNil(st.T(), updatedSystemToken)
-	assert.True(st.T(), updatedSystemToken.Revoked)
-	assert.NotNil(st.T(), updatedSystemToken.RevokedAt)
+	updatedSystemToken := st.systemTokenRepository.Calls[1].Parent.Calls[1].Arguments.Get(0).(domain.SystemToken)
+	require.NotNil(st.T(), updatedSystemToken)
+	require.True(st.T(), updatedSystemToken.Revoked)
+	require.NotNil(st.T(), updatedSystemToken.RevokedAt)
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenIDNotFound() {
@@ -94,18 +86,12 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenIDNotFound() {
 	require.Error(st.T(), err)
 	require.Equal(st.T(), logging.NotFoundError, logging.GetErrorType(err))
 
-	calls := st.systemTokenRepository.ExpectedCalls
-	assert.Equal(st.T(), 1, len(calls))
-	assert.Equal(st.T(), "FindById", calls[0].Method)
+	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", uuid))
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
-	systemToken := domain.SystemToken{
-		ID:        uuid.New(),
-		Name:      "Mock",
-		Revoked:   false,
-		CreatedAt: time.Now(),
-	}
+	systemToken := getDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).
@@ -116,21 +102,14 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
 	require.Error(st.T(), err)
 	require.Equal(st.T(), logging.NotFoundError, logging.GetErrorType(err))
 
-	calls := st.systemTokenRepository.ExpectedCalls
-	assert.Equal(st.T(), 2, len(calls))
-
-	assert.Equal(st.T(), "FindById", calls[0].Method)
-	assert.Equal(st.T(), "Update", calls[1].Method)
-
+	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {
-	systemToken := domain.SystemToken{
-		ID:        uuid.New(),
-		Name:      "Mock",
-		Revoked:   true,
-		CreatedAt: time.Now(),
-	}
+	systemToken := getDummySystemToken()
+	systemToken.Revoked = true
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 
@@ -138,7 +117,17 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {
 
 	require.Nil(st.T(), err)
 
-	calls := st.systemTokenRepository.ExpectedCalls
-	assert.Equal(st.T(), 1, len(calls))
-	assert.Equal(st.T(), "FindById", calls[0].Method)
+	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+}
+
+func getDummySystemToken() domain.SystemToken {
+	createdAt := time.Now()
+	return domain.SystemToken{
+		ID:          uuid.New(),
+		Name:        "SystemToken Test",
+		AuthorEmail: "joe.doe@email.com",
+		CreatedAt:   &createdAt,
+		Revoked:     false,
+	}
 }
