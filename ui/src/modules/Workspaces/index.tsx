@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { getProfileByKey } from 'core/utils/profile';
+import React, { useEffect, useState } from 'react';
 import Page from 'core/components/Page';
-import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, isIDMEnabled, isRoot, logout } from 'core/utils/auth';
-import { useWorkspacesByUser } from 'modules/Users/hooks';
-import { useWorkspace } from './hooks';
+import { getAccessTokenDecoded, isRoot, logout } from 'core/utils/auth';
 import Menu from './Menu';
+import { useSaveWorkspace } from 'modules/Workspaces/hooks';
+import { useHistory } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import routes from 'core/constants/routes';
+import { saveWorkspace } from 'core/utils/workspace';
+import { isRequired, maxLength } from 'core/utils/validations';
+import { removeWizard } from 'modules/Settings/helpers';
+import Modal from 'core/components/Modal';
+import Styled from './styled';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -30,46 +35,71 @@ interface Props {
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
   const { name: profileName, email } = getAccessTokenDecoded();
-  const workspaces = getProfileByKey('workspaces');
-  const userId = getProfileByKey('id');
-  const [filterWorkspace, , loading] = useWorkspace();
-  const { findWorkspacesByUser } = useWorkspacesByUser();
-  const [name, setName] = useState('');
-  const { list } = useGlobalState(({ workspaces }) => workspaces);
-
-  const onIDMFlow = useCallback(() => {
-    if (isRoot()) {
-      filterWorkspace();
-    } else {
-      findWorkspacesByUser(userId);
-    }
-  }, [filterWorkspace, findWorkspacesByUser, userId]);
-
-  useEffect(() => {
-    if (isIDMEnabled()) {
-      onIDMFlow();
-    }
-  }, [onIDMFlow]);
+  const [toggleModal, setToggleModal] = useState(false);
+  const {
+    save,
+    response: saveWorkspaceResponse,
+    loading: saveWorkspaceLoading
+  } = useSaveWorkspace();
+  const history = useHistory();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
-    if (isRoot()) {
-      filterWorkspace(name);
+    if (!email) {
+      logout();
     }
-  }, [name, filterWorkspace]);
-
-  useEffect(() => {
-    if (!email) logout();
   }, [email]);
 
-  const handleOnSearch = (name: string) => !loading && setName(name);
+  useEffect(() => {
+    if (saveWorkspaceResponse) {
+      removeWizard();
+      saveWorkspace(saveWorkspaceResponse);
+      history.push(routes.credentials);
+    }
+  }, [saveWorkspaceResponse, history]);
+
+  const onSubmit = ({ name }: Record<string, string>) => {
+    save({ name });
+  };
+
+  const renderModal = () =>
+    isRoot() && (
+      <Modal.Default onClose={() => setToggleModal(false)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Styled.Modal.Title color="light">
+            Create workspace
+          </Styled.Modal.Title>
+          <Styled.Modal.Input
+            name="name"
+            label="Type a name"
+            error={errors?.name?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength()
+            })}
+          />
+          <Styled.Modal.Button
+            type="submit"
+            isDisabled={!isValid}
+            isLoading={saveWorkspaceLoading}
+          >
+            Create workspace
+          </Styled.Modal.Button>
+        </form>
+      </Modal.Default>
+    );
 
   return (
     <Page>
+      {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
-          items={list?.content || workspaces}
-          isLoading={loading}
-          onSearch={handleOnSearch}
+          onCreate={() => setToggleModal(true)}
           selectedWorkspace={(name: string) => selectedWorkspace(name)}
         />
       </Page.Menu>

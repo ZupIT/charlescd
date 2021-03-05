@@ -19,7 +19,7 @@ import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
+import { CHARLES_DOC } from 'core/components/Popover';
 import { Datasource, Plugin, PluginDatasource } from './interfaces';
 import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
@@ -38,7 +38,6 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
     loading: loadingConnectionResponse,
     save: testConnection
   } = useTestConnection(testDataSourceConnection);
-  const [datasourceHealth, setDatasourceHealth] = useState(false);
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins();
   const { control, register, handleSubmit, getValues, formState } = useForm<
@@ -53,8 +52,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
   const onSubmit = (datasource: Datasource) => {
     save({
       ...datasource,
-      pluginSrc: plugin.src,
-      healthy: datasourceHealth
+      pluginSrc: plugin.src
     });
   };
 
@@ -73,29 +71,11 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
 
   const renderFields = () => (
     <>
-      {(plugin.inputParameters as PluginDatasource).health && (
-        <Styled.HealthWrapper>
-          <Styled.HealthSwitch
-            name="healthy"
-            label="Datasource health"
-            active={datasourceHealth}
-            onChange={() => setDatasourceHealth(!datasourceHealth)}
-          />
-          <Popover
-            title="Why do we ask for a source of health datasource?"
-            icon="info"
-            link={`${CHARLES_DOC}/reference/metrics`}
-            linkLabel="View documentation"
-            description="Marking a health datasource enables Charles pre-configured health metrics."
-          />
-        </Styled.HealthWrapper>
-      )}
       <Styled.Input
         ref={register({ required: true })}
         name="name"
         label="Datasource name"
       />
-
       {map(
         (plugin.inputParameters as PluginDatasource)['configurationInputs'],
         input => (

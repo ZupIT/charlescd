@@ -16,7 +16,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -61,7 +61,7 @@ metadata:
 type: Opaque
 data:
   postgresql-postgres-password: "NjZ6QmJtOFFWTw=="
-  postgresql-password: "YVlTZk15emI0MQ=="
+  postgresql-password: "VW9ORGJGZFByMg=="
 ---
 # Source: charlescd/charts/rabbitmq/templates/secrets.yaml
 apiVersion: v1
@@ -228,7 +228,7 @@ data:
                       local token = request_handle:headers():get("authorization")
                       local request = require("luajit-init")
                       local response = request.send(
-                        "http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
+                        "http://keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
                         {
                           headers = {
                             authorization = token
@@ -319,7 +319,7 @@ data:
             - endpoint:
                 address:
                   socket_address:
-                    address: charlescd-keycloak-http
+                    address: keycloak-http
                     port_value: 80
       
       - name: charlescd-compass
@@ -1801,7 +1801,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: charlescd-keycloak-startup
+  name: keycloak-startup
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6122,7 +6122,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-headless
+  name: keycloak-headless
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6146,7 +6146,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-http
+  name: keycloak-http
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6345,6 +6345,9 @@ spec:
     - name: http
       port: 3000
       targetPort: 3000
+    
+  selector:
+    app: charlescd-butler
 ---
 # Source: charlescd/templates/service.yaml
 apiVersion: v1
@@ -6672,7 +6675,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.0
+          image: zupcharles/charlescd-butler:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6732,7 +6735,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.0
+          image: zupcharles/charlescd-circle-matcher:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6829,7 +6832,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.0
+          image: zupcharles/charlescd-compass:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6974,10 +6977,10 @@ spec:
             value: "charlescd"
 
           - name: KEYCLOAK_SERVER_URL
-            value: "http://charlescd-keycloak-http/keycloak/auth"
-
+            value: "http://keycloak-http/keycloak/auth"
+          
           - name: KEYCLOAK_PUBLIC_CLIENT_ID
-            value: "realm-charlescd"
+            value: "charlescd-client"
           - name: KEYCLOAK_CLIENT_ID
             value: "realm-charlescd"
           - name: RATELIMIT_CAPACITY
@@ -6997,7 +7000,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.0
+          image: zupcharles/charlescd-moove:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -7052,7 +7055,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.0
+          image: zupcharles/charlescd-octopipe:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -7114,7 +7117,7 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
-          image: zupcharles/charlescd-ui:0.6.0
+          image: zupcharles/charlescd-ui:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -7180,7 +7183,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.0
+          image: zupcharles/charlescd-villager:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -7203,7 +7206,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -7216,14 +7219,14 @@ spec:
       app.kubernetes.io/name: keycloak
       app.kubernetes.io/instance: charlescd
   replicas: 1
-  serviceName: charlescd-keycloak-headless
+  serviceName: keycloak-headless
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       annotations:
-        checksum/config-startup: a97b69abc0b894b66147967e7c5977df317359812fef3dd69f46d380b662d817
+        checksum/config-startup: a09cd3a55fe67454f509ec623db5505a7f5a26a87f77b5235e70e02cc86a45da
         checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
       labels:
         app.kubernetes.io/name: keycloak
@@ -7310,8 +7313,8 @@ spec:
             - name: realm-secret
               mountPath: "/realm/"
               readOnly: false
-
-      serviceAccountName: charlescd-keycloak
+            
+      serviceAccountName: keycloak
       securityContext:
         fsGroup: 1000
       enableServiceLinks: true
@@ -7347,7 +7350,7 @@ spec:
       volumes:
         - name: startup
           configMap:
-            name: charlescd-keycloak-startup
+            name: keycloak-startup
             defaultMode: 0555
             items:
               - key: contextPath.cli

@@ -29,7 +29,6 @@ import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { useCreateUser, useUser } from 'modules/Users/hooks';
 import { useAuth } from 'modules/Auth/hooks';
 import { useCircleMatcher } from 'modules/Auth/Login/hook';
-import { isMicrofrontend } from 'App';
 
 const Main = lazy(() => import('modules/Main'));
 const Auth = lazy(() => import('modules/Auth'));
@@ -102,7 +101,7 @@ const Routes = () => {
   );
 
   return (
-    <BrowserRouter basename={isMicrofrontend() ? '/charlescd' : '/'}>
+    <BrowserRouter>
       <Suspense fallback="">
         <Switch>
           <Route path={routes.auth} component={Auth} />
