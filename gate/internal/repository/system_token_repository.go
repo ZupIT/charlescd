@@ -64,7 +64,7 @@ func (systemTokenRepository systemTokenRepository) Update(systemToken domain.Sys
 
 	if res := systemTokenRepository.db.Model(models.SystemToken{}).
 		Where("id = ?", systemToken.ID).Updates(&systemTokenToUpdate); res.Error != nil {
-		return handlerError("Update system token failed", "repository.Update.Updates", res.Error, "")
+		return handlerError("Update system token failed", "repository.Update.Updates", res.Error, logging.InternalError)
 	}
 
 	return systemToken, nil
