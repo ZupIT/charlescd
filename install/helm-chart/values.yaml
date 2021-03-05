@@ -205,7 +205,7 @@ CharlesApplications:
     replicaCount: 1
     hpa: true
     autoscaling:
-      minReplicas: 3
+      minReplicas: 1
       maxReplicas: 10
       targetMemoryUtilizationPercentage: 80
     resources:
