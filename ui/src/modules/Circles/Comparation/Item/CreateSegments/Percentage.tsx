@@ -23,14 +23,15 @@ import {
   useCirclePercentage,
   useSaveCirclePercentage
 } from 'modules/Circles/hooks';
-import Loader from './Loader';
-import Styled from './styled';
-import SliderPercentage from './Slider';
 import { getProfileByKey } from 'core/utils/profile';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import CirclePercentageList from '../Percentage/CirclePercentageList';
 import AvailablePercentage from '../Percentage/AvailablePercentage';
+import { CHARLES_DOC } from 'core/components/Popover';
+import Loader from './Loader';
+import SliderPercentage from './Slider';
 import { editingPercentageLimit } from './helpers';
+import Styled from './styled';
 
 interface Props {
   id: string;
@@ -136,6 +137,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
             title=""
             icon="info"
             size="18px"
+            link={`${CHARLES_DOC}/reference/circle-matcher`}
             description="The available quantity will be applied only after activating the circle"
           />
         </Styled.FieldPopover>

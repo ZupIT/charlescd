@@ -154,6 +154,7 @@ const MetricsGroupsCard = styled.div`
 
 const WarningPercentageContainer = styled.div`
   display: flex;
+  align-items: center;
   flex-direction: row;
   margin-top: 15px;
   margin-bottom: 15px;
