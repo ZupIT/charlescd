@@ -25,3 +25,12 @@ func (pg Page) TotalPages() int {
 		return int(math.Ceil(d))
 	}
 }
+
+func (pg *Page) FillDefaults() {
+	if pg.PageSize == 0 {
+		pg.PageSize = 20
+	}
+	if pg.Sort == "" {
+		pg.Sort = "created_at desc"
+	}
+}

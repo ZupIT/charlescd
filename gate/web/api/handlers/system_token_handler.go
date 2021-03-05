@@ -16,23 +16,16 @@ func GetAllSystemTokens(getAllSystemToken systemTokenInteractor.GetAllSystemToke
 
 		ctx := echoCtx.Request().Context()
 
-		pageNumber, err := strconv.Atoi(echoCtx.QueryParam("page"))
-		if err != nil {
-			pageNumber = 0
-		}
-		pageSize, err := strconv.Atoi(echoCtx.QueryParam("size"))
-		if err != nil {
-			pageSize = 20
-		}
+		pageNumber, _ := strconv.Atoi(echoCtx.QueryParam("page"))
+		pageSize, _ := strconv.Atoi(echoCtx.QueryParam("size"))
 		sort := echoCtx.QueryParam("sort")
-		if sort == "" {
-			sort = "created_at desc"
-		}
+
 		pageRequest := domain.Page{
 			PageNumber: pageNumber,
 			PageSize:   pageSize,
 			Sort:       sort,
 		}
+		pageRequest.FillDefaults()
 
 		systemTokens, page, err := getAllSystemToken.Execute(pageRequest)
 		if err != nil {
