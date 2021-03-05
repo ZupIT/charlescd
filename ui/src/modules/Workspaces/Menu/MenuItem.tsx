@@ -18,11 +18,6 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
 import { setUserAbilities } from 'core/utils/abilities';
-import { useDispatch } from 'core/state/hooks';
-import {
-  statusWorkspaceAction,
-  loadedWorkspaceAction
-} from 'modules/Workspaces/state/actions';
 import { hasPermission } from 'core/utils/auth';
 import { WORKSPACE_STATUS } from '../enums';
 import routes from 'core/constants/routes';
@@ -34,18 +29,15 @@ interface Props {
 }
 
 const MenuItem = ({ workspace }: Props) => {
-  const dispatch = useDispatch();
   const history = useHistory();
 
   const handleClick = () => {
     saveWorkspace({ ...workspace });
-    setUserAbilities(workspace);
-    dispatch(statusWorkspaceAction('idle'));
-    dispatch(loadedWorkspaceAction({ ...workspace }));
+    setUserAbilities();
     history.push({
       pathname:
         workspace?.status === WORKSPACE_STATUS.INCOMPLETE &&
-        hasPermission('maintenance_write', workspace)
+        hasPermission('maintenance_write')
           ? routes.credentials
           : routes.circles
     });

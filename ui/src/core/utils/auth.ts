@@ -16,14 +16,15 @@
 
 import JwtDecode from 'jwt-decode';
 import includes from 'lodash/includes';
+import isEmpty from 'lodash/isEmpty';
 import { clearCircleId } from './circle';
 import { clearProfile } from './profile';
-import { clearWorkspace } from './workspace';
+import { clearWorkspace, getWorkspace } from './workspace';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { redirectTo } from './routes';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
-import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
+import { ability, Actions, Subjects } from './abilities';
 
 type AccessToken = {
   id?: string;
@@ -67,15 +68,23 @@ export const isRoot = () => {
   return isRoot || false;
 };
 
-export const isRootRoute = (route: string) => includes(route, 'root');
-
-export const getRoles = (workspace: Workspace): string[] => {
+export const getPermissions = (): string[] => {
+  const workspace = getWorkspace();
   return workspace?.permissions || [];
 };
 
-export const hasPermission = (role: string, workspace: Workspace) => {
-  const roles = getRoles(workspace);
-  return isRoot() || includes(roles, role);
+export const isRootRoute = (route: string) => includes(route, 'root');
+
+export const getRoles = (): string[] => {
+  const workspace = getWorkspace();
+
+  return workspace?.permissions || [];
+};
+
+export const hasPermission = (role: string) => {
+  const [subject, action] = role.split('_') || ['', ''];
+  const rule = ability.relevantRuleFor(action as Actions, subject as Subjects);
+  return !isEmpty(rule);
 };
 
 export const getRefreshToken = () => localStorage.getItem(refreshTokenKey);

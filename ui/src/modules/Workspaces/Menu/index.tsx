@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import { isRoot } from 'core/utils/auth';
@@ -29,14 +30,21 @@ interface Props {
   onCreate: () => void;
 }
 const WorkspaceMenu = ({ onCreate }: Props) => {
-  const { getWorkspaces, status, workspaces, last } = useWorkspaces();
+  const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
   const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (status === 'idle') {
+      getWorkspaces();
+    }
+  }, [getWorkspaces, status]);
 
   const onSearch = useCallback((value: string) => {
     setName(value);
     const page = 0;
+    resetWorkspaces();
     getWorkspaces(value, page);
-  }, [getWorkspaces]);
+  }, [getWorkspaces, resetWorkspaces]);
 
   const loadMore = (page: number) => {
     getWorkspaces(name, page);
@@ -52,22 +60,22 @@ const WorkspaceMenu = ({ onCreate }: Props) => {
     />
   );
 
-    const renderEmpty = () => (
-      <Styled.Empty>
-        <Text.h3 color="dark">No workspace was found</Text.h3>
-      </Styled.Empty>
-    );
+  const renderEmpty = () => (
+    <Styled.Empty>
+      <Text.h3 color="dark">No workspace was found</Text.h3>
+    </Styled.Empty>
+  );
 
-    const renderContent = () => (
-      <InfiniteScroll
-        hasMore={!last}
-        loadMore={loadMore}
-        isLoading={status === 'pending'}
-        loader={<Styled.Loader />}
-      >
-        {!workspaces.length ? renderEmpty() : renderList(workspaces)}
-      </InfiniteScroll>
-    );
+  const renderContent = () => (
+    <InfiniteScroll
+      hasMore={!last}
+      loadMore={loadMore}
+      isLoading={status === 'pending'}
+      loader={<Styled.Loader />}
+    >
+      {isEmpty(workspaces) && status !== 'pending' ? renderEmpty() : renderList(workspaces)}
+    </InfiniteScroll>
+  );
 
   return (
     <>

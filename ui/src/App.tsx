@@ -20,9 +20,11 @@ import GlobalStyle from 'core/assets/style/global';
 import THEME from 'core/assets/themes';
 import { Provider as ContextProvider } from 'core/state/store';
 import { rootState, rootReducer } from 'core/state';
+import { setUserAbilities } from 'core/utils/abilities';
 import Routes from './Routes';
 
 const currentTheme = 'dark';
+setUserAbilities();
 
 function App() {
   const globalState = useReducer(rootReducer, rootState);
