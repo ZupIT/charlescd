@@ -40,8 +40,8 @@ describe('DeploymentController v2', () => {
       ]
     })
 
-    app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
+    app = await TestSetupUtils.createApplication(module)
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     manager = fixtureUtilsService.connection.manager
   })
@@ -148,11 +148,20 @@ describe('DeploymentController v2', () => {
   })
 
   it('create execution for the deployment', async() => {
+    const encryptedToken = `
+-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       namespace: 'default',
       git: {
-        token: '123abc45',
+        token: encryptedToken,
         provider: GitProvidersEnum.GITHUB
       },
       circle: {
@@ -185,6 +194,56 @@ describe('DeploymentController v2', () => {
     expect(executionsCount[1]).toEqual(1)
     const execution = await manager.findOneOrFail(Execution, { relations: ['deployment'] })
     expect(execution.deployment.id).toEqual(response.body.id)
+  })
+
+  it('returns a bad request error when the git token decryption fail', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
+      git: {
+        token: 'malformed token',
+        provider: GitProvidersEnum.GITHUB
+      },
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+    }
+
+    const expectedError = {
+      errors: [
+        {
+          detail: 'unable to decrypt "token"',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'git.token'
+          },
+          status: 500
+        }
+      ]
+    }
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'ab1c7726-a274-4fc3-9ec1-44e3563d58af')
+      .expect(500)
+      .expect(response => {
+        expect(response.body).toEqual(expectedError)
+      })
   })
 
   it('returns error for malformed payload', async() => {
@@ -396,6 +455,15 @@ describe('DeploymentController v2', () => {
   })
 
   it('saves the host value / gateway name parameters correctly', async() => {
+    const encryptedToken = `
+-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       namespace: 'default',
@@ -404,7 +472,7 @@ describe('DeploymentController v2', () => {
         default: false
       },
       git: {
-        token: '123123',
+        token: encryptedToken,
         provider: 'GITHUB'
       },
       components: [

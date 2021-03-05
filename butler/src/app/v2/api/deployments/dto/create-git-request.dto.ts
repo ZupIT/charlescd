@@ -20,7 +20,7 @@ import { GitProvidersEnum } from '../../../core/configuration/interfaces/git-pro
 export class CreateGitDeploymentDto {
 
   @ApiProperty()
-  public readonly token: string
+  public token: string
 
   @ApiProperty()
   public readonly provider: GitProvidersEnum
