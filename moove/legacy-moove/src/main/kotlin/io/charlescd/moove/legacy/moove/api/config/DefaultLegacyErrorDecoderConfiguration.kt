@@ -43,12 +43,17 @@ class DefaultLegacyErrorDecoderConfiguration {
     class CustomErrorDecoder : ErrorDecoder {
         private val logger = LoggerFactory.getLogger(this.javaClass)
         override fun decode(methodKey: String?, response: Response?): Exception {
-            val responseMessage: String? = this.extractMessageFromResponse(response)
+            val responseMessage: String? = getMessage(response)
             return when (response?.status()) {
                 400 -> IllegalArgumentException(responseMessage)
                 422 -> BusinessExceptionLegacy.of(MooveErrorCodeLegacy.INVALID_PAYLOAD, responseMessage ?: response.reason())
                 else -> RuntimeException(responseMessage)
             }
+        }
+
+        private fun getMessage(response: Response?): String {
+            val responseMessage = this.extractMessageFromResponse(response)
+            return responseMessage ?: "The server could not complete the request."
         }
 
         private fun extractMessageFromResponse(response: Response?): String? {

@@ -26,6 +26,7 @@ import io.charlescd.moove.domain.WebhookConfigurationLastDelivery
 import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
+import org.slf4j.LoggerFactory
 
 @Named
 class FindWorkspaceInteractorImpl @Inject constructor(
@@ -36,7 +37,10 @@ class FindWorkspaceInteractorImpl @Inject constructor(
     private val metricConfigurationService: MetricConfigurationService,
     private val hermesService: HermesService,
     private val userService: UserService
+
 ) : FindWorkspaceInteractor {
+
+    private val logger = LoggerFactory.getLogger(this.javaClass)
 
     override fun execute(workspaceId: String, authorization: String): WorkspaceResponse {
         val workspace = workspaceService.find(workspaceId)
@@ -72,18 +76,23 @@ class FindWorkspaceInteractorImpl @Inject constructor(
     }
 
     private fun getWebhookConfiguration(authorization: String, workspaceId: String): List<WebhookConfiguration> {
-        val authorEmail = userService.getEmailFromToken(authorization)
-        val subscriptions = hermesService.getSubscriptinsByExternalId(authorEmail, workspaceId)
-        return subscriptions.map {
-            WebhookConfiguration(
-                id = it.id,
-                description = it.description,
-                url = it.url,
-                workspaceId = it.workspaceId,
-                events = it.events,
-                lastDelivery = buildWebhookLastDelivery(authorEmail, it.id)
-            )
+        try {
+            val authorEmail = userService.getEmailFromToken(authorization)
+            val subscriptions = hermesService.getSubscriptinsByExternalId(authorEmail, workspaceId)
+            return subscriptions.map {
+                WebhookConfiguration(
+                    id = it.id,
+                    description = it.description,
+                    url = it.url,
+                    workspaceId = it.workspaceId,
+                    events = it.events,
+                    lastDelivery = buildWebhookLastDelivery(authorEmail, it.id)
+                )
+            }
+        } catch (ex: Exception) {
+            logger.error("Failed to get webhook info" + ex.message)
         }
+        return emptyList()
     }
 
     private fun buildWebhookLastDelivery(authorEmail: String, subscriptionId: String): WebhookConfigurationLastDelivery {
