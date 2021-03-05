@@ -22,7 +22,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"io"
-	"strconv"
 	"time"
 
 	"github.com/ZupIT/charlescd/compass/internal/util"
@@ -35,7 +34,6 @@ type DataSource struct {
 	util.BaseModel
 	Name        string     `json:"name"`
 	PluginSrc   string     `json:"pluginSrc"`
-	Health      bool       `json:"healthy"`
 	Data        []byte     `json:"data" gorm:"type:bytea"`
 	WorkspaceID uuid.UUID  `json:"workspaceId"`
 	DeletedAt   *time.Time `json:"-"`
@@ -45,7 +43,6 @@ type Request struct {
 	util.BaseModel
 	Name        string          `json:"name"`
 	PluginSrc   string          `json:"pluginSrc"`
-	Health      bool            `json:"healthy"`
 	Data        json.RawMessage `json:"data"`
 	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	DeletedAt   *time.Time      `json:"-"`
@@ -55,7 +52,6 @@ type Response struct {
 	util.BaseModel
 	Name        string          `json:"name"`
 	PluginSrc   string          `json:"pluginSrc"`
-	Health      bool            `json:"healthy"`
 	Data        json.RawMessage `json:"data"`
 	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	DeletedAt   *time.Time      `json:"-"`
@@ -112,20 +108,15 @@ func (main Main) Parse(dataSource io.ReadCloser) (Request, errors.Error) {
 	return *newDataSource, nil
 }
 
-func (main Main) FindAllByWorkspace(workspaceID uuid.UUID, health string) ([]Response, errors.Error) {
+func (main Main) FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error) {
 	var rows *sql.Rows
 	var err error
 	dataSources := make([]Response, 0)
 
-	if health == "" {
-		rows, err = main.db.Raw(workspaceDatasourceQuery, workspaceID).Rows()
-	} else {
-		healthValue, _ := strconv.ParseBool(health)
-		rows, err = main.db.Raw(workspaceAndHealthDatasourceQuery, workspaceID, healthValue).Rows()
-	}
+	rows, err = main.db.Raw(workspaceDatasourceQuery, workspaceID).Rows()
 	if err != nil {
-		return []Response{}, errors.NewError("Find all error", err.Error()).
-			WithOperations("FindAllByWorkspace.Raw")
+        return []Response{}, errors.NewError("Find all error", err.Error()).
+		WithOperations("FindAllByWorkspace.Raw")
 	}
 
 	for rows.Next() {
@@ -148,24 +139,10 @@ func (main Main) FindById(id string) (Response, errors.Error) {
 	row := main.db.Raw(datasourceDecryptedQuery, id).Row()
 
 	dbError := row.Scan(&dataSource.ID, &dataSource.Name, &dataSource.CreatedAt, &dataSource.Data,
-		&dataSource.WorkspaceID, &dataSource.Health, &dataSource.DeletedAt, &dataSource.PluginSrc)
+		&dataSource.WorkspaceID, &dataSource.DeletedAt, &dataSource.PluginSrc)
 	if dbError != nil {
 		return Response{}, errors.NewError("Find by id error", dbError.Error()).
 			WithOperations("FindById.ScanRows")
-	}
-
-	return dataSource.toResponse(), nil
-}
-
-func (main Main) FindHealthByWorkspaceId(workspaceID uuid.UUID) (Response, errors.Error) {
-	dataSource := DataSource{}
-	row := main.db.Raw(decryptedWorkspaceAndHealthDatasourceQuery, workspaceID, true).Row()
-
-	dbError := row.Scan(&dataSource.ID, &dataSource.Name, &dataSource.CreatedAt, &dataSource.Data,
-		&dataSource.WorkspaceID, &dataSource.Health, &dataSource.DeletedAt, &dataSource.PluginSrc)
-	if dbError != nil {
-		return Response{}, errors.NewError("Find error", dbError.Error()).
-			WithOperations("FindHealthByWorkspaceId.Row")
 	}
 
 	return dataSource.toResponse(), nil
@@ -230,38 +207,17 @@ func (main Main) TestConnection(pluginSrc string, datasourceData json.RawMessage
 	return nil
 }
 
-func (main Main) VerifyHealthAtWorkspace(workspaceId string) (bool, errors.Error) {
-	var count int8
-	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true AND deleted_at IS NULL", workspaceId).Count(&count)
-	if result.Error != nil {
-		return false, errors.NewError("Verify health error", result.Error.Error()).
-			WithOperations("VerifyHealthAtWorkspace.Count")
-	}
-
-	return count != 0, nil
-}
-
 func (main Main) Save(dataSource Request) (Response, errors.Error) {
-	if dataSource.Health == true {
-		hasHealth, err := main.VerifyHealthAtWorkspace(dataSource.WorkspaceID.String())
-		if err != nil {
-			return Response{}, err.WithOperations("Save.Count")
-		}
 
-		if hasHealth {
-			return Response{}, errors.NewError("Cannot save", "Has datasource health in workspace").
-				WithOperations("Save.VerifyHealthAtWorkspace")
-		}
-	}
 	id := uuid.New().String()
 	entity := DataSource{}
 
-	row := main.db.Exec(Insert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data, dataSource.Health, dataSource.WorkspaceID)).
+	row := main.db.Exec(Insert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data,  dataSource.WorkspaceID)).
 		Raw(datasourceSaveQuery, id).
 		Row()
 
 	dbError := row.Scan(&entity.ID, &entity.Name, &entity.CreatedAt,
-		&entity.WorkspaceID, &entity.Health, &entity.DeletedAt, &entity.PluginSrc)
+		&entity.WorkspaceID, &entity.DeletedAt, &entity.PluginSrc)
 	if dbError != nil {
 		return Response{}, errors.NewError("Save error", dbError.Error()).
 			WithOperations("Save.Scan")
@@ -275,7 +231,6 @@ func (entity DataSource) toResponse() Response {
 		BaseModel:   entity.BaseModel,
 		Name:        entity.Name,
 		PluginSrc:   entity.PluginSrc,
-		Health:      entity.Health,
 		Data:        entity.Data,
 		WorkspaceID: entity.WorkspaceID,
 		DeletedAt:   entity.DeletedAt,
