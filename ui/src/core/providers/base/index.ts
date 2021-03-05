@@ -59,8 +59,25 @@ declare global {
   }
 }
 
-export const basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
-export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
+const nodeEnv = process.env.NODE_ENV;
+export const DEFAULT_TEST_BASE_URL = 'http://localhost:8000';
+
+const getBasePath = () => {
+  if (nodeEnv === 'test') {
+    return DEFAULT_TEST_BASE_URL;
+  }
+  return window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
+}
+
+const getAuthPath = () => {
+  if (nodeEnv === 'test') {
+    return `${DEFAULT_TEST_BASE_URL}/keycloak`;
+  }
+  return window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
+}
+
+export const basePath = getBasePath();
+export const authPath = getAuthPath();
 
 export const authRequest = (
   url: string,
