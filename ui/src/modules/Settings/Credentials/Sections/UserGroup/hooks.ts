@@ -22,6 +22,7 @@ import { useFetch, FetchProps, useFetchData } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
 import { UserGroup, GroupRoles, Role } from './interfaces';
+import { ALREADY_ASSOCIATED_MESSAGE, ALREADY_ASSOCIATED_CODE } from './constants';
 
 export const useUserGroup = (): FetchProps => {
   const dispatch = useDispatch();
@@ -56,12 +57,26 @@ export const useUserGroup = (): FetchProps => {
 
   useEffect(() => {
     if (errorSave) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorSave.status}] User Group could not be saved.`,
-          status: 'error'
-        })
-      );
+      (async () => {
+        const e = await errorSave.json();
+        let code: string | number = ALREADY_ASSOCIATED_CODE;
+        let message = ALREADY_ASSOCIATED_MESSAGE;
+
+        if (e?.code === ALREADY_ASSOCIATED_CODE) {
+          code = 422;
+        }
+
+        if (e?.message === ALREADY_ASSOCIATED_MESSAGE) {
+          message = 'Group already associated to this workspace';
+        }
+
+        dispatch(
+          toogleNotification({
+            text: `[${code}] ${message}`,
+            status: 'error'
+          })
+        );
+      })();
     }
   }, [errorSave, dispatch]);
 
