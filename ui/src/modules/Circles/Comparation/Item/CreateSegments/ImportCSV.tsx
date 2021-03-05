@@ -16,7 +16,6 @@
 
 import React, { useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
-// import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { ReactComponent as ExampleSVG } from 'core/assets/svg/example-csv.svg';
 import InputFile from 'core/components/Form/InputFile';
