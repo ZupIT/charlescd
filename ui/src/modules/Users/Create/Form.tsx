@@ -39,7 +39,7 @@ const FormUser = ({ onFinish }: Props) => {
     handleSubmit,
     errors,
     formState: { isValid }
-  } = useForm<NewUser>({ mode: 'all' });
+  } = useForm<NewUser>({ mode: 'onChange' });
   const { create, newUser } = useCreateUser();
   const [status, setStatus] = useState<string>('');
 
