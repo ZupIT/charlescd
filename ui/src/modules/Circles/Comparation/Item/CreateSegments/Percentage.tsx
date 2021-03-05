@@ -113,7 +113,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
           open sea
         </Styled.HelpText>
         <Styled.HelpText color="dark">Circle {name}</Styled.HelpText>
-        <SliderPercentage limitValue={limit} />
+        <SliderPercentage limitValue={limit} isDisabled={isSaving} />
         {isSaving && <Loader />}
         <Styled.ButtonDefault
           id="percentage"
