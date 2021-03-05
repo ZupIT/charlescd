@@ -20,8 +20,8 @@ import { accessTokenKey, refreshTokenKey } from 'core/utils/auth';
 import { rest, server } from 'mocks/server';
 import { useCircleMatcher, useLogin } from '../hook';
 import { removeCookie } from 'unit-test/cookie';
-import fetch from 'node-fetch';
-import { FetchMock } from 'jest-fetch-mock/types';
+import { originalFetch } from 'setupTests';
+import { BASE_TEST_URL } from 'mocks/handlers/constants';
 
 jest.mock('core/state/hooks', () => ({
   useDispatch: () => jest.fn()
@@ -29,7 +29,7 @@ jest.mock('core/state/hooks', () => ({
 
 beforeAll(() => {
   server.listen();
-  global.fetch = fetch as unknown as FetchMock;
+  global.fetch = originalFetch;
 });
 
 afterEach(() => server.resetHandlers());
@@ -50,7 +50,7 @@ test('match a circle id', async () => {
 
 test('should not match a circle id', async () => {
   server.use(
-    rest.post('http://localhost:8000/charlescd-circle-matcher/identify', async (req, res, ctx) => {
+    rest.post(`${BASE_TEST_URL}/charlescd-circle-matcher/identify`, async (req, res, ctx) => {
       return res(ctx.json({}))
     }),
   );

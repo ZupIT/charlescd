@@ -40,6 +40,8 @@ export interface CustomGlobal {
   Worker: object;
 }
 
+export const originalFetch = window.fetch as FetchMock;
+
 declare const global: CustomGlobal;
 
 mockCookie();
