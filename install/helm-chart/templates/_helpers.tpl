@@ -123,7 +123,7 @@ env:
   value: "{{ .RangeContext.keycloak.realm }}"
 {{ if .ChartContext.Values.keycloak.enabled }}
 - name: KEYCLOAK_SERVER_URL
-  value: "http://{{ .ChartContext.Release.Name }}-keycloak-http/keycloak/auth"
+  value: "http://keycloak-http/keycloak/auth"
 {{ else }}
 - name: KEYCLOAK_SERVER_URL
   value: "{{ .RangeContext.keycloak.host}}"
@@ -155,13 +155,8 @@ env:
 env:
 - name: SPRING_PROFILES_ACTIVE
   value: {{ .RangeContext.redis.profile }}
-{{if .ChartContext.Values.redis.enabled}}
-- name: SPRING_REDIS_HOST
-  value: {{ .ChartContext.Release.Name }}-redis-master
-{{ else }}
 - name: SPRING_REDIS_HOST
   value: {{ .RangeContext.redis.host }}
-{{ end}}
 - name: SPRING_REDIS_PORT
   value: "{{ .RangeContext.redis.port }}"
 - name: SPRING_REDIS_PASSWORD

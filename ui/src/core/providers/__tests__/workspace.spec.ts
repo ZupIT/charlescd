@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { FetchMock } from 'jest-fetch-mock';
+import {findAll} from '../workspace';
 
-export enum GROWING_STATUS {
-  UP = 'UP',
-  NORMAL = 'NORMAL',
-  DOWN = 'DOWN'
-}
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+test('should find all workspaces', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ name: 'find all workspaces' })
+  );
+
+  const response = await findAll()({});
+  const data = await response.json();
+
+  expect(data).toEqual({ name: 'find all workspaces' });
+});
