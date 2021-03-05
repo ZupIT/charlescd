@@ -96,7 +96,7 @@ class SimpleFeignErrorDecoderConfigurationTest extends Specification {
         then:
         body.asInputStream() >> this.getArrayMessageReturnAsInputStream()
         assert exception instanceof RuntimeException
-        assert exception.message == "Internal server error"
+        assert exception.message == "The server could not complete the request."
     }
 
     def "should return RunTimeException when fails to  read response"() {

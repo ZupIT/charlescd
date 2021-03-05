@@ -53,7 +53,7 @@ class DefaultLegacyErrorDecoderConfiguration {
 
         private fun getMessage(response: Response?): String {
             val responseMessage = this.extractMessageFromResponse(response)
-            return responseMessage ?: "Internal server error"
+            return responseMessage ?: "The server could not complete the request."
         }
 
         private fun extractMessageFromResponse(response: Response?): String? {
