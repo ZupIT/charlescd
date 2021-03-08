@@ -41,7 +41,7 @@ jest.mock('react-cookies', () => {
     load: () => {
       return '';
     },
-    remove:  (key: string, options: object) => {
+    remove: (key: string, options: object) => {
       return `mock remove ${key}`;
     }
   };
@@ -126,10 +126,10 @@ test('render and valid login saving the session', async () => {
 
   const iconError403 = await screen.findByTestId('icon-error-403');
   expect(iconError403).toBeInTheDocument();
-  
+
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
-  
+
   const refreshToken = localStorage.getItem(refreshTokenKey);
   expect(refreshToken).toContain('opqrstuvwxyz');
 
@@ -158,7 +158,7 @@ test('create user in charles base', async () => {
       'access_token': token,
       'refresh_token': 'opqrstuvwxyz'
     }))
-    .mockRejectedValueOnce({ status: 404, json: () => ({ message: 'Error' })})
+    .mockRejectedValueOnce({ status: 404, json: () => ({ message: 'Error' }) })
     .mockResponse(JSON.stringify(profile));
 
   render(<MemoryRouter><Routes /></MemoryRouter>);

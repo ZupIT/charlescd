@@ -199,7 +199,7 @@ func (deployment *Deployment) Deploy() error {
 		)
 	}
 
-	return nil
+	return deployment.newWatcher(manifest)
 }
 
 func isResourController(resource *unstructured.Unstructured) bool {
