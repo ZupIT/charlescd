@@ -2,15 +2,22 @@ package main
 
 import (
 	"fmt"
+	"github.com/ZupIT/charlescd/gate/internal/logging"
+	systemTokenUseCase "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
 	"github.com/casbin/casbin/v2"
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/leebenson/conform"
+	"reflect"
+	"strings"
 )
 
 type server struct {
@@ -23,6 +30,7 @@ type customBinder struct{}
 
 type CustomValidator struct {
 	validator *validator.Validate
+	translator *ut.UniversalTranslator
 }
 
 func newServer(pm persistenceManager) (server, error) {
@@ -60,7 +68,11 @@ func (cb customBinder) Bind(i interface{}, echoCtx echo.Context) (err error) {
 }
 
 func (cv *CustomValidator) Validate(i interface{}) error {
-	return cv.validator.Struct(i)
+	err := cv.validator.Struct(i)
+	if err != nil {
+		return logging.NewValidationError(err, cv.translator)
+	}
+	return nil
 }
 
 func buildCustomValidator() *CustomValidator {
@@ -68,8 +80,23 @@ func buildCustomValidator() *CustomValidator {
 	if err := v.RegisterValidation("notblank", validators.NotBlank); err != nil {
 		return nil
 	}
+	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+	defaultLang := en.New()
+	uniTranslator := ut.New(defaultLang, defaultLang)
 
-	return &CustomValidator{validator: v}
+	defaultTrans, _ := uniTranslator.GetTranslator("en")
+	_ = enTranslations.RegisterDefaultTranslations(v, defaultTrans)
+
+	return &CustomValidator{
+		validator:  v,
+		translator: uniTranslator,
+	}
 }
 
 func (server server) registerRoutes() {
@@ -79,9 +106,9 @@ func (server server) registerRoutes() {
 		api.GET("/metrics", handlers.Metrics())
 		v1 := api.Group("/v1")
 		{
-			st := v1.Group("/system-token")
+			systemToken := v1.Group("/system-token")
 			{
-
+				systemToken.POST("", handlers.CreateSystemToken(systemTokenUseCase.NewCreateSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 		}
 	}

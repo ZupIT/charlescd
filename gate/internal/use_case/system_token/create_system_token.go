@@ -21,7 +21,10 @@ func NewCreateSystemToken(systemTokenRepository repository.SystemTokenRepository
 }
 
 func (createSystemToken createSystemToken) Execute(systemToken domain.SystemToken) (domain.SystemToken, error) {
-	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken)
+	//TODO: usando o repo de permissions, buscar a lista de permissions domain
+
+
+	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken, permissions)
 	if err != nil {
 		return domain.SystemToken{}, logging.WithOperation(err, "createSystemToken.Execute")
 	}
