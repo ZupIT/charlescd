@@ -20,20 +20,12 @@ import { accessTokenKey, refreshTokenKey } from 'core/utils/auth';
 import { rest, server } from 'mocks/server';
 import { useCircleMatcher, useLogin } from '../hook';
 import { removeCookie } from 'unit-test/cookie';
-import { DEFAULT_TEST_BASE_URL, originalFetch } from 'setupTests';
+import { DEFAULT_TEST_BASE_URL } from 'setupTests';
+import 'unit-test/setup-msw';
 
 jest.mock('core/state/hooks', () => ({
   useDispatch: () => jest.fn()
 }));
-
-beforeAll(() => {
-  server.listen();
-  global.fetch = originalFetch;
-});
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => server.close());
 
 test('match a circle id', async () => {
   const id = '123';
