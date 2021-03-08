@@ -182,7 +182,7 @@ func (deployment *Deployment) deploy() error {
 
 	err = deployment.newWatcher(manifest)
 	if err != nil {
-		return customerror.WithOperation(err, "deployment.deploy.ApplyResource")
+		return err
 	}
 
 	return nil
