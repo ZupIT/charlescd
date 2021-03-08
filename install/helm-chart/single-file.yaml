@@ -60,8 +60,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "NjZ6QmJtOFFWTw=="
-  postgresql-password: "VW9ORGJGZFByMg=="
+  postgresql-postgres-password: "ZjJqNGJpd0wwRQ=="
+  postgresql-password: "UXRTeEpSd2NoZQ=="
 ---
 # Source: charlescd/charts/rabbitmq/templates/secrets.yaml
 apiVersion: v1
@@ -6659,7 +6659,6 @@ spec:
             value: "3f2Yq8R4HhDCnefR"
           - name: DATABASE_NAME
             value: charlescd_butler
-
           - name: MOOVE_URL
             value: "http://charlescd-moove:8080"
           - name: DARWIN_NOTIFICATION_URL
@@ -6723,10 +6722,8 @@ spec:
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: redis-standalone
-
           - name: SPRING_REDIS_HOST
             value: charlescd-redis-master
-
           - name: SPRING_REDIS_PORT
             value: "6379"
           - name: SPRING_REDIS_PASSWORD
@@ -6752,7 +6749,12 @@ spec:
               port: 8080
             initialDelaySeconds: 120
           resources:
-              {}
+              limits:
+                cpu: 500m
+                memory: 384Mi
+              requests:
+                cpu: 500m
+                memory: 384Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7201,6 +7203,29 @@ spec:
             initialDelaySeconds: 60
           resources:
               {}
+---
+# Source: charlescd/templates/hpa.yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: charlescd-circle-matcher
+  labels:
+    app: charlescd-circle-matcher
+    version: charlescd-circle-matcher
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: charlescd-circle-matcher
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
 ---
 # Source: charlescd/charts/keycloak/templates/statefulset.yaml
 apiVersion: apps/v1
