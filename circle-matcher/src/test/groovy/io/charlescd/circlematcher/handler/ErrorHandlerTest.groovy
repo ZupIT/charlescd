@@ -85,7 +85,7 @@ class ErrorHandlerTest extends Specification {
         then:
         assert response.links == []
         assert response.id instanceof String
-        assert response.details == 'Default segmentation already registered in workspace: 123456'
+        assert response.details.contains('Default segmentation already registered in workspace')
         assert response.title == 'Error creating segmentation'
         assert response.status == "400"
         assert response.meta.get("component") == metaInfo.get("component")
