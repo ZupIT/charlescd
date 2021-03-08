@@ -27,12 +27,13 @@ import { RequestConfig, Resource, ResourceType } from '../../../../../app/v2/cor
 import { RepositoryStrategyFactory } from '../../../../../app/v2/core/integrations/repository-strategy-factory'
 import { ConsoleLoggerService } from '../../../../../app/v2/core/logs/console/console-logger.service'
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
+import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
 
 
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
-  const manifestConfig = {
+  const manifestConfig : ManifestConfig = {
     repo: {
       provider: GitProvidersEnum.GITHUB,
       url: 'https://myrepo.com/test',
@@ -46,25 +47,6 @@ describe('Generate K8s manifest by helm', () => {
   }
 
   const repositoryStrategyFactory = mockStratetyFactory(async config => await readFiles(basePath, config.resourceName))
-
-  it('should generate manifest with default values', async() => {
-    const manifestConfig = {
-      repo: {
-        provider: GitProvidersEnum.GITHUB,
-        url: 'https://myrepo.com/test',
-        token: 'my-token',
-        branch: 'master'
-      },
-      componentName: 'helm-test-chart',
-      imageUrl: 'latest'
-    }
-    const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
-    const manifest = await helm.generate(manifestConfig)
-
-    const expected: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'))
-
-    expect(manifest).toEqual(expected)
-  })
 
   it('should generate manifest with custom values', async() => {
     const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)

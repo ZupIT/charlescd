@@ -19,19 +19,17 @@ import { BadRequestException, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
-import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { UndeploymentValidation } from '../../../../app/v2/api/deployments/pipes/undeployment-validation.pipe'
-import { FixtureUtilsService } from '../fixture-utils.service'
-import { TestSetupUtils } from '../test-setup-utils'
 import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 import { defaultManifests } from '../../fixtures/manifests.fixture'
+import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication
@@ -150,23 +148,14 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
     return component
   })
 
-  const configEntity = new CdConfigurationEntity(
-    CdTypeEnum.SPINNAKER,
-    { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
-    'config-name',
-    'authorId',
-    'workspaceId'
-  )
-  const cdConfiguration = await fixtureUtilsService.createEncryptedConfiguration(configEntity)
-
   const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(
     params.deploymentId,
     params.authorId,
     params.circle,
-    cdConfiguration,
     params.callbackUrl,
     components,
-    params.defaultCircle
+    params.defaultCircle,
+    'my-namespace'
   ))
 
   deployment.current = status

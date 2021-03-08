@@ -17,18 +17,15 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
-import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { FixtureUtilsService } from '../fixture-utils.service'
-import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
-import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { AppModule } from '../../../../app/app.module'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
 import { customManifests } from '../../fixtures/manifests.fixture'
-import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
+import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -60,37 +57,36 @@ describe('CreateDeploymentUsecase v2', () => {
   })
 
   it('should only merge default circle components from the previous deployment entity of that circle', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: true
       },
-      modules: [
+      git: {
+        token: base64Token,
+        provider: GitProvidersEnum.GITHUB
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
           helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'v2',
-              componentName: 'A'
-            }
-          ]
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'v2',
+          componentName: 'A'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: true
+      namespace: 'my-namespace'
     }
 
     const component1 = new ComponentEntity(
@@ -129,7 +125,6 @@ describe('CreateDeploymentUsecase v2', () => {
       'baa226a2-97f1-4e1b-b05a-d758839408f9',
       'user-1',
       '333365f8-bb29-49f7-bf2b-3ec956a71583',
-      cdConfiguration,
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
@@ -153,7 +148,9 @@ describe('CreateDeploymentUsecase v2', () => {
           customManifests('B', 'my-namespace', 'imageurl.com')
         )
       ],
-      true
+      true,
+      'my-namespace',
+      60
     )
     sameCircleActiveDeployment.current = true
 
@@ -161,7 +158,6 @@ describe('CreateDeploymentUsecase v2', () => {
       'd63ef13f-6138-41ca-ac64-6f5c25eb89f2',
       'user-1',
       '22220857-a638-4a4a-b513-63e3ef6f9d54',
-      cdConfiguration,
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
@@ -185,7 +181,9 @@ describe('CreateDeploymentUsecase v2', () => {
           customManifests('D', 'my-namespace', 'imageurl.com')
         )
       ],
-      true
+      true,
+      'my-namespace',
+      60
     )
     diffCircleActiveDeployment.current = true
 
@@ -193,7 +191,6 @@ describe('CreateDeploymentUsecase v2', () => {
       '2ba59bb7-842a-43e7-b2c8-85f35d62781b',
       'user-1',
       'fcd22a4e-c192-4c86-bca2-f23de7b73757',
-      cdConfiguration,
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
@@ -217,7 +214,9 @@ describe('CreateDeploymentUsecase v2', () => {
           customManifests('F', 'my-namespace', 'imageurl.com')
         )
       ],
-      false
+      false,
+      'my-namespace',
+      60
     )
     normalCircleActiveDeployment.current = true
 

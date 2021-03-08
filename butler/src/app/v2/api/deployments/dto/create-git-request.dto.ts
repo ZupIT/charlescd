@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from './cd-type.enum'
+import { ApiProperty } from '@nestjs/swagger'
+import { GitProvidersEnum } from '../../../core/configuration/interfaces/git-providers.type'
 
-export {
-  CdTypeEnum
+export class CreateGitDeploymentDto {
+
+  @ApiProperty()
+  public token: string
+
+  @ApiProperty()
+  public readonly provider: GitProvidersEnum
+
+  constructor(token: string, provider: GitProvidersEnum) {
+    this.token = token
+    this.provider = provider
+  }
 }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
@@ -30,7 +29,7 @@ const IstioUndeploymentManifestsUtils = {
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
         }
@@ -49,7 +48,7 @@ const IstioUndeploymentManifestsUtils = {
       kind: 'VirtualService',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify([])
         }
@@ -89,7 +88,7 @@ const IstioUndeploymentManifestsUtils = {
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`,
+        namespace: `${deployment.namespace}`,
         annotations: {
           circles: JSON.stringify(istioSubsets.map(s => s.labels.circleId))
         }

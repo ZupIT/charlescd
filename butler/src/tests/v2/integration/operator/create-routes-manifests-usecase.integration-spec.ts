@@ -1,10 +1,9 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
-import { cdConfigurationFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
+import { deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 
@@ -13,7 +12,6 @@ describe('Routes manifest use case', () => {
   let app: INestApplication
   let deploymentRepository: DeploymentRepositoryV2
   let routeUseCase: CreateRoutesManifestsUseCase
-  let manager: EntityManager
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -31,7 +29,6 @@ describe('Routes manifest use case', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentRepository = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
     routeUseCase = app.get<CreateRoutesManifestsUseCase>(CreateRoutesManifestsUseCase)
-    manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
@@ -44,8 +41,6 @@ describe('Routes manifest use case', () => {
   })
 
   it('Updates the healthy column to true when both VirtualService and DestinationRule for a component is true', async() => {
-    const configuration = await manager.save(cdConfigurationFixture)
-    deploymentFixture.cdConfiguration = configuration
     deploymentFixture.circleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
     deploymentFixture.current = true
     await deploymentRepository.save(deploymentFixture)
@@ -82,8 +77,6 @@ describe('Routes manifest use case', () => {
   })
 
   it('Updates the healthy column to false when at least one manifest status is false', async() => {
-    const configuration = await manager.save(cdConfigurationFixture)
-    deploymentFixture.cdConfiguration = configuration
     deploymentFixture.circleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
     deploymentFixture.current = true
     await deploymentRepository.save(deploymentFixture)
@@ -120,16 +113,14 @@ describe('Routes manifest use case', () => {
   })
 
   it('Updates the healthy column for multiple circles independently', async() => {
-    const configuration = await manager.save(cdConfigurationFixture)
     const firstCircleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
     const secondCircleId = 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
     const firstDeployment = deploymentFixture
     const secondDeployment = deploymentFixture
-    firstDeployment.cdConfiguration = configuration
+
     firstDeployment.circleId = firstCircleId
     await deploymentRepository.save(firstDeployment)
 
-    secondDeployment.cdConfiguration = configuration
     secondDeployment.circleId = secondCircleId
     secondDeployment.id = 'a7d08a07-f29d-452e-a667-7a39820f3262'
     await deploymentRepository.save(secondDeployment)

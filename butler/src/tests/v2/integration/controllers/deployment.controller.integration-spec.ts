@@ -19,12 +19,9 @@ import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
+import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
-import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
@@ -43,8 +40,8 @@ describe('DeploymentController v2', () => {
       ]
     })
 
-    app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
+    app = await TestSetupUtils.createApplication(module)
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     manager = fixtureUtilsService.connection.manager
   })
@@ -57,189 +54,86 @@ describe('DeploymentController v2', () => {
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
   })
-  it('returns ok for valid params with existing cdConfiguration', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-    const createDeploymentRequest = {
-      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
-      circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
-      },
-      modules: [
-        {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
-        }
-      ],
-      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: false
-    }
-
-    const expectedResponse : ReadDeploymentDto = {
-      applicationName: cdConfiguration.id,
-      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl,
-      circle: { headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583' },
-      createdAt: expect.any(String),
-      defaultCircle: false,
-      description: '',
-      id: expect.any(String),
-      modulesDeployments: [
-        {
-          id: 'dummy-id',
-          moduleId: 'dummy-module-id',
-          createdAt: expect.any(String),
-          helmRepository: UrlConstants.helmRepository,
-          componentsDeployments: [
-            {
-              id: expect.any(String),
-              buildImageTag: 'tag1',
-              buildImageUrl: 'imageurl.com',
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              componentName: 'component-name',
-              createdAt: expect.any(String),
-              hostValue: null,
-              gatewayName: null
-            }
-          ]
-        }
-      ],
-    }
-    await request(app.getHttpServer())
-      .post('/v2/deployments')
-      .send(createDeploymentRequest)
-      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
-      .expect(201)
-      .expect(response => {
-        expect(response.body).toEqual(expectedResponse)
-      })
-  })
-
-  it('returns not found error for valid params without existing cdConfiguration', async() => {
-    const createDeploymentRequest = {
-      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
-      circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
-      },
-      modules: [
-        {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
-        }
-      ],
-      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: '067765f8-aa29-49f7-bf2b-3ec676a71583',
-      callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: false
-    }
-    await request(app.getHttpServer())
-      .post('/v2/deployments')
-      .send(createDeploymentRequest)
-      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
-      .expect(404)
-      .expect(response => {
-        expect(response.body).toEqual(
-          {
-            error: 'Not Found',
-            message: 'CdConfiguration not found - id: 067765f8-aa29-49f7-bf2b-3ec676a71583',
-            statusCode: 404
-          })
-      })
-  })
-
   it('returns error message for empty payload', async() => {
     const createDeploymentRequest = {}
     const errorResponse = {
       errors: [
         {
-          status: 400,
           detail: '"deploymentId" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
           source: {
             pointer: 'deploymentId'
           },
+          status: 400
+        },
+        {
+          detail: '"namespace" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
-          }
-        },
-        {
-          status: 400,
-          detail: '"defaultCircle" is required',
-          source: {
-            pointer: 'defaultCircle'
           },
-          meta: {
-            component: 'butler',
-            timestamp: expect.anything()
-          }
-        },
-        {
-          status: 400,
-          detail: '"modules" is required',
           source: {
-            pointer: 'modules'
+            pointer: 'namespace'
           },
+          status: 400
+        },
+        {
+          detail: '"circle" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
-          }
+          },
+          source: {
+            pointer: 'circle'
+          },
+          status: 400
         },
         {
-          status: 400,
+          detail: '"git" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'git'
+          },
+          status: 400
+        },
+        {
+          detail: '"components" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'components'
+          },
+          status: 400
+        },
+        {
           detail: '"authorId" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
           source: {
             pointer: 'authorId'
           },
-          meta: {
-            component: 'butler',
-            timestamp: expect.anything()
-          }
+          status: 400
         },
         {
-          status: 400,
-          detail: '"cdConfigurationId" is required',
-          source: {
-            pointer: 'cdConfigurationId'
-          },
-          meta: {
-            component: 'butler',
-            timestamp: expect.anything()
-          }
-        },
-        {
-          status: 400,
           detail: '"callbackUrl" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
           source: {
             pointer: 'callbackUrl'
           },
-          meta: {
-            component: 'butler',
-            timestamp: expect.anything()
-          }
+          status: 400
         }
       ]
     }
@@ -254,42 +148,47 @@ describe('DeploymentController v2', () => {
   })
 
   it('create execution for the deployment', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
+
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
-      circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      namespace: 'default',
+      git: {
+        token: base64Token,
+        provider: GitProvidersEnum.GITHUB
       },
-      modules: [
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
           helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: false
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'ab1c7726-a274-4fc3-9ec1-44e3563d58af')
+      .expect(response => {
+        expect(response.body).toEqual({
+          id: expect.anything()
+        })
+      })
 
     const executionsCount = await manager.findAndCount(Execution)
     expect(executionsCount[1]).toEqual(1)
@@ -297,71 +196,166 @@ describe('DeploymentController v2', () => {
     expect(execution.deployment.id).toEqual(response.body.id)
   })
 
+  it('returns a bad request error when the git token decryption fail', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
+      git: {
+        token: Buffer.from('malformed token').toString('base64'),
+        provider: GitProvidersEnum.GITHUB
+      },
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+    }
+
+    const expectedError = {
+      errors: [
+        {
+          detail: 'unable to decrypt "token"',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'git.token'
+          },
+          status: 500
+        }
+      ]
+    }
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'ab1c7726-a274-4fc3-9ec1-44e3563d58af')
+      .expect(500)
+      .expect(response => {
+        expect(response.body).toEqual(expectedError)
+      })
+  })
+
   it('returns error for malformed payload', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
         headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
       },
-      modules: [
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            },
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            },
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com2 ',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            },
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl-ends-with-dash.com3-',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            },
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: `very-long-url${'4'.repeat(237)}.com`, // max is 253 because of kubernetes
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            },
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'quiz-app-backend',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        },
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        },
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com2 ',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        },
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl-ends-with-dash.com3-',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        },
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: `very-long-url${'4'.repeat(237)}.com`, // max is 253 because of kubernetes
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        },
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'quiz-app-backend',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: false
+      callbackUrl: UrlConstants.deploymentCallbackUrl
     }
     const errorResponse = {
       errors: [
+        {
+          detail: '"namespace" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'namespace'
+          },
+          status: 400
+        },
+        {
+          detail: '"circle.id" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'circle/id'
+          },
+          status: 400
+        },
+        {
+          detail: '"circle.default" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'circle/default'
+          },
+          status: 400
+        },
+        {
+          detail: '"circle.headerValue" is not allowed',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'circle/headerValue'
+          },
+          status: 400
+        },
+        {
+          detail: '"git" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'git'
+          },
+          status: 400
+        },
         {
           detail: '"buildImageUrl" with value "imageurl.com2 " fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/',
           meta: {
@@ -369,7 +363,7 @@ describe('DeploymentController v2', () => {
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'modules/0/components/2/buildImageUrl'
+            pointer: 'components/2/buildImageUrl'
           },
           status: 400
         },
@@ -380,7 +374,7 @@ describe('DeploymentController v2', () => {
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'modules/0/components/3/buildImageUrl'
+            pointer: 'components/3/buildImageUrl'
           },
           status: 400
         },
@@ -391,7 +385,7 @@ describe('DeploymentController v2', () => {
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'modules/0/components/4/buildImageUrl'
+            pointer: 'components/4/buildImageUrl'
           },
           status: 400
         },
@@ -402,7 +396,7 @@ describe('DeploymentController v2', () => {
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'modules/0/components/1'
+            pointer: 'components/1'
           },
           status: 400
         }
@@ -419,30 +413,20 @@ describe('DeploymentController v2', () => {
   })
 
   it('returns error for empty components', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
       },
-      modules: [
-        {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
-          components: []
-        }
-      ],
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: false
+      callbackUrl: UrlConstants.deploymentCallbackUrl
     }
     const errorResponse = {
       errors: [
@@ -453,7 +437,7 @@ describe('DeploymentController v2', () => {
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'modules/0/components'
+            pointer: 'components'
           },
           status: 400
         }
@@ -470,86 +454,78 @@ describe('DeploymentController v2', () => {
       })
   })
 
-  it('saves the host value / gateway name parameters correctly', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+  it('saves optional parameters correctly', async() => {
+    const encryptedToken = `
+-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
       },
-      modules: [
+      git: {
+        token: Buffer.from(encryptedToken).toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1',
           helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name',
-              hostValue: 'host-value-1',
-              gatewayName: 'gateway-name-1'
-            }
-          ]
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: false
+      timeoutInSeconds: 10
     }
-    await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
-      .expect(response => {
-        expect(response.body.modulesDeployments[0].componentsDeployments[0].hostValue).toEqual('host-value-1')
-        expect(response.body.modulesDeployments[0].componentsDeployments[0].gatewayName).toEqual('gateway-name-1')
-      })
+    const deployment = await manager.findOneOrFail(DeploymentEntityV2, response.body.id, { relations: ['components'] })
+    expect(deployment.components.map(c => c.hostValue)).toEqual(['host-value-1'])
+    expect(deployment.components.map(c => c.gatewayName)).toEqual(['gateway-name-1'])
+    expect(deployment.timeoutInSeconds).toEqual(10)
   })
 
   it('validates size of componentName + buildImageTag concatenation', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
       },
-      modules: [
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
           helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: '11111111111111111111111111111111',
-              componentName: '22222222222222222222222222222222',
-              hostValue: 'host-value-1',
-              gatewayName: 'gateway-name-1'
-            }
-          ]
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: '11111111111111111111111111111111',
+          componentName: '22222222222222222222222222222222',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: true
     }
 
     const errorResponse = {
@@ -561,7 +537,7 @@ describe('DeploymentController v2', () => {
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'modules/0/components/0'
+            pointer: 'components/0'
           },
           status: 400
         }
@@ -580,45 +556,39 @@ describe('DeploymentController v2', () => {
   })
 
   it('validates imageTag is equal to suplied tag on imageUrl', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.OCTOPIPE,
-      { provider: ClusterProviderEnum.DEFAULT, gitProvider: GitProvidersEnum.GITHUB, gitToken: 'my-token', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
       },
-      modules: [
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
           helmRepository: UrlConstants.helmRepository,
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com:someTag',
-              buildImageTag: 'differentTag',
-              componentName: 'my-component',
-              hostValue: 'host-value-1',
-              gatewayName: 'gateway-name-1'
-            },
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl2.com:anotherTag',
-              buildImageTag: 'anotherTag',
-              componentName: 'my-other-component'
-            }
-          ]
+
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com:someTag',
+          buildImageTag: 'differentTag',
+          componentName: 'my-component',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1'
+        },
+        {
+          helmRepository: UrlConstants.helmRepository,
+
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl2.com:anotherTag',
+          buildImageTag: 'anotherTag',
+          componentName: 'my-other-component'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: UrlConstants.deploymentCallbackUrl,
-      defaultCircle: true
+      callbackUrl: UrlConstants.deploymentCallbackUrl
     }
 
     const errorResponse = {
@@ -630,7 +600,7 @@ describe('DeploymentController v2', () => {
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'modules/0/components/0'
+            pointer: 'components/0'
           },
           status: 400
         }

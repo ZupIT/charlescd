@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
-import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
-import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { Deployment } from '../../../../app/v2/api/deployments/interfaces'
-import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder'
+import * as k8s from '@kubernetes/client-node'
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import * as http from 'http'
-import * as k8s from '@kubernetes/client-node'
+import { Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
+import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
+import { CrdBuilder } from '../../../../app/v2/core/integrations/k8s/crd-builder'
+import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -32,21 +29,7 @@ const deployment: Deployment = {
   id: 'deployment-id',
   authorId: 'user-1',
   callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-  cdConfiguration: {
-    id: 'cd-configuration-id',
-    type: CdTypeEnum.OCTOPIPE,
-    configurationData: {
-      gitProvider: GitProvidersEnum.GITHUB,
-      gitToken: 'git-token',
-      provider: ClusterProviderEnum.DEFAULT,
-      namespace: 'sandbox'
-    },
-    name: 'octopipeconfiguration',
-    authorId: 'user-2',
-    workspaceId: 'workspace-id',
-    createdAt: new Date(),
-    deployments: null
-  },
+  namespace: 'sandbox',
   defaultCircle: false,
   circleId: 'circle-id2',
   createdAt: new Date(),

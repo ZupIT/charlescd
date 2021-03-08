@@ -16,12 +16,13 @@
 
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { CdConfigurationEntity } from '../../configurations/entity/cd-configuration.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
-import { CreateModuleDeploymentDto } from './create-module-request.dto'
+import { CreateComponentRequestDto } from './create-component-request.dto'
+import { CreateGitDeploymentDto } from './create-git-request.dto'
+
 
 export class CreateDeploymentRequestDto {
 
@@ -35,52 +36,57 @@ export class CreateDeploymentRequestDto {
   public callbackUrl: string
 
   @ApiProperty()
-  public cdConfigurationId: string
-
-  public cdConfiguration!: CdConfigurationEntity
-
-  @ApiProperty({ type: () => CreateCircleDeploymentDto })
   @Type(() => CreateCircleDeploymentDto)
   public circle: CreateCircleDeploymentDto
 
-  public status: DeploymentStatusEnum
+  @ApiProperty()
+  @Type(() => CreateGitDeploymentDto)
+  public git: CreateGitDeploymentDto
 
   @ApiProperty()
-  public defaultCircle: boolean
+  public namespace: string
 
-  @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
-  @Type(() => CreateModuleDeploymentDto)
-  public readonly modules: CreateModuleDeploymentDto[]
+  @ApiProperty()
+  public timeoutInSeconds: number
+
+  public status: DeploymentStatusEnum
+
+  @ApiProperty({ type: () => [CreateComponentRequestDto] })
+  @Type(() => CreateComponentRequestDto)
+  public readonly components: CreateComponentRequestDto[]
 
   constructor(
     deploymentId: string,
     authorId: string,
     callbackUrl: string,
-    cdConfigurationId: string,
     circle: CreateCircleDeploymentDto,
     status: DeploymentStatusEnum,
-    modules: CreateModuleDeploymentDto[],
-    defaultCircle: boolean
+    components: CreateComponentRequestDto[],
+    namespace: string,
+    git: CreateGitDeploymentDto,
+    timeoutInSeconds: number
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
     this.callbackUrl = callbackUrl
-    this.cdConfigurationId = cdConfigurationId
     this.circle = circle
     this.status = status
-    this.modules = modules
-    this.defaultCircle = defaultCircle
+    this.components = components
+    this.namespace = namespace
+    this.git = git
+    this.timeoutInSeconds = timeoutInSeconds
   }
 
   public toCircleEntity(newComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      this.circle.headerValue,
-      this.cdConfiguration,
+      this.circle.id,
       this.callbackUrl,
       newComponents,
-      this.defaultCircle
+      this.circle.default,
+      this.namespace,
+      this.timeoutInSeconds
     )
   }
 
@@ -88,11 +94,12 @@ export class CreateDeploymentRequestDto {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      this.circle.headerValue,
-      this.cdConfiguration,
+      this.circle.id,
       this.callbackUrl,
       [ ...activeComponents, ...newComponents],
-      this.defaultCircle
+      this.circle.default,
+      this.namespace,
+      this.timeoutInSeconds
     )
   }
 }

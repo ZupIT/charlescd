@@ -62,5 +62,3 @@ export const ConfigurationConstants = {
 
   BUTLER_NAMESPACE: 'default'
 }
-
-export type DefaultCircleId = 'f5d23a57-5607-4306-9993-477e1598cc2a'

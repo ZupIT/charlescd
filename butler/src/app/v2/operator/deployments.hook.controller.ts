@@ -26,12 +26,12 @@ export class DeploymentsHookController {
   @Post('/v2/operator/deployment/hook/finalize')
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async finalize(@Body() params: HookParams): Promise<{ status?: unknown, children: [], finalized: boolean, resyncAfterSeconds?: number }> {
-    const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
+  public async finalize(): Promise<{ status?: unknown, children: [], finalized: boolean, resyncAfterSeconds?: number }> {
     const finalized = true
-    const activeComponents = await this.componentRepository.findActiveComponents(deployment.cdConfiguration.id)
+    const activeComponents = await this.componentRepository.findActiveComponents()
     await this.k8sClient.applyRoutingCustomResource(activeComponents)
 
+    // TODO: Review all this placeholder logic
     // we cant trust that everything went well instantly, we need to keep returning finalized = true until we are sure there are no more routes to this deployment
     // const currentRoutes = this.k8sClient.getRoutingResource()
     // here we have to check if currentRoutes match the desired state based on activeComponents from database

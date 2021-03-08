@@ -16,8 +16,6 @@
 
 import { HttpModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { CdConfigurationEntity } from '../configurations/entity'
-import { CdConfigurationsRepository } from '../configurations/repository'
 import { MooveService } from '../../core/integrations/moove'
 import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
@@ -43,8 +41,6 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
     TypeOrmModule.forFeature([
       DeploymentEntity,
       Execution,
-      CdConfigurationEntity,
-      CdConfigurationsRepository,
       ComponentsRepositoryV2,
       ExecutionRepository,
       DeploymentRepositoryV2

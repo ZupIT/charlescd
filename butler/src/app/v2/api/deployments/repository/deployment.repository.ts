@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository } from 'typeorm'
+import { EntityRepository, Repository, UpdateResult } from 'typeorm'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 
 @EntityRepository(DeploymentEntityV2)
@@ -48,6 +48,10 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
   }
 
   public async findWithComponentsAndConfig(deploymentId: string): Promise<DeploymentEntityV2> {
-    return this.findOneOrFail({ id: deploymentId }, { relations: ['cdConfiguration', 'components'] })
+    return this.findOneOrFail({ id: deploymentId }, { relations: ['components'] })
+  }
+
+  public async updateCurrent(id: string, current: boolean): Promise<UpdateResult> {
+    return this.update({ id: id }, { current: current })
   }
 }

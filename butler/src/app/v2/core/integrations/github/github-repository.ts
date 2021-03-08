@@ -15,10 +15,9 @@
  */
 
 import { HttpService, Injectable } from '@nestjs/common'
-import { AxiosResponse, AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
-
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 
 @Injectable()

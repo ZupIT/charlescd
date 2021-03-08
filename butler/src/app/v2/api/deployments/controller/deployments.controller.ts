@@ -19,12 +19,12 @@ import { validate as uuidValidate } from 'uuid'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
-import { CdConfigurationExistencePipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
 import { JoiValidationPipe } from '../pipes/joi-validation-pipe'
+import { GitTokenDecryptionPipe } from '../pipes/git-token-decryption.pipe'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -35,7 +35,7 @@ export class DeploymentsController {
   ) { }
 
   @Post('/')
-  @UsePipes(CdConfigurationExistencePipe)
+  @UsePipes(GitTokenDecryptionPipe)
   @UsePipes(DeploymentUniquenessPipe)
   @UsePipes(new JoiValidationPipe())
   public async createDeployment(
