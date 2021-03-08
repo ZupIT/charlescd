@@ -153,19 +153,13 @@ class JdbcWorkspaceRepository(
                    user_group_author.name                 AS workspace_user_group_author_name,
                    user_group_author.email                AS workspace_user_group_author_email,
                    user_group_author.photo_url            AS workspace_user_group_author_photo_url,
-                   user_group_author.created_at           AS workspace_user_group_author_created_at,
-                   user_group_member.id                   AS workspace_user_group_member_id,
-                   user_group_member.name                 AS workspace_user_group_member_name,
-                   user_group_member.email                AS workspace_user_group_member_email,
-                   user_group_member.photo_url            AS workspace_user_group_member_photo_url,
-                   user_group_member.created_at           AS workspace_user_group_member_created_at
+                   user_group_author.created_at           AS workspace_user_group_author_created_at
             FROM ( $innerQueryStatement ) workspaces
                      INNER JOIN users workspace_author ON workspaces.user_id = workspace_author.id
                      LEFT JOIN workspaces_user_groups ON workspaces.id = workspaces_user_groups.workspace_id
                      LEFT JOIN user_groups ON workspaces_user_groups.user_group_id = user_groups.id
                      LEFT JOIN users user_group_author ON user_groups.user_id = user_group_author.id
                      LEFT JOIN user_groups_users on user_groups.id = user_groups_users.user_group_id
-                     LEFT JOIN users user_group_member ON user_groups_users.user_id = user_group_member.id
             WHERE 1 = 1 
             ORDER BY workspaces.name ASC
         """
@@ -208,17 +202,6 @@ class JdbcWorkspaceRepository(
         when (parameter) {
             "name" -> query.appendln("AND workspaces.$parameter ILIKE ?")
         }
-    }
-
-    private fun executePageQuery(
-        statement: StringBuilder,
-        pageRequest: PageRequest
-    ): Set<Workspace>? {
-        return this.jdbcTemplate.query(
-            statement.toString(),
-            arrayOf(pageRequest.size, pageRequest.offset()),
-            workspaceExtractor
-        )
     }
 
     private fun executeCountQuery(name: String?): Int? {

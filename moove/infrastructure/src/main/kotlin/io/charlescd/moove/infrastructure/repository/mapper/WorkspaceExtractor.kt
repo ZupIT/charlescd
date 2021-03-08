@@ -95,10 +95,21 @@ class WorkspaceExtractor(private val workspaceMapper: WorkspaceMapper) : ResultS
     }
 
     private fun createUserGroupMembers(resultSet: ResultSet, userGroupMembers: HashMap<String, HashSet<User>>) {
-        if (resultSet.getString("workspace_user_group_member_id") != null) {
+        val collumName = "workspace_user_group_member_id"
+        if (columnExist(collumName, resultSet) && resultSet.getString(collumName) != null) {
             userGroupMembers[resultSet.getString("workspace_user_group_id")]?.add(mapMember(resultSet))
                 ?: userGroupMembers.put(resultSet.getString("workspace_user_group_id"), hashSetOf(mapMember(resultSet)))
         }
+    }
+
+    fun columnExist(columnName: String?, rs: ResultSet): Boolean {
+        val meta = rs.metaData
+        for (i in 1..meta.columnCount) {
+            if (meta.getColumnName(i).equals(columnName, ignoreCase = true)) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun mapMember(resultSet: ResultSet): User {
