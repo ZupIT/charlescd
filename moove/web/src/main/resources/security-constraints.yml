@@ -180,6 +180,12 @@ constraints:
         - POST
         - PATCH
 
+  - pattern: /v2/workspaces/{workspaceId}/groups/**
+    roles:
+      maintenance_write:
+        - POST
+        - DELETE
+
   - pattern: /v2/configurations/metric-configurations/provider-status
     roles:
       maintenance_write:

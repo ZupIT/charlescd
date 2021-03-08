@@ -6463,7 +6463,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.0
+          image: zupcharles/charlescd-butler:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6521,7 +6521,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.0
+          image: zupcharles/charlescd-circle-matcher:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6623,7 +6623,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.0
+          image: zupcharles/charlescd-compass:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6710,7 +6710,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.0
+          image: zupcharles/charlescd-moove:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6765,7 +6765,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.0
+          image: zupcharles/charlescd-octopipe:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6827,7 +6827,7 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
-          image: zupcharles/charlescd-ui:0.6.0
+          image: zupcharles/charlescd-ui:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6893,7 +6893,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.0
+          image: zupcharles/charlescd-villager:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
