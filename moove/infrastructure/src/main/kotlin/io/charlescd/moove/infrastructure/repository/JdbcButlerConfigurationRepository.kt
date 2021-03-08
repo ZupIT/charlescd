@@ -70,7 +70,7 @@ class JdbcButlerConfigurationRepository(
                                namespace,
                                git_token,
                                git_provider)
-                VALUES (?, ?, ?, ?, ?, ?, ?, PGP_SYM_ENCRYPT(?, ?, 'cipher-algo=aes256'), ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ENCODE(ARMOR(PGP_SYM_ENCRYPT(?, ?, 'cipher-algo=aes256'))::bytea, 'base64'), ?)
                 """
         )
 
