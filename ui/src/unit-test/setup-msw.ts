@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-import { isNotBlank, trimValue } from "../validations";
+import { server } from 'mocks/server';
+import { originalFetch } from 'setupTests';
 
-test("should validate a empty field", () => {
-  const emptyValue = '   ';
-  const nonEmptyValue = 'x';
-  const nonStringValue = {};
-
-  expect(isNotBlank(nonStringValue)).toBe(nonStringValue);
-  expect(isNotBlank(emptyValue)).toBe('No whitespaces');
-  expect(isNotBlank(nonEmptyValue)).toBeTruthy();
+beforeAll(() => {
+  server.listen();
+  global.fetch = originalFetch;
 });
 
-test("should trim value", () => {
-  const whitespacesValue = '  x  ';
-  const nonStringValue = {};
+afterEach(() => server.resetHandlers());
 
-  expect(trimValue(nonStringValue)).toBe(nonStringValue);
-  expect(trimValue(whitespacesValue)).toBe('x');
-});
+afterAll(() => server.close());
