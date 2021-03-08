@@ -46,6 +46,9 @@ export class CreateDeploymentRequestDto {
   @ApiProperty()
   public namespace: string
 
+  @ApiProperty()
+  public timeoutInSeconds: number
+
   public status: DeploymentStatusEnum
 
   @ApiProperty({ type: () => [CreateComponentRequestDto] })
@@ -60,7 +63,8 @@ export class CreateDeploymentRequestDto {
     status: DeploymentStatusEnum,
     components: CreateComponentRequestDto[],
     namespace: string,
-    git: CreateGitDeploymentDto
+    git: CreateGitDeploymentDto,
+    timeoutInSeconds: number
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -70,6 +74,7 @@ export class CreateDeploymentRequestDto {
     this.components = components
     this.namespace = namespace
     this.git = git
+    this.timeoutInSeconds = timeoutInSeconds
   }
 
   public toCircleEntity(newComponents: ComponentEntity[]): DeploymentEntity {
@@ -80,7 +85,8 @@ export class CreateDeploymentRequestDto {
       this.callbackUrl,
       newComponents,
       this.circle.default,
-      this.namespace
+      this.namespace,
+      this.timeoutInSeconds
     )
   }
 
@@ -92,7 +98,8 @@ export class CreateDeploymentRequestDto {
       this.callbackUrl,
       [ ...activeComponents, ...newComponents],
       this.circle.default,
-      this.namespace
+      this.namespace,
+      this.timeoutInSeconds
     )
   }
 }

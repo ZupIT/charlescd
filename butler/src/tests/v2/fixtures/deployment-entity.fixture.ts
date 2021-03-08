@@ -22,7 +22,8 @@ export const deploymentFixture = new DeploymentEntityV2(
     )
   ],
   true,
-  'namespace'
+  'namespace',
+  60
 )
 
 export const deployComponentsFixture = [createDeployComponent()]
@@ -59,7 +60,8 @@ function createDeployComponent() {
       )
     ],
     true,
-    'namespace'
+    'namespace',
+    60
   )
   return component
 }
@@ -83,5 +85,6 @@ export const deploymentWithManifestFixture = new DeploymentEntityV2(
     )
   ],
   true,
-  'namespace'
+  'namespace',
+  60
 )

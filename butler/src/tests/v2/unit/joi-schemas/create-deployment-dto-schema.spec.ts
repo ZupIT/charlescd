@@ -32,7 +32,7 @@ it('Returns valid DTO object when params are valid', () => {
       default: 'false'
     },
     git: {
-      token: 'abc123-token',
+      token: Buffer.from('abc123-token').toString('base64'),
       provider: GitProvidersEnum.GITHUB
     },
     namespace: 'namespace',
@@ -53,7 +53,8 @@ it('Returns valid DTO object when params are valid', () => {
       }
     ],
     authorId: 'bc2a1669-34b8-4af2-b42c-acbad2ec6b60',
-    callbackUrl: UrlConstants.deploymentCallbackUrl
+    callbackUrl: UrlConstants.deploymentCallbackUrl,
+    timeoutInSeconds: 10
   }
   const validator = new CreateDeploymentValidator(params).validate()
   const expectedDto = new CreateDeploymentRequestDto(
@@ -83,7 +84,8 @@ it('Returns valid DTO object when params are valid', () => {
       )
     ],
     'namespace',
-    new CreateGitDeploymentDto('abc123-token', GitProvidersEnum.GITHUB)
+    new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
+    10
   )
   expect(validator).toEqual({ valid: true, data: expectedDto })
 })

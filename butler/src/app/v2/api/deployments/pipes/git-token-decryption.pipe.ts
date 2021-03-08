@@ -48,10 +48,10 @@ export class GitTokenDecryptionPipe implements PipeTransform {
 
   private async decryptToken(pgpToken: string) : Promise<string | undefined> {
     try {
-      const message = await openpgp.readMessage({ armoredMessage: pgpToken })
+      const decodedToken = Buffer.from(pgpToken, 'base64').toString('utf8')
+      const message = await openpgp.readMessage({ armoredMessage: decodedToken })
       const decryptedMessage = await openpgp.decrypt({ message: message, passwords: AppConstants.ENCRYPTION_KEY })
       return decryptedMessage.data
-
     } catch (error) {
       return
     }

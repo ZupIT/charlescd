@@ -57,15 +57,14 @@ describe('CreateDeploymentUsecase v2', () => {
   })
 
   it('should only merge default circle components from the previous deployment entity of that circle', async() => {
-    const encryptedToken = `
------BEGIN PGP MESSAGE-----
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
 
 ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
 BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 =QGZf
 -----END PGP MESSAGE-----
 `
-
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
@@ -73,7 +72,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         default: true
       },
       git: {
-        token: encryptedToken,
+        token: base64Token,
         provider: GitProvidersEnum.GITHUB
       },
       components: [
@@ -150,7 +149,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         )
       ],
       true,
-      'my-namespace'
+      'my-namespace',
+      60
     )
     sameCircleActiveDeployment.current = true
 
@@ -182,7 +182,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         )
       ],
       true,
-      'my-namespace'
+      'my-namespace',
+      60
     )
     diffCircleActiveDeployment.current = true
 
@@ -214,7 +215,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         )
       ],
       false,
-      'my-namespace'
+      'my-namespace',
+      60
     )
     normalCircleActiveDeployment.current = true
 

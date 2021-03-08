@@ -60,6 +60,9 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'routed' })
   public routed!: boolean
 
+  @Column({ name: 'timeout_in_seconds' })
+  public timeoutInSeconds: number
+
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
@@ -73,7 +76,8 @@ export class DeploymentEntityV2 implements Deployment {
     callbackUrl: string,
     components: ComponentEntity[],
     defaultCircle: boolean,
-    namespace: string
+    namespace: string,
+    timeoutInSeconds: number
   ) {
     this.id = deploymentId
     this.authorId = authorId
@@ -82,6 +86,7 @@ export class DeploymentEntityV2 implements Deployment {
     this.components = components
     this.defaultCircle = defaultCircle
     this.namespace = namespace
+    this.timeoutInSeconds = timeoutInSeconds
   }
 
   public toReadDto(): ReadDeploymentDto {

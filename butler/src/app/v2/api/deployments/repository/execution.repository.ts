@@ -41,6 +41,10 @@ export class ExecutionRepository extends Repository<Execution> {
     }
   }
 
+  public async findByDeploymentId(deploymentId: string): Promise<Execution> {
+    return await this.findOneOrFail({ deploymentId: deploymentId })
+  }
+
   public async listExecutionsAndRelations(current: boolean, pageSize: number, page: number): Promise<[Execution[], number]> {
     const baseQuery = this.createQueryBuilder('e')
       .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at, count (*) over() as total_executions')

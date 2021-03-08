@@ -41,6 +41,13 @@ export class RenameDeploymentsActiveAndAddHealthyToCurrent20210118163900 impleme
       default: false,
       isNullable: false
     }))
+
+    await queryRunner.addColumn('v2deployments', new TableColumn({
+      name: 'timeout_in_seconds',
+      type: 'int',
+      default: 60,
+      isNullable: false
+    }))
   }
 
   public async down(queryRunner: QueryRunner) : Promise<void> {
@@ -55,5 +62,6 @@ export class RenameDeploymentsActiveAndAddHealthyToCurrent20210118163900 impleme
 
     await queryRunner.dropColumn('v2deployments', 'healthy')
     await queryRunner.dropColumn('v2deployments', 'routed')
+    await queryRunner.dropColumn('v2deployments', 'reconciliation_count')
   }
 }

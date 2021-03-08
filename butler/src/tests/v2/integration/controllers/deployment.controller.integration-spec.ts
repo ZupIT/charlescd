@@ -148,20 +148,20 @@ describe('DeploymentController v2', () => {
   })
 
   it('create execution for the deployment', async() => {
-    const encryptedToken = `
------BEGIN PGP MESSAGE-----
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
 
 ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
 BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 =QGZf
 -----END PGP MESSAGE-----
 `
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
 
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       namespace: 'default',
       git: {
-        token: encryptedToken,
+        token: base64Token,
         provider: GitProvidersEnum.GITHUB
       },
       circle: {
@@ -201,7 +201,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       namespace: 'default',
       git: {
-        token: 'malformed token',
+        token: Buffer.from('malformed token').toString('base64'),
         provider: GitProvidersEnum.GITHUB
       },
       circle: {
@@ -421,7 +421,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         default: false
       },
       git: {
-        token: '123123',
+        token: Buffer.from('123123').toString('base64'),
         provider: 'GITHUB'
       },
       components: [],
@@ -454,7 +454,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       })
   })
 
-  it('saves the host value / gateway name parameters correctly', async() => {
+  it('saves optional parameters correctly', async() => {
     const encryptedToken = `
 -----BEGIN PGP MESSAGE-----
 
@@ -472,7 +472,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         default: false
       },
       git: {
-        token: encryptedToken,
+        token: Buffer.from(encryptedToken).toString('base64'),
         provider: 'GITHUB'
       },
       components: [
@@ -488,6 +488,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
+      timeoutInSeconds: 10
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -497,6 +498,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const deployment = await manager.findOneOrFail(DeploymentEntityV2, response.body.id, { relations: ['components'] })
     expect(deployment.components.map(c => c.hostValue)).toEqual(['host-value-1'])
     expect(deployment.components.map(c => c.gatewayName)).toEqual(['gateway-name-1'])
+    expect(deployment.timeoutInSeconds).toEqual(10)
   })
 
   it('validates size of componentName + buildImageTag concatenation', async() => {
@@ -508,7 +510,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         default: false
       },
       git: {
-        token: '123123',
+        token: Buffer.from('123123').toString('base64'),
         provider: 'GITHUB'
       },
       components: [
@@ -562,7 +564,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         default: false
       },
       git: {
-        token: '123123',
+        token: Buffer.from('123123').toString('base64'),
         provider: 'GITHUB'
       },
       components: [
