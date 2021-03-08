@@ -83,7 +83,7 @@ export class ReconcileDeploymentUsecase {
   private async handleTimedOut(deployment: DeploymentEntityV2) {
     const createdMoment = moment(deployment.createdAt)
     const nowMoment = moment(DateUtils.now())
-    if (moment.duration(createdMoment.diff(nowMoment)).asSeconds() > deployment.timeoutInSeconds) {
+    if (moment.duration(nowMoment.diff(createdMoment)).asSeconds() > deployment.timeoutInSeconds) {
       this.deploymentRepository.updateCurrent(deployment.id, false)
       this.notifyCallback(deployment, DeploymentStatusEnum.FAILED)
       this.k8sClient.applyUndeploymentCustomResource(deployment)
