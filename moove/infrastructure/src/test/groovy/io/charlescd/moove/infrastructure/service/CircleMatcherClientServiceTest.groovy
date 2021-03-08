@@ -17,15 +17,14 @@
 package io.charlescd.moove.infrastructure.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.SimpleCircle
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.fixture.Fixtures
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
 import io.charlescd.moove.infrastructure.service.client.response.IdentifyResponse
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 class CircleMatcherClientServiceTest extends Specification {
 
@@ -39,8 +38,7 @@ class CircleMatcherClientServiceTest extends Specification {
 
     def "should create a new circle segmentation on circle matcher"() {
         given:
-        def user = getDummyUser()
-        def circle = getDummyCircle("Women", user)
+        def circle = Fixtures.circle().build()
         def matcherUri = "http://circle-matcher.com"
 
         when:
@@ -70,8 +68,7 @@ class CircleMatcherClientServiceTest extends Specification {
     def "should update a circle segmentation on circle matcher"() {
         given:
         def previousReference = "c6e36515-cbfe-478d-83aa-3c185a5db4a4"
-        def user = getDummyUser()
-        def circle = getDummyCircle("Women", user)
+        def circle = Fixtures.circle().build()
         def matcherUri = "http://circle-matcher.com"
 
         when:
@@ -123,8 +120,7 @@ class CircleMatcherClientServiceTest extends Specification {
 
     def "should return a list of circles that match request parameters"() {
         given:
-        def author = getDummyUser()
-        def workspace = getDummyWorkspace("1f0e4b27-4db8-4698-b31b-9fbcacfc080f", author)
+        def workspace = Fixtures.workspace().withId("1f0e4b27-4db8-4698-b31b-9fbcacfc080f").build()
         def request = new HashMap<String, Object>()
         request.put("username", "zup")
 
@@ -155,49 +151,5 @@ class CircleMatcherClientServiceTest extends Specification {
         assert response[0].name == "Women"
         assert response[1].id == "d9fe48cb-710f-4058-8009-e3521cac3006"
         assert response[1].name == "Default"
-    }
-
-    private User getDummyUser() {
-        new User(
-                '4e806b2a-557b-45c5-91be-1e1db909bef6',
-                'User name',
-                'user@email.com',
-                'user.photo.png',
-                new ArrayList<Workspace>(),
-                false,
-                LocalDateTime.now()
-        )
-    }
-
-    private Workspace getDummyWorkspace(String workspaceId, User author) {
-        new Workspace(
-                workspaceId,
-                "Charles",
-                author,
-                LocalDateTime.now(),
-                [],
-                WorkspaceStatusEnum.COMPLETE,
-                null,
-                "http://circle-matcher.com",
-                null,
-                null,
-                null
-        )
-    }
-
-    private Circle getDummyCircle(String name, User author) {
-        new Circle(
-                'w8296aea-6ae1-44ea-bc55-0242ac13000w',
-                name,
-                'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author,
-                LocalDateTime.now(),
-                MatcherTypeEnum.SIMPLE_KV,
-                null,
-                null,
-                null,
-                false,
-                "44446b2a-557b-45c5-91be-1e1db9095556"
-        )
     }
 }
