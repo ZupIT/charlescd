@@ -19,11 +19,10 @@ import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import { useGlobalState } from 'core/state/hooks';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, isIDMAuthFlow, logout } from 'core/utils/auth';
+import { getAccessTokenDecoded, isIDMEnabled, isRoot, logout } from 'core/utils/auth';
 import { useWorkspacesByUser } from 'modules/Users/hooks';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
-import { isRoot } from 'core/utils/auth';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -40,17 +39,23 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
 
   const onIDMFlow = useCallback(() => {
     if (isRoot()) {
-      filterWorkspace(name);
+      filterWorkspace();
     } else {
       findWorkspacesByUser(userId);
     }
-  }, [filterWorkspace, findWorkspacesByUser, name, userId]);
+  }, [filterWorkspace, findWorkspacesByUser, userId]);
 
   useEffect(() => {
-    if (isIDMAuthFlow()) {
+    if (isIDMEnabled()) {
       onIDMFlow();
     }
   }, [onIDMFlow]);
+
+  useEffect(() => {
+    if (isRoot()) {
+      filterWorkspace(name);
+    }
+  }, [name, filterWorkspace]);
 
   useEffect(() => {
     if (!email) logout();

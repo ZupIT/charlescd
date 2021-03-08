@@ -51,7 +51,7 @@ import {
   ActionType,
   Action
 } from './types';
-import { ValidationError } from 'core/interfaces/ValidationError';
+import { DetailedErrorResponse } from 'core/interfaces/ValidationError';
 
 export const useMetricsGroupsResume = (): {
   getMetricsgroupsResume: Function;
@@ -152,7 +152,7 @@ export const useSaveMetric = (metricId: string) => {
   const saveRequest = metricId ? updateMetric : createMetric;
   const saveMetricPayload = useFetchData<Metric>(saveRequest);
   const status = useFetchStatus();
-  const [validationError, setValidationError] = useState<ValidationError>();
+  const dispatch = useDispatch();
 
   const saveMetric = useCallback(
     async (metricsGroupsId: string, metricPayload: Metric) => {
@@ -166,21 +166,25 @@ export const useSaveMetric = (metricId: string) => {
         status.resolved();
 
         return savedMetricResponse;
-      } catch (error) {
+      } catch (responseError) {
         status.rejected();
-        error.text().then((errorMessage: string) => {
-          const parsedError = JSON.parse(errorMessage);
-          setValidationError(parsedError);
+        responseError.json().then((error: DetailedErrorResponse) => {
+          const errorMessage = error?.errors?.[0]?.detail;
+          dispatch(
+            toogleNotification({
+              text: errorMessage ?? 'Error on save metric',
+              status: 'error'
+            })
+          );
         });
       }
     },
-    [saveMetricPayload, status]
+    [saveMetricPayload, dispatch, status]
   );
 
   return {
     saveMetric,
-    status,
-    validationError
+    status
   };
 };
 
@@ -233,13 +237,13 @@ export const useCreateMetricsGroup = (metricGroupId: string) => {
         status.resolved();
 
         return createdMetricsGroupResponse;
-      } catch (error) {
+      } catch (responseError) {
         status.rejected();
-        error.text().then((errorMessage: any) => {
-          const parsedError = JSON.parse(errorMessage);
+        responseError.json().then((error: DetailedErrorResponse) => {
+          const errorMessage = error?.errors?.[0]?.detail;
           dispatch(
             toogleNotification({
-              text: parsedError?.[0].message ?? 'Error on save metric group',
+              text: errorMessage ?? 'Error on save metric group',
               status: 'error'
             })
           );
@@ -348,18 +352,13 @@ export const useMetricQuery = () => {
         );
 
         return metricByQueryResponse;
-      } catch (error) {
-        error.text().then((errorMessage: string) => {
-          const parsedError = JSON.parse(errorMessage);
-          dispatch(
-            toogleNotification({
-              text:
-                parsedError?.[0].message ??
-                'Error on loaging metric chart data',
-              status: 'error'
-            })
-          );
-        });
+      } catch (responseError) {
+        dispatch(
+          toogleNotification({
+            text: 'Error on loading metric chart data',
+            status: 'error'
+          })
+        );
       }
     },
     [getMetricByQueryRequest, dispatch]
@@ -395,14 +394,13 @@ export const useSaveAction = (actionId?: string) => {
   const saveActionPayload = useFetchData<ActionGroupPayload>(saveRequest);
   const status = useFetchStatus();
   const dispatch = useDispatch();
-  const [validationError, setValidationError] = useState<ValidationError>();
 
   const saveAction = useCallback(
-    async (ActionGroupPayload: ActionGroupPayload) => {
+    async (actionGroupPayload: ActionGroupPayload) => {
       try {
         status.pending();
         const savedActionResponse = await saveActionPayload(
-          ActionGroupPayload,
+          actionGroupPayload,
           actionId
         );
 
@@ -410,9 +408,8 @@ export const useSaveAction = (actionId?: string) => {
 
         dispatch(
           toogleNotification({
-            text: `The action ${ActionGroupPayload.nickname} was successfully ${
-              actionId ? `edit` : `added`
-            }`,
+            text: `The action ${actionGroupPayload.nickname} was successfully ${actionId ? `edit` : `added`
+              }`,
             status: 'success'
           })
         );
@@ -420,16 +417,10 @@ export const useSaveAction = (actionId?: string) => {
         return savedActionResponse;
       } catch (error) {
         status.rejected();
-        error?.text?.().then((errorMessage: string) => {
-          const parsedError = JSON.parse(errorMessage);
-          setValidationError(parsedError);
-        });
-
         dispatch(
           toogleNotification({
-            text: `An error occurred while trying to create the ${
-              ActionGroupPayload.nickname
-            } ${actionId ? `edit` : `added`}`,
+            text: `An error occurred while trying to create the ${actionGroupPayload.nickname
+              } ${actionId ? `edit` : `added`}`,
             status: 'error'
           })
         );
@@ -440,8 +431,7 @@ export const useSaveAction = (actionId?: string) => {
 
   return {
     saveAction,
-    status,
-    validationError
+    status
   };
 };
 

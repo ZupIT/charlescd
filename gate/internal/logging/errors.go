@@ -13,11 +13,13 @@ import (
 type CustomError struct {
 	ID         uuid.UUID         `json:"id"`
 	Message    string            `json:"message"`
-	Detail     string            `json:"-"`
+	Detail     string            `json:"detail"`
 	Operations []string          `json:"-"`
+	Type       string            `json:"type"`
 	Timestamp  string            `json:"timestamp"`
-	Meta       map[string]string `json:"meta"`
+	Meta       map[string]string `json:"-"`
 }
+
 
 func (customError CustomError) Error() string {
 	return fmt.Sprintf("%s", customError.Detail)
@@ -40,19 +42,30 @@ func WithMeta(err error, key, value string) error {
 func Unwrap(err error) CustomError {
 	customErr, ok := err.(*CustomError)
 	if !ok {
-		customErr = NewError("", err, nil).(*CustomError)
+		customErr = NewError("", err,  customErr.Type, nil).(*CustomError)
 	}
 
 	return *customErr
 }
 
-func NewError(message string, err error, meta map[string]string, operations ...string) error {
+func GetErrorType(err error) string {
+	customError := Unwrap(err)
+	return customError.Type
+}
+
+func GetErrorDetails(err error) string {
+	customError := Unwrap(err)
+	return customError.Detail
+}
+
+func NewError(message string, err error, typeError string, meta map[string]string, operations ...string) error {
 	return &CustomError{
 		ID:         uuid.New(),
 		Message:    message,
 		Meta:       meta,
 		Detail:     err.Error(),
 		Operations: operations,
+		Type:       typeError,
 		Timestamp:  strconv.FormatInt(time.Now().Unix(), 10),
 	}
 }
@@ -73,3 +86,11 @@ func NewValidationError(validationError error, uniTranslator *ut.UniversalTransl
 		Timestamp: strconv.FormatInt(time.Now().Unix(), 10),
 	}
 }
+
+const (
+	NotFoundError = "NotFoundError"
+	InternalError = "InternalError"
+	IllegalParamError = "IllegalParamError"
+	ParseError = "ParseError"
+	BusinessError = "BusinessError"
+)

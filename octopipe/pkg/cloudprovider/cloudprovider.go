@@ -17,13 +17,12 @@
 package cloudprovider
 
 import (
+	"k8s.io/client-go/rest"
 	"octopipe/pkg/cloudprovider/eks"
 	"octopipe/pkg/cloudprovider/generic"
 	"octopipe/pkg/cloudprovider/incluster"
 	"octopipe/pkg/cloudprovider/outofcluster"
 	"os"
-
-	"k8s.io/client-go/dynamic"
 )
 
 const (
@@ -33,7 +32,7 @@ const (
 )
 
 type CloudproviderUseCases interface {
-	GetClient() (dynamic.Interface, error)
+	GetClient() (*rest.Config, error)
 }
 
 type Cloudprovider struct {

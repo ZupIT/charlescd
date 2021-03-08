@@ -26,8 +26,8 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.*
 import javax.inject.Named
+import kotlin.collections.ArrayList
 import org.apache.commons.io.IOUtils
 import uk.gov.nationalarchives.csv.validator.api.java.CsvValidator
 import uk.gov.nationalarchives.csv.validator.api.java.FailMessage
@@ -112,5 +112,42 @@ class CsvSegmentationService(private val objectMapper: ObjectMapper) {
         var byteArrayOutputStream = ByteArrayOutputStream()
         IOUtils.copy(input, byteArrayOutputStream)
         return byteArrayOutputStream
+    }
+    fun createJsonNodeList(rules: JsonNode?): List<JsonNode> {
+        val jsonList = mutableListOf<JsonNode>()
+        this.recursiveNodeExtraction(rules, jsonList)
+        return jsonList
+    }
+
+    private fun recursiveNodeExtraction(node: JsonNode?, nodes: MutableList<JsonNode>) {
+
+        val nodePart = node?.let {
+            objectMapper.treeToValue(
+                it,
+                NodePart::class.java
+            )
+        }
+        nodePart?.let { node ->
+            node.type?.let { type ->
+                if (type == NodePart.NodeTypeRequest.RULE) {
+                    this.createJsonNodes(node.content?.key, node.content?.value)
+                        ?.forEach {
+                            nodes.add(it)
+                        }
+                } else {
+                    node.clauses?.forEach {
+                        recursiveNodeExtraction(it.toJsonNode(), nodes)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun createJsonNodes(keyName: String?, value: List<String>?): List<JsonNode>? {
+        return keyName?.let { key ->
+            value?.map { value ->
+                this.createJsonNode(key, value)
+            }
+        }
     }
 }

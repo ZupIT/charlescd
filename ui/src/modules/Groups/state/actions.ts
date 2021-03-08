@@ -18,34 +18,44 @@ import { UserGroupPagination } from '../interfaces/UserGroupsPagination';
 import { UserGroup } from '../interfaces/UserGroups';
 
 export enum ACTION_TYPES {
-  listUserGroups = 'USERS/LIST_USERS_GROUPS',
-  getUserGroup = 'USERS/GET_USER_GROUP'
+  loadedUserGroups = 'USER_GROUPS/LOADED_USERS_GROUPS',
+  loadedUserGroup = 'USER_GROUPS/GET_USER_GROUP',
+  resetUserGroups = 'USER_GROUPS/RESET_USERS_GROUPS'
 }
 
 interface ListUserGroupsActionType {
-  type: typeof ACTION_TYPES.listUserGroups;
+  type: typeof ACTION_TYPES.loadedUserGroups;
   payload: UserGroupPagination;
 }
 
 interface GetUserGroupActionType {
-  type: typeof ACTION_TYPES.getUserGroup;
+  type: typeof ACTION_TYPES.loadedUserGroup;
   payload: UserGroup;
 }
 
-export const listUserGroupsAction = (
+interface ResetUserGroupsType {
+  type: typeof ACTION_TYPES.resetUserGroups;
+}
+
+export const loadUserGroupsAction = (
   payload: UserGroupPagination
 ): UserGroupsActionTypes => ({
-  type: ACTION_TYPES.listUserGroups,
+  type: ACTION_TYPES.loadedUserGroups,
   payload
 });
 
-export const getUserGroupAction = (
+export const loadUserGroupAction = (
   payload: UserGroup
 ): UserGroupsActionTypes => ({
-  type: ACTION_TYPES.getUserGroup,
+  type: ACTION_TYPES.loadedUserGroup,
   payload
+});
+
+export const resetUserGroupsAction = (): UserGroupsActionTypes => ({
+  type: ACTION_TYPES.resetUserGroups
 });
 
 export type UserGroupsActionTypes =
   | ListUserGroupsActionType
-  | GetUserGroupActionType;
+  | GetUserGroupActionType
+  | ResetUserGroupsType;

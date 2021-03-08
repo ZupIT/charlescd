@@ -57,7 +57,7 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
 
   return (
     <Styled.Link onClick={handleClick} data-testid={`workspace-${name}`}>
-      <Styled.ListItem icon="workspace" marginContent="8px">
+      <Styled.ListItem icon="workspace">
         <Styled.Item color="light">{name}</Styled.Item>
       </Styled.ListItem>
     </Styled.Link>

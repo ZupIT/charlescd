@@ -22,11 +22,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
+	"net/url"
+	"octopipe/pkg/customerror"
 	"os"
 	"strconv"
+	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"gopkg.in/resty.v1"
 )
 
 type GitlabRepository struct {
@@ -39,56 +41,140 @@ func NewGitlabRepository(url, token string) GitlabRepository {
 }
 
 func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) (string, string, error) {
-	var responseMap map[string]interface{}
-	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_GIT_HTTPS_VALIDATION"))
-	if errParse != nil {
-		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("SKIP_GIT_HTTPS_VALIDATION invalid, valid options (1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)")
-	}
-	customTransport := http.DefaultTransport.(*http.Transport).Clone()
-	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: skipTLS}
-	client := &http.Client{Transport: customTransport}
-	filesData := []string{}
-
-	for _, fileName := range gitlabRepository.getDefaultFileNamesByName(name) {
-		filePath := fmt.Sprintf("%s/%s%%2F%s?ref=master", gitlabRepository.Url, name, fileName)
-
-		request, err := http.NewRequest("GET", filePath, nil)
-		if err != nil {
-			return "", "", err
+	envSkipHttpsValidation := os.Getenv("SKIP_GIT_HTTPS_VALIDATION")
+	var skipTLS bool
+	var errParse error
+	if envSkipHttpsValidation != "" {
+		skipTLS, errParse = strconv.ParseBool(envSkipHttpsValidation)
+		if errParse != nil {
+			return "", "", customerror.New("Get chart by gitlab failed", errParse.Error(), map[string]string{
+				"validOptions": "1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False",
+			}, "gitlab.GetTemplateAndValueByName.ParseBool")
 		}
-
-		request.Header.Add("PRIVATE-TOKEN", fmt.Sprintf("%s", gitlabRepository.Token))
-		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("Request file from repository. Url: " + filePath)
-		response, err := client.Do(request)
-		if err != nil {
-			return "", "", errors.New("Unable to request file for repository. Error: " + err.Error())
-		}
-
-		if response.StatusCode != 200 {
-			return "", "", errors.New("Failed to find file in repository. StatusCode: " + strconv.Itoa(response.StatusCode))
-		}
-
-		err = json.NewDecoder(response.Body).Decode(&responseMap)
-		if err != nil {
-			return "", "", errors.New("It was not possible to decode the request body. Error: " + err.Error())
-		}
-
-		content := fmt.Sprintf("%s", responseMap["content"])
-		contentDecoded, err := base64.StdEncoding.DecodeString(content)
-
-		if err != nil {
-			return "", "", errors.New("It was not possible to decode the body in base64 of the request. Error: " + err.Error())
-		}
-
-		filesData = append(filesData, string(contentDecoded))
 	}
 
-	return filesData[0], filesData[1], nil
-}
-
-func (gitlabRepository GitlabRepository) getDefaultFileNamesByName(name string) []string {
-	return []string{
-		fmt.Sprintf("%s-darwin.tgz", name),
-		fmt.Sprintf("%s.yaml", name),
+	basePathSplit := strings.Split(gitlabRepository.Url, "?")
+	basePathRepositorySplit := strings.Split(basePathSplit[0], "/files")
+	basePathRepository := basePathRepositorySplit[0]
+	var pathQueries string
+	if len(basePathSplit) > 1 {
+		pathQueries = basePathSplit[1]
 	}
+
+	queryParams, err := url.ParseQuery(pathQueries)
+	if err != nil {
+		return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+			"path": gitlabRepository.Url,
+		}, "gitlab.GetTemplateAndValueByName.ParseQuery")
+	}
+
+	queryParams.Add("path", name)
+	client := resty.New()
+	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: skipTLS})
+	client.SetHeader("PRIVATE-TOKEN", fmt.Sprintf("%s", gitlabRepository.Token))
+
+	resp, err := client.R().Get(fmt.Sprintf("%s/tree?%s", basePathRepository, queryParams.Encode()))
+	if err != nil {
+		return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+			"path": fmt.Sprintf("%s/tree?%s", basePathRepository, queryParams.Encode()),
+		}, "gitlab.GetTemplateAndValueByName.GetTree")
+	}
+	if resp.IsError() {
+		return "", "", customerror.New("Get chart by gitlab failed", string(resp.Body()), map[string]string{
+			"path": fmt.Sprintf("%s/tree?%s", basePathRepository, queryParams.Encode()),
+		}, "gitlab.GetTemplateAndValueByName.GetTreeIsError")
+	}
+
+	var contentList []map[string]interface{}
+	err = json.Unmarshal(resp.Body(), &contentList)
+	if err != nil {
+		return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+			"body": string(resp.Body()),
+		}, "gitlab.GetTemplateAndValueByName.Unmarshal")
+	}
+
+	var template string
+	var value string
+	for _, content := range contentList {
+		contentName, ok := content["name"].(string)
+		if !ok {
+			continue
+		}
+
+		var path string
+		if basePathRepositorySplit[1] == "" {
+			path = url.PathEscape(fmt.Sprintf("%s/%s", name, contentName))
+		} else {
+			path = url.PathEscape(fmt.Sprintf("%s/%s/%s", basePathRepositorySplit[1], name, contentName))
+		}
+		if strings.Contains(contentName, ".tgz") {
+			resp, err := client.R().Get(fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()))
+			if err != nil {
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartTGZError")
+			}
+
+			if resp.IsError() {
+				return "", "", customerror.New("Get chart by gitlab failed", string(resp.Body()), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartTGZFailed")
+			}
+
+			var contentFile map[string]interface{}
+			err = json.Unmarshal(resp.Body(), &contentFile)
+			if err != nil {
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"body": string(resp.Body()),
+				}, "gitlab.GetTemplateAndValueByName.UnmarshalChartTGZ")
+			}
+
+			content, ok := contentFile["content"].(string)
+			if !ok {
+				return "", "", nil
+			}
+
+			sDec, _ := base64.StdEncoding.DecodeString(content)
+
+			template = string(sDec)
+		}
+
+		if strings.Contains(contentName, fmt.Sprintf("%s.yaml", name)) || strings.Contains(contentName, "value.yaml") {
+			resp, err := client.R().Get(fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()))
+			if err != nil {
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartValueError")
+			}
+
+			if resp.IsError() {
+				return "", "", customerror.New("Get chart by gitlab failed", string(resp.Body()), map[string]string{
+					"path": fmt.Sprintf("%s/files/%s?%s", basePathRepository, path, queryParams.Encode()),
+				}, "gitlab.GetTemplateAndValueByName.GetChartValueFailed")
+			}
+
+			var contentFile map[string]interface{}
+			err = json.Unmarshal(resp.Body(), &contentFile)
+			if err != nil {
+				return "", "", customerror.New("Get chart by gitlab failed", err.Error(), map[string]string{
+					"body": string(resp.Body()),
+				}, "gitlab.GetTemplateAndValueByName.UnmarshalChartValue")
+			}
+
+			content, ok := contentFile["content"].(string)
+			if !ok {
+				return "", "", nil
+			}
+
+			sDec, _ := base64.StdEncoding.DecodeString(content)
+
+			value = string(sDec)
+		}
+	}
+
+	if template == "" || value == "" {
+		return "", "", errors.New("not found template or value in gitlab repository")
+	}
+
+	return template, value, nil
 }

@@ -34,15 +34,23 @@ export const findDeployMetrics = (params: URLSearchParams) =>
 
 export const findAllCirclesMetrics = () => baseRequest(`${endpoint}/circles`);
 
-export const findAllCirclesHistory = (params: URLSearchParams) =>
-  baseRequest(`${circlesEndpoint}/history?${params}`);
+export const findAllCirclesHistory = (params: URLSearchParams) => {
+  params.append('size', '50');
+  return baseRequest(`${circlesEndpoint}/history?${params}`);
+}
 
 export const findAllCirclesReleases = (
   params: URLSearchParams,
   circleId: string
-) => baseRequest(`${deploymentEndpoint}/circle/${circleId}/history?${params}`);
+) => {
+  params.append('size', '50');
+  return baseRequest(`${deploymentEndpoint}/circle/${circleId}/history?${params}`);
+}
 
 export const findAllReleases = (
   params: URLSearchParams,
   releaseHistory: ReleaseHistoryRequest
-) => postRequest(`${deploymentEndpoint}/history?${params}`, releaseHistory);
+) => {
+  params.append('size', '50');
+  return postRequest(`${deploymentEndpoint}/history?${params}`, releaseHistory);
+}

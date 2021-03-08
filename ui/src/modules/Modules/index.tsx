@@ -14,45 +14,34 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from 'containers/PrivateRoute';
 import Page from 'core/components/Page';
-import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
-import { useFindAllModules } from './hooks/module';
 import Menu from './Menu';
 
 const Placeholder = React.lazy(() => import('./Placeholder'));
 const ModulesComparation = React.lazy(() => import('./Comparation'));
 
-const Modules = () => {
-  const { list } = useGlobalState(state => state.modules);
-  const { getAllModules, loading } = useFindAllModules();
-
-  useEffect(() => {
-    getAllModules();
-  }, [getAllModules]);
-
-  return (
-    <Page>
-      <Page.Menu>
-        <Menu items={list.content} isLoading={loading} />
-      </Page.Menu>
-      <Page.Content>
-        <React.Suspense fallback="">
-          <Switch>
-            <PrivateRoute
-              allowedRoles={['modules_read', 'modules_write']}
-              path={routes.modulesComparation}
-              component={ModulesComparation}
-            />
-            <Route path={routes.modules} component={Placeholder} />
-          </Switch>
-        </React.Suspense>
-      </Page.Content>
-    </Page>
-  );
-};
+const Modules = () => (
+  <Page>
+    <Page.Menu>
+      <Menu />
+    </Page.Menu>
+    <Page.Content>
+      <React.Suspense fallback="">
+        <Switch>
+          <PrivateRoute
+            allowedRoles={['modules_read', 'modules_write']}
+            path={routes.modulesComparation}
+            component={ModulesComparation}
+          />
+          <Route path={routes.modules} component={Placeholder} />
+        </Switch>
+      </React.Suspense>
+    </Page.Content>
+  </Page>
+);
 
 export default Modules;

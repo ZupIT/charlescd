@@ -33,7 +33,7 @@ const MenuItem = ({ route, id, name }: Props) => {
 
   return (
     <Styled.Link onClick={() => history.push(route)} isActive={isActive}>
-      <Styled.ListItem icon="metrics" marginContent="8px" isActive={isActive}>
+      <Styled.ListItem icon="metrics" isActive={isActive}>
         <Styled.Item color="light">{name}</Styled.Item>
       </Styled.ListItem>
     </Styled.Link>

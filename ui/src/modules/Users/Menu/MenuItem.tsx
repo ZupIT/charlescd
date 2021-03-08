@@ -17,24 +17,39 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
+import { useHistory } from 'react-router-dom';
+import useQueryStrings from 'core/utils/query';
+import { addParam, delParam } from 'core/utils/path';
+import routes from 'core/constants/routes';
 
 interface Props {
   id: string;
   name: string;
-  isActive: boolean;
-  onSelect: () => void;
+  email: string;
 }
 
-const MenuItem = ({ id, name, isActive, onSelect }: Props) => (
-  <Styled.Link
-    onClick={onSelect}
-    isActive={isActive}
-    data-testid={`menu-users-${id}`}
-  >
-    <Styled.ListItem icon="user">
-      <Text.h4 color="light">{name}</Text.h4>
-    </Styled.ListItem>
-  </Styled.Link>
-);
+const MenuItem = ({ id, name, email }: Props) => {
+  const history = useHistory();
+  const query = useQueryStrings();
+
+  const isActive = () => query.getAll('user').includes(id);
+
+  const toggleUser = () =>
+    isActive()
+      ? delParam('user', routes.usersComparation, history, id)
+      : addParam('user', routes.usersComparation, history, id);
+
+  return (
+    <Styled.Link
+      onClick={() => toggleUser()}
+      isActive={isActive()}
+      data-testid={`menu-users-${email}`}
+    >
+      <Styled.ListItem icon="user">
+        <Text.h4 color="light">{name}</Text.h4>
+      </Styled.ListItem>
+    </Styled.Link>
+  );
+};
 
 export default MenuItem;

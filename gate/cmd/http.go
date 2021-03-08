@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
-	systemTokenUseCase "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
-	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
 	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
@@ -108,7 +108,8 @@ func (server server) registerRoutes() {
 		{
 			systemToken := v1.Group("/system-token")
 			{
-				systemToken.POST("", handlers.CreateSystemToken(systemTokenUseCase.NewCreateSystemToken(server.persistenceManager.systemTokenRepository)))
+				systemToken.POST("", handlers.CreateSystemToken(systemTokenInteractor.NewCreateSystemToken(server.persistenceManager.systemTokenRepository)))
+				systemToken.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 		}
 	}

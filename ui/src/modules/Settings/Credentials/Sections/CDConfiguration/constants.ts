@@ -23,16 +23,24 @@ export const radios: RadioButtonProps[] = [
   { icon: 'spinnaker', name: 'Spinnaker', value: 'SPINNAKER' }
 ];
 
+export const githubProvider = {
+  value: 'GITHUB',
+  label: 'GitHub',
+  icon: 'github'
+};
+
+export const gitlabProvider = {
+  value: 'GITLAB',
+  label: 'GitLab',
+  icon: 'gitlab'
+};
+
 export const gitProviders = [
   {
-    value: 'GITHUB',
-    label: 'GitHub',
-    icon: 'github'
+    ...githubProvider
   },
   {
-    value: 'GITLAB',
-    label: 'GitLab',
-    icon: 'gitlab'
+    ...gitlabProvider
   }
 ];
 

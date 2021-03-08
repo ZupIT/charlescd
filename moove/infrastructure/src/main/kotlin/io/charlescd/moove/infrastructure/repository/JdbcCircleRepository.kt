@@ -36,8 +36,7 @@ class JdbcCircleRepository(
     private val circleExtractor: CircleExtractor,
     private val circleMetricExtractor: CircleMetricExtractor,
     private val circleHistoryExtractor: CircleHistoryExtractor
-) :
-    CircleRepository {
+) : CircleRepository {
 
     companion object {
         const val BASE_QUERY_STATEMENT = """
@@ -71,7 +70,7 @@ class JdbcCircleRepository(
         return findCircleById(id)
     }
 
-    override fun find(id: String, workspaceId: String): Optional<Circle> {
+    override fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Circle> {
         return findCircleByIdAndWorkspaceId(id, workspaceId)
     }
 
@@ -202,7 +201,7 @@ class JdbcCircleRepository(
 
     private fun findCircleByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Circle> {
         val statement = StringBuilder(BASE_QUERY_STATEMENT)
-            .appendln("AND circles.id = ?")
+            .appendln("AND circles.id = ? ")
             .appendln("AND circles.workspace_id = ?")
 
         return Optional.ofNullable(
@@ -335,7 +334,7 @@ class JdbcCircleRepository(
                 """
         )
 
-        name?.let { statement.appendln("AND circles.name ILIKE ?") }
+        name?.let { statement.appendln("AND circles.name ILIKE ? ") }
         statement.appendln("AND circles.workspace_id = ?")
         statement.appendln("ORDER BY circles.name")
 

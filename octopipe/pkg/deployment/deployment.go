@@ -18,19 +18,18 @@ package deployment
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"strings"
+	"octopipe/pkg/customerror"
+	"os"
+	"strconv"
+	"time"
 
-	"github.com/imdario/mergo"
-	log "github.com/sirupsen/logrus"
+	"github.com/argoproj/gitops-engine/pkg/health"
+	"github.com/argoproj/gitops-engine/pkg/utils/kube"
+	"k8s.io/client-go/rest"
+	"k8s.io/kubectl/pkg/cmd/util"
 
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/util/retry"
 )
 
 const (
@@ -47,7 +46,8 @@ type Deployment struct {
 	update    bool
 	namespace string
 	manifest  map[string]interface{}
-	config    dynamic.Interface
+	config    *rest.Config
+	kubectl   kube.Kubectl
 }
 
 func (main *DeploymentMain) NewDeployment(
@@ -55,121 +55,187 @@ func (main *DeploymentMain) NewDeployment(
 	update bool,
 	namespace string,
 	manifest map[string]interface{},
-	config dynamic.Interface,
+	config *rest.Config,
+	kubectl kube.Kubectl,
 ) UseCases {
-	return &Deployment{action, update, namespace, manifest, config}
+	return &Deployment{
+		action:    action,
+		update:    update,
+		namespace: namespace,
+		manifest:  manifest,
+		config:    config,
+		kubectl:   kubectl,
+	}
 }
 
 func (deployment *Deployment) Do() error {
-
 	switch deployment.action {
 	case DeployAction:
 		return deployment.deploy()
 	case UndeployAction:
 		return deployment.undeploy()
 	default:
-		return errors.New("Failed to execute deployment")
+		return customerror.New("Deploy action failed", "Not recognize deploy action", nil, "deployment.Do")
 	}
 }
 
-func (deployment *Deployment) createResource(manifest *unstructured.Unstructured, resourceInterface dynamic.ResourceInterface) error {
-	_, err := resourceInterface.Create(context.TODO(), manifest, metav1.CreateOptions{})
-	if err != nil {
-		return deployment.getDeploymentError("Failed to create resource in cluster", err, manifest)
+func getTimeoutDuration() time.Duration {
+	defaultValue := time.Duration(300)
+	envStr := os.Getenv("TIMEOUT_RESOURCE_VERIFICATION")
+	if envStr == "" {
+		return defaultValue
 	}
 
-	err = newCreateOrUpdateWatcher(manifest, resourceInterface)
+	value, err := strconv.Atoi(envStr)
 	if err != nil {
-		return deployment.getDeploymentError("Failed to create resource", err, manifest)
+		return defaultValue
 	}
 
-	return nil
+	return time.Duration(value)
 }
 
-func (deployment *Deployment) updateResource(
-	resource *unstructured.Unstructured,
-	manifest *unstructured.Unstructured,
-	resourceInterface dynamic.ResourceInterface,
-) error {
-	log.WithFields(log.Fields{"resource": resource.GetName(), "kind": resource.GetKind()}).Info("Start update")
+func (deployment *Deployment) newWatcher(manifest *unstructured.Unstructured) error {
+	ticker := time.NewTicker(3 * time.Second)
+	timeout := time.After(getTimeoutDuration() * time.Second)
+	for {
+		select {
+		case <-timeout:
+			ticker.Stop()
+			return customerror.New(
+				"Resource watch failed",
+				"Timeout",
+				map[string]string{
+					"resourceName":     manifest.GetName(),
+					"groupVersionKind": manifest.GroupVersionKind().String(),
+				},
+				"deployment.newWatcher.timeout",
+			)
+		case <-ticker.C:
 
-	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		err := mergo.Merge(&resource.Object, manifest.Object, mergo.WithOverride, mergo.WithOverwriteWithEmptyValue)
-		if err != nil {
-			return deployment.getDeploymentError("Failed to merge between the existing resource and the new resource", err, manifest)
+			gvk := manifest.GroupVersionKind()
+
+			resource, err := deployment.kubectl.GetResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace)
+			if err != nil {
+				return customerror.New(
+					"Resource watch failed",
+					err.Error(),
+					map[string]string{
+						"resourceName":     manifest.GetName(),
+						"groupVersionKind": manifest.GroupVersionKind().String(),
+					},
+					"deployment.newWatcher.GetResource",
+				)
+			}
+
+			if resource != nil {
+				if !isResourController(resource) {
+					ticker.Stop()
+					return nil
+				}
+
+				healthStatus, err := health.GetResourceHealth(resource, nil)
+				if err != nil {
+					ticker.Stop()
+					return customerror.New(
+						"Resource watch failed",
+						err.Error(),
+						map[string]string{
+							"resourceName":     manifest.GetName(),
+							"groupVersionKind": manifest.GroupVersionKind().String(),
+						},
+						"deployment.newWatcher.GetResourceHealth",
+					)
+				}
+
+				if healthStatus != nil && healthStatus.Status == health.HealthStatusHealthy {
+					ticker.Stop()
+					return nil
+				}
+			}
 		}
-
-		_, err = resourceInterface.Update(context.TODO(), resource, metav1.UpdateOptions{})
-		if err != nil {
-			return deployment.getDeploymentError("Failed to update resource in cluster", err, manifest)
-		}
-
-		log.WithFields(log.Fields{"resource": resource.GetName()}).Info("Retry update... " + resource.GetKind())
-
-		return nil
-	})
-
-	if retryErr != nil {
-		return deployment.getDeploymentError("Failed to retry update deployment", retryErr, manifest)
 	}
-
-	log.WithFields(log.Fields{"resource": resource.GetName()}).Info("Retry success...")
-
-	err := newCreateOrUpdateWatcher(manifest, resourceInterface)
-	if err != nil {
-		return deployment.getDeploymentError("Update failed", err, manifest)
-	}
-
-	return nil
 }
 
 func (deployment *Deployment) deploy() error {
 	manifest := deployment.getUnstructuredManifest()
-	resourceSchema := deployment.getResourceSchemaByManifest(manifest)
-	resourceInterface := deployment.config.Resource(resourceSchema).Namespace(deployment.namespace)
 
-	resourceInCluster, err := resourceInterface.Get(context.TODO(), manifest.GetName(), metav1.GetOptions{})
-	if err != nil && k8sErrors.IsNotFound(err) {
-		return deployment.createResource(manifest, resourceInterface)
-	}
-
+	_, err := deployment.kubectl.ApplyResource(
+		context.TODO(),
+		deployment.config,
+		manifest,
+		deployment.namespace,
+		util.DryRunNone,
+		true,
+		false,
+	)
 	if err != nil {
-		return deployment.getDeploymentError("Failed to get resource in deploy", err, manifest)
+		return customerror.New(
+			"Deploy failed",
+			err.Error(),
+			map[string]string{
+				"resourceName":     manifest.GetName(),
+				"groupVersionKind": manifest.GroupVersionKind().String(),
+			},
+			"deployment.deploy.ApplyResource",
+		)
 	}
 
-	if isResourController(resourceInCluster) && isCreatedOrUpdatedResourceController(resourceInCluster) {
-		return nil
+	err = deployment.newWatcher(manifest)
+	if err != nil {
+		return customerror.WithOperation(err, "deployment.deploy.ApplyResource")
 	}
 
-	return deployment.updateResource(resourceInCluster, manifest, resourceInterface)
+	return nil
+}
+func isResourController(resource *unstructured.Unstructured) bool {
+	if resource == nil {
+		return false
+	}
+
+	_, isRsourceController, _ := unstructured.NestedInt64(resource.Object, "status", "replicas")
+	return isRsourceController
 }
 
 func (deployment *Deployment) undeploy() error {
 	manifest := deployment.getUnstructuredManifest()
-	resourceSchema := deployment.getResourceSchemaByManifest(manifest)
-	resourceInterface := deployment.config.Resource(resourceSchema).Namespace(deployment.namespace)
+	gvk := manifest.GroupVersionKind()
 
-	resourceInCluster, err := resourceInterface.Get(context.TODO(), manifest.GetName(), metav1.GetOptions{})
+	resourceInCluster, err := deployment.kubectl.GetResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace)
 	if err != nil && k8sErrors.IsNotFound(err) {
 		return nil
+	}
+
+	if err != nil {
+		return customerror.New(
+			"Undeploy failed",
+			err.Error(),
+			map[string]string{
+				"resourceName":     manifest.GetName(),
+				"groupVersionKind": manifest.GroupVersionKind().String(),
+			},
+			"deployment.undeploy.GetResource",
+		)
 	}
 
 	if !isResourController(resourceInCluster) {
 		return nil
 	}
 
-	deletePolicy := metav1.DeletePropagationBackground
-	gracefullPeriod := 1
-	deleteOptions := *metav1.NewDeleteOptions(int64(gracefullPeriod))
-	deleteOptions.PropagationPolicy = &deletePolicy
-
-	err = resourceInterface.Delete(context.TODO(), manifest.GetName(), deleteOptions)
+	err = deployment.kubectl.DeleteResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace, false)
 	if err != nil && k8sErrors.IsNotFound(err) {
 		return nil
 	}
 
 	if err != nil {
-		return deployment.getDeploymentError("Failed to delete resource", err, manifest)
+		return customerror.New(
+			"Undeploy failed",
+			err.Error(),
+			map[string]string{
+				"resourceName":     manifest.GetName(),
+				"groupVersionKind": manifest.GroupVersionKind().String(),
+			},
+			"deployment.undeploy.DeleteResource",
+		)
 	}
 
 	return nil
@@ -179,18 +245,4 @@ func (deployment *Deployment) getUnstructuredManifest() *unstructured.Unstructur
 	return &unstructured.Unstructured{
 		Object: deployment.manifest,
 	}
-}
-
-func (deployment *Deployment) getResourceSchemaByManifest(manifest *unstructured.Unstructured) schema.GroupVersionResource {
-	group := manifest.GroupVersionKind().Group
-	version := manifest.GroupVersionKind().Version
-	resource := fmt.Sprintf("%ss", strings.ToLower(manifest.GroupVersionKind().Kind))
-	return schema.GroupVersionResource{Group: group, Version: version, Resource: resource}
-}
-
-func (deployment *Deployment) getDeploymentError(message string, err error, manifest *unstructured.Unstructured) error {
-	res, _ := manifest.MarshalJSON()
-
-	log.WithFields(log.Fields{"error": err.Error(), "resource": string(res)}).Error(message)
-	return err
 }

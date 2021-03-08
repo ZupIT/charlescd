@@ -15,11 +15,13 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import * as StateHooks from 'core/state/hooks';
 import Menu from '../index';
 
-const mockItem = [
-  {
+const list = {
+  last: true,
+  content: [{
     id: '4d1cf7a9-d2f5-43b0-852e-e1b583b71c58',
     name: 'Module 1',
     gitRepositoryAddress: 'git-address-2',
@@ -38,23 +40,35 @@ const mockItem = [
         errorThreshold: '0.6'
       }
     ]
-  }
-];
+  }]
+};
 
-test('render Modules Menu', () => {
-  const { getByText } = render(
-    <Menu items={mockItem} isLoading={false} />
-  );
+test('render Modules Menu', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({ list }));
 
-  const moduleName = getByText('Module 1');
+  render(<Menu />);
+
+  const moduleName = await screen.findByText('Module 1');
+
+  expect(moduleName).toBeInTheDocument();
+});
+
+
+test('render Modules Menu empty', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({}));
+
+  render(<Menu />);
+
+  const moduleName = await screen.findByText('No Modules was found');
 
   expect(moduleName).toBeInTheDocument();
 });
 
 test('render Modules Menu on Loading', () => {
-  const { getByText } = render(<Menu items={mockItem} isLoading />);
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({}));
+  render(<Menu />);
 
-  const loading = getByText('Loading...');
+  const loading = screen.getByText('Loading...');
 
   expect(loading).toBeInTheDocument();
 });

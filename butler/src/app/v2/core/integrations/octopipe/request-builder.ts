@@ -21,7 +21,7 @@ import { UrlUtils } from '../../utils/url.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
 import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
-import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
+import { componentsToBeRemoved, DeploymentUtils, unusedComponentProxy } from '../utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
 import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
@@ -47,7 +47,8 @@ export class OctopipeRequestBuilder {
       unusedDeployments: this.getUnusedDeploymentsArray(deployment, activeComponents),
       proxyDeployments: this.getProxyDeploymentsArray(deployment, activeComponents),
       callbackUrl: UrlUtils.getDeploymentNotificationUrl(configuration.executionId),
-      clusterConfig: this.getClusterConfig(deployment.cdConfiguration.configurationData as OctopipeConfigurationData)
+      clusterConfig: this.getClusterConfig(deployment.cdConfiguration.configurationData as OctopipeConfigurationData),
+      unusedProxyDeployments: this.overrideUnusedRules(deployment, activeComponents)
     }
   }
 
@@ -159,6 +160,28 @@ export class OctopipeRequestBuilder {
         rollbackIfFailed: false
       }
     })
+  }
+
+  private overrideUnusedRules(deployment: Deployment, activeComponents: Component[]) {
+    if (!deployment.components) {
+      return []
+    }
+
+    if (deployment.defaultCircle) {
+      return []
+    }
+
+    const proxyUndeployments: K8sManifest[] = []
+    const unused = unusedComponentProxy(deployment, activeComponents)
+    unused.forEach(component => {
+      const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
+      proxyUndeployments.push(IstioUndeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeByName))
+      proxyUndeployments.push(activeByName.length > 1 ?
+        IstioUndeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName) :
+        IstioUndeploymentManifestsUtils.getEmptyVirtualServiceManifest(deployment, component)
+      )
+    })
+    return proxyUndeployments
   }
 
   private getHelmRepositoryConfig(component: DeploymentComponent, cdConfiguration: CdConfiguration): HelmRepositoryConfig {

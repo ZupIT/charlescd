@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
@@ -27,7 +27,7 @@ import Placeholder from 'core/components/Placeholder';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
-import { isRoot } from 'core/utils/auth';
+import { isIDMEnabled, isRoot } from 'core/utils/auth';
 import { isRequired, maxLength } from 'core/utils/validations';
 import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateName } from 'modules/Users/hooks';
@@ -136,13 +136,15 @@ const Account = () => {
 
   const renderTabActions = () => (
     <Styled.Actions>
-      <LabeledIcon
-        icon="account"
-        marginContent="5px"
-        onClick={() => setToggleModal(true)}
-      >
-        <Text.h5 color="dark">Change password</Text.h5>
-      </LabeledIcon>
+      {!isIDMEnabled() && (
+        <LabeledIcon
+          icon="account"
+          marginContent="5px"
+          onClick={() => setToggleModal(true)}
+        >
+          <Text.h5 color="dark">Change password</Text.h5>
+        </LabeledIcon>
+      )}
     </Styled.Actions>
   );
 

@@ -18,27 +18,28 @@ type SystemTokenResponse struct {
 	Name string `json:"name"`
 	Permissions []string `json:"permissions"`
 	Workspaces []string `json:"workspaces"`
-	CreatedAt time.Time `json:"created_at"`
-	RevokedAt time.Time `json:"revoked_at"`
-	LastUsedAt time.Time `json:"last_used_at"`
+	CreatedAt *time.Time `json:"created_at"`
+	RevokedAt *time.Time `json:"revoked_at"`
+	LastUsedAt *time.Time `json:"last_used_at"`
 	Author string `json:"author"`
 }
 
-func (systemTokenRequest SystemTokenRequest) SystemTokenToDomain() domain.SystemToken {
+func (systemTokenRequest SystemTokenRequest) RequestToDomain() domain.SystemToken {
+	createdAt := time.Now()
 	return domain.SystemToken{
 		ID:          uuid.New(),
 		Name:        systemTokenRequest.Name,
 		Revoked:     false,
 		Permissions: systemTokenRequest.Permissions,
 		Workspaces: systemTokenRequest.Workspaces,
-		CreatedAt:   time.Now(),
-		RevokedAt:   time.Time{},
-		LastUsedAt:  time.Time{},
-		Author:      systemTokenRequest.Author,
+		CreatedAt:   &createdAt,
+		RevokedAt:   &time.Time{},
+		LastUsedAt:  &time.Time{},
+		Author: systemTokenRequest.Author,
 	}
 }
 
-func SystemTokenToResponse(systemToken domain.SystemToken) SystemTokenResponse {
+func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 	return SystemTokenResponse{
 		ID: systemToken.ID,
 		Name: systemToken.Name,

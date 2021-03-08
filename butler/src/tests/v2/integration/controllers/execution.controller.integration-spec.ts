@@ -107,7 +107,6 @@ describe('DeploymentController v2', () => {
         expect(response.body.executions[0].id).toEqual(thirdExecution.id)
         expect(response.body.page).toEqual(0)
         expect(response.body.size).toEqual(1)
-        expect(response.body.totalPages).toEqual(3)
         expect(response.body.last).toEqual(false)
       })
 
@@ -122,7 +121,6 @@ describe('DeploymentController v2', () => {
         expect(response.body.executions[0].id).toEqual(secondExecution.id)
         expect(response.body.page).toEqual(1)
         expect(response.body.size).toEqual(1)
-        expect(response.body.totalPages).toEqual(3)
         expect(response.body.last).toEqual(false)
       })
 
@@ -137,7 +135,6 @@ describe('DeploymentController v2', () => {
         expect(response.body.executions[0].id).toEqual(firstExecution.id)
         expect(response.body.page).toEqual(2)
         expect(response.body.size).toEqual(1)
-        expect(response.body.totalPages).toEqual(3)
         expect(response.body.last).toEqual(true)
       })
   })

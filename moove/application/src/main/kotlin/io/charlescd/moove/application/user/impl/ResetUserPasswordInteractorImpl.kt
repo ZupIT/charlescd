@@ -28,17 +28,24 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import java.util.*
 import javax.inject.Named
+import org.springframework.beans.factory.annotation.Value
 
 @Named
 class ResetUserPasswordInteractorImpl(
     private val passGenerator: UserPasswordGeneratorService,
-    private val userService: UserService
+    private val userService: UserService,
+    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) : ResetUserPasswordInteractor {
+
     override fun execute(authorization: String, id: UUID): UserNewPasswordResponse {
-        val userToResetPassword = userService.find(id.toString())
-        validateUser(authorization, userToResetPassword)
-        val newPassword = resetPassword(userToResetPassword.email)
-        return UserNewPasswordResponse(newPassword)
+        if (internalIdmEnabled) {
+            val userToResetPassword = userService.find(id.toString())
+            validateUser(authorization, userToResetPassword)
+            val newPassword = resetPassword(userToResetPassword.email)
+            return UserNewPasswordResponse(newPassword)
+        } else {
+            throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_FORBIDDEN)
+        }
     }
 
     private fun validateUser(authorization: String, userToResetPassword: User) {

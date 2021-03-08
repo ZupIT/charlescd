@@ -64,7 +64,7 @@ data:
                   - match:
                       prefix: "/keycloak"
                     route:
-                      cluster: charlescd-keycloak-http
+                      cluster: {{ .Release.Name }}-keycloak-http
                     typed_per_filter_config:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
@@ -100,7 +100,7 @@ data:
                       local token = request_handle:headers():get("authorization")
                       local request = require("luajit-init")
                       local response = request.send(
-                        "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
+                        "{{ .Values.idm.protocol }}://charlescd-{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
                         {
                           headers = {
                             authorization = token
@@ -183,19 +183,19 @@ data:
                     address: charlescd-circle-matcher
                     port_value: 8080
       {{- end}}
-      - name: charlescd-keycloak-http
+      - name: {{ .Release.Name }}-keycloak-http
         connect_timeout: 2.00s
         type: strict_dns
         lb_policy: round_robin
         http_protocol_options: {}
         load_assignment:
-          cluster_name: charlescd-keycloak-http
+          cluster_name: {{ .Release.Name }}-keycloak-http
           endpoints:
           - lb_endpoints:
             - endpoint:
                 address:
                   socket_address:
-                    address: {{ .Values.idm.endpoint }}
+                    address: {{ .Release.Name }}-{{ .Values.idm.endpoint }}
                     port_value: {{ .Values.idm.port }}
       {{ if .Values.compass.enabled }}
       - name: charlescd-compass

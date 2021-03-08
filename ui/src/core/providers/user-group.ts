@@ -21,6 +21,7 @@ const endpoint = '/moove/v2/user-groups';
 
 export interface UserGroupFilter {
   name?: string;
+  page?: number;
 }
 
 export interface UserGroupSave {
@@ -32,7 +33,8 @@ export interface UserGroupMemberSave {
 }
 
 const initialGroupUserFilter = {
-  name: ''
+  name: '',
+  page: 0
 };
 
 export const findAllUserGroup = (
@@ -40,7 +42,8 @@ export const findAllUserGroup = (
 ) => {
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
-    name: filter?.name
+    name: filter?.name || '',
+    page: `${filter.page ?? 0}`
   });
 
   return baseRequest(`${endpoint}?${params}`);

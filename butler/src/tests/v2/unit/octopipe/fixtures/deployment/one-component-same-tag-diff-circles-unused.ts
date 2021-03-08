@@ -190,6 +190,7 @@ export const oneComponentSameTagDiffCirclesUnusedOctopipe: OctopipeDeploymentReq
       }
     }
   ],
+  unusedProxyDeployments:[],
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null
 }

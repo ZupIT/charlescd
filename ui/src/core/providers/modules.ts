@@ -18,6 +18,8 @@ import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 import { buildParams, URLParams } from 'core/utils/query';
 import { baseRequest, postRequest } from './base';
 
+const endpoint = '/moove/v2/modules';
+
 export interface Component {
   name: string;
   errorThreshold: number;
@@ -31,13 +33,26 @@ export interface ModuleSave {
   components: Component[];
 }
 
-const endpoint = '/moove/v2/modules';
-
-export const findAll = (name: string) => {
-  const page = `page=0&size=${DEFAULT_PAGE_SIZE}`;
-  const qs = name ? `${page}&name=${name}` : page;
-  return baseRequest(`${endpoint}?${qs}`);
+const initialModulesFilter: ModulesFilter = {
+  name: '',
+  page: 0
 };
+
+export interface ModulesFilter {
+  name?: string;
+  page?: number;
+}
+
+export const findAll = (filter: ModulesFilter = initialModulesFilter) => {
+  const params = new URLSearchParams({
+    size: `${DEFAULT_PAGE_SIZE}`,
+    name: filter?.name || '',
+    page: `${filter.page ?? 0}`
+  });
+
+  return baseRequest(`${endpoint}?${params}`);
+};
+
 export const findById = (id: string) => baseRequest(`${endpoint}/${id}`);
 
 export const create = (module: ModuleSave) =>

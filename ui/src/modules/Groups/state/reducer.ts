@@ -36,16 +36,25 @@ export const userGroupReducer = (
   action: UserGroupsActionTypes
 ): UserGroupState => {
   switch (action.type) {
-    case ACTION_TYPES.listUserGroups: {
+    case ACTION_TYPES.loadedUserGroups: {
       return {
         ...state,
-        list: action.payload
+        list: {
+          ...action.payload,
+          content: [...state.list.content, ...(action?.payload?.content ?? [])]
+        }
       };
     }
-    case ACTION_TYPES.getUserGroup: {
+    case ACTION_TYPES.loadedUserGroup: {
       return {
         ...state,
         item: action.payload
+      };
+    }
+    case ACTION_TYPES.resetUserGroups: {
+      return {
+        ...state,
+        list: userGroupInitialState.list
       };
     }
     default: {

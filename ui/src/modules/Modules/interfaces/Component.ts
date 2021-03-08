@@ -21,4 +21,5 @@ export interface Component {
   errorThreshold?: string;
   hostValue?: string;
   gatewayName?: string;
+  createdAt?: string;
 }

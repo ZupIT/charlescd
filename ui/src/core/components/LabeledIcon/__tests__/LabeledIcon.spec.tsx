@@ -33,7 +33,7 @@ test('renders LabeledIcon component with default properties', () => {
 
   expect(textElement).toBeInTheDocument();
   expect(labelElement).toBeInTheDocument();
-  expect(labelElement).toHaveStyle('margin-left: 5px;');
+  expect(labelElement).toHaveStyle('margin-left:8px;');
   expect(iconElement).toBeInTheDocument();
 });
 
