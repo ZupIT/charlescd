@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+import { handlers } from './handlers';
 
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
-
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+const server = setupServer(...handlers);
+export { server, rest };

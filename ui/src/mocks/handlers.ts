@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import auth from './handlers/auth';
+import users from './handlers/users';
+import circleMatcher from './handlers/circleMatcher';
+import workspaces from './handlers/workspaces';
 
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
-
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+export const handlers = [
+  ...auth,
+  ...users,
+  ...circleMatcher,
+  ...workspaces
+]

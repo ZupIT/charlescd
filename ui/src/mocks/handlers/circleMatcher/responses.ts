@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
-
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
+export const IDENTIFY_ERROR = {
+  message: 'Default circle metadata not found.'
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+export const IDENTIFY_SUCCESS = {
+  "circles": [
+      {
+          "id": "123",
+          "name": "Default"
+      }
+  ]
+}

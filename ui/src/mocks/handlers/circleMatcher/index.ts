@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { basePath } from 'core/providers/base';
+import { rest } from 'msw';
+import { IDENTIFY_SUCCESS } from './responses';
 
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
-
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+export default [
+  rest.post(`${basePath}/charlescd-circle-matcher/identify`, (req, res, ctx) => {
+    return res(
+      ctx.json(IDENTIFY_SUCCESS)
+    )
+  }),
+]

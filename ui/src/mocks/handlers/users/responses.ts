@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
-
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
+export const USER_DETAILS = {
+  "id": "c7e6dafe-aa7a-4536-be1b-34eaad4c2915",
+  "name": "Charles Adminn",
+  "email": "charlesadmin@admin",
+  "photoUrl": "",
+  "createdAt": "2020-11-16 18:20:57",
+  "root": true
 }
-
-ReactDOM.render(<App />, document.getElementById('root'));

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { server } from 'mocks/server';
+import { originalFetch } from 'setupTests';
 
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
+beforeAll(() => {
+  server.listen();
+  global.fetch = originalFetch;
+});
 
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
+afterEach(() => server.resetHandlers());
 
-ReactDOM.render(<App />, document.getElementById('root'));
+afterAll(() => server.close());

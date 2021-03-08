@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { rest } from 'msw';
+import { basePath } from 'core/providers/base';
+import { WORKSPACES_LIST } from './responses';
 
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
-
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+export default [
+  rest.get(`${basePath}/moove/v2/workspaces`, (req, res, ctx) => {
+    return res(
+      ctx.json(WORKSPACES_LIST)
+    )
+  }),
+];

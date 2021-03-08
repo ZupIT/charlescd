@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { basePath } from 'core/providers/base';
+import { rest } from 'msw';
+import { LOGIN_SUCCESS } from './responses';
 
-const isMockEnv = Boolean(Number(process.env.REACT_APP_MOCK));
-
-if (isMockEnv) {
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+export default [
+  rest.post(`${basePath}/keycloak/auth/realms/:realm/protocol/openid-connect/token`, (req, res, ctx) => {
+    return res(
+      ctx.json(LOGIN_SUCCESS),
+    )
+  }),
+]
