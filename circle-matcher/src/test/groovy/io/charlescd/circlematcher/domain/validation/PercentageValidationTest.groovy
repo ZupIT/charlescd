@@ -10,7 +10,7 @@ class PercentageValidationTest extends Specification {
     def "when limit of percentage reached should allow creation of inactive segmentation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def inactiveSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, 20, false)
+        def inactiveSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 20, false)
         def activeSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 90)
         def anotherActiveSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 10)
         def activeMetadata = TestUtils.createKeyMetadata(null, activeSegmentation)
@@ -27,7 +27,7 @@ class PercentageValidationTest extends Specification {
     def "when limit of percentage reached should not allow creation of active segmentation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def activeSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, 20, true)
+        def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 20, true)
         def activeSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 90)
         def anotherActiveSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 10)
         def activeMetadata = TestUtils.createKeyMetadata(null, activeSegmentation)
@@ -44,7 +44,7 @@ class PercentageValidationTest extends Specification {
     def "when sum of percentage not exceed the limit should allow creation of active segmentation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def activeSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, 10, true)
+        def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 10, true)
         def activeSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 80)
         def anotherActiveSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 10)
         def activeMetadata = TestUtils.createKeyMetadata(null, activeSegmentation)
@@ -61,7 +61,7 @@ class PercentageValidationTest extends Specification {
     def "when sum of percentage exceeds should not allow creation of active segmentation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def activeSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, 10, true)
+        def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 10, true)
         def activeSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 80)
         def anotherActiveSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 20)
         def activeMetadata = TestUtils.createKeyMetadata(null, activeSegmentation)
@@ -78,24 +78,27 @@ class PercentageValidationTest extends Specification {
     def "when sum of percentage  reached  100% but is a update of a segmentation already created should allow update"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def activeSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, 10, true)
         def activeSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 80)
+        def activeSegmentationUpdate = TestUtils.createUpdateSegmentationRequest(
+                null, SegmentationType.PERCENTAGE,
+                activeSegmentation.reference,
+                10, true)
         def anotherActiveSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 20)
         def activeMetadata = TestUtils.createKeyMetadata(null, activeSegmentation)
         def anotherActiveMetadata = TestUtils.createKeyMetadata(null, anotherActiveSegmentation)
-        activeSegmentationRequest.reference = activeSegmentation.reference
+        activeSegmentationUpdate.reference = activeSegmentation.reference
         when:
         def validator = new PercentageValidator(keyMetadataRepository)
-        def valid = validator.isValid(activeSegmentationRequest, null)
+        def valid = validator.isValid(activeSegmentationUpdate, null)
         then:
-        keyMetadataRepository.findByWorkspaceId(activeSegmentationRequest.workspaceId) >> [activeMetadata, anotherActiveMetadata]
+        keyMetadataRepository.findByWorkspaceId(activeSegmentationUpdate.workspaceId) >> [activeMetadata, anotherActiveMetadata]
         assert valid
     }
 
     def "when is a invalid percentage should not allow creation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def activeSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, 110, true)
+        def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 110, true)
 
         when:
         def validator = new PercentageValidator(keyMetadataRepository)
@@ -108,7 +111,7 @@ class PercentageValidationTest extends Specification {
     def "when is another invalid percentage should not allow creation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def activeSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, -5, true)
+        def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, -5, true)
 
         when:
         def validator = new PercentageValidator(keyMetadataRepository)
@@ -121,7 +124,7 @@ class PercentageValidationTest extends Specification {
     def "when is a valid percentage should  allow creation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
-        def activeSegmentationRequest = TestUtils.createSegmentationRequest(null, SegmentationType.PERCENTAGE, 100, true)
+        def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 100, true)
 
         when:
         def validator = new PercentageValidator(keyMetadataRepository)

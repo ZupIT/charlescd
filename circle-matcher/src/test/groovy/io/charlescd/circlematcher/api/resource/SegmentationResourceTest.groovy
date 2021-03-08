@@ -62,7 +62,7 @@ class SegmentationResourceTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null, true)
 
         when:
 
@@ -107,7 +107,7 @@ class SegmentationResourceTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null, true)
         def requests = new ArrayList()
         requests.add(request)
 

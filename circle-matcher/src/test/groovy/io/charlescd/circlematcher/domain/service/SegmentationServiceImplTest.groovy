@@ -114,7 +114,7 @@ class SegmentationServiceImplTest extends Specification {
         def metadataList = new ArrayList()
         metadataList.add(keyMetadata)
 
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null, true)
 
         when:
 
@@ -150,7 +150,7 @@ class SegmentationServiceImplTest extends Specification {
         def metadataList = new ArrayList()
         metadataList.add(keyMetadata)
 
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.SIMPLE_KV, null)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.SIMPLE_KV, null, true)
 
         when:
 
