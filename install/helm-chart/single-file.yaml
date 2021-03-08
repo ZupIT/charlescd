@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "NEJMaUl1TDBZVw=="
-  postgresql-password: "VW9ORGJGZFByMg=="
+  postgresql-postgres-password: "ZjJqNGJpd0wwRQ=="
+  postgresql-password: "UXRTeEpSd2NoZQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -6538,7 +6538,12 @@ spec:
               port: 8080
             initialDelaySeconds: 120
           resources:
-              {}
+              limits:
+                cpu: 500m
+                memory: 384Mi
+              requests:
+                cpu: 500m
+                memory: 384Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6906,6 +6911,29 @@ spec:
             initialDelaySeconds: 60
           resources:
               {}
+---
+# Source: charlescd/templates/hpa.yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: charlescd-circle-matcher
+  labels:
+    app: charlescd-circle-matcher
+    version: charlescd-circle-matcher
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: charlescd-circle-matcher
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
 ---
 # Source: charlescd/charts/keycloak/templates/statefulset.yaml
 apiVersion: apps/v1
