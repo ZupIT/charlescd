@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import get from 'lodash/get';
@@ -90,24 +90,21 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
 
   const isUnable = !isEditing && limitPercentage === 0;
 
-  const renderWarningNoPercentageAvailable = () =>
-    isUnable && (
-      <Text.h5 color="error">
-        The sum of active segmentations has reached 100%, there is no available
-        space for a new segmentation. Please adjust the others segmentations per
-        percentage to make it possible to segment this circle
-      </Text.h5>
-    );
+  const renderWarningNoPercentageAvailable = () => (
+    <Text.h5 color="error">
+      The sum of active segmentations has reached 100%, there is no available
+      space for a new segmentation. Please adjust the others segmentations per
+      percentage to make it possible to segment this circle
+    </Text.h5>
+  );
 
   const renderSlider = () => {
-    if (isUnable) {
-      return null;
-    }
     const limit = isEditing
       ? editingPercentageLimit(limitPercentage, deployment, percentage)
       : limitPercentage;
+
     return (
-      <>
+      <Fragment>
         <Styled.HelpText color="dark">
           Add the proportion of users by the percentage factor available for the
           open sea
@@ -124,7 +121,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
         >
           <Text.h6 color={isValid ? 'light' : 'dark'}>Save</Text.h6>
         </Styled.ButtonDefault>
-      </>
+      </Fragment>
     );
   };
 
@@ -146,8 +143,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
           circle={circle}
         />
         <CirclePercentageList responseGetCircles={responseGetCircles} />
-        {renderWarningNoPercentageAvailable()}
-        {renderSlider()}
+        {isUnable ? renderWarningNoPercentageAvailable() : renderSlider()}
       </form>
     </FormProvider>
   );

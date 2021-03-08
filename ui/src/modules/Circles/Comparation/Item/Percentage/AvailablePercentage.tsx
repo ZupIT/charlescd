@@ -10,11 +10,7 @@ interface Props {
 }
 
 const AvailablePercentage = ({ responseGetCircles, circle }: Props) => {
-  // const getAvailablePercentageInOpenSea = (
-  //   responseGetCircles: CirclePercentagePagination
-  // ) => {
-  //   return `${100 - responseGetCircles?.content[0].sumPercentage}%`;
-  // };
+  const availableOpenSeaPercentage = `${100 - responseGetCircles?.content[0].sumPercentage}%`;
 
   return (
     <Styled.AvailableContainer>
@@ -24,7 +20,7 @@ const AvailablePercentage = ({ responseGetCircles, circle }: Props) => {
           data-testid="available-percentage-open-sea-value"
           color="light"
         >
-          {100 - circle?.percentage}%
+          {availableOpenSeaPercentage}
         </Text.h4>
       </Styled.AvailableItem>
       {circle && (

@@ -71,10 +71,9 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
         </Text.h2>
         {!releaseEnabled && (
           <Styled.WarningPercentageContainer>
-            <Icon name="alert" />
+            <Icon name="alert" color="warning" />
             <Text.h4 color="warning">
-              The configured percentage is bigger than the available in open
-              sea.
+              The configured percentage is bigger than the available in open sea.
             </Text.h4>
           </Styled.WarningPercentageContainer>
         )}

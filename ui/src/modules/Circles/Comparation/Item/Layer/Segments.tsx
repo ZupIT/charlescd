@@ -50,7 +50,7 @@ const renderPercentage = (
       />
       {!circle.deployment && (
         <Styled.WarningPercentageContainer>
-          <Icon color="warning" name="alert" />
+          <Icon name="alert" color="warning" />
           <Text.h4 color="warning">
             The percentage will be activated only when the circle is active.
           </Text.h4>
