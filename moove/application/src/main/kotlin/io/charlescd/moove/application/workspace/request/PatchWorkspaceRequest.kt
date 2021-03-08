@@ -29,7 +29,6 @@ data class PatchWorkspaceRequest(override val patches: List<PatchOperation>) : B
             "/name",
             "/gitConfigurationId",
             "/registryConfigurationId",
-            "/cdConfigurationId",
             "/circleMatcherUrl",
             "/metricConfigurationId",
             "/butlerConfigurationId"
