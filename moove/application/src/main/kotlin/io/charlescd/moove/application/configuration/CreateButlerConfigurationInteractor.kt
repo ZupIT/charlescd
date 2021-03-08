@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client.response
+package io.charlescd.moove.application.configuration
 
-data class DeployResponse(
-    val id: String
-)
+import io.charlescd.moove.application.configuration.request.CreateButlerConfigurationRequest
+import io.charlescd.moove.application.configuration.response.ButlerConfigurationResponse
+
+interface CreateButlerConfigurationInteractor {
+
+    fun execute(request: CreateButlerConfigurationRequest, workspaceId: String, authorization: String): ButlerConfigurationResponse
+}

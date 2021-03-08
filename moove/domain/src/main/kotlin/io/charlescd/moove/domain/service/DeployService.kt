@@ -19,14 +19,13 @@
 package io.charlescd.moove.domain.service
 
 import io.charlescd.moove.domain.Build
+import io.charlescd.moove.domain.ButlerConfiguration
 import io.charlescd.moove.domain.CdConfiguration
 import io.charlescd.moove.domain.Deployment
 
 interface DeployService {
 
-    fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, cdConfigurationId: String)
+    fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, configuration: ButlerConfiguration)
 
-    fun undeploy(deploymentId: String, authorId: String)
-
-    fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration?
+    fun undeploy(deploymentId: String, authorId: String, configuration: ButlerConfiguration)
 }

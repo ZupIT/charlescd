@@ -19,9 +19,10 @@
 package io.charlescd.moove.application.workspace.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import io.charlescd.moove.application.configuration.response.ButlerConfigurationResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
 import io.charlescd.moove.application.usergroup.response.UserGroupResponse
-import io.charlescd.moove.domain.CdConfiguration
+import io.charlescd.moove.domain.ButlerConfiguration
 import io.charlescd.moove.domain.GitConfiguration
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.Workspace
@@ -34,9 +35,9 @@ data class WorkspaceResponse(
     val authorId: String,
     val gitConfiguration: GitConfigurationResponse? = null,
     val registryConfiguration: RegistryConfigurationResponse? = null,
-    val cdConfiguration: CdConfigurationResponse? = null,
     val circleMatcherUrl: String? = null,
     val metricConfiguration: MetricConfigurationResponse? = null,
+    val butlerConfiguration: ButlerConfigurationResponse? = null,
     val userGroups: List<UserGroupResponse>,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime
@@ -47,8 +48,8 @@ data class WorkspaceResponse(
             workspace: Workspace,
             gitConfiguration: GitConfiguration? = null,
             registryConfigurationName: String? = null,
-            cdConfiguration: CdConfiguration? = null,
-            metricConfiguration: MetricConfiguration? = null
+            metricConfiguration: MetricConfiguration? = null,
+            butlerConfiguration: ButlerConfiguration? = null
         ): WorkspaceResponse {
             return WorkspaceResponse(
                 id = workspace.id,
@@ -70,16 +71,16 @@ data class WorkspaceResponse(
                         name = registryConfigurationName
                     )
                 },
-                cdConfiguration = cdConfiguration?.let {
-                    CdConfigurationResponse(
-                        id = it.id,
-                        name = it.name
-                    )
-                },
                 metricConfiguration = metricConfiguration?.let {
                     MetricConfigurationResponse(
                         id = it.id,
                         provider = it.provider.name
+                    )
+                },
+                butlerConfiguration = butlerConfiguration?.let {
+                    ButlerConfigurationResponse(
+                        id = it.id,
+                        name = it.name
                     )
                 }
             )
@@ -92,11 +93,6 @@ data class WorkspaceResponse(
     )
 
     data class RegistryConfigurationResponse(
-        val name: String,
-        val id: String
-    )
-
-    data class CdConfigurationResponse(
         val name: String,
         val id: String
     )

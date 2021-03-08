@@ -22,6 +22,7 @@ import io.charlescd.moove.infrastructure.service.client.*
 import io.charlescd.moove.infrastructure.service.client.request.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.net.URI
 
 @Service
 class DeployClientService(private val deployClient: DeployClient) : DeployService {
@@ -33,83 +34,61 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
     }
 
-    override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, cdConfigurationId: String) {
+    override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, configuration: ButlerConfiguration) {
         deployClient.deploy(
+            URI.create(configuration.butlerUrl),
             buildDeployRequest(
                 deployment,
                 build,
                 deployment.circle.id,
-                cdConfigurationId,
-                isDefaultCircle
+                isDefaultCircle,
+                configuration
             )
         )
     }
 
-    override fun undeploy(deploymentId: String, authorId: String) {
+    override fun undeploy(deploymentId: String, authorId: String, configuration: ButlerConfiguration) {
         deployClient.undeploy(
+            URI.create(configuration.butlerUrl),
             deploymentId,
             UndeployRequest(authorId)
         )
-    }
-
-    override fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration? {
-        return deployClient.getCdConfigurations(workspaceId).find { cdConfiguration ->
-            cdConfiguration.id == cdConfigurationId
-        }?.let { CdConfiguration(id = it.id, name = it.name) }
     }
 
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,
         circleId: String,
-        cdConfigurationId: String,
-        isDefault: Boolean
+        isDefault: Boolean,
+        butlerConfiguration: ButlerConfiguration
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
-            applicationName = build.workspaceId,
-            modules = buildModulesDeployRequest(build),
             authorId = deployment.author.id,
-            description = "Deployment from Charles C.D.",
-            circle = createDeployCircleRequest(circleId),
             callbackUrl = createCallbackUrl(deployment),
-            cdConfigurationId = cdConfigurationId,
-            defaultCircle = isDefault
+            namespace = butlerConfiguration.namespace,
+            components = buildComponentsDeployRequest(build),
+            circle = CircleRequest(circleId, isDefault),
+            git = GitRequest(butlerConfiguration.gitToken, butlerConfiguration.gitProvider)
         )
     }
 
-    private fun createDeployCircleRequest(circleId: String): DeployCircleRequest {
-        return DeployCircleRequest(headerValue = circleId)
-    }
-
-    private fun buildModulesDeployRequest(build: Build): List<DeployModuleRequest> =
+    private fun buildComponentsDeployRequest(build: Build): List<DeployComponentRequest> =
         getModulesFromBuild(
             build
-        ).map { module ->
-            DeployModuleRequest(
-                moduleId = module.moduleId,
-                helmRepository = module.helmRepository!!,
-                components = buildComponentsDeployRequest(module)
-            )
+        ).flatMap { module ->
+            module.components.map { component ->
+                DeployComponentRequest(
+                    componentId = component.componentId,
+                    componentName = component.name,
+                    buildImageUrl = component.artifact!!.artifact,
+                    buildImageTag = component.artifact!!.version,
+                    hostValue = component.hostValue,
+                    gatewayName = component.gatewayName,
+                    helmRepository = module.helmRepository!!
+                )
+            }
         }
-
-    private fun buildComponentsDeployRequest(module: ModuleSnapshot): List<DeployComponentRequest> =
-        module.components.map { component ->
-            buildComponentDeployRequest(
-                component
-            )
-        }
-
-    private fun buildComponentDeployRequest(component: ComponentSnapshot): DeployComponentRequest {
-        return DeployComponentRequest(
-            componentId = component.componentId,
-            componentName = component.name,
-            buildImageUrl = component.artifact!!.artifact,
-            buildImageTag = component.artifact!!.version,
-            hostValue = component.hostValue,
-            gatewayName = component.gatewayName
-        )
-    }
 
     private fun createCallbackUrl(deployment: Deployment): String {
         return "$APPLICATION_BASE_PATH/$DEPLOY_CALLBACK_API_PATH/${deployment.id}/callback"

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client.response
+package io.charlescd.moove.domain
 
-data class DeployResponse(
-    val id: String
-)
+enum class GitProviderEnum {
+    GITHUB,
+    GITLAB
+}

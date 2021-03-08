@@ -42,17 +42,18 @@ class PatchWorkspaceInteractorImplTest extends Specification {
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
     private CircleRepository circleRepository = Mock(CircleRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
+    private ButlerConfigurationRepository butlerConfigurationRepository = Mock(ButlerConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
 
     def setup() {
         interactor = new PatchWorkspaceInteractorImpl(
                 new GitConfigurationService(gitConfigurationRepository),
-                new CdConfigurationService(deployService),
                 new WorkspaceService(workspaceRepository, userRepository),
                 new RegistryConfigurationService(villagerService),
                 new MetricConfigurationService(metricConfigurationRepository, compassApi),
                 circleMatcherService,
-                new CircleService(circleRepository)
+                new CircleService(circleRepository),
+                new ButlerConfigurationService(butlerConfigurationRepository)
         )
     }
 
@@ -152,23 +153,25 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         }
     }
 
-    def 'when replacing CD configuration id, should patch information successfully'() {
-        given:
-        def newCdConfigurationId = "ba7006e0-a653-46dd-90be-71a0987f548a"
+    def 'when replacing Butler configuration id, should patch information successfully'() {
         def author = getDummyUser()
+        given:
+        def previousButlerConfigId = "ba7006e0-a653-46dd-90be-71a0987f548a"
+        def newButlerConfigId = TestUtils.butlerConfigId
+        def newButlerConfig = TestUtils.butlerConfig
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
-        def cdConfiguration = new CdConfiguration(newCdConfigurationId, "name")
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/cdConfigurationId", newCdConfigurationId)])
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, previousButlerConfigId)
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/butlerConfigurationId", newButlerConfigId)])
 
         when:
         interactor.execute(workspace.id, request)
 
         then:
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
-        0 * gitConfigurationRepository.exists(workspace.id, _)
-        0 * villagerService.checkIfRegistryConfigurationExists(newCdConfigurationId, workspace.id)
-        1 * deployService.getCdConfiguration(workspace.id, newCdConfigurationId) >> cdConfiguration
+        0 * gitConfigurationRepository.exists(_, _)
+        0 * villagerService.checkIfRegistryConfigurationExists(_, _)
+        1 * butlerConfigurationRepository.exists(workspace.id, newButlerConfigId) >> newButlerConfig
+        0 * metricConfigurationRepository.exists(_, _)
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
             workspaceUpdated instanceof Workspace
@@ -179,32 +182,33 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.status == workspace.status
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.gitConfigurationId
-            assert workspaceUpdated.cdConfigurationId == newCdConfigurationId
+            assert workspaceUpdated.butlerConfigurationId == newButlerConfigId
         }
     }
 
-    def 'when cd configuration id does not exist, should throw exception'() {
+    def 'when butler configuration id does not exist, should throw exception'() {
         given:
-        def cdConfigurationId = "e6128936-3fb2-4d10-9264-4ac63b689e56"
+        def butlerConfigId = TestUtils.butlerConfigId
+        def newButlerConfigId = "9014531b-372f-4b11-9259-dc9a5779f69a"
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, butlerConfigId)
 
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/cdConfigurationId", cdConfigurationId)])
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/butlerConfigurationId", newButlerConfigId)])
 
         when:
         interactor.execute(workspace.id, request)
 
         then:
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
-        0 * gitConfigurationRepository.exists(workspace.id, _)
-        0 * villagerService.checkIfRegistryConfigurationExists(cdConfigurationId, workspace.id)
+        0 * gitConfigurationRepository.exists(_, _)
+        0 * villagerService.checkIfRegistryConfigurationExists(_, _)
+        1 * butlerConfigurationRepository.exists(workspace.id, newButlerConfigId) >> false
         0 * workspaceRepository.update(_)
-        1 * deployService.getCdConfiguration(workspace.id, cdConfigurationId) >> null
 
         def ex = thrown(NotFoundException)
-        ex.resourceName == "cdConfigurationId"
-        ex.id == cdConfigurationId
+        ex.resourceName == "butlerConfigurationId"
+        ex.id == newButlerConfigId
     }
 
     def 'when registry configuration id does not exist, should throw exception'() {
@@ -338,7 +342,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(metricConfigurationId, workspace.id)
-        0 * deployService.getCdConfiguration(workspace.id, metricConfigurationId)
+        0 * butlerConfigurationRepository.exists(_, _)
         1 * metricConfigurationRepository.exists(metricConfigurationId, workspace.id) >> true
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -350,7 +354,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.status == workspace.status
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
-            assert workspaceUpdated.cdConfigurationId == workspace.cdConfigurationId
+            assert workspaceUpdated.butlerConfigurationId == workspace.butlerConfigurationId
             assert workspaceUpdated.metricConfigurationId == metricConfigurationId
         }
     }
@@ -371,7 +375,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, workspace.gitConfigurationId)
         0 * villagerService.checkIfRegistryConfigurationExists(workspace.registryConfigurationId, workspace.id)
-        0 * deployService.getCdConfiguration(workspace.id, workspace.cdConfigurationId)
+        0 * butlerConfigurationRepository.find(_, _)
         1 * metricConfigurationRepository.exists(metricConfigurationId, workspace.id) >> true
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -382,7 +386,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.author == workspace.author
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
-            assert workspaceUpdated.cdConfigurationId == workspace.cdConfigurationId
+            assert workspaceUpdated.butlerConfigurationId == workspace.butlerConfigurationId
             assert workspaceUpdated.metricConfigurationId == metricConfigurationId
             assert workspaceUpdated.status == WorkspaceStatusEnum.COMPLETE
         }

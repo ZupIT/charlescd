@@ -18,24 +18,14 @@ package io.charlescd.moove.domain
 
 import java.time.LocalDateTime
 
-data class Workspace(
+data class ButlerConfiguration(
     val id: String,
     val name: String,
     val author: User,
-    val createdAt: LocalDateTime,
-    val userGroups: List<UserGroup> = emptyList(),
-    val status: WorkspaceStatusEnum = WorkspaceStatusEnum.INCOMPLETE,
-    val registryConfigurationId: String? = null,
-    val circleMatcherUrl: String? = null,
-    val gitConfigurationId: String? = null,
-    val metricConfigurationId: String? = null,
-    val butlerConfigurationId: String? = null
-) {
-    fun checkCurrentWorkspaceStatus(): WorkspaceStatusEnum {
-        return if (butlerConfigurationId != null && registryConfigurationId != null) {
-            WorkspaceStatusEnum.COMPLETE
-        } else {
-            WorkspaceStatusEnum.INCOMPLETE
-        }
-    }
-}
+    val workspaceId: String,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val butlerUrl: String,
+    val namespace: String,
+    val gitToken: String,
+    val gitProvider: GitProviderEnum
+)
