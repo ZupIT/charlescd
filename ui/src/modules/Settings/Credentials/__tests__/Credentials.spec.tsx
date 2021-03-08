@@ -59,7 +59,7 @@ test('render Credentials default component', async () => {
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
 
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const credentialsElement = await screen.findByTestId("credentials");
   expect(credentialsElement).toBeInTheDocument();
@@ -70,7 +70,7 @@ test('should render Credentials items', async () => {
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
 
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
   expect(screen.getByText('Registry')).toBeInTheDocument();
@@ -89,7 +89,7 @@ test('should render Credentials items in the right order', async () => {
 
   const itemsRightOrder = ['Registry', 'CD Configuration', 'Circle Matcher', 'Datasources', 'Metric Action', 'Git', 'User group'];
 
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const items = await screen.findAllByTestId(/contentIcon-.*/);
   const itemsFiltered = items.slice(1);
@@ -104,7 +104,7 @@ test('render User Group credentials', async () => {
     getAll: jest.fn
   }));
 
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const content = screen.getByTestId('contentIcon-users');
   expect(content).toBeInTheDocument();
@@ -122,7 +122,7 @@ test('render User Group credentials', async () => {
 });
 
 test('render Git Credentials', async () => {
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const addGitButton = await screen.findByText(/Add Git/);
 
@@ -133,7 +133,7 @@ test('render Git Credentials', async () => {
 });
 
 test('render CD Configuration Credentials', async () => {
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const addCDConfigButton = await screen.findByText('Add CD Configuration');
 
@@ -144,7 +144,7 @@ test('render CD Configuration Credentials', async () => {
 });
 
 test('render Circle Matcher Credentials', async () => {
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const addCircleMatcherButton = await screen.findByText('Add Circle Matcher');
   await act(async () => userEvent.click(addCircleMatcherButton));
@@ -157,7 +157,7 @@ test('click to copy to clipboard', async () => {
 
   const copyToClipboardSpy = jest.spyOn(clipboardUtils, 'copyToClipboard');
 
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const dropdownElement = await screen.findByTestId('icon-vertical-dots');
   userEvent.click(dropdownElement);
@@ -171,9 +171,6 @@ test('click to copy to clipboard', async () => {
 });
 
 test('should render Credentials items with the right type: Required or Optional', async () => {
-  (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
-  );
 
   const configurationItems = [
     { name: 'Registry', type: 'Required' },
@@ -185,7 +182,7 @@ test('should render Credentials items with the right type: Required or Optional'
     { name: 'User group', type: 'Optional' },
   ];
 
-  render(<Credentials />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
 
   const types = await screen.findAllByTestId(/configuration-type.*/);
 

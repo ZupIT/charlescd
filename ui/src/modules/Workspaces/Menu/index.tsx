@@ -93,7 +93,7 @@ const WorkspaceMenu = ({ onCreate }: Props) => {
       <Styled.Content>
         <Styled.SearchInput
           resume
-          onSearch={(value) => onSearch(value)}
+          onSearch={onSearch}
           disabled={!isRoot()}
           maxLength={64}
         />

@@ -70,7 +70,6 @@ export const useWorkspaces = (): {
             last: true,
             status: 'resolved'
           });
-
         }
 
         reset.current = false;

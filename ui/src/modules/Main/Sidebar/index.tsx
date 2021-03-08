@@ -28,6 +28,7 @@ import MenuItems from './MenuItems';
 import Styled from './styled';
 import ReactTooltip from 'react-tooltip';
 import { goTo } from 'core/utils/routes';
+import isEmpty from 'lodash/isEmpty';
 
 interface Props {
   isExpanded: boolean;
@@ -56,7 +57,7 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
       />
       <Styled.Bottom>
         {
-          workspace?.id && (
+          !isEmpty(workspace?.id) && (
             <Styled.Item>
               <Styled.LinkIcon name="workspace" size="15px" isActive={false} />
               {
