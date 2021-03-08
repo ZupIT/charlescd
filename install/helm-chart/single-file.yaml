@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "OFUyUkNuMG9DWg=="
-  postgresql-password: "SURDMXFQS3BHSw=="
+  postgresql-postgres-password: "T00xbGZpQ2NvQw=="
+  postgresql-password: "Y2ljQnFGYTFMVw=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -171,6 +171,12 @@ data:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
+                  
+                  - match:
+                      prefix: "/gate/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-gate
               http_filters:
               
               - name: envoy.filters.http.cors
@@ -290,6 +296,21 @@ data:
                 address:
                   socket_address:
                     address: charlescd-compass
+                    port_value: 8080
+      
+      - name: charlescd-gate
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-gate
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-gate
                     port_value: 8080
     admin:
       access_log_path: "/dev/stdout"
@@ -5682,6 +5703,10 @@ data:
     psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
     psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
     psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+
+    psql -c "CREATE DATABASE charlescd_gate"
+    psql -c "CREATE USER charlescd_gate WITH PASSWORD 'Z2F0ZQo='"
+    psql -c "ALTER DATABASE charlescd_gate OWNER TO charlescd_gate"
 ---
 # Source: charlescd/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -6186,6 +6211,21 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: charlescd-gate
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    
+  selector:
+    app: charlescd-gate
+---
+# Source: charlescd/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
   name: charlescd-moove
 spec:
   type: ClusterIP
@@ -6643,6 +6683,74 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: charlescd-gate
+  namespace: charles
+  labels:
+    app: charlescd-gate
+    version: charlescd-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: charlescd-gate
+      version: charlescd-gate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: charlescd-gate
+        version: charlescd-gate
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgres:9.6.5
+          command: ['sh', '-c', 
+            'until pg_isready -h charlescd-postgresql -p 5432; 
+            do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: charlescd-gate
+                    
+          env:
+            - name: DB_USER
+              value: "charlescd_gate"
+            - name: DB_PASSWORD
+              value: "Z2F0ZQo="
+            - name: DB_HOST
+              value: "charlescd-postgresql"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "charlescd_gate"
+            - name: DB_SSL
+              value: "disable"
+            - name: ENV
+              value: "PROD"
+            - name: QUERIES_PATH
+              value: "./internal/repository/queries"
+          image: zupcharles/charlescd-gate:0.6.0
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+              httpGet:
+                path: /health
+                port: 8080
+              initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+          resources:
+              {}
+---
+# Source: charlescd/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: charlescd-moove
   namespace: charles
   labels:
@@ -6687,7 +6795,7 @@ spec:
             value: "http://charlescd-keycloak-http/keycloak/auth"
           
           - name: KEYCLOAK_PUBLIC_CLIENT_ID
-            value: "realm-charlescd"
+            value: "charlescd-client"
           - name: KEYCLOAK_CLIENT_ID
             value: "realm-charlescd"
           - name: RATELIMIT_CAPACITY

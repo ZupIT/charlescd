@@ -60,6 +60,9 @@ If release name contains chart name it will be used as a full name.
 {{- if contains "octopipe" .RangeContext.name }}
 {{ include "test.octopipe-envs" .}}
 {{- end -}}
+{{- if contains "gate" .RangeContext.name }}
+{{ include "test.gate-envs" .}}
+{{- end -}}
 {{- end -}}
 
 
@@ -269,7 +272,25 @@ env:
     value: {{ .RangeContext.idmRedirectHost }}
 {{- end -}}
 
-
+{{- define "test.gate-envs" -}}
+env:
+  - name: DB_USER
+    value: "{{ .RangeContext.database.user}}"
+  - name: DB_PASSWORD
+    value: "{{ .RangeContext.database.password}}"
+  - name: DB_HOST
+    value: "{{ .RangeContext.database.host}}"
+  - name: DB_PORT
+    value: "{{ .RangeContext.database.port}}"
+  - name: DB_NAME
+    value: "{{ .RangeContext.database.name}}"
+  - name: DB_SSL
+    value: "disable"
+  - name: ENV
+    value: "PROD"
+  - name: QUERIES_PATH
+    value: "{{ .RangeContext.queriesPath}}"
+{{- end -}}
 
 
 {{/*
