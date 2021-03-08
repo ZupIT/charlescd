@@ -180,13 +180,9 @@ func (deployment *Deployment) deploy() error {
 		)
 	}
 
-	err = deployment.newWatcher(manifest)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return deployment.newWatcher(manifest)
 }
+
 func isResourController(resource *unstructured.Unstructured) bool {
 	if resource == nil {
 		return false
