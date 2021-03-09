@@ -10,4 +10,3 @@ type Permission struct {
 	Name      string
 	CreatedAt time.Time
 }
-

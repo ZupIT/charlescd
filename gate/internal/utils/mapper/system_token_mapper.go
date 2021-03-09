@@ -30,3 +30,11 @@ func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken
 		AuthorEmail: systemToken.AuthorEmail,
 	}
 }
+
+func SystemTokensModelToDomains(systemToken []models.SystemToken) []domain.SystemToken {
+	systemTokens := make([]domain.SystemToken, 0)
+	for _, st := range systemToken {
+		systemTokens = append(systemTokens, SystemTokenModelToDomain(st))
+	}
+	return systemTokens
+}

@@ -20,7 +20,6 @@ type CustomError struct {
 	Meta       map[string]string `json:"-"`
 }
 
-
 func (customError CustomError) Error() string {
 	return fmt.Sprintf("%s", customError.Detail)
 }
@@ -42,7 +41,7 @@ func WithMeta(err error, key, value string) error {
 func Unwrap(err error) CustomError {
 	customErr, ok := err.(*CustomError)
 	if !ok {
-		customErr = NewError("", err,  customErr.Type, nil).(*CustomError)
+		customErr = NewError("", err, customErr.Type, nil).(*CustomError)
 	}
 
 	return *customErr
@@ -88,9 +87,9 @@ func NewValidationError(validationError error, uniTranslator *ut.UniversalTransl
 }
 
 const (
-	NotFoundError = "NotFoundError"
-	InternalError = "InternalError"
+	NotFoundError     = "NotFoundError"
+	InternalError     = "InternalError"
 	IllegalParamError = "IllegalParamError"
-	ParseError = "ParseError"
-	BusinessError = "BusinessError"
+	ParseError        = "ParseError"
+	BusinessError     = "BusinessError"
 )
