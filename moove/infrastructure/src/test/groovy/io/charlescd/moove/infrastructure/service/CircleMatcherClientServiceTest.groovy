@@ -17,7 +17,6 @@
 package io.charlescd.moove.infrastructure.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.SimpleCircle
@@ -159,24 +158,43 @@ class CircleMatcherClientServiceTest extends Specification {
         assert response[1].name == "Default"
     }
 
-    def "should find the circles from workspace and delete from circle-matcher"() {
+    def "should find the circles from workspace and delete of circle-matcher"() {
         given:
         def workspace = Fixtures.workspace().build()
         def matcherUri = "http://circle-matcher.com"
+        def content = [Fixtures.circle().build(), Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()]
         when:
         circleMatcherService.deleteAllFor(workspace, matcherUri)
         then:
-        1 * circleRepository.find(_, _, _, _) >> { arguments ->
-            def name = arguments[0]
-            def active = arguments[1]
-            def workspaceId = arguments[2]
+        1 * circleRepository.find(null, null, workspace.id, _) >> new Page(content, 0, 50, content.size())
 
-            assert name == null
-            assert active == null
-            assert workspaceId == workspace.id
+        1 * circleMatcherClient.delete(new URI(matcherUri), content[0].reference)
+        1 * circleMatcherClient.delete(new URI(matcherUri), content[1].reference)
+    }
 
-            new Page([Fixtures.circle().build()], 0, 50, 1)
+    def "should find the circles in two pages from workspace and delete of circle-matcher"() {
+        given:
+        def workspace = Fixtures.workspace().build()
+        def matcherUri = "http://circle-matcher.com"
+        def firstCircle = Fixtures.circle().build()
+        def secondCircle = Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()
+        when:
+        circleMatcherService.deleteAllFor(workspace, matcherUri)
+        then:
+        1 * circleRepository.find(null, null, workspace.id, _) >> { arguments ->
+            def pageRequest = (PageRequest) arguments[3]
+            assert pageRequest.page == 0
+
+            new Page([firstCircle], 0, 1, 2)
         }
-        1 * circleMatcherClient.delete(_, _)
+        1 * circleRepository.find(null, null, workspace.id, _) >> { arguments ->
+            def pageRequest = (PageRequest) arguments[3]
+            assert pageRequest.page == 1
+
+            new Page([secondCircle], 1, 1, 2)
+        }
+
+        1 * circleMatcherClient.delete(new URI(matcherUri), firstCircle.reference)
+        1 * circleMatcherClient.delete(new URI(matcherUri), secondCircle.reference)
     }
 }
