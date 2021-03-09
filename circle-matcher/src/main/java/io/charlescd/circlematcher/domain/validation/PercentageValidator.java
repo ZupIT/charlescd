@@ -38,11 +38,19 @@ public class PercentageValidator implements ConstraintValidator<PercentageConstr
         ).reduce(Integer::sum);
         if (sumPercentageWorkspace.isPresent() && segmentation.isActive()) {
             if (sumPercentageWorkspace.get() + segmentation.getPercentage() > 100) {
+                addErrorMessage(constraintValidatorContext, "Sum of percentage of active circles exceeded 100 percent");
                 return false;
             } else {
                 return segmentation.hasValidPercentage();
             }
         }
         return segmentation.hasValidPercentage();
+    }
+
+    public void addErrorMessage(ConstraintValidatorContext context, String message) {
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(
+                message
+        ).addPropertyNode("percentage").addConstraintViolation();
     }
 }
