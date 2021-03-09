@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -62,7 +63,7 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public DefaultErrorResponse handleConstraintsValidation(MethodArgumentNotValidException exception) {
         logger.error("BAD REQUEST ERROR - ", exception);
-        String message = "Invalid request body." + processFieldErrors(exception.getFieldErrors());
+        String message = "Invalid request body." + processErrors(exception.getAllErrors());
         return ExceptionUtils.createBadRequestError(message, getSourceFields(exception.getFieldErrors()));
     }
 
@@ -71,9 +72,9 @@ public class ErrorHandler {
                 .map(field -> String.format("%s/%s", "segmentation", field.getField())).collect(joining("\n"));
     }
 
-    private String processFieldErrors(List<FieldError> fieldErrors) {
+    private String processErrors(List<ObjectError> fieldErrors) {
         return fieldErrors.stream()
-                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .map(fe -> fe.getObjectName() + ": " + fe.getDefaultMessage())
                 .collect(joining("\n"));
     }
 

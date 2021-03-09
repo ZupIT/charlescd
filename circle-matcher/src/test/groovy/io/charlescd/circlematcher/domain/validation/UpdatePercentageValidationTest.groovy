@@ -5,7 +5,9 @@ import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepositor
 import io.charlescd.circlematcher.utils.TestUtils
 import spock.lang.Specification
 
-class PercentageValidationTest extends Specification {
+import javax.validation.ConstraintValidatorContext
+
+class UpdatePercentageValidationTest extends Specification {
 
     def "when limit of percentage reached should allow creation of inactive segmentation"() {
         given:
@@ -17,14 +19,14 @@ class PercentageValidationTest extends Specification {
         def anotherActiveMetadata = TestUtils.createKeyMetadata(null, anotherActiveSegmentation)
 
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
         def valid = validator.isValid(inactiveSegmentationRequest, null)
         then:
         keyMetadataRepository.findByWorkspaceId(inactiveSegmentationRequest.workspaceId) >> [activeMetadata, anotherActiveMetadata]
         assert valid
     }
 
-    def "when limit of percentage reached should not allow creation of active segmentation"() {
+    def "when limit of percentage reached should not allow update of active segmentation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
         def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 20, true)
@@ -32,16 +34,21 @@ class PercentageValidationTest extends Specification {
         def anotherActiveSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 10)
         def activeMetadata = TestUtils.createKeyMetadata(null, activeSegmentation)
         def anotherActiveMetadata = TestUtils.createKeyMetadata(null, anotherActiveSegmentation)
+        def constraintContext = Mock(ConstraintValidatorContext)
+        def constraintContextBuilder = Mock(ConstraintValidatorContext.ConstraintViolationBuilder)
+        def nodeContextBuilder = Mock(ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext)
 
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
-        def valid = validator.isValid(activeSegmentationRequest, null)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
+        def valid = validator.isValid(activeSegmentationRequest, constraintContext)
         then:
+        constraintContext.buildConstraintViolationWithTemplate("Sum of percentage of active circles exceeded 100 percent") >> constraintContextBuilder
+        constraintContextBuilder.addPropertyNode("percentage") >> nodeContextBuilder
         keyMetadataRepository.findByWorkspaceId(activeSegmentationRequest.workspaceId) >> [activeMetadata, anotherActiveMetadata]
         assert !valid
     }
 
-    def "when sum of percentage not exceed the limit should allow creation of active segmentation"() {
+    def "when sum of percentage not exceed the limit should allow update of active segmentation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
         def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 10, true)
@@ -51,14 +58,14 @@ class PercentageValidationTest extends Specification {
         def anotherActiveMetadata = TestUtils.createKeyMetadata(null, anotherActiveSegmentation)
 
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
         def valid = validator.isValid(activeSegmentationRequest, null)
         then:
         keyMetadataRepository.findByWorkspaceId(activeSegmentationRequest.workspaceId) >> [activeMetadata, anotherActiveMetadata]
         assert valid
     }
 
-    def "when sum of percentage exceeds should not allow creation of active segmentation"() {
+    def "when sum of percentage exceeds should not allow update of active segmentation"() {
         given:
         def keyMetadataRepository = Mock(KeyMetadataRepository)
         def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 10, true)
@@ -66,12 +73,18 @@ class PercentageValidationTest extends Specification {
         def anotherActiveSegmentation = TestUtils.createPercentageSegmentation(null, SegmentationType.PERCENTAGE, 20)
         def activeMetadata = TestUtils.createKeyMetadata(null, activeSegmentation)
         def anotherActiveMetadata = TestUtils.createKeyMetadata(null, anotherActiveSegmentation)
-
+        def constraintContext = Mock(ConstraintValidatorContext)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
+        def constraintContextBuilder = Mock(ConstraintValidatorContext.ConstraintViolationBuilder)
+        def nodeContextBuilder = Mock(ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext)
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
-        def valid = validator.isValid(activeSegmentationRequest, null)
+
+        def valid = validator.isValid(activeSegmentationRequest, constraintContext)
         then:
+
         keyMetadataRepository.findByWorkspaceId(activeSegmentationRequest.workspaceId) >> [activeMetadata, anotherActiveMetadata]
+        constraintContext.buildConstraintViolationWithTemplate("Sum of percentage of active circles exceeded 100 percent") >> constraintContextBuilder
+        constraintContextBuilder.addPropertyNode("percentage") >> nodeContextBuilder
         assert !valid
     }
 
@@ -88,7 +101,7 @@ class PercentageValidationTest extends Specification {
         def anotherActiveMetadata = TestUtils.createKeyMetadata(null, anotherActiveSegmentation)
         activeSegmentationUpdate.reference = activeSegmentation.reference
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
         def valid = validator.isValid(activeSegmentationUpdate, null)
         then:
         keyMetadataRepository.findByWorkspaceId(activeSegmentationUpdate.workspaceId) >> [activeMetadata, anotherActiveMetadata]
@@ -101,7 +114,7 @@ class PercentageValidationTest extends Specification {
         def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 110, true)
 
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
         def valid = validator.isValid(activeSegmentationRequest, null)
         then:
         keyMetadataRepository.findByWorkspaceId(activeSegmentationRequest.workspaceId) >> []
@@ -114,7 +127,7 @@ class PercentageValidationTest extends Specification {
         def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, -5, true)
 
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
         def valid = validator.isValid(activeSegmentationRequest, null)
         then:
         keyMetadataRepository.findByWorkspaceId(activeSegmentationRequest.workspaceId) >> []
@@ -127,7 +140,7 @@ class PercentageValidationTest extends Specification {
         def activeSegmentationRequest = TestUtils.createUpdateSegmentationRequest(null, SegmentationType.PERCENTAGE, 100, true)
 
         when:
-        def validator = new PercentageValidator(keyMetadataRepository)
+        def validator = new UpdatePercentageValidator(keyMetadataRepository)
         def valid = validator.isValid(activeSegmentationRequest, null)
         then:
         keyMetadataRepository.findByWorkspaceId(activeSegmentationRequest.workspaceId) >> []

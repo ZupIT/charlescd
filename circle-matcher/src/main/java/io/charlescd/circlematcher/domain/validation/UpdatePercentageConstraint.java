@@ -9,10 +9,10 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = PercentageValidator.class)
-@Target({ ElementType.TYPE, ElementType.FIELD })
+@Constraint(validatedBy = UpdatePercentageValidator.class)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PercentageConstraint {
+public @interface UpdatePercentageConstraint {
     String message() default "Invalid percentage";
     Class<?>[] groups() default {};
 
