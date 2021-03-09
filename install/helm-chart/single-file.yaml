@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "ZjJqNGJpd0wwRQ=="
-  postgresql-password: "UXRTeEpSd2NoZQ=="
+  postgresql-postgres-password: "QmN3WEZHaVB6dw=="
+  postgresql-password: "bnd1VDFwVlc4WQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -6731,7 +6731,7 @@ spec:
               value: "PROD"
             - name: QUERIES_PATH
               value: "./internal/repository/queries"
-          image: zupcharles/charlescd-gate:0.6.0
+          image: zupcharles/charlescd-gate:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -7033,7 +7033,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: charlescd-circle-matcher
-  minReplicas: 3
+  minReplicas: 1
   maxReplicas: 10
   metrics:
     - type: Resource
