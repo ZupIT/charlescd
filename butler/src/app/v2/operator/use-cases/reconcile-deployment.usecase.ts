@@ -81,6 +81,9 @@ export class ReconcileDeploymentUsecase {
   }
 
   private async handleTimedOut(deployment: DeploymentEntityV2) {
+    if (deployment.healthy) {
+      return
+    }
     const createdMoment = moment(deployment.createdAt)
     const nowMoment = moment(DateUtils.now())
     if (moment.duration(nowMoment.diff(createdMoment)).asSeconds() > deployment.timeoutInSeconds) {
