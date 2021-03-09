@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-import { isNotBlank, trimValue } from "../validations";
-
-test("should validate a empty field", () => {
-  const emptyValue = '   ';
-  const nonEmptyValue = 'x';
-  const nonStringValue = {};
-
-  expect(isNotBlank(nonStringValue)).toBe(nonStringValue);
-  expect(isNotBlank(emptyValue)).toBe('No whitespaces');
-  expect(isNotBlank(nonEmptyValue)).toBeTruthy();
-});
-
-test("should trim value", () => {
-  const whitespacesValue = '  x  ';
-  const nonStringValue = {};
-
-  expect(trimValue(nonStringValue)).toBe(nonStringValue);
-  expect(trimValue(whitespacesValue)).toBe('x');
-});
+export const USER_DETAILS = {
+  "id": "c7e6dafe-aa7a-4536-be1b-34eaad4c2915",
+  "name": "Charles Adminn",
+  "email": "charlesadmin@admin",
+  "photoUrl": "",
+  "createdAt": "2020-11-16 18:20:57",
+  "root": true
+}
