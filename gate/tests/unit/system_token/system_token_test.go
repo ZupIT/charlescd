@@ -75,7 +75,7 @@ func getDummySystemToken() domain.SystemToken {
 	createdAt := time.Now()
 	return domain.SystemToken{
 		ID: uuid.New(),
-		Name: "SystemToken Test",
+		Name: "SystemToken",
 		AuthorEmail: "joe.doe@email.com",
 		CreatedAt: &createdAt,
 		Revoked: false,
