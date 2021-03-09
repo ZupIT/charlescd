@@ -17,13 +17,14 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { K8sClient } from '../../../core/integrations/k8s/client'
+import { MooveService } from '../../../core/integrations/moove/moove.service'
+import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
+import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
-import { ComponentsRepositoryV2 } from '../repository'
 import { ExecutionTypeEnum } from '../enums'
-import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
-import { K8sClient } from '../../../core/integrations/k8s/client'
-import { ConsoleLoggerService } from '../../../core/logs/console/console-logger.service'
+import { ComponentsRepositoryV2 } from '../repository'
 
 @Injectable()
 export class CreateUndeploymentUseCase {
@@ -35,7 +36,8 @@ export class CreateUndeploymentUseCase {
     @InjectRepository(ComponentsRepositoryV2)
     private componentsRepository: ComponentsRepositoryV2,
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly k8sClient: K8sClient
+    private readonly k8sClient: K8sClient,
+    private readonly mooveService: MooveService
   ) {}
 
   public async execute(
@@ -46,9 +48,20 @@ export class CreateUndeploymentUseCase {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { deploymentId, incomingCircleId })
     const deployment = await this.deploymentsRepository.findOneOrFail({ id: deploymentId })
     const execution = await this.createExecution(deployment, incomingCircleId)
-    await this.k8sClient.applyUndeploymentCustomResource(deployment)
+    await this.deleteDeploymentCRD(deployment)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { execution })
     return { id: deploymentId }
+  }
+
+  private async deleteDeploymentCRD(deployment: DeploymentEntity) {
+    const activeComponents = await this.componentsRepository.findActiveComponents()
+    try {
+      await this.k8sClient.applyRoutingCustomResource(activeComponents)
+      await this.k8sClient.applyUndeploymentCustomResource(deployment)
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR_DELETING_DEPLOYMENT_CRD')
+      throw error
+    }
   }
 
   private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null): Promise<Execution> {
