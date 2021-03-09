@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-import { isNotBlank, trimValue } from "../validations";
+import auth from './handlers/auth';
+import users from './handlers/users';
+import circleMatcher from './handlers/circleMatcher';
+import workspaces from './handlers/workspaces';
 
-test("should validate a empty field", () => {
-  const emptyValue = '   ';
-  const nonEmptyValue = 'x';
-  const nonStringValue = {};
-
-  expect(isNotBlank(nonStringValue)).toBe(nonStringValue);
-  expect(isNotBlank(emptyValue)).toBe('No whitespaces');
-  expect(isNotBlank(nonEmptyValue)).toBeTruthy();
-});
-
-test("should trim value", () => {
-  const whitespacesValue = '  x  ';
-  const nonStringValue = {};
-
-  expect(trimValue(nonStringValue)).toBe(nonStringValue);
-  expect(trimValue(whitespacesValue)).toBe('x');
-});
+export const handlers = [
+  ...auth,
+  ...users,
+  ...circleMatcher,
+  ...workspaces
+]

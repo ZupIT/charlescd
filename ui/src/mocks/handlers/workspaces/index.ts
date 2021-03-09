@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-import { isNotBlank, trimValue } from "../validations";
+import { rest } from 'msw';
+import { basePath } from 'core/providers/base';
+import { WORKSPACES_LIST } from './responses';
 
-test("should validate a empty field", () => {
-  const emptyValue = '   ';
-  const nonEmptyValue = 'x';
-  const nonStringValue = {};
-
-  expect(isNotBlank(nonStringValue)).toBe(nonStringValue);
-  expect(isNotBlank(emptyValue)).toBe('No whitespaces');
-  expect(isNotBlank(nonEmptyValue)).toBeTruthy();
-});
-
-test("should trim value", () => {
-  const whitespacesValue = '  x  ';
-  const nonStringValue = {};
-
-  expect(trimValue(nonStringValue)).toBe(nonStringValue);
-  expect(trimValue(whitespacesValue)).toBe('x');
-});
+export default [
+  rest.get(`${basePath}/moove/v2/workspaces`, (req, res, ctx) => {
+    return res(
+      ctx.json(WORKSPACES_LIST)
+    )
+  }),
+];
