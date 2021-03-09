@@ -20,6 +20,20 @@ func (st *SystemTokenSuite) TestGetAll() {
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", getDummyPage()))
 }
 
+func (st *SystemTokenSuite) TestGetAllEmpty() {
+	st.systemTokenRepository.On("FindAll", getDummyPage()).Return(
+		[]domain.SystemToken{},
+		getDummyPage(),
+		nil)
+
+	stList, _, err := st.getAllSystemToken.Execute(getDummyPage())
+
+	require.NotNil(st.T(), stList)
+	require.Nil(st.T(), err)
+	require.Empty(st.T(), stList)
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", getDummyPage()))
+}
+
 func (st *SystemTokenSuite) TestErrorGetAllInternalError() {
 	st.systemTokenRepository.On("FindAll", getDummyPage()).Return(
 		[]domain.SystemToken{},
@@ -39,6 +53,6 @@ func getDummyPage() domain.Page {
 		PageNumber: 0,
 		PageSize:   20,
 		Sort:       "sort",
-		Total:      20,
+		Total:      2,
 	}
 }
