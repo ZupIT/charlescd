@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroupPaginationItem {
-  id: string;
-  name: string;
-  users: User[];
-}
+import { UserGroup } from './UserGroups';
 
 export interface UserGroupPagination {
-  content: UserGroupPaginationItem[];
+  content: UserGroup[];
   page: number;
   size: number;
   totalPages: number;

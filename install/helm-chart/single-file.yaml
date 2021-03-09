@@ -16,7 +16,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "T00xbGZpQ2NvQw=="
-  postgresql-password: "Y2ljQnFGYTFMVw=="
+  postgresql-postgres-password: "ZjJqNGJpd0wwRQ=="
+  postgresql-password: "UXRTeEpSd2NoZQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -189,7 +189,7 @@ data:
                       local token = request_handle:headers():get("authorization")
                       local request = require("luajit-init")
                       local response = request.send(
-                        "http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
+                        "http://keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
                         {
                           headers = {
                             authorization = token
@@ -280,7 +280,7 @@ data:
             - endpoint:
                 address:
                   socket_address:
-                    address: charlescd-keycloak-http
+                    address: keycloak-http
                     port_value: 80
       
       - name: charlescd-compass
@@ -1762,7 +1762,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: charlescd-keycloak-startup
+  name: keycloak-startup
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6014,7 +6014,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-headless
+  name: keycloak-headless
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6038,7 +6038,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-http
+  name: keycloak-http
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6503,7 +6503,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.0
+          image: zupcharles/charlescd-butler:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6551,10 +6551,8 @@ spec:
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: redis-standalone
-          
           - name: SPRING_REDIS_HOST
             value: charlescd-redis-master
-          
           - name: SPRING_REDIS_PORT
             value: "6379"
           - name: SPRING_REDIS_PASSWORD
@@ -6563,7 +6561,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.0
+          image: zupcharles/charlescd-circle-matcher:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6580,7 +6578,12 @@ spec:
               port: 8080
             initialDelaySeconds: 120
           resources:
-              {}
+              limits:
+                cpu: 500m
+                memory: 384Mi
+              requests:
+                cpu: 500m
+                memory: 384Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6660,7 +6663,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.0
+          image: zupcharles/charlescd-compass:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6792,7 +6795,7 @@ spec:
             value: "charlescd"
           
           - name: KEYCLOAK_SERVER_URL
-            value: "http://charlescd-keycloak-http/keycloak/auth"
+            value: "http://keycloak-http/keycloak/auth"
           
           - name: KEYCLOAK_PUBLIC_CLIENT_ID
             value: "charlescd-client"
@@ -6815,7 +6818,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.0
+          image: zupcharles/charlescd-moove:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6870,7 +6873,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.0
+          image: zupcharles/charlescd-octopipe:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6932,7 +6935,7 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
-          image: zupcharles/charlescd-ui:0.6.0
+          image: zupcharles/charlescd-ui:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6998,7 +7001,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.0
+          image: zupcharles/charlescd-villager:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -7017,11 +7020,34 @@ spec:
           resources:
               {}
 ---
+# Source: charlescd/templates/hpa.yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: charlescd-circle-matcher
+  labels:
+    app: charlescd-circle-matcher
+    version: charlescd-circle-matcher
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: charlescd-circle-matcher
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
 # Source: charlescd/charts/keycloak/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -7034,14 +7060,14 @@ spec:
       app.kubernetes.io/name: keycloak
       app.kubernetes.io/instance: charlescd
   replicas: 1
-  serviceName: charlescd-keycloak-headless
+  serviceName: keycloak-headless
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       annotations:
-        checksum/config-startup: a97b69abc0b894b66147967e7c5977df317359812fef3dd69f46d380b662d817
+        checksum/config-startup: a09cd3a55fe67454f509ec623db5505a7f5a26a87f77b5235e70e02cc86a45da
         checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
       labels:
         app.kubernetes.io/name: keycloak
@@ -7129,7 +7155,7 @@ spec:
               mountPath: "/realm/"
               readOnly: false
             
-      serviceAccountName: charlescd-keycloak
+      serviceAccountName: keycloak
       securityContext:
         fsGroup: 1000
       enableServiceLinks: true
@@ -7165,7 +7191,7 @@ spec:
       volumes:
         - name: startup
           configMap:
-            name: charlescd-keycloak-startup
+            name: keycloak-startup
             defaultMode: 0555
             items:
               - key: contextPath.cli

@@ -21,6 +21,8 @@ import (
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
+
+	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 )
 
 type MainUseCases interface {
@@ -28,6 +30,7 @@ type MainUseCases interface {
 }
 
 type ManagerMain struct {
+	kubectl           kube.Kubectl
 	templateMain      template.MainUseCases
 	deploymentMain    deployment.MainUseCases
 	cloudproviderMain cloudprovider.MainUseCases
@@ -35,10 +38,12 @@ type ManagerMain struct {
 }
 
 func NewManagerMain(
+	kubectl kube.Kubectl,
 	templateMain template.MainUseCases,
 	deploymentMain deployment.MainUseCases,
 	cloudprovider cloudprovider.MainUseCases,
 	repositoryMain repository.MainUseCases,
 ) MainUseCases {
-	return &ManagerMain{templateMain, deploymentMain, cloudprovider, repositoryMain}
+
+	return &ManagerMain{kubectl, templateMain, deploymentMain, cloudprovider, repositoryMain}
 }
