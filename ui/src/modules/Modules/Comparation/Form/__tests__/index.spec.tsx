@@ -224,3 +224,98 @@ test("Should render submit button", async () => {
   expect(updateModuleSpy).toHaveBeenCalled();
   updateModuleSpy.mockRestore();
 });
+
+test('should validate blank in optional helm path', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const gitProviderSelect = screen.getByText('Git provider');
+  await act(async () => selectEvent.select(gitProviderSelect, 'GitLab'));
+
+  const pathInput = screen.getByTestId('input-text-helmPath');
+  await act(async () => userEvent.type(pathInput, '   '))
+  await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
+});
+
+test('should validate blank in optional branch path', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const gitProviderSelect = screen.getByText('Git provider');
+  await act(async () => selectEvent.select(gitProviderSelect, 'GitLab'));
+
+  const branchInput = screen.getByTestId('input-text-helmBranch');
+  await act(async () => userEvent.type(branchInput, '   '))
+  await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
+});
+
+test('should not show error when optional field is empty (helm path)', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const gitProviderSelect = screen.getByText('Git provider');
+  await act(async () => selectEvent.select(gitProviderSelect, 'GitLab'));
+
+  const helmPath = screen.getByTestId('input-text-helmPath');
+  await act(async () => userEvent.type(helmPath, ''))
+  await waitFor(() => expect(screen.queryByText('the field is required.')).not.toBeInTheDocument());
+});
+
+test('should not show error when optional field is empty (helm branch)', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const gitProviderSelect = screen.getByText('Git provider');
+  await act(async () => selectEvent.select(gitProviderSelect, 'GitLab'));
+
+  const helmBranch = screen.getByTestId('input-text-helmBranch');
+  await act(async () => userEvent.type(helmBranch, ''))
+  await waitFor(() => expect(screen.queryByText('the field is required.')).not.toBeInTheDocument());
+});
+
+test('should not show error when typing whitespaces followed by some value', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const gitProviderSelect = screen.getByText('Git provider');
+  await act(async () => selectEvent.select(gitProviderSelect, 'GitLab'));
+
+  const helmBranch = screen.getByTestId('input-text-helmBranch');
+  await act(async () => userEvent.type(helmBranch, '   some value'))
+  await waitFor(() => expect(screen.queryByText('No whitespaces')).not.toBeInTheDocument());
+});
