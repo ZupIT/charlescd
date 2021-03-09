@@ -81,7 +81,7 @@ export class ReconcileDeploymentUsecase {
   }
 
   private async handleTimedOut(deployment: DeploymentEntityV2) {
-    if (deployment.healthy) {
+    if (deployment.healthy && deployment.routed) {
       return
     }
     const createdMoment = moment(deployment.createdAt)
@@ -89,6 +89,8 @@ export class ReconcileDeploymentUsecase {
     if (moment.duration(nowMoment.diff(createdMoment)).asSeconds() > deployment.timeoutInSeconds) {
       this.deploymentRepository.updateCurrent(deployment.id, false)
       this.notifyCallback(deployment, DeploymentStatusEnum.FAILED)
+      const activeComponents = await this.componentRepository.findActiveComponents()
+      await this.k8sClient.applyRoutingCustomResource(activeComponents)
       this.k8sClient.applyUndeploymentCustomResource(deployment)
     }
   }
