@@ -45,10 +45,9 @@ jobs:
           fail_ci_if_error: true
 
       - name: Code Style
-        uses: docker://morphy/revive-action:v1
+        uses: morphy2k/revive-action@v1
         with:
-          config: ./gate/revive.toml
-          path: "./gate/..."
+          config: revive.toml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
