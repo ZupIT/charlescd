@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-import { isNotBlank, trimValue } from "../validations";
+export const IDENTIFY_ERROR = {
+  message: 'Default circle metadata not found.'
+}
 
-test("should validate a empty field", () => {
-  const emptyValue = '   ';
-  const nonEmptyValue = 'x';
-  const nonStringValue = {};
-
-  expect(isNotBlank(nonStringValue)).toBe(nonStringValue);
-  expect(isNotBlank(emptyValue)).toBe('No whitespaces');
-  expect(isNotBlank(nonEmptyValue)).toBeTruthy();
-});
-
-test("should trim value", () => {
-  const whitespacesValue = '  x  ';
-  const nonStringValue = {};
-
-  expect(trimValue(nonStringValue)).toBe(nonStringValue);
-  expect(trimValue(whitespacesValue)).toBe('x');
-});
+export const IDENTIFY_SUCCESS = {
+  "circles": [
+      {
+          "id": "123",
+          "name": "Default"
+      }
+  ]
+}
