@@ -16,8 +16,8 @@ import (
 
 type server struct {
 	persistenceManager persistenceManager
-	httpServer     *echo.Echo
-	enforcer *casbin.Enforcer
+	httpServer         *echo.Echo
+	enforcer           *casbin.Enforcer
 }
 
 type customBinder struct{}
@@ -28,8 +28,8 @@ type CustomValidator struct {
 
 func newServer(pm persistenceManager) (server, error) {
 	return server{
-		persistenceManager:   pm,
-		httpServer: createHttpServerInstance(),
+		persistenceManager: pm,
+		httpServer:         createHttpServerInstance(),
 	}, nil
 }
 
@@ -82,6 +82,7 @@ func (server server) registerRoutes() {
 		{
 			st := v1.Group("/system-token")
 			{
+				st.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
 				st.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 		}

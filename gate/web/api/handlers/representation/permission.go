@@ -6,7 +6,7 @@ import (
 )
 
 type PermissionResponse struct {
-	ID uuid.UUID
+	ID   uuid.UUID
 	Name string
 }
 
