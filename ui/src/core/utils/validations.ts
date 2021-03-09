@@ -28,7 +28,9 @@ export const validFields = (fields: object) => {
   return status;
 };
 
-export const isNotBlank = (value: string) => !!value?.trim() || 'No whitespaces';
+export const isNotBlank = (value: string) => {
+  if(value) return !!value?.trim() || 'No whitespaces';
+}
 
 export const trimValue = (value: string) => value?.trim();
 
