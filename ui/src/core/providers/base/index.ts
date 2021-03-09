@@ -46,6 +46,7 @@ export interface EnvVariables {
   REACT_APP_IDM_REDIRECT_URI?: string;
   REACT_APP_IDM: string;
   REACT_APP_WORKSPACE_ID?: string;
+  REACT_APP_MOCK?: string;
 }
 
 type GlobalApexCharts = {
