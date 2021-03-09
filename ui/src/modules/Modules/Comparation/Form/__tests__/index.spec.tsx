@@ -171,11 +171,11 @@ test('should not show required message for optional fields GITLAB', async () => 
     userEvent.type(pathInput, '/zup');
     userEvent.type(pathInput, '');
   })
-  await waitFor(() => expect(screen.queryByText('The field is required.')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
 
   userEvent.type(branchInput, 'feature/zup');
   userEvent.type(branchInput, '');
-  await waitFor(() => expect(screen.queryByText('The field is required.')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
 });
 
 test('should not show required message for optional fields GITHUB', async () => {
@@ -199,11 +199,11 @@ test('should not show required message for optional fields GITHUB', async () => 
     userEvent.type(pathInput, '/zup');
     userEvent.type(pathInput, '');
   })
-  await waitFor(() => expect(screen.queryByText('The field is required.')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
   
   userEvent.type(branchInput, 'feature/zup');
   userEvent.type(branchInput, '');
-  await waitFor(() => expect(screen.queryByText('The field is required.')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
 });
 
 test("Should render submit button", async () => {
@@ -279,7 +279,7 @@ test('should not show error when optional field is empty (helm path)', async () 
 
   const helmPath = screen.getByTestId('input-text-helmPath');
   await act(async () => userEvent.type(helmPath, ''))
-  await waitFor(() => expect(screen.queryByText('the field is required.')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
 });
 
 test('should not show error when optional field is empty (helm branch)', async () => {
@@ -298,7 +298,7 @@ test('should not show error when optional field is empty (helm branch)', async (
 
   const helmBranch = screen.getByTestId('input-text-helmBranch');
   await act(async () => userEvent.type(helmBranch, ''))
-  await waitFor(() => expect(screen.queryByText('the field is required.')).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
 });
 
 test('should not show error when typing whitespaces followed by some value', async () => {

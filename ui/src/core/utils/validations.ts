@@ -54,7 +54,7 @@ export const minLength = (value: number, message?: string) => ({
 
 export const isRequired = () => ({
   value: true,
-  message: 'The field is required.'
+  message: 'This field is required'
 });
 
 export const emailPattern = () => ({

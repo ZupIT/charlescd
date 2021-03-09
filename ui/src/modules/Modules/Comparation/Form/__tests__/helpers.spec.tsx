@@ -168,7 +168,7 @@ test('should retun validation with required true', () => {
   const result = getHelmFieldsValidations('some name');
 
   expect(result.required).toHaveProperty('value', true);
-  expect(result.required).toHaveProperty('message', 'The field is required.');
+  expect(result.required).toHaveProperty('message', 'This field is required');
 });
 
 test('should retun validation with required false', () => {
