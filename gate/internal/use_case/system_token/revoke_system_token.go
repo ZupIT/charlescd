@@ -29,17 +29,19 @@ func (r revokeSystemToken) Execute(id uuid.UUID) error {
 		return logging.WithOperation(err, "RevokeSystemToken.Execute")
 	}
 
-	if !systemToken.Revoked {
-		revokedAt := time.Now()
+	if systemToken.Revoked {
+		return logging.NewError("Token already revoked.", logging.CustomError{}, logging.BusinessError, nil)
+	}
 
-		systemToken.Revoked = true
-		systemToken.RevokedAt = &revokedAt
+	revokedAt := time.Now()
 
-		_, updateError := r.systemTokenRepository.Update(systemToken)
+	systemToken.Revoked = true
+	systemToken.RevokedAt = &revokedAt
 
-		if updateError != nil {
-			return logging.WithOperation(updateError, "RevokeSystemToken.Execute")
-		}
+	_, updateError := r.systemTokenRepository.Update(systemToken)
+
+	if updateError != nil {
+		return logging.WithOperation(updateError, "RevokeSystemToken.Execute")
 	}
 
 	return nil

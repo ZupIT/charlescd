@@ -23,12 +23,12 @@ import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleHistoryExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleMetricExtractor
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 import java.sql.Types
 import java.time.Duration
 import java.util.*
 import kotlin.collections.ArrayList
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Repository
 
 @Repository
 class JdbcCircleRepository(

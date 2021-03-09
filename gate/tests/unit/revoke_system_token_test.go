@@ -69,7 +69,8 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {
 
 	err := st.revokeSystemToken.Execute(systemToken.ID)
 
-	require.Nil(st.T(), err)
+	require.Error(st.T(), err)
+	require.Equal(st.T(), logging.BusinessError, logging.GetErrorType(err))
 
 	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
