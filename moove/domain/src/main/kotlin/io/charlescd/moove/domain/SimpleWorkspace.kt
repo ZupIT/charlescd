@@ -14,29 +14,10 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.workspace.response
+package io.charlescd.moove.domain
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import io.charlescd.moove.domain.SimpleWorkspace
-
-data class SimpleWorkspaceResponse(
+data class SimpleWorkspace(
     val id: String,
     val name: String,
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    val permissions: List<String>,
-    val status: String
-) {
-    companion object {
-
-        fun from(
-            workspace: SimpleWorkspace
-        ): SimpleWorkspaceResponse {
-            return SimpleWorkspaceResponse(
-                id = workspace.id,
-                name = workspace.name,
-                status = workspace.status.name,
-                permissions = emptyList()
-            )
-        }
-    }
-}
+    val status: WorkspaceStatusEnum = WorkspaceStatusEnum.INCOMPLETE
+)

@@ -64,9 +64,7 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
     def "when there are workspaces, should list them"() {
         given:
         def pageRequest = new PageRequest()
-        def author = new User("author", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
-        def workspace = new Workspace("workspace-id", "workspace-name", author, LocalDateTime.now(), [], WorkspaceStatusEnum.INCOMPLETE, "registry-configuration-id",
-                "circle-matcher-url", "git-configuration-id", "cd-configuration-id", null)
+        def workspace = new SimpleWorkspace("workspace-id", "workspace-name",WorkspaceStatusEnum.INCOMPLETE)
         def page = new Page([workspace], 0, 20, 1)
 
         when:
@@ -88,12 +86,6 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
         assert response.content[0].id == workspace.id
         assert response.content[0].name == workspace.name
         assert response.content[0].status == workspace.status.toString()
-        assert response.content[0].circleMatcherUrl == workspace.circleMatcherUrl
-        assert response.content[0].registryConfiguration == null
-        assert response.content[0].gitConfiguration == null
-        assert response.content[0].cdConfiguration == null
-        assert response.content[0].createdAt == workspace.createdAt
-        assert response.content[0].authorId == workspace.author.id
         assert response.totalPages == 1
         assert response.isLast
     }
