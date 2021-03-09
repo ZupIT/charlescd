@@ -123,6 +123,16 @@ class WorkspaceFixture {
     }
 
     Workspace build() {
-        new Workspace(id, name, author, createdAt, userGroups, status, registryConfigurationId, circleMatcherUrl, gitConfigurationId, cdConfigurationId, metricConfigurationId)
+        new Workspace(id,
+                name,
+                author,
+                createdAt,
+                userGroups,
+                status,
+                registryConfigurationId,
+                circleMatcherUrl,
+                gitConfigurationId,
+                cdConfigurationId,
+                metricConfigurationId)
     }
 }

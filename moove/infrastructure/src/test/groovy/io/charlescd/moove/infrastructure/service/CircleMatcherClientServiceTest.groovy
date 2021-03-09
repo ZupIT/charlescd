@@ -17,7 +17,11 @@
 package io.charlescd.moove.infrastructure.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.Page
+import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.SimpleCircle
+import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.fixture.Fixtures
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
@@ -32,8 +36,10 @@ class CircleMatcherClientServiceTest extends Specification {
 
     private CircleMatcherClient circleMatcherClient = Mock(CircleMatcherClient)
 
+    private CircleRepository circleRepository = Mock(CircleRepository)
+
     void setup() {
-        this.circleMatcherService = new CircleMatcherClientService(circleMatcherClient, new ObjectMapper())
+        this.circleMatcherService = new CircleMatcherClientService(circleMatcherClient, circleRepository, new ObjectMapper())
     }
 
     def "should create a new circle segmentation on circle matcher"() {
@@ -151,5 +157,26 @@ class CircleMatcherClientServiceTest extends Specification {
         assert response[0].name == "Women"
         assert response[1].id == "d9fe48cb-710f-4058-8009-e3521cac3006"
         assert response[1].name == "Default"
+    }
+
+    def "should find the circles from workspace and delete from circle-matcher"() {
+        given:
+        def workspace = Fixtures.workspace().build()
+        def matcherUri = "http://circle-matcher.com"
+        when:
+        circleMatcherService.deleteAllFor(workspace, matcherUri)
+        then:
+        1 * circleRepository.find(_, _, _, _) >> { arguments ->
+            def name = arguments[0]
+            def active = arguments[1]
+            def workspaceId = arguments[2]
+
+            assert name == null
+            assert active == null
+            assert workspaceId == workspace.id
+
+            new Page([Fixtures.circle().build()], 0, 50, 1)
+        }
+        1 * circleMatcherClient.delete(_, _)
     }
 }

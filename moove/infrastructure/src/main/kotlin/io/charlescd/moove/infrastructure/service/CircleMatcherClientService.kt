@@ -21,8 +21,10 @@ package io.charlescd.moove.infrastructure.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.SimpleCircle
 import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
@@ -34,6 +36,7 @@ import org.springframework.stereotype.Service
 @Service
 class CircleMatcherClientService(
     private val circleMatcherClient: CircleMatcherClient,
+    private val circleRepository: CircleRepository,
     private val objectMapper: ObjectMapper
 ) : CircleMatcherService {
 
@@ -118,4 +121,13 @@ class CircleMatcherClientService(
             active = isActive,
             createdAt = circle.createdAt
         )
+
+    override fun deleteAllFor(workspace: Workspace, matcherUri: String) {
+        var pageNumber = 0
+        do {
+            val pageRequest = PageRequest(page = pageNumber++)
+            val page = circleRepository.find(null, null, workspace.id, pageRequest)
+            page.content.forEach { circleMatcherClient.delete(URI(matcherUri), it.reference) }
+        } while (!page.isLast())
+    }
 }
