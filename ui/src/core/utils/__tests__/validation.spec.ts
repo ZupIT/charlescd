@@ -19,7 +19,9 @@ import { isNotBlank } from "../validations";
 test("should validate a empty field", () => {
   const emptyValue = '   ';
   const nonEmptyValue = 'x';
+  const spacesWithValue = '    xyz   ';
 
   expect(isNotBlank(emptyValue)).toBe('No whitespaces');
   expect(isNotBlank(nonEmptyValue)).toBeTruthy();
+  expect(isNotBlank(spacesWithValue)).toBeTruthy();
 });
