@@ -127,7 +127,7 @@ class CircleMatcherClientService(
         do {
             val pageRequest = PageRequest(page = pageNumber++)
             val page = circleRepository.find(null, null, workspace.id, pageRequest)
-            page.content.forEach { circleMatcherClient.delete(URI(matcherUri), it.reference) }
+            page.content.forEach { delete(it.reference, matcherUri) }
         } while (!page.isLast())
     }
 }
