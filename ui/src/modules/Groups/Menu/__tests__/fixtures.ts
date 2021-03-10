@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { UserGroupPaginationItem } from '../../interfaces/UserGroupsPagination';
+import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 
-export const UserGroupItem: UserGroupPaginationItem[] = [
+export const UserGroupItem: UserGroup[] = [
   {
     id: '1',
     name: 'user',
