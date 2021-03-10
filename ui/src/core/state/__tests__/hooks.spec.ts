@@ -19,6 +19,7 @@ import { useGlobalState, useDispatch } from '../hooks';
 import { AllTheProviders as wrapper } from 'unit-test/testUtils';
 import { circlesInitialState } from 'modules/Circles/state/reducer';
 import { userInitialState } from 'modules/Users/state/reducer';
+import { userGroupInitialState } from 'modules/Groups/state/reducer';
 
 test('circle: useGlobalState', () => {
   const { result } = renderHook(() => useGlobalState(state => state.circles), {
@@ -26,6 +27,14 @@ test('circle: useGlobalState', () => {
   });
 
   expect(result.current).toEqual(circlesInitialState);
+});
+
+test('userGroups: useGlobalState', () => {
+  const { result } = renderHook(() => useGlobalState(state => state.userGroups), {
+    wrapper
+  });
+
+  expect(result.current).toEqual(userGroupInitialState);
 });
 
 test('circle: useDispatch', () => {
