@@ -30,11 +30,10 @@ export const validFields = (fields: object) => {
 };
 
 export const isNotBlank = (value: any) => {
-  if(isString(value)) {
+  if (isString(value)) {
     return !!value?.trim() || 'No whitespaces'
-  } else {
-    return value;
   }
+  return value;
 }
 
 export const trimValue = (value: unknown) => isString(value) ? value?.trim() : value;
