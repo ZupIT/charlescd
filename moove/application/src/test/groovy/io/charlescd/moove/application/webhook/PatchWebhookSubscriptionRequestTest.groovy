@@ -20,6 +20,7 @@ import io.charlescd.moove.application.OpCodeEnum
 import io.charlescd.moove.application.PatchOperation
 import io.charlescd.moove.application.webhook.request.PatchWebhookSubscriptionRequest
 import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
+import io.charlescd.moove.domain.Workspace
 import spock.lang.Specification
 
 class PatchWebhookSubscriptionRequestTest extends Specification {
@@ -30,7 +31,7 @@ class PatchWebhookSubscriptionRequestTest extends Specification {
 
         then:
         def exception = thrown(IllegalArgumentException)
-        exception.message == "Path /testing not allowed."
+        exception.message.contains("Path /testing is not allowed.")
 
         where:
         patchWebhookSubscriptionRequest << [
@@ -68,10 +69,6 @@ class PatchWebhookSubscriptionRequestTest extends Specification {
     }
 
     def "when all variables are correct should not throw exception"() {
-        given:
-        def events = new ArrayList()
-        events.add("DEPLOY")
-
         when:
         patchWebhookSubscriptionRequest.validate()
 
@@ -80,7 +77,7 @@ class PatchWebhookSubscriptionRequestTest extends Specification {
 
         where:
         patchWebhookSubscriptionRequest << [
-                new PatchWebhookSubscriptionRequest([new PatchOperation(OpCodeEnum.REPLACE, "/events", events)])
+                new PatchWebhookSubscriptionRequest([new PatchOperation(OpCodeEnum.REPLACE, "/events", ["DEPLOY"])])
         ]
     }
 }
