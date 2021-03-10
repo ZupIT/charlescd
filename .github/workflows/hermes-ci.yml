@@ -8,7 +8,7 @@ on:
     tags:
       - "!*"
   pull_request:
-    branches: [feature/weebhook, main]
+    branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - "hermes/**"
@@ -35,7 +35,7 @@ jobs:
       - name: Run Unit tests
         working-directory: ./hermes
         run: |
-          go test ./internal/... -v -coverpkg ./internal/... -coverprofile=coverage.cov
+          go test -v -coverpkg ./internal/... -coverprofile=coverage.cov ./internal/tests/...
 
       - name: Tests coverage
         uses: codecov/codecov-action@v1.0.13
