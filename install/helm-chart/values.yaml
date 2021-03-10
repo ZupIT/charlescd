@@ -1,5 +1,5 @@
 postgresqlGlobal: &postgresInfo
-  host: &postgresHost 192.168.68.101
+  host: &postgresHost charlescd-postgresql
   port: &postgresPort 5432
 
 hostGlobal: &hostGlobal http://charles.info.example
