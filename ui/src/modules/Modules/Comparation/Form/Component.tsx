@@ -153,6 +153,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           />
         </Styled.FieldPopover>
         <Styled.Subtitle
+          data-testid="subtitle-advanced-options"
           onClick={() => setIsAdvancedOptions(!isAdvancedOptions)}
           color="dark"
         >
