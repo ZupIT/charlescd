@@ -25,7 +25,6 @@ import {
   useManagerMemberInUserGroup,
   useUpdateUserGroup,
   useDeleteUserGroup,
-  useFindAllUserGroup
 } from '../hooks';
 import { delParamUserGroup } from '../helpers';
 import Styled from './styled';
@@ -43,7 +42,6 @@ const Tab = ({ param }: Props) => {
   const [search, setSearch] = useState('');
   const [isOpenModalUsers, toggleModalUsers] = useState(false);
   const [getUserGroup, userGroup] = useFindUserGroupByID();
-  const [getAllUserGroups] = useFindAllUserGroup();
   const [editUserGroup, , editStatus] = useUpdateUserGroup();
   const [deleteUserGroup, , isDeleted] = useDeleteUserGroup();
   const [managerMemberUserGroup, memberStatus] = useManagerMemberInUserGroup();
@@ -64,9 +62,8 @@ const Tab = ({ param }: Props) => {
   useEffect(() => {
     if (memberStatus === 'resolved' || editStatus === 'resolved') {
       getUserGroup(id);
-      getAllUserGroups();
     }
-  }, [getUserGroup, getAllUserGroups, id, memberStatus, editStatus]);
+  }, [getUserGroup, id, memberStatus, editStatus]);
 
   useEffect(() => {
     getUserList(search);

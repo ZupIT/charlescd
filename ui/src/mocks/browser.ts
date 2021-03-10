@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
+import { setupWorker } from 'msw';
+import { handlers } from './handlers';
 
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users: User[];
-}
+export const worker = setupWorker(...handlers);

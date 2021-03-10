@@ -16,6 +16,7 @@
 
 import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
 
 export const validFields = (fields: object) => {
   let status = true;
@@ -28,11 +29,14 @@ export const validFields = (fields: object) => {
   return status;
 };
 
-export const isNotBlank = (value: string) => {
-  if(value) return !!value?.trim() || 'No whitespaces';
+export const isNotBlank = (value: any) => {
+  if(isString(value)) {
+    return !!value?.trim() || 'No whitespaces'
+  } 
+  return value;
 }
 
-export const trimValue = (value: string) => value?.trim();
+export const trimValue = (value: unknown) => isString(value) ? value?.trim() : value;
 
 export const isRequiredAndNotBlank = {
   required: true,

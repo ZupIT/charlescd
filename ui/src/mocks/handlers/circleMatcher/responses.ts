@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
-
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
+export const IDENTIFY_ERROR = {
+  message: 'Default circle metadata not found.'
 }
 
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users: User[];
+export const IDENTIFY_SUCCESS = {
+  "circles": [
+      {
+          "id": "123",
+          "name": "Default"
+      }
+  ]
 }

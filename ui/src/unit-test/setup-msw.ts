@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
+import { server } from 'mocks/server';
+import { originalFetch } from 'setupTests';
 
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
+beforeAll(() => {
+  server.listen();
+  global.fetch = originalFetch;
+});
 
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users: User[];
-}
+afterEach(() => server.resetHandlers());
+
+afterAll(() => server.close());

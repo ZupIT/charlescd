@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-import { isNotBlank } from "../validations";
+import { isNotBlank, trimValue } from "../validations";
 
 test("should validate a empty field", () => {
   const emptyValue = '   ';
   const nonEmptyValue = 'x';
   const spacesWithValue = '    xyz   ';
+  const nonStringValue = {};
 
+  expect(isNotBlank(nonStringValue)).toBe(nonStringValue);
   expect(isNotBlank(emptyValue)).toBe('No whitespaces');
   expect(isNotBlank(nonEmptyValue)).toBeTruthy();
   expect(isNotBlank(spacesWithValue)).toBeTruthy();
+});
+
+test("should trim value", () => {
+  const whitespacesValue = '  x  ';
+  const nonStringValue = {};
+
+  expect(trimValue(nonStringValue)).toBe(nonStringValue);
+  expect(trimValue(whitespacesValue)).toBe('x');
 });

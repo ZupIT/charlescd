@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+import { handlers } from './handlers';
 
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users: User[];
-}
+const server = setupServer(...handlers);
+export { server, rest };

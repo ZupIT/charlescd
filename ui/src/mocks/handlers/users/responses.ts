@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
-
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users: User[];
+export const USER_DETAILS = {
+  "id": "c7e6dafe-aa7a-4536-be1b-34eaad4c2915",
+  "name": "Charles Adminn",
+  "email": "charlesadmin@admin",
+  "photoUrl": "",
+  "createdAt": "2020-11-16 18:20:57",
+  "root": true
 }

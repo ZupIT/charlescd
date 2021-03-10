@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
+import { rest } from 'msw';
+import { USER_DETAILS } from 'mocks/handlers/users/responses';
+import { basePath } from 'core/providers/base';
 
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users: User[];
-}
+export default [
+  rest.get(`${basePath}/moove/v2/users/:userEmail`, (req, res, ctx) => {
+    return res(
+      ctx.json(USER_DETAILS)
+    )
+  }),
+]

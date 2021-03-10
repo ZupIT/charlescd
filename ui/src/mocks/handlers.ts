@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
+import auth from './handlers/auth';
+import users from './handlers/users';
+import circleMatcher from './handlers/circleMatcher';
+import workspaces from './handlers/workspaces';
 
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users: User[];
-}
+export const handlers = [
+  ...auth,
+  ...users,
+  ...circleMatcher,
+  ...workspaces
+]
