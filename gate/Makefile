@@ -27,7 +27,7 @@ unit-tests:mocks
 				$(GOTEST) ./tests/unit/...
 
 unit-tests-with-cover:mocks
-				$(GOTEST) ./tests/unit -coverpkg ./internal/... -coverprofile=cover.out
+				$(GOTEST) ./tests/unit/... -coverpkg ./internal/... -coverprofile=cover.out
 				$(GOTOOL) cover -func=cover.out
 
 unit-tests-with-cover-html:unit-tests-with-cover
