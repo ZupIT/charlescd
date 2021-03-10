@@ -10,7 +10,6 @@ type SystemTokenRequest struct {
 	Name string `json:"name" validate:"required,notblank"`
 	Permissions []string `json:"permissions" validate:"min=1,dive,notblank"`
 	Workspaces []string `json:"workspaces" validate:"required"`
-	Author string `json:"author" validate:"required,notblank"`
 }
 
 type SystemTokenResponse struct {
@@ -35,7 +34,7 @@ func (systemTokenRequest SystemTokenRequest) RequestToDomain() domain.SystemToke
 		CreatedAt:   &createdAt,
 		RevokedAt:   &time.Time{},
 		LastUsedAt:  &time.Time{},
-		Author: systemTokenRequest.Author,
+		Author: "",
 	}
 }
 

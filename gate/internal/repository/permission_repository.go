@@ -4,6 +4,7 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
+	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"gorm.io/gorm"
 )
 
@@ -22,16 +23,15 @@ func NewPermissionRepository(db *gorm.DB) (PermissionRepository, error) {
 func (permissionRepository permissionRepository) FindAll(permissionNames []string) ([]domain.Permission, error) {
 	var permissions []models.Permission
 
-	res := permissionRepository.db.Table("permissions").Where(permissionNames).Find(&permissions)
+	res := permissionRepository.db.Table("permissions").Where("name IN ?", permissionNames).Find(&permissions)
 
 	if res.Error != nil {
-		return []domain.Permission{}, logging.NewError("Find all permissions failed", res.Error, nil, "repository.FindAll.Find")
+		return []domain.Permission{}, handlePermissionError("Find all permissions failed", "repository.FindAll.Find", res.Error, logging.NotFoundError)
 	}
 
-	return permissions
+	return mapper.PermissionsModelToDomains(permissions), nil
 }
 
-func handlerError(message string, operation string, err error, errType string) error {
+func handlePermissionError(message string, operation string, err error, errType string) error {
 	return logging.NewError(message, err, errType, nil, operation)
-
 }

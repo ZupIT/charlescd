@@ -26,10 +26,11 @@ func CreateSystemToken(createSystemToken systemTokenInteractor.CreateSystemToken
 			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
 		}
 
-		createdSystemToken, err := createSystemToken.Execute(request.RequestToDomain())
+		var authorization = echoCtx.Request().Header.Get("Authorization")
+
+		createdSystemToken, err := createSystemToken.Execute(authorization, request.RequestToDomain())
 		if err != nil {
-			logging.LogErrorFromCtx(ctx, err)
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+			return HandleError(echoCtx, ctx, err)
 		}
 
 		return echoCtx.JSON(http.StatusCreated, representation.DomainToResponse(createdSystemToken))
@@ -46,7 +47,7 @@ func GetSystemToken(getSystemToken systemTokenInteractor.GetSystemToken) echo.Ha
 
 		systemToken, err := getSystemToken.Execute(uuid)
 		if err != nil {
-			return HandlerError(echoCtx, ctx, err)
+			return HandleError(echoCtx, ctx, err)
 		}
 		return echoCtx.JSON(http.StatusOK, representation.DomainToResponse(systemToken))
 	}

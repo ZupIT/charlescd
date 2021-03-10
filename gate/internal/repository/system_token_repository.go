@@ -26,8 +26,8 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 	systemToken.ID = uuid.New()
 	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken, permissions)
 
-	if res := systemTokenRepository.db.Table("system_tokens").Save(&systemTokenToSave); res.Error != nil {
-		return handleError("Save system token failed", "unit.Create.Save", res.Error, logging.InternalError)
+	if res := systemTokenRepository.db.Table("system_tokens").Create(&systemTokenToSave); res.Error != nil {
+		return handleSystemTokenError("Save system token failed", "unit.Create.Save", res.Error, logging.InternalError)
 	}
 
 	return systemToken, nil
@@ -39,13 +39,13 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 	res := systemTokenRepository.db.Model(models.SystemToken{}).Where("id = ?", id).First(&systemToken)
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
-			return handleError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
+			return handleSystemTokenError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
 		}
-		return handleError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
+		return handleSystemTokenError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
 	}
 	return mapper.SystemTokenModelToDomain(systemToken), nil
 }
 
-func handleError(message string, operation string, err error, errType string) (domain.SystemToken, error) {
+func handleSystemTokenError(message string, operation string, err error, errType string) (domain.SystemToken, error) {
 	return domain.SystemToken{}, logging.NewError(message, err, errType, nil, operation)
 }

@@ -16,7 +16,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server, err := newServer(persistenceManager)
+	serviceManager, err := prepareServices()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server, err := newServer(persistenceManager, serviceManager)
 	if err != nil {
 		log.Fatal(err)
 	}
