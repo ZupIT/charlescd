@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.legacy.moove.api.DeployApi
-import io.charlescd.moove.legacy.moove.api.response.UndeployResponse
 import io.charlescd.moove.legacy.repository.DeploymentRepository
 import io.charlescd.moove.legacy.repository.entity.*
 import spock.lang.Specification
@@ -38,72 +37,6 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
     def setup() {
         this.service = new DeploymentServiceLegacy(deploymentRepository, deployApi)
         this.service.MOOVE_BASE_PATH = "http://fake-moove/base-path"
-    }
-
-    def 'should do the undeploy of a release'() {
-
-        given:
-        User user = new User(
-                "user-id",
-                "zup-user",
-                "zup-user@zup.com.br",
-                "http://zup-user.com/user.jpg",
-                false,
-                LocalDateTime.now()
-        )
-        Hypothesis hypothesis = createHypothesis("hypothesis-a", user)
-
-        CardColumn cardColumn = new CardColumn("card-column-id", "card-column-name", hypothesis, "workspace-id")
-
-        Build build = new Build("build-id",
-                user,
-                LocalDateTime.now(),
-                [],
-                "build-tag",
-                null,
-                cardColumn,
-                BuildStatus.BUILT,
-                workspaceId,
-                [])
-
-        Circle circle = new Circle("circle-id",
-                "woman",
-                "reference",
-                user,
-                LocalDateTime.now(),
-                MatcherType.SIMPLE_KV,
-                JSON_NODE,
-                1000, LocalDateTime.now())
-
-        Deployment deployment = new Deployment("deployment-id",
-                user,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                DeploymentStatus.DEPLOYED,
-                circle,
-                build,
-                workspaceId,
-                null
-        )
-
-        Deployment updatedDeployment = new Deployment("deployment-id",
-                user,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                DeploymentStatus.UNDEPLOYING,
-                circle,
-                build,
-                workspaceId,
-                null)
-
-        when:
-        this.service.undeploy("deployment-id", workspaceId)
-
-        then:
-        this.deploymentRepository.findByIdAndWorkspaceId(_, _) >> Optional.ofNullable(deployment)
-        this.deploymentRepository.save(_) >> updatedDeployment
-        this.deployApi.undeploy(_) >> new UndeployResponse("deployment-id")
-
     }
 
     def 'should return not found exception when try to get deployment by id and it were not found'() {
@@ -147,18 +80,6 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
         1 * deploymentRepository.findByIdAndWorkspaceId("id", workspaceId) >> Optional.of(buildDeployment(workspaceId, "id"))
         1 * deploymentRepository.delete(_ as Deployment)
         0 * _
-    }
-
-    def 'should return not found exception when try to undeploy an deployment that does not exists'() {
-        when:
-        service.undeploy("id", workspaceId)
-        then:
-        1 * deploymentRepository.findByIdAndWorkspaceId("id", workspaceId) >> Optional.empty()
-        0 * _
-
-        def exception = thrown(NotFoundExceptionLegacy)
-        assert exception.resourceName == "deployment"
-        assert exception.id == "id"
     }
 
     private static Deployment buildDeployment(String workspaceId, String deploymentId) {
