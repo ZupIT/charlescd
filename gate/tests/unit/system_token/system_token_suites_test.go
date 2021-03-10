@@ -1,19 +1,21 @@
 package system_token
 
 import (
+	"testing"
+	"time"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	mocks "github.com/ZupIT/charlescd/gate/tests/unit/mocks/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
-	"testing"
-	"time"
 )
 
 type SystemTokenSuite struct {
 	suite.Suite
 	getSystemToken        systemTokenInteractor.GetSystemToken
 	getAllSystemToken     systemTokenInteractor.GetAllSystemToken
+	revokeSystemToken     systemTokenInteractor.RevokeSystemToken
 	systemTokenRepository *mocks.SystemTokenRepository
 }
 
@@ -21,6 +23,7 @@ func (st *SystemTokenSuite) SetupSuite() {
 	st.systemTokenRepository = new(mocks.SystemTokenRepository)
 	st.getSystemToken = systemTokenInteractor.NewGetSystemToken(st.systemTokenRepository)
 	st.getAllSystemToken = systemTokenInteractor.NewGetAllSystemToken(st.systemTokenRepository)
+	st.revokeSystemToken = systemTokenInteractor.NewRevokeSystemToken(st.systemTokenRepository)
 }
 
 func (st *SystemTokenSuite) SetupTest() {
