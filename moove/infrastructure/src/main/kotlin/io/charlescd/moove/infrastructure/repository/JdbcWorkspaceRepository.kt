@@ -135,7 +135,7 @@ class JdbcWorkspaceRepository(
                    workspaces.name                        AS workspace_name,
                    workspaces.status                      AS workspace_status
             FROM workspaces WHERE 1 = 1 $innerQueryStatement
-            ORDER BY workspaces.name ASC
+            ORDER BY workspaces.name, workspaces.id ASC
             LIMIT ${pageRequest.size}
             OFFSET ${pageRequest.offset()}
         """
