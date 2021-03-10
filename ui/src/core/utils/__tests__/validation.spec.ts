@@ -16,7 +16,7 @@
 
 import { isNotBlank, trimValue } from "../validations";
 
-test("should validate a empty field", () => {
+test("should validate blank fields", () => {
   const emptyValue = '   ';
   const nonEmptyValue = 'x';
   const spacesWithValue = '    xyz   ';
