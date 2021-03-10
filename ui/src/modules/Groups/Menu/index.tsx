@@ -25,8 +25,8 @@ import MenuItem from './MenuItem';
 import Styled from './styled';
 import { isActiveById } from '../helpers';
 import { useFindAllUserGroup } from '../hooks';
-import { UserGroupPaginationItem } from '../interfaces/UserGroupsPagination';
 import { resetUserGroupsAction } from '../state/actions';
+import { UserGroup } from '../interfaces/UserGroups';
 
 interface Props {
   onCreate: () => void;
@@ -54,7 +54,7 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
     getUserGroups(name, page);
   };
 
-  const renderItem = ({ id, name }: UserGroupPaginationItem) => (
+  const renderItem = ({ id, name }: UserGroup) => (
     <MenuItem
       key={id}
       id={id}
@@ -70,7 +70,7 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
     </Styled.Empty>
   );
 
-  const renderList = (data: UserGroupPaginationItem[]) =>
+  const renderList = (data: UserGroup[]) =>
     map(data, item => renderItem(item))
 
   const renderContent = () => (
