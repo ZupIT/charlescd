@@ -38,7 +38,7 @@ func (r revokeSystemToken) Execute(id uuid.UUID) error {
 	systemToken.Revoked = true
 	systemToken.RevokedAt = &revokedAt
 
-	_, updateError := r.systemTokenRepository.Update(systemToken)
+	updateError := r.systemTokenRepository.Update(systemToken)
 
 	if updateError != nil {
 		return logging.WithOperation(updateError, "RevokeSystemToken.Execute")

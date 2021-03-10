@@ -78,7 +78,6 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -148,7 +147,6 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -213,7 +211,6 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecutionError() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,

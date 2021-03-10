@@ -24,7 +24,7 @@ mocks:vendor
 				$(GORUN) $(VEND_PATH)/github.com/vektra/mockery/v2/main.go --all --dir ./internal --output ./tests/unit/mocks/ --keeptree --case underscore
 
 unit-tests:mocks
-				$(GOTEST) ./tests/unit
+				$(GOTEST) ./tests/unit/...
 
 unit-tests-with-cover:mocks
 				$(GOTEST) ./tests/unit -coverpkg ./internal/... -coverprofile=cover.out

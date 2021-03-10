@@ -35,6 +35,36 @@ func (_m *SystemTokenRepository) Create(systemToken domain.SystemToken) (domain.
 	return r0, r1
 }
 
+// FindAll provides a mock function with given fields: pageRequest
+func (_m *SystemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
+	ret := _m.Called(pageRequest)
+
+	var r0 []domain.SystemToken
+	if rf, ok := ret.Get(0).(func(domain.Page) []domain.SystemToken); ok {
+		r0 = rf(pageRequest)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.SystemToken)
+		}
+	}
+
+	var r1 domain.Page
+	if rf, ok := ret.Get(1).(func(domain.Page) domain.Page); ok {
+		r1 = rf(pageRequest)
+	} else {
+		r1 = ret.Get(1).(domain.Page)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(domain.Page) error); ok {
+		r2 = rf(pageRequest)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}
+
 // FindById provides a mock function with given fields: id
 func (_m *SystemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
 	ret := _m.Called(id)
@@ -57,22 +87,15 @@ func (_m *SystemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, err
 }
 
 // Update provides a mock function with given fields: systemToken
-func (_m *SystemTokenRepository) Update(systemToken domain.SystemToken) (domain.SystemToken, error) {
+func (_m *SystemTokenRepository) Update(systemToken domain.SystemToken) error {
 	ret := _m.Called(systemToken)
 
-	var r0 domain.SystemToken
-	if rf, ok := ret.Get(0).(func(domain.SystemToken) domain.SystemToken); ok {
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.SystemToken) error); ok {
 		r0 = rf(systemToken)
 	} else {
-		r0 = ret.Get(0).(domain.SystemToken)
+		r0 = ret.Error(0)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(domain.SystemToken) error); ok {
-		r1 = rf(systemToken)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }

@@ -14,8 +14,9 @@ import (
 
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
+	FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
-	Update(systemToken domain.SystemToken) (domain.SystemToken, error)
+	Update(systemToken domain.SystemToken) error
 }
 
 type systemTokenRepository struct {
@@ -37,9 +38,32 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken)
 
 	if res := systemTokenRepository.db.Save(&systemTokenToSave); res.Error != nil {
-		return handlerError("Save system token failed", "unit.Create.Save", res.Error, "")
+		return domain.SystemToken{}, handlerError("Save system token failed", "unit.Create.Save", res.Error, "")
 	}
 	return systemToken, nil
+}
+
+func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
+	var systemTokens []models.SystemToken
+	var page = pageRequest
+
+	res := systemTokenRepository.db.Where("revoked = false").
+		Order(page.Sort).
+		Offset(page.Offset()).
+		Limit(page.PageSize).
+		Find(&systemTokens)
+	if res.Error != nil {
+		return []domain.SystemToken{}, page, handlerError("Find all tokens failed", "unit.GetAll.Find", res.Error, logging.InternalError)
+	}
+
+	res = systemTokenRepository.db.Table("system_tokens").
+		Where("revoked = false").
+		Count(&page.Total)
+	if res.Error != nil {
+		return []domain.SystemToken{}, page, handlerError("Find all tokens failed", "unit.GetAll.Count", res.Error, logging.InternalError)
+	}
+
+	return mapper.SystemTokensModelToDomains(systemTokens), page, nil
 }
 
 func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
@@ -51,14 +75,14 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
-			return handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
+			return domain.SystemToken{}, handlerError("Token not found", "unit.GetById.First", res.Error, logging.NotFoundError)
 		}
-		return handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
+		return domain.SystemToken{}, handlerError("Find token failed", "unit.GetById.First", res.Error, logging.InternalError)
 	}
 	return mapper.SystemTokenModelToDomain(systemToken), nil
 }
 
-func (systemTokenRepository systemTokenRepository) Update(systemToken domain.SystemToken) (domain.SystemToken, error) {
+func (systemTokenRepository systemTokenRepository) Update(systemToken domain.SystemToken) error {
 
 	systemTokenToUpdate := mapper.SystemTokenDomainToModel(systemToken)
 
@@ -67,9 +91,9 @@ func (systemTokenRepository systemTokenRepository) Update(systemToken domain.Sys
 		return handlerError("Update system token failed", "repository.Update.Updates", res.Error, logging.InternalError)
 	}
 
-	return systemToken, nil
+	return nil
 }
 
-func handlerError(message string, operation string, err error, errType string) (domain.SystemToken, error) {
-	return domain.SystemToken{}, logging.NewError(message, err, errType, nil, operation)
+func handlerError(message string, operation string, err error, errType string) error {
+	return logging.NewError(message, err, errType, nil, operation)
 }

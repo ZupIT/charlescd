@@ -81,7 +81,6 @@ func (s *SuiteDispatcher) TestStartMetricProviderError() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:908"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
