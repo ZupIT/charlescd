@@ -260,7 +260,7 @@ class JdbcDeploymentRepository(
 
         return this.jdbcTemplate.query(
             statement.toString(),
-            arrayOf(circleId, workspaceId),
+            arrayOf(workspaceId, circleId),
             deploymentExtractor
         )?.toList() ?: emptyList()
     }
