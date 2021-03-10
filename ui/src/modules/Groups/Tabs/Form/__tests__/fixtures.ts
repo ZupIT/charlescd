@@ -14,58 +14,73 @@
  * limitations under the License.
  */
 
-export const mockUserGroup1 = {
+import { UserGroup } from 'modules/Groups/interfaces/UserGroups'
+
+export const mockUserGroup1: UserGroup = {
+  id: '123',
   name: 'User Group 1',
   users: [
     {
       id: 'c7e6dete-aa7a-4216-be1b-34eaqd4c2915',
-      name: 'User 1'
+      name: 'User 1',
+      email: 'darwin@charles.io'
     },
     {
       id: 'a7c3e4b6-4be3-4d62-8140-e2d34214e03f',
-      name: 'User 2'
+      name: 'User 2',
+      email: 'darwin@charles.io'
     },
   ]
 }
 
-export const mockUserGroup2 = {
+export const mockUserGroup2: UserGroup = {
+  id: '456',
   name: 'User Group 2',
   users: [
     {
       id: 'c7e6dete-aa7a-4216-be1b-34eaqd4c2915',
-      name: 'User 1'
+      name: 'User 1',
+      email: 'darwin@charles.io'
     },
     {
       id: 'a7c3e4b6-4be3-4d62-8140-e2d34214e03f',
-      name: 'User 2'
+      name: 'User 2',
+      email: 'darwin@charles.io'
     },
     {
       id: '13ea193b-f9d2-4wed-b1ce-471a7aqa71c2',
-      name: 'User 3'
+      name: 'User 3',
+      email: 'darwin@charles.io'
     },
     {
       id: 'a7c3e4b6-4ce3-1d62-8140-e2d23214e03f',
-      name: 'User 4'
+      name: 'User 4',
+      email: 'darwin@charles.io'
     },
     {
       id: 'a7c3e4b6-4233-4d62-8140-e1ad23214e03f',
-      name: 'User 5'
+      name: 'User 5',
+      email: 'darwin@charles.io'
     },
     {
       id: 'jns6e4b6-4be3-4d62-8140-e2d23214e03f',
-      name: 'User 6'
+      name: 'User 6',
+      email: 'darwin@charles.io'
     },
     {
       id: 'a7uj16b6-4be3-4d62-8140-e2d23214e03f',
-      name: 'User 7'
+      name: 'User 7',
+      email: 'darwin@charles.io'
     },
     {
       id: 'a7c3e4b6-4be3-4d62-8140-e2d2ok14e03f',
-      name: 'User 8'
+      name: 'User 8',
+      email: 'darwin@charles.io'
     },
     {
       id: 'a7cop9b6-4be3-4d62-8140-e2d23214e03f',
-      name: 'User 9'
+      name: 'User 9',
+      email: 'darwin@charles.io'
     }
   ]
 }
