@@ -1,5 +1,5 @@
 postgresqlGlobal: &postgresInfo
-  host: &postgresHost charlescd-postgresql
+  host: &postgresHost 192.168.68.101
   port: &postgresPort 5432
 
 hostGlobal: &hostGlobal http://charles.info.example
@@ -9,7 +9,7 @@ CharlesApplications:
   butler:
     enabled: true
     name: charlescd-butler
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /healthcheck
@@ -137,6 +137,7 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
+    database: {}
     resources: {}
     nodeSelector: {}
     tolerations: []
@@ -167,6 +168,7 @@ CharlesApplications:
         - name: http
           port: 3000
     replicaCount: 1
+    database: {}
     resources: {}
     nodeSelector: {}
     tolerations: []
@@ -203,6 +205,7 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
+    database: {}
     hpa: true
     autoscaling:
       minReplicas: 1
@@ -288,6 +291,11 @@ postgresql:
   enabled: true
   fullnameOverride: *postgresHost
   initdbScriptsConfigMap: charles-postgres
+  pguser: postgres
+  pgpassword: postgres
+
+job:
+  name: init-db
 
 redis:
   enabled: true
