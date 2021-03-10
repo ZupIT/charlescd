@@ -66,6 +66,19 @@ class HermesClientServiceTest extends Specification {
 
     }
 
+    def 'when getting subscriptions by externalId, should do it successfully'() {
+        given:
+        def response = new ArrayList<HermesSubscriptionResponse>()
+        response.add(hermesSubscriptionResponse)
+
+        when:
+        hermesService.getSubscriptinsByExternalId(authorEmail, "subscriptionId")
+
+        then:
+        1 * hermesClient.getSubscriptionsByExternalId(authorEmail, "subscriptionId") >> response
+
+    }
+
     def 'when update a subscription, should do it successfully'() {
         given:
         def request = new HermesUpdateSubscriptionRequest(events)
