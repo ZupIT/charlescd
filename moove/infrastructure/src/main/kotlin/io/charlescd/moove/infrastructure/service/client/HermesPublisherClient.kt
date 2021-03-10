@@ -28,7 +28,7 @@ interface HermesPublisherClient {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
-        value = ["/subscriptions/publish"],
+        value = ["api/v1/subscriptions/publish"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
