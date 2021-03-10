@@ -38,4 +38,6 @@ interface CircleMatcherService {
     fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle>
 
     fun deleteAllFor(workspace: Workspace, matcherUri: String)
+
+    fun saveAllFor(workspace: Workspace, matcherUri: String)
 }

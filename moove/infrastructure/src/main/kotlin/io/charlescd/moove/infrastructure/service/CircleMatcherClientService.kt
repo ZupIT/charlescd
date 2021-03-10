@@ -123,11 +123,23 @@ class CircleMatcherClientService(
         )
 
     override fun deleteAllFor(workspace: Workspace, matcherUri: String) {
+        executeByPageFor(workspace) {
+            delete(it.reference, matcherUri)
+        }
+    }
+
+    override fun saveAllFor(workspace: Workspace, matcherUri: String) {
+        executeByPageFor(workspace) {
+            create(it, matcherUri)
+        }
+    }
+
+    private fun executeByPageFor(workspace: Workspace, action: (Circle) -> Unit) {
         var pageNumber = 0
         do {
             val pageRequest = PageRequest(page = pageNumber++)
             val page = circleRepository.find(null, null, workspace.id, pageRequest)
-            page.content.forEach { delete(it.reference, matcherUri) }
+            page.content.forEach { action(it) }
         } while (!page.isLast())
     }
 }

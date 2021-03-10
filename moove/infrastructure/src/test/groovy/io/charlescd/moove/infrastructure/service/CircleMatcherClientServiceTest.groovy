@@ -197,4 +197,43 @@ class CircleMatcherClientServiceTest extends Specification {
         1 * circleMatcherClient.delete(new URI(matcherUri), firstCircle.reference)
         1 * circleMatcherClient.delete(new URI(matcherUri), secondCircle.reference)
     }
+
+    def "should find the circles from workspace and create at circle-matcher"() {
+        given:
+        def workspace = Fixtures.workspace().build()
+        def matcherUri = "http://circle-matcher.com"
+        def content = [Fixtures.circle().build(), Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()]
+        when:
+        circleMatcherService.saveAllFor(workspace, matcherUri)
+        then:
+        1 * circleRepository.find(null, null, workspace.id, _) >> new Page(content, 0, 50, content.size())
+
+        2 * circleMatcherClient.create(new URI(matcherUri), _)
+    }
+
+    def "should find the circles in two pages from workspace and create at circle-matcher"() {
+        given:
+        def workspace = Fixtures.workspace().build()
+        def matcherUri = "http://circle-matcher.com"
+        def firstCircle = Fixtures.circle().build()
+        def secondCircle = Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()
+        when:
+        circleMatcherService.saveAllFor(workspace, matcherUri)
+        then:
+        1 * circleRepository.find(null, null, workspace.id, _) >> { arguments ->
+            def pageRequest = (PageRequest) arguments[3]
+            assert pageRequest.page == 0
+
+            new Page([firstCircle], 0, 1, 2)
+        }
+        1 * circleRepository.find(null, null, workspace.id, _) >> { arguments ->
+            def pageRequest = (PageRequest) arguments[3]
+            assert pageRequest.page == 1
+
+            new Page([secondCircle], 1, 1, 2)
+        }
+
+        1 * circleMatcherClient.create(new URI(matcherUri), _)
+        1 * circleMatcherClient.create(new URI(matcherUri), _)
+    }
 }
