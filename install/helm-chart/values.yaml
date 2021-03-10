@@ -76,7 +76,7 @@ CharlesApplications:
     keycloak:
       host: "http://examplename-keycloak-http/keycloak/auth"
       realm: charlescd
-      publicClientId: realm-charlescd
+      publicClientId: charlescd-client
       clientId: realm-charlescd
       clientSecret: "441cfd37-8443-4f3d-bf6c-ee9861b04e28"
     internalIdmEnabled: true
@@ -203,7 +203,18 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    resources: {}
+    hpa: true
+    autoscaling:
+      minReplicas: 1
+      maxReplicas: 10
+      targetMemoryUtilizationPercentage: 80
+    resources:
+      limits:
+        cpu: 500m
+        memory: 384Mi
+      requests:
+        cpu: 500m
+        memory: 384Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -295,6 +306,7 @@ keycloak:
     user: keycloak
     password: DCWYW66Mq2ca6w8u
   charlesHost: *hostGlobal
+  fullnameOverride: keycloak
   extraEnv: |
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"

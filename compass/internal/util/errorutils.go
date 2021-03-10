@@ -26,8 +26,6 @@ const (
 
 const (
 	DatasourceSaveError           = "DATASOURCE_SAVE_ERROR"
-	VerifyDatasourceHealthError   = "VERIFY_HEALTH_ERROR"
-	ExistingDatasourceHealthError = "EXISTING_HEALTHY_DATASOURCE_ERROR"
 	FindDatasourceError           = "FIND_DATASOURCE_ERROR"
 	DeleteDatasourceError         = "DELETE_ERROR"
 	OpenPluginGetMetricsError     = "OPEN_PLUGIN_GET_METRICS_ERROR"

@@ -96,7 +96,6 @@ func (s *SuitePlugins) TestFindAll() {
 			Src:         "datasource/prometheus/prometheus",
 			Description: "My prometheus",
 			InputParameters: map[string]interface{}{
-				"health":              true,
 				"configurationInputs": pInput,
 			},
 		},

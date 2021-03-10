@@ -31,13 +31,14 @@ class FindCircleByIdInteractorImpl(
     private val deploymentService: DeploymentService
 ) : FindCircleByIdInteractor {
     override fun execute(id: String, workspaceId: String): CircleResponse {
-        return createCircleResponse(circleService.find(id, workspaceId))
+        return createCircleResponse(circleService.findByIdAndWorkspaceId(id, workspaceId), workspaceId)
     }
 
     private fun createCircleResponse(
-        circle: Circle
+        circle: Circle,
+        workspaceId: String
     ): CircleResponse {
-        val deployment = deploymentService.findLastActive(circle.id)
+        val deployment = deploymentService.findLastActive(circle.id, workspaceId)
         val build = deployment?.let { buildService.find(it.buildId) }
         return CircleResponse.from(circle, deployment, build)
     }

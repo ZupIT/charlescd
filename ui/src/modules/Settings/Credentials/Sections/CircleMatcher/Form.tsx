@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -27,7 +27,9 @@ import Styled from './styled';
 
 const FormCircleMatcher = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingAdd } = useCircleMatcher();
-  const { register, handleSubmit } = useForm<CircleMatcher>();
+  const { register, handleSubmit, formState: { isValid } } = useForm<CircleMatcher>({
+    mode: 'onChange'
+  });
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -44,7 +46,11 @@ const FormCircleMatcher = ({ onFinish }: Props) => {
         name="url"
         label="Insert URL Circle Matcher"
       />
-      <Button.Default type="submit" isLoading={loadingAdd}>
+      <Button.Default
+        type="submit"
+        isDisabled={!isValid}
+        isLoading={loadingAdd}
+      >
         Save
       </Button.Default>
     </Styled.Form>
