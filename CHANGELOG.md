@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.6.1 (05/03/2021)
+- [#940](https://github.com/ZupIT/charlescd/pull/940) Removing unused chart
+- [#939](https://github.com/ZupIT/charlescd/pull/939) Feature/get system token
+- [#954](https://github.com/ZupIT/charlescd/pull/954) fix moove not returning circle deployment
+- [#941](https://github.com/ZupIT/charlescd/pull/941) Validation error messages - Error responses pattern
+- [#948](https://github.com/ZupIT/charlescd/pull/948) charts adjustments
+- [#906](https://github.com/ZupIT/charlescd/pull/906) Add infinite scroll in Workspace
+- [#902](https://github.com/ZupIT/charlescd/pull/902) Remove microfrontend
+- [#937](https://github.com/ZupIT/charlescd/pull/937) Fixing keycloak public client id.
+- [#885](https://github.com/ZupIT/charlescd/pull/885) Add Form whitespace validation
+- [#874](https://github.com/ZupIT/charlescd/pull/874) Adding issue and pull request templates.
+- [#681](https://github.com/ZupIT/charlescd/pull/681) Validate resources with other ids
+- [#935](https://github.com/ZupIT/charlescd/pull/935) Update hermes install helm
+- [#832](https://github.com/ZupIT/charlescd/pull/832) Improve error details
+- [#926](https://github.com/ZupIT/charlescd/pull/926) Fix field array default values
+- [#932](https://github.com/ZupIT/charlescd/pull/932) CI Update of charts and changelog
+
+---
+
 ## 0.6.0 (24/02/2021)
 - [#883](https://github.com/ZupIT/charlescd/pull/883) Helm chart refactor
 - [#870](https://github.com/ZupIT/charlescd/pull/870) CI Update of charts and changelog
@@ -473,12 +492,3 @@
 - [#327](https://github.com/ZupIT/charlescd/pull/327) Correction User Group Tab Layout
 - [#326](https://github.com/ZupIT/charlescd/pull/326) Creating Circle Sample.
 - [#381](https://github.com/ZupIT/charlescd/pull/381) Butler stabilization timeout
-
----
-
-## 0.3.3 (12/08/2020)
-- [#379](https://github.com/ZupIT/charlescd/pull/379) Octopipe support for gitlab
-- [#363](https://github.com/ZupIT/charlescd/pull/363) Using Keycloak internal host for authentication
-- [#369](https://github.com/ZupIT/charlescd/pull/369) Merge default deployments
-- [#377](https://github.com/ZupIT/charlescd/pull/377) validate image url to match k8s format and length
-- [#376](https://github.com/ZupIT/charlescd/pull/376) validate unique components per on deploy
