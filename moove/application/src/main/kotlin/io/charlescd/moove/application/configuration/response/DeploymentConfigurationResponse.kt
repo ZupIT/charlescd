@@ -16,16 +16,16 @@
 
 package io.charlescd.moove.application.configuration.response
 
-import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.DeploymentConfiguration
 
-data class ButlerConfigurationResponse(
+data class DeploymentConfigurationResponse(
     val id: String,
     val name: String
 ) {
     companion object {
-        fun from(butlerConfiguration: ButlerConfiguration) = ButlerConfigurationResponse(
-            id = butlerConfiguration.id,
-            name = butlerConfiguration.name
+        fun from(deploymentConfiguration: DeploymentConfiguration) = DeploymentConfigurationResponse(
+            id = deploymentConfiguration.id,
+            name = deploymentConfiguration.name
         )
     }
 }

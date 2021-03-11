@@ -29,10 +29,10 @@ data class Workspace(
     val circleMatcherUrl: String? = null,
     val gitConfigurationId: String? = null,
     val metricConfigurationId: String? = null,
-    val butlerConfigurationId: String? = null
+    val deploymentConfigurationId: String? = null
 ) {
     fun checkCurrentWorkspaceStatus(): WorkspaceStatusEnum {
-        return if (butlerConfigurationId != null && registryConfigurationId != null) {
+        return if (deploymentConfigurationId != null && registryConfigurationId != null) {
             WorkspaceStatusEnum.COMPLETE
         } else {
             WorkspaceStatusEnum.INCOMPLETE

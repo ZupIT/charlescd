@@ -44,10 +44,10 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def butlerConfig = getDummyButlerConfiguration(user)
+        def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), butlerConfig)
+        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), deploymentConfig)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -57,12 +57,12 @@ class DeployClientServiceTest extends Specification {
             assert url instanceof URI
             assert deployRequest instanceof DeployRequest
 
-            assert url.toString() == butlerConfig.butlerUrl
+            assert url.toString() == deploymentConfig.butlerUrl
 
             assert deployRequest.deploymentId == deployment.id
             assert deployRequest.authorId == deployment.author.id
             assert deployRequest.callbackUrl.contains('http://localhost:8080/v2/deployments/1fe2b392-726d-11ea-bc55-0242ac130003/callback')
-            assert deployRequest.namespace == butlerConfig.namespace
+            assert deployRequest.namespace == deploymentConfig.namespace
 
             assert deployRequest.components.size() == 2
 
@@ -83,8 +83,8 @@ class DeployClientServiceTest extends Specification {
             assert deployRequest.circle.default
 
             assert deployRequest.git != null
-            assert deployRequest.git.token == butlerConfig.gitToken
-            assert deployRequest.git.provider == butlerConfig.gitProvider
+            assert deployRequest.git.token == deploymentConfig.gitToken
+            assert deployRequest.git.provider == deploymentConfig.gitProvider
         }
     }
 
@@ -96,10 +96,10 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def butlerConfig = getDummyButlerConfiguration(user)
+        def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), butlerConfig)
+        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), deploymentConfig)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -109,12 +109,12 @@ class DeployClientServiceTest extends Specification {
             assert url instanceof URI
             assert deployRequest instanceof DeployRequest
 
-            assert url.toString() == butlerConfig.butlerUrl
+            assert url.toString() == deploymentConfig.butlerUrl
 
             assert deployRequest.deploymentId == deployment.id
             assert deployRequest.authorId == deployment.author.id
             assert deployRequest.callbackUrl.contains('http://localhost:8080/v2/deployments/1fe2b392-726d-11ea-bc55-0242ac130003/callback')
-            assert deployRequest.namespace == butlerConfig.namespace
+            assert deployRequest.namespace == deploymentConfig.namespace
 
             assert deployRequest.components.size() == 2
 
@@ -135,8 +135,8 @@ class DeployClientServiceTest extends Specification {
             assert !deployRequest.circle.default
 
             assert deployRequest.git != null
-            assert deployRequest.git.token == butlerConfig.gitToken
-            assert deployRequest.git.provider == butlerConfig.gitProvider
+            assert deployRequest.git.token == deploymentConfig.gitToken
+            assert deployRequest.git.provider == deploymentConfig.gitProvider
         }
     }
 
@@ -149,10 +149,10 @@ class DeployClientServiceTest extends Specification {
                 user, circle, workspaceId)
         def undeployRequestCompare = new UndeployRequest("author-id")
         def deploymentIdCompare = deployment.id
-        def butlerConfig = getDummyButlerConfiguration(user)
+        def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.undeploy(deployment.id, "author-id", butlerConfig)
+        deployClientService.undeploy(deployment.id, "author-id", deploymentConfig)
 
         then:
         1 * deployClient.undeploy(_, _, _) >> { arguments ->
@@ -161,7 +161,7 @@ class DeployClientServiceTest extends Specification {
             def undeployRequest = arguments[2]
 
             assert url instanceof URI
-            assert url.toString() == butlerConfig.butlerUrl
+            assert url.toString() == deploymentConfig.butlerUrl
 
             assert deploymentId == deploymentIdCompare
 
@@ -255,8 +255,8 @@ class DeployClientServiceTest extends Specification {
                 author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, isDefault, "44446b2a-557b-45c5-91be-1e1db9095556")
     }
 
-    private static ButlerConfiguration getDummyButlerConfiguration(User author) {
-        new ButlerConfiguration(
+    private static DeploymentConfiguration getDummyDeploymentConfiguration(User author) {
+        new DeploymentConfiguration(
                 'id', 'name', author, 'wid', LocalDateTime.now(), 'url', 'namespace', 'token', GitProviderEnum.GITHUB
         )
     }

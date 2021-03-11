@@ -2,15 +2,15 @@ databaseChangeLog:
   - changeSet:
       id: 20210301165000-1
       author: lucas.fernandes
-      comment: "Add butler configuration id column to workspaces table"
+      comment: "Add deployment configuration id column to workspaces table"
       changes:
         - addColumn:
             tableName: workspaces
             columns:
               - column:
-                  name: butler_configuration_id
+                  name: deployment_configuration_id
                   type: varchar(36)
                   constraints:
-                    foreignKeyName: fk_workspaces_butler_configuration_id
-                    references: butler_configurations(id)
+                    foreignKeyName: fk_workspaces_deployment_configuration_id
+                    references: deployment_configurations(id)
                     nullable: true

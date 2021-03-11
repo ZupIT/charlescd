@@ -16,15 +16,15 @@
 
 package io.charlescd.moove.domain.repository
 
-import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.DeploymentConfiguration
 import java.util.*
 
 
-interface ButlerConfigurationRepository {
+interface DeploymentConfigurationRepository {
 
-    fun save(butlerConfiguration: ButlerConfiguration): ButlerConfiguration
+    fun save(deploymentConfiguration: DeploymentConfiguration): DeploymentConfiguration
 
-    fun find(id: String): Optional<ButlerConfiguration>
+    fun find(id: String): Optional<DeploymentConfiguration>
 
     fun exists(workspaceId: String, id: String): Boolean
 }

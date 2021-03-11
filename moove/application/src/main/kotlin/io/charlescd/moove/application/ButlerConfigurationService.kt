@@ -18,29 +18,29 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.ButlerConfigurationRepository
+import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
 import javax.inject.Named
 
 @Named
-class ButlerConfigurationService(
-    private val butlerConfigurationRepository: ButlerConfigurationRepository
+class DeploymentConfigurationService(
+    private val deploymentConfigurationRepository: DeploymentConfigurationRepository
 ) {
 
-    fun save(butlerConfiguration: ButlerConfiguration): ButlerConfiguration {
-        return butlerConfigurationRepository.save(butlerConfiguration)
+    fun save(deploymentConfiguration: DeploymentConfiguration): DeploymentConfiguration {
+        return deploymentConfigurationRepository.save(deploymentConfiguration)
     }
 
-    fun find(id: String): ButlerConfiguration {
-        return butlerConfigurationRepository.find(id).orElseThrow {
-            NotFoundException("butlerConfiguration", id)
+    fun find(id: String): DeploymentConfiguration {
+        return deploymentConfigurationRepository.find(id).orElseThrow {
+            NotFoundException("deploymentConfiguration", id)
         }
     }
 
-    fun checkIfButlerConfigurationExists(workspaceId: String, butlerConfigurationId: String) {
-        if (!this.butlerConfigurationRepository.exists(workspaceId, butlerConfigurationId)) {
-            throw NotFoundException("butlerConfigurationId", butlerConfigurationId)
+    fun checkIfDeploymentConfigurationExists(workspaceId: String, deploymentConfigurationId: String) {
+        if (!this.deploymentConfigurationRepository.exists(workspaceId, deploymentConfigurationId)) {
+            throw NotFoundException("deploymentConfigurationId", deploymentConfigurationId)
         }
     }
 }

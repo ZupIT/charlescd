@@ -18,7 +18,7 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-import io.charlescd.moove.application.ButlerConfigurationService
+import io.charlescd.moove.application.DeploymentConfigurationService
 import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.deployment.CreateUndeploymentInteractor
@@ -37,7 +37,7 @@ open class CreateUndeploymentInteractorImpl @Inject constructor(
     private val deploymentService: DeploymentService,
     private val deployService: DeployService,
     private val workspaceService: WorkspaceService,
-    private val butlerConfigurationService: ButlerConfigurationService
+    private val deploymentConfigurationService: DeploymentConfigurationService
 ) : CreateUndeploymentInteractor {
 
     @Transactional
@@ -45,13 +45,13 @@ open class CreateUndeploymentInteractorImpl @Inject constructor(
         val deployment = deploymentService.findByIdAndWorkspaceId(deploymentId, workspaceId)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
-        val butlerConfiguration = butlerConfigurationService.find(workspace.butlerConfigurationId!!)
+        val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
 
-        deployService.undeploy(deploymentId, deployment.author.id, butlerConfiguration)
+        deployService.undeploy(deploymentId, deployment.author.id, deploymentConfiguration)
         deploymentService.update(deployment.copy(status = DeploymentStatusEnum.NOT_DEPLOYED, undeployedAt = LocalDateTime.now()))
     }
 
     private fun validateWorkspace(workspace: Workspace) {
-        workspace.butlerConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_BUTLER_CONFIGURATION_IS_MISSING)
+        workspace.deploymentConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING)
     }
 }

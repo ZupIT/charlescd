@@ -41,7 +41,7 @@ enum class MooveErrorCode(val key: String) {
     FORBIDDEN("forbidden"),
     WORKSPACE_GIT_CONFIGURATION_IS_MISSING("workspace.git.configuration.is.missing"),
     WORKSPACE_DOCKER_REGISTRY_CONFIGURATION_IS_MISSING("workspace.docker.registry.configuration.is.missing"),
-    WORKSPACE_BUTLER_CONFIGURATION_IS_MISSING("workspace.butler.configuration.is.missing"),
+    WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING("workspace.deployment.configuration.is.missing"),
     SOME_OF_INFORMED_FEATURES_DOES_NOT_EXIST_OR_ARE_NOT_READY_TO_GO("some.of.informed.features.does.not.exist.or.are.not.ready.to.go"),
     CIRCLE_DEPLOYMENT_ACTIVE("circle.deployment.active"),
     CANNOT_UPDATE_DEFAULT_CIRCLE("cannot.update.default.circle"),
