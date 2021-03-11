@@ -16,7 +16,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "OFUyUkNuMG9DWg=="
-  postgresql-password: "SURDMXFQS3BHSw=="
+  postgresql-postgres-password: "QmN3WEZHaVB6dw=="
+  postgresql-password: "bnd1VDFwVlc4WQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -171,6 +171,12 @@ data:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
+                  
+                  - match:
+                      prefix: "/gate/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-gate
               http_filters:
               
               - name: envoy.filters.http.cors
@@ -183,7 +189,7 @@ data:
                       local token = request_handle:headers():get("authorization")
                       local request = require("luajit-init")
                       local response = request.send(
-                        "http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
+                        "http://keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo",
                         {
                           headers = {
                             authorization = token
@@ -274,7 +280,7 @@ data:
             - endpoint:
                 address:
                   socket_address:
-                    address: charlescd-keycloak-http
+                    address: keycloak-http
                     port_value: 80
       
       - name: charlescd-compass
@@ -290,6 +296,21 @@ data:
                 address:
                   socket_address:
                     address: charlescd-compass
+                    port_value: 8080
+      
+      - name: charlescd-gate
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-gate
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-gate
                     port_value: 8080
     admin:
       access_log_path: "/dev/stdout"
@@ -1741,7 +1762,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: charlescd-keycloak-startup
+  name: keycloak-startup
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -5682,6 +5703,10 @@ data:
     psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
     psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
     psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+
+    psql -c "CREATE DATABASE charlescd_gate"
+    psql -c "CREATE USER charlescd_gate WITH PASSWORD 'Z2F0ZQo='"
+    psql -c "ALTER DATABASE charlescd_gate OWNER TO charlescd_gate"
 ---
 # Source: charlescd/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -5989,7 +6014,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-headless
+  name: keycloak-headless
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6013,7 +6038,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: charlescd-keycloak-http
+  name: keycloak-http
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6181,6 +6206,21 @@ spec:
     
   selector:
     app: charlescd-compass
+---
+# Source: charlescd/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: charlescd-gate
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    
+  selector:
+    app: charlescd-gate
 ---
 # Source: charlescd/templates/service.yaml
 apiVersion: v1
@@ -6463,7 +6503,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.0
+          image: zupcharles/charlescd-butler:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6511,10 +6551,8 @@ spec:
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: redis-standalone
-          
           - name: SPRING_REDIS_HOST
             value: charlescd-redis-master
-          
           - name: SPRING_REDIS_PORT
             value: "6379"
           - name: SPRING_REDIS_PASSWORD
@@ -6523,7 +6561,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.0
+          image: zupcharles/charlescd-circle-matcher:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6540,7 +6578,12 @@ spec:
               port: 8080
             initialDelaySeconds: 120
           resources:
-              {}
+              limits:
+                cpu: 500m
+                memory: 384Mi
+              requests:
+                cpu: 500m
+                memory: 384Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6620,7 +6663,75 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.0
+          image: zupcharles/charlescd-compass:0.6.1
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+              httpGet:
+                path: /health
+                port: 8080
+              initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+          resources:
+              {}
+---
+# Source: charlescd/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: charlescd-gate
+  namespace: charles
+  labels:
+    app: charlescd-gate
+    version: charlescd-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: charlescd-gate
+      version: charlescd-gate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: charlescd-gate
+        version: charlescd-gate
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgres:9.6.5
+          command: ['sh', '-c', 
+            'until pg_isready -h charlescd-postgresql -p 5432; 
+            do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: charlescd-gate
+                    
+          env:
+            - name: DB_USER
+              value: "charlescd_gate"
+            - name: DB_PASSWORD
+              value: "Z2F0ZQo="
+            - name: DB_HOST
+              value: "charlescd-postgresql"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "charlescd_gate"
+            - name: DB_SSL
+              value: "disable"
+            - name: ENV
+              value: "PROD"
+            - name: QUERIES_PATH
+              value: "./internal/repository/queries"
+          image: zupcharles/charlescd-gate:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6684,10 +6795,10 @@ spec:
             value: "charlescd"
           
           - name: KEYCLOAK_SERVER_URL
-            value: "http://charlescd-keycloak-http/keycloak/auth"
+            value: "http://keycloak-http/keycloak/auth"
           
           - name: KEYCLOAK_PUBLIC_CLIENT_ID
-            value: "realm-charlescd"
+            value: "charlescd-client"
           - name: KEYCLOAK_CLIENT_ID
             value: "realm-charlescd"
           - name: RATELIMIT_CAPACITY
@@ -6707,7 +6818,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.0
+          image: zupcharles/charlescd-moove:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6762,7 +6873,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.0
+          image: zupcharles/charlescd-octopipe:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6824,7 +6935,7 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
-          image: zupcharles/charlescd-ui:0.6.0
+          image: zupcharles/charlescd-ui:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6890,7 +7001,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.0
+          image: zupcharles/charlescd-villager:0.6.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6909,11 +7020,34 @@ spec:
           resources:
               {}
 ---
+# Source: charlescd/templates/hpa.yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: charlescd-circle-matcher
+  labels:
+    app: charlescd-circle-matcher
+    version: charlescd-circle-matcher
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: charlescd-circle-matcher
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
 # Source: charlescd/charts/keycloak/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: charlescd-keycloak
+  name: keycloak
   labels:
     helm.sh/chart: keycloak-9.8.1
     app.kubernetes.io/name: keycloak
@@ -6926,14 +7060,14 @@ spec:
       app.kubernetes.io/name: keycloak
       app.kubernetes.io/instance: charlescd
   replicas: 1
-  serviceName: charlescd-keycloak-headless
+  serviceName: keycloak-headless
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       annotations:
-        checksum/config-startup: a97b69abc0b894b66147967e7c5977df317359812fef3dd69f46d380b662d817
+        checksum/config-startup: a09cd3a55fe67454f509ec623db5505a7f5a26a87f77b5235e70e02cc86a45da
         checksum/secrets: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
       labels:
         app.kubernetes.io/name: keycloak
@@ -7021,7 +7155,7 @@ spec:
               mountPath: "/realm/"
               readOnly: false
             
-      serviceAccountName: charlescd-keycloak
+      serviceAccountName: keycloak
       securityContext:
         fsGroup: 1000
       enableServiceLinks: true
@@ -7057,7 +7191,7 @@ spec:
       volumes:
         - name: startup
           configMap:
-            name: charlescd-keycloak-startup
+            name: keycloak-startup
             defaultMode: 0555
             items:
               - key: contextPath.cli

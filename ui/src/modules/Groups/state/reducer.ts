@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+import { map } from 'lodash';
 import { UserGroupsActionTypes, ACTION_TYPES } from './actions';
 import { UserGroupPagination } from '../interfaces/UserGroupsPagination';
 import { UserGroupState } from '../interfaces/UserGroupState';
 
-const initialListState: UserGroupPagination = {
+export const initialListState: UserGroupPagination = {
   content: [],
   page: 0,
   size: 0,
@@ -49,6 +50,25 @@ export const userGroupReducer = (
       return {
         ...state,
         item: action.payload
+      };
+    }
+    case ACTION_TYPES.updateUserGroup: {
+      const userGroups = map(state.list.content, userGroupItem => {
+        if (userGroupItem.id === action.payload.id) {
+          return action.payload;
+        }
+
+        return userGroupItem;
+      });
+
+      return {
+        ...state,
+        list: {
+          ...state.list,
+          content: [
+            ...userGroups
+          ]
+        }
       };
     }
     case ACTION_TYPES.resetUserGroups: {

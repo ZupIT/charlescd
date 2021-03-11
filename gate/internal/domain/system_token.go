@@ -1,15 +1,15 @@
 package domain
 
 import (
-	"github.com/google/uuid"
 	"time"
+	"github.com/google/uuid"
 )
 
 type SystemToken struct {
 	ID          uuid.UUID
 	Name        string
 	Revoked     bool
-	Permissions []string
+	Permissions []Permission
 	Workspaces  []string
 	CreatedAt   *time.Time
 	RevokedAt   *time.Time

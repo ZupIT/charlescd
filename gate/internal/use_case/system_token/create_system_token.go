@@ -9,7 +9,7 @@ import (
 )
 
 type CreateSystemToken interface {
-	Execute(authorization string, systemToken domain.SystemToken) (domain.SystemToken, error)
+	Execute(authorization string, input CreateSystemTokenInput) (domain.SystemToken, error)
 }
 
 type createSystemToken struct {
@@ -28,7 +28,7 @@ func NewCreateSystemToken(systemTokenRepository repository.SystemTokenRepository
 	}
 }
 
-func (createSystemToken createSystemToken) Execute(authorization string, systemToken domain.SystemToken) (domain.SystemToken, error) {
+func (createSystemToken createSystemToken) Execute(authorization string, input CreateSystemTokenInput) (domain.SystemToken, error) {
 	var authToken, err = createSystemToken.authTokenService.ParseAuthorizationToken(authorization)
 	if err != nil {
 		return domain.SystemToken{}, logging.NewError("Unable to parse authorization", err, logging.BusinessError, nil, "createSystemToken.Execute")
@@ -39,16 +39,19 @@ func (createSystemToken createSystemToken) Execute(authorization string, systemT
 		return domain.SystemToken{}, logging.NewError("Unable to find user by email", err, logging.BusinessError, nil, "createSystemToken.Execute")
 	}
 
-	systemToken.Author = user.Email
-
-	permissions, err := createSystemToken.permissionRepository.FindAll(systemToken.Permissions)
+	permissions, err := createSystemToken.permissionRepository.FindAll(input.Permissions)
 	if err != nil {
 		return domain.SystemToken{}, logging.WithOperation(err, "createSystemToken.Execute")
 	}
 
-	if len(permissions) != len(systemToken.Permissions) {
+	if len(permissions) != len(input.Permissions) {
 		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "createSystemToken.Execute")
 	}
+
+	systemToken := CreateSystemTokenInput.InputToDomain(input)
+
+	systemToken.Author = user.Email
+	systemToken.Permissions = permissions
 
 	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken, permissions)
 	if err != nil {
@@ -57,4 +60,3 @@ func (createSystemToken createSystemToken) Execute(authorization string, systemT
 
 	return savedSystemToken, nil
 }
-

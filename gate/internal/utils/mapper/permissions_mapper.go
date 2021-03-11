@@ -21,7 +21,7 @@ func PermissionsModelToDomains(permissions []models.Permission) []domain.Permiss
 	return permissionsModel
 }
 
-func GetPermissionModelsName(permissions []models.Permission) []string {
+func GetPermissionModelsName(permissions []domain.Permission) []string {
 	var permissionsModel []string
 	for _, permission := range permissions {
 		permissionsModel = append(permissionsModel, permission.Name)

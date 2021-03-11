@@ -15,13 +15,13 @@ type getSystemToken struct {
 	systemTokenRepository repository.SystemTokenRepository
 }
 
-func NewGetSystemToken(repository repository.SystemTokenRepository)  GetSystemToken {
+func NewGetSystemToken(repository repository.SystemTokenRepository) GetSystemToken {
 	return getSystemToken{
 		systemTokenRepository: repository,
 	}
 }
 
-func (s getSystemToken) Execute(id uuid.UUID) (domain.SystemToken, error)  {
+func (s getSystemToken) Execute(id uuid.UUID) (domain.SystemToken, error) {
 	systemToken, err := s.systemTokenRepository.FindById(id)
 	if err != nil {
 		return domain.SystemToken{}, logging.WithOperation(err, "GetSystemToken.Execute")

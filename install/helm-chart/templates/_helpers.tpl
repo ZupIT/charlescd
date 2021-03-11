@@ -60,6 +60,9 @@ If release name contains chart name it will be used as a full name.
 {{- if contains "octopipe" .RangeContext.name }}
 {{ include "test.octopipe-envs" .}}
 {{- end -}}
+{{- if contains "gate" .RangeContext.name }}
+{{ include "test.gate-envs" .}}
+{{- end -}}
 {{- end -}}
 
 
@@ -123,7 +126,7 @@ env:
   value: "{{ .RangeContext.keycloak.realm }}"
 {{ if .ChartContext.Values.keycloak.enabled }}
 - name: KEYCLOAK_SERVER_URL
-  value: "http://{{ .ChartContext.Release.Name }}-keycloak-http/keycloak/auth"
+  value: "http://keycloak-http/keycloak/auth"
 {{ else }}
 - name: KEYCLOAK_SERVER_URL
   value: "{{ .RangeContext.keycloak.host}}"
@@ -155,13 +158,8 @@ env:
 env:
 - name: SPRING_PROFILES_ACTIVE
   value: {{ .RangeContext.redis.profile }}
-{{if .ChartContext.Values.redis.enabled}}
-- name: SPRING_REDIS_HOST
-  value: {{ .ChartContext.Release.Name }}-redis-master
-{{ else }}
 - name: SPRING_REDIS_HOST
   value: {{ .RangeContext.redis.host }}
-{{ end}}
 - name: SPRING_REDIS_PORT
   value: "{{ .RangeContext.redis.port }}"
 - name: SPRING_REDIS_PASSWORD
@@ -269,7 +267,25 @@ env:
     value: {{ .RangeContext.idmRedirectHost }}
 {{- end -}}
 
-
+{{- define "test.gate-envs" -}}
+env:
+  - name: DB_USER
+    value: "{{ .RangeContext.database.user}}"
+  - name: DB_PASSWORD
+    value: "{{ .RangeContext.database.password}}"
+  - name: DB_HOST
+    value: "{{ .RangeContext.database.host}}"
+  - name: DB_PORT
+    value: "{{ .RangeContext.database.port}}"
+  - name: DB_NAME
+    value: "{{ .RangeContext.database.name}}"
+  - name: DB_SSL
+    value: "disable"
+  - name: ENV
+    value: "PROD"
+  - name: QUERIES_PATH
+    value: "{{ .RangeContext.queriesPath}}"
+{{- end -}}
 
 
 {{/*
