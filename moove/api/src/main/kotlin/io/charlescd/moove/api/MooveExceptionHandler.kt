@@ -16,13 +16,12 @@
 
 package io.charlescd.moove.api
 
+import io.charlescd.moove.application.ErrorDetailedResponse
 import io.charlescd.moove.application.ErrorMessageResponse
 import io.charlescd.moove.application.ResourceValueResponse
 import io.charlescd.moove.commons.exceptions.*
 import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.ForbiddenException
-import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.exceptions.*
 import java.lang.IllegalArgumentException
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -53,6 +52,30 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
+    }
+
+    @ExceptionHandler(BadRequestClientException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun clientBadRequestExceptions(ex: BadRequestClientException): ErrorDetailedResponse {
+        this.logger.error(ex.details, ex)
+        return ErrorDetailedResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
+    }
+
+    @ExceptionHandler(NotFoundClientException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    fun clientNotFoundExceptions(ex: NotFoundClientException): ErrorDetailedResponse {
+        this.logger.error(ex.details, ex)
+        return ErrorDetailedResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
+    }
+
+    @ExceptionHandler(InternalErrorClientException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    fun clientInternalErrorExceptions(ex: InternalErrorClientException): ErrorDetailedResponse {
+        this.logger.error(ex.details, ex)
+        return ErrorDetailedResponse(ex.id, ex.links, ex.title, ex.details, ex.status, ex.source, ex.meta)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

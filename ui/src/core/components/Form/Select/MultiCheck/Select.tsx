@@ -55,7 +55,7 @@ const Select = ({
         DropdownIndicator: () => <DownSVG />
       }}
       onChange={(
-        value: ValueType<OptionTypeBase>,
+        value: ValueType<OptionTypeBase, false>,
         actionMeta: ActionMeta<OptionTypeBase>
       ) => handleChange(value as Option[], actionMeta, onChange, options)}
     />

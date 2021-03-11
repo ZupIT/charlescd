@@ -28,7 +28,6 @@ const SearchInput = styled(SearchInputComponent)`
 const Actions = styled.div`
   display: flex;
   justify-content: space-between;
-
   > * + * {
     margin-left: 20px;
   }
@@ -50,7 +49,6 @@ const List = styled.ul`
   margin: 0;
   padding: 0;
   list-style-type: none;
-
   > * {
     padding: 0 16px;
   }
@@ -62,16 +60,34 @@ const ListItem = styled(LabeledIcon)`
   display: flex;
 `;
 
-interface LinkProps {
+interface ActionProps {
   isActive: boolean;
 }
 
-const Link = styled('button')<LinkProps>`
+const Button = styled.button<ActionProps>`
+  padding: 0;
   background: none;
   border: none;
   text-decoration: none;
   background-color: ${({ isActive }) =>
     isActive ? COLOR_BLACK_MARLIN : 'transparent'};
+`;
+
+const Link = styled.button<ActionProps>`
+  width: 100%;
+  display: block;
+  padding: 0 16px;
+  background: none;
+  border: none;
+  text-decoration: none;
+  background-color: ${({ isActive }) =>
+    isActive ? COLOR_BLACK_MARLIN : 'transparent'};
+
+  span {
+    width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 const A = styled.a`
@@ -83,6 +99,7 @@ export default {
   Actions,
   Content,
   Icon,
+  Button,
   Link,
   List,
   ListItem,

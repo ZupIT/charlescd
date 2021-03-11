@@ -33,7 +33,7 @@ export class ExecutionRepository extends Repository<Execution> {
     super()
   }
 
-  public async updateNotificationStatus(id: string, status: number) : Promise<UpdateResult>{
+  public async updateNotificationStatus(id: string, status: number): Promise<UpdateResult> {
     if (status >= 200 && status < 300) {
       return await this.update({ id: id }, { notificationStatus: NotificationStatusEnum.SENT })
     } else {
@@ -41,8 +41,8 @@ export class ExecutionRepository extends Repository<Execution> {
     }
   }
 
-  public async listExecutionsAndRelations(active: boolean, pageSize = 20, page = 0): Promise<[Execution[], number]> {
-    const baseQuery = this.createQueryBuilder('e')
+  public async listExecutionsAndRelations(pageSize: number, page: number, active?: boolean): Promise<[Execution[], number]> {
+    let baseQuery = this.createQueryBuilder('e')
       .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at, count (*) over() as total_executions')
       .leftJoin(DeploymentEntity, 'd', 'd.id = e.deployment_id')
       .leftJoin(ComponentEntity, 'c', 'd.id = c.deployment_id')
@@ -68,10 +68,13 @@ export class ExecutionRepository extends Repository<Execution> {
          )) AS deployment
       `)
       .groupBy('e.id, d.id')
-      .andWhere('d.active = :active', { active: active })
       .orderBy({ 'e.created_at': 'DESC', 'e.id': 'DESC' })
       .limit(pageSize)
       .offset(pageSize * (page))
+
+    if (active) {
+      baseQuery = baseQuery.andWhere('d.active = :active', { active: active })
+    }
 
     // TODO leaving this here to discuss keyset pagination
     // if (lastSeenId && lastSeenTimestamp) {
@@ -83,7 +86,7 @@ export class ExecutionRepository extends Repository<Execution> {
     try {
       const dbResult = await baseQuery.getRawMany()
       if (dbResult.length > 0) {
-        const entities = dbResult.map((e) => {
+        const entities = dbResult.map(e => {
           const execution = new Execution(e.deployment, e.type, e.incomingCircleId, e.status)
           execution.id = e.id
           execution.createdAt = e.created_at
@@ -94,7 +97,7 @@ export class ExecutionRepository extends Repository<Execution> {
           execution.type = e.type
           return { execution: execution, total: e.total_executions as number }
         })
-        return [entities.map(e=> e.execution), entities[0].total]
+        return [entities.map(e => e.execution), entities[0].total]
       }
       return [[], 0]
     } catch (error) {
@@ -104,7 +107,7 @@ export class ExecutionRepository extends Repository<Execution> {
 
   }
 
-  public async updateTimedOutStatus(timeInMinutes: number): Promise<UpdatedExecution[] | undefined>{ // TODO move to executions repo
+  public async updateTimedOutStatus(timeInMinutes: number): Promise<UpdatedExecution[] | undefined> { // TODO move to executions repo
     const result = await getConnection().manager.query(`
       WITH timed_out_executions AS
         (UPDATE v2executions

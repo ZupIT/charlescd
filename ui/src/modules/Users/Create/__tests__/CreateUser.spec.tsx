@@ -15,12 +15,11 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
-import CreateUser from '..';
+import { render, act, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-
-(global as any).MutationObserver = MutationObserver
+import * as pathUtils from 'core/utils/path';
+import CreateUser from '..';
+import routes from 'core/constants/routes';
 
 const props = {
   onFinish: jest.fn()
@@ -45,15 +44,17 @@ jest.mock('../../hooks', () => {
 
 test('render CreateUser default component', async () => {
   render(
-    <CreateUser {...props} onFinish={props.onFinish}/>
+    <CreateUser {...props} onFinish={props.onFinish} />
   );
 
   expect(await screen.findByTestId('create-user')).toBeInTheDocument();
 });
 
 test('close CreateUser component', async () => {
+  const delParamSpy = jest.spyOn(pathUtils, 'delParam');
+
   render(
-    <CreateUser {...props} onFinish={props.onFinish}/>
+    <CreateUser {...props} onFinish={props.onFinish} />
   );
 
   await waitFor(() => expect(screen.getByTestId('create-user')).toBeInTheDocument());
@@ -62,7 +63,12 @@ test('close CreateUser component', async () => {
   expect(tabPanelCloseButton).toBeInTheDocument();
 
   act(() => (userEvent.click(tabPanelCloseButton)));
-  waitFor(() => expect(screen.getByTestId('create-user')).not.toBeInTheDocument());
+  expect(delParamSpy).toHaveBeenCalledWith(
+    'user',
+    routes.usersComparation,
+    expect.anything(),
+    'create'
+  );
 });
 
 test("render CreateUser Form component with empty fields", async () => {
@@ -80,12 +86,12 @@ test("render CreateUser Form component with empty fields", async () => {
 
   const ButtonCreateUser = screen.getByTestId("button-create-user");
   expect(ButtonCreateUser).toBeInTheDocument();
-  await waitFor (() => expect(ButtonCreateUser).toBeDisabled());
+  await waitFor(() => expect(ButtonCreateUser).toBeDisabled());
 
   const InputName = screen.getByTestId("input-text-name");
   const InputEmail = screen.getByTestId("input-text-email");
   const InputPassword = screen.getByTestId("input-password-password");
-  
+
   expect(InputName).toBeEmptyDOMElement();
   expect(InputEmail).toBeEmptyDOMElement();
   expect(InputPassword).toBeEmptyDOMElement();

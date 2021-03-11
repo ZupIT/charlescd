@@ -32,7 +32,7 @@ import { ModulePagination } from 'modules/Modules/interfaces/ModulePagination';
 import { Module } from 'modules/Modules/interfaces/Module';
 import {
   loadModulesAction,
-  resetModuleAction
+  resetModulesAction
 } from 'modules/Modules/state/actions';
 
 export const useFindAllModules = (): {
@@ -45,8 +45,8 @@ export const useFindAllModules = (): {
   const { response, loading } = modulesData;
 
   const getAllModules = useCallback(
-    (name: string) => {
-      getModules(name);
+    (name: string, page = 0) => {
+      getModules({ name, page });
     },
     [getModules]
   );
@@ -98,7 +98,7 @@ export const useSaveModule = (): {
   saveModule: Function;
 } => {
   const [data, saveModule] = useFetch<Module>(create);
-  const { getAllModules } = useFindAllModules();
+  const { getAllModules, response: modules } = useFindAllModules();
   const { response, error, loading } = data;
   const dispatch = useDispatch();
 
@@ -107,7 +107,14 @@ export const useSaveModule = (): {
       updateUntitledParam('module', response.id);
       getAllModules();
     }
-  }, [response, getAllModules]);
+  }, [response, getAllModules, dispatch]);
+
+  useEffect(() => {
+    if (modules) {
+      dispatch(resetModulesAction());
+      dispatch(loadModulesAction(modules));
+    }
+  }, [modules, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -140,15 +147,16 @@ export const useDeleteModule = (
   useEffect(() => {
     if (response) {
       getAllModules();
-      dispatch(resetModuleAction());
     }
-  }, [response, dispatch, getAllModules, history, module]);
+  }, [response, getAllModules, history, module]);
 
   useEffect(() => {
     if (modules) {
       delParam('module', routes.modulesComparation, history, module?.id);
+      dispatch(resetModulesAction());
+      dispatch(loadModulesAction(modules));
     }
-  }, [modules, history, module]);
+  }, [dispatch, modules, history, module]);
 
   useEffect(() => {
     if (error) {

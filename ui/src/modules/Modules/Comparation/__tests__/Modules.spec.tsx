@@ -15,12 +15,9 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, wait, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import ModulesComparation  from '..';
-
-(global as any).MutationObserver = MutationObserver
 
 const originalWindow = { ...window };
 

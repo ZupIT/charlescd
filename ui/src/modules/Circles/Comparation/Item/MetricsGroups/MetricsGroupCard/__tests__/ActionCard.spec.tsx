@@ -16,16 +16,18 @@
 
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { Action } from '../../types';
 import { actionData } from '../../__tests__/fixtures';
 import ActionCard from '../ActionCard';
 
-test('render Action Card', () => {
+test('render Action Card', async () => {
+  const action = jest.fn();
+
   render(
     <ActionCard
-      handleDeleteAction={jest.fn()}
-      handleEditAction={jest.fn()}
+      handleDeleteAction={action}
+      handleEditAction={action}
       action={actionData}
     />
     );
@@ -34,18 +36,19 @@ test('render Action Card', () => {
   const nickname = screen.getByText('action');
   const actionType = screen.getByText('Circle promotion');
   const triggeredAt = screen.getByText('08/10/2015 • 12:35:00');
-  const dropdown = screen.getByTestId('icon-vertical-dots');
+  const dropdown = await screen.findByTestId('icon-vertical-dots');
 
   expect(status).toBeInTheDocument();
   expect(nickname).toBeInTheDocument();
   expect(actionType).toBeInTheDocument();
   expect(triggeredAt).toBeInTheDocument();
 
-  fireEvent.click(dropdown);
-  fireEvent.click(screen.getByText('Edit action'));
-
   userEvent.click(dropdown);
+  userEvent.click(screen.getByText('Edit action'));
   userEvent.click(screen.getByText('Delete action'));
+  userEvent.click(screen.getByText('Yes, delete'));
+
+  expect(action).toHaveBeenCalledTimes(2);
 });
 
 test('render Action Card and confirm delete', async () => {

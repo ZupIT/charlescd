@@ -34,15 +34,16 @@ type API struct {
 }
 
 const (
-	v1Path = "/api/v1"
-	v2Path = "/api/v2"
+	v1Path                       = "/api/v1"
+	v2Path                       = "/api/v2"
 	DefaultLimitRequestsBySecond = 10
 )
 
 func NewAPI() *API {
 	requestLimiter := getLimiter()
-	router := gin.Default()
+	router := gin.New()
 	router.Use(throttle(requestLimiter))
+
 	v1 := router.Group(v1Path)
 	v1.GET("/health", health)
 
@@ -60,7 +61,7 @@ func (api *API) Start() {
 }
 
 func throttle(requestLimiter *rate.Limiter) gin.HandlerFunc {
-	return func(context *gin.Context){
+	return func(context *gin.Context) {
 		if requestLimiter.Allow() {
 			context.Next()
 			return

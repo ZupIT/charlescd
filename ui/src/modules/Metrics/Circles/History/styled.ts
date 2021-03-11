@@ -106,11 +106,11 @@ const HistoryLegend = styled.div`
   }
 `;
 
-interface Dot {
+type DotProps = {
   status: string;
 }
 
-const Dot = styled.div<Dot>`
+const Dot = styled.div<DotProps>`
   height: 16px;
   width: 16px;
   background-color: ${({ theme, status }) => theme.metrics.circles[status]};
@@ -126,11 +126,11 @@ const HistorySearchInput = styled(SearchInputComponent)`
   padding-left: 15px;
 `;
 
-interface Line {
+type LineProps = {
   status: string;
 }
 
-const StatusLine = styled.div<Line>`
+const StatusLine = styled.div<LineProps>`
   position: absolute;
   left: 0;
   height: calc(100% - 6px);

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import map from 'lodash/map';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
+import find from 'lodash/find';
 import xorBy from 'lodash/xorBy';
 import { User } from 'modules/Users/interfaces/User';
 import { UserChecked } from '../../interfaces/UserChecked';
@@ -71,7 +72,7 @@ const UserItem = ({ id, name, email, checked, onSelected }: UserItemProps) => {
   };
 
   return (
-    <Styled.Item.Wrapper onClick={() => handleSelected(id)}>
+    <Styled.Item.Wrapper key={`user-item-${id}`} onClick={() => handleSelected(id)}>
       <Styled.Item.Profile>
         <Styled.Item.Photo name={name} />
         <div>
@@ -107,7 +108,9 @@ const AddUserModal = ({
     }
   });
 
-  useOutsideClick(contentRef, () => setIsDisabled(true));
+  useEffect(() => {
+    setIsDisabled(isEmpty(changedUsers));
+  }, [changedUsers])
 
   const setSelected = (id: string, checked: boolean) => {
     if (!isEmpty(id)) {
@@ -126,6 +129,18 @@ const AddUserModal = ({
     </Styled.Placeholder>
   );
 
+  const renderItem = (user: UserChecked) => {
+    const userChanged = find(changedUsers, { id: user.id });
+
+    if (userChanged) {
+      user.checked = userChanged.checked
+    };
+
+    return <UserItem key={user.id} {...user} onSelected={setSelected} />
+  }
+
+  const renderItems = () => map(users, user => renderItem(user))
+  
   return (
     <Styled.Wrapper
       data-testid="modal-user"
@@ -147,10 +162,7 @@ const AddUserModal = ({
             />
           </Styled.Header>
           <Styled.Content ref={contentRef}>
-            {map(users, user => (
-              <UserItem key={user.id} {...user} onSelected={setSelected} />
-            ))}
-            {isEmpty(users) && renderPlaceHolder()}
+            {isEmpty(users) ? renderPlaceHolder() : renderItems()}
           </Styled.Content>
           <Styled.Button.Update>
             <Button.Default

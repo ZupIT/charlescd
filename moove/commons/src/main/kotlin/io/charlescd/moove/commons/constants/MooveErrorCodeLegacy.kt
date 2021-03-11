@@ -34,6 +34,7 @@ enum class MooveErrorCodeLegacy(val key: String) {
     INVALID_AUTHORIZATION("invalid.authorization"),
     WORKSPACE_GIT_CONFIGURATION_IS_MISSING("workspace.git.configuration.is.missing"),
     METRIC_CONFIGURATION_IS_MISSING("metric.configuration.is.missing"),
+    EXTERNAL_IDM_FORBIDDEN("external.idm.forbidden"),
     INVALID_REGISTRY_CONFIGURATION("invalid.registry.configuration"),
     INVALID_REGISTRY_CONNECTION("invalid.registry.connection"),
     REGISTRY_INTEGRATION_ERROR("registry.integration.error"),

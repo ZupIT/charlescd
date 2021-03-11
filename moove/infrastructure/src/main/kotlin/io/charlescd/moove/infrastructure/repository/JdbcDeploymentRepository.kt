@@ -113,6 +113,10 @@ class JdbcDeploymentRepository(
         return findActiveDeploymentsByCircleId(circleId)
     }
 
+    override fun findActiveByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
+        return findActiveDeploymentsByCircleIdAndWorkspaceId(circleId, workspaceId)
+    }
+
     private fun deleteDeploymentsByCircleId(circleId: String) {
         val statement = "DELETE FROM deployments WHERE deployments.circle_id = ?"
 
@@ -236,6 +240,19 @@ class JdbcDeploymentRepository(
         return this.jdbcTemplate.query(
             statement.toString(),
             arrayOf(circleId),
+            deploymentExtractor
+        )?.toList() ?: emptyList()
+    }
+
+    private fun findActiveDeploymentsByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
+        val statement = StringBuilder(BASE_QUERY_STATEMENT)
+            .appendln("AND deployments.workspace_id = ?")
+            .appendln("AND deployments.circle_id = ?")
+            .appendln("AND deployments.status not in ('NOT_DEPLOYED','DEPLOY_FAILED')")
+
+        return this.jdbcTemplate.query(
+            statement.toString(),
+            arrayOf(workspaceId, circleId),
             deploymentExtractor
         )?.toList() ?: emptyList()
     }

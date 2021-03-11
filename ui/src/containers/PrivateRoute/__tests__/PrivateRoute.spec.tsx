@@ -32,7 +32,7 @@ beforeEach(() => {
   );
 });
 
-test('render Private Route allowed', () => {
+test('render Private Route allowed', async () => {
   const workspaceID = '1234-workspace';
   jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
   jest.spyOn(StateHooks, 'useGlobalState')
@@ -54,10 +54,10 @@ test('render Private Route allowed', () => {
     </MemoryRouter>
   );
 
-  waitFor(() => expect(screen.getByTestId('mock-component')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId('mock-component')).toBeInTheDocument());
 });
 
-test('render Private Route not allowed', () => {
+test('render Private Route not allowed', async () => {
   setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpc1Jvb3QiOmZhbHNlfQ.sEZZKPx1eyELnP_aI3Ethc5O9iwLRKAW6lZdXUtv_Jg');
   const workspaceID = '1234-workspace';
   jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
@@ -69,6 +69,7 @@ test('render Private Route not allowed', () => {
       },
       status: 'resolved'
     });
+  
   render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute
@@ -81,10 +82,10 @@ test('render Private Route not allowed', () => {
   );
 
   const body = screen.queryByTestId('mock-component');
-  waitFor(() => expect(body).not.toBeInTheDocument());
+  await waitFor(() => expect(body).not.toBeInTheDocument());
 });
 
-test('render PrivateRoute without role', () => {
+test('render PrivateRoute without role', async () => {
   setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpc1Jvb3QiOmZhbHNlfQ.sEZZKPx1eyELnP_aI3Ethc5O9iwLRKAW6lZdXUtv_Jg');
   const workspaceID = '1234-workspace';
   jest.spyOn(StateHooks, 'useGlobalState')
@@ -95,18 +96,19 @@ test('render PrivateRoute without role', () => {
       },
       status: 'resolved'
     });
+
   render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute path="/main" component={MockApp} allowedRoles={['role']} />
     </MemoryRouter>
   );
 
-  waitFor(() =>
+  await waitFor(() =>
     expect(screen.queryByTestId('mock-component')).not.toBeInTheDocument()
   );
 });
 
-test('render PrivateRoute by refresh', () => {
+test('render PrivateRoute by refresh', async () => {
   setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpc1Jvb3QiOmZhbHNlfQ.sEZZKPx1eyELnP_aI3Ethc5O9iwLRKAW6lZdXUtv_Jg');
   const workspaceID = '1234-workspace';
   jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
@@ -140,5 +142,5 @@ test('render PrivateRoute by refresh', () => {
   );
 
   const body = screen.queryByTestId('mock-component');
-  waitFor(() => expect(body).not.toBeInTheDocument());
+  await waitFor(() => expect(body).not.toBeInTheDocument());
 });

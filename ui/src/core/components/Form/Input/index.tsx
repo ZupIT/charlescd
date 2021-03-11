@@ -74,10 +74,12 @@ const Input = React.forwardRef(
     const isTip = !isEmpty(tipTitle) && !isEmpty(tipDescription);
     const [isFocused, setIsFocused] = useState(true);
 
+    const value = inputRef?.current?.value;
+
     useEffect(() => {
       const isEmptyValue = isEmpty(inputRef.current.value);
       setIsFocused(!isEmptyValue || disabled);
-    }, [rest.defaultValue, disabled]);
+    }, [rest.defaultValue, disabled, value]);
 
     const renderTip = () => (
       <Popover title={tipTitle} icon="info" description={tipDescription} />
@@ -106,6 +108,7 @@ const Input = React.forwardRef(
         data-testid={`input-wrapper-${name}`}
       >
         <Styled.Input
+          id={`input-${type}-${name}`}
           ref={inputRef}
           type={type}
           name={name}
@@ -126,6 +129,7 @@ const Input = React.forwardRef(
             isFocused={isFocused}
             hasError={hasError || !isEmpty(error)}
             onClick={() => handleClick()}
+            htmlFor={`input-${type}-${name}`}
           >
             {label}
           </Styled.Label>

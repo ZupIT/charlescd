@@ -20,6 +20,7 @@ type InfiniteScrollArgs = {
   hasMore: boolean;
   loadMore: (page: number) => void;
   distance?: number;
+  rootMargin: string;
 };
 
 export default function useInfiniteScroll<
@@ -27,7 +28,8 @@ export default function useInfiniteScroll<
   LoaderElementType extends HTMLElement
 >({
   hasMore,
-  loadMore
+  loadMore,
+  rootMargin
 }: InfiniteScrollArgs): [
   RefObject<LoaderElementType>,
   RefObject<ScrollElementType>,
@@ -51,7 +53,8 @@ export default function useInfiniteScroll<
     }
 
     const options: IntersectionObserverInit = {
-      root: scrollContainerNode
+      root: scrollContainerNode,
+      rootMargin: rootMargin
     };
 
     const listener: IntersectionObserverCallback = entries => {
@@ -76,7 +79,7 @@ export default function useInfiniteScroll<
     observer.observe(loaderNode);
 
     return () => observer.disconnect();
-  }, [hasMore, loadMore]);
+  }, [hasMore, loadMore, rootMargin]);
 
   return [loaderRef, scrollContainerRef, resetPage];
 }

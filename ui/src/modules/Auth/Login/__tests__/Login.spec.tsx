@@ -44,10 +44,10 @@ test('render Login page', async () => {
   expect(buttonSubmit).toBeDisabled();
 });
 
-test('render Login page', async () => {
+test('login on charles C.D.', async () => {
   window.location = {
     ...window.location,
-    href: '',
+    href: '/workspaces',
     pathname: '/workspaces',
   };
 

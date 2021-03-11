@@ -15,15 +15,15 @@
  */
 
 import React from 'react';
-import { render, fireEvent, act, screen } from 'unit-test/testUtils';
-import MutationObserver from 'mutation-observer';
+import { render, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { FetchMock } from 'jest-fetch-mock';
 import CreateRelease from '../index';
 
-(global as any).MutationObserver = MutationObserver
-
-jest.mock('lodash/debounce', () => jest.fn(fn => fn));
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
 const mockGetModules = JSON.stringify({
   content: [
@@ -50,49 +50,53 @@ const mockGetTags = JSON.stringify(
 );
 
 test('form should be valid', async () => {
-  (fetch as FetchMock).mockResponseOnce(mockGetModules);
-  (fetch as FetchMock).mockResponseOnce(mockGetTags);
+  (fetch as FetchMock)
+    .mockResponseOnce(mockGetModules)
+    .mockResponseOnce(mockGetTags)
+    .mockResponse(JSON.stringify([]));
 
   render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-  
+
   const nameInput = screen.getByTestId('input-text-releaseName');
-  fireEvent.change(nameInput, { target: { value: 'release-name' }});
-  
+  await act(() => userEvent.type(nameInput, 'release-name'));
+
   const moduleLabel = screen.getByText('Select a module');
-  await act(async() => selectEvent.select(moduleLabel, 'module-1'));
+  await act(async () => selectEvent.select(moduleLabel, 'module-1'));
 
   const componentLabel = screen.getByText('Select a component');
-  await act(async() => selectEvent.select(componentLabel, 'component-1'));
+  await act(async () => selectEvent.select(componentLabel, 'component-1'));
 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
-  fireEvent.change(versionInput, { target: { value: 'version-1' }});
+  await act(() => userEvent.type(versionInput, 'image-1.0.0'));
 
-  const submit = await screen.findByTestId('button-default-submit');
-
-  expect(submit).not.toBeDisabled();
+  await waitFor(() =>
+    expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
+    { timeout: 700 }
+  );
 });
 
 test('form should be invalid when version name not found', async () => {
-  (fetch as FetchMock).mockResponseOnce(mockGetModules);
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify([]));
+  (fetch as FetchMock)
+    .mockResponseOnce(mockGetModules)
+    .mockResponseOnce(JSON.stringify([]));
 
   render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-  
+
   const nameInput = screen.getByTestId('input-text-releaseName');
-  fireEvent.change(nameInput, { target: { value: 'release-name' }});
-  
+  fireEvent.change(nameInput, { target: { value: 'release-name' } });
+
   const moduleLabel = screen.getByText('Select a module');
-  await act(async() => selectEvent.select(moduleLabel, 'module-1'));
+  await act(async () => selectEvent.select(moduleLabel, 'module-1'));
 
   const componentLabel = screen.getByText('Select a component');
-  await act(async() => selectEvent.select(componentLabel, 'component-1'));
+  await act(async () => selectEvent.select(componentLabel, 'component-1'));
 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
-  fireEvent.change(versionInput, { target: { value: 'version-1' }});
+  fireEvent.change(versionInput, { target: { value: 'version-1' } });
 
   const submit = await screen.findByTestId('button-default-submit');
 

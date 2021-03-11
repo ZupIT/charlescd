@@ -39,7 +39,7 @@ const MenuItem = ({ id, icon, name, path }: Props) => {
       isActive={isActive(id)}
       data-testid={`menu-${name}`}
     >
-      <Styled.ListItem icon={icon} marginContent="8px">
+      <Styled.ListItem icon={icon}>
         <Text.h4 color="light">{name}</Text.h4>
       </Styled.ListItem>
     </Styled.Link>

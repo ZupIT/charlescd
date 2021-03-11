@@ -18,6 +18,8 @@
 
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
@@ -36,11 +38,14 @@ class UserServiceLegacy(
 
     @Transactional
     fun delete(id: String, authorization: String): UserRepresentation {
-        val user = findByAuthorizationToken(authorization)
-        if (user.isRoot) {
-            return deleteUser(id)
-        }
-        return deleteUser(user.id)
+        if (internalIdmEnabled) {
+            val user = findByAuthorizationToken(authorization)
+            if (user.isRoot) {
+                return deleteUser(id)
+            }
+            return deleteUser(user.id)
+        } else
+            throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN)
     }
 
     fun findUsers(users: List<String>): List<User> =
@@ -56,7 +61,7 @@ class UserServiceLegacy(
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
     fun findByAuthorizationToken(authorization: String): User {
-        val email = keycloakServiceLegacy.getEmailByToken(authorization)
+        val email = keycloakServiceLegacy.getEmailByAuthorizationToken(authorization)
         return userRepository.findByEmail(email).orElseThrow {
             NotFoundExceptionLegacy("user", email)
         }
@@ -71,9 +76,7 @@ class UserServiceLegacy(
     }
 
     private fun deleteOnKeycloak(it: User): User {
-        if (internalIdmEnabled) {
-            keycloakServiceLegacy.deleteUserById(it.id)
-        }
+        keycloakServiceLegacy.deleteUserById(it.id)
         return it
     }
 

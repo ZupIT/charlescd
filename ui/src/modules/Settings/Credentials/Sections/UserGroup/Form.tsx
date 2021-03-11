@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import debounce from 'debounce-promise';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import { CHARLES_DOC } from 'core/components/Popover';
@@ -156,7 +156,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
         </Text.h2>
       </Styled.Title>
       <Styled.Description>
-        <Text.h4 color="dark" data-testid="text-datasource">
+        <Text.h4 color="dark" data-testid="user-group-help-text">
           With the user group you have more control over the entire application.
           You can choose which accesses this group will have in this workspace.
           Consult the our{' '}

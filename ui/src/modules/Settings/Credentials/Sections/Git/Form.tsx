@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
@@ -77,7 +77,9 @@ const FormGit = ({ onFinish }: Props) => {
   const onSubmit = (git: GitFormData) => {
     save({
       ...git,
-      credentials: buildConnectionPayload(git, gitType)
+      credentials: {
+        ...buildConnectionPayload(git, gitType).credentials
+      }
     });
   };
 
@@ -140,7 +142,7 @@ const FormGit = ({ onFinish }: Props) => {
   return (
     <Styled.Content>
       <Styled.Title color="light">Add Git</Styled.Title>
-      <Styled.Info color="dark">
+      <Styled.Info color="dark" data-testid="git-help-text">
         Adding a Git allows Charles to create, delete and merge branches, as
         well as view repositories and generate releases. Consult our{' '}
         <Styled.Link

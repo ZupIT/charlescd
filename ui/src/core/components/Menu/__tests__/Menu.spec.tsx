@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, waitFor, act } from 'unit-test/testUtils';
+import { render, screen, waitFor, act, waitForElementToBeRemoved } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { Action as MenuAction } from '..';
 import Menu from '..';
@@ -68,19 +68,24 @@ test('trigger Menu actions', async() => {
   expect(screen.queryByText(/Action/)).not.toBeInTheDocument();
 });
 
-test('trigger Menu select action', () => {
+test('trigger Menu select action', async () => {
   const onSelect = jest.fn();
+
   render(
     <Menu actions={menuFilterItemsMock} onSelect={onSelect}>
        content
     </Menu>
   );
+
   const menuContentElement = screen.getByText('content');
   act(() => userEvent.click(menuContentElement));
   
   const actionsElements = screen.getAllByText(/Action/);
+  
   userEvent.click(actionsElements[0]);
 
   expect(onSelect).toHaveBeenCalledWith('first_action');
-  waitFor(() => expect(actionsElements).toHaveLength(0));
+  await waitFor(() => {
+    expect(screen.queryAllByText(/Action/)).toHaveLength(0);
+  })
 });

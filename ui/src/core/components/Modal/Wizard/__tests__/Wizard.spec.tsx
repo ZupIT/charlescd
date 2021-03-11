@@ -29,7 +29,7 @@ test('render Trigger', () => {
   expect(nextButton).toBeInTheDocument();
 });
 
-test('Next button click', () => {
+test('Next button click', async () => {
   render(<Modal.Wizard onClose={jest.fn} />);
 
   const welcome = screen.getByTestId('modal-wizard-info-welcome');
@@ -39,7 +39,7 @@ test('Next button click', () => {
   expect(button).toBeInTheDocument();
 
   userEvent.click(button);
-  waitFor(() => expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument());
 });
 
 

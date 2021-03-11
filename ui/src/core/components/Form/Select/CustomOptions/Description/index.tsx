@@ -18,7 +18,7 @@ import React from 'react';
 import { components, OptionTypeBase, OptionProps } from 'react-select';
 import Styled from './styled';
 
-const CustomOption = (props: OptionProps<OptionTypeBase>) => {
+const CustomOption = (props: OptionProps<OptionTypeBase, false>) => {
   const { label, description } = props.data;
 
   return (

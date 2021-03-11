@@ -28,7 +28,7 @@ const Content = styled.div`
   }
 `;
 
-interface Card {
+type CardProps = {
   height?: string;
   width?: string;
 }
@@ -50,7 +50,7 @@ const Plates = styled.div`
   }
 `;
 
-const Card = styled.div<Card>`
+const Card = styled.div<CardProps>`
   background: ${({ theme }) => theme.metrics.dashboard.card};
   height: ${({ height }) => height || '94px'};
   width: ${({ width }) => width || '175px'};

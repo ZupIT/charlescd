@@ -15,11 +15,13 @@
  */
 
 import { renderHook, act } from '@testing-library/react-hooks';
-import { FetchMock } from 'jest-fetch-mock';
 import { circleKey } from 'core/utils/circle';
 import { accessTokenKey, refreshTokenKey } from 'core/utils/auth';
+import { rest, server } from 'mocks/server';
 import { useCircleMatcher, useLogin } from '../hook';
-import { CIRCLE_UNMATCHED } from '../constants';
+import { removeCookie } from 'unit-test/cookie';
+import { DEFAULT_TEST_BASE_URL } from 'setupTests';
+import 'unit-test/setup-msw';
 
 jest.mock('core/state/hooks', () => ({
   useDispatch: () => jest.fn()
@@ -27,43 +29,33 @@ jest.mock('core/state/hooks', () => ({
 
 test('match a circle id', async () => {
   const id = '123';
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    circles: [{ id, name: 'circle' }]
-  }));
+
   const { result } = renderHook(() => useCircleMatcher());
   const { current } = result;
 
   await act(async () => current.getCircleId({ username: 'charlescd@zup.com.br' }));
 
   expect(document.cookie).toContain(`${circleKey}=${id}`);
+  removeCookie(circleKey);
 });
 
 test('should not match a circle id', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  server.use(
+    rest.post(`${DEFAULT_TEST_BASE_URL}/charlescd-circle-matcher/identify`, async (req, res, ctx) => {
+      return res(ctx.json({}))
+    }),
+  );
+
   const { result } = renderHook(() => useCircleMatcher());
   const { current } = result;
 
   await act(async () => current.getCircleId({ username: 'charlescd@zup.com.br' }));
 
-  expect(document.cookie).toContain('');
+  expect(document.cookie).toEqual('');
 });
 
 test('do login', async () => {
   const id = '123';
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    access_token: 'abcdefghijklmn', refresh_token: 'opqrstuvwxyz'
-  }));
-
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    circles: [{ id, name: 'circle' }]
-  }));
-
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    id: '1',
-    name: 'charlescd',
-    email: 'charlescd@zup.com.br',
-    workspaces: [{ id: '1', name: 'workspace' }]
-  }));
 
   const { result } = renderHook(() => useLogin());
   const { current } = result;
@@ -73,8 +65,9 @@ test('do login', async () => {
   expect(document.cookie).toContain(`${circleKey}=${id}`);
 
   const accessToken = localStorage.getItem(accessTokenKey);
-  expect(accessToken).toContain('abcdefghijklmn');
+
+  expect(accessToken).toBeDefined();
 
   const refreshToken = localStorage.getItem(refreshTokenKey);
-  expect(refreshToken).toContain('opqrstuvwxyz');
+  expect(refreshToken).toBeDefined();
 });

@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 import Text from 'core/components/Text';
 
-interface Dot {
+type DotProps = {
   color: string;
 }
 
@@ -26,7 +26,7 @@ const Item = styled.div`
   margin-right: 15px;
 `;
 
-const Dot = styled.div<Dot>`
+const Dot = styled.div<DotProps>`
   height: 16px;
   width: 16px;
   background-color: ${({ theme, color }) => theme.summary.colors[color]};

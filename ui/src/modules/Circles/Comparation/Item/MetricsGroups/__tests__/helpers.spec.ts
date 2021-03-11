@@ -39,7 +39,6 @@ import {
   createActionPayload,
   normalizeActionsOptions
 } from '../helpers';
-import { ActionForm } from '../AddAction';
 import * as workspaceUtils from 'core/utils/workspace';
 
 test('must normalized metrics options', () => {
@@ -94,6 +93,8 @@ test('must create CirclePromotionPayload', () => {
 });
 
 test('must create Action payload', () => {
+  jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue('3');
+
   const payload = createActionPayload(actionForm, metricGroupItem, '2', 'circledeployment');
 
   const expected = {

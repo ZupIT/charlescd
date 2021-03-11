@@ -41,7 +41,6 @@ class V2UserController(
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
     private val changeUserPasswordInteractor: ChangeUserPasswordInteractor,
-    private val deleteUserInteractor: DeleteUserInteractor,
     private val patchUserInteractor: PatchUserInteractor
 ) {
 
@@ -71,7 +70,7 @@ class V2UserController(
         @RequestHeader(value = "Authorization") authorization: String,
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
-        pageable: PageRequest
+        @Valid pageable: PageRequest
     ): ResourcePageResponse<SimpleUserResponse> {
         return this.findAllUsersInteractor.execute(name, email, authorization, pageable)
     }
@@ -125,16 +124,5 @@ class V2UserController(
         @RequestBody @Valid request: ChangeUserPasswordRequest
     ) {
         this.changeUserPasswordInteractor.execute(authorization, request)
-    }
-
-    @ApiOperation(value = "Delete by id")
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    // TODO: needs more discovery to finish implementation
-    fun delete(
-        @RequestHeader(value = "Authorization") authorization: String,
-        @PathVariable id: String
-    ) {
-        deleteUserInteractor.execute(id, authorization)
     }
 }

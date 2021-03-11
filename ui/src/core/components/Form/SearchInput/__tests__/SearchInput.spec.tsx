@@ -45,7 +45,7 @@ test('trigger focus and blur events', () => {
   expect(iconElement).toHaveStyle(`color: ${inputTheme.search.color};`);
 });
 
-test('trigger change event', () => {
+test('trigger change event', async () => {
   const onSearch = jest.fn();
   const value = "Foo bar";
   render(<SearchInput onSearch={onSearch} />);
@@ -54,5 +54,5 @@ test('trigger change event', () => {
 
   userEvent.type(element, value);
   
-  waitFor(() => expect(onSearch).toHaveBeenCalledWith(value));
+  await waitFor(() => expect(onSearch).toHaveBeenCalledWith(value));
 });

@@ -19,8 +19,7 @@ import { render, screen, waitFor } from 'unit-test/testUtils';
 import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'core/utils/auth';
 import { getProfileByKey, profileKey } from 'core/utils/profile';
 import { FetchMock } from 'jest-fetch-mock';
-import { MemoryRouter } from 'react-router-dom';
-import { setIsMicrofrontend } from 'App';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import Routes from '../Routes';
 
 const originalWindow = window;
@@ -42,7 +41,7 @@ jest.mock('react-cookies', () => {
     load: () => {
       return '';
     },
-    remove:  (key: string, options: object) => {
+    remove: (key: string, options: object) => {
       return `mock remove ${key}`;
     }
   };
@@ -75,10 +74,13 @@ test('render with a valid session token', async () => {
     workspaces: [{ id: '1', name: 'workspace' }]
   }));
 
-  render(<MemoryRouter><Routes /></MemoryRouter>);
+  render(
+    <BrowserRouter basename="/">
+      <Routes />
+    </BrowserRouter>
+  );
 
-  const sidebar = await screen.findByTestId('sidebar');
-  expect(sidebar).toBeInTheDocument();
+  await waitFor(async () => expect(screen.getByTestId('sidebar')).toBeInTheDocument());
 
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
@@ -98,17 +100,6 @@ test('render with an invalid session token', async () => {
   expect(name).toBeUndefined();
 });
 
-test('render main in microfrontend mode', async () => {
-  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '0' } });
-
-  setIsMicrofrontend(true);
-
-  render(<MemoryRouter><Routes /></MemoryRouter>);
-
-  const menuWorkspaces = await screen.findByTestId('menu-workspaces');
-  expect(menuWorkspaces.getAttribute('href')).toContain('/charlescd');
-});
-
 test('render and valid login saving the session', async () => {
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
 
@@ -123,6 +114,7 @@ test('render and valid login saving the session', async () => {
       'access_token': token,
       'refresh_token': 'opqrstuvwxyz'
     }))
+    .mockResponseOnce(JSON.stringify({}))
     .mockResponseOnce(JSON.stringify({
       id: '1',
       name: 'charlescd',
@@ -134,10 +126,10 @@ test('render and valid login saving the session', async () => {
 
   const iconError403 = await screen.findByTestId('icon-error-403');
   expect(iconError403).toBeInTheDocument();
-  
+
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
-  
+
   const refreshToken = localStorage.getItem(refreshTokenKey);
   expect(refreshToken).toContain('opqrstuvwxyz');
 
@@ -166,7 +158,7 @@ test('create user in charles base', async () => {
       'access_token': token,
       'refresh_token': 'opqrstuvwxyz'
     }))
-    .mockRejectedValueOnce({ status: 404, json: () => ({ message: 'Error' })})
+    .mockRejectedValueOnce({ status: 404, json: () => ({ message: 'Error' }) })
     .mockResponse(JSON.stringify(profile));
 
   render(<MemoryRouter><Routes /></MemoryRouter>);

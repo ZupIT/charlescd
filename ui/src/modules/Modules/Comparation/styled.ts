@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import Page from 'core/components/Page';
+import { slideInLeft } from 'core/assets/style/animate';
 
 const ScrollX = styled(Page.Content)`
   overflow-y: hidden;
@@ -23,6 +24,7 @@ const ScrollX = styled(Page.Content)`
 `;
 
 const Wrapper = styled.div`
+  animation: 0.2s ${slideInLeft} linear;
   display: flex;
   flex-direction: row;
 `;

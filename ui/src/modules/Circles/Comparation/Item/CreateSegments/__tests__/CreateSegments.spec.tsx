@@ -15,8 +15,7 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, screen, wait, waitFor } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import { ThemeScheme } from 'core/assets/themes';
@@ -26,8 +25,6 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 
 const theme = getTheme() as ThemeScheme;
-
-(global as any).MutationObserver = MutationObserver
 
 const circle = {
   deployment: {

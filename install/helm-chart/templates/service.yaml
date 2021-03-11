@@ -1,0 +1,21 @@
+{{- range .Values.CharlesApplications -}}
+{{- if .enabled -}}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+spec:
+  type: {{ .service.type }}
+  ports:
+    {{ range $i, $var := .service.ports -}}
+    - name: {{ $var.name }}
+      port: {{ $var.port }}
+      targetPort: {{ $var.port }}
+    {{ end }}
+  selector:
+    app: {{ .name }}
+---
+{{- end -}}
+{{- end -}}
+

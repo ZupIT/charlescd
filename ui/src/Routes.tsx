@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -21,7 +20,7 @@ import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
 import {
   getAccessTokenDecoded,
-  isIDMAuthFlow,
+  isIDMEnabled,
   redirectToIDM,
   saveSessionData
 } from 'core/utils/auth';
@@ -30,7 +29,6 @@ import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { useCreateUser, useUser } from 'modules/Users/hooks';
 import { useAuth } from 'modules/Auth/hooks';
 import { useCircleMatcher } from 'modules/Auth/Login/hook';
-import { isMicrofrontend } from 'App';
 
 const Main = lazy(() => import('modules/Main'));
 const Auth = lazy(() => import('modules/Auth'));
@@ -40,7 +38,8 @@ const NotFound404 = lazy(() => import('modules/Error/404'));
 const Routes = () => {
   const { getCircleId } = useCircleMatcher();
   const [enabledRoutes, setEnabledRoutes] = useState(false);
-  const isEnabledRoutes = enabledRoutes || !isIDMAuthFlow();
+  const isEnabledRoutes = enabledRoutes || !isIDMEnabled();
+
   const { findByEmail, user, error } = useUser();
   const { getTokens, grants } = useAuth();
   const { create, newUser } = useCreateUser();
@@ -48,7 +47,7 @@ const Routes = () => {
   useEffect(() => {
     const { email } = getAccessTokenDecoded();
 
-    if (isIDMAuthFlow()) {
+    if (isIDMEnabled()) {
       const code = getParam('code');
 
       if (code) {
@@ -102,7 +101,7 @@ const Routes = () => {
   );
 
   return (
-    <BrowserRouter basename={isMicrofrontend() ? '/charlescd' : '/'}>
+    <BrowserRouter>
       <Suspense fallback="">
         <Switch>
           <Route path={routes.auth} component={Auth} />

@@ -15,7 +15,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
@@ -27,6 +26,7 @@ import Styled from './styled';
 import { useCreateUser } from '../hooks';
 import { updateParam } from 'core/utils/path';
 import { useHistory } from 'react-router-dom';
+import useForm from 'core/hooks/useForm';
 
 interface Props {
   onFinish: (createUserStatus: string) => void;
@@ -39,7 +39,7 @@ const FormUser = ({ onFinish }: Props) => {
     handleSubmit,
     errors,
     formState: { isValid }
-  } = useForm<NewUser>({ mode: 'onBlur' });
+  } = useForm<NewUser>({ mode: 'onChange' });
   const { create, newUser } = useCreateUser();
   const [status, setStatus] = useState<string>('');
 

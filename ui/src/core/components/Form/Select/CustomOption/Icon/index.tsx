@@ -19,7 +19,7 @@ import { components, OptionTypeBase, OptionProps } from 'react-select';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
 
-const CustomOption = (props: OptionProps<OptionTypeBase>) => (
+const CustomOption = (props: OptionProps<OptionTypeBase, false>) => (
   <components.Option {...props}>
     <Styled.Wrapper>
       <Icon name={props.data.icon} size="12px" />

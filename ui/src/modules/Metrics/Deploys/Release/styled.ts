@@ -97,11 +97,11 @@ const ReleaseHistoryLegend = styled.div`
   }
 `;
 
-interface Dot {
+type DotProps = {
   status: string;
 }
 
-const Dot = styled.div<Dot>`
+const Dot = styled.div<DotProps>`
   height: 15px;
   width: 15px;
   background-color: ${({ theme, status }) => theme.metrics.deploy[status]};
@@ -110,11 +110,11 @@ const Dot = styled.div<Dot>`
   margin-right: 5px;
 `;
 
-interface Line {
+type LineProps = {
   status: string;
 }
 
-const StatusLine = styled.div<Line>`
+const StatusLine = styled.div<LineProps>`
   position: absolute;
   left: 0;
   height: calc(100% - 6px);

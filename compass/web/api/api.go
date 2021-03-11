@@ -30,7 +30,6 @@ import (
 
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/health"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
@@ -50,7 +49,6 @@ type Api struct {
 	metricGroupActionMain metricsgroupaction.UseCases
 	metricsGroupMain      metricsgroup.UseCases
 	mooveMain             moove.UseCases
-	healthMain            health.UseCases
 }
 
 func NewApi(
@@ -63,7 +61,6 @@ func NewApi(
 	metricGroupActionMain metricsgroupaction.UseCases,
 	metricsGroupMain metricsgroup.UseCases,
 	mooveMain moove.UseCases,
-	healthMain health.UseCases,
 ) *mux.Router {
 
 	api := Api{
@@ -76,7 +73,6 @@ func NewApi(
 		metricGroupActionMain: metricGroupActionMain,
 		metricsGroupMain:      metricsGroupMain,
 		mooveMain:             mooveMain,
-		healthMain:            healthMain,
 	}
 	router := mux.NewRouter()
 	api.health(router)

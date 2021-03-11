@@ -15,7 +15,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -34,6 +33,8 @@ import isEqual from 'lodash/isEqual';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import { testRegistryConnection } from 'core/providers/registry';
 import DocumentationLink from 'core/components/DocumentationLink';
+import { useForm } from 'react-hook-form';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 const registryPlaceholder: Option = {
   AZURE: 'example.azurecr.io',
@@ -84,7 +85,7 @@ const FormRegistry = ({ onFinish }: Props) => {
 
   useEffect(() => {
     if (registryType === 'DOCKER_HUB') {
-      register('address');
+      register('address', isRequiredAndNotBlank);
       setValue('address', 'https://registry.hub.docker.com');
     }
   }, [registryType, setValue, register]);
@@ -127,7 +128,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     return (
       <>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="region"
           label="Enter the region"
         />
@@ -140,12 +141,12 @@ const FormRegistry = ({ onFinish }: Props) => {
         {awsUseSecret && (
           <>
             <Form.Password
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
               name="accessKey"
               label="Enter the access key"
             />
             <Form.Password
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
               name="secretKey"
               label="Enter the secret key"
             />
@@ -159,7 +160,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     return (
       <>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="organization"
           label="Enter the project id"
         />
@@ -182,12 +183,12 @@ const FormRegistry = ({ onFinish }: Props) => {
     return (
       <>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="username"
           label="Enter the username"
         />
         <Form.Password
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="password"
           label="Enter the password"
         />
@@ -213,7 +214,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       </Text.h5>
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           name="name"
           label="Type a name for Registry"
         />
@@ -286,7 +287,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   return (
     <Styled.Content>
       <Styled.Title color="light">Add Registry</Styled.Title>
-      <Text.h5 color="dark">
+      <Text.h5 color="dark" data-testid="registry-help-text">
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to
         deploy them. Consult our{' '}

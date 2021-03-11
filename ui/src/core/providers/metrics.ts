@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
 import { ReleaseHistoryRequest } from 'modules/Metrics/Deploys/interfaces';
 import { baseRequest, postRequest } from './base';
 
@@ -24,7 +23,7 @@ const circlesEndpoint = '/moove/v2/circles';
 
 const deploymentEndpoint = '/moove/v2/deployments';
 
-export const findCircleMetrics = (data: CircleMetrics) => {
+export const findCircleMetrics = (data: any) => {
   const params = new URLSearchParams({ ...data });
   return baseRequest(`${endpoint}/?${params}`);
 };
@@ -34,15 +33,23 @@ export const findDeployMetrics = (params: URLSearchParams) =>
 
 export const findAllCirclesMetrics = () => baseRequest(`${endpoint}/circles`);
 
-export const findAllCirclesHistory = (params: URLSearchParams) =>
-  baseRequest(`${circlesEndpoint}/history?${params}`);
+export const findAllCirclesHistory = (params: URLSearchParams) => {
+  params.append('size', '50');
+  return baseRequest(`${circlesEndpoint}/history?${params}`);
+}
 
 export const findAllCirclesReleases = (
   params: URLSearchParams,
   circleId: string
-) => baseRequest(`${deploymentEndpoint}/circle/${circleId}/history?${params}`);
+) => {
+  params.append('size', '50');
+  return baseRequest(`${deploymentEndpoint}/circle/${circleId}/history?${params}`);
+}
 
 export const findAllReleases = (
   params: URLSearchParams,
   releaseHistory: ReleaseHistoryRequest
-) => postRequest(`${deploymentEndpoint}/history?${params}`, releaseHistory);
+) => {
+  params.append('size', '50');
+  return postRequest(`${deploymentEndpoint}/history?${params}`, releaseHistory);
+}

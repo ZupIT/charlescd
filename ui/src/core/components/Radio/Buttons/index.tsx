@@ -19,14 +19,14 @@ import map from 'lodash/map';
 import { ChangeInputEvent } from 'core/interfaces/InputEvents';
 import Styled from './styled';
 
-export interface RadioButton {
+export type RadioButtonProps = {
   icon?: string;
   name?: string;
   value: string;
 }
 
 export interface Props {
-  items: RadioButton[];
+  items: RadioButtonProps[];
   name: string;
   onChange?: (event: ChangeInputEvent) => void;
   className?: string;

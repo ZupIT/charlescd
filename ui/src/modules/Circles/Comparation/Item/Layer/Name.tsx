@@ -17,15 +17,24 @@
 import React from 'react';
 import ContentIcon from 'core/components/ContentIcon';
 import Styled from '../styled';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
+import Icon from 'core/components/Icon';
+import Text from 'core/components/Text';
+import { isRequired, maxLength } from 'core/utils/validations';
 
 interface Props {
   name: string;
   onSave: (name: string) => void;
 }
 
+type FormValues = {
+  name: string;
+}
+
 const LayerName = ({ name, onSave }: Props) => {
-  const { register, handleSubmit, getValues } = useForm();
+  const { register, handleSubmit, getValues, errors } = useForm<FormValues>({
+    mode: 'onChange'
+  });
 
   const onSubmit = () => {
     const { name } = getValues();
@@ -38,12 +47,22 @@ const LayerName = ({ name, onSave }: Props) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.InputTitle
             name="name"
-            ref={register}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength()
+            })}
             onClickSave={onSubmit}
             placeholder="Type a name"
             defaultValue={name}
+            isDisabled={!!errors.name}
             resume
           />
+          {errors.name && (
+            <Styled.FieldErrorWrapper>
+              <Icon name="error" color="error" />
+              <Text.h6 color="error">{errors.name.message}</Text.h6>
+            </Styled.FieldErrorWrapper>
+          )}
         </form>
       </ContentIcon>
     </Styled.Layer>

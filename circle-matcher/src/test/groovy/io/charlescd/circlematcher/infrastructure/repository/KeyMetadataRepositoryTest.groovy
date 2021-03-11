@@ -54,7 +54,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList()
@@ -87,7 +87,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
@@ -126,7 +126,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
@@ -165,7 +165,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
@@ -204,7 +204,7 @@ class KeyMetadataRepositoryTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList<KeyMetadata>()
@@ -221,5 +221,44 @@ class KeyMetadataRepositoryTest extends Specification {
 
         notThrown()
 
+    }
+
+    def "should find all  old key metadata records"() {
+
+        given:
+
+        def workspaceId = "78094351-7f16-4571-ac7a-7681db81e146"
+        def value = "user@zup.com.br"
+        def values = new ArrayList()
+        values.add(value)
+
+        def content = TestUtils.createContent(values)
+        def node = TestUtils.createNode(content)
+
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, null)
+        def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
+        def keyMetadata = new KeyMetadata(composedKey, segmentation)
+        def metadataList = new ArrayList<KeyMetadata>()
+        metadataList.add(keyMetadata)
+
+        when:
+
+        def response = keyMetadataRepository.findAllOldMetadata()
+
+        then:
+
+        assert response[0].key == metadataList[0].key
+        assert response[0].name == metadataList[0].name
+        assert response[0].type == metadataList[0].type
+        assert response[0].reference == metadataList[0].reference
+
+        1 * redisTemplate.opsForSet() >> setOperations
+        1 * setOperations.scan(_, _) >> cursor
+        1 * cursor.isClosed() >> false
+        1 * cursor.hasNext() >> true
+        1 * cursor.isClosed() >> true
+        1 * cursor.next() >> keyMetadata
+
+        notThrown()
     }
 }

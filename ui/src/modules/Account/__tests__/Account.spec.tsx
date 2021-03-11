@@ -21,11 +21,8 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
 import { FetchMock } from 'jest-fetch-mock';
-import MutationObserver from 'mutation-observer';
 import { saveProfile } from 'core/utils/profile';
 import Account from '../';
-
-(global as any).MutationObserver = MutationObserver
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
