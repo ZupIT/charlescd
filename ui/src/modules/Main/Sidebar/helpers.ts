@@ -26,9 +26,9 @@ export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
 
 export const getItems = () => {
-  if (getWorkspaceId()) {
+  if (getWorkspaceId() && window.location.pathname !== '/workspaces') {
     return workspaceMenu;
-  } else if(isRoot()) {
+  } else if(isRoot() && window.location.pathname === '/workspaces') {
     return rootMainMenu;
   } else {
     return mainMenu;
