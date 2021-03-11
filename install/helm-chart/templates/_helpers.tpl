@@ -294,8 +294,10 @@ env:
     value: "{{ .RangeContext.amqp.deliveredFailQueue}}"
   - name: PUBLISHER_TIME
     value: "{{ .RangeContext.publisher.time}}"
-  - name: PUBLISHER_RETRY
-    value: "{{ .RangeContext.publisher.retry}}"
+  - name: PUBLISHER_ATTEMPTS
+    value: "{{ .RangeContext.publisher.attempts}}"
+  - name: CONSUME_DELIVERED_FAILED_TIME
+    value: "{{ .RangeContext.consumer.deliveredFailed.time}}"
   - name: SUBSCRIPTION_REGISTER_LIMIT
     value: "{{ .RangeContext.subscriptionRegisterLimit}}"
 {{- end -}}

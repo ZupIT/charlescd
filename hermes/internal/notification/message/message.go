@@ -100,7 +100,7 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 func (main Main) FindAllNotEnqueuedAndDeliveredFail() ([]payloads.MessageResponse, errors.Error) {
 	var response []payloads.MessageResponse
 
-	query := main.db.Raw(FindAllNotEnqueuedAndDeliveredFailQuery, configuration.GetConfiguration("PUBLISHER_RETRY")).Scan(&response)
+	query := main.db.Raw(FindAllNotEnqueuedAndDeliveredFailQuery, configuration.GetConfiguration("PUBLISHER_ATTEMPTS")).Scan(&response)
 	if query.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("FindAllNotEnqueued Message error", query.Error.Error()).
 			WithOperations("FindAllNotEnqueued.Query")

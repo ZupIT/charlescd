@@ -357,7 +357,10 @@ CharlesApplications:
       deliveredFailQueue: queue-fail
     publisher:
       time: 15s
-      retry: 2
+      attempts: 2
+    consumer:
+      deliveredFailed:
+        time: 2m
     subscriptionRegisterLimit: 5
 
 postgresql:

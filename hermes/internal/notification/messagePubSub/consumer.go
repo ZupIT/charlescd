@@ -36,7 +36,7 @@ func (main *Main) Consume(stopSub chan bool) {
 			msg := <-response
 			err := main.subscriptionMain.SendWebhookEvent(msg)
 			if err != nil {
-				logrus.Error(err)
+				logrus.Error(err.Error())
 				main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
 			} else {
 				main.updateMessageInfo(msg, delivered, successLog, 200)
@@ -48,13 +48,13 @@ func (main *Main) Consume(stopSub chan bool) {
 }
 
 func (main *Main) ConsumeDeliveredFail(stopSub chan bool) {
-	interval, err := time.ParseDuration(configuration.GetConfiguration("PUBLISHER_TIME"))
-	if err != nil {
+	interval, parseErr := time.ParseDuration(configuration.GetConfiguration("CONSUMER_DELIVERED_FAILED_TIME"))
+	if parseErr != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start publish", "Get sync interval failed").
+			"parseErr": errors.NewError("Cannot start consuming delivered failed", "Get sync interval failed").
 				WithOperations("Start.getInterval"),
 		}).Errorln()
-		logrus.Error(err)
+		logrus.Error(parseErr)
 	}
 
 	ticker := time.NewTicker(interval)
@@ -68,7 +68,7 @@ func (main *Main) ConsumeDeliveredFail(stopSub chan bool) {
 					msg := <-response
 					err := main.subscriptionMain.SendWebhookEvent(msg)
 					if err != nil {
-						logrus.Error(err)
+						logrus.Error(err.Error())
 						main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
 					} else {
 						main.updateMessageInfo(msg, delivered, successLog, 200)

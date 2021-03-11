@@ -225,13 +225,13 @@ func (c *Client) Stream(response chan payloads.MessageResponse, queue string) {
 
 	go func() {
 		for msg := range messages {
-			messageResponse := c.processMessage(msg)
+			messageResponse := c.processMessage(msg, queue)
 			response <- messageResponse
 		}
 	}()
 }
 
-func (c *Client) processMessage(msg amqp.Delivery) payloads.MessageResponse {
+func (c *Client) processMessage(msg amqp.Delivery, queue string) payloads.MessageResponse {
 	l := c.logger
 	startTime := time.Now()
 
@@ -256,6 +256,7 @@ func (c *Client) processMessage(msg amqp.Delivery) payloads.MessageResponse {
 	logrus.WithFields(logrus.Fields{
 		"Message consumed": messageResponse.Id,
 		"Time":             time.Now(),
+		"Queue":            queue,
 	}).Println()
 
 	msg.Ack(false)
