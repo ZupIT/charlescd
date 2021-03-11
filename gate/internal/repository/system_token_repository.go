@@ -63,6 +63,7 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 
 	res := systemTokenRepository.db.Model(models.SystemToken{}).
 		Where("id = ?", id).
+		Preload("Permissions").
 		First(&systemToken)
 
 	if res.Error != nil {
