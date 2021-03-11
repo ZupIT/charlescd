@@ -19,6 +19,7 @@
 package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.Circles
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -69,5 +70,9 @@ class CircleService(private val circleRepository: CircleRepository) {
 
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle> {
         return this.circleRepository.findDefaultByWorkspaceId(workspaceId)
+    }
+
+    fun findByWorkspaceId(workspaceId: String): Circles {
+        return this.circleRepository.findByWorkspaceId(workspaceId)
     }
 }

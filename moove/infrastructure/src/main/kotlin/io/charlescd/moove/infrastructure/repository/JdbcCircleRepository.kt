@@ -560,4 +560,13 @@ class JdbcCircleRepository(
             rs.getInt(1)
         } ?: 0
     }
+
+    override fun findByWorkspaceId(workspaceId: String): Circles {
+        val statement = StringBuilder(BASE_QUERY_STATEMENT)
+            .appendln("AND circles.workspace_id = ?")
+
+        return Circles(
+            this.jdbcTemplate.query(statement.toString(), arrayOf(workspaceId), circleExtractor)!!
+        )
+    }
 }

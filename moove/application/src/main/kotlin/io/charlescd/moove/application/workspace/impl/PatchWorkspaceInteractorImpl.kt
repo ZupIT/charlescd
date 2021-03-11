@@ -22,6 +22,7 @@ import io.charlescd.moove.application.*
 import io.charlescd.moove.application.workspace.PatchWorkspaceInteractor
 import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.Circles
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.exceptions.BusinessException
@@ -47,7 +48,7 @@ open class PatchWorkspaceInteractorImpl(
 
         checkIfNewConfigurationsExist(workspaceId, workspace, updatedWorkspace)
 
-        checkIfCircleDefaultNeedsToBeCreatedAndDoIt(workspace, updatedWorkspace)
+        syncWithCircleMatcherIfNecessary(workspace, updatedWorkspace)
 
         workspaceService.update(updatedWorkspace.copy(status = updatedWorkspace.checkCurrentWorkspaceStatus()))
     }
@@ -67,6 +68,34 @@ open class PatchWorkspaceInteractorImpl(
         }
     }
 
+    private fun syncWithCircleMatcherIfNecessary(actualWorkspace: Workspace, updatedWorkspace: Workspace) {
+        if (isRemovingCircleMatcher(actualWorkspace.circleMatcherUrl, updatedWorkspace.circleMatcherUrl)) {
+            val circles = circleService.findByWorkspaceId(actualWorkspace.id)
+            circleMatcherService.deleteAllFor(circles, actualWorkspace.circleMatcherUrl!!)
+            return
+        }
+
+        if (isReplacingCircleMatcher(actualWorkspace, updatedWorkspace)) {
+            val circles = circleService.findByWorkspaceId(actualWorkspace.id)
+            if (!circles.hasDefault()) {
+                throw BusinessException.of(MooveErrorCode.MISSING_DEFAULT_CIRCLE)
+            }
+
+            if(actualWorkspace.circleMatcherUrl != null) {
+                deleteAllCirclesOnCircleMatcher(actualWorkspace.circleMatcherUrl!!, circles)
+            }
+            createAllCirclesOnCircleMatcher(updatedWorkspace.circleMatcherUrl!!, circles)
+        }
+    }
+
+    private fun isRemovingCircleMatcher(actualMatcherUrl: String?, newMatcherUrl: String?): Boolean {
+        return actualMatcherUrl?.isNotBlank() == true && newMatcherUrl.isNullOrBlank()
+    }
+
+    private fun isReplacingCircleMatcher(workspace: Workspace, updatedWorkspace: Workspace): Boolean {
+        return !updatedWorkspace.circleMatcherUrl.isNullOrBlank() && isCircleMatcherUrlNew(workspace, updatedWorkspace)
+    }
+
     private fun isCircleMatcherUrlNew(
         workspace: Workspace,
         updatedWorkspace: Workspace
@@ -78,6 +107,22 @@ open class PatchWorkspaceInteractorImpl(
     ) {
         try {
             this.circleMatcherService.create(circle, workspace.circleMatcherUrl!!)
+        } catch (exception: Exception) {
+            throw BusinessException.of(MooveErrorCode.INVALID_CIRCLE_MATCHER_URL_ERROR)
+        }
+    }
+
+    private fun createAllCirclesOnCircleMatcher(circleMatcherUrl: String, circles: Circles) {
+        try {
+            this.circleMatcherService.saveAllFor(circles, circleMatcherUrl)
+        } catch (exception: Exception) {
+            throw BusinessException.of(MooveErrorCode.INVALID_CIRCLE_MATCHER_URL_ERROR)
+        }
+    }
+
+    private fun deleteAllCirclesOnCircleMatcher(circleMatcherUrl: String, circles: Circles) {
+        try {
+            this.circleMatcherService.deleteAllFor(circles, circleMatcherUrl)
         } catch (exception: Exception) {
             throw BusinessException.of(MooveErrorCode.INVALID_CIRCLE_MATCHER_URL_ERROR)
         }
