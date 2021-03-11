@@ -76,6 +76,7 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
     ): List<WebhookSubscriptionEventHistory> {
         val subscriptionEventsHistory =
             hermesClient.getSubscriptionEventsHistory(authorEmail, id, eventType, eventStatus, eventField, eventValue, pageRequest.page, pageRequest.size)
+
         return buildWebhookSubscriptionEventHistory(
             authorEmail,
             subscriptionEventsHistory
@@ -139,11 +140,11 @@ class HermesClientService(private val hermesClient: HermesClient, private val he
                 subscription = buildWebhookSubscriptionInfo(authorEmail, it.subscriptionId),
                 status = it.lastStatus,
                 event = buildEventInfo(it),
-                executions = it.executions.map {
+                executions = it.executions.map { response ->
                     WebhookExecutionInfo(
-                        it.executionLog,
-                        it.status,
-                        it.loggedAt
+                        response.executionLog,
+                        response.status,
+                        response.loggedAt
                     )
                 }
             ) }

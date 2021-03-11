@@ -48,7 +48,7 @@ type MessageResponse struct {
 type FullMessageResponse struct {
 	Id             uuid.UUID       `json:"id"`
 	EventType      string          `json:"eventType"`
-	Event          json.RawMessage `json:"event"`
+	Event          string          `json:"event"`
 	LastStatus     string          `json:"lastStatus"`
 	SubscriptionId uuid.UUID       `json:"subscriptionId"`
 }

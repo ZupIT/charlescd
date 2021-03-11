@@ -25,7 +25,6 @@ data class HermesSubscriptionEventHistoryResponse(
     val lastStatus: String,
     val subscriptionId: String,
     val executions: List<HermesExecutionInfoResponse>
-
 )
 
 data class HermesExecutionInfoResponse(
