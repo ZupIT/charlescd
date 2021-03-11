@@ -103,17 +103,15 @@ test("render CreateSegments with manual session active", async () => {
     "button-iconRounded-manually"
   );
 
-  act(() => {
-    userEvent.click(ManuallyButton);
-  });
+  userEvent.click(ManuallyButton);
+
   await waitFor(() => {
     const ManuallyText = screen.getByTestId("segments-rules");
-
     expect(ManuallyText).toBeInTheDocument();
   });
 });
 
-test("render CreateSegments with manual session active", async () => {
+test("render CreateSegments with CSV session active", async () => {
   const onGoBack = jest.fn();
   const onSaveCircle = jest.fn();
 
@@ -130,17 +128,13 @@ test("render CreateSegments with manual session active", async () => {
     "button-iconRounded-upload"
   );
 
-  act(() => {
-    userEvent.click(ImportCsvButton);
-  });
+  userEvent.click(ImportCsvButton);
+
   await waitFor(() => {
     const ImportCsvText = screen.getByTestId("input-file-inputFileId-file");
-
     expect(ImportCsvText).toBeInTheDocument();
   });
 });
-
-//warning and onContinue section
 
 test("modal change percentage to manually should be rendered", async () => {
   const onGoBack = jest.fn();
