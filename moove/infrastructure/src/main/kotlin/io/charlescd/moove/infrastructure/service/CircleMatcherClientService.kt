@@ -21,22 +21,20 @@ package io.charlescd.moove.infrastructure.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.domain.Circles
 import io.charlescd.moove.domain.SimpleCircle
 import io.charlescd.moove.domain.Workspace
-import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
 import io.charlescd.moove.infrastructure.service.client.request.Node
-import java.net.URI
 import org.springframework.stereotype.Service
+import java.net.URI
 
 @Service
 class CircleMatcherClientService(
     private val circleMatcherClient: CircleMatcherClient,
-    private val circleRepository: CircleRepository,
     private val objectMapper: ObjectMapper
 ) : CircleMatcherService {
 
@@ -122,24 +120,11 @@ class CircleMatcherClientService(
             createdAt = circle.createdAt
         )
 
-    override fun deleteAllFor(workspace: Workspace, matcherUri: String) {
-        executeByPageFor(workspace) {
-            delete(it.reference, matcherUri)
-        }
+    override fun deleteAllFor(circles: Circles, matcherUri: String) {
+        circles.getReferences().forEach { delete(it, matcherUri) }
     }
 
-    override fun saveAllFor(workspace: Workspace, matcherUri: String) {
-        executeByPageFor(workspace) {
-            create(it, matcherUri)
-        }
-    }
-
-    private fun executeByPageFor(workspace: Workspace, action: (Circle) -> Unit) {
-        var pageNumber = 0
-        do {
-            val pageRequest = PageRequest(page = pageNumber++)
-            val page = circleRepository.find(null, null, workspace.id, pageRequest)
-            page.content.forEach { action(it) }
-        } while (!page.isLast())
+    override fun saveAllFor(circles: Circles, matcherUri: String) {
+        circles.forEach { create(it, matcherUri) }
     }
 }

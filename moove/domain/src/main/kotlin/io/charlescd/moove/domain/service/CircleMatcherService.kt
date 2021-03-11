@@ -20,6 +20,7 @@ package io.charlescd.moove.domain.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.Circles
 import io.charlescd.moove.domain.SimpleCircle
 import io.charlescd.moove.domain.Workspace
 
@@ -37,7 +38,7 @@ interface CircleMatcherService {
 
     fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle>
 
-    fun deleteAllFor(workspace: Workspace, matcherUri: String)
+    fun deleteAllFor(circles: Circles, matcherUri: String)
 
-    fun saveAllFor(workspace: Workspace, matcherUri: String)
+    fun saveAllFor(circles: Circles, matcherUri: String)
 }
