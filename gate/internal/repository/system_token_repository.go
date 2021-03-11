@@ -43,6 +43,7 @@ func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Pa
 		Order(page.Sort).
 		Offset(page.Offset()).
 		Limit(page.PageSize).
+		Preload("Permissions").
 		Find(&systemTokens)
 	if res.Error != nil {
 		return []domain.SystemToken{}, page, handleSystemTokenError("Find all tokens failed", "unit.GetAll.Find", res.Error, logging.InternalError)
