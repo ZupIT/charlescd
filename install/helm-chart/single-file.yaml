@@ -60,8 +60,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "TkI0aDhOVTR6Uw=="
-  postgresql-password: "ZjNtQU5UQ2swTw=="
+  postgresql-postgres-password: "V2ZtQkVKcTkyNQ=="
+  postgresql-password: "cFNCMGNUVzdvVg=="
 ---
 # Source: charlescd/charts/rabbitmq/templates/secrets.yaml
 apiVersion: v1
@@ -77,7 +77,7 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "YUdWeWJXVno="
-  rabbitmq-erlang-cookie: "TFc4bEU0RHhFcmtJRzE2aDVMckI3QUt4MnZHeXVsZFI="
+  rabbitmq-erlang-cookie: "eUhZM1pLT1Nxamw1aFRseUFVMlNxSlJjbTZwazZSd1Q="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -6692,7 +6692,12 @@ spec:
               port: 3000
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 256Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6852,7 +6857,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 128Mi
+              requests:
+                cpu: 64m
+                memory: 64Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6912,8 +6922,10 @@ spec:
               value: "queue-fail"
             - name: PUBLISHER_TIME
               value: "15s"
-            - name: PUBLISHER_RETRY
+            - name: PUBLISHER_ATTEMPTS
               value: "2"
+            - name: CONSUME_DELIVERED_FAILED_TIME
+              value: "2m"
             - name: SUBSCRIPTION_REGISTER_LIMIT
               value: "5"
           image: zupcharles/charlescd-hermes:0.6.0
@@ -7020,7 +7032,12 @@ spec:
               port: 8080
             initialDelaySeconds: 180
           resources:
-              {}
+              limits:
+                cpu: 1
+                memory: 1024Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7075,7 +7092,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 512m
+                memory: 1Gi
+              requests:
+                cpu: 512m
+                memory: 1Gi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7137,7 +7159,12 @@ spec:
               port: 3000
             initialDelaySeconds: 20
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 128Mi
+              requests:
+                cpu: 64m
+                memory: 64Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7203,7 +7230,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 256m
+                memory: 512Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/hpa.yaml
 apiVersion: autoscaling/v2beta2
@@ -7565,7 +7597,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: cefd48a7bdc5d27ebbbb3cec3ba8633667894291ab320066430a07fd64077b5c
-        checksum/secret: f39fda4080de268599cdcafc00bdaf4da925069376f5cd3c0e67915c7b9ffd41
+        checksum/secret: 112100e1ba5aa19ea4505b109c3e3e99bffc34cb2a541e72a81fd972f722ef10
     spec:
       
       serviceAccountName: charlescd-rabbitmq
