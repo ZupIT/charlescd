@@ -35,10 +35,10 @@ export type Rules = {
   type: string;
   clauses: (
     | {
-        type: string;
-        clauses: IRule[];
-        logicalOperator: string;
-      }
+      type: string;
+      clauses: IRule[];
+      logicalOperator: string;
+    }
     | IRule
   )[];
   logicalOperator: string;
@@ -59,8 +59,8 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
     defaultValues,
     mode: 'onChange'
   });
-  const { register, formState: { errors }} = form;
-  
+  const { register, formState: { errors } } = form;
+
   const fieldArray = useFieldArray({
     control: form.control,
     name: 'clauses'

@@ -140,6 +140,28 @@ export const baseRequest = (
     );
 };
 
+export const baseRequestQuery = (
+  url: string,
+  body: object | string | undefined = undefined,
+  options?: RequestInit
+) => {
+  return baseRequest(
+    url,
+    body,
+    options
+  )({})
+    .then(response =>
+      response.text().then(function(text) {
+        return text ? JSON.parse(text) : {};
+      })
+    )
+    .catch(async (error: Response) => {
+      const { status } = error;
+      const errorMessage = await error.json();
+      return Promise.reject({ status, ...errorMessage });
+    });
+};
+
 export const postRequest = (
   url: string,
   body: object | string | undefined = undefined

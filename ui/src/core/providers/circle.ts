@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { baseRequest, postRequest } from './base';
+import { baseRequest, baseRequestQuery, postRequest } from './base';
 import { ParameterPayload } from 'modules/Circles/Matcher/interfaces';
 import {
   CreateCircleWithFilePayload,
@@ -37,6 +37,11 @@ const initialCircleFilter = {
   page: 0
 };
 
+type DeleteCircleParams = {
+  id: string;
+  name: string
+}
+
 export const findAllCircles = (filter: CircleFilter = initialCircleFilter) => {
   const params = new URLSearchParams({
     active: `${filter?.active}`,
@@ -48,14 +53,23 @@ export const findAllCircles = (filter: CircleFilter = initialCircleFilter) => {
   return baseRequest(`${endpoint}?${params}`);
 };
 
+export const findComponentsQuery = (id: string) =>
+  baseRequestQuery(`${endpoint}/${id}/components`);
+
 export const findComponents = (id: string) =>
   baseRequest(`${endpoint}/${id}/components`);
+
+export const findCircleByIdQuery = async (circleId: string) =>
+  baseRequestQuery(`${endpoint}/${circleId}`);
 
 export const findCircleById = (filter: CircleFilter) =>
   baseRequest(`${endpoint}/${filter?.id}`);
 
 export const deleteCircleById = (id: string) =>
   baseRequest(`${endpoint}/${id}`, null, { method: 'DELETE' });
+
+export const deleteCircleByIdQuery = ({ id }: DeleteCircleParams) =>
+  baseRequestQuery(`${endpoint}/${id}`, null, { method: 'DELETE' });
 
 export const circleMatcherIdentify = (data: ParameterPayload) =>
   postRequest(`${endpoint}/identify`, data);

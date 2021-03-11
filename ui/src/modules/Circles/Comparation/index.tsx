@@ -24,7 +24,7 @@ import CircleMatcher from '../Matcher';
 import { CIRCLE_MATCHER_TAB } from '../constants';
 
 interface Props {
-  onChange: (delCircleStatus: string) => void;
+  onChange: () => void;
 }
 
 const CirclesComparation = ({ onChange }: Props) => {
@@ -34,7 +34,7 @@ const CirclesComparation = ({ onChange }: Props) => {
   const renderCircle = (id: string) => (
     <CirclesComparationItem
       id={id}
-      onChange={(delCircleStatus: string) => onChange(delCircleStatus)}
+      onChange={onChange}
     />
   );
 

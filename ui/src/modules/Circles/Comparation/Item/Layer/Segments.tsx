@@ -32,7 +32,7 @@ interface Props {
 
 const LayerSegments = ({ circle, isEditing, onClickCreate }: Props) => {
   const renderContent = () => {
-    return isEditing ? (
+    return isEditing && circle ? (
       <Segments rules={circle?.rules} viewMode />
     ) : (
       <ButtonIconRounded
