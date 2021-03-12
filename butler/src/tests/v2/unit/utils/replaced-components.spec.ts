@@ -79,7 +79,8 @@ it('new deployment with active components on default circle', async() => {
     'www.callback.com',
     activeOnCircle,
     false,
-    'default'
+    'default',
+    5
   )
   const defaultDeployment = new DeploymentEntityV2(
     'deployment-id-2',
@@ -88,7 +89,8 @@ it('new deployment with active components on default circle', async() => {
     'www.callback.com',
     activeOnDefault,
     true,
-    'default'
+    'default',
+    5
   )
 
   activeOnDefault = activeOnDefault.map(c => {
@@ -141,7 +143,8 @@ it('new deployment with active components on default circle', async() => {
     'www.callback.com',
     newComponents,
     false,
-    'default'
+    'default',
+    5
   )
 
   newComponents = newComponents.map(c => {
