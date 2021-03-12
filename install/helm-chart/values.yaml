@@ -27,7 +27,13 @@ CharlesApplications:
         - name: http
           port: 3000
     replicaCount: 1
-    resources: {}
+    resources:
+      limits:
+        cpu: 128m
+        memory: 256Mi
+      requests:
+        cpu: 128m
+        memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -61,7 +67,13 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    resources: {}
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 128m
+        memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -102,7 +114,13 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    resources: {}
+    resources:
+      limits:
+        cpu: 256m
+        memory: 512Mi
+      requests:
+        cpu: 128m
+        memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -138,7 +156,13 @@ CharlesApplications:
           port: 8080
     replicaCount: 1
     database: {}
-    resources: {}
+    resources:
+      limits:
+        cpu: 512m
+        memory: 1Gi
+      requests:
+        cpu: 512m
+        memory: 1Gi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -169,7 +193,13 @@ CharlesApplications:
           port: 3000
     replicaCount: 1
     database: {}
-    resources: {}
+    resources:
+      limits:
+        cpu: 128m
+        memory: 128Mi
+      requests:
+        cpu: 64m
+        memory: 64Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -260,7 +290,13 @@ CharlesApplications:
           port: 8080
     replicaCount: 1
     postgresqlWait: true
-    resources: {}
+    resources:
+      limits:
+        cpu: 128m
+        memory: 128Mi
+      requests:
+        cpu: 64m
+        memory: 64Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
