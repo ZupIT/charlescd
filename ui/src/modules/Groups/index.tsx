@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Page from 'core/components/Page';
 import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';

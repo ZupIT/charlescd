@@ -83,7 +83,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> new ArrayList<String>()
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> new ArrayList<String>()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "module"
@@ -129,7 +129,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build
@@ -197,7 +197,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * moduleRepository.findByIds(listOfModulesId) >> listOfModules
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build

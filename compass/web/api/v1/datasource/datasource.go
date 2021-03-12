@@ -38,7 +38,7 @@ func FindAllByWorkspace(datasourceMain datasource.UseCases) func(w http.Response
 			util.NewResponse(w, http.StatusInternalServerError, parseErr)
 		}
 
-		dataSources, dbErr := datasourceMain.FindAllByWorkspace(workspaceUUID, r.URL.Query().Get("healthy"))
+		dataSources, dbErr := datasourceMain.FindAllByWorkspace(workspaceUUID)
 		if dbErr != nil {
 			util.NewResponse(w, http.StatusInternalServerError, []error{errors.New("error doing the process")})
 			return

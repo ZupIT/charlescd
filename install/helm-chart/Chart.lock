@@ -1,0 +1,15 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 10.2.2
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.6.0
+- name: keycloak
+  repository: https://codecentric.github.io/helm-charts
+  version: 9.8.1
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 3.15.2
+digest: sha256:8a59ce8cb6f82f50658788842057e50a37dd9f4a8102850e65f4fdd0f86e1b8b
+generated: "2021-01-21T16:11:58.607452296-03:00"

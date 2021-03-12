@@ -15,10 +15,11 @@
  */
 
 import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react";
+import { render, fireEvent, waitFor, screen } from "@testing-library/react";
 import ComponentForm from "../ComponentForm";
 import { Component } from "modules/Modules/interfaces/Component";
 import { ThemeProviderWrapper } from "unit-test/testUtils";
+import userEvent from "@testing-library/user-event";
 
 const fakeComponent: Component = {
   id: "fake-id",
@@ -35,8 +36,8 @@ jest.mock("react-hook-form", () => {
   return {
     __esModule: true,
     useFormContext: () => ({
-      register: () => {},
-      unregister: () => {}
+      register: () => { },
+      unregister: () => { }
     })
   };
 });
@@ -81,7 +82,7 @@ test("componentForm for two or more components render and trash", async () => {
 });
 
 test("componentForm for more Options render", () => {
-  const { container } = render(
+  render(
     <ThemeProviderWrapper>
       <ComponentForm
         remove={mockRemove}
@@ -93,10 +94,12 @@ test("componentForm for more Options render", () => {
     </ThemeProviderWrapper>
   );
 
-  const componentButton: any = container.querySelector("span");
-  expect(container.innerHTML).toMatch("Show");
-  fireEvent.click(componentButton);
-  expect(container.innerHTML).toMatch("Hide");
+  let componentButton = screen.getByText(/Show advanced/);
+  userEvent.click(componentButton);
+  componentButton = screen.getByText(/Hide and clean advanced/);
+  expect(componentButton).toBeInTheDocument();
+  userEvent.click(componentButton);
+  expect(screen.getByText(/Show advanced/)).toBeInTheDocument();
 });
 
 test("renders inputs with values", async () => {
