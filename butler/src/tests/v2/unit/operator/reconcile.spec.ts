@@ -80,7 +80,8 @@ describe('Deployment on existing circle', () => {
       'some-url',
       previousComponents,
       false,
-      'my-namespace'
+      'my-namespace',
+      5
     )
 
     const currentComponents = [

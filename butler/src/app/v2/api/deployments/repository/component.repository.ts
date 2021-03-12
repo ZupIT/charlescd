@@ -26,7 +26,9 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     // TODO: we may have to save the workspace_id now in case the user is using the same butler for multiple workspaces
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
+      .leftJoin('deployment.executions', 'e', 'e.deployment_id = deployment.id')
       .where('deployment.current = true')
+      .andWhere('e.status != :status', { status: DeploymentStatusEnum.TIMED_OUT })
       .orderBy('deployment.created_at', 'DESC')
       .getMany()
   }

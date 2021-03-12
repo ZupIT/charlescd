@@ -155,7 +155,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
     params.callbackUrl,
     components,
     params.defaultCircle,
-    'my-namespace'
+    'my-namespace',
+    5
   ))
 
   deployment.current = status

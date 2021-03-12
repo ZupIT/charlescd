@@ -28,8 +28,6 @@ import { MooveService } from '../../core/integrations/moove/moove.service'
 import { ConsoleLoggerService } from '../../core/logs/console'
 import { HookParams } from '../params.interface'
 import { ReconcileDeployment } from './reconcile-deployments.usecase'
-import moment = require('moment')
-import { DateUtils } from '../../core/utils/date.utils'
 
 @Injectable()
 export class ReconcileDeploymentUsecase {
@@ -46,9 +44,12 @@ export class ReconcileDeploymentUsecase {
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
+    const execution = await this.executionRepository.findByDeploymentId(deployment.id)
+    if (execution.status === DeploymentStatusEnum.TIMED_OUT) {
+      return { children: [] }
+    }
     const rawSpecs = deployment.components.flatMap(c => c.manifests)
     const specs = this.reconcileUseCase.addMetadata(rawSpecs, deployment)
-    await this.handleTimedOut(deployment)
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
     }
@@ -78,21 +79,6 @@ export class ReconcileDeploymentUsecase {
     await this.deploymentRepository.updateHealthStatus(deployment.id, true)
     await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
     return { children: specs }
-  }
-
-  private async handleTimedOut(deployment: DeploymentEntityV2) {
-    if (deployment.healthy && deployment.routed) {
-      return
-    }
-    const createdMoment = moment(deployment.createdAt)
-    const nowMoment = moment(DateUtils.now())
-    if (moment.duration(nowMoment.diff(createdMoment)).asSeconds() > deployment.timeoutInSeconds) {
-      this.deploymentRepository.updateCurrent(deployment.id, false)
-      this.notifyCallback(deployment, DeploymentStatusEnum.FAILED)
-      const activeComponents = await this.componentRepository.findActiveComponents()
-      await this.k8sClient.applyRoutingCustomResource(activeComponents)
-      this.k8sClient.applyUndeploymentCustomResource(deployment)
-    }
   }
 
   private async notifyCallback(deployment: DeploymentEntityV2, status: DeploymentStatusEnum) {
