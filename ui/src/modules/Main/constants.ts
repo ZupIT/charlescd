@@ -17,7 +17,16 @@
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 
-export const workspaceMenu = [
+export type menuType = {
+  id: string,
+  icon: string,
+  text: string,
+  to: string,
+  action?: string,
+  subject?: string
+}[];
+
+export const workspaceMenu: menuType = [
   {
     id: genMenuId(routes.circles),
     icon: 'circles',
@@ -60,7 +69,7 @@ export const workspaceMenu = [
   }
 ];
 
-export const mainMenu = [
+export const mainMenu: menuType = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspaces',
@@ -75,7 +84,7 @@ export const mainMenu = [
   }
 ];
 
-export const rootMainMenu = [
+export const rootMainMenu: menuType = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspace',

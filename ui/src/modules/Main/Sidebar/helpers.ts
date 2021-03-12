@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-import { getWorkspaceId } from 'core/utils/workspace';
-import { isRoot } from 'core/utils/auth';
 import {
   rootMainMenu,
   mainMenu,
-  workspaceMenu
+  workspaceMenu,
+  menuType
 } from '../constants';
+import find from 'lodash/find';
+import forEach from 'lodash/forEach';
 
 export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
 
 export const getItems = () => {
-  if (getWorkspaceId() && window.location.pathname !== '/workspaces') {
-    return workspaceMenu;
-  } else if(isRoot() && window.location.pathname === '/workspaces') {
-    return rootMainMenu;
-  } else {
-    return mainMenu;
-  }
+  const [,path] = window.location.pathname.split('/');
+  let currentMenu: menuType = [];
+
+  forEach([workspaceMenu, rootMainMenu, mainMenu], (menu) => {
+    find(menu, ({to}) => {
+      if(to.includes(`/${path}`)) {
+        currentMenu = menu;
+      }
+    })
+  });
+
+  return currentMenu;
 };
