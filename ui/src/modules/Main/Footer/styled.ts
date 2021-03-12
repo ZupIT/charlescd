@@ -15,6 +15,7 @@
  */
 
 import styled from 'styled-components';
+import Text from 'core/components/Text';
 
 const Footer = styled.footer`
   grid-area: footer;
@@ -22,7 +23,13 @@ const Footer = styled.footer`
   background-color: ${({ theme }) => theme.footer.background};
   z-index: ${({ theme }) => theme.zIndex.OVER_3};
 `;
+ 
+const Version = styled(Text.h3)`
+  margin-right: 18px;
+  margin-top: 8px;
+`;
 
 export default {
-  Footer
+  Footer,
+  Version
 };
