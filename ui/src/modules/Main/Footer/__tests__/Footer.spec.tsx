@@ -23,7 +23,10 @@ test('render Footer', async () => {
   render(<Footer />);
 
   const component = await screen.findByTestId('footer');
-  await waitFor(() => expect(component).toBeInTheDocument());
+  const version = await screen.findByText('Version 0.6.1');
+
+  expect(component).toBeInTheDocument();
+  expect(version).toBeInTheDocument();
 });
 
 test('render Footer with success notification', async () => {
