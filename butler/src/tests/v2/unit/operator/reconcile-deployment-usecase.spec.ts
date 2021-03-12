@@ -30,6 +30,9 @@ import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/recon
 import { MooveService } from '../../../../app/v2/core/integrations/moove'
 import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
 import { HttpService } from '@nestjs/common'
+import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
+import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums/execution-type.enum'
+import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 
 describe('Reconcile deployment usecase spec', () => {
 
@@ -49,6 +52,9 @@ describe('Reconcile deployment usecase spec', () => {
 
   beforeEach(() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentWithManifestFixture)
+    jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
+      new Execution(deploymentWithManifestFixture, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    )
     jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
 
     hookParams = {
