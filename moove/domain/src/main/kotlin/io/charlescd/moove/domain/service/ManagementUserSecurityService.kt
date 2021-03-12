@@ -28,6 +28,4 @@ ManagementUserSecurityService {
     fun changePassword(email: String, oldPassword: String, newPassword: String)
 
     fun createUser(email: String, name: String, password: String)
-
-    fun deleteUser(id: String)
 }

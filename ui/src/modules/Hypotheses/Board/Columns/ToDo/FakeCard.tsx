@@ -25,6 +25,7 @@ import React, {
 import { useForm } from 'react-hook-form';
 import Input from 'core/components/Form/Input';
 import Styled from './styled';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 interface Props {
   onSave: Function;
@@ -48,7 +49,7 @@ const FakeCard = forwardRef(({ onSave }: Props, ref: Ref<HTMLDivElement>) => {
       <form onSubmit={handleSubmit(data => onSave(data.name))}>
         <Input
           ref={(input: HTMLInputElement) => {
-            register(input);
+            register(input, isRequiredAndNotBlank);
             inputRef.current = input;
           }}
           name="name"

@@ -30,6 +30,10 @@ interface Props {
   };
 }
 
+type ComponentField = {
+  fieldName: string;
+} & Component;
+
 const Components = ({ fieldArray }: Props) => {
   const { fields, append, remove } = fieldArray;
 
@@ -38,9 +42,9 @@ const Components = ({ fieldArray }: Props) => {
       <Styled.Subtitle color="dark">
         Add components and enter SLO metrics:
       </Styled.Subtitle>
-      {fields.map((field: Component, index: number) => (
+      {fields.map((field: ComponentField, index: number) => (
         <ComponentForm
-          key={index}
+          key={field.fieldName}
           field={field}
           fields={fields}
           remove={remove}

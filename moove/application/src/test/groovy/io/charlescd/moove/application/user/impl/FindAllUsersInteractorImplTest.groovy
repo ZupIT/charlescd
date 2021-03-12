@@ -30,10 +30,8 @@ import java.time.LocalDateTime
 class FindAllUsersInteractorImplTest extends Specification {
 
     private FindAllUsersInteractor findAllUsersInteractor
-
-    private UserRepository userRepository = Mock(UserRepository)
-
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
+    private UserRepository userRepository = Mock(UserRepository)
 
     void setup() {
         this.findAllUsersInteractor = new FindAllUsersInteractorImpl(new UserService(userRepository, managementUserSecurityService))

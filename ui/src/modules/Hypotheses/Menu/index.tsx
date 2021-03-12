@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { generatePath, useHistory } from 'react-router';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import map from 'lodash/map';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';

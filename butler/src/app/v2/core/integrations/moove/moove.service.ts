@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { HttpService, Inject, Injectable } from '@nestjs/common'
+import { HttpService, Injectable } from '@nestjs/common'
 import { Observable, of, throwError } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { AppConstants } from '../../constants'
-import { IoCTokensConstants } from '../../constants/ioc'
 import { ConsoleLoggerService } from '../../logs/console'
-import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
 import { AxiosResponse } from 'axios'
 
 @Injectable()
@@ -28,9 +26,7 @@ export class MooveService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly consoleLoggerService: ConsoleLoggerService,
-    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
-    private readonly envConfiguration: IEnvConfiguration
+    private readonly consoleLoggerService: ConsoleLoggerService
   ) { }
 
   public async notifyDeploymentStatus(

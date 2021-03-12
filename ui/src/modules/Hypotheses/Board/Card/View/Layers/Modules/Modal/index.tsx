@@ -31,7 +31,7 @@ import {
 } from 'modules/Hypotheses/Board/Card/constants';
 import { useModules } from 'modules/Hypotheses/Board/hooks';
 import { Module as ModuleProps } from 'modules/Modules/interfaces/Module';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Module from '../Module';
 import Checked from './Checked';
 import Styled from './styled';

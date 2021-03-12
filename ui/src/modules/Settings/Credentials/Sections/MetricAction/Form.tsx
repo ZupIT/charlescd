@@ -25,6 +25,7 @@ import Styled from './styled';
 import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
 import DocumentationLink from 'core/components/DocumentationLink';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 const FormAddAction = ({ onFinish }: Props) => {
   const [loadingPlugins, setLoadingPlugins] = useState(true);
@@ -98,7 +99,7 @@ const FormAddAction = ({ onFinish }: Props) => {
       {!isDefault && (
         <Styled.Input
           name="configuration"
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           label="Enter a action configuration"
         />
       )}
@@ -117,13 +118,13 @@ const FormAddAction = ({ onFinish }: Props) => {
     <Styled.FormContent showForm={!showConfigAction}>
       <Styled.Input
         name="nickname"
-        ref={register({ required: true })}
+        ref={register(isRequiredAndNotBlank)}
         label="Type a nickname"
         maxLength={100}
       />
       <Styled.Input
         name="description"
-        ref={register({ required: true })}
+        ref={register(isRequiredAndNotBlank)}
         label="Type a description"
         maxLength={100}
       />
