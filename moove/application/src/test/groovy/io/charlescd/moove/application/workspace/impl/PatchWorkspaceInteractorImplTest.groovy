@@ -486,6 +486,40 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         thrown(BusinessException)
     }
 
+    def 'when removing circle matcher url, should patch information successfully'() {
+        given:
+        def oldCircleMatcherUrl = "https://old-circle-matcher-url.com.br"
+        def author = getDummyUser()
+        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, oldCircleMatcherUrl, null, null, null)
+
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/circleMatcherUrl", null)])
+        def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+
+        def circles = new Circles([circle])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * circleRepository.findByWorkspaceId(workspace.id) >> circles
+        1 * circleMatcherService.deleteAllFor(circles, oldCircleMatcherUrl)
+        1 * workspaceRepository.update(_) >> { arguments ->
+            def workspaceUpdated = (Workspace) arguments[0]
+
+            assert workspaceUpdated.id == workspace.id
+            assert workspaceUpdated.name == workspace.name
+            assert workspaceUpdated.userGroups == workspace.userGroups
+            assert workspaceUpdated.author == workspace.author
+            assert workspaceUpdated.status == workspace.status
+            assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
+            assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
+            assert workspaceUpdated.circleMatcherUrl == null
+        }
+    }
+
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
                 new ArrayList<Workspace>(), false, LocalDateTime.now())

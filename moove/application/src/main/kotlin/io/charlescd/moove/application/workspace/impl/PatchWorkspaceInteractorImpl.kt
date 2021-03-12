@@ -21,7 +21,6 @@ package io.charlescd.moove.application.workspace.impl
 import io.charlescd.moove.application.*
 import io.charlescd.moove.application.workspace.PatchWorkspaceInteractor
 import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
-import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.Circles
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Workspace
@@ -53,64 +52,38 @@ open class PatchWorkspaceInteractorImpl(
         workspaceService.update(updatedWorkspace.copy(status = updatedWorkspace.checkCurrentWorkspaceStatus()))
     }
 
-    private fun checkIfCircleDefaultNeedsToBeCreatedAndDoIt(
-        workspace: Workspace,
-        updatedWorkspace: Workspace
-    ) {
-        if (!updatedWorkspace.circleMatcherUrl.isNullOrBlank() && isCircleMatcherUrlNew(workspace, updatedWorkspace)) {
-            val circle = circleService.findDefaultByWorkspaceId(workspace.id)
-
-            if (circle.isPresent) {
-                createDefaultCircleAtCircleMatcher(updatedWorkspace, circle.get())
-            } else {
-                throw BusinessException.of(MooveErrorCode.MISSING_DEFAULT_CIRCLE)
-            }
-        }
-    }
-
-    private fun syncWithCircleMatcherIfNecessary(actualWorkspace: Workspace, updatedWorkspace: Workspace) {
-        if (isRemovingCircleMatcher(actualWorkspace.circleMatcherUrl, updatedWorkspace.circleMatcherUrl)) {
-            val circles = circleService.findByWorkspaceId(actualWorkspace.id)
-            circleMatcherService.deleteAllFor(circles, actualWorkspace.circleMatcherUrl!!)
+    private fun syncWithCircleMatcherIfNecessary(currentWorkspace: Workspace, updatedWorkspace: Workspace) {
+        if (isRemovingCircleMatcher(currentWorkspace.circleMatcherUrl, updatedWorkspace.circleMatcherUrl)) {
+            val circles = circleService.findByWorkspaceId(currentWorkspace.id)
+            circleMatcherService.deleteAllFor(circles, currentWorkspace.circleMatcherUrl!!)
             return
         }
 
-        if (isReplacingCircleMatcher(actualWorkspace, updatedWorkspace)) {
-            val circles = circleService.findByWorkspaceId(actualWorkspace.id)
+        if (isReplacingCircleMatcher(currentWorkspace, updatedWorkspace)) {
+            val circles = circleService.findByWorkspaceId(currentWorkspace.id)
             if (!circles.hasDefault()) {
                 throw BusinessException.of(MooveErrorCode.MISSING_DEFAULT_CIRCLE)
             }
 
-            if(actualWorkspace.circleMatcherUrl != null) {
-                deleteAllCirclesOnCircleMatcher(actualWorkspace.circleMatcherUrl!!, circles)
+            if(currentWorkspace.circleMatcherUrl != null) {
+                deleteAllCirclesOnCircleMatcher(currentWorkspace.circleMatcherUrl!!, circles)
             }
             createAllCirclesOnCircleMatcher(updatedWorkspace.circleMatcherUrl!!, circles)
         }
     }
 
-    private fun isRemovingCircleMatcher(actualMatcherUrl: String?, newMatcherUrl: String?): Boolean {
-        return actualMatcherUrl?.isNotBlank() == true && newMatcherUrl.isNullOrBlank()
+    private fun isRemovingCircleMatcher(currentMatcherUrl: String?, newMatcherUrl: String?): Boolean {
+        return currentMatcherUrl?.isNotBlank() == true && newMatcherUrl.isNullOrBlank()
     }
 
-    private fun isReplacingCircleMatcher(workspace: Workspace, updatedWorkspace: Workspace): Boolean {
-        return !updatedWorkspace.circleMatcherUrl.isNullOrBlank() && isCircleMatcherUrlNew(workspace, updatedWorkspace)
+    private fun isReplacingCircleMatcher(currentWorkspace: Workspace, updatedWorkspace: Workspace): Boolean {
+        return !updatedWorkspace.circleMatcherUrl.isNullOrBlank() && isCircleMatcherUrlNew(currentWorkspace, updatedWorkspace)
     }
 
     private fun isCircleMatcherUrlNew(
         workspace: Workspace,
         updatedWorkspace: Workspace
     ) = workspace.circleMatcherUrl != updatedWorkspace.circleMatcherUrl
-
-    private fun createDefaultCircleAtCircleMatcher(
-        workspace: Workspace,
-        circle: Circle
-    ) {
-        try {
-            this.circleMatcherService.create(circle, workspace.circleMatcherUrl!!)
-        } catch (exception: Exception) {
-            throw BusinessException.of(MooveErrorCode.INVALID_CIRCLE_MATCHER_URL_ERROR)
-        }
-    }
 
     private fun createAllCirclesOnCircleMatcher(circleMatcherUrl: String, circles: Circles) {
         try {
