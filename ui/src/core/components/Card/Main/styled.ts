@@ -27,7 +27,7 @@ const Title = styled(Text.h4)`
 `;
 
 const Description = styled(Text.h5)`
-  width: 235px;
+  width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
