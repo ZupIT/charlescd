@@ -25,8 +25,6 @@ const Footer = styled.footer`
 `;
  
 const Version = styled(Text.h3)`
-  display: flex;
-  justify-content: right;
   margin-right: 18px;
   margin-top: 8px;
 `;
