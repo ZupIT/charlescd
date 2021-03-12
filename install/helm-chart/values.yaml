@@ -155,6 +155,7 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
+    database: {}
     resources:
       limits:
         cpu: 512m
@@ -191,6 +192,7 @@ CharlesApplications:
         - name: http
           port: 3000
     replicaCount: 1
+    database: {}
     resources:
       limits:
         cpu: 128m
@@ -233,6 +235,7 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
+    database: {}
     hpa: true
     autoscaling:
       minReplicas: 1
@@ -367,6 +370,11 @@ postgresql:
   enabled: true
   fullnameOverride: *postgresHost
   initdbScriptsConfigMap: charles-postgres
+  pguser: postgres
+  pgpassword: postgres
+
+job:
+  name: init-db
 
 redis:
   enabled: true
