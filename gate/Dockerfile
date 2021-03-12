@@ -18,7 +18,7 @@ RUN go build -o ./out/gate cmd/*.go
 FROM alpine:3.12.0
 
 COPY --from=builder /app/gate/out/gate .
-COPY --from=builder /app/gate/migrations resources/migrations
+COPY --from=builder /app/gate/resources/migrations resources/migrations
 
 EXPOSE 8080
 
