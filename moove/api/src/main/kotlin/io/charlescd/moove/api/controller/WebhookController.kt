@@ -20,6 +20,7 @@ import io.charlescd.moove.application.webhook.*
 import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.request.PatchWebhookSubscriptionRequest
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
+import io.charlescd.moove.application.webhook.response.EventHistoryWebhookSubscriptionResponse
 import io.charlescd.moove.application.webhook.response.HealthCheckWebhookSubscriptionResponse
 import io.charlescd.moove.application.webhook.response.WebhookSubscriptionResponse
 import io.charlescd.moove.domain.PageRequest
@@ -103,7 +104,7 @@ class WebhookController(
     }
 
     @ApiOperation(value = "Webhook event history")
-    @DeleteMapping("/{id}/history")
+    @GetMapping("/{id}/history")
     @ResponseStatus(HttpStatus.OK)
     fun getSubscriptionEventHistory(
         @RequestHeader("x-workspace-id") workspaceId: String,
@@ -114,7 +115,16 @@ class WebhookController(
         @RequestParam(value = "eventField", required = false) eventField: String?,
         @RequestParam(value = "eventValue", required = false) eventValue: String?,
         @Valid pageRequest: PageRequest
-    ) {
-        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue, pageRequest)
+    ): List<EventHistoryWebhookSubscriptionResponse> {
+        return eventHistoryWebhookSubscriptionInteractor.execute(
+            workspaceId,
+            authorization,
+            id,
+            eventType,
+            eventStatus,
+            eventField,
+            eventValue,
+            pageRequest
+        )
     }
 }

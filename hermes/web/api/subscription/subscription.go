@@ -154,7 +154,7 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 
 		qp := map[string]string{
 			"EventType":  r.URL.Query().Get("eventType"),
-			"Status":     r.URL.Query().Get("status"),
+			"Status":     r.URL.Query().Get("eventStatus"),
 			"EventField": r.URL.Query().Get("eventField"),
 			"EventValue": r.URL.Query().Get("eventValue"),
 		}
