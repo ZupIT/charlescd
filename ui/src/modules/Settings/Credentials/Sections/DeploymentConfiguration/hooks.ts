@@ -15,12 +15,12 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { create, configPath } from 'core/providers/cdConfiguration';
+import { create, configPath } from 'core/providers/deploymentConfiguration';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { CDConfiguration, Response } from './interfaces';
+import { DeploymentConfiguration, Response } from './interfaces';
 
 export const useCDConfiguration = (): FetchProps => {
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ export const useCDConfiguration = (): FetchProps => {
   } = delData;
 
   const save = useCallback(
-    (cdConfiguration: CDConfiguration) => {
+    (cdConfiguration: DeploymentConfiguration) => {
       createCDConfiguration(cdConfiguration);
     },
     [createCDConfiguration]
@@ -58,14 +58,14 @@ export const useCDConfiguration = (): FetchProps => {
     if (errorSave) {
       dispatch(
         toogleNotification({
-          text: `[${errorSave.status}] CD Configuration could not be saved.`,
+          text: `[${errorSave.status}] Deployment Configuration could not be saved.`,
           status: 'error'
         })
       );
     } else if (errorAdd) {
       dispatch(
         toogleNotification({
-          text: `[${errorAdd.status}] CD Configuration could not be patched.`,
+          text: `[${errorAdd.status}] Deployment Configuration could not be patched.`,
           status: 'error'
         })
       );
@@ -80,7 +80,7 @@ export const useCDConfiguration = (): FetchProps => {
     if (errorRemove) {
       dispatch(
         toogleNotification({
-          text: `[${errorRemove.status}] CD Configuration could not be removed.`,
+          text: `[${errorRemove.status}] Deployment Configuration could not be removed.`,
           status: 'error'
         })
       );

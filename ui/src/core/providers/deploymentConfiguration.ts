@@ -14,32 +14,11 @@
  * limitations under the License.
  */
 
-export interface Props {
-  onSave: Function;
-}
+import { DeploymentConfiguration } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/interfaces';
+import { postRequest } from './base';
 
-export interface CDConfiguration {
-  name: string;
-  type: string;
-  configurationData: {
-    namespace: string;
-    url: string;
-    gitAccount: string;
-    account: string;
-    gitProvider: string;
-    gitToken: string;
-    provider: string;
-    clientCertificate?: string;
-    clientKey?: string;
-    caData?: string;
-    awsSID?: string;
-    awsSecret?: string;
-    awsRegion?: string;
-    awsClusterName?: string;
-  };
-}
+const endpoint = '/moove/v2/configurations/deployment';
+export const configPath = '/cdConfigurationId';
 
-export interface Response {
-  id: string;
-  cdConfiguration?: CDConfiguration;
-}
+export const create = (deploymentConfiguration: DeploymentConfiguration) =>
+  postRequest(`${endpoint}`, deploymentConfiguration);

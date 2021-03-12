@@ -16,14 +16,14 @@
 
 import React from 'react';
 import { render, act, screen } from 'unit-test/testUtils';
-import FormCDConfiguration from '../Sections/CDConfiguration/Form';
+import FormDeploymentConfiguration from '../Sections/DeploymentConfiguration/Form';
 import userEvent from '@testing-library/user-event';
 
 const mockOnFinish = jest.fn();
 
-test('render CD Configuration form for CharlesCD', async () => {
+test('render Deployment Configuration form for CharlesCD', async () => {
   render(
-    <FormCDConfiguration onFinish={mockOnFinish}/>
+    <FormDeploymentConfiguration onFinish={mockOnFinish}/>
   );
 
   const radioButton = await screen.findByTestId('radio-group-cd-configuration-item-OCTOPIPE');
@@ -34,9 +34,9 @@ test('render CD Configuration form for CharlesCD', async () => {
   expect(input).toBeInTheDocument();
 });
 
-test('render CD Configuration form for Spinnaker', async () => {
+test('render Deployment Configuration form for Spinnaker', async () => {
   render(
-    <FormCDConfiguration onFinish={mockOnFinish}/>
+    <FormDeploymentConfiguration onFinish={mockOnFinish}/>
   );
 
   const radioButton = await screen.findByTestId('radio-group-cd-configuration-item-SPINNAKER');

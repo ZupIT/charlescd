@@ -18,7 +18,7 @@ import Git from './Git';
 import Registry from './Registry';
 import CircleMatcher from './CircleMatcher';
 import MetricProvider from './MetricProvider';
-import CDConfiguration from './CDConfiguration';
+import DeploymentConfiguration from './DeploymentConfiguration';
 import UserGroup from './UserGroup';
 import MetricAction from './MetricAction';
 
@@ -27,7 +27,7 @@ export default {
   Registry,
   CircleMatcher,
   MetricProvider,
-  CDConfiguration,
+  DeploymentConfiguration,
   UserGroup,
   MetricAction
 };

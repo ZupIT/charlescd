@@ -36,7 +36,7 @@ import {
 import Styled from './styled';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import Select from 'core/components/Form/Select/Single/Select';
-import { gitProviders } from 'modules/Settings/Credentials/Sections/CDConfiguration/constants';
+import { gitProviders } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/constants';
 import { Option } from 'core/components/Form/Select/interfaces';
 
 interface Props {

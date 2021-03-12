@@ -21,7 +21,7 @@ import { Helm } from 'modules/Modules/interfaces/Helm';
 import {
   githubProvider,
   gitlabProvider
-} from 'modules/Settings/Credentials/Sections/CDConfiguration/constants';
+} from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/constants';
 
 export const validFields = (fields: object) => {
   let status = true;

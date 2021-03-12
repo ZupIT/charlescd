@@ -15,41 +15,36 @@
  */
 
 import { Helm } from "modules/Modules/interfaces/Helm";
-import { githubProvider, gitlabProvider } from "modules/Settings/Credentials/Sections/CDConfiguration/constants";
-import React from "react";
+import { githubProvider, gitlabProvider } from "modules/Settings/Credentials/Sections/DeploymentConfiguration/constants";
 import { validFields, createGitApi, destructHelmUrl } from "../helpers"
 
 const invalidEmptyStringObject: Record<string, any> = {
   key1: "",
 };
 
-const invalidNullObject: Record<string, any> = {
-  key1: undefined
-};
-
 const validObject: Record<string, any> = {
   key1: "fake-value",
 };
 
-test("Test empty strings validFields", () => {
+test("should empty strings validFields", () => {
   const objectIsValid = validFields(invalidEmptyStringObject)
 
   expect(objectIsValid).toBeFalsy()
 });
 
-test("Test undefined validFields", () => {
+test("should undefined validFields", () => {
   const objectIsValid = validFields(invalidEmptyStringObject)
 
   expect(objectIsValid).toBeFalsy()
 });
 
-test("Test valid string validFields", () => {
+test("should valid string validFields", () => {
   const objectIsValid = validFields(validObject)
 
   expect(objectIsValid).toBeTruthy()
 });
 
-test("Test createGitApi return github with all data", () => {
+test("should createGitApi return github with all data", () => {
   const helmData: Helm = {
     helmBranch: "main",
     helmOrganization: "zupit",
@@ -61,7 +56,7 @@ test("Test createGitApi return github with all data", () => {
   expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents/examplepath?ref=main")
 })
 
-test("Test createGitApi return github without path", () => {
+test("createGitApi return github without path", () => {
   const helmData: Helm = {
     helmBranch: "main",
     helmOrganization: "zupit",
@@ -72,7 +67,7 @@ test("Test createGitApi return github without path", () => {
   expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents?ref=main")
 })
 
-test("Test createGitApi return github without branch", () => {
+test("should createGitApi return github without branch", () => {
   const helmData: Helm = {
     helmOrganization: "zupit",
     helmRepository: "examplerepo"
@@ -82,7 +77,7 @@ test("Test createGitApi return github without branch", () => {
   expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents?ref=main")
 })
 
-test("Test createGitApi return gitlab with all data", () => {
+test("should createGitApi return gitlab with all data", () => {
   const helmData: Helm = {
     helmBranch: "main",
     helmOrganization: "zupit",
@@ -95,7 +90,7 @@ test("Test createGitApi return gitlab with all data", () => {
   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files/examplepath?ref=main")
 })
 
-test("Test createGitApi return github without path", () => {
+test("should createGitApi return gitlab without path", () => {
   const helmData: Helm = {
     helmBranch: "main",
     helmOrganization: "zupit",
@@ -108,7 +103,7 @@ test("Test createGitApi return github without path", () => {
   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
 })
 
-test("Test createGitApi return github without branch", () => {
+test("should createGitApi return gitlab without branch", () => {
   const helmData: Helm = {
     helmOrganization: "zupit",
     helmRepository: "examplerepo",
@@ -119,7 +114,7 @@ test("Test createGitApi return github without branch", () => {
   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
 })
 
-test("Test destructHelmUrl github with full url", () => {
+test("destructHelmUrl github with full url", () => {
   const setValue = jest.fn()
   const fullUrl = "https://api.github.com/repos/zupit/examplerepo/contents/examplepath?ref=main"
 
@@ -130,7 +125,7 @@ test("Test destructHelmUrl github with full url", () => {
   expect(setValue).toHaveBeenCalledWith("helmBranch", "main")
 })
 
-test("Test destructHelmUrl github without path", () => {
+test("destructHelmUrl github without path", () => {
   const setValue = jest.fn()
   const fullUrl = "https://api.github.com/repos/zupit/examplerepo/contents?ref=main"
 
@@ -141,7 +136,7 @@ test("Test destructHelmUrl github without path", () => {
 })
 
 
-test("Test destructHelmUrl gitlab with full url", () => {
+test("destructHelmUrl gitlab with full url", () => {
   const setValue = jest.fn()
   const fullUrl = "https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files/examplepath?ref=main"
 
@@ -154,7 +149,7 @@ test("Test destructHelmUrl gitlab with full url", () => {
   expect(setValue).toBeCalledTimes(5)
 })
 
-test("Test destructHelmUrl github without path", () => {
+test("destructHelmUrl gitlab without path", () => {
   const setValue = jest.fn()
   const fullUrl = "https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main"
 
@@ -163,5 +158,4 @@ test("Test destructHelmUrl github without path", () => {
   expect(setValue).toHaveBeenCalledWith("helmRepository", "examplerepo")
   expect(setValue).toHaveBeenCalledWith("helmBranch", "main")
   expect(setValue).toBeCalledTimes(4)
-
 })

@@ -15,6 +15,7 @@
  */
 
 import styled from 'styled-components';
+import { fadeIn } from 'core/assets/style/animate';
 import TextComponent from 'core/components/Text';
 
 const Title = styled(TextComponent.h2)`
@@ -34,13 +35,27 @@ const Subtitle = styled(TextComponent.h5)`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
+  animation: 0.3s ${fadeIn} linear;
   margin-top: 10px;
   margin-left: 40px;
+
+  > :first-child {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    > :last-child {
+      margin-left: 10px;
+    }
+  }
 `;
 
 const Form = styled.form`
-  margin-top: 20px;
-  width: 271px;
+  width: 269px;
+
+  > * {
+    margin-top: 19px;
+  }
 `;
 
 const Fields = styled.div`

@@ -14,27 +14,40 @@
  * limitations under the License.
  */
 
-import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
-
-export interface Workspace {
-  id: string;
-  name: string;
-  createdAt: string;
-  status?: string;
-  circleMatcherUrl?: string;
-  gitConfiguration?: Configuration;
-  userGroups?: UserGroup[];
-  deploymentConfiguration?: Configuration;
-  metricConfiguration?: MetricConfiguration;
-  registryConfiguration?: Configuration;
+export interface Props {
+  onSave: Function;
 }
 
-export interface Configuration {
-  id: string;
+export interface CDConfiguration {
   name: string;
+  type: string;
+  configurationData: {
+    namespace: string;
+    url: string;
+    gitAccount: string;
+    account: string;
+    gitProvider: string;
+    gitToken: string;
+    provider: string;
+    clientCertificate?: string;
+    clientKey?: string;
+    caData?: string;
+    awsSID?: string;
+    awsSecret?: string;
+    awsRegion?: string;
+    awsClusterName?: string;
+  };
 }
 
-export interface MetricConfiguration {
+export interface DeploymentConfiguration {
+  name: string;
+  butlerUrl: string;
+  namespace: string;
+  gitToken: string;
+  gitProvider: 'GITHUB' | 'GITLAB'
+}
+
+export interface Response {
   id: string;
-  provider: string;
+  deploymentConfiguration?: DeploymentConfiguration;
 }
