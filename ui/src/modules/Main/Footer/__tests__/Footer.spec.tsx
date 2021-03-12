@@ -23,8 +23,29 @@ test('render Footer', async () => {
   render(<Footer />);
 
   const component = await screen.findByTestId('footer');
-  await waitFor(() => expect(component).toBeInTheDocument());
+  const version = await screen.findByText('Version 0.6.1');
+
+  expect(component).toBeInTheDocument();
+  expect(version).toBeInTheDocument();
 });
+
+// test.only('render Footer without version', async () => {
+//   Object.assign(window, {
+//     CHARLESCD_ENVIRONMENT: {
+//       REACT_APP_CHARLES_VERSION: ''
+//     }
+//   });
+
+//   render(<Footer />);
+
+//   screen.debug();
+
+//   const component = await screen.findByTestId('footer');
+//   const version = await screen.findByText('Version 0.6.1');
+
+//   expect(component).toBeInTheDocument();
+//   expect(version).toBeInTheDocument();
+// });
 
 test('render Footer with success notification', async () => {
   jest.spyOn(StateHooks, 'useGlobalState')
