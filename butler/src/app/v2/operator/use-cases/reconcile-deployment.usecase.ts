@@ -46,6 +46,7 @@ export class ReconcileDeploymentUsecase {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const execution = await this.executionRepository.findByDeploymentId(deployment.id)
     if (execution.status === DeploymentStatusEnum.TIMED_OUT) {
+      this.consoleLoggerService.log('DEPLOYMENT_RECONCILE:TIMED_OUT_DEPLOYMENT', { executionId: execution.id, deploymentId: execution.deploymentId })
       return { children: [] }
     }
     const rawSpecs = deployment.components.flatMap(c => c.manifests)
