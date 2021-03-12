@@ -27,15 +27,22 @@ import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-case
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
+import { MooveService } from '../../../../app/v2/core/integrations/moove'
+import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
+import { HttpService } from '@nestjs/common'
 
 describe('Reconcile deployment usecase spec', () => {
 
   const butlerNamespace = 'butler-namespace'
+  const consoleLoggerService = new ConsoleLoggerService()
+  const envConfiguration = { butlerNamespace: butlerNamespace } as IEnvConfiguration
+
   const deploymentRepository = new DeploymentRepositoryV2()
   const componentsRepository = new ComponentsRepositoryV2()
+  const executionRepository = new ExecutionRepository(consoleLoggerService)
+  const mooveService = new MooveService(new HttpService(), consoleLoggerService)
 
-  const consoleLoggerService = new ConsoleLoggerService()
-  const k8sClient = new K8sClient(consoleLoggerService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
+  const k8sClient = new K8sClient(consoleLoggerService, envConfiguration)
   const reconcileDeployment = new ReconcileDeployment()
 
   let hookParams: HookParams
@@ -265,7 +272,9 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       consoleLoggerService,
-      reconcileDeployment
+      reconcileDeployment,
+      executionRepository,
+      mooveService
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParams)

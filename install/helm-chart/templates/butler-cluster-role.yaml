@@ -1,7 +1,8 @@
+{{- if .Values.CharlesApplications.butler.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Release.Name }}-charlescd-butler-role
+  name: charlescd-butler-role-{{ .Release.Namespace }}
 rules:
 - apiGroups:
   - charlescd.io
@@ -12,3 +13,4 @@ rules:
   - delete
   - get
   - patch
+{{- end }}

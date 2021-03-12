@@ -45,7 +45,7 @@ export class ExecutionRepository extends Repository<Execution> {
     return await this.findOneOrFail({ deploymentId: deploymentId })
   }
 
-  public async listExecutionsAndRelations(pageSize: number, page: number, current: boolean): Promise<[Execution[], number]> {
+  public async listExecutionsAndRelations(pageSize: number, page: number, current?: boolean): Promise<[Execution[], number]> {
     let baseQuery = this.createQueryBuilder('e')
       .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at, count (*) over() as total_executions')
       .leftJoin(DeploymentEntity, 'd', 'd.id = e.deployment_id')
@@ -71,13 +71,12 @@ export class ExecutionRepository extends Repository<Execution> {
          )) AS deployment
       `)
       .groupBy('e.id, d.id')
-      .andWhere('d.current = :current', { current: current })
       .orderBy({ 'e.created_at': 'DESC', 'e.id': 'DESC' })
       .limit(pageSize)
       .offset(pageSize * (page))
 
-    if (active) {
-      baseQuery = baseQuery.andWhere('d.active = :active', { active: active })
+    if (current) {
+      baseQuery = baseQuery.andWhere('d.current = :current', { current: current })
     }
 
     // TODO leaving this here to discuss keyset pagination
