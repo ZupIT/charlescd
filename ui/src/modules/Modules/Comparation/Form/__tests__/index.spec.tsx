@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import React, { ReactElement } from "react";
-import { render, waitFor, screen, act } from "@testing-library/react";
+import { ReactElement } from "react";
+import { render, waitFor, screen } from "@testing-library/react";
 import FormModule from "../";
 import * as UpdateModuleHook from '../../../hooks/module';
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
 import { Module, Author } from "modules/Modules/interfaces/Module";
 import { Actions, Subjects } from "core/utils/abilities";
-import selectEvent from 'react-select-event';
 import userEvent from "@testing-library/user-event";
 
 interface fakeCanProps {
@@ -40,6 +39,7 @@ const fakeAuthor: Author = {
   id: "1",
   name: "pseudonym"
 }
+
 const fakeComponent: ComponentInterface = {
   id: "fake-id",
   name: "fake-name",
@@ -58,15 +58,6 @@ const fakeModule: Module = {
   components: [fakeComponent]
 }
 
-const fakeGitlabModule: Module = {
-  gitRepositoryAddress: "fake-github",
-  helmRepository: "https://gitlabexample.com/api/v4/projects/zup%2Fcharlescd/repository/files/teste%2Fteste?ref=master",
-  id: "1",
-  name: "fake-module",
-  author: fakeAuthor,
-  components: [fakeComponent]
-}
-
 const mockOnChange = jest.fn()
 
 jest.mock('containers/Can', () => {
@@ -77,7 +68,6 @@ jest.mock('containers/Can', () => {
     }
   };
 });
-
 
 test("component for edit mode render", async () => {
   const { container } = render(
@@ -93,7 +83,6 @@ test("component for edit mode render", async () => {
   await waitFor(() => expect(container.innerHTML).toMatch("Edit module"));
 });
 
-
 test("component for edit mode create", async () => {
   const { container } = render(
     <AllTheProviders>
@@ -108,51 +97,6 @@ test("component for edit mode create", async () => {
   await waitFor(() => expect(container.innerHTML).toMatch("Create module"));
 });
 
-
-test("component for edit mode render with gitlab", async () => {
-  const { container } = render(
-    <AllTheProviders>
-      <FormModule
-        onChange={mockOnChange}
-        module={fakeGitlabModule}
-        key={"fake-key"}
-      />
-    </AllTheProviders>
-  );
-
-  await waitFor(() => expect(container.innerHTML).toMatch("Edit module"));
-});
-
-
-test("Should render the form and select a GIT provider", async () => {
-  render(
-    <AllTheProviders>
-      <FormModule
-        onChange={jest.fn()}
-        module={{} as Module}
-        key={"fake-key"}
-      />
-    </AllTheProviders>
-  );
-
-  const gitProviderSelect = screen.getByText('Git provider');
-  await act(() => selectEvent.select(gitProviderSelect, 'GitLab'));
-
-  const gitlabURLInput = screen.getByTestId('input-text-helmGitlabUrl');
-  const organizationInput = screen.getByTestId('input-text-helmOrganization');
-  const repositoryInput = screen.getByTestId('input-text-helmRepository');
-  const pathInput = screen.getByTestId('input-text-helmPath');
-  const branchInput = screen.getByTestId('input-text-helmBranch');
-
-  userEvent.type(gitlabURLInput, 'http://gitlab.com');
-  userEvent.type(organizationInput, 'Zup');
-  userEvent.type(repositoryInput, 'ZupIT');
-  userEvent.type(pathInput, '/zup');
-  userEvent.type(branchInput, 'feature/zup');
-
-  expect(screen.getByText('Add helm chart repository')).toBeInTheDocument();
-});
-
 test("Should render submit button", async () => {
   const updateModuleSpy = jest.spyOn(UpdateModuleHook, 'useUpdateModule');
 
@@ -160,13 +104,12 @@ test("Should render submit button", async () => {
     <AllTheProviders>
       <FormModule
         onChange={jest.fn()}
-        module={fakeGitlabModule}
+        module={fakeModule}
         key={"fake-key"}
       />
     </AllTheProviders>
   );
 
-  await act(() => userEvent.click(screen.getByTestId('button-default-undefined')));
-  
+  userEvent.click(screen.getByTestId('button-default-submit'));
   expect(updateModuleSpy).toHaveBeenCalled();
 });
