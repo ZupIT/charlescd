@@ -2,7 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 20201007113800-1
       author: thalles.freitas
-      comment: "Adding percentage column to ci"
+      comment: "Adding percentage column to circle"
       changes:
         - addColumn:
             tableName: circles
