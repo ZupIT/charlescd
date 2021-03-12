@@ -22,6 +22,7 @@ import {
 } from '../constants';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
+import { isRoot } from 'core/utils/auth';
 
 export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
@@ -29,8 +30,9 @@ export const getExpandIcon = (expand: boolean) =>
 export const getItems = () => {
   const [,path] = window.location.pathname.split('/');
   let currentMenu: menuType = [];
+  const menus = isRoot() ? [workspaceMenu, rootMainMenu] : [workspaceMenu, mainMenu];
 
-  forEach([workspaceMenu, rootMainMenu, mainMenu], (menu) => {
+  forEach(menus, (menu) => {
     find(menu, ({to}) => {
       if(to.includes(`/${path}`)) {
         currentMenu = menu;
