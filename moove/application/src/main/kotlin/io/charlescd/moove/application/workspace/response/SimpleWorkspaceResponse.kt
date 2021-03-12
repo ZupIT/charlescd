@@ -22,7 +22,6 @@ import io.charlescd.moove.domain.SimpleWorkspace
 data class SimpleWorkspaceResponse(
     val id: String,
     val name: String,
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     val permissions: List<String>,
     val status: String
 ) {

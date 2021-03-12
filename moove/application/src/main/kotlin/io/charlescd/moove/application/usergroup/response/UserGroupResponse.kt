@@ -28,7 +28,6 @@ data class UserGroupResponse(
     val author: SimpleUserResponse,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime,
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     val users: List<SimpleUserResponse>
 ) {
 
