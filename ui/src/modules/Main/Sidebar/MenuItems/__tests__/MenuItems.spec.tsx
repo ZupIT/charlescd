@@ -18,8 +18,9 @@ import React from 'react';
 import { render, fireEvent, screen } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
-import * as utilsAuth from 'core/utils/auth';
 import MenuItems from '../index';
+import { saveProfile } from 'core/utils/profile';
+import {dark as sidebarDarkTheme} from 'core/assets/themes/sidebar';
 
 const originalWindow = { ...window };
 
@@ -108,21 +109,6 @@ test('should show main menu for non-root user', () => {
   expect(screen.getByText('Account')).toBeInTheDocument();
 });
 
-test('should show root main menu for root user', () => {
-  const onClickExpand = jest.fn();
-  const isExpanded = true;
-  jest.spyOn(utilsAuth, 'isRoot').mockReturnValue(true);
-
-  render(
-    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
-  );
-
-  expect(screen.getByText('Workspaces')).toBeInTheDocument();
-  expect(screen.getByText('Users')).toBeInTheDocument();
-  expect(screen.getByText('User Group')).toBeInTheDocument();
-  expect(screen.getByText('Account')).toBeInTheDocument();
-});
-
 test('should show workspace menu', () => {
   const onClickExpand = jest.fn();
   const isExpanded = true;
@@ -144,4 +130,78 @@ test('should show workspace menu', () => {
   expect(screen.getByText('Modules')).toBeInTheDocument();
   expect(screen.getByText('Metrics')).toBeInTheDocument();
   expect(screen.getByText('Settings')).toBeInTheDocument();
+  expect(screen.queryByText('Workspaces')).not.toBeInTheDocument();
+});
+
+test('should render root main menu when route is /users/compare', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.usersComparation
+  };
+
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: true
+  });
+
+  localStorage.setItem('workspace', '1234567890');
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.getByText('Users')).toBeInTheDocument();
+  expect(screen.getByText('User Group')).toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
+  expect(screen.getByTestId('menu-users')).toHaveStyle(`backgroundColor: ${sidebarDarkTheme.menuBgActive}`);
+
+});
+
+test('should show root main menu', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: true
+  });
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.getByText('Users')).toBeInTheDocument();
+  expect(screen.getByText('User Group')).toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
+});
+
+test('should show main menu', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: false
+  });
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.queryByText('Users')).not.toBeInTheDocument();
+  expect(screen.queryByText('User Group')).not.toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
 });
