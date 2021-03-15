@@ -74,6 +74,7 @@ class WebhookEventService(
 
     private fun buildWebhookDeploymentEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): WebhookDeploymentEvent {
         return WebhookDeploymentEvent(
+            deploymentId = deployment.id,
             workspaceId = deployment.workspaceId,
             type = simpleWebhookEvent.eventSubType,
             status = simpleWebhookEvent.eventStatus,
