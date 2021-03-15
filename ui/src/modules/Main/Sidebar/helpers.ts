@@ -29,7 +29,7 @@ export const getExpandIcon = (expand: boolean) =>
 
 export const getItems = () => {
   const [,path] = window.location.pathname.split('/');
-  let currentMenu: MenuType = [];
+  let currentMenu: MenuType[] = [];
   const menus = isRoot() ? [workspaceMenu, rootMainMenu] : [workspaceMenu, mainMenu];
 
   forEach(menus, (menu) => {

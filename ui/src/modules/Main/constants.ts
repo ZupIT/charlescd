@@ -24,9 +24,9 @@ export type MenuType = {
   to: string,
   action?: string,
   subject?: string
-}[];
+};
 
-export const workspaceMenu: MenuType = [
+export const workspaceMenu: MenuType[] = [
   {
     id: genMenuId(routes.circles),
     icon: 'circles',
@@ -69,7 +69,7 @@ export const workspaceMenu: MenuType = [
   }
 ];
 
-export const mainMenu: MenuType = [
+export const mainMenu: MenuType[] = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspaces',
@@ -84,7 +84,7 @@ export const mainMenu: MenuType = [
   }
 ];
 
-export const rootMainMenu: MenuType = [
+export const rootMainMenu: MenuType[] = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspace',
