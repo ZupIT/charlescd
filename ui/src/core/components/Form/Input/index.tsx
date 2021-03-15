@@ -108,6 +108,7 @@ const Input = React.forwardRef(
         data-testid={`input-wrapper-${name}`}
       >
         <Styled.Input
+          id={`input-${type}-${name}`}
           ref={inputRef}
           type={type}
           name={name}
@@ -128,6 +129,7 @@ const Input = React.forwardRef(
             isFocused={isFocused}
             hasError={hasError || !isEmpty(error)}
             onClick={() => handleClick()}
+            htmlFor={`input-${type}-${name}`}
           >
             {label}
           </Styled.Label>

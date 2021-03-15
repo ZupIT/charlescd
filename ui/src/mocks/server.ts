@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { Execution } from '../../entity/execution.entity'
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+import { handlers } from './handlers';
 
-export interface PaginatedExecutions {
-  executions: Execution[]
-  page: number
-  size: number
-  last: boolean
-}
+const server = setupServer(...handlers);
+export { server, rest };
