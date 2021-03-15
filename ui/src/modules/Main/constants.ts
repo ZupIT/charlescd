@@ -69,7 +69,7 @@ export const workspaceMenu: MenuType = [
   }
 ];
 
-export const mainMenu: menuType = [
+export const mainMenu: MenuType = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspaces',
@@ -84,7 +84,7 @@ export const mainMenu: menuType = [
   }
 ];
 
-export const rootMainMenu: menuType = [
+export const rootMainMenu: MenuType = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspace',
