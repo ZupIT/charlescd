@@ -29,7 +29,7 @@ class CreateDeploymentConfigurationInteractorImpl(
     private val deploymentConfigurationRepository: DeploymentConfigurationRepository,
     private val userService: UserService,
     private val workspaceService: WorkspaceService
-): CreateDeploymentConfigurationInteractor {
+) : CreateDeploymentConfigurationInteractor {
 
     override fun execute(request: CreateDeploymentConfigurationRequest, workspaceId: String, authorization: String): DeploymentConfigurationResponse {
         workspaceService.checkIfWorkspaceExists(workspaceId)

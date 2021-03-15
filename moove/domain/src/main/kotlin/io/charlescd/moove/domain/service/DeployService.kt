@@ -19,8 +19,8 @@
 package io.charlescd.moove.domain.service
 
 import io.charlescd.moove.domain.Build
-import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.DeploymentConfiguration
 
 interface DeployService {
 

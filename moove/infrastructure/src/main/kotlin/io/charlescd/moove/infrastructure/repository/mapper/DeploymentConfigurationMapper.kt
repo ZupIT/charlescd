@@ -19,8 +19,8 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.GitProviderEnum
 import io.charlescd.moove.domain.User
-import org.springframework.stereotype.Component
 import java.sql.ResultSet
+import org.springframework.stereotype.Component
 
 @Component
 class DeploymentConfigurationMapper() {
@@ -37,7 +37,7 @@ class DeploymentConfigurationMapper() {
                 butlerUrl = resultSet.getString("deployment_configuration_butler_url"),
                 namespace = resultSet.getString("deployment_configuration_namespace"),
                 gitToken = resultSet.getString("deployment_configuration_git_token"),
-                gitProvider =  GitProviderEnum.valueOf(
+                gitProvider = GitProviderEnum.valueOf(
                     resultSet.getString("deployment_configuration_git_provider")
                 )
             )
