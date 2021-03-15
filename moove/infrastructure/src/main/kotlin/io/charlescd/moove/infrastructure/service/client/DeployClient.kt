@@ -21,6 +21,7 @@ import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
 import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
 import io.charlescd.moove.infrastructure.service.client.response.DeployResponse
 import io.charlescd.moove.infrastructure.service.client.response.UndeployResponse
+import java.net.URI
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
-import java.net.URI
 
 // TODO remove url. It is currently needed here because we couldn't find another way to disable Ribbon (https://github.com/Netflix/ribbon).
 @FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration = [ SimpleFeignEncoderConfiguration::class])

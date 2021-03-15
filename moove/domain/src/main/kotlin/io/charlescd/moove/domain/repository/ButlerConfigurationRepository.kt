@@ -19,7 +19,6 @@ package io.charlescd.moove.domain.repository
 import io.charlescd.moove.domain.DeploymentConfiguration
 import java.util.*
 
-
 interface DeploymentConfigurationRepository {
 
     fun save(deploymentConfiguration: DeploymentConfiguration): DeploymentConfiguration
