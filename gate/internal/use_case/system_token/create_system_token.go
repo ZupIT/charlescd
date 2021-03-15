@@ -36,9 +36,13 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 		return domain.SystemToken{}, logging.NewError("Unable to parse authorization", err, logging.BusinessError, nil, "createSystemToken.Execute")
 	}
 
-	user, err := createSystemToken.userRepository.FindByEmail(authToken.Email)
+	userExists, err := createSystemToken.userRepository.ExistsByEmail(authToken.Email)
 	if err != nil {
 		return domain.SystemToken{}, logging.NewError("Unable to find user by email", err, logging.BusinessError, nil, "createSystemToken.Execute")
+	}
+
+	if !userExists {
+		return domain.SystemToken{}, logging.NewError("User not found", errors.New("user not found"), logging.BusinessError, nil, "createSystemToken.Execute")
 	}
 
 	permissions, err := createSystemToken.permissionRepository.FindAll(input.Permissions)
@@ -61,7 +65,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 
 	systemToken := CreateSystemTokenInput.InputToDomain(input)
 
-	systemToken.Author = user.Email
+	systemToken.Author = authToken.Email
 	systemToken.Permissions = permissions
 
 	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken, permissions)

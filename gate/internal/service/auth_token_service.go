@@ -13,8 +13,8 @@ type AuthTokenService interface {
 
 type authTokenService struct {}
 
-func NewAuthTokenService() (AuthTokenService, error) {
-	return authTokenService{}, nil
+func NewAuthTokenService() AuthTokenService {
+	return authTokenService{}
 }
 
 func (authTokenService authTokenService) ParseAuthorizationToken(authorization string) (AuthToken, error) {

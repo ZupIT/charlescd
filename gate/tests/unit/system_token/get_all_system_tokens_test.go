@@ -3,12 +3,13 @@ package system_token
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
+	"github.com/ZupIT/charlescd/gate/tests/unit/utils"
 	"github.com/stretchr/testify/require"
 )
 
 func (st *SystemTokenSuite) TestGetAll() {
 	st.systemTokenRepository.On("FindAll", getDummyPage()).Return(
-		[]domain.SystemToken{getDummySystemToken(), getDummySystemToken()},
+		[]domain.SystemToken{utils.GetDummySystemToken(), utils.GetDummySystemToken()},
 		getDummyPage(),
 		nil)
 
