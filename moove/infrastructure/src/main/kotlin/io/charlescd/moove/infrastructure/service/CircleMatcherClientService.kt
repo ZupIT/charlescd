@@ -29,8 +29,8 @@ import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
 import io.charlescd.moove.infrastructure.service.client.request.Node
-import org.springframework.stereotype.Service
 import java.net.URI
+import org.springframework.stereotype.Service
 
 @Service
 class CircleMatcherClientService(
