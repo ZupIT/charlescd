@@ -104,7 +104,7 @@ open class DeploymentCallbackInteractorImpl(
     }
 
     private fun getWebhookEventType(callbackRequest: DeploymentCallbackRequest, deployment: Deployment): WebhookEventTypeEnum {
-        if (callbackRequest.isDeployEvent() || deployment.deployedAt != null) {
+        if (callbackRequest.isDeployEvent() || callbackRequest.deploymentStatus == DeploymentRequestStatus.TIMED_OUT) {
             return WebhookEventTypeEnum.DEPLOY
         }
         return WebhookEventTypeEnum.UNDEPLOY

@@ -32,6 +32,7 @@ data class WebhookDeploymentEventType(
 )
 
 data class WebhookDeploymentEvent(
+    val deploymentId: String,
     val type: WebhookEventSubTypeEnum,
     val status: WebhookEventStatusEnum,
     val date: LocalDateTime?,
