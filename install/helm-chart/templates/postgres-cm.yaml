@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: charles-postgres
+  {{- if not .Values.postgresql.enabled }}
+  annotations:
+      "helm.sh/hook": "pre-install"
+  {{- end }}
+data:
+  charles-init.sh: |
+    #!/bin/bash
+    {{- if .Values.postgresql.enabled -}}
+    {{- range .Values.CharlesApplications -}}
+    {{ if .database }}
+      psql -c "CREATE DATABASE {{ .database.name }}"
+      psql -c "CREATE USER {{ .database.user }} WITH PASSWORD '{{ .database.password }}'"
+      psql -c "ALTER DATABASE {{ .database.name }} OWNER TO {{ .database.user }}"
+      psql -d {{ .database.name }} -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    {{ end }}
+    {{- end -}}
+    {{ if .Values.keycloak.enabled }}
+      psql -c "CREATE DATABASE {{ .Values.keycloak.database.name }}"
+      psql -c "CREATE USER {{ .Values.keycloak.database.user }} WITH PASSWORD '{{ .Values.keycloak.database.password }}'"
+      psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
+    {{ end }}
+    {{ else }}
+    export PGUSER={{ .Values.postgresql.pguser }}
+    export PGPASSWORD={{ .Values.postgresql.pgpassword }}
+    {{- range .Values.CharlesApplications -}}
+    {{ if .database }}
+    psql -h $PGHOST -U $PGUSER -c "CREATE DATABASE {{ .database.name }}"
+    psql -h $PGHOST -U $PGUSER -c "CREATE USER {{ .database.user }} WITH PASSWORD '{{ .database.password }}'"
+    psql -h $PGHOST -U $PGUSER -c  "ALTER DATABASE {{ .database.name }} OWNER TO {{ .database.user }}"
+    psql -h $PGHOST -U $PGUSER -d {{ .database.name }} -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    {{ end }}
+    {{- end -}}
+    {{ if .Values.keycloak.enabled }}
+    psql -h $PGHOST -U $PGUSER -c "CREATE DATABASE {{ .Values.keycloak.database.name }}"
+    psql -h $PGHOST -U $PGUSER -c "CREATE USER {{ .Values.keycloak.database.user }} WITH PASSWORD '{{ .Values.keycloak.database.password }}'"
+    psql -h $PGHOST -U $PGUSER -c  "ALTER DATABASE keycloak OWNER TO keycloak"
+    {{ end }}
+    {{ end }}

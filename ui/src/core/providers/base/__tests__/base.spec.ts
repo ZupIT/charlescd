@@ -33,15 +33,15 @@ test('base request success', async () => {
 });
 
 test('base request reject', async () => {
-  (fetch as FetchMock).mockResponse(JSON.stringify({ name: 'base request' }), {
-    status: 401
-  });
+  const error = {
+    status: 403,
+    message: 'Forbidden'
+  };
 
-  baseRequest(
-    '/test',
-    {},
-    { method: 'POST' }
-  )({}).catch(async err =>
-    expect(await err.json()).toEqual({ name: 'base request' })
-  );
+  (fetch as FetchMock).mockRejectedValue(error);
+
+  await baseRequest('/test')({})
+    .catch(async err =>
+      expect(err).toEqual(error)
+    );
 });

@@ -3,7 +3,6 @@
   "id": "prometheus",
   "description": "My prometheus",
   "inputParameters": {
-    "health": true,
     "configurationInputs": [
       {
         "name": "url",

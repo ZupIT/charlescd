@@ -23,14 +23,14 @@ import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
 
-export const useWorkspace = (): [Function, Function, boolean] => {
+export const useWorkspaces = (): [Function, Function, boolean] => {
   const dispatch = useDispatch();
   const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
   const { response, error, loading } = workspacesData;
 
   const filterWorkspace = useCallback(
-    (name: string) => {
-      getWorkspace({ name });
+    (name: string, page = 0) => {
+      getWorkspace({ name, page });
     },
     [getWorkspace]
   );

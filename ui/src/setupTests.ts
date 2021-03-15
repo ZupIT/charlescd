@@ -18,12 +18,23 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
+
 import '@testing-library/jest-dom/extend-expect';
 import fetch, { FetchMock } from 'jest-fetch-mock';
 import storageMock from 'unit-test/local-storage';
 import { mockCookie } from './unit-test/cookie';
 import 'mutationobserver-shim';
 import MockIntersectionObserver from 'unit-test/MockIntersectionObserver';
+
+export const DEFAULT_TEST_BASE_URL = 'http://localhost:8000';
+
+Object.assign(window, {
+  CHARLESCD_ENVIRONMENT: {
+    REACT_APP_API_URI: DEFAULT_TEST_BASE_URL,
+    REACT_APP_AUTH_URI: `${DEFAULT_TEST_BASE_URL}/keycloak`,
+    REACT_APP_CHARLES_VERSION: '0.6.1'
+  }
+});
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -34,11 +45,13 @@ interface CustomDocument {
 }
 
 export interface CustomGlobal {
-  fetch: FetchMock;
+  fetch: any;
   localStorage?: object;
   document?: CustomDocument;
   Worker: object;
 }
+
+export const originalFetch = window.fetch as FetchMock;
 
 declare const global: CustomGlobal;
 

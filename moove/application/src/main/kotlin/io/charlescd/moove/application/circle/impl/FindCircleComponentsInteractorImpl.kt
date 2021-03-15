@@ -32,7 +32,7 @@ class FindCircleComponentsInteractorImpl(
 ) : FindCircleComponentsInteractor {
 
     override fun execute(id: String, workspaceId: String): List<CircleComponentResponse> {
-        val deployments = deploymentService.findActiveList(id)
+        val deployments = deploymentService.findActiveList(id, workspaceId)
         return createResponseList(deployments)
     }
 
