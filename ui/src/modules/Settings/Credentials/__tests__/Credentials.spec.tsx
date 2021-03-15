@@ -74,7 +74,7 @@ test('should render Credentials items', async () => {
 
   await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
   expect(screen.getByText('Registry')).toBeInTheDocument();
-  expect(screen.getByText('CD Configuration')).toBeInTheDocument();
+  expect(screen.getByText('Deployment Configuration')).toBeInTheDocument();
   expect(screen.getByText('Circle Matcher')).toBeInTheDocument();
   expect(screen.getByText('Datasources')).toBeInTheDocument();
   expect(screen.getByText('Metric Action')).toBeInTheDocument();
@@ -87,7 +87,15 @@ test('should render Credentials items in the right order', async () => {
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
 
-  const itemsRightOrder = ['Registry', 'CD Configuration', 'Circle Matcher', 'Datasources', 'Metric Action', 'Git', 'User group'];
+  const itemsRightOrder = [
+    'Registry',
+    'Deployment Configuration',
+    'Circle Matcher',
+    'Datasources',
+    'Metric Action',
+    'Git',
+    'User group'
+  ];
 
   render(<Credentials />);
 
@@ -132,10 +140,10 @@ test('render Git Credentials', async () => {
   expect(backButton).toBeInTheDocument();
 });
 
-test('render CD Configuration Credentials', async () => {
+test('render Deployment Configuration Credentials', async () => {
   render(<Credentials />);
 
-  const addCDConfigButton = await screen.findByText('Add CD Configuration');
+  const addCDConfigButton = await screen.findByText('Add Deployment Configuration');
 
   await act(async () => userEvent.click(addCDConfigButton));
 
@@ -177,7 +185,7 @@ test('should render Credentials items with the right type: Required or Optional'
 
   const configurationItems = [
     { name: 'Registry', type: 'Required' },
-    { name: 'CD Configuration', type: 'Required' },
+    { name: 'Deployment Configuration', type: 'Required' },
     { name: 'Circle Matcher', type: 'Required' },
     { name: 'Datasources', type: 'Optional' },
     { name: 'Metric Action', type: 'Optional' },
