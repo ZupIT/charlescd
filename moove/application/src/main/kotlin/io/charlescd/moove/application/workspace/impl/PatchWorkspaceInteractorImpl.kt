@@ -53,31 +53,21 @@ open class PatchWorkspaceInteractorImpl(
     }
 
     private fun syncWithCircleMatcherIfNecessary(currentWorkspace: Workspace, updatedWorkspace: Workspace) {
-        if (isRemovingCircleMatcher(currentWorkspace.circleMatcherUrl, updatedWorkspace.circleMatcherUrl)) {
-            val circles = circleService.findByWorkspaceId(currentWorkspace.id)
-            circleMatcherService.deleteAllFor(circles, currentWorkspace.circleMatcherUrl!!)
-            return
-        }
-
-        if (isReplacingCircleMatcher(currentWorkspace, updatedWorkspace)) {
+        if (isCircleMatcherUrlNew(currentWorkspace, updatedWorkspace)) {
             val circles = circleService.findByWorkspaceId(currentWorkspace.id)
             if (!circles.hasDefault()) {
                 throw BusinessException.of(MooveErrorCode.MISSING_DEFAULT_CIRCLE)
             }
 
-            if(currentWorkspace.circleMatcherUrl != null) {
+            if (currentWorkspace.hasCircleMatcher()) {
                 deleteAllCirclesOnCircleMatcher(currentWorkspace.circleMatcherUrl!!, circles)
             }
-            createAllCirclesOnCircleMatcher(updatedWorkspace.circleMatcherUrl!!, circles)
+
+            if (updatedWorkspace.hasCircleMatcher()) {
+                deleteAllCirclesOnCircleMatcher(updatedWorkspace.circleMatcherUrl!!, circles)
+                createAllCirclesOnCircleMatcher(updatedWorkspace.circleMatcherUrl!!, circles)
+            }
         }
-    }
-
-    private fun isRemovingCircleMatcher(currentMatcherUrl: String?, newMatcherUrl: String?): Boolean {
-        return currentMatcherUrl?.isNotBlank() == true && newMatcherUrl.isNullOrBlank()
-    }
-
-    private fun isReplacingCircleMatcher(currentWorkspace: Workspace, updatedWorkspace: Workspace): Boolean {
-        return !updatedWorkspace.circleMatcherUrl.isNullOrBlank() && isCircleMatcherUrlNew(currentWorkspace, updatedWorkspace)
     }
 
     private fun isCircleMatcherUrlNew(

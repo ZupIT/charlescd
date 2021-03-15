@@ -251,6 +251,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(newCircleMatcherUrl, workspace.id)
         1 * circleRepository.findByWorkspaceId(workspace.id) >> circles
+        1 * circleMatcherService.deleteAllFor(circles, newCircleMatcherUrl)
         1 * circleMatcherService.saveAllFor(circles, newCircleMatcherUrl)
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -290,6 +291,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         0 * villagerService.checkIfRegistryConfigurationExists(newCircleMatcherUrl, workspace.id)
         1 * circleRepository.findByWorkspaceId(workspace.id) >> circles
         1 * circleMatcherService.deleteAllFor(circles, oldCircleMatcherUrl)
+        1 * circleMatcherService.deleteAllFor(circles, newCircleMatcherUrl)
         1 * circleMatcherService.saveAllFor(circles, newCircleMatcherUrl)
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
