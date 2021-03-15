@@ -18,6 +18,7 @@ type persistenceManager struct {
 	systemTokenRepository repository.SystemTokenRepository
 	permissionRepository repository.PermissionRepository
 	userRepository repository.UserRepository
+	workspaceRepository repository.WorkspaceRepository
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -91,9 +92,15 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate user repository with error: %s", err.Error()))
 	}
 
+	workspaceRepo, err := repository.NewWorkspaceRepository(db)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate workspace repository with error: %s", err.Error()))
+	}
+
 	return persistenceManager{
 		systemTokenRepository: systemTokenRepo,
 		permissionRepository: permissionRepo,
 		userRepository: userRepo,
+		workspaceRepository: workspaceRepo,
 	}, nil
 }

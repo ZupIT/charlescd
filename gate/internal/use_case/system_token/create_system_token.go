@@ -16,14 +16,16 @@ type createSystemToken struct {
 	systemTokenRepository repository.SystemTokenRepository
 	permissionRepository repository.PermissionRepository
 	userRepository repository.UserRepository
+	workspaceRepository repository.WorkspaceRepository
 	authTokenService service.AuthTokenService
 }
 
-func NewCreateSystemToken(systemTokenRepository repository.SystemTokenRepository, permissionRepository repository.PermissionRepository, userRepository repository.UserRepository, authTokenService service.AuthTokenService) CreateSystemToken {
+func NewCreateSystemToken(systemTokenRepository repository.SystemTokenRepository, permissionRepository repository.PermissionRepository, userRepository repository.UserRepository, workspaceRepository repository.WorkspaceRepository, authTokenService service.AuthTokenService) CreateSystemToken {
 	return createSystemToken{
 		systemTokenRepository: systemTokenRepository,
 		permissionRepository: permissionRepository,
 		userRepository: userRepository,
+		workspaceRepository: workspaceRepository,
 		authTokenService: authTokenService,
 	}
 }
@@ -46,6 +48,15 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 
 	if len(permissions) != len(input.Permissions) {
 		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "createSystemToken.Execute")
+	}
+
+	workspacesFound, err := createSystemToken.workspaceRepository.ExistsByIds(input.Workspaces)
+	if err != nil {
+		return domain.SystemToken{}, logging.WithOperation(err, "createSystemToken.Execute")
+	}
+
+	if int(workspacesFound) < len(input.Workspaces) {
+		return domain.SystemToken{}, logging.NewError("Some workspaces were not found", errors.New("some workspaces were not found"), logging.BusinessError, nil, "createSystemToken.Execute")
 	}
 
 	systemToken := CreateSystemTokenInput.InputToDomain(input)
