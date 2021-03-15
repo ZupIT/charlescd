@@ -17,7 +17,7 @@
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 
-export type menuType = {
+export type MenuType = {
   id: string,
   icon: string,
   text: string,
@@ -26,7 +26,7 @@ export type menuType = {
   subject?: string
 }[];
 
-export const workspaceMenu: menuType = [
+export const workspaceMenu: MenuType = [
   {
     id: genMenuId(routes.circles),
     icon: 'circles',
