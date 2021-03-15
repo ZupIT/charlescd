@@ -62,3 +62,12 @@ func GetDummyPermissions() []domain.Permission {
 		},
 	}
 }
+
+func GetDummyPage() domain.Page {
+	return domain.Page{
+		PageNumber: 0,
+		PageSize:   20,
+		Sort:       "sort",
+		Total:      2,
+	}
+}
