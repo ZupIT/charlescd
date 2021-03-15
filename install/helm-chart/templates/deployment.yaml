@@ -31,8 +31,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: {{ .database.password}}
           command: ['sh', '-c', 
-            'until pg_isready -h {{ .database.host }} -p 5432; 
+            'until pg_isready -h {{ .database.host }} -p 5432 -d {{ .database.name }} -U {{ .database.user}};
             do echo waiting for database; sleep 2; done;']
     {{- end }}
     {{- with .imagePullSecrets }}

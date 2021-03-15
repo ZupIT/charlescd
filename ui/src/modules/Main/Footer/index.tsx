@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import { charlesVersion } from 'core/providers/base/index';
 import Notification from 'core/components/Notification';
 import { useGlobalState, useDispatch } from 'core/state/hooks';
 import { dismissNotification } from 'core/components/Notification/state/actions';
@@ -32,6 +33,7 @@ const Footer = () => {
           onDismiss={() => dispatch(dismissNotification())}
         />
       )}
+      {charlesVersion && <Styled.Version color='light' align='right'>Version   {charlesVersion}</Styled.Version>}
     </Styled.Footer>
   );
 };
