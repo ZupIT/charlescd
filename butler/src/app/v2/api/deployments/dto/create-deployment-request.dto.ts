@@ -51,6 +51,9 @@ export class CreateDeploymentRequestDto {
 
   public status: DeploymentStatusEnum
 
+  @ApiProperty()
+  public overrideCircle: boolean
+
   @ApiProperty({ type: () => [CreateComponentRequestDto] })
   @Type(() => CreateComponentRequestDto)
   public readonly components: CreateComponentRequestDto[]
@@ -64,7 +67,8 @@ export class CreateDeploymentRequestDto {
     components: CreateComponentRequestDto[],
     namespace: string,
     git: CreateGitDeploymentDto,
-    timeoutInSeconds: number
+    timeoutInSeconds: number,
+    overrideCircle: boolean
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -75,6 +79,7 @@ export class CreateDeploymentRequestDto {
     this.namespace = namespace
     this.git = git
     this.timeoutInSeconds = timeoutInSeconds
+    this.overrideCircle = overrideCircle
   }
 
   public toCircleEntity(newComponents: ComponentEntity[]): DeploymentEntity {
@@ -90,7 +95,7 @@ export class CreateDeploymentRequestDto {
     )
   }
 
-  public toDefaultEntity(activeComponents: ComponentEntity[], newComponents: ComponentEntity[]): DeploymentEntity {
+  public toIncrementalEntity(activeComponents: ComponentEntity[], newComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
@@ -99,7 +104,7 @@ export class CreateDeploymentRequestDto {
       [ ...activeComponents, ...newComponents],
       this.circle.default,
       this.namespace,
-      this.timeoutInSeconds
+      this.timeoutInSeconds,
     )
   }
 }

@@ -65,7 +65,7 @@ export class FixtureUtilsService {
     unchangedComponents: ComponentEntityV2[],
     newComponents: ComponentEntityV2[]
   ): Promise<DeploymentEntityV2> {
-    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toDefaultEntity(unchangedComponents, newComponents))
+    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toIncrementalEntity(unchangedComponents, newComponents))
     return this.manager.save(deployment)
   }
 
