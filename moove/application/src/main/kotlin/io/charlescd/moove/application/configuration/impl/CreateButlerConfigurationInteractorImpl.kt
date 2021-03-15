@@ -29,7 +29,7 @@ class CreateButlerConfigurationInteractorImpl(
     private val butlerConfigurationRepository: ButlerConfigurationRepository,
     private val userService: UserService,
     private val workspaceService: WorkspaceService
-): CreateButlerConfigurationInteractor {
+) : CreateButlerConfigurationInteractor {
 
     override fun execute(request: CreateButlerConfigurationRequest, workspaceId: String, authorization: String): ButlerConfigurationResponse {
         workspaceService.checkIfWorkspaceExists(workspaceId)

@@ -20,9 +20,9 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.infrastructure.service.client.*
 import io.charlescd.moove.infrastructure.service.client.request.*
+import java.net.URI
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.net.URI
 
 @Service
 class DeployClientService(private val deployClient: DeployClient) : DeployService {

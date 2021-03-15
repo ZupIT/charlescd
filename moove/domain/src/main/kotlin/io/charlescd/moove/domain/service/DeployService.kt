@@ -20,7 +20,6 @@ package io.charlescd.moove.domain.service
 
 import io.charlescd.moove.domain.Build
 import io.charlescd.moove.domain.ButlerConfiguration
-import io.charlescd.moove.domain.CdConfiguration
 import io.charlescd.moove.domain.Deployment
 
 interface DeployService {
