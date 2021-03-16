@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
 import { groupBy, isEmpty } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
@@ -38,16 +39,19 @@ export class CreateRoutesManifestsUseCase {
 
   public async execute(hookParams: RouteHookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     this.consoleLoggerService.log('START:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
-    let specs : (VirtualServiceSpec | DestinationRuleSpec)[]= []
+    let specs: (VirtualServiceSpec | DestinationRuleSpec)[] = []
+    let services : KubernetesObject[] = []
     for (const c of hookParams.parent.spec.circles) {
       const deployment = await this.retriveDeploymentFor(c.id)
       const activeComponents = await this.componentsRepository.findHealthyActiveComponents()
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
+      services = services.concat(deployment.components.flatMap(c => c.manifests).filter(m => m.kind === 'Service'))
       specs = specs.concat(proxySpecs)
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
     await this.updateRouteStatus(healthStatus)
-    return { children: specs, resyncAfterSeconds: 5 }
+    const children = [...specs, ...services]
+    return { children: children, resyncAfterSeconds: 5 }
   }
 
   public getRoutesStatus(observed: PartialRouteHookParams, desired: SpecsUnion[]): {circle: string, component: string, status: boolean, kind: string}[] {
@@ -77,6 +81,7 @@ export class CreateRoutesManifestsUseCase {
     return results
   }
 
+  // TODO check for services too, right now we only check for DR + VS
   private handleSpecStatus(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): { circle: string, component: string, status: boolean, kind: string } {
     const baseResponse = {
       circle: circleId,
