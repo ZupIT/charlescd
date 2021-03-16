@@ -31,7 +31,8 @@ export const DEFAULT_TEST_BASE_URL = 'http://localhost:8000';
 Object.assign(window, {
   CHARLESCD_ENVIRONMENT: {
     REACT_APP_API_URI: DEFAULT_TEST_BASE_URL,
-    REACT_APP_AUTH_URI: `${DEFAULT_TEST_BASE_URL}/keycloak`
+    REACT_APP_AUTH_URI: `${DEFAULT_TEST_BASE_URL}/keycloak`,
+    REACT_APP_CHARLES_VERSION: '0.6.1'
   }
 });
 
