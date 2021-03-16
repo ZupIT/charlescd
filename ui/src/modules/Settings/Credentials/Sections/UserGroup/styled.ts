@@ -16,10 +16,11 @@
 
 import styled from 'styled-components';
 import SelectComponent from 'core/components/Form/Select';
+import Modal from 'core/components/Modal';
 import AsyncSelect from 'core/components/Form/Select/Async';
 import { fadeIn } from 'core/assets/style/animate';
 
-const Title = styled.div`
+const Title = styled(Modal.Trigger)`
   display: flex;
 `;
 

@@ -26,6 +26,8 @@ import { getWorkspaceId } from 'core/utils/workspace';
 import { useUserGroup } from './hooks';
 import { FORM_USER_GROUP } from './constants';
 import FormUserGroup from './Form';
+import Modal from 'core/components/Modal';
+import Text from 'core/components/Text';
 
 interface Props {
   form: string;
@@ -42,6 +44,19 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
     setUserGroups(filter(userGroups, item => item.id !== id));
   };
 
+  // TODO verify font size
+  const renderWarningModal = () => (
+    <Modal.Trigger 
+      title="Do you want to remove this user group?"
+      dismissLabel="Cancel, keep user group"
+      onDismiss={() => {console.log('close');}}>
+        <Text.h3>
+          When you remove a user group, all the users associated to the group will
+          no longer access the workspace. Do you want to continue? 
+        </Text.h3>
+    </Modal.Trigger>
+  )
+
   const renderSection = () => (
     <Section
       name="User group"
@@ -50,6 +65,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_USER_GROUP)}
       type="Optional"
     >
+      {renderWarningModal()}
       {userGroups &&
         map(userGroups, userGroup => (
           <Card.Config
