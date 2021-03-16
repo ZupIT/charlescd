@@ -80,7 +80,8 @@ data class WorkspaceResponse(
                 deploymentConfiguration = deploymentConfiguration?.let {
                     DeploymentConfigurationResponse(
                         id = it.id,
-                        name = it.name
+                        name = it.name,
+                        gitProvider = it.gitProvider
                     )
                 }
             )

@@ -17,15 +17,18 @@
 package io.charlescd.moove.application.configuration.response
 
 import io.charlescd.moove.domain.DeploymentConfiguration
+import io.charlescd.moove.domain.GitProviderEnum
 
 data class DeploymentConfigurationResponse(
     val id: String,
-    val name: String
+    val name: String,
+    val gitProvider: GitProviderEnum
 ) {
     companion object {
         fun from(deploymentConfiguration: DeploymentConfiguration) = DeploymentConfigurationResponse(
             id = deploymentConfiguration.id,
-            name = deploymentConfiguration.name
+            name = deploymentConfiguration.name,
+            gitProvider = deploymentConfiguration.gitProvider
         )
     }
 }

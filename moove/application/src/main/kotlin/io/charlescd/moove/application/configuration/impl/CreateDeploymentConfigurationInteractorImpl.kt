@@ -38,6 +38,6 @@ class CreateDeploymentConfigurationInteractorImpl(
 
         val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
 
-        return DeploymentConfigurationResponse(saved.id, saved.name)
+        return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
     }
 }
