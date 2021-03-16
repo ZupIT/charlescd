@@ -24,7 +24,7 @@ import io.charlescd.moove.domain.DeploymentConfiguration
 
 interface DeployService {
 
-    fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, configuration: DeploymentConfiguration)
+    fun deploy(deployment: Deployment, build: Build, configuration: DeploymentConfiguration, override: Boolean?)
 
     fun undeploy(deploymentId: String, authorId: String, configuration: DeploymentConfiguration)
 

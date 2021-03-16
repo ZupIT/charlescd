@@ -58,7 +58,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         if (build.canBeDeployed()) {
             checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
-            deploy(deployment, build, workspace, deploymentConfiguration)
+            deploy(deployment, build, workspace, deploymentConfiguration, request.override)
             return DeploymentResponse.from(deployment, build)
         } else {
             notifyEvent(workspaceId, WebhookEventStatusEnum.FAIL, deployment)
@@ -104,9 +104,9 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
             webhookEventService.notifyDeploymentEvent(workspaceId, WebhookEventTypeEnum.DEPLOY, WebhookEventSubTypeEnum.START_DEPLOY, status, deployment, error)
     }
 
-    private fun deploy(deployment: Deployment, build: Build, workspace: Workspace, deploymentConfiguration: DeploymentConfiguration) {
+    private fun deploy(deployment: Deployment, build: Build, workspace: Workspace, deploymentConfiguration: DeploymentConfiguration, override: Boolean?) {
         try {
-            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), deploymentConfiguration)
+            deployService.deploy(deployment, build, deploymentConfiguration, override)
             notifyEvent(workspace.id, WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
             notifyEvent(workspace.id, WebhookEventStatusEnum.FAIL, deployment, ex.message)
