@@ -37,8 +37,7 @@ describe('Generate K8s manifest by helm', () => {
     repo: {
       provider: GitProvidersEnum.GITHUB,
       url: 'https://myrepo.com/test',
-      token: 'my-token',
-      branch: 'master'
+      token: 'my-token'
     },
     componentName: 'helm-test-chart',
     imageUrl: 'latest',

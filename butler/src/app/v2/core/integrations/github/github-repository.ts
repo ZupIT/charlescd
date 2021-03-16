@@ -25,10 +25,13 @@ export class GitHubRepository implements Repository {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly httpService: HttpService) {}
+    private readonly httpService: HttpService
+  ) {}
 
   public async getResource(requestConfig: RequestConfig): Promise<Resource> {
-    const urlResource = new URL(`${requestConfig.url}/contents/${requestConfig.resourceName}?ref=${requestConfig.branch}`)
+    const urlResource = new URL(requestConfig.url)
+    urlResource.pathname = `${urlResource.pathname}/${requestConfig.resourceName}`
+
     this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITHUB', urlResource)
     return this.downloadResource(urlResource, requestConfig.resourceName, {
       headers: {

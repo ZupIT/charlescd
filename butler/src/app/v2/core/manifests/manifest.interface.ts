@@ -20,8 +20,7 @@ import { GitProvidersEnum } from '../configuration/interfaces/git-providers.type
 export interface RepoConfig {
   provider: GitProvidersEnum,
   url: string,
-  token: string,
-  branch: string
+  token: string
 }
 
 export interface ManifestConfig {
