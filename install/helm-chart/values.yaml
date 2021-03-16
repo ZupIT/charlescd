@@ -9,7 +9,7 @@ CharlesApplications:
   butler:
     enabled: true
     name: charlescd-butler
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /healthcheck
@@ -27,7 +27,13 @@ CharlesApplications:
         - name: http
           port: 3000
     replicaCount: 1
-    resources: {}
+    resources:
+      limits:
+        cpu: 128m
+        memory: 256Mi
+      requests:
+        cpu: 128m
+        memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -61,7 +67,13 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    resources: {}
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 128m
+        memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -102,7 +114,13 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    resources: {}
+    resources:
+      limits:
+        cpu: 256m
+        memory: 512Mi
+      requests:
+        cpu: 128m
+        memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -137,7 +155,14 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    resources: {}
+    database: {}
+    resources:
+      limits:
+        cpu: 512m
+        memory: 1Gi
+      requests:
+        cpu: 512m
+        memory: 1Gi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -167,7 +192,14 @@ CharlesApplications:
         - name: http
           port: 3000
     replicaCount: 1
-    resources: {}
+    database: {}
+    resources:
+      limits:
+        cpu: 128m
+        memory: 128Mi
+      requests:
+        cpu: 64m
+        memory: 64Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -203,6 +235,7 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
+    database: {}
     hpa: true
     autoscaling:
       minReplicas: 1
@@ -257,7 +290,13 @@ CharlesApplications:
           port: 8080
     replicaCount: 1
     postgresqlWait: true
-    resources: {}
+    resources:
+      limits:
+        cpu: 128m
+        memory: 128Mi
+      requests:
+        cpu: 64m
+        memory: 64Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -288,6 +327,11 @@ postgresql:
   enabled: true
   fullnameOverride: *postgresHost
   initdbScriptsConfigMap: charles-postgres
+  pguser: postgres
+  pgpassword: postgres
+
+job:
+  name: init-db
 
 redis:
   enabled: true
