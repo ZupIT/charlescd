@@ -110,7 +110,7 @@ func (main Main) FindAllNotEnqueuedAndDeliveredFail() ([]payloads.MessageRespons
 	return response, nil
 }
 
-func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error) {
+func (main Main) FindAllBySubscriptionIdAndFilter(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error) {
 	var cond interface{} = ""
 
 	eventValue := parameters["EventValue"]
@@ -123,8 +123,8 @@ func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters ma
 
 	query, response := main.buildQuery(subscriptionId, cond, parameters, page, size)
 	if query.Error != nil {
-		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionId Message error", query.Error.Error()).
-			WithOperations("FindAllBySubscriptionId.Query")
+		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionIdAndFilter Message error", query.Error.Error()).
+			WithOperations("FindAllBySubscriptionIdAndFilter.Query")
 	}
 
 	return response, nil

@@ -172,7 +172,7 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			return
 		}
 
-		result, err := messageMain.FindAllBySubscriptionId(subscriptionId, qp, page, size)
+		result, err := messageMain.FindAllBySubscriptionIdAndFilter(subscriptionId, qp, page, size)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
