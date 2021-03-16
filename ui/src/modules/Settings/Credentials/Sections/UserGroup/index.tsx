@@ -33,6 +33,7 @@ import { getProfileByKey } from 'core/utils/profile';
 import { useHistory } from 'react-router';
 import routes from 'core/constants/routes';
 import useOutsideClick from 'core/hooks/useClickOutside';
+import { hasUserDuplication } from './helpers';
 
 interface Props {
   form: string;
@@ -60,7 +61,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
     
     setToggleModal(false);
 
-    if (hasUser) {
+    if (hasUser && !hasUserDuplication(userGroups, email)) {
       history.push(routes.workspaces);
     }
   };
@@ -70,7 +71,6 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
     setToggleModal(true);
   };
 
-  // TODO verify font size
   const renderWarningModal = () => (
     <Modal.Trigger
       ref={modalRef}
