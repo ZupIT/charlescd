@@ -1,0 +1,51 @@
+{{ if not .Values.postgresql.enabled}}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: {{ .Release.Name }}-{{ .Values.job.name }}
+    namespace: {{ .Release.Namespace }}
+spec:
+    backoffLimit: 20
+    template:
+        spec:
+            restartPolicy: OnFailure
+            volumes:
+                -   name: {{ .Release.Name }}-{{ .Values.job.name }}-volume
+                    configMap:
+                        name: {{ .Values.postgresql.initdbScriptsConfigMap }}
+                        defaultMode: 0777
+            initContainers:
+                -   name: check-db-ready
+                    image: "postgres:9.6.5"
+                    imagePullPolicy: Always
+                    resources: { }
+                    command:
+                        - sh
+                        - -c
+                        - until pg_isready -h {{ .Values.postgresqlGlobal.host }} -p 5432; do echo waiting for database; sleep 2; done;
+            containers:
+                -   name: {{ .Release.Name }}-{{ .Values.job.name }}
+                    image: "postgres:9.6.5"
+                    imagePullPolicy: Always
+                    command: ["/bin/sh"]
+                    args: ["/tmp/charles-init.sh"]
+                    env:
+                        -   name: PGUSER
+                            value: {{ .Values.postgresql.pguser }}
+                        -   name: PGPASSWORD
+                            value: {{ .Values.postgresql.pgpassword }}
+                        -   name: PGHOST
+                            value: {{ .Values.postgresqlGlobal.host }}
+                    resources:
+                        requests:
+                            cpu: "{{ .Values.postgresql.resources.requests.cpu }}"
+                            memory: "{{ .Values.postgresql.resources.requests.memory }}"
+                        limits:
+                            cpu: "{{ .Values.postgresql.resources.requests.cpu }}"
+                            memory: "{{ .Values.postgresql.resources.requests.memory }}"
+                    volumeMounts:
+                        -   mountPath: /tmp/charles-init.sh
+                            name: {{ .Release.Name }}-{{ .Values.job.name }}-volume
+                            subPath: charles-init.sh
+{{- end -}}

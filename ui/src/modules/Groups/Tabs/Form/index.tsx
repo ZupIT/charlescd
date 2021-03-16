@@ -15,16 +15,16 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Text from 'core/components/Text';
 import ContentIcon from 'core/components/ContentIcon';
 import InputTitle from 'core/components/Form/InputTitle';
-import { UserGroup } from '../../interfaces/UserGroups';
 import { isRequired, maxLength } from 'core/utils/validations';
 import { counter } from 'core/utils/counter';
-import map from 'lodash/map';
-import Styled from './styled';
 import Icon from 'core/components/Icon';
+import map from 'lodash/map';
+import { UserGroup } from '../../interfaces/UserGroups';
+import Styled from './styled';
 
 interface Props {
   userGroup: UserGroup;
@@ -32,8 +32,12 @@ interface Props {
   onAddUser: () => void;
 }
 
+type FormValues = {
+  name: string;
+}
+
 const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
-  const { register, handleSubmit, errors } = useForm({ mode: 'onChange' });
+  const { register, handleSubmit, errors } = useForm<FormValues>({ mode: 'onBlur' });
   const [userCounter, setUserCounter] = useState(0);
 
   useEffect(() => {
@@ -74,6 +78,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
               required: isRequired(),
               maxLength: maxLength()
             })}
+            isDisabled={!!errors.name}
             defaultValue={userGroup?.name}
             onClickSave={handleSubmit(handleSaveClick)}
           />

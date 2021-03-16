@@ -29,8 +29,6 @@ import (
 
 	"github.com/ZupIT/charlescd/compass/web/api/v1/metric"
 
-	"github.com/ZupIT/charlescd/compass/web/api/v1/health"
-
 	"github.com/ZupIT/charlescd/compass/web/api/v1/circle"
 
 	"github.com/ZupIT/charlescd/compass/web/api/v1/datasource"
@@ -72,7 +70,7 @@ func (api *Api) newV1Api(router *mux.Router) {
 	{
 		path := "/metrics-groups"
 		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics", path), metric.Create(api.metricMain, api.metricsGroupMain)).Methods("POST")
-		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Update(api.metricMain, api.metricsGroupMain)).Methods("PUT")
+		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Update(api.metricMain)).Methods("PUT")
 		s.HandleFunc(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), metric.Delete(api.metricMain)).Methods("DELETE")
 	}
 	{
@@ -85,11 +83,6 @@ func (api *Api) newV1Api(router *mux.Router) {
 	{
 		path := "/circles"
 		s.HandleFunc(fmt.Sprintf("%s/{circleID}/metrics-groups", path), circle.ListMetricGroupInCircle(api.metricsGroupMain)).Methods("GET")
-	}
-	{
-		path := "/application-health"
-		s.HandleFunc(fmt.Sprintf("%s/{circleID}/components", path), health.Components(api.healthMain)).Methods("GET")
-		s.HandleFunc(fmt.Sprintf("%s/{circleID}/components/health", path), health.ComponentsHealth(api.healthMain)).Methods("GET")
 	}
 	{
 		path := "/plugins"

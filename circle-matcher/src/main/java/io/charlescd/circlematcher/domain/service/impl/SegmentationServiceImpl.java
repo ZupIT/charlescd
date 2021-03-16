@@ -31,7 +31,6 @@ import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepositor
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -119,6 +118,7 @@ public class SegmentationServiceImpl implements SegmentationService {
                     item.isConvertibleToKv() ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
                     segmentationRequest.getWorkspaceId(),
                     segmentationRequest.getIsDefault(),
+                    segmentationRequest.isActive(),
                     segmentationRequest.getCreatedAt())));
 
             return segmentation;
@@ -148,14 +148,21 @@ public class SegmentationServiceImpl implements SegmentationService {
             return;
         }
         if (isUpdate) {
-            throw new BusinessException(MatcherErrorCode.CANNOT_UPDATE_DEFAULT_SEGMENTATION);
+            throw new BusinessException(
+                    MatcherErrorCode.CANNOT_UPDATE_DEFAULT_SEGMENTATION,
+                    "Error updating segmentation"
+            );
         }
 
         var metadataList = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
         var hasMetadataDefault = metadataList.stream().parallel()
                 .anyMatch(keyMetadata -> keyMetadata.getIsDefault());
         if (hasMetadataDefault) {
-            throw new BusinessException(MatcherErrorCode.DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE);
+            throw new BusinessException(
+                    MatcherErrorCode.DEFAULT_SEGMENTATION_ALREADY_REGISTERED_IN_WORKSPACE,
+                    "segmentationRequest/workspaceId",
+                    "Error creating segmentation ")
+                    .withParameters(request.getWorkspaceId());
         }
     }
 

@@ -26,6 +26,7 @@ import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
 import Module from './Module';
 import Styled from '../styled';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 const defaultValues = {
   modules: [MODULE],
@@ -99,7 +100,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         <Text.h5 color="dark">Type a name for release:</Text.h5>
         <Styled.Input
           name="releaseName"
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           label="Release name"
         />
         {fields.map((module, index) => (

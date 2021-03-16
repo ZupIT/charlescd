@@ -18,4 +18,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
+const isMockEnv = Boolean(Number(window?.CHARLESCD_ENVIRONMENT.REACT_APP_MOCK));
+
+if (isMockEnv) {
+  const { worker } = require('./mocks/browser');
+  worker.start();
+}
+
 ReactDOM.render(<App />, document.getElementById('root'));

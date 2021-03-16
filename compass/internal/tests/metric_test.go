@@ -138,7 +138,6 @@ func (s *SuiteMetric) TestSaveMetric() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -180,7 +179,6 @@ func (s *SuiteMetric) TestUpdateMetric() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -203,7 +201,7 @@ func (s *SuiteMetric) TestUpdateMetric() {
 
 	metricStruct.Metric = "Name"
 
-	res, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
+	res, err := s.repository.UpdateMetric(metricStruct)
 
 	require.Nil(s.T(), err)
 
@@ -243,7 +241,6 @@ func (s *SuiteMetric) TestFindMetricById() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -306,7 +303,7 @@ func (s *SuiteMetric) TestUpdateMetricError() {
 
 	metricStruct.Metric = "Name"
 
-	_, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
+	_, err := s.repository.UpdateMetric(metricStruct)
 
 	require.NotNil(s.T(), err)
 }
@@ -331,7 +328,6 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -399,7 +395,6 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 	dataSource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,

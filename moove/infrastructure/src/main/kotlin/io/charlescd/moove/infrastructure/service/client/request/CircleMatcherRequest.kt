@@ -29,6 +29,7 @@ class CircleMatcherRequest(
     val workspaceId: String,
     @get:JsonProperty("isDefault")
     val isDefault: Boolean,
+    val active: Boolean,
     val createdAt: LocalDateTime
 )
 

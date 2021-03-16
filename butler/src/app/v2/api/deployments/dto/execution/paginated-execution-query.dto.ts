@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { IsBooleanString, IsOptional, IsInt, Min } from 'class-validator'
+import { IsOptional, IsInt, Min, IsBooleanString } from 'class-validator'
 import { Transform } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -35,10 +35,11 @@ export class ExecutionQuery {
   public page: number
 
   @ApiProperty()
+  @IsOptional()
   @IsBooleanString()
-  public active: boolean
+  public active?: boolean
 
-  constructor(size: number, page: number, active: boolean) {
+  constructor(size = 50, page = 0, active?: boolean) {
     this.size = size
     this.page = page
     this.active = active

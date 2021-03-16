@@ -213,9 +213,9 @@ func (main Main) SaveMetric(metric Metric) (Metric, errors.Error) {
 	return metric, nil
 }
 
-func (main Main) UpdateMetric(id string, metric Metric) (Metric, errors.Error) {
+func (main Main) UpdateMetric(metric Metric) (Metric, errors.Error) {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
-		db := main.db.Where("id = ?", id).Save(&metric).Association("Filters").Replace(metric.Filters)
+		db := main.db.Save(&metric).Association("Filters").Replace(metric.Filters)
 		if db.Error != nil {
 			logger.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
 			return db.Error

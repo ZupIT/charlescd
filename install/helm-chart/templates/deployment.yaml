@@ -1,0 +1,80 @@
+{{- range .Values.CharlesApplications -}}
+{{- if .enabled -}}
+{{$data := dict "RangeContext" . "ChartContext" $}}
+{{- $appEnvs := include "test.appEnvs" $data -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app: {{ .name }}
+    version: {{ .name }}
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+      version: {{ .name }}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: '{{ .sidecarIstio.enabled }}' 
+      labels:
+        app: {{ .name }}
+        version: {{ .name }}
+    spec:
+    {{- if .serviceAccountName }}
+      serviceAccountName: {{ .serviceAccountName }}
+    {{- end}}
+    {{- if .postgresqlWait }}
+      initContainers:
+        - name: check-db-ready
+          image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: {{ .database.password}}
+          command: ['sh', '-c', 
+            'until pg_isready -h {{ .database.host }} -p 5432 -d {{ .database.name }} -U {{ .database.user}};
+            do echo waiting for database; sleep 2; done;']
+    {{- end }}
+    {{- with .imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .name }}
+          {{ $appEnvs | indent 10 }}
+          image: {{ .image.registry }}/{{ .image.application }}:{{-  .image.tag | default $.Chart.AppVersion }}
+          imagePullPolicy: {{ .pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+              httpGet:
+                path: {{ .healthCheck.path }}
+                port: {{ .healthCheck.port }}
+              initialDelaySeconds: {{ .healthCheck.initialDelay }}
+          readinessProbe:
+            httpGet:
+              path: {{ .healthCheck.path }}
+              port: {{ .healthCheck.port }}
+            initialDelaySeconds: {{ .healthCheck.initialDelay }}
+          resources:
+            {{- toYaml .resources | nindent 14 }}
+      {{- with .nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end}}
+      {{- with .affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+{{- end }}
+{{- end }}

@@ -362,7 +362,6 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -432,7 +431,6 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -481,7 +479,6 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDDatabaseError() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "datasource/prometheus/prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -506,7 +503,6 @@ func (s *SuiteMetricGroup) TestResultByGroupErrorNotFoundPlugin() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,

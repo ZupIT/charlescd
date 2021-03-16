@@ -7,39 +7,52 @@ import (
 )
 
 type V2CallbackData struct {
-	Type	string `json:"type"`
-	Status	string `json:"status"`
+	Type   string `json:"type"`
+	Status string `json:"status"`
+}
+
+// DefaultCircle contains information for helm usage
+type DefaultCircle struct {
+	Enabled  bool   `yaml:"enabled"`
+	CircleID string `yaml:"circleID"`
+}
+
+// VirtualServiceData contains information for helm usage
+type VirtualServiceData struct {
+	Traffic       []string      `yaml:"traffic"`
+	DefaultCircle DefaultCircle `yaml:"defaultCircle"`
 }
 
 const (
-	DEPLOYMENT_CALLBACK = "DEPLOYMENT"
+	DEPLOYMENT_CALLBACK   = "DEPLOYMENT"
 	UNDEPLOYMENT_CALLBACK = "UNDEPLOYMENT"
-	SUCCEEDED_STATUS = "SUCCEEDED"
-	FAILED_STATUS = "FAILED"
-	DEPLOY_ACTION = "DEPLOY"
-	UNDEPLOY_ACTION = "UNDEPLOY"
+	SUCCEEDED_STATUS      = "SUCCEEDED"
+	FAILED_STATUS         = "FAILED"
+	DEPLOY_ACTION         = "DEPLOY"
+	UNDEPLOY_ACTION       = "UNDEPLOY"
 )
 
 type V2Deployment struct {
-	ComponentName		 string					`json:"componentName"`
-	HelmRepositoryConfig repository.Repository  `json:"helmRepositoryConfig"`
-	HelmConfig   	     helm.HelmTemplate		`json:"helmConfig"`
-	RollbackIfFailed	 bool					`json:"rollbackIfFailed"`
+	ComponentName        string                `json:"componentName"`
+	HelmRepositoryConfig repository.Repository `json:"helmRepositoryConfig"`
+	HelmConfig           helm.HelmTemplate     `json:"helmConfig"`
+	RollbackIfFailed     bool                  `json:"rollbackIfFailed"`
 }
 
 type V2DeploymentPipeline struct {
-	Namespace 		 	string						`json:"namespace"`
-	Deployments 	 	[]V2Deployment				`json:"deployments"`
-	UnusedDeployments 	[]V2Deployment				`json:"unusedDeployments"`
-	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
-	CallbackUrl   		string           			`json:"callbackUrl"`
-	ClusterConfig    	cloudprovider.Cloudprovider `json:"clusterConfig"`
+	Namespace              string                      `json:"namespace"`
+	Deployments            []V2Deployment              `json:"deployments"`
+	UnusedDeployments      []V2Deployment              `json:"unusedDeployments"`
+	ProxyDeployments       []map[string]interface{}    `json:"proxyDeployments"`
+	UnusedProxyDeployments []map[string]interface{}    `json:"unusedProxyDeployments"`
+	CallbackUrl            string                      `json:"callbackUrl"`
+	ClusterConfig          cloudprovider.Cloudprovider `json:"clusterConfig"`
 }
 
 type V2UndeploymentPipeline struct {
-	Namespace 		 	string						`json:"namespace"`
-	Undeployments 	 	[]V2Deployment				`json:"undeployments"`
-	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
-	CallbackUrl   		string           			`json:"callbackUrl"`
-	ClusterConfig    	cloudprovider.Cloudprovider `json:"clusterConfig"`
+	Namespace        string                      `json:"namespace"`
+	Undeployments    []V2Deployment              `json:"undeployments"`
+	ProxyDeployments []map[string]interface{}    `json:"proxyDeployments"`
+	CallbackUrl      string                      `json:"callbackUrl"`
+	ClusterConfig    cloudprovider.Cloudprovider `json:"clusterConfig"`
 }

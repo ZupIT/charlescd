@@ -18,8 +18,8 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.domain.*
-import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import javax.inject.Named
 
@@ -42,23 +42,27 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         deploymentRepository.deleteByCircleId(circleId)
     }
 
-    fun find(id: String): Deployment {
-        return this.deploymentRepository.findById(
-            id
-        ).orElseThrow {
-            NotFoundException("deployment", id)
-        }
-    }
-
     fun findLastActive(circleId: String): Deployment? {
         return this.deploymentRepository.findActiveByCircleId(
             circleId
         ).maxBy { it.createdAt }
     }
 
+    fun findLastActive(circleId: String, workspaceId: String): Deployment? {
+        return this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(
+            circleId, workspaceId
+        ).maxBy { it.createdAt }
+    }
+
     fun findActiveList(circleId: String): List<Deployment> {
         return this.deploymentRepository.findActiveByCircleId(
             circleId
+        )
+    }
+
+    fun findActiveList(circleId: String, workspaceId: String): List<Deployment> {
+        return this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(
+            circleId, workspaceId
         )
     }
 }

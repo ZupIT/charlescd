@@ -61,7 +61,7 @@ class SegmentationKeyUtilsTest extends Specification {
 
         def segmentationRule = new Node(NodeType.CLAUSE, LogicalOperatorType.AND, clause, null)
 
-        def segmentation = TestUtils.createSegmentation(segmentationRule, SegmentationType.REGULAR)
+        def segmentation = TestUtils.createSegmentation(segmentationRule, SegmentationType.REGULAR, true)
 
         when:
 

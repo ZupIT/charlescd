@@ -49,8 +49,8 @@ class CircleService(private val circleRepository: CircleRepository) {
         }
     }
 
-    fun find(circleId: String, workspaceId: String): Circle {
-        return this.circleRepository.find(
+    fun findByIdAndWorkspaceId(circleId: String, workspaceId: String): Circle {
+        return this.circleRepository.findByIdAndWorkspaceId(
             circleId,
             workspaceId
         ).orElseThrow {
