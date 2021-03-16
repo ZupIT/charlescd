@@ -19,6 +19,7 @@ type SystemTokenResponse struct {
 	Name string `json:"name"`
 	Permissions []string `json:"permissions"`
 	Workspaces []string `json:"workspaces"`
+	Revoked bool `json:"revoked"`
 	CreatedAt *time.Time `json:"created_at"`
 	RevokedAt *time.Time `json:"revoked_at"`
 	LastUsedAt *time.Time `json:"last_used_at"`
@@ -47,6 +48,7 @@ func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 		Name: systemToken.Name,
 		Permissions: mapper.GetPermissionModelsName(systemToken.Permissions),
 		Workspaces: systemToken.Workspaces,
+		Revoked: systemToken.Revoked,
 		CreatedAt: systemToken.CreatedAt,
 		RevokedAt: systemToken.RevokedAt,
 		LastUsedAt: systemToken.LastUsedAt,
