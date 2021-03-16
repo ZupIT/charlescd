@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
 import map from 'lodash/map';
@@ -32,6 +32,7 @@ import Text from 'core/components/Text';
 import { getProfileByKey } from 'core/utils/profile';
 import { useHistory } from 'react-router';
 import routes from 'core/constants/routes';
+import useOutsideClick from 'core/hooks/useClickOutside';
 
 interface Props {
   form: string;
@@ -45,6 +46,9 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
   const [toggleModal, setToggleModal] = useState<boolean>(false);
   const [currentUserGroup, setCurrentUserGroup] = useState(null);
   const history = useHistory();
+  const modalRef = useRef<HTMLDivElement>();
+
+  useOutsideClick(modalRef, () => setToggleModal(false));
 
   const confirmUserGroupDelete = async () => {
     const email = getProfileByKey('email');
@@ -69,6 +73,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
   // TODO verify font size
   const renderWarningModal = () => (
     <Modal.Trigger
+      ref={modalRef}
       title="Do you want to remove this user group?"
       dismissLabel="Cancel, keep user group"
       onDismiss={() => setToggleModal(false)}

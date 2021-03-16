@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, ReactNode } from 'react';
+import React, { useState, ReactNode, forwardRef, Ref } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
@@ -31,7 +31,7 @@ export interface Props {
   children: ReactNode;
 }
 
-const Trigger = ({
+const Trigger = forwardRef(({
   className,
   onContinue,
   onDismiss,
@@ -41,7 +41,7 @@ const Trigger = ({
   isDisabled,
   isLoading,
   children
-}: Props) => {
+}: Props, ref: Ref<HTMLDivElement>) => {
   const [toggle, switchToggle] = useState(true);
 
   const handleDismiss = () => {
@@ -53,7 +53,7 @@ const Trigger = ({
     toggle && (
       <Styled.Wrapper data-testid="modal-trigger" className={className}>
         <Styled.Background className="modal-background" />
-        <Styled.Content className="modal-content">
+        <Styled.Content className="modal-content" ref={ref}>
           <Styled.Button.Container>
             <Icon
               name="cancel"
@@ -90,6 +90,6 @@ const Trigger = ({
       </Styled.Wrapper>
     )
   );
-};
+});
 
 export default Trigger;
