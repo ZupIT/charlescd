@@ -46,23 +46,6 @@ const user = {
   "root": true
 }
 
-const workspaces = [
-  {
-      id: "123",
-      name: "Charles",
-      permissions: [
-          "deploy_write",
-          "modules_read",
-          "hypothesis_write",
-          "hypothesis_read",
-          "modules_write",
-          "circles_read",
-          "circles_write",
-          "maintenance_write"
-      ]
-  }
-]
-
 test('create a new user', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(newUser));
 
