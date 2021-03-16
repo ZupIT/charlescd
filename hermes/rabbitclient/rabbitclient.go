@@ -212,33 +212,31 @@ func (c *Client) Stream(response chan payloads.MessageResponse, queue string) {
 
 	messages, err := c.channel.Consume(
 		queue,
-		time.Now().String(), // Consumer
-		false,               // Auto-Ack
-		false,               // Exclusive
-		false,               // No-local
-		false,               // No-Wait
-		nil,                 // Args
+		time.Now().String(),
+		false,
+		false,
+		false,
+		false,
+		nil,
 	)
 	if err != nil {
 		logrus.Error(err)
 	}
 
-	go func() {
+	func() {
 		for msg := range messages {
-			messageResponse := c.processMessage(msg, queue)
-			response <- messageResponse
+			c.processMessage(response, msg, queue)
 		}
 	}()
 }
 
-func (c *Client) processMessage(msg amqp.Delivery, queue string) payloads.MessageResponse {
+func (c *Client) processMessage(response chan payloads.MessageResponse, msg amqp.Delivery, queue string) {
 	l := c.logger
 	startTime := time.Now()
 
 	messageResponse, err := parseMessage(msg)
 	if err != nil {
 		logAndNack(msg, l, startTime, "error parse message: %s - %s", string(msg.Body), err.Error())
-		return payloads.MessageResponse{}
 	}
 
 	defer func(messageResponse payloads.MessageResponse, m amqp.Delivery, logger *logrus.Logger) {
@@ -259,8 +257,8 @@ func (c *Client) processMessage(msg amqp.Delivery, queue string) payloads.Messag
 		"Queue":            queue,
 	}).Println()
 
+	response <- messageResponse
 	msg.Ack(false)
-	return messageResponse
 }
 
 func logAndNack(msg amqp.Delivery, l *logrus.Logger, t time.Time, err string, args ...interface{}) {

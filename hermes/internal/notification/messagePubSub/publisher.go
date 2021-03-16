@@ -20,6 +20,7 @@ package messagePubSub
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -30,29 +31,9 @@ import (
 	"time"
 )
 
-func (main *Main) Publish(stopPub chan bool) error {
-	interval, err := time.ParseDuration(configuration.GetConfiguration("PUBLISHER_TIME"))
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start publish", "Get sync interval failed").
-				WithOperations("Start.getInterval"),
-		}).Errorln()
-		return err
-	}
+func (main *Main) Publish() {
+	fmt.Printf("\n[Publisher] Time: %s\n", time.Now())
 
-	ticker := time.NewTicker(interval)
-	for {
-		select {
-		case <-ticker.C:
-			main.publish()
-		case <-stopPub:
-			return nil
-		}
-	}
-
-}
-
-func (main *Main) publish() {
 	messages, err := main.messageMain.FindAllNotEnqueuedAndDeliveredFail()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
