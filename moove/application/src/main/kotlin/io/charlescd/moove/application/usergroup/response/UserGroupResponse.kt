@@ -17,7 +17,6 @@
 package io.charlescd.moove.application.usergroup.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonInclude
 import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.domain.UserGroup
 import java.time.LocalDateTime

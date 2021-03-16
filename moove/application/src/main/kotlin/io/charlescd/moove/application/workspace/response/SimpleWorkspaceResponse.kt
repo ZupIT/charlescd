@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.workspace.response
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import io.charlescd.moove.domain.SimpleWorkspace
 
 data class SimpleWorkspaceResponse(
