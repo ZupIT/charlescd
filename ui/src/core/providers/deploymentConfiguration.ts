@@ -18,7 +18,7 @@ import { DeploymentConfiguration } from 'modules/Settings/Credentials/Sections/D
 import { postRequest } from './base';
 
 const endpoint = '/moove/v2/configurations/deployment';
-export const configPath = '/cdConfigurationId';
+export const configPath = '/deploymentConfigurationId';
 
 export const create = (deploymentConfiguration: DeploymentConfiguration) =>
   postRequest(`${endpoint}`, deploymentConfiguration);
