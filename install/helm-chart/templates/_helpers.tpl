@@ -262,6 +262,8 @@ env:
     value: {{ .RangeContext.idmLogoutUri }}
   - name: REACT_APP_IDM_REDIRECT_URI
     value: {{ .RangeContext.idmRedirectHost }}
+  - name: REACT_APP_CHARLES_VERSION
+    value: {{ .ChartContext.AppVersion }}
 {{- end -}}
 
 
