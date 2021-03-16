@@ -27,6 +27,7 @@ import (
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"io"
+	"strings"
 	"time"
 )
 
@@ -112,9 +113,17 @@ func (main Main) FindAllNotEnqueuedAndDeliveredFail() ([]payloads.MessageRespons
 func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error) {
 	var cond interface{} = ""
 
-	if parameters["EventValue"] != "" && parameters["EventField"] != "" {
-		cond = datatypes.JSONQuery("event").Equals(parameters["EventValue"], parameters["EventField"])
+	eventValue := parameters["EventValue"]
+	eventField := parameters["EventField"]
+
+	if eventValue != "" && eventField != "" {
+		keys := strings.Split(eventField, ".")
+		cond = datatypes.JSONQuery("event").Equals(eventValue, keys...)
 	}
+
+	//if parameters["EventValue"] != "" && parameters["EventField"] != "" {
+	//	cond = datatypes.JSONQuery("event").Equals(parameters["EventValue"], parameters["EventField"])
+	//}
 
 	query, response := main.buildQuery(subscriptionId, cond, parameters, page, size)
 	if query.Error != nil {
