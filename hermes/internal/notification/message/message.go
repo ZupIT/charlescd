@@ -121,10 +121,6 @@ func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters ma
 		cond = datatypes.JSONQuery("event").Equals(eventValue, keys...)
 	}
 
-	//if parameters["EventValue"] != "" && parameters["EventField"] != "" {
-	//	cond = datatypes.JSONQuery("event").Equals(parameters["EventValue"], parameters["EventField"])
-	//}
-
 	query, response := main.buildQuery(subscriptionId, cond, parameters, page, size)
 	if query.Error != nil {
 		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionId Message error", query.Error.Error()).
