@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useImperativeHandle, useRef } from 'react';
+import React, { KeyboardEvent, useImperativeHandle, useRef } from 'react';
+import { isIntoMax, isNumber } from './helper';
 import Styled from './styled';
 
 interface Props {
   name: string;
   label?: string;
+  max?: number;
   placeholder?: string;
   className?: string;
   defaultValue?: string;
@@ -33,6 +35,7 @@ const Number = React.forwardRef(
     {
       name,
       label,
+      max,
       placeholder,
       className,
       defaultValue,
@@ -46,6 +49,16 @@ const Number = React.forwardRef(
 
     useImperativeHandle(ref, () => inputRef.current);
 
+    const onKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+      const key = event.key;
+      const currentValue = event.currentTarget.value;
+      const futureValue = `${currentValue}${key}`;
+
+      if (!isNumber(key) || isIntoMax(futureValue, max)) {
+        event.preventDefault();
+      }
+    }
+
     return (
       <Styled.Input
         name={name}
@@ -53,6 +66,7 @@ const Number = React.forwardRef(
         type="number"
         ref={inputRef}
         className={className}
+        onKeyPress={onKeyPress}
         placeholder={placeholder}
         defaultValue={defaultValue}
         maxLength={maxLength}
