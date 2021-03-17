@@ -20,7 +20,6 @@ package messagePubSub
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"hermes/internal/configuration"
@@ -73,7 +72,6 @@ func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse) {
 		main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHttpStatus(webhookErr))
 
 		if messageResponse.RetryCount < configuration.GetConfigurationAsInt("CONSUMER_MESSAGE_RETRY_ATTEMPTS") {
-			fmt.Printf("OPAAAA")
 			sendToWaitQueue(main, messageResponse)
 		}
 	} else {
