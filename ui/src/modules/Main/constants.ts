@@ -36,14 +36,6 @@ export const workspaceMenu: MenuType[] = [
     subject: 'circles'
   },
   {
-    id: genMenuId(routes.hypotheses),
-    icon: 'hypotheses',
-    text: 'Hypotheses',
-    to: routes.hypotheses,
-    action: 'read',
-    subject: 'hypothesis'
-  },
-  {
     id: genMenuId(routes.modules),
     icon: 'modules',
     text: 'Modules',

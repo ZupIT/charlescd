@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="16px" viewBox="0 0 14 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon/Math/Plus/Circle</title>
+    <defs>
+        <path d="M14,14 C14.3686667,14 14.6666667,14.298 14.6666667,14.6666667 C14.6666667,15.0353333 14.3686667,15.3333333 14,15.3333333 L2,15.3333333 C1.632,15.3333333 1.33333333,15.0353333 1.33333333,14.6666667 C1.33333333,14.298 1.632,14 2,14 L14,14 Z M9.80466667,0.862 L12.4713333,3.52866667 C12.732,3.78933333 12.732,4.21066667 12.4713333,4.47133333 L5.138,11.8046667 C5.01333333,11.93 4.84333333,12 4.66666667,12 L2,12 C1.632,12 1.33333333,11.702 1.33333333,11.3333333 L1.33333333,8.66666667 C1.33333333,8.49 1.40333333,8.32 1.52866667,8.19533333 L8.862,0.862 C9.12266667,0.601333333 9.544,0.601333333 9.80466667,0.862 Z M9.33333333,2.276 L2.66666667,8.94266667 L2.66666667,10.6666667 L4.39066667,10.6666667 L11.0573333,4 L9.33333333,2.276 Z" id="path-1-manually"></path>
+    </defs>
+    <g id="Circles---Create-circle" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon/Math/Plus/Circle" transform="translate(-1.000000, 0.000000)">
+            <mask id="mask-2-manually" fill="white">
+                <use xlink:href="#path-1-manually"></use>
+            </mask>
+            <use id="Icon-Edit" fill="currentColor" xlink:href="#path-1-manually"></use>
+        </g>
+    </g>
+</svg>

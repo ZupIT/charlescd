@@ -42,7 +42,8 @@ class CircleResponse(
     val importedAt: LocalDateTime? = null,
     val default: Boolean,
     val deployment: DeploymentResponse? = null,
-    val workspaceId: String
+    val workspaceId: String,
+    val percentage: Int? = null
 ) {
     companion object {
         fun from(circle: Circle) = CircleResponse(
@@ -56,7 +57,8 @@ class CircleResponse(
             author = circle.author?.let { SimpleUserResponse.from(it) },
             matcherType = circle.matcherType,
             default = circle.defaultCircle,
-            workspaceId = circle.workspaceId
+            workspaceId = circle.workspaceId,
+            percentage = circle.percentage
         )
 
         fun from(circle: Circle, deployment: Deployment?, build: Build?) = CircleResponse(
@@ -71,7 +73,8 @@ class CircleResponse(
             matcherType = circle.matcherType,
             default = circle.defaultCircle,
             workspaceId = circle.workspaceId,
-            deployment = deployment?.let { d -> build?.let { b -> DeploymentResponse.from(d, b) } }
+            deployment = deployment?.let { d -> build?.let { b -> DeploymentResponse.from(d, b) } },
+            percentage = circle.percentage
         )
     }
 }

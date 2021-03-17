@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen, waitFor } from 'unit-test/testUtils';
-import { FetchMock } from 'jest-fetch-mock/types';
-import { Circle } from 'modules/Circles/interfaces/Circle';
-import { ThemeScheme } from 'core/assets/themes';
-import { getTheme } from 'core/utils/themes';
-import CreateSegments from '..';
-import userEvent from '@testing-library/user-event';
-import { act } from 'react-dom/test-utils';
+import React from "react";
+import { render, screen, act, waitFor } from "unit-test/testUtils";
+import { FetchMock } from "jest-fetch-mock/types";
+import { Circle } from "modules/Circles/interfaces/Circle";
+import CreateSegments from "..";
+import userEvent from "@testing-library/user-event";
+import {
+  circle,
+  mockPercentageCircles,
+  circlePercentage,
+  circleManually,
+  circleCSV
+} from "./fixtures";
+import { NEW_TAB } from "core/components/TabPanel/constants";
 
-const theme = getTheme() as ThemeScheme;
-
-const circle = {
+const simpleCircle = {
   deployment: {
-    status: 'DEPLOYED'
+    status: "DEPLOYED"
   }
-}
+};
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
-test('render CreateSegments default component', async () => {
+test("render CreateSegments default component", async () => {
   const onGoBack = jest.fn();
   const onSaveCircle = jest.fn();
   render(
@@ -44,64 +47,313 @@ test('render CreateSegments default component', async () => {
       onGoBack={onGoBack}
       onSaveCircle={onSaveCircle}
       id="123"
-      circle={circle as Circle}
+      circle={simpleCircle as Circle}
     />
   );
+  const DefaultText = await screen.findByText("Create manually");
 
-  const ButtonGoBack = await screen.findByTestId('icon-arrow-left');
-  expect(ButtonGoBack).toBeInTheDocument();
-
-  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
-  expect(ButtonCreateManually).toBeInTheDocument();
-
-  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
-  expect(ButtonImportCSV).toBeInTheDocument();
+  expect(DefaultText).toBeInTheDocument();
 });
 
-test('render CreateSegments and try Create manually', async () => {
+test("render CreateSegments with percentage session active", async () => {
   const onGoBack = jest.fn();
   const onSaveCircle = jest.fn();
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(mockPercentageCircles));
+
   render(
     <CreateSegments
       onGoBack={onGoBack}
       onSaveCircle={onSaveCircle}
-      id="123"
+      id={NEW_TAB}
       circle={circle as Circle}
     />
   );
 
-  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
-  expect(ButtonCreateManually).toBeInTheDocument();
+  const PercentageButton = await screen.findByTestId(
+    "button-iconRounded-percentage"
+  );
 
-  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
-  expect(ButtonImportCSV).toBeInTheDocument();
-  
-  act(() => userEvent.click(ButtonCreateManually));
+  act(() => {
+    userEvent.click(PercentageButton);
+  });
+  await waitFor(() => {
+    const PercentageText = screen.getByText(
+      "Quantity available for consumption."
+    );
 
-  expect(ButtonCreateManually).toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
-  expect(ButtonImportCSV).not.toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
+    expect(PercentageText).toBeInTheDocument();
+  });
 });
 
-test('render CreateSegments and try Import CSV', async () => {
+test("render CreateSegments with manual session active", async () => {
   const onGoBack = jest.fn();
   const onSaveCircle = jest.fn();
+
   render(
     <CreateSegments
       onGoBack={onGoBack}
       onSaveCircle={onSaveCircle}
-      id="123"
-      circle={circle as Circle}
+      id={NEW_TAB}
+      circle={simpleCircle as Circle}
     />
   );
 
-  const ButtonImportCSV = screen.getByTestId('button-iconRounded-upload');
-  expect(ButtonImportCSV).toBeInTheDocument();
+  const ManuallyButton = await screen.findByTestId(
+    "button-iconRounded-manually"
+  );
 
-  const ButtonCreateManually = screen.getByTestId('button-iconRounded-edit');
-  expect(ButtonCreateManually).toBeInTheDocument();
+  userEvent.click(ManuallyButton);
 
-  act(() => userEvent.click(ButtonImportCSV));
+  await waitFor(() => {
+    const ManuallyText = screen.getByTestId("segments-rules");
+    expect(ManuallyText).toBeInTheDocument();
+  });
+});
 
-  waitFor(() => expect(ButtonImportCSV).toHaveStyle(`background-color: ${theme.radio.button.checked.background}`));
-  expect(ButtonCreateManually).not.toHaveStyle(`background-color: ${theme.radio.button.checked.background}`);
+test("render CreateSegments with CSV session active", async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id={NEW_TAB}
+      circle={simpleCircle as Circle}
+    />
+  );
+
+  const ImportCsvButton = await screen.findByTestId(
+    "button-iconRounded-upload"
+  );
+
+  userEvent.click(ImportCsvButton);
+
+  await waitFor(() => {
+    const ImportCsvText = screen.getByTestId("input-file-inputFileId-file");
+    expect(ImportCsvText).toBeInTheDocument();
+  });
+});
+
+test("modal change percentage to manually should be rendered", async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(mockPercentageCircles));
+
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id={circlePercentage.id}
+      circle={circlePercentage as Circle}
+    />
+  );
+
+  const ManuallyButton = await screen.findByTestId(
+    "button-iconRounded-manually"
+  );
+
+  userEvent.click(ManuallyButton);
+
+  const ModalText = await screen.findByText(
+    "Your current percentage circle will be converted to segmentation circle."
+  );
+
+  expect(ModalText).toBeInTheDocument();
+
+  const ContinueButton = screen.getByTestId("button-default-continue");
+
+  userEvent.click(ContinueButton);
+
+  const ManuallyText = await screen.findByTestId("segments-rules");
+
+  expect(ManuallyText).toBeInTheDocument();
+});
+
+test("modal change percentage to Import CSV should be rendered", async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(mockPercentageCircles));
+
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id={circlePercentage.id}
+      circle={circlePercentage as Circle}
+    />
+  );
+
+  const UploadButton = await screen.findByTestId("button-iconRounded-upload");
+
+  act(() => {
+    userEvent.click(UploadButton);
+  });
+
+  const ModalText = await screen.findByText(
+    "Your current percentage circle will be converted to segmentation circle."
+  );
+
+  expect(ModalText).toBeInTheDocument();
+
+  const ContinueButton = screen.getByTestId("button-default-continue");
+
+  userEvent.click(ContinueButton);
+
+  const ImportCsvText = await screen.findByTestId(
+    "input-file-inputFileId-file"
+  );
+
+  expect(ImportCsvText).toBeInTheDocument();
+});
+
+test("modal change manual to percentage should be rendered", async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(mockPercentageCircles));
+
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id={circleManually.id}
+      circle={circleManually as Circle}
+    />
+  );
+
+  const PercentageButton = await screen.findByTestId(
+    "button-iconRounded-percentage"
+  );
+
+  userEvent.click(PercentageButton);
+
+  const ModalText = screen.getByText(
+    "Your current segmentation will be deleted and replaced with percentage rules."
+  );
+
+  expect(ModalText).toBeInTheDocument();
+
+  const ContinueButton = screen.getByTestId("button-default-continue");
+
+  userEvent.click(ContinueButton);
+
+  const PercentageText = await screen.findByText(
+    "Quantity available for consumption."
+  );
+
+  expect(PercentageText).toBeInTheDocument();
+});
+
+test("modal change manual to import csv should be rendered", async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(mockPercentageCircles));
+
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id={circleManually.id}
+      circle={circleManually as Circle}
+    />
+  );
+
+  const UploadButton = await screen.findByTestId("button-iconRounded-upload");
+
+  userEvent.click(UploadButton);
+
+  const ModalText = screen.getByText(
+    "Your current segmentation was created using manual rules, this rules will be replaced by the CSV content."
+  );
+
+  expect(ModalText).toBeInTheDocument();
+
+  const ContinueButton = screen.getByTestId("button-default-continue");
+
+  userEvent.click(ContinueButton);
+
+  const ImportCsvText = await screen.findByTestId(
+    "input-file-inputFileId-file"
+  );
+
+  expect(ImportCsvText).toBeInTheDocument();
+});
+
+test("modal change import csv to manually should be rendered", async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(mockPercentageCircles));
+
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id={circleCSV.id}
+      circle={circleCSV as Circle}
+    />
+  );
+
+  const ManuallyButton = await screen.findByTestId(
+    "button-iconRounded-manually"
+  );
+
+  userEvent.click(ManuallyButton);
+
+  const ModalText = screen.getByText(
+    "Your current base was imported using a .CSV file, manually creating your entire circle segmentation will be deleted and replaced."
+  );
+
+  expect(ModalText).toBeInTheDocument();
+
+  const ContinueButton = screen.getByTestId("button-default-continue");
+
+  userEvent.click(ContinueButton);
+
+  const ManuallyText = await screen.findByTestId("segments-rules");
+
+  expect(ManuallyText).toBeInTheDocument();
+});
+
+test("modal change import csv to percentage should be rendered", async () => {
+  const onGoBack = jest.fn();
+  const onSaveCircle = jest.fn();
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(mockPercentageCircles));
+
+  render(
+    <CreateSegments
+      onGoBack={onGoBack}
+      onSaveCircle={onSaveCircle}
+      id={circleCSV.id}
+      circle={circleCSV as Circle}
+    />
+  );
+
+  const PercentageButton = await screen.findByTestId(
+    "button-iconRounded-percentage"
+  );
+
+  userEvent.click(PercentageButton);
+
+  const ModalText = screen.getByText(
+    "Your current segmentation will be deleted and replaced with percentage rules."
+  );
+
+  expect(ModalText).toBeInTheDocument();
+
+  const ContinueButton = screen.getByTestId("button-default-continue");
+
+  userEvent.click(ContinueButton);
+
+  const PercentageText = await screen.findByText(
+    "Quantity available for consumption."
+  );
+
+  expect(PercentageText).toBeInTheDocument();
 });
