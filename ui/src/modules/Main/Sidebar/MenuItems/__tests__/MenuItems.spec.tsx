@@ -126,7 +126,7 @@ test('should show workspace menu', () => {
   );
 
   expect(screen.getByText('Circles')).toBeInTheDocument();
-  expect(screen.getByText('Hypotheses')).toBeInTheDocument();
+  expect(screen.queryByText('Hypotheses')).not.toBeInTheDocument();
   expect(screen.getByText('Modules')).toBeInTheDocument();
   expect(screen.getByText('Metrics')).toBeInTheDocument();
   expect(screen.getByText('Settings')).toBeInTheDocument();
