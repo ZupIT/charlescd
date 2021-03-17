@@ -118,6 +118,7 @@ public class SegmentationServiceImpl implements SegmentationService {
                     item.isConvertibleToKv() ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
                     segmentationRequest.getWorkspaceId(),
                     segmentationRequest.getIsDefault(),
+                    segmentationRequest.getPercentage(),
                     segmentationRequest.isActive(),
                     segmentationRequest.getCreatedAt())));
 

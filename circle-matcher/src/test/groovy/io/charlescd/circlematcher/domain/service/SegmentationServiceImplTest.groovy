@@ -54,7 +54,7 @@ class SegmentationServiceImplTest extends Specification {
         def node = TestUtils.createClauseNode([TestUtils.createNode(content)])
         def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
-        def request = TestUtils.createSegmentationRequest(node, SegmentationType.REGULAR)
+        def request = TestUtils.createSegmentationRequest(node, SegmentationType.REGULAR, null, true)
 
         when:
 
@@ -82,7 +82,7 @@ class SegmentationServiceImplTest extends Specification {
         def node = TestUtils.createNode(content)
         def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
-        def request = TestUtils.createSegmentationRequest(node, SegmentationType.SIMPLE_KV)
+        def request = TestUtils.createSegmentationRequest(node, SegmentationType.SIMPLE_KV, null, true)
 
         when:
 
@@ -114,7 +114,7 @@ class SegmentationServiceImplTest extends Specification {
         def metadataList = new ArrayList()
         metadataList.add(keyMetadata)
 
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null, true)
 
         when:
 
@@ -150,7 +150,7 @@ class SegmentationServiceImplTest extends Specification {
         def metadataList = new ArrayList()
         metadataList.add(keyMetadata)
 
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.SIMPLE_KV)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.SIMPLE_KV, null, true)
 
         when:
 

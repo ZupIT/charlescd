@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-import { Execution } from '../../entity/execution.entity'
+package io.charlescd.circlematcher.domain.service.impl;
 
-export interface PaginatedExecutions {
-  executions: Execution[]
-  page: number
-  size: number
-  last: boolean
+import io.charlescd.circlematcher.domain.service.RandomService;
+import java.security.SecureRandom;
+import org.springframework.stereotype.Service;
+
+@Service
+public class RandomServiceImpl implements RandomService {
+
+    private SecureRandom secureRandom;
+
+    public RandomServiceImpl() {
+        this.secureRandom = new SecureRandom();
+    }
+
+    public int getRandomNumber(int number) {
+        return this.secureRandom.nextInt(number) + 1;
+    }
+
 }
