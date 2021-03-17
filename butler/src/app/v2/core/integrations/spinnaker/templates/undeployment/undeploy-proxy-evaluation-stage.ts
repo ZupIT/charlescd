@@ -43,7 +43,7 @@ const getProxyDeploymentsResultExpression = (components: DeploymentComponent[]):
   let expression = ''
   components.forEach((component, index)=> {
     expression = index === 0 ? '${' : expression
-    expression += '#stage(\'' + `Undeploy Virtual Service ${component.name}` + '\').status.toString() == \'SUCCEEDED\''
+    expression += '#stage(\'' + `Undeploy Destination Rules ${component.name}` + '\').status.toString() == \'SUCCEEDED\''
     expression = index === components.length - 1 ? `${expression}}` : `${expression} && `
   })
   return expression

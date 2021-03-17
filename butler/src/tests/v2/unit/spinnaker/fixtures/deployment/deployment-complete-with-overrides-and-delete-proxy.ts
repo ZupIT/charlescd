@@ -1310,6 +1310,8 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       requisiteStageRefIds: [
         '14'
       ],
+      stageEnabled: {
+      },
       skipExpressionEvaluation: false,
       source: 'text',
       trafficManagement: {

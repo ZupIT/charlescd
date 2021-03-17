@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20210217183000-1
+      author: mateus.cruz
+      comment: "Remove hypotheses from all roles description"
+      changes:
+        - sql:
+            comment: "Updating Maintainer role description"
+            sql: "update roles set description = 'Can access and edit this workspace''s settings. Can deploy. Can also create, edit and delete: circles and modules.' where id = 'abf2ac96-e25b-4b82-8828-d7ef2b013ade'"
+        - sql:
+            comment: "Updating Developer role description"
+            sql: "update roles set description = 'Can deploy. Can also create, edit and delete: circles and modules.' where id = '822a87d4-2bba-4d2a-b21c-b2b8533f9cc1'"
+        - sql:
+            comment: "Updating Reader role description"
+            sql: "update roles set description = 'Can view circles and modules.' where id = '52c22f91-5320-4760-a013-701c31611aed'"
+        - sql:
+            comment: "Updating Analyst role description"
+            sql: "update roles set description = 'Can view modules. Can also create, edit and delete circles.' where id = 'da59c62b-5498-4e65-b311-01cb5c5279ef'"

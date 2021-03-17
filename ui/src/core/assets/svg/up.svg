@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="6px" viewBox="0 0 10 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon/Arrow/Straight/Left Copy 2</title>
+    <defs>
+        <path d="M4.66683333,5.3335 C4.49616667,5.3335 4.3255,5.26816667 4.1955,5.13816667 L0.1955,1.13816667 C-0.0651666667,0.8775 -0.0651666667,0.456166667 0.1955,0.1955 C0.456166667,-0.0651666667 0.8775,-0.0651666667 1.13816667,0.1955 L4.66683333,3.72416667 L8.1955,0.1955 C8.45616667,-0.0651666667 8.8775,-0.0651666667 9.13816667,0.1955 C9.39883333,0.456166667 9.39883333,0.8775 9.13816667,1.13816667 L5.13816667,5.13816667 C5.00816667,5.26816667 4.8375,5.3335 4.66683333,5.3335" id="path-1-up"></path>
+    </defs>
+    <g id="Circles---Create-circle" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-up" transform="translate(-3.000000, -4.000000)">
+            <g id="Icons/Chevron/Up" transform="translate(3.333333, 4.666667)">
+                <mask id="mask-2-up" fill="white">
+                    <use xlink:href="#path-1-up"></use>
+                </mask>
+                <use id="Icon-Chevron-Up" fill="currentColor" transform="translate(4.666833, 2.666750) scale(1, -1) translate(-4.666833, -2.666750) " xlink:href="#path-1-up"></use>
+            </g>
+        </g>
+    </g>
+</svg>
