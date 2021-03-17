@@ -19,18 +19,29 @@ import { render, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import SectionUserGroup from '../';
-import { user } from 'modules/Workspaces/__tests__/fixtures';
 
 test('should remove a user group', async () => {
+  // TODO put in fixture
   const userGroup = [
     {
       id: '1',
-      name: 'devx',
+      name: 'devx user group',
       users: [
         {
           id: '12',
           name: 'user 1',
           email: 'user1@gmail.com'
+        }
+      ]
+    },
+    {
+      id: '2',
+      name: 'metrics user group',
+      users: [
+        {
+          id: '34',
+          name: 'user 2',
+          email: 'user2@gmail.com'
         }
       ]
     }
@@ -44,22 +55,98 @@ test('should remove a user group', async () => {
     />
   );
 
-  const temp = screen.getByText('devx').querySelector('[data-testid="icon-cancel"]')
-  console.log('temp:',temp);
-  // await waitFor(() => expect(screen.getByText('devx')).toBeInTheDocument());
+  const userGroup1 = await screen.findByTestId('user-group-1');
+  const removeIcon = userGroup1.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(removeIcon);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+
+  const confirmRemove = screen.getByTestId('button-default-continue');
+  userEvent.click(confirmRemove);
+
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
   
-
-  // screen.debug()
-  // add a user group
-  // remove user group, clicar X
-  // show modal
-  // escolher yes remove
-  // modal nao deveria aparecer
-  // user group removido nao deveria aparecer
-
+  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
 });
 
-test.only('should render modal that confirms user group deletion', async () => {
+test.only('should cancel removal of a user group', async () => {
+  // TODO put in fixture
+  const userGroup = [
+    {
+      id: '1',
+      name: 'devx user group',
+      users: [
+        {
+          id: '12',
+          name: 'user 1',
+          email: 'user1@gmail.com'
+        }
+      ]
+    },
+    {
+      id: '2',
+      name: 'metrics user group',
+      users: [
+        {
+          id: '34',
+          name: 'user 2',
+          email: 'user2@gmail.com'
+        }
+      ]
+    }
+  ];
+
+  render(
+    <SectionUserGroup 
+      form=''
+      setForm={() => jest.fn()}
+      data={userGroup}
+    />
+  );
+
+  const userGroup1 = await screen.findByTestId('user-group-1');
+  const removeIcon = userGroup1.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(removeIcon);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+
+  const cancelRemove = screen.getByTestId('button-default-dismiss');
+  userEvent.click(cancelRemove);
+
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  
+  expect(screen.getByText('devx user group')).toBeInTheDocument();
+});
+
+
+test.skip('should remove a user group OLD', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({}));
+  saveProfile({
+    id: 'profile',
+    name: 'user1',
+    email: 'user1@email'
+  });
+  render(<Credentials />);
+
+  console.log('before', window.location);
+  
+  await waitFor(() => expect(screen.getByText('devx')).toBeInTheDocument());
+  const userGroup = await screen.findByTestId('user-group-ug-1');
+  const iconCancel = userGroup.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(iconCancel);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+  const confirmButton = await screen.findByText('Yes, remove user group');
+
+  userEvent.click(confirmButton);
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  expect(screen.queryByText('devx')).not.toBeInTheDocument();
+
+  await waitFor(() => {});
+  console.log('after', window.location);
+});
+
+test.skip('should render modal that confirms user group deletion', async () => {
   const userGroup = [
     {
       id: '1',
@@ -94,7 +181,7 @@ test.only('should render modal that confirms user group deletion', async () => {
   expect(screen.getByTestId('icon-close-modal')).toBeInTheDocument();
 });
 
-test.only('should close modal', async () => {
+test.skip('should close modal', async () => {
   const userGroup = [
     {
       id: '1',
@@ -127,7 +214,7 @@ test.only('should close modal', async () => {
   expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument();
 });
 
-test.only('should close modal when clicking outside modal', async () => {
+test.skip('should close modal when clicking outside modal', async () => {
   const userGroup = [
     {
       id: '1',
@@ -160,31 +247,4 @@ test.only('should close modal when clicking outside modal', async () => {
   const modalWrapper = screen.getByTestId('wrapper-modal');
   userEvent.click(modalWrapper);
   expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument();
-});
-
-test.skip('should remove a user group', async () => {
-  (fetch as FetchMock).mockResponse(JSON.stringify({}));
-  saveProfile({
-    id: 'profile',
-    name: 'user1',
-    email: 'user1@email'
-  });
-  render(<Credentials />);
-
-  console.log('before', window.location);
-  
-  await waitFor(() => expect(screen.getByText('devx')).toBeInTheDocument());
-  const userGroup = await screen.findByTestId('user-group-ug-1');
-  const iconCancel = userGroup.querySelector('[data-testid="icon-cancel"]');
-
-  userEvent.click(iconCancel);
-  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
-  const confirmButton = await screen.findByText('Yes, remove user group');
-
-  userEvent.click(confirmButton);
-  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
-  expect(screen.queryByText('devx')).not.toBeInTheDocument();
-
-  await waitFor(() => {});
-  console.log('after', window.location);
 });
