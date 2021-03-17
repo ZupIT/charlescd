@@ -154,7 +154,7 @@ class CircleMatcherClientServiceTest extends Specification {
         assert response[1].name == "Default"
     }
 
-    def "should find the circles from workspace and delete of circle-matcher"() {
+    def "should find the circles from workspace and delete at circle-matcher"() {
         given:
         def matcherUri = "http://circle-matcher.com"
         def circles = new Circles([Fixtures.circle().build(), Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()])
