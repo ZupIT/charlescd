@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
@@ -24,13 +22,8 @@ type systemTokenRepository struct {
 	queries goyesql.Queries
 }
 
-func NewSystemTokenRepository(db *gorm.DB, queriesPath string) (SystemTokenRepository, error) {
-	queries, err := goyesql.ParseFile(fmt.Sprintf("%s/%s", queriesPath, "system_token_queries.sql"))
-	if err != nil {
-		return systemTokenRepository{}, err
-	}
-
-	return systemTokenRepository{db: db, queries: queries}, nil
+func NewSystemTokenRepository(db *gorm.DB) (SystemTokenRepository, error) {
+	return systemTokenRepository{db: db}, nil
 }
 
 func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken) (domain.SystemToken, error) {

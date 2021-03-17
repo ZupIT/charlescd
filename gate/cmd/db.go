@@ -74,8 +74,7 @@ func runMigrations(sqlDb *sql.DB) error {
 }
 
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
-	queriesPath := configuration.Get("QUERIES_PATH")
-	stRepo, err := repository.NewSystemTokenRepository(db, queriesPath)
+	stRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
 	}
