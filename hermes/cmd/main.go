@@ -49,7 +49,11 @@ func main() {
 	goChan := make(chan os.Signal, 1)
 	amqpClient := rabbitclient.NewClient(
 		configuration.GetConfiguration("AMQP_MESSAGE_QUEUE"),
-		configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"),
+		configuration.GetConfiguration("AMQP_WAIT_MESSAGE_QUEUE"),
+		configuration.GetConfiguration("AMQP_MESSAGE_EXCHANGE"),
+		configuration.GetConfiguration("AMQP_WAIT_MESSAGE_EXCHANGE"),
+		configuration.GetConfiguration("AMQP_MESSAGE_ROUTING_KEY"),
+		configuration.GetConfiguration("CONSUMER_MESSAGE_RETRY_EXPIRATION"),
 		configuration.GetConfiguration("AMQP_URL"),
 		logrus.New(),
 		goChan,
@@ -60,16 +64,13 @@ func main() {
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
 	messagePubSubMain := messagePubSub.NewMain(db, amqpClient, messageMain, messageExecutionMain, subscriptionMain)
 
-	queue := configuration.GetConfiguration("AMQP_MESSAGE_QUEUE")
-	failedQueue := configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE")
-
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cron.DefaultLogger)))
 	c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
-	c.AddFunc(configuration.GetConfiguration("CONSUMER_TIME"), func() { messagePubSubMain.Consume(queue) })
-	c.AddFunc(configuration.GetConfiguration("CONSUMER_DELIVERED_FAILED_TIME"), func() { messagePubSubMain.Consume(failedQueue) })
-
 	go c.Start()
+
+	stopChan := make(chan bool, 0)
+	go messagePubSubMain.Consume(stopChan)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)

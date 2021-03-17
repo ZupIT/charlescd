@@ -36,7 +36,7 @@ const (
 
 type UseCases interface {
 	Publish()
-	Consume(queue string)
+	Consume(stopChan chan bool)
 }
 
 type Main struct {

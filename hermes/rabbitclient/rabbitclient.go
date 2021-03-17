@@ -24,6 +24,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"hermes/internal/notification/payloads"
+	"log"
 	"os"
 	"runtime"
 	"sync"
@@ -39,48 +40,56 @@ const (
 )
 
 type Client struct {
-	messageQueue       string
-	deliveredFailQueue string
-	logger             *logrus.Logger
-	connection         *amqp.Connection
-	channel            *amqp.Channel
-	done               chan os.Signal
-	notifyClose        chan *amqp.Error
-	notifyConfirm      chan amqp.Confirmation
-	isConnected        bool
-	alive              bool
-	threads            int
-	wg                 *sync.WaitGroup
+	messageQueue         string
+	waitQueue            string
+	exchangeMessageQueue string
+	exchangeWaitQueue    string
+	messageRoutingKey    string
+	retryExpiration      string
+	logger               *logrus.Logger
+	connection           *amqp.Connection
+	channel              *amqp.Channel
+	done                 chan os.Signal
+	notifyClose          chan *amqp.Error
+	notifyConfirm        chan amqp.Confirmation
+	isConnected          bool
+	alive                bool
+	threads              int
+	wg                   *sync.WaitGroup
 }
 
-func NewClient(messageQueue, deliveredFailQueue, addr string, l *logrus.Logger, done chan os.Signal) *Client {
+func NewClient(messageQueue, waitQueue, exchangeMessageQueue, exchangeWaitQueue, messageRoutingKey, retryExpiration, addr string, l *logrus.Logger, done chan os.Signal) *Client {
 	threads := runtime.GOMAXPROCS(0)
 	if numCPU := runtime.NumCPU(); numCPU > threads {
 		threads = numCPU
 	}
 
 	client := Client{
-		logger:             l,
-		threads:            threads,
-		messageQueue:       messageQueue,
-		deliveredFailQueue: deliveredFailQueue,
-		done:               done,
-		alive:              true,
-		wg:                 &sync.WaitGroup{},
+		logger:               l,
+		threads:              threads,
+		messageQueue:         messageQueue,
+		waitQueue:            waitQueue,
+		exchangeMessageQueue: exchangeMessageQueue,
+		exchangeWaitQueue:    exchangeWaitQueue,
+		messageRoutingKey:    messageRoutingKey,
+		retryExpiration:      retryExpiration,
+		done:                 done,
+		alive:                true,
+		wg:                   &sync.WaitGroup{},
 	}
 	client.wg.Add(threads)
 
-	go client.handleReconnect(addr)
+	go client.handleReconnect(addr, messageQueue, waitQueue, exchangeMessageQueue, exchangeWaitQueue, messageRoutingKey)
 	return &client
 }
 
-func (c *Client) handleReconnect(addr string) {
+func (c *Client) handleReconnect(addr string, messageQueue string, waitQueue string, exchangeMessageQueue string, exchangeWaitQueue string, messageRoutingKey string) {
 	for c.alive {
 		c.isConnected = false
 		t := time.Now()
 		fmt.Printf("Attempting to connect to rabbitMQ: %s\n", addr)
 		var retryCount int
-		for !c.connect(addr) {
+		for !c.connect(addr, messageQueue, waitQueue, exchangeMessageQueue, exchangeWaitQueue, messageRoutingKey) {
 			if !c.alive {
 				return
 			}
@@ -101,7 +110,8 @@ func (c *Client) handleReconnect(addr string) {
 	}
 }
 
-func (c *Client) connect(addr string) bool {
+func (c *Client) connect(addr string, messageQueue string, waitQueue string, exchangeMessageQueue string, exchangeWaitQueue string, messageRoutingKey string) bool {
+
 	conn, err := amqp.Dial(addr)
 	if err != nil {
 		c.logger.Printf("failed to dial rabbitMQ server: %v", err)
@@ -114,8 +124,22 @@ func (c *Client) connect(addr string) bool {
 	}
 	ch.Confirm(false)
 
+	err = ch.ExchangeDeclare(
+		exchangeMessageQueue,
+		"topic",
+		true,
+		false,
+		false,
+		false,
+		nil)
+
+	if err != nil {
+		c.logger.Printf("failed to declare exchange queue: %v", err)
+		return false
+	}
+
 	_, err = ch.QueueDeclare(
-		c.messageQueue,
+		messageQueue,
 		true,  // Durable
 		false, // Delete when unused
 		false, // Exclusive
@@ -127,17 +151,37 @@ func (c *Client) connect(addr string) bool {
 		return false
 	}
 
-	_, err = ch.QueueDeclare(
-		c.deliveredFailQueue,
-		true,  // Durable
-		false, // Delete when unused
-		false, // Exclusive
-		false, // No-wait
-		nil,   //Arguments
-	)
+	err = ch.QueueBind(messageQueue, messageRoutingKey, exchangeMessageQueue, false, nil)
 	if err != nil {
-		c.logger.Printf("failed to declare delivered fail queue: %v", err)
+		log.Printf("Erro ao fazer binding da fila " + c.messageQueue + " com " + "exchange-message")
+	}
+
+	err = ch.ExchangeDeclare(
+		exchangeWaitQueue,
+		"topic",
+		true,
+		false,
+		false,
+		false,
+		nil)
+
+	if err != nil {
+		c.logger.Printf("failed to declare exchange queue: %v", err)
 		return false
+	}
+
+	args := make(amqp.Table)
+	args["x-dead-letter-exchange"] = exchangeMessageQueue
+	_, err = ch.QueueDeclare(waitQueue, true, false, false, false, args)
+
+	if err != nil {
+		c.logger.Printf("failed to declare message queue: %v", err)
+		return false
+	}
+
+	err = ch.QueueBind(waitQueue, messageRoutingKey, exchangeWaitQueue, false, nil)
+	if err != nil {
+		log.Printf("Erro ao fazer binding da fila " + c.messageQueue + " com " + "exchange-message")
 	}
 
 	c.changeConnection(conn, ch)
@@ -155,12 +199,12 @@ func (c *Client) changeConnection(connection *amqp.Connection, channel *amqp.Cha
 	c.channel.NotifyPublish(c.notifyConfirm)
 }
 
-func (c *Client) Push(data []byte, queue string) error {
+func (c *Client) Push(data []byte) error {
 	if !c.isConnected {
 		return errors.New("failed to push : not connected")
 	}
 	for {
-		err := c.UnsafePush(data, queue)
+		err := c.UnsafePush(data)
 		if err != nil {
 			if err == ErrDisconnected {
 				continue
@@ -180,23 +224,72 @@ func (c *Client) Push(data []byte, queue string) error {
 
 }
 
-func (c *Client) UnsafePush(data []byte, queue string) error {
+func (c *Client) PushWithExpiration(data []byte) error {
+
+	if !c.isConnected {
+		return errors.New("failed to push : not connected")
+	}
+	for {
+		err := c.UnsafePushWithExpiration(data)
+		if err != nil {
+			if err == ErrDisconnected {
+				continue
+			}
+			return err
+		}
+		select {
+		case confirm := <-c.notifyConfirm:
+			if confirm.Ack {
+				return nil
+			}
+			return errors.New("no push confirmation received")
+		case <-time.After(reconnectDelay):
+			return errors.New("no push confirmation received")
+		}
+	}
+
+}
+
+func (c *Client) UnsafePush(data []byte) error {
+	exchangeMessage := "exchange-message"
+	routingKeyMessage := "routing-key-message"
+
 	if !c.isConnected {
 		return ErrDisconnected
 	}
 	return c.channel.Publish(
-		"",
-		queue,
+		exchangeMessage,
+		routingKeyMessage,
 		false,
 		false,
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        data,
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "text/plain",
+			Body:         data,
 		},
 	)
 }
 
-func (c *Client) Stream(consumerName, queue string) (<-chan amqp.Delivery, error) {
+func (c *Client) UnsafePushWithExpiration(data []byte) error {
+
+	if !c.isConnected {
+		return ErrDisconnected
+	}
+	return c.channel.Publish(
+		c.exchangeWaitQueue,
+		c.messageRoutingKey,
+		false,
+		false,
+		amqp.Publishing{
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "text/plain",
+			Body:         data,
+			Expiration:   "30000",
+		},
+	)
+}
+
+func (c *Client) Stream() (<-chan amqp.Delivery, error) {
 	for {
 		if c.isConnected {
 			break
@@ -205,8 +298,8 @@ func (c *Client) Stream(consumerName, queue string) (<-chan amqp.Delivery, error
 	}
 
 	return c.channel.Consume(
-		queue,
-		consumerName,
+		c.messageQueue,
+		"hermes-consumer",
 		false,
 		false,
 		false,
@@ -215,13 +308,12 @@ func (c *Client) Stream(consumerName, queue string) (<-chan amqp.Delivery, error
 	)
 }
 
-func (c *Client) LogAndAck(msg amqp.Delivery, response payloads.MessageResponse, queue string) {
+func (c *Client) LogAndAck(msg amqp.Delivery, response payloads.MessageResponse) {
 	msg.Ack(false)
 
 	c.logger.WithFields(logrus.Fields{
 		"Message consumed": response.Id,
 		"Time":             time.Now(),
-		"Queue":            queue,
 	}).Info()
 }
 
@@ -231,19 +323,4 @@ func (c *Client) LogAndNack(msg amqp.Delivery, t time.Time, err string, args ...
 	c.logger.WithFields(logrus.Fields{
 		"took-ms": time.Since(t).Milliseconds(),
 	}).Error(fmt.Sprintf(err, args...))
-}
-
-func (c *Client) Close(consumerName string) {
-	if !c.isConnected {
-		return
-	}
-
-	fmt.Println("Closing consumer: ", consumerName)
-	err := c.channel.Cancel(consumerName, false)
-	if err != nil {
-		fmt.Errorf("error canceling consumer %s: %v", consumerName, err)
-	}
-
-	fmt.Println("Gracefully closed " + consumerName + " connection")
-	return
 }

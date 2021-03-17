@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import Git from './Git';
 import Registry from './Registry';
 import CircleMatcher from './CircleMatcher';
 import MetricProvider from './MetricProvider';
@@ -24,7 +23,6 @@ import MetricAction from './MetricAction';
 import Webhook from './Webhook';
 
 export default {
-  Git,
   Registry,
   CircleMatcher,
   MetricProvider,

@@ -23,50 +23,62 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+	"hermes/internal/configuration"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"strconv"
 	"time"
 )
 
-func (main *Main) Consume(queue string) {
-	fmt.Println("[Consumer] Queue: "+queue+" Time: " + time.Now().String())
+func (main *Main) Consume(stopChan chan bool) {
 	startTime := time.Now()
-	consumerName := consumerName(queue)
 
-	messages, err := main.amqpClient.Stream(consumerName, queue)
-	if err != nil {
-		logrus.Error(err)
-		main.amqpClient.Close(consumerName)
-	}
-
-	go func() {
-		for message := range messages {
-			messageResponse, err := parseMessage(message)
+	func() {
+		for {
+			messages, err := main.amqpClient.Stream()
 			if err != nil {
-				main.amqpClient.LogAndNack(message, startTime, "error parse message: %s - %s", string(message.Body), err.Error())
-				main.amqpClient.Close(consumerName)
-				return
+				logrus.Error(err.Error())
 			}
 
-			webhookErr := main.subscriptionMain.SendWebhookEvent(messageResponse)
-			if webhookErr != nil {
-				logrus.Error(webhookErr.Error())
-				main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHttpStatus(webhookErr))
-			} else {
-				main.updateMessageInfo(messageResponse, delivered, successLog, 200)
-			}
+			for message := range messages {
+				messageResponse, err := parseMessage(message)
+				if err != nil {
+					main.amqpClient.LogAndNack(message, startTime, "error parse message: %s - %s", string(message.Body), err.Error())
+				}
 
-			main.amqpClient.LogAndAck(message, messageResponse, queue)
-			main.amqpClient.Close(consumerName)
+				main.sendWebhookEvent(messageResponse)
+
+				main.amqpClient.LogAndAck(message, messageResponse)
+			}
 		}
 	}()
+
+	<-stopChan
 }
 
 func parseMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
 	var messageResponse payloads.MessageResponse
 	err := json.Unmarshal(msg.Body, &messageResponse)
 	return messageResponse, err
+}
+
+func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse)  {
+	webhookErr := main.subscriptionMain.SendWebhookEvent(messageResponse)
+	if webhookErr != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot send to webhook", "Error to send message").
+				WithOperations("SendWebhookEvent"),
+		}).Errorln(webhookErr)
+
+		main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHttpStatus(webhookErr))
+
+		if messageResponse.RetryCount < configuration.GetConfigurationAsInt("CONSUMER_MESSAGE_RETRY_ATTEMPTS") {
+			fmt.Printf("OPAAAA")
+			sendToWaitQueue(main, messageResponse)
+		}
+	} else {
+		main.updateMessageInfo(messageResponse, delivered, successLog, 200)
+	}
 }
 
 func extractHttpStatus(err errors.Error) int {
@@ -77,6 +89,13 @@ func extractHttpStatus(err errors.Error) int {
 	return httpStatus
 }
 
-func consumerName(queue string) string {
-	return fmt.Sprintf("%v-%d", queue, time.Now().Nanosecond())
+func sendToWaitQueue(main *Main, msg payloads.MessageResponse) {
+	msg.RetryCount += 1
+	err := main.sendMessageWithExpiration(msg)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot publish message to wait queue", "Error to publish message").
+				WithOperations("sendMessageWithExpiration"),
+		}).Errorln(err.Error())
+	}
 }

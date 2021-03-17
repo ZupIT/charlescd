@@ -24,7 +24,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"hermes/internal/configuration"
 	"hermes/internal/notification/messageexecutionhistory"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
@@ -34,7 +33,7 @@ import (
 func (main *Main) Publish() {
 	fmt.Println("[Publisher] Time: " + time.Now().String())
 
-	messages, err := main.messageMain.FindAllNotEnqueuedAndDeliveredFail()
+	messages, err := main.messageMain.FindAllNotEnqueued()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": errors.NewError("Cannot start publisher", "Could not find active messages").
@@ -48,18 +47,18 @@ func (main *Main) Publish() {
 			"Time":                      time.Now(),
 		}).Println()
 
-		main.sendMessage(msg, getQueue(msg.LastStatus))
+		err := main.sendMessage(msg)
+		if err != nil  {
+			logrus.WithFields(logrus.Fields{
+				"err": errors.NewError("Cannot publish message", "Error to publish message").
+					WithOperations("sendMessage"),
+			}).Errorln()
+			logrus.Error(err)
+		}
 	}
 }
 
-func getQueue(status string) string {
-	if status == "NOT_ENQUEUED" || status == "" {
-		return configuration.GetConfiguration("AMQP_MESSAGE_QUEUE")
-	}
-	return configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE")
-}
-
-func (main *Main) sendMessage(message payloads.MessageResponse, queue string) error {
+func (main *Main) sendMessage(message payloads.MessageResponse) error {
 	pushMsg, err := json.Marshal(message)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -68,11 +67,30 @@ func (main *Main) sendMessage(message payloads.MessageResponse, queue string) er
 		}).Errorln()
 	}
 
-	err = main.amqpClient.Push(pushMsg, queue)
+	err = main.amqpClient.Push(pushMsg)
 	if err != nil {
 		main.updateMessageStatus(message, notEnqueued, err.Error())
 		return err
 	}
+	main.updateMessageStatus(message, enqueued, successLog)
+	return nil
+}
+
+func (main *Main) sendMessageWithExpiration(message payloads.MessageResponse) error {
+	pushMsg, err := json.Marshal(message)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("ParseMessageError", "Could not parse message").
+				WithOperations("sendMessage.Marshal"),
+		}).Errorln()
+	}
+
+	err = main.amqpClient.PushWithExpiration(pushMsg)
+	if err != nil {
+		main.updateMessageStatus(message, notEnqueued, err.Error())
+		return err
+	}
+
 	main.updateMessageStatus(message, enqueued, successLog)
 	return nil
 }

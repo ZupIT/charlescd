@@ -52,6 +52,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val user = userService.findByAuthorizationToken(authorization)
         val deployment = createDeployment(request, workspaceId, user)
         if (build.canBeDeployed()) {
+            checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
             deploy(deployment, build, workspace)
             return DeploymentResponse.from(deployment, build)
@@ -67,6 +68,12 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         } catch (ex: Exception) {
             notifyEvent(workspaceId, WebhookEventStatusEnum.FAIL, null, ex.message!!)
             throw ex
+        }
+    }
+
+    private fun checkIfCircleCanBeDeployed(circle: Circle) {
+        if (circle.isPercentage()) {
+            this.circleService.checkIfPercentageCircleCanDeploy(circle, workspaceId = circle.workspaceId)
         }
     }
 

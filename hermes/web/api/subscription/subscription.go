@@ -156,6 +156,7 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			"EventType":  r.URL.Query().Get("eventType"),
 			"Status":     r.URL.Query().Get("eventStatus"),
 			"EventField": r.URL.Query().Get("eventField"),
+			"EventKey": r.URL.Query().Get("eventKey"),
 			"EventValue": r.URL.Query().Get("eventValue"),
 		}
 
@@ -172,7 +173,7 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			return
 		}
 
-		result, err := messageMain.FindAllBySubscriptionId(subscriptionId, qp, page, size)
+		result, err := messageMain.FindAllBySubscriptionIdAndFilter(subscriptionId, qp, page, size)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return

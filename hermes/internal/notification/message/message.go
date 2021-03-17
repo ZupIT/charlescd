@@ -27,6 +27,7 @@ import (
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"io"
+	"strings"
 	"time"
 )
 
@@ -78,17 +79,13 @@ func (main Main) ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, e
 
 func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error) {
 	var msgList []Message
-	var ids []uuid.UUID
 	var response []payloads.MessageResponse
-
 	for _, r := range messagesRequest {
 		msg := requestToEntity(r)
-
 		msgList = append(msgList, msg)
-		ids = append(ids, msg.ID)
 	}
 
-	result := main.db.Model(&Message{}).Create(&msgList).Find(&response, ids)
+	result := main.db.Model(&Message{}).Create(&msgList).Scan(&response)
 	if result.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
 			WithOperations("Publish.Result")
@@ -97,10 +94,10 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 	return response, nil
 }
 
-func (main Main) FindAllNotEnqueuedAndDeliveredFail() ([]payloads.MessageResponse, errors.Error) {
+func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error) {
 	var response []payloads.MessageResponse
 
-	query := main.db.Raw(FindAllNotEnqueuedAndDeliveredFailQuery, configuration.GetConfiguration("PUBLISHER_ATTEMPTS")).Scan(&response)
+	query := main.db.Raw(FindAllNotEnqueuedQuery, configuration.GetConfiguration("PUBLISHER_ATTEMPTS")).Scan(&response)
 	if query.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("FindAllNotEnqueued Message error", query.Error.Error()).
 			WithOperations("FindAllNotEnqueued.Query")
@@ -109,17 +106,21 @@ func (main Main) FindAllNotEnqueuedAndDeliveredFail() ([]payloads.MessageRespons
 	return response, nil
 }
 
-func (main Main) FindAllBySubscriptionId(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error) {
+func (main Main) FindAllBySubscriptionIdAndFilter(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error) {
 	var cond interface{} = ""
 
-	if parameters["EventValue"] != "" && parameters["EventField"] != "" {
-		cond = datatypes.JSONQuery("event").Equals(parameters["EventValue"], parameters["EventField"])
+	eventValue := parameters["EventValue"]
+	eventField := parameters["EventField"]
+
+	if eventValue != "" && eventField != "" {
+		keys := strings.Split(eventField, ".")
+		cond = datatypes.JSONQuery("event").Equals(eventValue, keys...)
 	}
 
 	query, response := main.buildQuery(subscriptionId, cond, parameters, page, size)
 	if query.Error != nil {
-		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionId Message error", query.Error.Error()).
-			WithOperations("FindAllBySubscriptionId.Query")
+		return []payloads.FullMessageResponse{}, errors.NewError("FindAllBySubscriptionIdAndFilter Message error", query.Error.Error()).
+			WithOperations("FindAllBySubscriptionIdAndFilter.Query")
 	}
 
 	return response, nil
