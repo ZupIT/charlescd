@@ -29,10 +29,10 @@ export const validFields = (fields: object) => {
   return status;
 };
 
-export const isNotBlank = (value: any) => {
-  if(isString(value)) {
-    return !!value?.trim() || 'No whitespaces'
-  } 
+export const isNotBlank = (value: string | any) => {
+  if (value && isString(value)) {
+    return !!value.trim() || 'No whitespaces'
+  }
   return value;
 }
 
@@ -58,7 +58,7 @@ export const minLength = (value: number, message?: string) => ({
 
 export const isRequired = () => ({
   value: true,
-  message: 'The field is required.'
+  message: 'This field is required'
 });
 
 export const emailPattern = () => ({

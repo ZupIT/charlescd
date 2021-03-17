@@ -21,15 +21,17 @@ import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
+import Icon from 'core/components/Icon';
 
 interface Props {
   onClickCreate: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   circle: Circle;
+  releaseEnabled: boolean;
 }
 
-const LayerRelease = ({ circle, onClickCreate }: Props) => {
+const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   const renderRelease = ({ tag, artifacts }: Deployment) => (
     <Styled.Release>
       <Card.Release
@@ -40,13 +42,22 @@ const LayerRelease = ({ circle, onClickCreate }: Props) => {
     </Styled.Release>
   );
 
+  const checkIfButtonIsDisabled = () => {
+    if (!circle?.id) {
+      return true;
+    } else if (!releaseEnabled) {
+      return true;
+    }
+    return false;
+  };
+
   const renderButton = () => (
     <Button.Rounded
       icon="add"
       name="add"
       color="dark"
       onClick={onClickCreate}
-      isDisabled={!circle?.id}
+      isDisabled={checkIfButtonIsDisabled()}
     >
       Insert release
     </Button.Rounded>
@@ -58,6 +69,14 @@ const LayerRelease = ({ circle, onClickCreate }: Props) => {
         <Text.h2 color="light">
           {circle?.deployment ? 'Last release deployed' : 'Release'}
         </Text.h2>
+        {!releaseEnabled && (
+          <Styled.WarningPercentageContainer>
+            <Icon name="alert" color="warning" />
+            <Text.h4 color="warning">
+              The configured percentage is bigger than the available in open sea.
+            </Text.h4>
+          </Styled.WarningPercentageContainer>
+        )}
       </ContentIcon>
       <Styled.Content>
         {circle?.deployment

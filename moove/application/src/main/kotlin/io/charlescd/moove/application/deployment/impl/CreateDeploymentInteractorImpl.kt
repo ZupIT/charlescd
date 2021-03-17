@@ -45,14 +45,20 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val user = userService.findByAuthorizationToken(authorization)
-
         if (build.canBeDeployed()) {
             val deployment = createDeployment(request, workspaceId, user)
+            checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
             deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
             return DeploymentResponse.from(deployment, build)
         } else {
             throw BusinessException.of(MooveErrorCode.DEPLOY_INVALID_BUILD).withParameters(build.id)
+        }
+    }
+
+    private fun checkIfCircleCanBeDeployed(circle: Circle) {
+        if (circle.isPercentage()) {
+            this.circleService.checkIfPercentageCircleCanDeploy(circle, workspaceId = circle.workspaceId)
         }
     }
 
