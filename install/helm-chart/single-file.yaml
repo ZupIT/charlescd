@@ -60,8 +60,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "V2ZtQkVKcTkyNQ=="
-  postgresql-password: "cFNCMGNUVzdvVg=="
+  postgresql-postgres-password: "d3RORkU5VGRNWA=="
+  postgresql-password: "d1lXUkRjOFc3cw=="
 ---
 # Source: charlescd/charts/rabbitmq/templates/secrets.yaml
 apiVersion: v1
@@ -77,7 +77,7 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "YUdWeWJXVno="
-  rabbitmq-erlang-cookie: "eUhZM1pLT1Nxamw1aFRseUFVMlNxSlJjbTZwazZSd1Q="
+  rabbitmq-erlang-cookie: "TGNkRGJ1cDFNUjJ0UTZ1c0ZQbFlxTzQ1V3licnV5SVk="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -5752,31 +5752,34 @@ metadata:
 data:
   charles-init.sh: |
     #!/bin/bash
-    export PGUSER=postgres
-    export PGPASSWORD=firstpassword
-    psql -c "CREATE DATABASE charlescd_butler"
-    psql -c "CREATE USER charlescd_butler WITH PASSWORD '3f2Yq8R4HhDCnefR'"
-    psql -c "ALTER DATABASE charlescd_butler OWNER TO charlescd_butler"
-    psql -d charlescd_butler -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE charlescd_moove"
-    psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
-    psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
-    psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE charlescd_villager"
-    psql -c "CREATE USER charlescd_villager WITH PASSWORD 'ZkQ67Lnhs2bM3MPN'"
-    psql -c "ALTER DATABASE charlescd_villager OWNER TO charlescd_villager"
-    psql -d charlescd_villager -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE keycloak"
-    psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
-    psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
-    psql -c "CREATE DATABASE charlescd_compass"
-    psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
-    psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
-    psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE charlescd_hermes"
-    psql -c "CREATE USER charlescd_hermes WITH PASSWORD 'aGVybWVz'"
-    psql -c "ALTER DATABASE charlescd_hermes OWNER TO charlescd_hermes"
-    psql -d charlescd_hermes -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+      psql -c "CREATE DATABASE charlescd_butler"
+      psql -c "CREATE USER charlescd_butler WITH PASSWORD '3f2Yq8R4HhDCnefR'"
+      psql -c "ALTER DATABASE charlescd_butler OWNER TO charlescd_butler"
+      psql -d charlescd_butler -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_compass"
+      psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+      psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+      psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_hermes"
+      psql -c "CREATE USER charlescd_hermes WITH PASSWORD 'aGVybWVz'"
+      psql -c "ALTER DATABASE charlescd_hermes OWNER TO charlescd_hermes"
+      psql -d charlescd_hermes -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_moove"
+      psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
+      psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
+      psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_villager"
+      psql -c "CREATE USER charlescd_villager WITH PASSWORD 'ZkQ67Lnhs2bM3MPN'"
+      psql -c "ALTER DATABASE charlescd_villager OWNER TO charlescd_villager"
+      psql -d charlescd_villager -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE keycloak"
+      psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
+      psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
 ---
 # Source: charlescd/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -6642,8 +6645,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: 3f2Yq8R4HhDCnefR
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_butler -U charlescd_butler;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
@@ -6788,8 +6794,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: C1UinUu6N0vc
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_compass -U charlescd_compass;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
@@ -6890,8 +6899,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: aGVybWVz
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_hermes -U charlescd_hermes;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-hermes
@@ -6918,14 +6930,22 @@ spec:
               value: "amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/"
             - name: AMQP_MESSAGE_QUEUE
               value: "queue-message"
-            - name: AMQP_DELIVERED_FAIL_QUEUE
-              value: "queue-fail"
+            - name: AMQP_MESSAGE_ROUTING_KEY
+              value: "routing-key-message"
+            - name: AMQP_MESSAGE_EXCHANGE
+              value: "exchange-message"
+            - name: AMQP_WAIT_MESSAGE_QUEUE
+              value: "queue-message-wait"
+            - name: AMQP_AMQP_WAIT_MESSAGE_EXCHANGE
+              value: "exchange-message-wait"
             - name: PUBLISHER_TIME
-              value: "15s"
+              value: "@every 5s"
             - name: PUBLISHER_ATTEMPTS
-              value: "2"
-            - name: CONSUME_DELIVERED_FAILED_TIME
-              value: "2m"
+              value: "3"
+            - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
+              value: "30000"
+            - name: CONSUMER_MESSAGE_RETRY_ATTEMPTS
+              value: "3"
             - name: SUBSCRIPTION_REGISTER_LIMIT
               value: "5"
           image: zupcharles/charlescd-hermes:0.6.0
@@ -6973,8 +6993,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: 7Qs2KuM9gYzw48BS
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_moove -U charlescd_moove;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
@@ -7142,6 +7165,8 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
+            - name: REACT_APP_CHARLES_VERSION
+              value: 
           image: zupcharles/charlescd-ui:0.6.0
           imagePullPolicy: Always
           ports:
@@ -7192,8 +7217,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: ZkQ67Lnhs2bM3MPN
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_villager -U charlescd_villager;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
@@ -7597,7 +7625,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: cefd48a7bdc5d27ebbbb3cec3ba8633667894291ab320066430a07fd64077b5c
-        checksum/secret: 112100e1ba5aa19ea4505b109c3e3e99bffc34cb2a541e72a81fd972f722ef10
+        checksum/secret: e29519e6cefdeb511832c7eee1a143732db14736309c7a417d1069aa715c4f76
     spec:
       
       serviceAccountName: charlescd-rabbitmq

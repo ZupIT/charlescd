@@ -291,15 +291,23 @@ env:
   - name: AMQP_URL
     value: "{{ .RangeContext.amqp.url}}"
   - name: AMQP_MESSAGE_QUEUE
-    value: "{{ .RangeContext.amqp.messageQueue}}"
-  - name: AMQP_DELIVERED_FAIL_QUEUE
-    value: "{{ .RangeContext.amqp.deliveredFailQueue}}"
+    value: "{{ .RangeContext.amqp.message.queue}}"
+  - name: AMQP_MESSAGE_ROUTING_KEY
+    value: "{{ .RangeContext.amqp.message.routingKey}}"
+  - name: AMQP_MESSAGE_EXCHANGE
+    value: "{{ .RangeContext.amqp.message.exchange}}"
+  - name: AMQP_WAIT_MESSAGE_QUEUE
+    value: "{{ .RangeContext.amqp.waitMessage.queue}}"
+  - name: AMQP_AMQP_WAIT_MESSAGE_EXCHANGE
+    value: "{{ .RangeContext.amqp.waitMessage.exchange}}"
   - name: PUBLISHER_TIME
     value: "{{ .RangeContext.publisher.time}}"
   - name: PUBLISHER_ATTEMPTS
     value: "{{ .RangeContext.publisher.attempts}}"
-  - name: CONSUME_DELIVERED_FAILED_TIME
-    value: "{{ .RangeContext.consumer.deliveredFailed.time}}"
+  - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
+    value: "{{ .RangeContext.consumer.messageRetry.expiration}}"
+  - name: CONSUMER_MESSAGE_RETRY_ATTEMPTS
+    value: "{{ .RangeContext.consumer.messageRetry.attempts}}"
   - name: SUBSCRIPTION_REGISTER_LIMIT
     value: "{{ .RangeContext.subscriptionRegisterLimit}}"
 {{- end -}}
