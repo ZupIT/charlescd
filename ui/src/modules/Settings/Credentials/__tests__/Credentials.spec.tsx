@@ -225,7 +225,7 @@ test('should render Credentials items with the right type: Required or Optional'
   })
 });
 
-test.only('should remove a user group', async () => {
+test.skip('should remove a user group', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify({}));
   saveProfile({
     id: 'profile',
