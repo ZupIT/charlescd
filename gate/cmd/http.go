@@ -78,13 +78,16 @@ func (server server) registerRoutes() {
 	server.httpServer.GET("/health", handlers.Health())
 	server.httpServer.GET("/metrics", handlers.Metrics())
 
-	v1 := server.httpServer.Group("/v1")
+	api := server.httpServer.Group("/api")
 	{
-		st := v1.Group("/system-token")
+		v1 := api.Group("/v1")
 		{
-			st.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
-			st.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
-			st.POST("/:id/revoke", handlers.RevokeSytemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
+			st := v1.Group("/system-token")
+			{
+				st.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
+				st.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
+				st.POST("/:id/revoke", handlers.RevokeSytemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
+			}
 		}
 	}
 }
