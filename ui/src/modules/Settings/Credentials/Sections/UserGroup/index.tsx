@@ -49,6 +49,8 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
   const history = useHistory();
   const modalRef = useRef<HTMLDivElement>();
 
+  console.log('usergroups:',userGroups);
+
   useOutsideClick(modalRef, () => setToggleModal(false));
 
   const confirmUserGroupDelete = async () => {

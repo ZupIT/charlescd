@@ -45,10 +45,23 @@ jest.mock('containers/Can', () => {
 });
 
 beforeEach(() => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementationOnce(() => ({
     item: {
       id: '123',
-      status: WORKSPACE_STATUS.COMPLETE
+      status: WORKSPACE_STATUS.COMPLETE,
+      userGroups: [
+        {
+          id: 123,
+          name: 'devx',
+          users: [
+            {
+              id: 1234,
+              name: 'user 1',
+              email: 'user1@email'
+            }
+          ]
+        }
+      ]
     },
     status: 'resolved'
   }));
@@ -60,6 +73,7 @@ test('render Credentials default component', async () => {
   );
 
   render(<Credentials />);
+  screen.debug()
 
   const credentialsElement = await screen.findByTestId("credentials");
   expect(credentialsElement).toBeInTheDocument();
@@ -192,4 +206,19 @@ test('should render Credentials items with the right type: Required or Optional'
   types.forEach((type, index) => {
     expect(type.textContent).toBe(configurationItems[index].type);
   })
+});
+
+test.skip('should remove a user group', async () => {
+  render(<Credentials />);
+  
+  await waitFor(() => expect(screen.queryByText('User group')).toBeInTheDocument());
+  screen.debug()
+
+  // renderizar credential
+  // contem lista de user groups
+  // clicar no botao X 
+  // modal aparece
+  // clicar no botao yes, remove user group
+  // modal nao deve aparecer
+  // user group nao deve aparecer/ ser removido da lista
 });
