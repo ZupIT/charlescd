@@ -24,7 +24,6 @@ import (
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"strconv"
-	"time"
 )
 
 func (main *Main) Consume(stopSub chan bool) {
@@ -36,8 +35,18 @@ func (main *Main) Consume(stopSub chan bool) {
 			msg := <-response
 			err := main.subscriptionMain.SendWebhookEvent(msg)
 			if err != nil {
-				logrus.Error(err.Error())
+				logrus.WithFields(logrus.Fields{
+					"err": errors.NewError("Cannot send to webhook", "Error to send message").
+						WithOperations("SendWebhookEvent"),
+				}).Errorln()
+				logrus.Error(err)
+
 				main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
+
+				if msg.RetryCount < configuration.GetConfigurationAsInt("CONSUMER_MESSAGE_RETRY_ATTEMPTS") {
+					sendToWaitQueue(main, msg)
+				}
+
 			} else {
 				main.updateMessageInfo(msg, delivered, successLog, 200)
 			}
@@ -47,44 +56,22 @@ func (main *Main) Consume(stopSub chan bool) {
 	<-stopSub
 }
 
-func (main *Main) ConsumeDeliveredFail(stopSub chan bool) {
-	interval, parseErr := time.ParseDuration(configuration.GetConfiguration("CONSUMER_DELIVERED_FAILED_TIME"))
-	if parseErr != nil {
-		logrus.WithFields(logrus.Fields{
-			"parseErr": errors.NewError("Cannot start consuming delivered failed", "Get sync interval failed").
-				WithOperations("Start.getInterval"),
-		}).Errorln()
-		logrus.Error(parseErr)
-	}
-
-	ticker := time.NewTicker(interval)
-	for {
-		select {
-		case <-ticker.C:
-			response := make(chan payloads.MessageResponse, 0)
-			func() {
-				for {
-					go main.amqpClient.Stream(response, configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"))
-					msg := <-response
-					err := main.subscriptionMain.SendWebhookEvent(msg)
-					if err != nil {
-						logrus.Error(err.Error())
-						main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
-					} else {
-						main.updateMessageInfo(msg, delivered, successLog, 200)
-					}
-				}
-			}()
-		case <-stopSub:
-			return
-		}
-	}
-}
-
 func extractHttpStatus(err errors.Error) int {
-	httpStatus,aErr := strconv.Atoi(err.Error().Meta["http-status"])
+	httpStatus, aErr := strconv.Atoi(err.Error().Meta["http-status"])
 	if aErr != nil {
 		logrus.Error(aErr)
 	}
 	return httpStatus
+}
+
+func sendToWaitQueue(main *Main, msg payloads.MessageResponse) {
+	msg.RetryCount += 1
+	err := main.sendMessageWithExpiration(msg)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot publish message to wait queue", "Error to publish message").
+				WithOperations("sendMessageWithExpiration"),
+		}).Errorln()
+		logrus.Error(err)
+	}
 }

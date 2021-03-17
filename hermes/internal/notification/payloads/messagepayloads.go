@@ -43,6 +43,7 @@ type MessageResponse struct {
 	LastStatus     string          `json:"lastStatus"`
 	EventType      string          `json:"eventType"`
 	Event          json.RawMessage `json:"event"`
+	RetryCount int  `json:"retryCount"ss`
 }
 
 type FullMessageResponse struct {

@@ -59,6 +59,7 @@ func (main *Main) publish() {
 			"err": errors.NewError("Cannot start publisher", "Could not find active messages").
 				WithOperations("publish.FindAllNotEnqueuedAndDeliveredFail"),
 		}).Errorln()
+		logrus.Error(err)
 	}
 
 	for i, msg := range messages {
@@ -67,18 +68,18 @@ func (main *Main) publish() {
 			"Time":                      time.Now(),
 		}).Println()
 
-		main.sendMessage(msg, getQueue(msg.LastStatus))
+		err := main.sendMessage(msg)
+		if err != nil  {
+			logrus.WithFields(logrus.Fields{
+				"err": errors.NewError("Cannot publish message", "Error to publish message").
+					WithOperations("sendMessage"),
+			}).Errorln()
+			logrus.Error(err)
+		}
 	}
 }
 
-func getQueue(status string) string {
-	if status == "NOT_ENQUEUED" || status == "" {
-		return configuration.GetConfiguration("AMQP_MESSAGE_QUEUE")
-	}
-	return configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE")
-}
-
-func (main *Main) sendMessage(message payloads.MessageResponse, queue string) error {
+func (main *Main) sendMessage(message payloads.MessageResponse) error {
 	pushMsg, err := json.Marshal(message)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -87,11 +88,31 @@ func (main *Main) sendMessage(message payloads.MessageResponse, queue string) er
 		}).Errorln()
 	}
 
-	err = main.amqpClient.Push(pushMsg, queue)
+	err = main.amqpClient.Push(pushMsg)
 	if err != nil {
 		main.updateMessageStatus(message, notEnqueued, err.Error())
 		return err
 	}
+	main.updateMessageStatus(message, enqueued, successLog)
+	return nil
+}
+
+func (main *Main) sendMessageWithExpiration(message payloads.MessageResponse) error {
+	pushMsg, err := json.Marshal(message)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("ParseMessageError", "Could not parse message").
+				WithOperations("sendMessage.Marshal"),
+		}).Errorln()
+	}
+
+
+	err = main.amqpClient.PushWithExpiration(pushMsg)
+	if err != nil {
+		main.updateMessageStatus(message, notEnqueued, err.Error())
+		return err
+	}
+
 	main.updateMessageStatus(message, enqueued, successLog)
 	return nil
 }

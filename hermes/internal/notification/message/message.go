@@ -79,17 +79,13 @@ func (main Main) ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, e
 
 func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error) {
 	var msgList []Message
-	var ids []uuid.UUID
 	var response []payloads.MessageResponse
-
 	for _, r := range messagesRequest {
 		msg := requestToEntity(r)
-
 		msgList = append(msgList, msg)
-		ids = append(ids, msg.ID)
 	}
 
-	result := main.db.Model(&Message{}).Create(&msgList).Find(&response, ids)
+	result := main.db.Model(&Message{}).Create(&msgList).Scan(&response)
 	if result.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
 			WithOperations("Publish.Result")
@@ -98,10 +94,10 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.Message
 	return response, nil
 }
 
-func (main Main) FindAllNotEnqueuedAndDeliveredFail() ([]payloads.MessageResponse, errors.Error) {
+func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error) {
 	var response []payloads.MessageResponse
 
-	query := main.db.Raw(FindAllNotEnqueuedAndDeliveredFailQuery, configuration.GetConfiguration("PUBLISHER_ATTEMPTS")).Scan(&response)
+	query := main.db.Raw(FindAllNotEnqueuedQuery, configuration.GetConfiguration("PUBLISHER_ATTEMPTS")).Scan(&response)
 	if query.Error != nil {
 		return []payloads.MessageResponse{}, errors.NewError("FindAllNotEnqueued Message error", query.Error.Error()).
 			WithOperations("FindAllNotEnqueued.Query")

@@ -48,7 +48,11 @@ func main() {
 	goChan := make(chan os.Signal, 1)
 	amqpClient := rabbitclient.NewClient(
 		configuration.GetConfiguration("AMQP_MESSAGE_QUEUE"),
-		configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"),
+		configuration.GetConfiguration("AMQP_WAIT_MESSAGE_QUEUE"),
+		configuration.GetConfiguration("AMQP_MESSAGE_EXCHANGE"),
+		configuration.GetConfiguration("AMQP_WAIT_MESSAGE_EXCHANGE"),
+		configuration.GetConfiguration("AMQP_MESSAGE_ROUTING_KEY"),
+		configuration.GetConfiguration("CONSUMER_MESSAGE_RETRY_EXPIRATION"),
 		configuration.GetConfiguration("AMQP_URL"),
 		logrus.New(),
 		goChan,
@@ -63,8 +67,6 @@ func main() {
 	go messagePubSubMain.Publish(stopPub)
 	stopSub := make(chan bool, 0)
 	go messagePubSubMain.Consume(stopSub)
-	stopFailSub := make(chan bool, 0)
-	go messagePubSubMain.ConsumeDeliveredFail(stopFailSub)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)
