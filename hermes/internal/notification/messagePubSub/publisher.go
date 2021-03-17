@@ -48,7 +48,7 @@ func (main *Main) Publish() {
 		}).Println()
 
 		err := main.sendMessage(msg)
-		if err != nil  {
+		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": errors.NewError("Cannot publish message", "Error to publish message").
 					WithOperations("sendMessage"),
@@ -101,7 +101,7 @@ func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, lo
 		ExecutionId:  message.Id,
 		ExecutionLog: log,
 		Status:       status,
-		HttpStatus: httpStatus,
+		HttpStatus:   httpStatus,
 		LoggedAt:     time.Now(),
 	}
 

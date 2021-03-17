@@ -62,7 +62,7 @@ func parseMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
 	return messageResponse, err
 }
 
-func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse)  {
+func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse) {
 	webhookErr := main.subscriptionMain.SendWebhookEvent(messageResponse)
 	if webhookErr != nil {
 		logrus.WithFields(logrus.Fields{
