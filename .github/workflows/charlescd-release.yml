@@ -1,4 +1,4 @@
-name: charlescd-prodrelease
+name: charlescd-release
 
 on:
   release:
