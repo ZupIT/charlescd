@@ -19,7 +19,9 @@
 package messagePubSub
 
 import (
+	"encoding/json"
 	"github.com/sirupsen/logrus"
+	"github.com/streadway/amqp"
 	"hermes/internal/configuration"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
@@ -27,64 +29,71 @@ import (
 	"time"
 )
 
-func (main *Main) Consume(stopSub chan bool) {
-	response := make(chan payloads.MessageResponse, 0)
+func (main *Main) Consume(stopChan chan bool) {
+	startTime := time.Now()
 
 	func() {
 		for {
-			go main.amqpClient.Stream(response, configuration.GetConfiguration("AMQP_MESSAGE_QUEUE"))
-			msg := <-response
-			err := main.subscriptionMain.SendWebhookEvent(msg)
+			messages, err := main.amqpClient.Stream()
 			if err != nil {
 				logrus.Error(err.Error())
-				main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
-			} else {
-				main.updateMessageInfo(msg, delivered, successLog, 200)
+			}
+
+			for message := range messages {
+				messageResponse, err := parseMessage(message)
+				if err != nil {
+					main.amqpClient.LogAndNack(message, startTime, "error parse message: %s - %s", string(message.Body), err.Error())
+				}
+
+				main.sendWebhookEvent(messageResponse)
+
+				main.amqpClient.LogAndAck(message, messageResponse)
 			}
 		}
 	}()
 
-	<-stopSub
+	<-stopChan
 }
 
-func (main *Main) ConsumeDeliveredFail(stopSub chan bool) {
-	interval, parseErr := time.ParseDuration(configuration.GetConfiguration("CONSUMER_DELIVERED_FAILED_TIME"))
-	if parseErr != nil {
-		logrus.WithFields(logrus.Fields{
-			"parseErr": errors.NewError("Cannot start consuming delivered failed", "Get sync interval failed").
-				WithOperations("Start.getInterval"),
-		}).Errorln()
-		logrus.Error(parseErr)
-	}
+func parseMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
+	var messageResponse payloads.MessageResponse
+	err := json.Unmarshal(msg.Body, &messageResponse)
+	return messageResponse, err
+}
 
-	ticker := time.NewTicker(interval)
-	for {
-		select {
-		case <-ticker.C:
-			response := make(chan payloads.MessageResponse, 0)
-			func() {
-				for {
-					go main.amqpClient.Stream(response, configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"))
-					msg := <-response
-					err := main.subscriptionMain.SendWebhookEvent(msg)
-					if err != nil {
-						logrus.Error(err.Error())
-						main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
-					} else {
-						main.updateMessageInfo(msg, delivered, successLog, 200)
-					}
-				}
-			}()
-		case <-stopSub:
-			return
+func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse) {
+	webhookErr := main.subscriptionMain.SendWebhookEvent(messageResponse)
+	if webhookErr != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot send to webhook", "Error to send message").
+				WithOperations("SendWebhookEvent"),
+		}).Errorln(webhookErr)
+
+		main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHttpStatus(webhookErr))
+
+		if messageResponse.RetryCount < configuration.GetConfigurationAsInt("CONSUMER_MESSAGE_RETRY_ATTEMPTS") {
+			sendToWaitQueue(main, messageResponse)
 		}
+	} else {
+		main.updateMessageInfo(messageResponse, delivered, successLog, 200)
 	}
 }
 
 func extractHttpStatus(err errors.Error) int {
-	httpStatus,aErr := strconv.Atoi(err.Error().Meta["http-status"])
+	httpStatus, aErr := strconv.Atoi(err.Error().Meta["http-status"])
 	if aErr != nil {
 		logrus.Error(aErr)
 	}
 	return httpStatus
+}
+
+func sendToWaitQueue(main *Main, msg payloads.MessageResponse) {
+	msg.RetryCount += 1
+	err := main.sendMessageWithExpiration(msg)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot publish message to wait queue", "Error to publish message").
+				WithOperations("sendMessageWithExpiration"),
+		}).Errorln(err.Error())
+	}
 }

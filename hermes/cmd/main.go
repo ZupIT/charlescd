@@ -20,6 +20,7 @@ package main
 
 import (
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"hermes/internal/configuration"
 	"hermes/internal/notification/message"
@@ -48,7 +49,11 @@ func main() {
 	goChan := make(chan os.Signal, 1)
 	amqpClient := rabbitclient.NewClient(
 		configuration.GetConfiguration("AMQP_MESSAGE_QUEUE"),
-		configuration.GetConfiguration("AMQP_DELIVERED_FAIL_QUEUE"),
+		configuration.GetConfiguration("AMQP_WAIT_MESSAGE_QUEUE"),
+		configuration.GetConfiguration("AMQP_MESSAGE_EXCHANGE"),
+		configuration.GetConfiguration("AMQP_WAIT_MESSAGE_EXCHANGE"),
+		configuration.GetConfiguration("AMQP_MESSAGE_ROUTING_KEY"),
+		configuration.GetConfiguration("CONSUMER_MESSAGE_RETRY_EXPIRATION"),
 		configuration.GetConfiguration("AMQP_URL"),
 		logrus.New(),
 		goChan,
@@ -59,12 +64,13 @@ func main() {
 	messageMain := message.NewMain(db, amqpClient, messageExecutionMain)
 	messagePubSubMain := messagePubSub.NewMain(db, amqpClient, messageMain, messageExecutionMain, subscriptionMain)
 
-	stopPub := make(chan bool, 0)
-	go messagePubSubMain.Publish(stopPub)
-	stopSub := make(chan bool, 0)
-	go messagePubSubMain.Consume(stopSub)
-	stopFailSub := make(chan bool, 0)
-	go messagePubSubMain.ConsumeDeliveredFail(stopFailSub)
+	c := cron.New(cron.WithChain(
+		cron.SkipIfStillRunning(cron.DefaultLogger)))
+	c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
+	go c.Start()
+
+	stopChan := make(chan bool, 0)
+	go messagePubSubMain.Consume(stopChan)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)

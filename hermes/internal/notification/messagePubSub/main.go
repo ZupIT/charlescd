@@ -35,9 +35,8 @@ const (
 )
 
 type UseCases interface {
-	Publish(stopPub chan bool) error
-	Consume(stopSub chan bool)
-	ConsumeDeliveredFail(stopFailSub chan bool)
+	Publish()
+	Consume(stopChan chan bool)
 }
 
 type Main struct {

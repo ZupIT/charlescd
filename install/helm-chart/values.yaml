@@ -356,14 +356,20 @@ CharlesApplications:
       name: charlescd_hermes
     amqp:
       url: amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/
-      messageQueue: queue-message
-      deliveredFailQueue: queue-fail
+      message:
+        queue: queue-message
+        routingKey: routing-key-message
+        exchange: exchange-message
+      waitMessage:
+        queue: queue-message-wait
+        exchange: exchange-message-wait
     publisher:
-      time: 15s
-      attempts: 2
+      time: "@every 5s"
+      attempts: 3
     consumer:
-      deliveredFailed:
-        time: 2m
+      messageRetry:
+        expiration: 30000
+        attempts: 3
     subscriptionRegisterLimit: 5
 
 postgresql:
