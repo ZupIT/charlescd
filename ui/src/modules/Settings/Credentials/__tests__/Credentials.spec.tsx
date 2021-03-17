@@ -26,7 +26,6 @@ import { Actions, Subjects } from "core/utils/abilities";
 import * as MetricProviderHooks from '../Sections/MetricProvider/hooks';
 import { Datasources } from '../Sections/MetricProvider/__tests__/fixtures';
 import routes from 'core/constants/routes';
-import { saveProfile } from 'core/utils/profile';
 
 interface fakeCanProps {
   I?: Actions;
@@ -65,20 +64,7 @@ beforeEach(() => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123',
-      status: WORKSPACE_STATUS.COMPLETE,
-      userGroups: [
-        {
-          id: 'ug-1',
-          name: 'devx',
-          users: [
-            {
-              id: 'u-1',
-              name: 'user 1',
-              email: 'user1@email'
-            }
-          ]
-        }
-      ]
+      status: WORKSPACE_STATUS.COMPLETE
     },
     status: 'resolved'
   }));
@@ -223,31 +209,4 @@ test('should render Credentials items with the right type: Required or Optional'
   types.forEach((type, index) => {
     expect(type.textContent).toBe(configurationItems[index].type);
   })
-});
-
-test.skip('should remove a user group', async () => {
-  (fetch as FetchMock).mockResponse(JSON.stringify({}));
-  saveProfile({
-    id: 'profile',
-    name: 'user1',
-    email: 'user1@email'
-  });
-  render(<Credentials />);
-
-  console.log('before', window.location);
-  
-  await waitFor(() => expect(screen.getByText('devx')).toBeInTheDocument());
-  const userGroup = await screen.findByTestId('user-group-ug-1');
-  const iconCancel = userGroup.querySelector('[data-testid="icon-cancel"]');
-
-  userEvent.click(iconCancel);
-  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
-  const confirmButton = await screen.findByText('Yes, remove user group');
-
-  userEvent.click(confirmButton);
-  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
-  expect(screen.queryByText('devx')).not.toBeInTheDocument();
-
-  await waitFor(() => {});
-  console.log('after', window.location);
 });

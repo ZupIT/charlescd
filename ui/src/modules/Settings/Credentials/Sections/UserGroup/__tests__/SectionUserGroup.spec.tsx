@@ -161,3 +161,30 @@ test.only('should close modal when clicking outside modal', async () => {
   userEvent.click(modalWrapper);
   expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument();
 });
+
+test.skip('should remove a user group', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({}));
+  saveProfile({
+    id: 'profile',
+    name: 'user1',
+    email: 'user1@email'
+  });
+  render(<Credentials />);
+
+  console.log('before', window.location);
+  
+  await waitFor(() => expect(screen.getByText('devx')).toBeInTheDocument());
+  const userGroup = await screen.findByTestId('user-group-ug-1');
+  const iconCancel = userGroup.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(iconCancel);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+  const confirmButton = await screen.findByText('Yes, remove user group');
+
+  userEvent.click(confirmButton);
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  expect(screen.queryByText('devx')).not.toBeInTheDocument();
+
+  await waitFor(() => {});
+  console.log('after', window.location);
+});
