@@ -17,7 +17,7 @@
 import React, { ReactElement } from 'react';
 import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import { FetchMock } from 'jest-fetch-mock/types';
+import { FetchMock } from 'jest-fetch-mock';
 import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '../';
@@ -25,6 +25,8 @@ import * as clipboardUtils from 'core/utils/clipboard';
 import { Actions, Subjects } from "core/utils/abilities";
 import * as MetricProviderHooks from '../Sections/MetricProvider/hooks';
 import { Datasources } from '../Sections/MetricProvider/__tests__/fixtures';
+import routes from 'core/constants/routes';
+import { saveProfile } from 'core/utils/profile';
 
 interface fakeCanProps {
   I?: Actions;
@@ -44,18 +46,33 @@ jest.mock('containers/Can', () => {
   };
 });
 
+const originalWindow = {...window};
+
 beforeEach(() => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementationOnce(() => ({
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.settings
+  };
+});
+
+afterEach(() => {
+  window = originalWindow;
+});
+
+beforeEach(() => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
       id: '123',
       status: WORKSPACE_STATUS.COMPLETE,
       userGroups: [
         {
-          id: 123,
+          id: 'ug-1',
           name: 'devx',
           users: [
             {
-              id: 1234,
+              id: 'u-1',
               name: 'user 1',
               email: 'user1@email'
             }
@@ -208,17 +225,29 @@ test('should render Credentials items with the right type: Required or Optional'
   })
 });
 
-test.skip('should remove a user group', async () => {
+test.only('should remove a user group', async () => {
+  (fetch as FetchMock).mockResponse(JSON.stringify({}));
+  saveProfile({
+    id: 'profile',
+    name: 'user1',
+    email: 'user1@email'
+  });
   render(<Credentials />);
-  
-  await waitFor(() => expect(screen.queryByText('User group')).toBeInTheDocument());
-  screen.debug()
 
-  // renderizar credential
-  // contem lista de user groups
-  // clicar no botao X 
-  // modal aparece
-  // clicar no botao yes, remove user group
-  // modal nao deve aparecer
-  // user group nao deve aparecer/ ser removido da lista
+  console.log('before', window.location);
+  
+  await waitFor(() => expect(screen.getByText('devx')).toBeInTheDocument());
+  const userGroup = await screen.findByTestId('user-group-ug-1');
+  const iconCancel = userGroup.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(iconCancel);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+  const confirmButton = await screen.findByText('Yes, remove user group');
+
+  userEvent.click(confirmButton);
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  expect(screen.queryByText('devx')).not.toBeInTheDocument();
+
+  await waitFor(() => {});
+  console.log('after', window.location);
 });

@@ -49,21 +49,24 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
   const history = useHistory();
   const modalRef = useRef<HTMLDivElement>();
 
-  console.log('usergroups:',userGroups);
-
   useOutsideClick(modalRef, () => setToggleModal(false));
 
   const confirmUserGroupDelete = async () => {
     const email = getProfileByKey('email');
     const { users } = currentUserGroup;
     const hasUser = find(users, user => user.email === email);
+    const isUserDuplicated = !hasUserDuplication(userGroups, email);
 
     await remove(getWorkspaceId(), currentUserGroup.id);
     setUserGroups(filter(userGroups, item => item.id !== currentUserGroup.id));
+
+    console.log('email', email);
+    console.log('hasDuplicate', !hasUserDuplication(userGroups, email));
     
     setToggleModal(false);
 
-    if (hasUser && !hasUserDuplication(userGroups, email)) {
+    if (hasUser && isUserDuplicated) {
+      console.log('redirect');
       history.push(routes.workspaces);
     }
   };
@@ -101,6 +104,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
       {userGroups &&
         map(userGroups, userGroup => (
           <Card.Config
+            id={`user-group-${userGroup.id}`}
             key={userGroup.name}
             icon="users"
             description={userGroup.name}
