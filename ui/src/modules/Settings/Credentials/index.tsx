@@ -33,7 +33,6 @@ import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { useDatasource } from './Sections/MetricProvider/hooks';
 import { Datasource } from './Sections/MetricProvider/interfaces';
-import { isRoot } from 'core/utils/auth';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
