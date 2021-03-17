@@ -63,6 +63,7 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.previousReference == null
             assert !request.active
             assert request.createdAt == circle.createdAt
+            assert request.percentage == circle.percentage
         }
     }
 
@@ -96,6 +97,7 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.previousReference == reference
             assert !request.active
             assert request.createdAt == circle.createdAt
+            assert request.percentage == circle.percentage
         }
     }
 

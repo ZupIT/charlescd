@@ -17,8 +17,10 @@
 package io.charlescd.circlematcher.api.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.charlescd.circlematcher.domain.validation.PercentageConstraint;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@PercentageConstraint
 public class CreateSegmentationRequest extends SegmentationRequest {
 
 }

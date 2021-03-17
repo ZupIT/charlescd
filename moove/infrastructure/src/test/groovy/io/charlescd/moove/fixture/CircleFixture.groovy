@@ -26,6 +26,7 @@ class CircleFixture {
     Boolean defaultCircle
     String workspaceId
     Boolean active
+    Integer percentage
 
     CircleFixture(String id,
                   String name,
@@ -38,7 +39,8 @@ class CircleFixture {
                   LocalDateTime importedAt,
                   Boolean defaultCircle,
                   String workspaceId,
-                  Boolean active) {
+                  Boolean active,
+                  Integer percentage) {
         this.id = id
         this.name = name
         this.reference = reference
@@ -51,6 +53,7 @@ class CircleFixture {
         this.defaultCircle = defaultCircle
         this.workspaceId = workspaceId
         this.active = false
+        this.percentage = null
     }
 
     static CircleFixture create() {
@@ -65,7 +68,8 @@ class CircleFixture {
                 null,
                 false,
                 DEFAULT_WORKSPACE_ID,
-                false)
+                false,
+                null)
     }
 
     CircleFixture withId(String id) {
@@ -140,6 +144,7 @@ class CircleFixture {
                 importedAt,
                 defaultCircle,
                 workspaceId,
-                active)
+                active,
+                percentage)
     }
 }

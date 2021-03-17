@@ -115,7 +115,8 @@ class TestUtils {
                 null,
                 false,
                 workspaceId,
-                false
+                false,
+                null
         )
     }
 

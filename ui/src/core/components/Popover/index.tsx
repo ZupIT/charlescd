@@ -39,7 +39,7 @@ interface WithChildren extends PopoverProps {
   children: ReactNode;
 }
 
-export type Props = WithChildren | WithIcon;
+export type Props = WithIcon | WithChildren;
 
 const Popover = (props: Props) => {
   const {
