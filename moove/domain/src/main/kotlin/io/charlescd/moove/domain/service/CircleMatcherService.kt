@@ -26,7 +26,7 @@ import io.charlescd.moove.domain.Workspace
 
 interface CircleMatcherService {
 
-    fun create(circle: Circle, matcherUri: String)
+    fun create(circle: Circle, matcherUri: String, active: Boolean = false)
 
     fun update(circle: Circle, previousReference: String, matcherUri: String, active: Boolean)
 

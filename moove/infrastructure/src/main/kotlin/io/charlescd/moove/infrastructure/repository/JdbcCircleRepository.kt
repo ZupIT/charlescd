@@ -562,11 +562,35 @@ class JdbcCircleRepository(
     }
 
     override fun findByWorkspaceId(workspaceId: String): Circles {
-        val statement = StringBuilder(BASE_QUERY_STATEMENT)
-            .appendln("AND circles.workspace_id = ?")
+        val statement = """
+                SELECT DISTINCT circles.id         AS circle_id,
+                       circles.name                AS circle_name,
+                       circles.reference           AS circle_reference,
+                       circles.created_at          AS circle_created_at,
+                       circles.matcher_type        AS circle_matcher_type,
+                       circles.rules               AS circle_rules,
+                       circles.imported_kv_records AS circle_imported_kv_records,
+                       circles.imported_at         AS circle_imported_at,
+                       circles.default_circle      AS circle_default,
+                       circles.workspace_id        AS circle_workspace_id,
+                       circle_user.id              AS circle_user_id,
+                       circle_user.name            AS circle_user_name,
+                       circle_user.email           AS circle_user_email,
+                       circle_user.photo_url       AS circle_user_photo_url,
+                       circle_user.created_at      AS circle_user_created_at,
+                       CASE 
+                        WHEN (deployments.status NOT IN ('NOT_DEPLOYED', 'DEPLOY_FAILED')) THEN TRUE 
+                        ELSE FALSE 
+                       END AS circle_active
+                FROM circles
+                         LEFT JOIN users circle_user ON circles.user_id = circle_user.id
+                         LEFT JOIN deployments ON circles.id = deployments.circle_id
+                WHERE 1 = 1
+                    AND circles.workspace_id = ?
+              """
 
         return Circles(
-            this.jdbcTemplate.query(statement.toString(), arrayOf(workspaceId), circleExtractor)!!
+            this.jdbcTemplate.query(statement, arrayOf(workspaceId), circleExtractor)!!
         )
     }
 }

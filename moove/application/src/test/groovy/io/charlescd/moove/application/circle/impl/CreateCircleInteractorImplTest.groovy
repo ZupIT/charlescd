@@ -66,7 +66,7 @@ class CreateCircleInteractorImplTest extends Specification {
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * circleRepository.save(_) >> circle
-        1 * circleMatcherService.create(circle, workspace.circleMatcherUrl)
+        1 * circleMatcherService.create(circle, workspace.circleMatcherUrl, false)
 
         notThrown(NotFoundException)
 

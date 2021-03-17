@@ -31,7 +31,8 @@ data class Circle(
     val importedKvRecords: Int? = null,
     val importedAt: LocalDateTime? = null,
     val defaultCircle: Boolean,
-    val workspaceId: String
+    val workspaceId: String,
+    val active: Boolean = false
 ) {
     companion object {
         const val DEFAULT_CIRCLE_NAME = "Default"

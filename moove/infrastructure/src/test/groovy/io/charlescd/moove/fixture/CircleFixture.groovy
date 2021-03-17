@@ -25,6 +25,7 @@ class CircleFixture {
     LocalDateTime importedAt
     Boolean defaultCircle
     String workspaceId
+    Boolean active
 
     CircleFixture(String id,
                   String name,
@@ -36,7 +37,8 @@ class CircleFixture {
                   Integer importedKvRecords,
                   LocalDateTime importedAt,
                   Boolean defaultCircle,
-                  String workspaceId) {
+                  String workspaceId,
+                  Boolean active) {
         this.id = id
         this.name = name
         this.reference = reference
@@ -48,6 +50,7 @@ class CircleFixture {
         this.importedAt = importedAt
         this.defaultCircle = defaultCircle
         this.workspaceId = workspaceId
+        this.active = false
     }
 
     static CircleFixture create() {
@@ -61,7 +64,8 @@ class CircleFixture {
                 null,
                 null,
                 false,
-                DEFAULT_WORKSPACE_ID)
+                DEFAULT_WORKSPACE_ID,
+                false)
     }
 
     CircleFixture withId(String id) {
@@ -119,6 +123,11 @@ class CircleFixture {
         return this
     }
 
+    CircleFixture withActive(Boolean active) {
+        this.active = active
+        return this
+    }
+
     Circle build() {
         new Circle(id,
                 name,
@@ -130,6 +139,7 @@ class CircleFixture {
                 importedKvRecords,
                 importedAt,
                 defaultCircle,
-                workspaceId)
+                workspaceId,
+                active)
     }
 }

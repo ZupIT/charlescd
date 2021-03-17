@@ -38,15 +38,15 @@ class CircleMatcherClientService(
     private val objectMapper: ObjectMapper
 ) : CircleMatcherService {
 
-    override fun create(circle: Circle, matcherUri: String) {
-        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, false))
+    override fun create(circle: Circle, matcherUri: String, active: Boolean) {
+        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, active))
     }
 
-    override fun update(circle: Circle, previousReference: String, matcherUri: String, isActive: Boolean) {
+    override fun update(circle: Circle, previousReference: String, matcherUri: String, active: Boolean) {
         this.circleMatcherClient.update(
             URI(matcherUri),
             previousReference,
-            createMatcherRequest(circle, isActive, previousReference)
+            createMatcherRequest(circle, active, previousReference)
         )
     }
 
@@ -125,6 +125,6 @@ class CircleMatcherClientService(
     }
 
     override fun saveAllFor(circles: Circles, matcherUri: String) {
-        circles.forEach { create(it, matcherUri) }
+        circles.forEach { create(it, matcherUri, it.active) }
     }
 }
