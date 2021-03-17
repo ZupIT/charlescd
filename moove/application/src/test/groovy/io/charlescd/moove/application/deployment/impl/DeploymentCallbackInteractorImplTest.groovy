@@ -97,6 +97,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def circle = getCircle(false)
 
+        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
 
@@ -141,6 +148,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def circle = getCircle(true
         )
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYING, circle,
                 buildId, workspaceId, null)
 
@@ -301,6 +309,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def circle = getCircle(false)
 
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, workspaceId, null)
 
@@ -363,6 +372,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def circle = getCircle(false)
 
+        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, workspaceId, null)
         def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
@@ -405,6 +421,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def circle = getCircle(false)
 
+        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, workspaceId, null)
 
@@ -440,6 +463,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def circle = getCircle(false)
 
+        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, workspaceId, null)
 
@@ -465,6 +495,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         def circle = getCircle(false)
 
+        def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, workspaceId, null)
 
@@ -488,6 +525,11 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
 
         def circle = getCircle(false)
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
@@ -533,7 +575,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "Circle", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null)
@@ -611,7 +653,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
     private static getCircle(boolean defaultCircle) {
         return new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, defaultCircle, workspaceId)
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, defaultCircle, workspaceId, null)
 
     }
 

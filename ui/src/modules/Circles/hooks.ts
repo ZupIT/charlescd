@@ -18,6 +18,7 @@ import { useEffect, useCallback, useState } from 'react';
 import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import {
   findAllCircles,
+  findPercentageCircles,
   findCircleById,
   findComponents,
   deleteCircleById,
@@ -25,7 +26,9 @@ import {
   createCircleWithFile,
   createCircleManually,
   updateCircleManually,
-  findAllCirclesWithoutActive
+  findAllCirclesWithoutActive,
+  updateCirclePercentage,
+  createCirclePercentage
 } from 'core/providers/circle';
 import { undeploy } from 'core/providers/deployment';
 import { useDispatch } from 'core/state/hooks';
@@ -33,13 +36,17 @@ import {
   loadedCirclesAction,
   loadedCirclesMetricsAction
 } from './state/actions';
-import { CirclePagination } from './interfaces/CirclesPagination';
+import {
+  CirclePercentagePagination,
+  CirclePagination
+} from './interfaces/CirclesPagination';
 import {
   Circle,
   Component,
   CreateCircleWithFilePayload,
   CreateCircleManuallyPayload,
-  Deployment
+  Deployment,
+  CreateCirclePercentagePayload
 } from './interfaces/Circle';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { buildFormData } from './helpers';
@@ -206,6 +213,73 @@ export const useCircles = (
   }, [dispatch, response, error, type]);
 
   return [loading, filterCircles, getCircles, response];
+};
+
+export const useSaveCirclePercentage = (
+  circleId: string
+): [Circle, Function, boolean] => {
+  const saveCircleRequest =
+    circleId !== NEW_TAB ? updateCirclePercentage : createCirclePercentage;
+  const [circleData, saveCircle] = useFetch<Circle>(saveCircleRequest);
+  const { response, error, loading: isSaving } = circleData;
+  const dispatch = useDispatch();
+
+  const saveCirclePercentage = useCallback(
+    (circle: CreateCirclePercentagePayload) => {
+      saveCircle(circle, circleId);
+    },
+    [saveCircle, circleId]
+  );
+
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        toogleNotification({
+          text: `Error to save circle`,
+          status: 'error'
+        })
+      );
+    }
+  }, [error, dispatch]);
+
+  return [response, saveCirclePercentage, isSaving];
+};
+
+export const useCirclePercentage = (): [
+  CirclePercentagePagination,
+  Function,
+  Function,
+  boolean
+] => {
+  const [circleData, getCircles] = useFetch<CirclePercentagePagination>(
+    findPercentageCircles
+  );
+  const { response, error, loading: isSaving } = circleData;
+  const dispatch = useDispatch();
+
+  const filterCircles = useCallback(
+    (name: string, status: string) => {
+      if (status === CIRCLE_STATUS.active) {
+        getCircles({ name, active: true });
+      } else if (status === CIRCLE_STATUS.inactives) {
+        getCircles({ name, active: false });
+      }
+    },
+    [getCircles]
+  );
+
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        toogleNotification({
+          text: `Error to fetch percentage circle`,
+          status: 'error'
+        })
+      );
+    }
+  }, [error, dispatch]);
+
+  return [response, filterCircles, getCircles, isSaving];
 };
 
 export const useSaveCircleManually = (
