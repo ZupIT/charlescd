@@ -65,11 +65,11 @@ func main() {
 
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cron.DefaultLogger)))
-	c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { go messagePubSubMain.Publish() })
-	c.AddFunc(configuration.GetConfiguration("CONSUMER_TIME"), func() { go messagePubSubMain.Consume(queue) })
-	c.AddFunc(configuration.GetConfiguration("CONSUMER_DELIVERED_FAILED_TIME"), func() { go messagePubSubMain.Consume(failedQueue) })
+	c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
+	c.AddFunc(configuration.GetConfiguration("CONSUMER_TIME"), func() { messagePubSubMain.Consume(queue) })
+	c.AddFunc(configuration.GetConfiguration("CONSUMER_DELIVERED_FAILED_TIME"), func() { messagePubSubMain.Consume(failedQueue) })
 
-	c.Start()
+	go c.Start()
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)

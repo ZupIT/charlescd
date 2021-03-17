@@ -19,8 +19,10 @@
 package messagePubSub
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/streadway/amqp"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"strconv"
@@ -28,19 +30,43 @@ import (
 )
 
 func (main *Main) Consume(queue string) {
-	response := make(chan payloads.MessageResponse, 0)
-	fmt.Printf("\n[COnsumer] Queue: %s Time: %s\n", queue, time.Now())
-	func() {
-		go main.amqpClient.Stream(response, queue)
-		msg := <-response
-		err := main.subscriptionMain.SendWebhookEvent(msg)
-		if err != nil {
-			logrus.Error(err.Error())
-			main.updateMessageInfo(msg, deliveredFailed, err.Error().Detail, extractHttpStatus(err))
-		} else {
-			main.updateMessageInfo(msg, delivered, successLog, 200)
+	fmt.Println("[Consumer] Queue: "+queue+" Time: " + time.Now().String())
+	startTime := time.Now()
+	consumerName := consumerName(queue)
+
+	messages, err := main.amqpClient.Stream(consumerName, queue)
+	if err != nil {
+		logrus.Error(err)
+		main.amqpClient.Close(consumerName)
+	}
+
+	go func() {
+		for message := range messages {
+			messageResponse, err := parseMessage(message)
+			if err != nil {
+				main.amqpClient.LogAndNack(message, startTime, "error parse message: %s - %s", string(message.Body), err.Error())
+				main.amqpClient.Close(consumerName)
+				return
+			}
+
+			webhookErr := main.subscriptionMain.SendWebhookEvent(messageResponse)
+			if webhookErr != nil {
+				logrus.Error(webhookErr.Error())
+				main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHttpStatus(webhookErr))
+			} else {
+				main.updateMessageInfo(messageResponse, delivered, successLog, 200)
+			}
+
+			main.amqpClient.LogAndAck(message, messageResponse, queue)
+			main.amqpClient.Close(consumerName)
 		}
 	}()
+}
+
+func parseMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
+	var messageResponse payloads.MessageResponse
+	err := json.Unmarshal(msg.Body, &messageResponse)
+	return messageResponse, err
 }
 
 func extractHttpStatus(err errors.Error) int {
@@ -49,4 +75,8 @@ func extractHttpStatus(err errors.Error) int {
 		logrus.Error(aErr)
 	}
 	return httpStatus
+}
+
+func consumerName(queue string) string {
+	return fmt.Sprintf("%v-%d", queue, time.Now().Nanosecond())
 }

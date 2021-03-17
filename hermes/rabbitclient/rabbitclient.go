@@ -19,7 +19,6 @@
 package rabbitclient
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
@@ -197,7 +196,7 @@ func (c *Client) UnsafePush(data []byte, queue string) error {
 	)
 }
 
-func (c *Client) Stream(response chan payloads.MessageResponse, queue string) {
+func (c *Client) Stream(consumerName, queue string) (<-chan amqp.Delivery, error) {
 	for {
 		if c.isConnected {
 			break
@@ -205,71 +204,46 @@ func (c *Client) Stream(response chan payloads.MessageResponse, queue string) {
 		time.Sleep(1 * time.Second)
 	}
 
-	err := c.channel.Qos(1, 0, false)
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	messages, err := c.channel.Consume(
+	return c.channel.Consume(
 		queue,
-		time.Now().String(),
+		consumerName,
 		false,
 		false,
 		false,
 		false,
 		nil,
 	)
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	func() {
-		for msg := range messages {
-			c.processMessage(response, msg, queue)
-		}
-	}()
 }
 
-func (c *Client) processMessage(response chan payloads.MessageResponse, msg amqp.Delivery, queue string) {
-	l := c.logger
-	startTime := time.Now()
+func (c *Client) LogAndAck(msg amqp.Delivery, response payloads.MessageResponse, queue string) {
+	msg.Ack(false)
 
-	messageResponse, err := parseMessage(msg)
-	if err != nil {
-		logAndNack(msg, l, startTime, "error parse message: %s - %s", string(msg.Body), err.Error())
-	}
-
-	defer func(messageResponse payloads.MessageResponse, m amqp.Delivery, logger *logrus.Logger) {
-		if err := recover(); err != nil {
-			stack := make([]byte, 8096)
-			stack = stack[:runtime.Stack(stack, false)]
-			l.WithFields(logrus.Fields{
-				"stack": stack,
-				"error": err,
-			}).Fatal("panic recovery for rabbitMQ message")
-			msg.Nack(false, false)
-		}
-	}(messageResponse, msg, l)
-
-	logrus.WithFields(logrus.Fields{
-		"Message consumed": messageResponse.Id,
+	c.logger.WithFields(logrus.Fields{
+		"Message consumed": response.Id,
 		"Time":             time.Now(),
 		"Queue":            queue,
-	}).Println()
-
-	response <- messageResponse
-	msg.Ack(false)
+	}).Info()
 }
 
-func logAndNack(msg amqp.Delivery, l *logrus.Logger, t time.Time, err string, args ...interface{}) {
+func (c *Client) LogAndNack(msg amqp.Delivery, t time.Time, err string, args ...interface{}) {
 	msg.Nack(false, false)
-	l.WithFields(logrus.Fields{
+
+	c.logger.WithFields(logrus.Fields{
 		"took-ms": time.Since(t).Milliseconds(),
 	}).Error(fmt.Sprintf(err, args...))
 }
 
-func parseMessage(msg amqp.Delivery) (payloads.MessageResponse, error) {
-	var messageResponse payloads.MessageResponse
-	err := json.Unmarshal(msg.Body, &messageResponse)
-	return messageResponse, err
+func (c *Client) Close(consumerName string) {
+	if !c.isConnected {
+		return
+	}
+
+	fmt.Println("Closing consumer: ", consumerName)
+	err := c.channel.Cancel(consumerName, false)
+	if err != nil {
+		fmt.Errorf("error canceling consumer %s: %v", consumerName, err)
+	}
+
+	fmt.Println("Gracefully closed " + consumerName + " connection")
+	return
 }

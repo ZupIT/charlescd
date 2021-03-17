@@ -32,7 +32,7 @@ import (
 )
 
 func (main *Main) Publish() {
-	fmt.Printf("\n[Publisher] Time: %s\n", time.Now())
+	fmt.Println("[Publisher] Time: " + time.Now().String())
 
 	messages, err := main.messageMain.FindAllNotEnqueuedAndDeliveredFail()
 	if err != nil {
