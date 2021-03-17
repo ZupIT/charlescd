@@ -587,7 +587,7 @@ class JdbcCircleRepository(
             this.jdbcTemplate.query(statement.toString(), arrayOf(workspaceId), circleExtractor)!!
         )
     }
-    
+
     override fun countPercentageByWorkspaceId(workspaceId: String): Int {
         val parameters = mutableListOf(workspaceId, workspaceId)
         val query = StringBuilder(
