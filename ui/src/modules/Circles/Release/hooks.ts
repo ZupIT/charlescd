@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   useFetch,
   useFetchData,
@@ -33,6 +33,8 @@ import { Build, FilterBuild } from './interfaces/Build';
 import { CreateDeployment } from './interfaces/Deployment';
 import { Deployment } from '../interfaces/Circle';
 import { Tag } from './interfaces/Tag';
+import { useDispatch } from 'core/state/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useComponentTags = (): {
   getComponentTag: Function;
@@ -76,8 +78,24 @@ export const useComposeBuild = (): {
   response: Build;
   loading: boolean;
 } => {
+  const dispatch = useDispatch();
   const [data, composeBuild] = useFetch<Build>(postComposeBuild);
-  const { response, loading } = data;
+  const { response, error, loading } = data;
+
+  useEffect(() => {
+    (async () => {
+      if (error) {
+        const e = await error.json();
+
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
+  }, [dispatch, error]);
 
   return {
     composeBuild,
@@ -91,8 +109,9 @@ export const useCreateDeployment = (): {
   response: Deployment;
   loading: boolean;
 } => {
+  const dispatch = useDispatch();
   const [data, createDeploy] = useFetch<Deployment>(postCreateDeployment);
-  const { response, loading } = data;
+  const { response, error, loading } = data;
 
   const createDeployment = useCallback(
     (data: CreateDeployment) => {
@@ -100,6 +119,21 @@ export const useCreateDeployment = (): {
     },
     [createDeploy]
   );
+
+  useEffect(() => {
+    (async () => {
+      if (error) {
+        const e = await error.json();
+
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
+  }, [dispatch, error]);
 
   return {
     createDeployment,

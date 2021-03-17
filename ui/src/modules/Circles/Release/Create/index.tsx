@@ -19,6 +19,7 @@ import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ModuleForm } from '../interfaces/Module';
@@ -26,7 +27,6 @@ import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
 import Module from './Module';
 import Styled from '../styled';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 const defaultValues = {
   modules: [MODULE],
@@ -130,7 +130,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           isLoading={savingBuild}
           isDisabled={isEmptyFields || !isEmpty(errors)}
         >
-          deploy
+          Deploy
         </Styled.Submit>
       </Styled.Form>
     </FormProvider>
