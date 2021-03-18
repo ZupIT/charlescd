@@ -40,4 +40,4 @@ dependencies:
     version: 8.9.1
     repository: https://charts.bitnami.com/bitnami
     condition: rabbitmq.enabled
-appVersion: 0.6.0
+appVersion: 0.6.1
