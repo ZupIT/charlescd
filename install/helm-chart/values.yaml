@@ -16,9 +16,11 @@ CharlesApplications:
       path: /healthcheck
       port: 3000
       initialDelay: 60
-    image: charlescd-butler:1.0
+    image:
+      registry: zupcharles
+      application: charlescd-butler
     imagePullSecrets: false
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     service:
       name: charlescd-butler
       type: ClusterIP
@@ -46,7 +48,7 @@ CharlesApplications:
       ssl: false
 
   moove:
-    enabled: false
+    enabled: true
     name: charlescd-moove
     sidecarIstio: 
       enabled: true
@@ -93,7 +95,7 @@ CharlesApplications:
     internalIdmEnabled: true
 
   villager:
-    enabled: false
+    enabled: true
     name: charlescd-villager
     sidecarIstio: 
       enabled: true
@@ -133,7 +135,7 @@ CharlesApplications:
       name: charlescd_villager
 
   ui:
-    enabled: false
+    enabled: true
     name: charlescd-ui
     sidecarIstio: 
       enabled: true
@@ -176,7 +178,7 @@ CharlesApplications:
     idmRedirectHost: *hostGlobal
 
   circleMatcher:
-    enabled: false
+    enabled: true
     name: charlescd-circle-matcher
     sidecarIstio: 
       enabled: true
@@ -230,7 +232,7 @@ CharlesApplications:
         master: "example"
 
   compass:
-    enabled: false
+    enabled: true
     name: charlescd-compass
     sidecarIstio: 
       enabled: true
@@ -295,14 +297,14 @@ job:
   name: init-db
 
 redis:
-  enabled: false
+  enabled: true
   fullnameOverride: charlescd-redis
   password: "hb2Fj9MGKjBkZ6zV"
   cluster:
     enabled: false
 
 keycloak:
-  enabled: false
+  enabled: true
   postgresql:
     enabled: false
   database:
@@ -390,7 +392,7 @@ keycloak:
       readOnly: false
 
 envoy:
-  enabled: false
+  enabled: true
   ui:
     enabled: true
   moove:
@@ -416,10 +418,10 @@ envoy:
 ingress:
   host: charles.info.example
   class: nginx
-  enabled: false
+  enabled: true
 
 nginx_ingress_controller:
-  enabled: false
+  enabled: true
 
 ingress-nginx:
   controller:
