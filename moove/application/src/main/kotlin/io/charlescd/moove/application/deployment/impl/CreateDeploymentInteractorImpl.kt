@@ -37,7 +37,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     private val circleService: CircleService,
     private val deployService: DeployService,
     private val workspaceService: WorkspaceService,
-    private val butlerConfigurationService: ButlerConfigurationService
+    private val deploymentConfigurationService: DeploymentConfigurationService
 ) : CreateDeploymentInteractor {
 
     @Transactional
@@ -46,12 +46,12 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val user = userService.findByAuthorizationToken(authorization)
-        val butlerConfiguration = butlerConfigurationService.find(workspace.butlerConfigurationId!!)
+        val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
 
         if (build.canBeDeployed()) {
             val deployment = createDeployment(request, workspaceId, user)
             deploymentService.save(deployment)
-            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), butlerConfiguration)
+            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), deploymentConfiguration)
             return DeploymentResponse.from(deployment, build)
         } else {
             throw BusinessException.of(MooveErrorCode.DEPLOY_INVALID_BUILD).withParameters(build.id)
@@ -59,7 +59,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     }
 
     private fun validateWorkspace(workspace: Workspace) {
-        workspace.butlerConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_BUTLER_CONFIGURATION_IS_MISSING)
+        workspace.deploymentConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING)
     }
 
     private fun createDeployment(

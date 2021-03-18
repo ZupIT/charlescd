@@ -28,7 +28,6 @@ import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { ComponentsRepositoryV2 } from '../repository'
 import { K8sClient } from '../../../core/integrations/k8s/client'
-import { RepoConfig } from '../../../core/manifests/manifest.interface'
 import { HelmManifest } from '../../../core/manifests/helm/helm-manifest'
 import { KubernetesManifest } from '../../../core/integrations/interfaces/k8s-manifest.interface'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
@@ -138,8 +137,7 @@ export class CreateDeploymentUseCase {
     repoUrl: string,
     component: CreateComponentRequestDto,
     gitToken: string,
-    gitProvider: GitProvidersEnum,
-    branch = 'master'
+    gitProvider: GitProvidersEnum
   ): Promise<KubernetesManifest[]> {
     // TODO: utilizar aqui a interface Manifest e obter de um factory
     try {
@@ -150,7 +148,6 @@ export class CreateDeploymentUseCase {
         imageUrl: component.buildImageUrl,
         namespace: namespace,
         repo: {
-          branch: branch,
           provider: gitProvider,
           token: gitToken,
           url: repoUrl
@@ -159,15 +156,6 @@ export class CreateDeploymentUseCase {
     }catch(err) {
       this.consoleLoggerService.error('ERROR:GENERATE_MANIFESTS', err)
       throw err
-    }
-  }
-
-  private getRepoConfig(gitToken: string, gitProvider: GitProvidersEnum, repoUrl: string): RepoConfig {
-    return {
-      provider: gitProvider,
-      url: repoUrl,
-      token: gitToken,
-      branch: 'master' // TODO obter branch
     }
   }
 

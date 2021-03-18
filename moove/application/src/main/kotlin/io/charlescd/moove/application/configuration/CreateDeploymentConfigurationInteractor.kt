@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+package io.charlescd.moove.application.configuration
 
-import java.time.LocalDateTime
+import io.charlescd.moove.application.configuration.request.CreateDeploymentConfigurationRequest
+import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 
-data class ButlerConfiguration(
-    val id: String,
-    val name: String,
-    val author: User,
-    val workspaceId: String,
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-    val butlerUrl: String,
-    val namespace: String,
-    val gitToken: String,
-    val gitProvider: GitProviderEnum
-)
+interface CreateDeploymentConfigurationInteractor {
+
+    fun execute(request: CreateDeploymentConfigurationRequest, workspaceId: String, authorization: String): DeploymentConfigurationResponse
+}

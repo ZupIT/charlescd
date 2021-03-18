@@ -16,15 +16,15 @@
 
 package io.charlescd.moove.application.configuration.request
 
-import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.GitProviderEnum
 import io.charlescd.moove.domain.User
 import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
-data class CreateButlerConfigurationRequest(
-    val name: String = "Butler Configuration",
+data class CreateDeploymentConfigurationRequest(
+    val name: String = "Deployment Configuration",
 
     @field:NotBlank
     @field:NotNull
@@ -42,7 +42,7 @@ data class CreateButlerConfigurationRequest(
     val gitProvider: GitProviderEnum
 ) {
 
-    fun toButlerConfiguration(workspaceId: String, author: User) = ButlerConfiguration(
+    fun toDeploymentConfiguration(workspaceId: String, author: User) = DeploymentConfiguration(
         id = UUID.randomUUID().toString(),
         name = name,
         author = author,

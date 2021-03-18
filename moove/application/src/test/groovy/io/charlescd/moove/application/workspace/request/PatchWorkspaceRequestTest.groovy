@@ -49,7 +49,7 @@ class PatchWorkspaceRequestTest extends Specification {
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.ADD, "/name", "test")]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.ADD, "/gitConfigurationId", "test")]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.ADD, "/registryConfigurationId", "test")]),
-                new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.ADD, "/butlerConfigurationId", "test")]),
+                new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.ADD, "/deploymentConfigurationId", "test")]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.ADD, "/circleMatcherUrl", "test")]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.ADD, "/metricConfigurationId", "test")])
         ]
@@ -100,8 +100,8 @@ class PatchWorkspaceRequestTest extends Specification {
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", "http://circle-matcher-url.com.br")]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/registryConfigurationId", "8b3a3427-03aa-4008-9db9-53f47b9c355c")]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/registryConfigurationId", null)]),
-                new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/butlerConfigurationId", "8b3a3427-03aa-4008-9db9-53f47b9c355c")]),
-                new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/butlerConfigurationId", null)]),
+                new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", "8b3a3427-03aa-4008-9db9-53f47b9c355c")]),
+                new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", null)]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/metricConfigurationId", "8b3a3427-03aa-4008-9db9-53f47b9c355c")]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/metricConfigurationId", null)]),
                 new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/circleMatcherUrl", null)])

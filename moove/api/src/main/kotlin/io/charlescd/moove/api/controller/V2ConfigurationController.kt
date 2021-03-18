@@ -19,7 +19,7 @@ package io.charlescd.moove.api.controller
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.configuration.*
 import io.charlescd.moove.application.configuration.request.*
-import io.charlescd.moove.application.configuration.response.ButlerConfigurationResponse
+import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.application.configuration.response.GitConfigurationResponse
 import io.charlescd.moove.application.configuration.response.GitConnectionResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
@@ -44,7 +44,7 @@ class V2ConfigurationController(
     private val updateGitConfigurationInteractor: UpdateGitConfigurationInteractor,
     private val gitStatusConfigurationInteractor: GitConnectionStatusConfigurationInteractor,
     private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor,
-    private val createButlerConfigurationInteractor: CreateButlerConfigurationInteractor
+    private val createDeploymentConfigurationInteractor: CreateDeploymentConfigurationInteractor
 ) {
 
     @ApiOperation(value = "Create git Configuration")
@@ -142,20 +142,20 @@ class V2ConfigurationController(
     ): ProviderConnectionResponse =
         providerStatusConfigurationInteractor.execute(provider, providerType)
 
-    @ApiOperation(value = "Create Butler Configuration")
+    @ApiOperation(value = "Create Deployment Configuration")
     @ApiImplicitParam(
         name = "request",
-        value = "Butler Configuration",
+        value = "Deployment Configuration",
         required = true,
-        dataType = "CreateButlerConfigurationRequest"
+        dataType = "CreateDeploymentConfigurationRequest"
     )
-    @PostMapping("/butler")
+    @PostMapping("/deployment")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createButlerConfiguration(
+    fun createDeploymentConfiguration(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
-        @Valid @RequestBody request: CreateButlerConfigurationRequest
-    ): ButlerConfigurationResponse {
-        return this.createButlerConfigurationInteractor.execute(request, workspaceId, authorization)
+        @Valid @RequestBody request: CreateDeploymentConfigurationRequest
+    ): DeploymentConfigurationResponse {
+        return this.createDeploymentConfigurationInteractor.execute(request, workspaceId, authorization)
     }
 }

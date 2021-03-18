@@ -111,6 +111,6 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         workspaceResponse.circleMatcherUrl == expectedWorkspace.circleMatcherUrl
         workspaceResponse.gitConfiguration == null
         workspaceResponse.registryConfiguration == null
-        workspaceResponse.butlerConfiguration == null
+        workspaceResponse.deploymentConfiguration == null
     }
 }

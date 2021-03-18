@@ -34,12 +34,13 @@ describe('Download resources from gitlab', () => {
       data: contents[resourceName] || []
     } as AxiosResponse))
 
-  const url = 'https://gitlab.com/api/v4/projects/22700476/repository'
+  const urlMaster = 'https://gitlab.com/api/v4/projects/22700476/repository?ref=master'
+  const urlFeature = 'https://gitlab.com/api/v4/projects/22700476/repository?ref=feature'
 
   it('Download helm chart recursively from gitlab', async() => {
     const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'master' })
+    const resource = await repository.getResource({ url: urlMaster, token: 'my-token', resourceName: 'helm-chart' })
 
     expect(resource.name).toBe('helm-chart')
     expect(resource.type).toBe('directory')
@@ -52,7 +53,7 @@ describe('Download resources from gitlab', () => {
   it('Download a single file from giblab', async() => {
     const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml', branch: 'master' })
+    const resource = await repository.getResource({ url: urlMaster, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
 
     expect(resource.name).toBe('Chart.yaml')
     expect(resource.type).toBe('file')
@@ -62,7 +63,7 @@ describe('Download resources from gitlab', () => {
   it('Download helm chart recursively from gitlab from feature branch', async() => {
     const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'feature' })
+    const resource = await repository.getResource({ url: urlFeature, token: 'my-token', resourceName: 'helm-chart' })
 
     expect(resource.name).toBe('helm-chart')
     expect(resource.type).toBe('directory')
@@ -85,7 +86,7 @@ describe('Download resources from gitlab', () => {
 
     const getSpy = jest.spyOn(httpService, 'get')
 
-    await repository.getResource({ url: url, token: gitlabToken, resourceName: 'helm-chart', branch: 'feature' })
+    await repository.getResource({ url: urlFeature, token: gitlabToken, resourceName: 'helm-chart' })
     expect(getSpy).toHaveBeenCalledWith(expect.anything(), expectedRequestConfig)
   })
 })

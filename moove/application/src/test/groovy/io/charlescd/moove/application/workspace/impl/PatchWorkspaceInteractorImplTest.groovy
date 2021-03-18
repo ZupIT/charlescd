@@ -42,7 +42,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
     private CircleRepository circleRepository = Mock(CircleRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
-    private ButlerConfigurationRepository butlerConfigurationRepository = Mock(ButlerConfigurationRepository)
+    private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
 
     def setup() {
@@ -53,7 +53,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
                 new MetricConfigurationService(metricConfigurationRepository, compassApi),
                 circleMatcherService,
                 new CircleService(circleRepository),
-                new ButlerConfigurationService(butlerConfigurationRepository)
+                new DeploymentConfigurationService(deploymentConfigurationRepository)
         )
     }
 
@@ -153,15 +153,15 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         }
     }
 
-    def 'when replacing Butler configuration id, should patch information successfully'() {
+    def 'when replacing deployment configuration id, should patch information successfully'() {
         def author = getDummyUser()
         given:
-        def previousButlerConfigId = "ba7006e0-a653-46dd-90be-71a0987f548a"
-        def newButlerConfigId = TestUtils.butlerConfigId
-        def newButlerConfig = TestUtils.butlerConfig
+        def previousDeploymentConfigId = "ba7006e0-a653-46dd-90be-71a0987f548a"
+        def newDeploymentConfigId = TestUtils.deploymentConfigId
+        def newDeploymentConfig = TestUtils.deploymentConfig
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, previousButlerConfigId)
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/butlerConfigurationId", newButlerConfigId)])
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, previousDeploymentConfigId)
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
 
         when:
         interactor.execute(workspace.id, request)
@@ -170,7 +170,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(_, _)
         0 * villagerService.checkIfRegistryConfigurationExists(_, _)
-        1 * butlerConfigurationRepository.exists(workspace.id, newButlerConfigId) >> newButlerConfig
+        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId) >> newDeploymentConfig
         0 * metricConfigurationRepository.exists(_, _)
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -182,19 +182,19 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.status == workspace.status
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.gitConfigurationId
-            assert workspaceUpdated.butlerConfigurationId == newButlerConfigId
+            assert workspaceUpdated.deploymentConfigurationId == newDeploymentConfigId
         }
     }
 
-    def 'when butler configuration id does not exist, should throw exception'() {
+    def 'when deployment configuration id does not exist, should throw exception'() {
         given:
-        def butlerConfigId = TestUtils.butlerConfigId
-        def newButlerConfigId = "9014531b-372f-4b11-9259-dc9a5779f69a"
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def newDeploymentConfigId = "9014531b-372f-4b11-9259-dc9a5779f69a"
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, butlerConfigId)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, deploymentConfigId)
 
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/butlerConfigurationId", newButlerConfigId)])
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
 
         when:
         interactor.execute(workspace.id, request)
@@ -203,12 +203,12 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(_, _)
         0 * villagerService.checkIfRegistryConfigurationExists(_, _)
-        1 * butlerConfigurationRepository.exists(workspace.id, newButlerConfigId) >> false
+        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId) >> false
         0 * workspaceRepository.update(_)
 
         def ex = thrown(NotFoundException)
-        ex.resourceName == "butlerConfigurationId"
-        ex.id == newButlerConfigId
+        ex.resourceName == "deploymentConfigurationId"
+        ex.id == newDeploymentConfigId
     }
 
     def 'when registry configuration id does not exist, should throw exception'() {
@@ -342,7 +342,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(metricConfigurationId, workspace.id)
-        0 * butlerConfigurationRepository.exists(_, _)
+        0 * deploymentConfigurationRepository.exists(_, _)
         1 * metricConfigurationRepository.exists(metricConfigurationId, workspace.id) >> true
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -354,7 +354,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.status == workspace.status
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
-            assert workspaceUpdated.butlerConfigurationId == workspace.butlerConfigurationId
+            assert workspaceUpdated.deploymentConfigurationId == workspace.deploymentConfigurationId
             assert workspaceUpdated.metricConfigurationId == metricConfigurationId
         }
     }
@@ -365,7 +365,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.INCOMPLETE, "registryConfigurationId", "https://circle-matcher.com.br",
-                "gitConfigurationId", "cdConfigurationId", "metricConfigurationId")
+                "gitConfigurationId", "metricConfigurationId", "deploymentConfigurationId")
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/metricConfigurationId", metricConfigurationId)])
 
         when:
@@ -375,7 +375,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, workspace.gitConfigurationId)
         0 * villagerService.checkIfRegistryConfigurationExists(workspace.registryConfigurationId, workspace.id)
-        0 * butlerConfigurationRepository.find(_, _)
+        0 * deploymentConfigurationRepository.find(_, _)
         1 * metricConfigurationRepository.exists(metricConfigurationId, workspace.id) >> true
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
@@ -386,7 +386,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
             assert workspaceUpdated.author == workspace.author
             assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
             assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
-            assert workspaceUpdated.butlerConfigurationId == workspace.butlerConfigurationId
+            assert workspaceUpdated.deploymentConfigurationId == workspace.deploymentConfigurationId
             assert workspaceUpdated.metricConfigurationId == metricConfigurationId
             assert workspaceUpdated.status == WorkspaceStatusEnum.COMPLETE
         }

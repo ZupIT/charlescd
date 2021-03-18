@@ -19,10 +19,10 @@
 package io.charlescd.moove.application.workspace.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import io.charlescd.moove.application.configuration.response.ButlerConfigurationResponse
+import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
 import io.charlescd.moove.application.usergroup.response.UserGroupResponse
-import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.GitConfiguration
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.Workspace
@@ -37,7 +37,7 @@ data class WorkspaceResponse(
     val registryConfiguration: RegistryConfigurationResponse? = null,
     val circleMatcherUrl: String? = null,
     val metricConfiguration: MetricConfigurationResponse? = null,
-    val butlerConfiguration: ButlerConfigurationResponse? = null,
+    val deploymentConfiguration: DeploymentConfigurationResponse? = null,
     val userGroups: List<UserGroupResponse>,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime
@@ -49,7 +49,7 @@ data class WorkspaceResponse(
             gitConfiguration: GitConfiguration? = null,
             registryConfigurationName: String? = null,
             metricConfiguration: MetricConfiguration? = null,
-            butlerConfiguration: ButlerConfiguration? = null
+            deploymentConfiguration: DeploymentConfiguration? = null
         ): WorkspaceResponse {
             return WorkspaceResponse(
                 id = workspace.id,
@@ -77,10 +77,11 @@ data class WorkspaceResponse(
                         provider = it.provider.name
                     )
                 },
-                butlerConfiguration = butlerConfiguration?.let {
-                    ButlerConfigurationResponse(
+                deploymentConfiguration = deploymentConfiguration?.let {
+                    DeploymentConfigurationResponse(
                         id = it.id,
-                        name = it.name
+                        name = it.name,
+                        gitProvider = it.gitProvider
                     )
                 }
             )

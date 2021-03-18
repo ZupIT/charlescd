@@ -2,10 +2,10 @@ databaseChangeLog:
   - changeSet:
       id: 20210301151000-1
       author: lucas.fernandes
-      comment: "Create table butler_configurations"
+      comment: "Create table deployment_configurations"
       changes:
         - createTable:
-            tableName: butler_configurations
+            tableName: deployment_configurations
             columns:
               - column:
                   name: id
@@ -23,14 +23,14 @@ databaseChangeLog:
                   name: user_id
                   type: varchar(36)
                   constraints:
-                    foreignKeyName: fk_butler_configurations_users
+                    foreignKeyName: fk_deployment_configurations_users
                     references: users(id)
                     nullable: false
               - column:
                   name: workspace_id
                   type: varchar(36)
                   constraints:
-                    foreignKeyName: fk_butler_configurations_workspace_id
+                    foreignKeyName: fk_deployment_configurations_workspace_id
                     references: workspaces(id)
                     nullable: false
               - column:
@@ -60,5 +60,5 @@ databaseChangeLog:
                     nullable: false
         - addUniqueConstraint:
             columnNames: butler_url, namespace
-            constraintName: unique_butler_configurations_butler_url_namespace
-            tableName: butler_configurations
+            constraintName: unique_deployment_configurations_butler_url_namespace
+            tableName: deployment_configurations

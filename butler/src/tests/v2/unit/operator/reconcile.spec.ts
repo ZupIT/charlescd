@@ -4,6 +4,7 @@ import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/de
 import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 import { UrlConstants } from '../../integration/test-constants'
 import { reconcileFixtures, reconcileFixturesParams } from './params'
+import { deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 
 
 describe('Deployment on existing circle', () => {
@@ -19,7 +20,7 @@ describe('Deployment on existing circle', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const previousDeployment = reconcileFixtures.previousDeploymentId
     const reconcile = new ReconcileDeployment()
-    const ids = reconcile.specsByDeployment(params, previousDeployment).map(s => s.metadata.labels.deployment_id)
+    const ids = reconcile.specsByDeployment(params, previousDeployment).map(s => s.metadata.labels.deploymentId)
     expect(ids).toEqual([previousDeployment, previousDeployment])
   })
 
@@ -49,25 +50,25 @@ describe('Deployment on existing circle', () => {
           {
             kind: 'Deployment',
             metadata: {
-              name: 'batata'
+              name: 'previous'
             }
           },
           {
             kind: 'Service',
             metadata: {
-              name: 'batata'
+              name: 'previous'
             }
           },
           {
             kind: 'Deployment',
             metadata: {
-              name: 'jilo'
+              name: 'current-2'
             }
           },
           {
             kind: 'Service',
             metadata: {
-              name: 'jilo'
+              name: 'current-2'
             }
           }
         ]
@@ -88,29 +89,45 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Deployment',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-          namespace: 'my-namespace'
+          name: 'current-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'abobora',
-          namespace: 'my-namespace'
+          name: 'current',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Deployment',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-          namespace: 'my-namespace'
+          name: 'current-2-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'jilo',
-          namespace: 'my-namespace'
+          name: 'current-2',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       }
     ]
@@ -119,43 +136,67 @@ describe('Deployment on existing circle', () => {
       {
         kind: 'Deployment',
         metadata: {
-          name: 'abobora-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-          namespace: 'my-namespace'
+          name: 'current-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'abobora',
-          namespace: 'my-namespace'
+          name: 'current',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Deployment',
         metadata: {
-          name: 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-          namespace: 'my-namespace'
+          name: 'current-2-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'jilo',
-          namespace: 'my-namespace'
+          name: 'current-2',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.currentDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Deployment',
         metadata: {
-          name: 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-          namespace: 'my-namespace'
+          name: 'previous-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.previousDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       },
       {
         kind: 'Service',
         metadata: {
-          name: 'batata',
-          namespace: 'my-namespace'
+          name: 'previous',
+          namespace: 'my-namespace',
+          labels: {
+            'deploymentId': reconcileFixtures.previousDeploymentId,
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+          }
         }
       }
     ]
