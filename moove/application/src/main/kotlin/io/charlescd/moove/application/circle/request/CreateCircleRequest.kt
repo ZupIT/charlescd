@@ -38,6 +38,7 @@ class CreateCircleRequest(
 
     @field:Valid
     val rules: NodePart
+
 ) {
     fun toDomain(user: User, workspaceId: String) = Circle(
         id = UUID.randomUUID().toString(),

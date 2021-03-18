@@ -78,7 +78,6 @@ test('should render Credentials items', async () => {
   expect(screen.getByText('Circle Matcher')).toBeInTheDocument();
   expect(screen.getByText('Datasources')).toBeInTheDocument();
   expect(screen.getByText('Metric Action')).toBeInTheDocument();
-  expect(screen.getByText('Git')).toBeInTheDocument();
   expect(screen.getByText('User group')).toBeInTheDocument();
 });
 
@@ -87,7 +86,7 @@ test('should render Credentials items in the right order', async () => {
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
 
-  const itemsRightOrder = ['Registry', 'CD Configuration', 'Circle Matcher', 'Datasources', 'Metric Action', 'Git', 'User group'];
+  const itemsRightOrder = ['Registry', 'CD Configuration', 'Circle Matcher', 'Datasources', 'Metric Action', 'User group'];
 
   render(<Credentials />);
 
@@ -119,17 +118,6 @@ test('render User Group credentials', async () => {
   expect(backButton).not.toBeInTheDocument();
 
   useDatasourceSpy.mockRestore();
-});
-
-test('render Git Credentials', async () => {
-  render(<Credentials />);
-
-  const addGitButton = await screen.findByText(/Add Git/);
-
-  await act(async () => userEvent.click(addGitButton));
-
-  const backButton = screen.getByTestId('icon-arrow-left');
-  expect(backButton).toBeInTheDocument();
 });
 
 test('render CD Configuration Credentials', async () => {
@@ -181,7 +169,6 @@ test('should render Credentials items with the right type: Required or Optional'
     { name: 'Circle Matcher', type: 'Required' },
     { name: 'Datasources', type: 'Optional' },
     { name: 'Metric Action', type: 'Optional' },
-    { name: 'Git', type: 'Optional' },
     { name: 'User group', type: 'Optional' },
   ];
 

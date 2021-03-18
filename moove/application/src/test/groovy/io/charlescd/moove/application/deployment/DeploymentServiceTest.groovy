@@ -152,7 +152,7 @@ class DeploymentServiceTest extends Specification {
     }
     private Circle getDummyCircle() {
         new Circle("qwerty-12345-asdf-98760", "charles", "reference", getDummyUser(),
-                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "worspaceId")
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "worspaceId", null)
     }
 
 

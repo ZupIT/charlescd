@@ -23,9 +23,9 @@ export const PlaceholderCardItems = [
     linkTo: routes.circles
   },
   {
-    icon: 'hypotheses',
-    text: 'Go to Hypotheses',
-    linkTo: routes.hypotheses
+    icon: 'activity',
+    text: 'Go to Circle Health',
+    linkTo: routes.circlesMetrics
   },
   {
     icon: 'modules',

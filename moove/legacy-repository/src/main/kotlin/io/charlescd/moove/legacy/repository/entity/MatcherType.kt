@@ -17,5 +17,5 @@
 package io.charlescd.moove.legacy.repository.entity
 
 enum class MatcherType {
-    REGULAR, SIMPLE_KV;
+    REGULAR, SIMPLE_KV, PERCENTAGE;
 }

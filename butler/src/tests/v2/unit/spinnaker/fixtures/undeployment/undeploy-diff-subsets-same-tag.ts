@@ -32,68 +32,6 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       manifests: [
         {
           apiVersion: 'networking.istio.io/v1alpha3',
-          kind: 'DestinationRule',
-          metadata: {
-            name: 'A',
-            namespace: 'sandbox'
-          },
-          spec: {
-            host: 'A',
-            subsets: [
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: 'circle-id2'
-                },
-                name: 'circle-id2'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: 'circle-id3'
-                },
-                name: 'circle-id3'
-              }
-            ]
-          }
-        }
-      ],
-      moniker: {
-        app: 'default'
-      },
-      name: 'Undeploy Destination Rules A',
-      refId: '1',
-      requisiteStageRefIds: [],
-      skipExpressionEvaluation: false,
-      source: 'text',
-      trafficManagement: {
-        enabled: false,
-        options: {
-          enableTraffic: false,
-          services: []
-        }
-      },
-      type: 'deployManifest'
-    },
-    {
-      account: 'default',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      manifests: [
-        {
-          apiVersion: 'networking.istio.io/v1alpha3',
           kind: 'VirtualService',
           metadata: {
             name: 'A',
@@ -259,16 +197,11 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
         app: 'default'
       },
       name: 'Undeploy Virtual Service A',
-      refId: '2',
+      refId: '1',
       requisiteStageRefIds: [
-        '1'
       ],
       skipExpressionEvaluation: false,
       source: 'text',
-      stageEnabled: {
-        expression: '${ #stage(\'Undeploy Destination Rules A\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
       trafficManagement: {
         enabled: false,
         options: {
@@ -289,19 +222,35 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
           apiVersion: 'networking.istio.io/v1alpha3',
           kind: 'DestinationRule',
           metadata: {
-            name: 'B',
+            name: 'A',
             namespace: 'sandbox'
           },
           spec: {
-            host: 'B',
+            host: 'A',
             subsets: [
               {
                 labels: {
-                  component: 'B',
-                  tag: 'v1',
+                  component: 'A',
+                  tag: 'v0',
                   circleId: 'default-circle-id'
                 },
                 name: 'default-circle-id'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'circle-id2'
+                },
+                name: 'circle-id2'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'circle-id3'
+                },
+                name: 'circle-id3'
               }
             ]
           }
@@ -310,9 +259,13 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       moniker: {
         app: 'default'
       },
-      name: 'Undeploy Destination Rules B',
-      refId: '3',
-      requisiteStageRefIds: [],
+      name: 'Undeploy Destination Rules A',
+      refId: '2',
+      requisiteStageRefIds: ['1'],
+      stageEnabled: {
+        expression: '${ #stage(\'Undeploy Virtual Service A\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
       skipExpressionEvaluation: false,
       source: 'text',
       trafficManagement: {
@@ -374,16 +327,61 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
         app: 'default'
       },
       name: 'Undeploy Virtual Service B',
-      refId: '4',
+      refId: '3',
       requisiteStageRefIds: [
-        '3'
       ],
       skipExpressionEvaluation: false,
       source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
+    },
+    {
+      account: 'default',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'DestinationRule',
+          metadata: {
+            name: 'B',
+            namespace: 'sandbox'
+          },
+          spec: {
+            host: 'B',
+            subsets: [
+              {
+                labels: {
+                  component: 'B',
+                  tag: 'v1',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Destination Rules B',
+      refId: '4',
       stageEnabled: {
-        expression: '${ #stage(\'Undeploy Destination Rules B\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Undeploy Virtual Service B\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
+      requisiteStageRefIds: ['3'],
+      skipExpressionEvaluation: false,
+      source: 'text',
       trafficManagement: {
         enabled: false,
         options: {
@@ -405,7 +403,7 @@ export const undeployDiffSubsetsSameTag: SpinnakerPipeline = {
       variables: [
         {
           key: 'proxyUndeploymentsResult',
-          value: '${#stage(\'Undeploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Undeploy Virtual Service B\').status.toString() == \'SUCCEEDED\'}'
+          value: '${#stage(\'Undeploy Destination Rules A\').status.toString() == \'SUCCEEDED\' && #stage(\'Undeploy Destination Rules B\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
