@@ -74,7 +74,6 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization)  >> root.email
         1 * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
         1 * userRepository.findById(userId.toString()) >> Optional.of(user)
-        //TODO: verify how todo this verification: 1 * managementUserSecurityService.resetUserPassword("'user@zup.com.br", newPassword)
 
         assert response != null
         assert response.newPassword.size() == 10
@@ -102,7 +101,6 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         numberOfPasswords * managementUserSecurityService.getUserEmail(authorization)  >> root.email
         numberOfPasswords * userRepository.findByEmail(root.getEmail()) >> Optional.of(root)
         numberOfPasswords * userRepository.findById(userId.toString()) >> Optional.of(user)
-        //TODO: verify how todo this verification: 1 * managementUserSecurityService.resetUserPassword("'user@zup.com.br", newPassword)
 
         passwords.stream().forEach({ response ->
             assert response.newPassword.size() == 10

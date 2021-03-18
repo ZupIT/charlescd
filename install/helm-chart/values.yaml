@@ -49,7 +49,7 @@ CharlesApplications:
   moove:
     enabled: true
     name: charlescd-moove
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /actuator/health
@@ -96,7 +96,7 @@ CharlesApplications:
   villager:
     enabled: true
     name: charlescd-villager
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /health
@@ -137,7 +137,7 @@ CharlesApplications:
     enabled: true
     serviceAccountName: charlescd-octopipe
     name: charlescd-octopipe
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /api/v1/health
@@ -174,7 +174,7 @@ CharlesApplications:
   ui:
     enabled: true
     name: charlescd-ui
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /
@@ -217,7 +217,7 @@ CharlesApplications:
   circleMatcher:
     enabled: true
     name: charlescd-circle-matcher
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /actuator/health
@@ -271,7 +271,7 @@ CharlesApplications:
   compass:
     enabled: true
     name: charlescd-compass
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /health
@@ -322,6 +322,55 @@ CharlesApplications:
         user: charlescd_moove
         password: 7Qs2KuM9gYzw48BS
 
+  hermes:
+    enabled: true
+    name: charlescd-hermes
+    sidecarIstio:
+      enabled: true
+    healthCheck:
+      path: /health
+      port: 8080
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-hermes
+    imagePullSecrets: false
+    pullPolicy: Always
+    service:
+      name: charlescd-hermes
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    postgresqlWait: true
+    #hermes envs
+    database:
+      <<: *postgresInfo
+      user: charlescd_hermes
+      password: aGVybWVz
+      name: charlescd_hermes
+    amqp:
+      url: amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/
+      message:
+        queue: queue-message
+        routingKey: routing-key-message
+        exchange: exchange-message
+      waitMessage:
+        queue: queue-message-wait
+        exchange: exchange-message-wait
+    publisher:
+      time: "@every 5s"
+      attempts: 3
+    consumer:
+      messageRetry:
+        expiration: 30000
+        attempts: 3
+    subscriptionRegisterLimit: 5
 
 postgresql:
   enabled: true
@@ -376,7 +425,7 @@ keycloak:
         -Dkeycloak.migration.strategy=IGNORE_EXISTING
 
   securityContext:
-    runAsUser: 0   
+    runAsUser: 0
     runAsNonRoot: false
 
   contextPath: keycloak/auth
@@ -412,12 +461,12 @@ keycloak:
   extraInitContainers: |
     - name: check-db-ready
       image: postgres:9.6.5
-      command: ['sh', '-c', 
-        'until pg_isready -h {{ .Values.database.host }} -p {{ .Values.database.port }}; 
+      command: ['sh', '-c',
+        'until pg_isready -h {{ .Values.database.host }} -p {{ .Values.database.port }};
         do echo waiting for database; sleep 2; done;']
   auth:
     adminPassword: firstpassword
-  
+
   extraVolumes: |
     - name: realm-secret
       configMap:
@@ -442,6 +491,8 @@ envoy:
     enabled: true
   compass:
     enabled: true
+  hermes:
+    enabled: true
   cors:
     enabled: true
     hosts: []
@@ -464,9 +515,58 @@ ingress-nginx:
   controller:
     service:
       annotations: {}
-    
 
-    
-
-
-
+rabbitmq:
+  enabled: true
+  fullnameOverride: charlescd-rabbitmq
+  auth:
+    username: charlescd_hermes
+    password: aGVybWVz
+  configuration: |-
+    ## Username and password
+    ##
+    default_user = {{ .Values.auth.username }}
+    default_pass = {{ .Values.auth.password }}
+    ## Clustering
+    ##
+    cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
+    cluster_formation.k8s.host = kubernetes.default.svc.{{ .Values.clusterDomain }}
+    cluster_formation.node_cleanup.interval = 10
+    cluster_formation.node_cleanup.only_log_warning = true
+    cluster_partition_handling = autoheal
+    # queue master locator
+    queue_master_locator = min-masters
+    # enable guest user
+    loopback_users.guest = false
+    {{ tpl .Values.extraConfiguration . }}
+    {{- if .Values.auth.tls.enabled }}
+    ssl_options.verify = {{ .Values.auth.tls.sslOptionsVerify }}
+    listeners.ssl.default = {{ .Values.service.tlsPort }}
+    ssl_options.fail_if_no_peer_cert = {{ .Values.auth.tls.failIfNoPeerCert }}
+    ssl_options.cacertfile = /opt/bitnami/rabbitmq/certs/ca_certificate.pem
+    ssl_options.certfile = /opt/bitnami/rabbitmq/certs/server_certificate.pem
+    ssl_options.keyfile = /opt/bitnami/rabbitmq/certs/server_key.pem
+    {{- end }}
+    {{- if .Values.ldap.enabled }}
+    auth_backends.1 = rabbit_auth_backend_ldap
+    auth_backends.2 = internal
+    {{- range $index, $server := .Values.ldap.servers }}
+    auth_ldap.servers.{{ add $index 1 }} = {{ $server }}
+    {{- end }}
+    auth_ldap.port = {{ .Values.ldap.port }}
+    auth_ldap.user_dn_pattern = {{ .Values.ldap.user_dn_pattern  }}
+    {{- if .Values.ldap.tls.enabled }}
+    auth_ldap.use_ssl = true
+    {{- end }}
+    {{- end }}
+    {{- if .Values.metrics.enabled }}
+    ## Prometheus metrics
+    ##
+    prometheus.tcp.port = 9419
+    {{- end }}
+    {{- if .Values.memoryHighWatermark.enabled }}
+    ## Memory Threshold
+    ##
+    total_memory_available_override_value = {{ include "rabbitmq.toBytes" .Values.resources.limits.memory }}
+    vm_memory_high_watermark.{{ .Values.memoryHighWatermark.type }} = {{ .Values.memoryHighWatermark.value }}
+    {{- end }}

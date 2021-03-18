@@ -59,13 +59,15 @@ class DeploymentServiceTest extends Specification {
 
     def "when find a deployment by cirlcleId and workspaceId should not throw"() {
         given:
-        def deployment = getDummyDeployment();
+        def deployment = getDummyDeployment()
+        def deploymentList = new ArrayList();
+        deploymentList.add(deployment)
 
         when:
-        this.deploymentService.findByCircleIdAndWorkspaceId(deployment.circle.id, deployment.workspaceId)
+        this.deploymentService.findLastActive(deployment.circle.id, deployment.workspaceId)
 
         then:
-        1 * this.deploymentRepository.findByCircleIdAndWorkspaceId(deployment.circle.id, deployment.workspaceId)
+        1 * this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(deployment.circle.id, deployment.workspaceId) >> deploymentList
         notThrown()
     }
 
@@ -156,7 +158,7 @@ class DeploymentServiceTest extends Specification {
     }
 
 
-    private Deployment getDummyDeployment(String email) {
+    private Deployment getDummyDeployment() {
         new Deployment(
                 "qwerty-12345-asdf-98760",
                 getDummyUser(),
