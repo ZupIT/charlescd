@@ -50,6 +50,22 @@ func (st *SystemTokenSuite) TestCreateSystemToken() {
 	require.Equal(st.T(), systemToken.Author, createdSystemToken.Author)
 }
 
+func (st *SystemTokenSuite) TestCreateSystemTokenWithEmptyAuthorization() {
+	authorization := ""
+	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
+
+	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
+
+	require.Zero(st.T(), result)
+	require.NotNil(st.T(), err)
+	require.Equal(st.T(), logging.BusinessError, logging.GetErrorType(err))
+
+	require.Equal(st.T(), 0, len(st.userRepository.ExpectedCalls))
+	require.Equal(st.T(), 0, len(st.permissionRepository.ExpectedCalls))
+	require.Equal(st.T(), 0, len(st.workspaceRepository.ExpectedCalls))
+	require.Equal(st.T(), 0, len(st.systemTokenRepository.ExpectedCalls))
+}
+
 func (st *SystemTokenSuite) TestCreateSystemTokenWithInvalidAuthorization() {
 	authorization := "Bearer invalid authorization header"
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
