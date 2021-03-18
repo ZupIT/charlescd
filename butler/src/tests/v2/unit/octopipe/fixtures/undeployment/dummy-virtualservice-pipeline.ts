@@ -60,18 +60,6 @@ export const dummyVirtualServicePipelineOctopipe: OctopipeUndeploymentRequest = 
   proxyDeployments: [
     {
       apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'A',
-        subsets: []
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'VirtualService',
       metadata: {
         name: 'A',
@@ -108,11 +96,11 @@ export const dummyVirtualServicePipelineOctopipe: OctopipeUndeploymentRequest = 
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
       metadata: {
-        name: 'B',
+        name: 'A',
         namespace: 'sandbox'
       },
       spec: {
-        host: 'B',
+        host: 'A',
         subsets: []
       }
     },
@@ -149,7 +137,19 @@ export const dummyVirtualServicePipelineOctopipe: OctopipeUndeploymentRequest = 
           }
         ]
       }
-    }
+    },
+    {
+      apiVersion: 'networking.istio.io/v1alpha3',
+      kind: 'DestinationRule',
+      metadata: {
+        name: 'B',
+        namespace: 'sandbox'
+      },
+      spec: {
+        host: 'B',
+        subsets: []
+      }
+    },
   ],
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null

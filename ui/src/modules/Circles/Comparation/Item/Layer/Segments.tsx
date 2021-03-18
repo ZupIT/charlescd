@@ -21,6 +21,11 @@ import Segments from 'modules/Circles/Segments';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
 import ButtonIconRounded from 'core/components/Button/Rounded';
+import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPagination';
+import { SECTIONS } from '../enums';
+import CirclePercentageList from '../Percentage/CirclePercentageList';
+import AvailablePercentage from '../Percentage/AvailablePercentage';
+import Icon from 'core/components/Icon';
 
 interface Props {
   isEditing: boolean;
@@ -28,12 +33,66 @@ interface Props {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   circle: Circle;
+  setActiveSection: Function;
+  percentageCircles?: CirclePercentagePagination;
 }
 
-const LayerSegments = ({ circle, isEditing, onClickCreate }: Props) => {
+const renderPercentage = (
+  circle: Circle,
+  percentageCircles: CirclePercentagePagination,
+  setActiveSection: Function
+) => {
+  return (
+    <>
+      <AvailablePercentage
+        responseGetCircles={percentageCircles}
+        circle={circle}
+      />
+      {!circle.deployment && (
+        <Styled.WarningPercentageContainer>
+          <Icon name="alert" color="warning" />
+          <Text.h4 color="warning">
+            The percentage will be activated only when the circle is active.
+          </Text.h4>
+        </Styled.WarningPercentageContainer>
+      )}
+      <CirclePercentageList responseGetCircles={percentageCircles} />
+      <ButtonIconRounded
+        name="add"
+        color="dark"
+        onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
+        isDisabled={!circle?.name}
+        icon="edit"
+        size="medium"
+      >
+        Edit segments
+      </ButtonIconRounded>
+    </>
+  );
+};
+
+const renderSegments = (
+  circle: Circle,
+  percentageCircles: CirclePercentagePagination,
+  setActiveSection?: Function
+) => {
+  if (circle.matcherType === 'PERCENTAGE') {
+    return renderPercentage(circle, percentageCircles, setActiveSection);
+  } else {
+    return <Segments rules={circle?.rules} viewMode />;
+  }
+};
+
+const LayerSegments = ({
+  circle,
+  isEditing,
+  onClickCreate,
+  setActiveSection,
+  percentageCircles
+}: Props) => {
   const renderContent = () => {
     return isEditing ? (
-      <Segments rules={circle?.rules} viewMode />
+      renderSegments(circle, percentageCircles, setActiveSection)
     ) : (
       <ButtonIconRounded
         name="add"

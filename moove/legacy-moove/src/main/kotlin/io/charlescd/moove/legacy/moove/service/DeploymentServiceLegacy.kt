@@ -23,28 +23,18 @@ import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toResourcePageRepresentation
 import io.charlescd.moove.commons.representation.DeploymentRepresentation
 import io.charlescd.moove.commons.representation.ResourcePageRepresentation
-import io.charlescd.moove.legacy.moove.api.DeployApi
-import io.charlescd.moove.legacy.moove.api.request.UndeployRequest
-import io.charlescd.moove.legacy.moove.api.request.UndeployRequestV1
 import io.charlescd.moove.legacy.repository.DeploymentRepository
-import io.charlescd.moove.legacy.repository.entity.Deployment
-import io.charlescd.moove.legacy.repository.entity.DeploymentStatus
-import javax.transaction.Transactional
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
 class DeploymentServiceLegacy(
-    private val deploymentRepository: DeploymentRepository,
-    private val deployApi: DeployApi
+    private val deploymentRepository: DeploymentRepository
 ) {
 
     @Value("\${charlescd.moove.url}")
     lateinit var MOOVE_BASE_PATH: String
-
-    private val log = LoggerFactory.getLogger(this.javaClass)
 
     fun getDeploymentById(id: String, applicationId: String): DeploymentRepresentation {
         return this.deploymentRepository.findByIdAndWorkspaceId(id, applicationId)
@@ -65,25 +55,5 @@ class DeploymentServiceLegacy(
         return this.deploymentRepository.findByIdAndWorkspaceId(id, workspaceId)
             .map { this.deploymentRepository.delete(it) }
             .orElseThrow { NotFoundExceptionLegacy("deployment", id) }
-    }
-
-    @Transactional
-    fun undeploy(id: String, workspaceId: String) {
-        return deploymentRepository.findByIdAndWorkspaceId(id, workspaceId)
-            .orElseThrow { NotFoundExceptionLegacy("deployment", id) }
-            .let { it.updateDeploymentStatus() }
-            .let { deployApi.undeploy(id, UndeployRequest(it.author.id)) }
-    }
-
-    @Transactional
-    fun undeployV1(id: String, workspaceId: String) {
-        return deploymentRepository.findByIdAndWorkspaceId(id, workspaceId)
-            .orElseThrow { NotFoundExceptionLegacy("deployment", id) }
-            .let { it.updateDeploymentStatus() }
-            .let { deployApi.undeployV1(UndeployRequestV1(it.author.id, id)) }
-    }
-
-    private fun Deployment.updateDeploymentStatus(): Deployment {
-        return deploymentRepository.save(this.copy(status = DeploymentStatus.UNDEPLOYING))
     }
 }

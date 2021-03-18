@@ -142,6 +142,9 @@ test("component to not render more options", async () => {
     </AllTheProviders>
   );
 
+  const advancedOptions = screen.getByTestId('subtitle-advanced-options');
+  userEvent.click(advancedOptions);
+
   const componentHostValue: any = container.querySelector(
     "input[name='hostValue']"
   );
@@ -162,9 +165,12 @@ test("component to not render more option", async () => {
     </AllTheProviders>
   );
 
+  const advancedOptions = screen.getByTestId('subtitle-advanced-options');
+  userEvent.click(advancedOptions);
+
   const componentHostValue: any = container.querySelector(
     "input[name='hostValue']"
   );
 
-  await waitFor(() => expect(componentHostValue.value).toEqual(""));
+  await waitFor(() => expect(componentHostValue?.value).toEqual(""));
 });

@@ -21,8 +21,12 @@ package io.charlescd.moove.application.workspace.impl
 import io.charlescd.moove.application.*
 import io.charlescd.moove.application.workspace.FindWorkspaceInteractor
 import io.charlescd.moove.application.workspace.response.WorkspaceResponse
+import io.charlescd.moove.domain.WebhookConfiguration
+import io.charlescd.moove.domain.WebhookConfigurationLastDelivery
+import io.charlescd.moove.domain.service.HermesService
 import javax.inject.Inject
 import javax.inject.Named
+import org.slf4j.LoggerFactory
 
 @Named
 class FindWorkspaceInteractorImpl @Inject constructor(
@@ -30,10 +34,15 @@ class FindWorkspaceInteractorImpl @Inject constructor(
     private val gitConfigurationService: GitConfigurationService,
     private val registryConfigurationService: RegistryConfigurationService,
     private val cdConfigurationService: CdConfigurationService,
-    private val metricConfigurationService: MetricConfigurationService
+    private val metricConfigurationService: MetricConfigurationService,
+    private val hermesService: HermesService,
+    private val userService: UserService
+
 ) : FindWorkspaceInteractor {
 
-    override fun execute(workspaceId: String): WorkspaceResponse {
+    private val logger = LoggerFactory.getLogger(this.javaClass)
+
+    override fun execute(workspaceId: String, authorization: String): WorkspaceResponse {
         val workspace = workspaceService.find(workspaceId)
 
         val gitConfiguration =
@@ -54,12 +63,43 @@ class FindWorkspaceInteractorImpl @Inject constructor(
             metricConfigurationService.find(workspace.metricConfigurationId!!, workspace.id)
         }
 
+        val webhookConfiguration = getWebhookConfiguration(authorization, workspaceId)
+
         return WorkspaceResponse.from(
             workspace,
             gitConfiguration,
             registryConfiguration,
             cdConfiguration,
-            metricConfiguration
+            metricConfiguration,
+            webhookConfiguration
+        )
+    }
+
+    private fun getWebhookConfiguration(authorization: String, workspaceId: String): List<WebhookConfiguration> {
+        try {
+            val authorEmail = userService.getEmailFromToken(authorization)
+            val subscriptions = hermesService.getSubscriptinsByExternalId(authorEmail, workspaceId)
+            return subscriptions.map {
+                WebhookConfiguration(
+                    id = it.id,
+                    description = it.description,
+                    url = it.url,
+                    workspaceId = it.workspaceId,
+                    events = it.events,
+                    lastDelivery = buildWebhookLastDelivery(authorEmail, it.id)
+                )
+            }
+        } catch (ex: Exception) {
+            logger.error("Failed to get webhook info" + ex.message)
+        }
+        return emptyList()
+    }
+
+    private fun buildWebhookLastDelivery(authorEmail: String, subscriptionId: String): WebhookConfigurationLastDelivery {
+        val healthCheckSubscription = hermesService.healthCheckSubscription(authorEmail, subscriptionId)
+        return WebhookConfigurationLastDelivery(
+            status = healthCheckSubscription.status,
+            details = healthCheckSubscription.details
         )
     }
 }

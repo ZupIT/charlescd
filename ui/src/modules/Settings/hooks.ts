@@ -38,6 +38,7 @@ export const useWorkspace = (): [Workspace, Function, Function, Function] => {
       try {
         dispatch(statusWorkspaceAction('pending'));
         const response = await getWorkspaceById({ id });
+
         dispatch(loadedWorkspaceAction(response));
         dispatch(statusWorkspaceAction('resolved'));
         setWorkspace(response);

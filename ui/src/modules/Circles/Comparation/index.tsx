@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import map from 'lodash/map';
 import reverse from 'lodash/reverse';
 import getQueryStrings from 'core/utils/query';
@@ -22,6 +22,7 @@ import CirclesComparationItem from 'modules/Circles/Comparation/Item';
 import Styled from './styled';
 import CircleMatcher from '../Matcher';
 import { CIRCLE_MATCHER_TAB } from '../constants';
+import { CIRCLE_STATUS, useCirclePercentage } from '../hooks';
 
 interface Props {
   onChange: (delCircleStatus: string) => void;
@@ -30,11 +31,24 @@ interface Props {
 const CirclesComparation = ({ onChange }: Props) => {
   const query = getQueryStrings();
   const circles = query.getAll('circle');
+  const [responseGetCircles, getFilteredCircles] = useCirclePercentage();
+
+  const updateCircle = () => {
+    getFilteredCircles('', CIRCLE_STATUS.active);
+  };
+
+  useEffect(() => {
+    if (!responseGetCircles) {
+      getFilteredCircles('', CIRCLE_STATUS.active);
+    }
+  }, [responseGetCircles, getFilteredCircles]);
 
   const renderCircle = (id: string) => (
     <CirclesComparationItem
       id={id}
       onChange={(delCircleStatus: string) => onChange(delCircleStatus)}
+      updateCircle={() => updateCircle()}
+      circlesListResponse={responseGetCircles}
     />
   );
 
