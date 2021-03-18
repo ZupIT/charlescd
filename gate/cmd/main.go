@@ -1,15 +1,12 @@
 package main
 
 import (
-	"github.com/ZupIT/charlescd/gate/internal/configuration"
+	"github.com/joho/godotenv"
 	"log"
 )
 
 func main() {
-	err := configuration.LoadConfigurations()
-	if err != nil {
-		log.Fatal(err)
-	}
+	godotenv.Load("./resources/.env")
 
 	persistenceManager, err := prepareDatabase()
 	if err != nil {
