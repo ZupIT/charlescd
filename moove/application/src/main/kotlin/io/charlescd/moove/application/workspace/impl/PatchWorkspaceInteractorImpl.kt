@@ -36,7 +36,7 @@ open class PatchWorkspaceInteractorImpl(
     private val metricConfigurationService: MetricConfigurationService,
     private val circleMatcherService: CircleMatcherService,
     private val circleService: CircleService,
-    private val butlerConfigurationService: ButlerConfigurationService
+    private val deploymentConfigurationService: DeploymentConfigurationService
 ) : PatchWorkspaceInteractor {
 
     override fun execute(workspaceId: String, request: PatchWorkspaceRequest) {
@@ -98,10 +98,10 @@ open class PatchWorkspaceInteractorImpl(
             )
         }
 
-        if (shouldConfigurationBeChecked(workspace.butlerConfigurationId, updatedWorkspace.butlerConfigurationId)) {
-            butlerConfigurationService.checkIfButlerConfigurationExists(
+        if (shouldConfigurationBeChecked(workspace.deploymentConfigurationId, updatedWorkspace.deploymentConfigurationId)) {
+            deploymentConfigurationService.checkIfDeploymentConfigurationExists(
                 workspaceId,
-                updatedWorkspace.butlerConfigurationId!!
+                updatedWorkspace.deploymentConfigurationId!!
             )
         }
 

@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.configuration.response
+package io.charlescd.moove.domain.repository
 
-import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.DeploymentConfiguration
+import java.util.*
 
-data class ButlerConfigurationResponse(
-    val id: String,
-    val name: String
-) {
-    companion object {
-        fun from(butlerConfiguration: ButlerConfiguration) = ButlerConfigurationResponse(
-            id = butlerConfiguration.id,
-            name = butlerConfiguration.name
-        )
-    }
+interface DeploymentConfigurationRepository {
+
+    fun save(deploymentConfiguration: DeploymentConfiguration): DeploymentConfiguration
+
+    fun find(id: String): Optional<DeploymentConfiguration>
+
+    fun exists(workspaceId: String, id: String): Boolean
 }

@@ -34,12 +34,12 @@ describe('Download resources from github', () => {
       data: contents[resourceName]
     } as AxiosResponse))
 
-  const url = 'https://api.github.com/repos/charlescd-fake/helm-chart'
+  const url = 'https://api.github.com/repos/charlescd-fake/helm-chart/contents?ref=master'
 
   it('Download helm chart recursively from github', async() => {
     const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'master' })
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
 
     expect(resource.name).toBe('helm-chart')
     expect(resource.type).toBe('directory')
@@ -52,7 +52,7 @@ describe('Download resources from github', () => {
   it('Download a single file from gibhub', async() => {
     const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml', branch: 'master' })
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
 
     expect(resource.name).toBe('Chart.yaml')
     expect(resource.type).toBe('file')
@@ -62,7 +62,7 @@ describe('Download resources from github', () => {
   it('Download helm chart recursively from github from feature branch', async() => {
     const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
 
-    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart', branch: 'feature' })
+    const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
 
     expect(resource.name).toBe('helm-chart')
     expect(resource.type).toBe('directory')
@@ -85,7 +85,7 @@ describe('Download resources from github', () => {
 
     const getSpy = jest.spyOn(httpService, 'get')
 
-    await repository.getResource({ url: url, token: githubToken, resourceName: 'helm-chart', branch: 'feature' })
+    await repository.getResource({ url: url, token: githubToken, resourceName: 'helm-chart' })
     expect(getSpy).toHaveBeenCalledWith(expect.anything(), expectedRequestConfig)
   })
 })

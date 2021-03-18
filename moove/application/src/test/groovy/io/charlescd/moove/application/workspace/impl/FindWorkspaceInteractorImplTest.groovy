@@ -20,11 +20,7 @@ import io.charlescd.moove.application.*
 import io.charlescd.moove.application.workspace.FindWorkspaceInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.ButlerConfigurationRepository
-import io.charlescd.moove.domain.repository.GitConfigurationRepository
-import io.charlescd.moove.domain.repository.MetricConfigurationRepository
-import io.charlescd.moove.domain.repository.UserRepository
-import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.VillagerService
 import io.charlescd.moove.metrics.connector.compass.CompassApi
 import spock.lang.Specification
@@ -40,7 +36,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
     private VillagerService villagerService = Mock(VillagerService)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
-    private ButlerConfigurationRepository butlerConfigurationRepository = Mock(ButlerConfigurationRepository)
+    private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
 
     def setup() {
@@ -49,7 +45,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
                 new GitConfigurationService(gitConfigurationRepository),
                 new RegistryConfigurationService(villagerService),
                 new MetricConfigurationService(metricConfigurationRepository, compassApi),
-                new ButlerConfigurationService(butlerConfigurationRepository)
+                new DeploymentConfigurationService(deploymentConfigurationRepository)
         )
     }
 
@@ -106,13 +102,13 @@ class FindWorkspaceInteractorImplTest extends Specification {
         exception.id == registryConfigurationId
     }
 
-    def 'when butler configuration does not exist should throw exception'() {
+    def 'when deployment configuration does not exist should throw exception'() {
         given:
-        def cdConfigurationId = "0000000d-9d3c-4a32-aa78-e19471affd56"
-        def butlerConfigId = TestUtils.butlerConfigId
+        def metricConfigurationId = "0000000d-9d3c-4a32-aa78-e19471affd56"
+        def deploymentConfigId = TestUtils.deploymentConfigId
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, cdConfigurationId, butlerConfigId)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, metricConfigurationId, deploymentConfigId)
 
         when:
         getWorkspaceInteractor.execute(workspace.id)
@@ -120,20 +116,19 @@ class FindWorkspaceInteractorImplTest extends Specification {
         then:
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.find(workspace.gitConfigurationId) >> Optional.empty()
-        0 * villagerService.findRegistryConfigurationNameById(cdConfigurationId, workspace.id)
-        1 * butlerConfigurationRepository.find(workspace.butlerConfigurationId) >> Optional.empty()
+        0 * villagerService.findRegistryConfigurationNameById(metricConfigurationId, workspace.id)
+        1 * deploymentConfigurationRepository.find(workspace.deploymentConfigurationId) >> Optional.empty()
 
         def exception = thrown(NotFoundException)
-        exception.resourceName == "butlerConfiguration"
-        exception.id == butlerConfigId
+        exception.resourceName == "deploymentConfiguration"
+        exception.id == deploymentConfigId
     }
 
     def 'should return workspace information successfully'() {
         given:
         def circleMatcherUrl = "www.circle-matcher.url"
         def workspaceId = "309d992e-9d3c-4a32-aa78-e19471affd56"
-        def cdConfigurationId = "309d992e-9d3c-4a32-aa78-e19471affd56"
-        def butlerConfigId = TestUtils.butlerConfigId
+        def deploymentConfigId = TestUtils.deploymentConfigId
         def registryConfigurationId = "0000000d-9d3c-4a32-aa78-e19471affd56"
         def registryConfigurationName = "Registry Test"
 
@@ -144,8 +139,8 @@ class FindWorkspaceInteractorImplTest extends Specification {
         def metricConfiguration = new MetricConfiguration("64f4174e-381d-4d08-a4ce-872ce6f78c01", MetricConfiguration.ProviderEnum.PROMETHEUS,
                 "https://metric-provider-url.com.br", LocalDateTime.now(), workspaceId, author)
         def workspace = new Workspace(workspaceId, "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, registryConfigurationId, "www.circle-matcher.url", gitConfiguration.id, metricConfiguration.id, butlerConfigId)
-        def butlerConfig = TestUtils.butlerConfig
+                WorkspaceStatusEnum.INCOMPLETE, registryConfigurationId, "www.circle-matcher.url", gitConfiguration.id, metricConfiguration.id, deploymentConfigId)
+        def deploymentConfig = TestUtils.deploymentConfig
 
         when:
         def response = getWorkspaceInteractor.execute(workspaceId)
@@ -154,7 +149,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         1 * gitConfigurationRepository.find(workspace.gitConfigurationId) >> Optional.of(gitConfiguration)
         1 * villagerService.findRegistryConfigurationNameById(registryConfigurationId, workspaceId) >> registryConfigurationName
-        1 * butlerConfigurationRepository.find(workspace.butlerConfigurationId) >> Optional.of(butlerConfig)
+        1 * deploymentConfigurationRepository.find(workspace.deploymentConfigurationId) >> Optional.of(deploymentConfig)
         1 * metricConfigurationRepository.find(metricConfiguration.id, workspaceId) >> Optional.of(metricConfiguration)
 
         response.id == workspace.id
@@ -167,8 +162,8 @@ class FindWorkspaceInteractorImplTest extends Specification {
         response.circleMatcherUrl == circleMatcherUrl
         response.registryConfiguration.id == registryConfigurationId
         response.registryConfiguration.name == registryConfigurationName
-        response.butlerConfiguration.id == butlerConfig.id
-        response.butlerConfiguration.name == butlerConfig.name
+        response.deploymentConfiguration.id == deploymentConfig.id
+        response.deploymentConfiguration.name == deploymentConfig.name
         response.metricConfiguration.id == metricConfiguration.id
         response.metricConfiguration.provider == metricConfiguration.provider.name()
     }

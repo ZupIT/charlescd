@@ -1,5 +1,5 @@
 {
-  "https://gitlab.com/api/v4/projects/22700476/repository/tree?path=helm-chart&ref=master": [
+  "https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=master&path=helm-chart": [
     {
       "id": "ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
       "name": "Chart.yaml",
@@ -46,7 +46,7 @@
     "last_commit_id": "e5a0e4e340cf7fd8035672b36bdaf76e338dccc9",
     "content": "ZW5hYmxlZDogdHJ1ZQpuYW1lOiBkcmFnb25ib2FyZGluZwpyZXBsaWNhQ291\nbnQ6IDEKaW1hZ2U6CiAgcmVwb3NpdG9yeTogZHJhZ29uYm9hcmRpbmcKICB0\nYWc6IGxhdGVzdAogIHB1bGxQb2xpY3k6IEFsd2F5cwpzZXJ2aWNlOgogIG5h\nbWU6IGRyYWdvbmJvYXJkaW5nCiAgdHlwZTogQ2x1c3RlcklQCiAgcG9ydHM6\nCiAgICAtIG5hbWU6IGh0dHAKICAgICAgcG9ydDogODAKcmVzb3VyY2VzOgog\nIGxpbWl0czoKICAgIGNwdTogMTI4bQogICAgbWVtb3J5OiAxMjhNaQogIHJl\ncXVlc3RzOgogICAgY3B1OiA2NG0KICAgIG1lbW9yeTogNjRNaQpzaWRlY2Fy\nSXN0aW86CiAgZW5hYmxlZDogdHJ1ZQ==\n"
   },
-  "https://gitlab.com/api/v4/projects/22700476/repository/tree?path=helm-chart/templates&ref=master": [
+  "https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=master&path=helm-chart%2Ftemplates": [
     {
       "id": "b1903d3a9937c8a908a978cfae7c12f8c10872bc",
       "name": "deployment.yaml",
@@ -87,8 +87,7 @@
     "content": "YXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZQptZXRhZGF0YToKICBsYWJl\nbHM6CiAgICBhcHA6IHt7IC5WYWx1ZXMubmFtZSB9fQogICAgc2VydmljZTog\ne3sgLlZhbHVlcy5uYW1lIH19CiAgbmFtZToge3sgLlZhbHVlcy5uYW1lIH19\nCiAgbmFtZXNwYWNlOiB7eyAuUmVsZWFzZS5OYW1lc3BhY2UgfX0Kc3BlYzoK\nICBwb3J0czoKICAgIHt7IHJhbmdlICRpLCAkdmFyIDo9IC5WYWx1ZXMuc2Vy\ndmljZS5wb3J0cyAtfX0KICAgIC0gbmFtZToge3sgJHZhci5uYW1lIH19CiAg\nICAgIHBvcnQ6IHt7ICR2YXIucG9ydCB9fQogICAgICB0YXJnZXRQb3J0OiB7\neyAkdmFyLnBvcnQgfX0KICAgIHt7IGVuZCB9fQogIHNlbGVjdG9yOgogICAg\nYXBwOiB7eyAuVmFsdWVzLm5hbWUgfX0KICB0eXBlOiB7eyAuVmFsdWVzLnNl\ncnZpY2UudHlwZX19\n"
   },
 
-
-  "https://gitlab.com/api/v4/projects/22700476/repository/tree?path=helm-chart&ref=feature": [
+  "https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=feature&path=helm-chart": [
     {
       "id": "ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
       "name": "Chart.yaml",
@@ -135,7 +134,7 @@
     "last_commit_id": "e5a0e4e340cf7fd8035672b36bdaf76e338dccc9",
     "content": "ZW5hYmxlZDogdHJ1ZQpuYW1lOiBkcmFnb25ib2FyZGluZwpyZXBsaWNhQ291\nbnQ6IDEKaW1hZ2U6CiAgcmVwb3NpdG9yeTogZHJhZ29uYm9hcmRpbmcKICB0\nYWc6IGxhdGVzdAogIHB1bGxQb2xpY3k6IEFsd2F5cwpzZXJ2aWNlOgogIG5h\nbWU6IGRyYWdvbmJvYXJkaW5nCiAgdHlwZTogQ2x1c3RlcklQCiAgcG9ydHM6\nCiAgICAtIG5hbWU6IGh0dHAKICAgICAgcG9ydDogODAKcmVzb3VyY2VzOgog\nIGxpbWl0czoKICAgIGNwdTogMTI4bQogICAgbWVtb3J5OiAxMjhNaQogIHJl\ncXVlc3RzOgogICAgY3B1OiA2NG0KICAgIG1lbW9yeTogNjRNaQpzaWRlY2Fy\nSXN0aW86CiAgZW5hYmxlZDogdHJ1ZQ==\n"
   },
-  "https://gitlab.com/api/v4/projects/22700476/repository/tree?path=helm-chart/templates&ref=feature": [
+  "https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=feature&path=helm-chart%2Ftemplates": [
     {
       "id": "b1903d3a9937c8a908a978cfae7c12f8c10872bc",
       "name": "deployment.yaml",

@@ -16,20 +16,20 @@
 
 package io.charlescd.moove.infrastructure.repository.mapper
 
-import io.charlescd.moove.domain.ButlerConfiguration
+import io.charlescd.moove.domain.DeploymentConfiguration
 import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 
 @Component
-class ButlerConfigurationExtractor(private val butlerConfigurationMapper: ButlerConfigurationMapper) :
-    ResultSetExtractor<Set<ButlerConfiguration>> {
+class DeploymentConfigurationExtractor(private val deploymentConfigurationMapper: DeploymentConfigurationMapper) :
+    ResultSetExtractor<Set<DeploymentConfiguration>> {
 
-    override fun extractData(resultSet: ResultSet): Set<ButlerConfiguration> {
-        val configurations = HashSet<ButlerConfiguration>()
+    override fun extractData(resultSet: ResultSet): Set<DeploymentConfiguration> {
+        val configurations = HashSet<DeploymentConfiguration>()
 
         while (resultSet.next()) {
-            butlerConfigurationMapper.mapButlerConfiguration(resultSet)?.let { configurations.add(it) }
+            deploymentConfigurationMapper.mapDeploymentConfiguration(resultSet)?.let { configurations.add(it) }
         }
 
         return configurations

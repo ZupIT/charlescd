@@ -41,8 +41,7 @@ export class HelmManifest implements Manifest {
     const requestConfig : RequestConfig = {
       url: config.repo.url,
       token: config.repo.token,
-      resourceName: config.componentName,
-      branch: config.repo.branch
+      resourceName: config.componentName
     }
     this.consoleLoggerService.log('GET:CHART FROM REPOSITORY', config.componentName)
     const repository = this.repositoryFactory.create(config.repo.provider)

@@ -39,7 +39,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private CircleRepository circleRepository = Mock(CircleRepository)
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-    private ButlerConfigurationRepository butlerConfigurationRepository = Mock(ButlerConfigurationRepository)
+    private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
@@ -50,7 +50,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 new CircleService(circleRepository),
                 deployService,
                 new WorkspaceService(workspaceRepository, userRepository),
-                new ButlerConfigurationService(butlerConfigurationRepository)
+                new DeploymentConfigurationService(deploymentConfigurationRepository)
         )
     }
 
@@ -80,13 +80,13 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def circleId = TestUtils.circle.id
         def workspaceId = TestUtils.workspaceId
-        def butlerConfigId = TestUtils.butlerConfigId
+        def deploymentConfigId = TestUtils.deploymentConfigId
         def authorization = TestUtils.authorization
         def build = getDummyBuild( BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
         def workspace = TestUtils.workspace
-        def butlerConfig = TestUtils.butlerConfig
+        def deploymentConfig = TestUtils.deploymentConfig
 
         when:
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
@@ -96,7 +96,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * butlerConfigurationRepository.find(butlerConfigId) >> Optional.of(butlerConfig)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
 
         def ex = thrown(BusinessException)
         ex.errorCode == MooveErrorCode.DEPLOY_INVALID_BUILD
@@ -107,13 +107,13 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def circleId = TestUtils.circle.id
         def workspaceId = TestUtils.workspaceId
-        def butlerConfigId = TestUtils.butlerConfigId
+        def deploymentConfigId = TestUtils.deploymentConfigId
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
         def workspace = TestUtils.workspace
-        def butlerConfig = TestUtils.butlerConfig
+        def deploymentConfig = TestUtils.deploymentConfig
 
         when:
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
@@ -123,7 +123,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * userRepository.findByEmail(author.email) >> Optional.empty()
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        0 * butlerConfigurationRepository.find(butlerConfigId) >> Optional.of(butlerConfig)
+        0 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
@@ -135,12 +135,12 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
         def workspaceId = TestUtils.workspaceId
-        def butlerConfigId = TestUtils.butlerConfigId
+        def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
         def workspace = TestUtils.workspace
-        def butlerConfig = TestUtils.butlerConfig
+        def deploymentConfig = TestUtils.deploymentConfig
 
         when:
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
@@ -150,7 +150,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * butlerConfigurationRepository.find(butlerConfigId) >> Optional.of(butlerConfig)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * circleRepository.findById(circleId) >> Optional.empty()
 
         def ex = thrown(NotFoundException)
@@ -163,12 +163,12 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
-        def butlerConfigId = TestUtils.butlerConfigId
+        def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
         def workspace = TestUtils.workspace
-        def butlerConfig = TestUtils.butlerConfig
+        def deploymentConfig = TestUtils.deploymentConfig
 
         when:
         def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
@@ -178,7 +178,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * butlerConfigurationRepository.find(butlerConfigId) >> Optional.of(butlerConfig)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * deploymentRepository.save(_) >> _
         1 * deployService.deploy(_, _, false, _) >> { arguments ->
@@ -188,11 +188,11 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
             assert deploymentArgument instanceof Deployment
             assert buildArgument instanceof Build
-            assert configArgument instanceof ButlerConfiguration
+            assert configArgument instanceof DeploymentConfiguration
 
             deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
             buildArgument.id == build.id
-            configArgument.id == butlerConfig.id
+            configArgument.id == deploymentConfig.id
         }
 
         notThrown()
@@ -223,12 +223,12 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def circle = getCircle(true)
         def workspaceId = TestUtils.workspaceId
-        def butlerConfigId = TestUtils.butlerConfigId
+        def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
         def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
 
         def workspace = TestUtils.workspace
-        def butlerConfig = TestUtils.butlerConfig
+        def deploymentConfig = TestUtils.deploymentConfig
 
         when:
         def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
@@ -238,7 +238,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * butlerConfigurationRepository.find(butlerConfigId) >> Optional.of(butlerConfig)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.save(_) >> _
@@ -249,11 +249,11 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
             assert deploymentArgument instanceof Deployment
             assert buildArgument instanceof Build
-            assert configArgument instanceof ButlerConfiguration
+            assert configArgument instanceof DeploymentConfiguration
 
             deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
             buildArgument.id == build.id
-            configArgument.id == butlerConfig.id
+            configArgument.id == deploymentConfig.id
         }
 
         notThrown()

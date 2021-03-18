@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain.repository
+package io.charlescd.moove.application.configuration.response
 
-import io.charlescd.moove.domain.ButlerConfiguration
-import java.util.*
+import io.charlescd.moove.domain.DeploymentConfiguration
+import io.charlescd.moove.domain.GitProviderEnum
 
-interface ButlerConfigurationRepository {
-
-    fun save(butlerConfiguration: ButlerConfiguration): ButlerConfiguration
-
-    fun find(id: String): Optional<ButlerConfiguration>
-
-    fun exists(workspaceId: String, id: String): Boolean
+data class DeploymentConfigurationResponse(
+    val id: String,
+    val name: String,
+    val gitProvider: GitProviderEnum
+) {
+    companion object {
+        fun from(deploymentConfiguration: DeploymentConfiguration) = DeploymentConfigurationResponse(
+            id = deploymentConfiguration.id,
+            name = deploymentConfiguration.name,
+            gitProvider = deploymentConfiguration.gitProvider
+        )
+    }
 }

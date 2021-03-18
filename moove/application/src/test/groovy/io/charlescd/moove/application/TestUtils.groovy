@@ -62,7 +62,7 @@ class TestUtils {
         return "charlesadmin@zup.com.br"
     }
 
-    static String getButlerConfigId() {
+    static String getDeploymentConfigId() {
         return "5a0d5b3f-8c28-49ab-a6d0-7b5d1296f610"
     }
 
@@ -102,7 +102,7 @@ class TestUtils {
                 "http://circle-matcher.com",
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 "cc3448d8-4421-4aba-99a9-184bdabeq233",
-                butlerConfigId
+                deploymentConfigId
         )
     }
 
@@ -125,10 +125,10 @@ class TestUtils {
         return "865758f1-17ea-4f96-8518-3490977fa0ea"
     }
 
-    static ButlerConfiguration getButlerConfig() {
-        new ButlerConfiguration(
-                butlerConfigId,
-                "butlerConfigName",
+    static DeploymentConfiguration getDeploymentConfig() {
+        new DeploymentConfiguration(
+                deploymentConfigId,
+                "deploymentConfigName",
                 user,
                 workspaceId,
                 LocalDateTime.now(),

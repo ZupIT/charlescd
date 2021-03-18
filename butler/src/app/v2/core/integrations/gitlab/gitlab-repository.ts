@@ -17,7 +17,7 @@
 import { HttpService, Injectable } from '@nestjs/common'
 import { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
-import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
+import { ConsoleLoggerService } from '../../logs/console'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 
@@ -29,8 +29,10 @@ export class GitLabRepository implements Repository {
     private readonly httpService: HttpService) {}
 
   public async getResource(requestConfig: RequestConfig): Promise<Resource> {
-    const resourcePath = `/tree?path=${requestConfig.resourceName}`
-    this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITLAB', `${requestConfig.url}${resourcePath}&ref=${requestConfig.branch}`)
+    const urlResource = new URL(requestConfig.url)
+    this.appendPathParam(urlResource, requestConfig.resourceName)
+
+    this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITLAB', { urlResource })
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -38,15 +40,14 @@ export class GitLabRepository implements Repository {
       },
       timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
     }
-    return this.downloadResource(requestConfig.url, resourcePath, requestConfig.resourceName, config, requestConfig.branch)
+    return this.downloadResource(urlResource, requestConfig.resourceName, config)
   }
 
-  private async downloadResource(baseUrl: string, resourcePath: string, resourceName: string, config: AxiosRequestConfig, branch: string): Promise<Resource> {
-    const urlResource = `${baseUrl}${resourcePath}&ref=${branch}`
-    const response = await this.fetch(urlResource, config)
+  private async downloadResource(url: URL, resourceName: string, config: AxiosRequestConfig): Promise<Resource> {
+    const response = await this.fetch(`${url.origin}${url.pathname}/tree${url.search}`, config)
 
     if(this.isResourceFile(response.data)) {
-      return this.downloadFile(baseUrl, resourceName, config, branch)
+      return this.downloadFile(url, resourceName, config)
     }
 
     const resource: Resource = {
@@ -57,17 +58,18 @@ export class GitLabRepository implements Repository {
 
     for (const item of response.data) {
       if (item.type === 'tree') {
-        const nextResourcePath = `${resourcePath}/${item.name}`
-        resource.children?.push(await this.downloadResource(baseUrl, nextResourcePath, item.name, config, branch))
+        const newUrl = new URL(url.toString())
+        this.appendPathParam(newUrl, item.name)
+        resource.children?.push(await this.downloadResource(newUrl, item.name, config))
       } else {
-        resource.children?.push(await this.downloadFile(baseUrl, item.path, config, branch))
+        resource.children?.push(await this.downloadFile(url, item.path, config))
       }
     }
     return resource
   }
 
-  private async downloadFile(baseUrl: string, path: string, config: AxiosRequestConfig, branch: string): Promise<Resource> {
-    const fileUrl = `${baseUrl}/files/${encodeURIComponent(path)}?ref=${branch}`
+  private async downloadFile(url: URL, path: string, config: AxiosRequestConfig): Promise<Resource> {
+    const fileUrl = `${url.origin}${url.pathname}/files/${encodeURIComponent(path)}?ref=${url.searchParams.get('ref')}`
     const fileContent = await this.fetch(fileUrl, config)
     return {
       name: fileContent.data.file_name,
@@ -83,5 +85,13 @@ export class GitLabRepository implements Repository {
   private async fetch(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url)
     return this.httpService.get(url, config).toPromise()
+  }
+
+  private appendPathParam(urlResource: URL, resourceName: string): void {
+    const pathValue = urlResource.searchParams.get('path')
+    urlResource.searchParams.set(
+      'path',
+      pathValue ? `${pathValue}/${resourceName}` : resourceName
+    )
   }
 }
