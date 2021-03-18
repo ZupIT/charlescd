@@ -17,7 +17,6 @@
 import React from 'react';
 import { render, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import { FetchMock } from 'jest-fetch-mock';
 import { saveProfile } from 'core/utils/profile';
 import { getProfileByKey } from 'core/utils/profile';
 import find from 'lodash/find';
@@ -34,7 +33,7 @@ import SectionUserGroup from '../';
 
 test('should remove a user group', async () => {
   // TODO put in fixture
-  const userGroup = [
+  const userGroups = [
     {
       id: '1',
       name: 'devx user group',
@@ -63,7 +62,7 @@ test('should remove a user group', async () => {
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
-      data={userGroup}
+      data={userGroups}
     />
   );
 
@@ -147,7 +146,6 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
   saveProfile({ id: '123', name: 'user 1', email: 'user1@gmail.com' });
 
   // TODO put in fixture
-  // TODO plural
   const userGroups = [
     {
       id: '1',
@@ -181,7 +179,6 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
     />
   );
 
-  console.log('PATHNAME ANTES:', window.location.pathname);
   const userGroupDevx = await screen.findByTestId('user-group-1');
   const removeIcon = userGroupDevx.querySelector('[data-testid="icon-cancel"]');
   
@@ -217,7 +214,7 @@ test('should remove a user group (I am a root user), and not be redirected to wo
 
 test('should cancel removal of a user group', async () => {
   // TODO put in fixture
-  const userGroup = [
+  const userGroups = [
     {
       id: '1',
       name: 'devx user group',
@@ -246,7 +243,7 @@ test('should cancel removal of a user group', async () => {
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
-      data={userGroup}
+      data={userGroups}
     />
   );
 
@@ -265,7 +262,7 @@ test('should cancel removal of a user group', async () => {
 });
 
 test('should render modal that confirms user group deletion', async () => {
-  const userGroup = [
+  const userGroups = [
     {
       id: '1',
       name: 'devx',
@@ -285,7 +282,7 @@ test('should render modal that confirms user group deletion', async () => {
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
-      data={userGroup}
+      data={userGroups}
     />
   );
 
@@ -300,7 +297,7 @@ test('should render modal that confirms user group deletion', async () => {
 });
 
 test('should close modal', async () => {
-  const userGroup = [
+  const userGroups = [
     {
       id: '1',
       name: 'devx',
@@ -318,7 +315,7 @@ test('should close modal', async () => {
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
-      data={userGroup}
+      data={userGroups}
     />
   );
 
@@ -333,7 +330,7 @@ test('should close modal', async () => {
 });
 
 test('should close modal when clicking outside modal', async () => {
-  const userGroup = [
+  const userGroups = [
     {
       id: '1',
       name: 'devx',
@@ -352,7 +349,7 @@ test('should close modal when clicking outside modal', async () => {
       <SectionUserGroup 
         form=''
         setForm={() => jest.fn()}
-        data={userGroup}
+        data={userGroups}
       />
     </div>
   );
