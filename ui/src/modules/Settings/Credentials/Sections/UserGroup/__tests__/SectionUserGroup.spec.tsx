@@ -20,6 +20,7 @@ import userEvent from '@testing-library/user-event';
 import { saveProfile } from 'core/utils/profile';
 import { getProfileByKey } from 'core/utils/profile';
 import find from 'lodash/find';
+import {userGroups, userGroup} from './fixtures';
 import SectionUserGroup from '../';
 
 // const mockPush = jest.fn();
@@ -32,32 +33,6 @@ import SectionUserGroup from '../';
 // }));
 
 test('should remove a user group', async () => {
-  // TODO put in fixture
-  const userGroups = [
-    {
-      id: '1',
-      name: 'devx user group',
-      users: [
-        {
-          id: '12',
-          name: 'user 1',
-          email: 'user1@gmail.com'
-        }
-      ]
-    },
-    {
-      id: '2',
-      name: 'metrics user group',
-      users: [
-        {
-          id: '34',
-          name: 'user 2',
-          email: 'user2@gmail.com'
-        }
-      ]
-    }
-  ];
-
   render(
     <SectionUserGroup 
       form=''
@@ -82,33 +57,6 @@ test('should remove a user group', async () => {
 
 test('should remove a user group that I do not belong to', async () => {
   saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br' });
-
-  // TODO put in fixture
-  // TODO plural
-  const userGroups = [
-    {
-      id: '1',
-      name: 'devx user group',
-      users: [
-        {
-          id: '12',
-          name: 'user 1',
-          email: 'user1@gmail.com'
-        }
-      ]
-    },
-    {
-      id: '2',
-      name: 'metrics user group',
-      users: [
-        {
-          id: '34',
-          name: 'user 2',
-          email: 'user2@gmail.com'
-        }
-      ]
-    }
-  ];
 
   render(
     <SectionUserGroup 
@@ -144,32 +92,6 @@ test('should remove a user group that I do not belong to', async () => {
 
 test('should remove a user group that I (maintainer) belong to, and be redirected to workspaces', async () => {
   saveProfile({ id: '123', name: 'user 1', email: 'user1@gmail.com' });
-
-  // TODO put in fixture
-  const userGroups = [
-    {
-      id: '1',
-      name: 'devx user group',
-      users: [
-        {
-          id: '12',
-          name: 'user 1',
-          email: 'user1@gmail.com'
-        }
-      ]
-    },
-    {
-      id: '2',
-      name: 'metrics user group',
-      users: [
-        {
-          id: '34',
-          name: 'user 2',
-          email: 'user2@gmail.com'
-        }
-      ]
-    }
-  ];
 
   render(
     <SectionUserGroup 
@@ -213,32 +135,7 @@ test('should remove a user group (I am a root user), and not be redirected to wo
 });
 
 test('should cancel removal of a user group', async () => {
-  // TODO put in fixture
-  const userGroups = [
-    {
-      id: '1',
-      name: 'devx user group',
-      users: [
-        {
-          id: '12',
-          name: 'user 1',
-          email: 'user1@gmail.com'
-        }
-      ]
-    },
-    {
-      id: '2',
-      name: 'metrics user group',
-      users: [
-        {
-          id: '34',
-          name: 'user 2',
-          email: 'user2@gmail.com'
-        }
-      ]
-    }
-  ];
-
+  
   render(
     <SectionUserGroup 
       form=''
@@ -262,27 +159,13 @@ test('should cancel removal of a user group', async () => {
 });
 
 test('should render modal that confirms user group deletion', async () => {
-  const userGroups = [
-    {
-      id: '1',
-      name: 'devx',
-      users: [
-        {
-          id: '12',
-          name: 'user 1',
-          email: 'user1@gmail.com'
-        }
-      ]
-    }
-  ];
-
   const modalDescription = "When you remove a user group, all the users associated to the group will no longer access the workspace. Do you want to continue?"
 
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
-      data={userGroups}
+      data={userGroup}
     />
   );
 
@@ -297,25 +180,11 @@ test('should render modal that confirms user group deletion', async () => {
 });
 
 test('should close modal', async () => {
-  const userGroups = [
-    {
-      id: '1',
-      name: 'devx',
-      users: [
-        {
-          id: '12',
-          name: 'user 1',
-          email: 'user1@gmail.com'
-        }
-      ]
-    }
-  ];
-
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
-      data={userGroups}
+      data={userGroup}
     />
   );
 
@@ -330,26 +199,12 @@ test('should close modal', async () => {
 });
 
 test('should close modal when clicking outside modal', async () => {
-  const userGroups = [
-    {
-      id: '1',
-      name: 'devx',
-      users: [
-        {
-          id: '12',
-          name: 'user 1',
-          email: 'user1@gmail.com'
-        }
-      ]
-    }
-  ];
-
   render(
     <div data-testid="wrapper-modal">
       <SectionUserGroup 
         form=''
         setForm={() => jest.fn()}
-        data={userGroups}
+        data={userGroup}
       />
     </div>
   );
