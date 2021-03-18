@@ -14,20 +14,42 @@
  * limitations under the License.
  */
 
-export interface Helm {
-  helmOrganization: string;
-  helmRepository?: string;
-  helmProjectId?: string;
-  helmPath?: string;
-  helmUrl?: string;
-  helmBranch?: string;
-}
+import styled from 'styled-components';
+import FormComponent from 'core/components/Form';
+import Text from 'core/components/Text';
 
-export interface GitHelm {
-  baseUrl: string;
-  path?: string;
-  branch: string;
-  projectId?: string;
-  organization?: string;
-  repository?: string;
+
+const Form = styled.form``;
+
+const Title = styled(Text.h2)`
+  display: flex;
+  align-items: center;
+
+  > :last-child {
+    margin-left: 10px;
+  }
+`;
+
+const Input = styled(FormComponent.Input)`
+  width: 271px;
+  margin-bottom: 12px;
+`;
+
+const Helm = styled.div`
+  margin-top: 40px;
+  margin-bottom: 12px;
+  width: 271px;
+`;
+
+const Fields = styled.div`
+  margin-bottom: 12px;
+  width: 271px;
+`;
+
+export default {
+  Form,
+  Title,
+  Input,
+  Helm,
+  Fields
 }

@@ -44,75 +44,75 @@ test("should valid string validFields", () => {
   expect(objectIsValid).toBeTruthy()
 });
 
-test("should createGitApi return github with all data", () => {
-  const helmData: Helm = {
-    helmBranch: "main",
-    helmOrganization: "zupit",
-    helmPath: "examplepath",
-    helmRepository: "examplerepo"
-  }
+// test("should createGitApi return github with all data", () => {
+//   const helmData: Helm = {
+//     helmBranch: "main",
+//     helmOrganization: "zupit",
+//     helmPath: "examplepath",
+//     helmRepository: "examplerepo"
+//   }
 
-  const githubApi = createGitApi(helmData, githubProvider)
-  expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents/examplepath?ref=main")
-})
+//   const githubApi = createGitApi(helmData, githubProvider)
+//   expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents/examplepath?ref=main")
+// })
 
-test("createGitApi return github without path", () => {
-  const helmData: Helm = {
-    helmBranch: "main",
-    helmOrganization: "zupit",
-    helmRepository: "examplerepo"
-  }
+// test("createGitApi return github without path", () => {
+//   const helmData: Helm = {
+//     helmBranch: "main",
+//     helmOrganization: "zupit",
+//     helmRepository: "examplerepo"
+//   }
 
-  const githubApi = createGitApi(helmData, githubProvider)
-  expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents?ref=main")
-})
+//   const githubApi = createGitApi(helmData, githubProvider)
+//   expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents?ref=main")
+// })
 
-test("should createGitApi return github without branch", () => {
-  const helmData: Helm = {
-    helmOrganization: "zupit",
-    helmRepository: "examplerepo"
-  }
+// test("should createGitApi return github without branch", () => {
+//   const helmData: Helm = {
+//     helmOrganization: "zupit",
+//     helmRepository: "examplerepo"
+//   }
 
-  const githubApi = createGitApi(helmData, githubProvider)
-  expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents?ref=main")
-})
+//   const githubApi = createGitApi(helmData, githubProvider)
+//   expect(githubApi).toBe("https://api.github.com/repos/zupit/examplerepo/contents?ref=main")
+// })
 
-test("should createGitApi return gitlab with all data", () => {
-  const helmData: Helm = {
-    helmBranch: "main",
-    helmOrganization: "zupit",
-    helmPath: "examplepath",
-    helmRepository: "examplerepo",
-    helmGitlabUrl: "https://examplegitlab.com"
-  }
+// test("should createGitApi return gitlab with all data", () => {
+//   const helmData: Helm = {
+//     helmBranch: "main",
+//     helmOrganization: "zupit",
+//     helmPath: "examplepath",
+//     helmRepository: "examplerepo",
+//     helmGitlabUrl: "https://examplegitlab.com"
+//   }
 
-  const gitlabApi = createGitApi(helmData, gitlabProvider)
-  expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files/examplepath?ref=main")
-})
+//   const gitlabApi = createGitApi(helmData, gitlabProvider)
+//   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files/examplepath?ref=main")
+// })
 
-test("should createGitApi return gitlab without path", () => {
-  const helmData: Helm = {
-    helmBranch: "main",
-    helmOrganization: "zupit",
-    helmRepository: "examplerepo",
-    helmGitlabUrl: "https://examplegitlab.com"
+// test("should createGitApi return gitlab without path", () => {
+//   const helmData: Helm = {
+//     helmBranch: "main",
+//     helmOrganization: "zupit",
+//     helmRepository: "examplerepo",
+//     helmGitlabUrl: "https://examplegitlab.com"
 
-  }
+//   }
 
-  const gitlabApi = createGitApi(helmData, gitlabProvider)
-  expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
-})
+//   const gitlabApi = createGitApi(helmData, gitlabProvider)
+//   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
+// })
 
-test("should createGitApi return gitlab without branch", () => {
-  const helmData: Helm = {
-    helmOrganization: "zupit",
-    helmRepository: "examplerepo",
-    helmGitlabUrl: "https://examplegitlab.com"
-  }
+// test("should createGitApi return gitlab without branch", () => {
+//   const helmData: Helm = {
+//     helmOrganization: "zupit",
+//     helmRepository: "examplerepo",
+//     helmGitlabUrl: "https://examplegitlab.com"
+//   }
 
-  const gitlabApi = createGitApi(helmData, gitlabProvider)
-  expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
-})
+//   const gitlabApi = createGitApi(helmData, gitlabProvider)
+//   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
+// })
 
 test("destructHelmUrl github with full url", () => {
   const setValue = jest.fn()
