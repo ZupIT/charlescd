@@ -106,9 +106,9 @@ const previousDeploymentparams : HookParams = {
           'generation': 1,
           'labels': {
             'app': 'batata',
-            'circle_id': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
             'controller-uid': '5c6e0a99-f05b-4198-8499-469fa34f755b',
-            'deployment_id': reconcileFixtures.previousDeploymentId,
+            'deploymentId': reconcileFixtures.previousDeploymentId,
             'version': 'batata'
           },
           'name': 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
@@ -244,9 +244,9 @@ const previousDeploymentparams : HookParams = {
           'generation': 1,
           'labels': {
             'app': 'jilo',
-            'circle_id': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
             'controller-uid': '5c6e0a99-f05b-4198-8499-469fa34f755b',
-            'deployment_id': reconcileFixtures.previousDeploymentId,
+            'deploymentId': reconcileFixtures.previousDeploymentId,
             'version': 'jilo'
           },
           'name': 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
@@ -383,9 +383,9 @@ const previousDeploymentparams : HookParams = {
           'creationTimestamp': '2021-01-15T21:02:06Z',
           'labels': {
             'app': 'batata',
-            'circle_id': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
             'controller-uid': '5c6e0a99-f05b-4198-8499-469fa34f755b',
-            'deployment_id': reconcileFixtures.previousDeploymentId,
+            'deploymentId': reconcileFixtures.previousDeploymentId,
             'service': 'batata'
           },
           'name': 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
@@ -433,9 +433,9 @@ const previousDeploymentparams : HookParams = {
           'creationTimestamp': '2021-01-15T21:01:21Z',
           'labels': {
             'app': 'jilo',
-            'circle_id': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+            'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
             'controller-uid': '5c6e0a99-f05b-4198-8499-469fa34f755b',
-            'deployment_id': reconcileFixtures.previousDeploymentId,
+            'deploymentId': reconcileFixtures.previousDeploymentId,
             'service': 'jilo'
           },
           'name': 'jilo-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',

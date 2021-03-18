@@ -55,8 +55,8 @@ export interface SpecMetadata {
   uid: string
   labels: {
     app: string
-    circle_id: string
-    deployment_id: string
+    circleId: string
+    deploymentId: string
     'controller-uid': string
     version?: string // only on deployment
     service?: string // only on service
