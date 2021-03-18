@@ -124,8 +124,6 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
   
   expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
   
-  // await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/workspaces'));
-
   // TODO should be redirected to /workspaces
 });
 
