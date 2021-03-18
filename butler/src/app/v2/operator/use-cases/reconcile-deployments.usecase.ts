@@ -10,22 +10,29 @@ export class ReconcileDeployment {
     const rawSpecs = previousDeployment.components.flatMap(c => c.manifests)
     const previousSpecs = this.addMetadata(rawSpecs, previousDeployment)
     const allSpecs = specs.concat(previousSpecs)
+    // TODO verify if this filter is necessary
     const uniqByNameAndKind = uniqWith(allSpecs, (a, b) => a.metadata?.name === b.metadata?.name && a.kind === b.kind)
     return uniqByNameAndKind
   }
 
   public addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2) : KubernetesManifest[] {
     return spec.map((s: KubernetesManifest) => {
-      if (s.metadata && s.kind === 'Deployment') { //TODO what about other resources such as StatefulSet, CronJob etc?
+      if (!s.metadata) {
+        throw new Error('Invalid manifest. Field metadata is not present.')
+      }
+
+      if (s.kind === 'Deployment') { //TODO what about other resources such as StatefulSet, CronJob etc?
         s.metadata.name = `${s.metadata.name}-${deployment.circleId}`
       }
-      if (s.metadata) {
-        s.metadata.namespace = deployment.namespace
+
+      s.metadata.namespace = deployment.namespace
+
+      s.metadata.labels = {
+        ...s.metadata.labels,
+        'deploymentId': deployment.id,
+        'circleId': deployment.circleId
       }
-      if (s.metadata?.labels) {
-        s.metadata.labels['deployment_id'] = deployment.id
-        s.metadata.labels['circle_id'] = deployment.circleId
-      }
+
       return s
     })
   }
@@ -60,7 +67,7 @@ export class ReconcileDeployment {
   public specsByDeployment(params: HookParams, currentDeploymentId: string): { metadata: SpecMetadata, status: SpecStatus }[] {
     return Object.entries(params.children['Deployment.apps/v1'])
       .map(c => c[1])
-      .filter(p => p.metadata.labels.deployment_id === currentDeploymentId)
+      .filter(p => p.metadata.labels.deploymentId === currentDeploymentId)
   }
 
 }

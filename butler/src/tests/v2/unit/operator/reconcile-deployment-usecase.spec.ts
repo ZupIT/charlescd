@@ -166,8 +166,8 @@ describe('Reconcile deployment usecase spec', () => {
             labels: {
               app: 'hello-kubernetes',
               service: 'hello-kubernetes',
-              circle_id: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deployment_id: 'b7d08a07-f29d-452e-a667-7a39820f3262'
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
             },
             name: 'hello-kubernetes',
             namespace: 'namespace'
@@ -195,8 +195,8 @@ describe('Reconcile deployment usecase spec', () => {
             labels: {
               app: 'hello-kubernetes',
               version: 'hello-kubernetes',
-              circle_id: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deployment_id: 'b7d08a07-f29d-452e-a667-7a39820f3262'
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
             }
           },
           spec: {
