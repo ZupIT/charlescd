@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import Text from 'core/components/Text';
 import DefaultButton from 'core/components/Button/Default';
+import {COLOR_WHITE} from 'core/assets/colors';
 
 const Wrapper = styled.div``;
 
@@ -87,6 +88,7 @@ const DismissButton = styled(DefaultButton)`
   display: flex;
   justify-content: center;
   background-color: transparent;
+  border: 0.1rem solid ${COLOR_WHITE};
 `;
 
 const CloseButtonContainer = styled.div`
