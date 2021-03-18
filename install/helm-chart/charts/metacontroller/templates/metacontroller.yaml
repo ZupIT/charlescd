@@ -38,10 +38,6 @@ spec:
     apiVersion: charlescd.io/v1
     resource: charlesdeployments
   childResources:
-  - apiVersion: v1
-    resource: services
-    updateStrategy:
-      method: InPlace
   - apiVersion: apps/v1
     resource: deployments
     updateStrategy:
@@ -67,6 +63,10 @@ spec:
       method: InPlace
   - apiVersion: networking.istio.io/v1beta1
     resource: destinationrules
+    updateStrategy:
+      method: InPlace
+  - apiVersion: v1
+    resource: services
     updateStrategy:
       method: InPlace
   hooks:

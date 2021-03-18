@@ -49,7 +49,7 @@ export class ReconcileDeploymentUsecase {
       this.consoleLoggerService.log('DEPLOYMENT_RECONCILE:TIMED_OUT_DEPLOYMENT', { executionId: execution.id, deploymentId: execution.deploymentId })
       return { children: [] }
     }
-    const rawSpecs = deployment.components.flatMap(c => c.manifests)
+    const rawSpecs = deployment.components.flatMap(c => c.manifests).filter(e => e.kind !== 'Service')
     const specs = this.reconcileUseCase.addMetadata(rawSpecs, deployment)
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
@@ -66,7 +66,7 @@ export class ReconcileDeploymentUsecase {
       }
       const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
       const currentAndPrevious = this.reconcileUseCase.concatWithPrevious(previousDeployment, specs)
-      return { children: currentAndPrevious, resyncAfterSeconds: 5 }
+      return { children: currentAndPrevious.filter(e => e.kind !== 'Service'), resyncAfterSeconds: 5 }
     }
 
     const activeComponents = await this.componentRepository.findActiveComponents()
