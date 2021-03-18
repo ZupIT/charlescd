@@ -60,7 +60,7 @@ const Trigger = forwardRef(({
               size="22px"
               onClick={() => handleDismiss()}
               color="light"
-              data-testid="icon-close-modal"
+              data-testid="icon-cancel-modal"
             />
           </Styled.Button.Container>
           <Styled.Title weight="bold" color="light">

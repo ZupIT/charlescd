@@ -67,7 +67,7 @@ test('onContinue button click', () => {
   expect(onContinue).toHaveBeenCalled();
 });
 
-test('onClose button click', () => {
+test('onClose button click', async () => {
   render(
     <Modal.Trigger
       title="Test"
@@ -80,7 +80,7 @@ test('onClose button click', () => {
   );
 
   const modalElement = screen.getByTestId('modal-trigger');
-  const cancelButton = screen.getByTestId('icon-cancel');
+  const cancelButton = await screen.findByTestId('icon-cancel-modal');
   expect(modalElement).toBeInTheDocument();
 
   userEvent.click(cancelButton);

@@ -176,7 +176,7 @@ test('should render modal that confirms user group deletion', async () => {
   expect(screen.getByText(modalDescription)).toBeInTheDocument();
   expect(screen.getByText('Yes, remove user group')).toBeInTheDocument();
   expect(screen.getByText('Cancel, keep user group')).toBeInTheDocument();
-  expect(screen.getByTestId('icon-close-modal')).toBeInTheDocument();
+  expect(screen.getByTestId('icon-cancel-modal')).toBeInTheDocument();
 });
 
 test('should close modal', async () => {
@@ -192,7 +192,7 @@ test('should close modal', async () => {
   userEvent.click(cancelIcon);
 
   expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
-  const closeModalIcon = screen.getByTestId('icon-close-modal');
+  const closeModalIcon = screen.getByTestId('icon-cancel-modal');
   userEvent.click(closeModalIcon);
   
   expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument();
