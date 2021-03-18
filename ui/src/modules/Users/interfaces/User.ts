@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import { GitProviders } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/interfaces';
+
 export interface Workspace {
   id: string;
   name?: string;
   permissions?: string[];
+  gitProvider?: GitProviders;
 }
 
 interface Base {

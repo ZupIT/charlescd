@@ -18,6 +18,8 @@ export interface Props {
   onSave: Function;
 }
 
+export type GitProviders = 'GITHUB' | 'GITLAB';
+
 export interface CDConfiguration {
   name: string;
   type: string;
@@ -44,7 +46,7 @@ export interface DeploymentConfiguration {
   butlerUrl: string;
   namespace: string;
   gitToken: string;
-  gitProvider: 'GITHUB' | 'GITLAB'
+  gitProvider: GitProviders;
 }
 
 export interface Response {

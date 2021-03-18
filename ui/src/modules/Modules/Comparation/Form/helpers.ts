@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Option } from 'core/components/Form/Select/interfaces';
 import { isNotBlank, isRequired, trimValue } from 'core/utils/validations';
 import forEach from 'lodash/forEach';
 import { Helm } from 'modules/Modules/interfaces/Helm';
@@ -23,6 +22,12 @@ import {
   githubProvider,
   gitlabProvider
 } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/constants';
+import { GitProviders } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/interfaces';
+
+type SetValue = (name: keyof Helm, value: unknown, config?: Partial<{
+  shouldValidate: boolean;
+  shouldDirty: boolean;
+}>) => void;
 
 export const validFields = (fields: object) => {
   let status = true;
@@ -73,8 +78,8 @@ const createGitlabApi = ({
   return `${url}?${params}`;
 };
 
-export const createGitApi = (data: Helm, gitProvider: Option) => {
-  if (gitProvider.value === 'GITHUB') {
+export const createGitApi = (data: Helm, gitProvider: GitProviders) => {
+  if (gitProvider === 'GITHUB') {
     return createGithubApi(data);
   } else {
     return createGitlabApi(data);
@@ -83,7 +88,7 @@ export const createGitApi = (data: Helm, gitProvider: Option) => {
 
 const destructGithub = (
   url: string,
-  setValue: (name: any, value: any) => void
+  setValue: SetValue
 ) => {
   const params = (new URL(url)).searchParams;
   const splitProtocol = url.split('//');
@@ -95,18 +100,17 @@ const destructGithub = (
   const organization = splitUrl[reposPosition + 1];
   const repository = splitUrl[reposPosition + 2]
 
-  setValue('helmUrl', helmUrl);
-  setValue('helmOrganization', organization);
-  setValue('helmRepository', repository);
-  setValue('helmBranch', params.get('ref'));
-  setValue('helmPath', params.get('path'));
+  setValue('helmUrl', helmUrl, { shouldValidate: true });
+  setValue('helmOrganization', organization, { shouldValidate: true });
+  setValue('helmRepository', repository, { shouldValidate: true });
+  setValue('helmBranch', params.get('ref'), { shouldValidate: true });
+  setValue('helmPath', params.get('path'), { shouldValidate: true });
 };
 
 const destructGitlab = (
   url: string,
-  setValue: (name: any, value: any) => void
+  setValue: SetValue
 ) => {
-  console.log('destructGitlab');
   const params = (new URL(url)).searchParams;
   const baseUrlFind = '/api/v4/projects';
   const baseUrlLocation = url.indexOf(baseUrlFind);
@@ -115,18 +119,18 @@ const destructGitlab = (
   const infoSplit = leftInfo.split('/');
   const projectId = infoSplit[0];
 
-  setValue('helmUrl', baseUrl);
-  setValue('helmProjectId', projectId);
-  setValue('helmBranch', params.get('ref'));
-  setValue('helmPath', params.get('path'));
+  setValue('helmUrl', baseUrl, { shouldValidate: true });
+  setValue('helmProjectId', projectId, { shouldValidate: true });
+  setValue('helmBranch', params.get('ref'), { shouldValidate: true });
+  setValue('helmPath', params.get('path'), { shouldValidate: true });
 };
 
 export const destructHelmUrl = (
   url: string,
-  gitProvider: Option,
-  setValue: (name: any, value: any) => void
+  gitProvider: GitProviders,
+  setValue: SetValue
 ) => {
-  if (gitProvider.value === 'GITHUB') {
+  if (gitProvider === 'GITHUB') {
     return destructGithub(url, setValue);
   } else {
     return destructGitlab(url, setValue);

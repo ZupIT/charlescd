@@ -16,16 +16,32 @@
 
 import { Workspace } from 'modules/Users/interfaces/User';
 
+const WORKSPACE = 'workspaceSelected';
 const WORKSPACE_KEY = 'workspace';
 
 export const getWorkspaceId = () => localStorage.getItem(WORKSPACE_KEY);
 
 export const clearWorkspace = () => localStorage.removeItem(WORKSPACE_KEY);
 
+export const getWorkspace = (): Workspace => {
+  const ws = {
+    id: ''
+  } as Workspace;
+
+  try {
+    const workspace : Workspace = JSON.parse(localStorage.getItem(WORKSPACE));
+    return workspace || ws;
+
+  } catch (e) {
+    return ws;
+  }
+}
+
 export const saveWorkspace = (workspace: Workspace) => {
   clearWorkspace();
 
   if (workspace) {
     localStorage.setItem(WORKSPACE_KEY, workspace?.id);
+    localStorage.setItem(WORKSPACE, JSON.stringify(workspace));
   }
 };
