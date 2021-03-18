@@ -178,6 +178,19 @@ func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusRespon
 		}
 	}
 
+
+	if r.LastStatus == "NOT_ENQUEUED" || r.LastStatus == "ENQUEUED" {
+		lastExecution, err := main.executionMain.FindLastByExecutionId(r.Id)
+
+		if err != nil {
+			return payloads.StatusResponse{Status: 500, Details: err.Error().Detail}, nil
+		}
+
+		if lastExecution.ExecutionLog != "" {
+			return payloads.StatusResponse{Status: 500, Details: "Failed to publish message"}, nil
+		}
+	}
+
 	return payloads.StatusResponse{Status: 418, Details: "Awaiting first delivery"}, nil
 }
 
