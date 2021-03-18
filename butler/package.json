@@ -20,7 +20,7 @@
     "test:all:cov": "jest --runInBand --coverage --forceExit"
   },
   "dependencies": {
-    "@kubernetes/client-node": "^0.13.0",
+    "@kubernetes/client-node": "^0.14.0",
     "@nestjs/common": "^7.6.5",
     "@nestjs/config": "^0.4.2",
     "@nestjs/core": "^7.4.2",
