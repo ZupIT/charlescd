@@ -160,33 +160,6 @@ describe('Reconcile deployment usecase spec', () => {
     const expectedReconcileObj = {
       children: [
         {
-          apiVersion: 'v1',
-          kind: 'Service',
-          metadata: {
-            labels: {
-              app: 'hello-kubernetes',
-              service: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
-            },
-            name: 'hello-kubernetes',
-            namespace: 'namespace'
-          },
-          spec: {
-            ports: [
-              {
-                name: 'http',
-                port: 80,
-                targetPort: 80
-              }
-            ],
-            selector: {
-              app: 'hello-kubernetes'
-            },
-            type: 'ClusterIP'
-          }
-        },
-        {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
@@ -271,7 +244,6 @@ describe('Reconcile deployment usecase spec', () => {
       ],
       resyncAfterSeconds: 5
     }
-
 
     const reconcileDeploymentUsecase = new ReconcileDeploymentUsecase(
       k8sClient,
