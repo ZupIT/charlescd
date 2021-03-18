@@ -66,7 +66,9 @@ const Trigger = forwardRef(({
           <Styled.Title weight="bold" color="light">
             {title}
           </Styled.Title>
-          {children}
+          <Text.h5 color="light">
+            {children}
+          </Text.h5>
           <Styled.Buttons className="modal-buttons">
             <Styled.Button.Dismiss
               id="dismiss"
