@@ -128,17 +128,6 @@ test('render User Group credentials', async () => {
   useDatasourceSpy.mockRestore();
 });
 
-test('render Git Credentials', async () => {
-  render(<Credentials />);
-
-  const addGitButton = await screen.findByText(/Add Git/);
-
-  await act(async () => userEvent.click(addGitButton));
-
-  const backButton = screen.getByTestId('icon-arrow-left');
-  expect(backButton).toBeInTheDocument();
-});
-
 test('render Deployment Configuration Credentials', async () => {
   render(<Credentials />);
 
