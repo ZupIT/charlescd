@@ -80,9 +80,10 @@ const defaultCircleWithoutDeployment = {
 
 test('render CircleComparationItem default component', async () => {
   const handleChange = jest.fn();
+  const updateCircle = jest.fn();
 
   render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
+    <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
   );
 
   const comparationItem = await screen.findByTestId(`circle-comparation-item-${props.id}`)
@@ -161,10 +162,11 @@ test('should not disable delete button and show tooltip when is an Inactive Circ
     .mockResponseOnce(JSON.stringify(circleWithoutDeployment))
     .mockResponseOnce(JSON.stringify(circleWithoutDeployment));
   const handleChange = jest.fn();
+  const updateCircle = jest.fn();
 
   render(
     <AllTheProviders>
-      <CirclesComparationItem id={props.id} onChange={handleChange} />
+      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
     </AllTheProviders>
   );
 

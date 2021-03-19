@@ -69,7 +69,8 @@ class DeploymentExtractor(private val objectMapper: ObjectMapper) : ResultSetExt
         importedKvRecords = resultSet.getInt("deployment_circle_imported_kv_records"),
         importedAt = resultSet.getTimestamp("deployment_circle_imported_at")?.toLocalDateTime(),
         defaultCircle = resultSet.getBoolean("deployment_circle_default_circle"),
-        workspaceId = resultSet.getString("deployment_circle_workspace_id")
+        workspaceId = resultSet.getString("deployment_circle_workspace_id"),
+        percentage = resultSet.getInt("deployment_circle_percentage")
     )
 
     private fun mapDeploymentCircleUser(resultSet: ResultSet) = User(

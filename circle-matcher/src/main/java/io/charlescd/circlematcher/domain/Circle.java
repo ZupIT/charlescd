@@ -36,6 +36,16 @@ public class Circle {
         return name;
     }
 
+    public static Circle from(KeyMetadata keyMetadata) {
+        if (keyMetadata == null) {
+            throw new IllegalArgumentException("Keymetadata must not be null");
+        }
+        return new Circle(
+                keyMetadata.getCircleId(),
+                keyMetadata.getName()
+        );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

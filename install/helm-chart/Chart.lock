@@ -11,5 +11,8 @@ dependencies:
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
   version: 3.15.2
-digest: sha256:8a59ce8cb6f82f50658788842057e50a37dd9f4a8102850e65f4fdd0f86e1b8b
-generated: "2021-01-21T16:11:58.607452296-03:00"
+- name: rabbitmq
+  repository: https://charts.bitnami.com/bitnami
+  version: 8.9.1
+digest: sha256:662f54e6e7f005bfd2615216087234332be01057e77cab5378e7d81ac9beee8b
+generated: "2021-02-25T10:47:18.72750322-03:00"

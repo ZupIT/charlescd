@@ -27,7 +27,7 @@ import { buildActionPayload } from './helpers';
 import DocumentationLink from 'core/components/DocumentationLink';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 
-const FormAddAction = ({ onFinish }: Props) => {
+const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   const [loadingPlugins, setLoadingPlugins] = useState(true);
   const [showConfigAction, setShowConfigAction] = useState(false);
   const [isDefault, setIsDefault] = useState(true);

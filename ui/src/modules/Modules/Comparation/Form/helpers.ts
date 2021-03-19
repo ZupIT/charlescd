@@ -169,8 +169,8 @@ export const validateSlash = (input: string, name: string) => {
 }
 
 
-export const getHelmFieldsValidations = (name: string) => ({
-  required: isRequired(),
+export const getHelmFieldsValidations = (name: string, required = true) => ({
+  required: required ? isRequired() : null,
   validate: {
     validSlash: (value: string) => validateSlash(value, name),
     notBlank: isNotBlank

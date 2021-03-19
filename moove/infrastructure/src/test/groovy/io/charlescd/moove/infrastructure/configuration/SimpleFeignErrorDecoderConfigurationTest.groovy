@@ -35,7 +35,7 @@ class SimpleFeignErrorDecoderConfigurationTest extends Specification {
         HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper())
         ObjectFactory<HttpMessageConverters> objectFactory = { -> new HttpMessageConverters(jacksonConverter) }
         feignErrorDecoderConfiguration = new SimpleFeignEncoderConfiguration(objectFactory)
-        errorDecoder = feignErrorDecoderConfiguration.errorDecoder()
+        errorDecoder = feignErrorDecoderConfiguration.simpleErrorDecoder()
     }
 
     def "should return illegal argument exception when status is 400"() {
@@ -96,7 +96,7 @@ class SimpleFeignErrorDecoderConfigurationTest extends Specification {
         then:
         body.asInputStream() >> this.getArrayMessageReturnAsInputStream()
         assert exception instanceof RuntimeException
-        assert exception.message == null
+        assert exception.message == "The server could not complete the request."
     }
 
     def "should return RunTimeException when fails to  read response"() {
