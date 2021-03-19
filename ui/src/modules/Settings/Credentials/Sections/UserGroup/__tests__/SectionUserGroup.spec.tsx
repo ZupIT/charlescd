@@ -158,13 +158,6 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
   
   expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
-  
-  // TODO should be redirected to /workspaces
-});
-
-// TODO add
-test('should remove a user group (I am a root user), and not be redirected to workspaces', () => {
-
 });
 
 test('should cancel removal of a user group (maintainer user)', async () => {
