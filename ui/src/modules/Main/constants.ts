@@ -26,7 +26,7 @@ export type MenuType = {
   subject?: string
 };
 
-export const workspaceMenu = [
+export const workspaceMenu: MenuType[] = [
   {
     id: genMenuId(routes.circles),
     icon: 'circles',
@@ -61,7 +61,7 @@ export const workspaceMenu = [
   }
 ];
 
-export const mainMenu = [
+export const mainMenu: MenuType[] = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspaces',
@@ -76,42 +76,7 @@ export const mainMenu = [
   }
 ];
 
-export const rootWorkspaceMenu = [
-  {
-    id: genMenuId(routes.circles),
-    icon: 'circles',
-    text: 'Circles',
-    to: routes.circles,
-    action: 'read',
-    subject: 'circles'
-  },
-  {
-    id: genMenuId(routes.modules),
-    icon: 'modules',
-    text: 'Modules',
-    to: routes.modules,
-    action: 'read',
-    subject: 'modules'
-  },
-  {
-    id: genMenuId(routes.metrics),
-    icon: 'metrics',
-    text: 'Metrics',
-    to: routes.metrics,
-    action: 'read',
-    subject: 'circles'
-  },
-  {
-    id: genMenuId(routes.settings),
-    icon: 'settings',
-    text: 'Settings',
-    to: routes.credentials,
-    action: 'write',
-    subject: 'maintenance'
-  }
-];
-
-export const rootMainMenu = [
+export const rootMainMenu: MenuType[] = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspace',

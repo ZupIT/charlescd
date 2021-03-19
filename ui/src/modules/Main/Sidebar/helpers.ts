@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { isRoot } from 'core/utils/auth';
 import {
   rootMainMenu,
   mainMenu,
@@ -23,6 +22,7 @@ import {
 } from '../constants';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
+import { isRoot } from 'core/utils/auth';
 
 export const getExpandIcon = (expand: boolean) =>
   expand ? 'menu-expanded' : 'menu';
