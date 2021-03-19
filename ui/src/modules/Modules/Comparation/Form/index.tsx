@@ -33,7 +33,7 @@ import {
   validateSlash
 } from './helpers';
 import Styled from './styled';
-import { isNotBlank, isRequired, isRequiredAndNotBlank } from 'core/utils/validations';
+import { isNotBlank, isRequiredAndNotBlank } from 'core/utils/validations';
 import { getWorkspace } from 'core/utils/workspace';
 
 interface Props {
