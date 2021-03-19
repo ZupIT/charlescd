@@ -19,6 +19,7 @@ import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { getAccessTokenDecoded, isRoot, logout } from 'core/utils/auth';
 import Menu from './Menu';
+import { clearWorkspace } from 'core/utils/workspace';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -66,6 +67,10 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const onSubmit = ({ name }: Record<string, string>) => {
     save({ name });
   };
+
+  useEffect(() => {
+    clearWorkspace();
+  }, []);
 
   const renderModal = () =>
     isRoot() && (

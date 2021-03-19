@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
@@ -78,7 +78,6 @@ test('should render Credentials items', async () => {
   expect(screen.getByText('Circle Matcher')).toBeInTheDocument();
   expect(screen.getByText('Datasources')).toBeInTheDocument();
   expect(screen.getByText('Metric Action')).toBeInTheDocument();
-  expect(screen.getByText('Git')).toBeInTheDocument();
   expect(screen.getByText('User group')).toBeInTheDocument();
 });
 
@@ -93,7 +92,7 @@ test('should render Credentials items in the right order', async () => {
     'Circle Matcher',
     'Datasources',
     'Metric Action',
-    'Git',
+    'Webhook',
     'User group'
   ];
 
@@ -167,8 +166,8 @@ test('click to copy to clipboard', async () => {
 
   render(<Credentials />);
 
-  const dropdownElement = await screen.findByTestId('icon-vertical-dots');
-  userEvent.click(dropdownElement);
+  const dropdownElement = await screen.findAllByTestId('icon-vertical-dots');
+  userEvent.click(dropdownElement[0]);
   const copyIDElement = screen.getByText('Copy ID');
 
   expect(copyIDElement).toBeInTheDocument();
@@ -189,7 +188,7 @@ test('should render Credentials items with the right type: Required or Optional'
     { name: 'Circle Matcher', type: 'Required' },
     { name: 'Datasources', type: 'Optional' },
     { name: 'Metric Action', type: 'Optional' },
-    { name: 'Git', type: 'Optional' },
+    { name: 'Webhook', type: 'Optional' },
     { name: 'User group', type: 'Optional' },
   ];
 

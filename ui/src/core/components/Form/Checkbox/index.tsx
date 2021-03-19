@@ -14,51 +14,80 @@
  * limitations under the License.
  */
 
-import React, { Fragment, useState } from 'react';
+import React, {
+  Fragment,
+  useState,
+  Ref,
+  useRef,
+  forwardRef,
+  useImperativeHandle
+} from 'react';
 import Styled from './styled';
 
 interface Props {
+  name: string;
+  value: string;
   label: string;
   description?: string;
   active?: boolean;
+  defaultChecked?: boolean;
   onChange?: (value: boolean) => void;
   className?: string;
 }
 
-const Checkbox = ({
-  label,
-  description,
-  active,
-  onChange,
-  className
-}: Props) => {
-  const [isChecked, setIsChecked] = useState(active);
+const Checkbox = forwardRef(
+  (
+    {
+      name,
+      value,
+      label,
+      description,
+      active,
+      defaultChecked,
+      onChange,
+      className,
+      ...rest
+    }: Props,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    const checkboxRef = useRef<HTMLInputElement>(null);
+    const [isChecked, setIsChecked] = useState(active);
 
-  const onCheck = () => {
-    setIsChecked(!isChecked);
-    onChange && onChange(isChecked);
-  };
+    useImperativeHandle(ref, () => checkboxRef.current);
 
-  const renderDescription = () => (
-    <Styled.Description color="dark">{description}</Styled.Description>
-  );
+    const onCheck = () => {
+      setIsChecked(!isChecked);
+      onChange && onChange(isChecked);
+    };
 
-  return (
-    <Fragment>
-      <Styled.Checkbox data-testid={`checkbox-${label}`} className={className}>
-        <Styled.Input
-          data-testid={`checkbox-input-${label}`}
-          type="checkbox"
-          checked={isChecked}
-          onChange={onCheck}
-        />
-        <Styled.Toggle data-testid={`checkbox-toggle-${label}`} />
-        <Styled.Label color="light">{label}</Styled.Label>
-      </Styled.Checkbox>
+    const renderDescription = () => (
+      <Styled.Description color="dark">{description}</Styled.Description>
+    );
 
-      {description && renderDescription()}
-    </Fragment>
-  );
-};
+    return (
+      <Fragment>
+        <Styled.Checkbox className={className}>
+          <Styled.Input
+            type="checkbox"
+            data-testid={`checkbox-input-${label}`}
+            ref={checkboxRef}
+            name={name}
+            value={value}
+            checked={isChecked}
+            onChange={onCheck}
+            defaultChecked={defaultChecked}
+            {...rest}
+          />
+          <Styled.Toggle data-testid={`checkbox-toggle-${label}`} />
+          <Styled.Label data-testid={`checkbox-${label}`} color="light">
+            {label}
+          </Styled.Label>
+        </Styled.Checkbox>
+
+        {description && renderDescription()}
+      </Fragment>
+    );
+  }
+);
 
 export default Checkbox;

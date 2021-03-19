@@ -18,7 +18,8 @@ import { baseRequest, postRequest } from './base';
 import { ParameterPayload } from 'modules/Circles/Matcher/interfaces';
 import {
   CreateCircleWithFilePayload,
-  CreateCircleManuallyPayload
+  CreateCircleManuallyPayload,
+  CreateCirclePercentagePayload
 } from 'modules/Circles/interfaces/Circle';
 import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 
@@ -48,6 +49,19 @@ export const findAllCircles = (filter: CircleFilter = initialCircleFilter) => {
   return baseRequest(`${endpoint}?${params}`);
 };
 
+export const findPercentageCircles = (
+  filter: CircleFilter = initialCircleFilter
+) => {
+  const sizeFixed = 200;
+  const params = new URLSearchParams({
+    active: `${filter?.active}`,
+    size: `${sizeFixed}`,
+    name: filter?.name
+  });
+
+  return baseRequest(`${endpoint}/percentage?${params}`);
+};
+
 export const findComponents = (id: string) =>
   baseRequest(`${endpoint}/${id}/components`);
 
@@ -62,6 +76,32 @@ export const circleMatcherIdentify = (data: ParameterPayload) =>
 
 export const createCircleManually = (data: CreateCircleManuallyPayload) =>
   baseRequest(`${endpoint}`, data, { method: 'POST' });
+
+export const createCirclePercentage = (data: CreateCirclePercentagePayload) =>
+  baseRequest(`${endpoint}/percentage`, data, { method: 'POST' });
+
+export const updateCirclePercentage = (
+  data: CreateCirclePercentagePayload,
+  id: string
+) => {
+  const payload = {
+    patches: [
+      {
+        op: 'replace',
+        path: '/percentage',
+        value: data.percentage
+      },
+      {
+        op: 'replace',
+        path: '/name',
+        value: data.name
+      }
+    ]
+  };
+  return baseRequest(`${endpoint}/${id}/percentage`, payload, {
+    method: 'PATCH'
+  });
+};
 
 export const updateCircleManually = (
   data: CreateCircleManuallyPayload,

@@ -24,7 +24,6 @@ import Can from 'containers/Can';
 import { Link as LinkProps, ExpandClick } from '../Types';
 import { getExpandIcon, getItems } from '../helpers';
 import Styled from '../styled';
-
 interface Props {
   isExpanded: boolean;
   expandMenu: (state: ExpandClick) => void;
@@ -33,6 +32,7 @@ interface Props {
 export const MenuItems = ({ isExpanded, expandMenu }: Props) => {
   const subMenuRef = useRef<HTMLDivElement>();
   const activeMenuId = getActiveMenuId();
+
   const isActive = (id: string) => {
     return startsWith(activeMenuId?.replace('-charlescd', ''), id);
   };

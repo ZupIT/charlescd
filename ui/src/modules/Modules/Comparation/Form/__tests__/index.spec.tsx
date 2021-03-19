@@ -15,7 +15,7 @@
  */
 
 import { ReactElement } from "react";
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, waitFor, screen, act } from "@testing-library/react";
 import FormModule from "../";
 import * as UpdateModuleHook from '../../../hooks/module';
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
@@ -112,4 +112,85 @@ test("Should render submit button", async () => {
 
   userEvent.click(screen.getByTestId('button-default-submit'));
   expect(updateModuleSpy).toHaveBeenCalled();
+  updateModuleSpy.mockRestore();
+});
+
+test('should validate blank in optional helm path', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const pathInput = screen.getByTestId('input-text-helmPath');
+  await act(async () => userEvent.type(pathInput, '   '))
+  await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
+});
+
+test('should validate blank in optional branch path', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const branchInput = screen.getByTestId('input-text-helmBranch');
+  await act(async () => userEvent.type(branchInput, '   '))
+  await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
+});
+
+test('should not show error when optional field is empty (helm path)', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const helmPath = screen.getByTestId('input-text-helmPath');
+  await act(async () => userEvent.type(helmPath, ''))
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
+});
+
+test('should not show error when optional field is empty (helm branch)', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const helmBranch = screen.getByTestId('input-text-helmBranch');
+  await act(async () => userEvent.type(helmBranch, ''))
+  await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
+});
+
+test('should not show error when typing whitespaces followed by some value', async () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={jest.fn()}
+        module={{} as Module}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const helmBranch = screen.getByTestId('input-text-helmBranch');
+  await act(async () => userEvent.type(helmBranch, '   some value'))
+  await waitFor(() => expect(screen.queryByText('No whitespaces')).not.toBeInTheDocument());
 });

@@ -154,10 +154,10 @@ const Credentials = ({ onClickHelp }: Props) => {
           getNewActions={getActions}
         />
       )}
-      <Section.Git
+      <Section.Webhook
         form={form}
         setForm={setForm}
-        data={workspace.gitConfiguration}
+        data={workspace.webhookConfiguration}
       />
       <Section.UserGroup
         form={form}

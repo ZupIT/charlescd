@@ -18,5 +18,6 @@ export enum HTTP_STATUS {
   success = 200,
   unauthorized = 401,
   forbidden = 403,
-  notFound = 404
+  notFound = 404,
+  teapot = 418
 }

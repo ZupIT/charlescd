@@ -16,9 +16,29 @@
 
 import styled, { css } from 'styled-components';
 
+type Size = 'small' | 'medium' | 'default';
+
 interface ButtonProps {
   backgroundColor: 'default' | 'primary';
-  size: 'small' | 'default';
+  size: Size;
+}
+
+export enum HEIGHT {
+  small = '30px',
+  medium = '40px',
+  default = '50px'
+}
+
+export enum PADDING {
+  small = '9px 18px',
+  medium = '12px 25px',
+  default = '15px 33px'
+}
+
+export enum RADIUS {
+  small = '15px',
+  medium = '20px',
+  default = '30px'
 }
 
 const Button = styled.button<ButtonProps>`
@@ -26,12 +46,12 @@ const Button = styled.button<ButtonProps>`
   background: ${({ backgroundColor, theme }) =>
     theme.button.rounded.background[backgroundColor]};
   height: 50px;
-  border-radius: ${({ size }) => (size === 'default' ? '30px' : '15px')};
-  height: ${({ size }) => (size === 'default' ? '50px' : '30px')};
+  border-radius: ${({ size }) => RADIUS[size]};
+  height: ${({ size }) => HEIGHT[size]};
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: ${({ size }) => (size === 'default' ? '15px 33px' : '9px 18px')};
+  padding: ${({ size }) => PADDING[size]};
   cursor: pointer;
   transition: 0.2s;
   width: fit-content;
