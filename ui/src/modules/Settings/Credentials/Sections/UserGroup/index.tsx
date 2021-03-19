@@ -59,14 +59,10 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
 
     await remove(getWorkspaceId(), currentUserGroup.id);
     setUserGroups(filter(userGroups, item => item.id !== currentUserGroup.id));
-
-    console.log('email', email);
-    console.log('hasDuplicate', !hasUserDuplication(userGroups, email));
     
     setToggleModal(false);
 
     if (hasUser && isUserDuplicated) {
-      console.log('redirect');
       history.push(routes.workspaces);
     }
   };
