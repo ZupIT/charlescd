@@ -15,8 +15,10 @@
  */
 
 import { Helm } from "modules/Modules/interfaces/Helm";
-import { githubProvider, gitlabProvider } from "modules/Settings/Credentials/Sections/DeploymentConfiguration/constants";
 import { validFields, createGitApi, destructHelmUrl } from "../helpers"
+
+const githubProvider = 'GITHUB';
+const gitlabProvider = 'GITLAB';
 
 const invalidEmptyStringObject: Record<string, any> = {
   key1: "",
@@ -83,11 +85,11 @@ test("should valid string validFields", () => {
 //     helmOrganization: "zupit",
 //     helmPath: "examplepath",
 //     helmRepository: "examplerepo",
-//     helmGitlabUrl: "https://examplegitlab.com"
+//     helmGitlabUrl: "https://gitlab.com"
 //   }
 
 //   const gitlabApi = createGitApi(helmData, gitlabProvider)
-//   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files/examplepath?ref=main")
+//   expect(gitlabApi).toBe("https://gitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files/examplepath?ref=main")
 // })
 
 // test("should createGitApi return gitlab without path", () => {
@@ -95,34 +97,36 @@ test("should valid string validFields", () => {
 //     helmBranch: "main",
 //     helmOrganization: "zupit",
 //     helmRepository: "examplerepo",
-//     helmGitlabUrl: "https://examplegitlab.com"
+//     helmGitlabUrl: "https://gitlab.com"
 
 //   }
 
 //   const gitlabApi = createGitApi(helmData, gitlabProvider)
-//   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
+//   expect(gitlabApi).toBe("https://gitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
 // })
 
-// test("should createGitApi return gitlab without branch", () => {
-//   const helmData: Helm = {
-//     helmOrganization: "zupit",
-//     helmRepository: "examplerepo",
-//     helmGitlabUrl: "https://examplegitlab.com"
-//   }
+test("should createGitApi return gitlab without branch", () => {
+  const helmData: Helm = {
+    helmOrganization: "zupit",
+    helmProjectId: "123456",
+    helmUrl: "https://gitlab.com"
+  }
 
-//   const gitlabApi = createGitApi(helmData, gitlabProvider)
-//   expect(gitlabApi).toBe("https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main")
-// })
+  const gitlabApi = createGitApi(helmData, gitlabProvider)
+  expect(gitlabApi).toBe("https://gitlab.com/api/v4/projects/123456/repository?ref=main")
+})
 
 test("destructHelmUrl github with full url", () => {
   const setValue = jest.fn()
-  const fullUrl = "https://api.github.com/repos/zupit/examplerepo/contents/examplepath?ref=main"
+  const fullUrl = "https://api.github.com/repos/zupit/examplerepo/contents/examplepath&ref=main"
 
   destructHelmUrl(fullUrl, githubProvider, setValue)
-  expect(setValue).toHaveBeenCalledWith("helmOrganization", "zupit")
-  expect(setValue).toHaveBeenCalledWith("helmRepository", "examplerepo")
-  expect(setValue).toHaveBeenCalledWith("helmPath", "examplepath")
-  expect(setValue).toHaveBeenCalledWith("helmBranch", "main")
+  expect(setValue).toHaveBeenCalledWith("helmUrl", "https://api.github.com", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmOrganization", "zupit", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmRepository", "examplerepo", {"shouldValidate": true});
+  // expect(setValue).toHaveBeenCalledWith("helmPath", "examplepath", {"shouldValidate": true})
+  // expect(setValue).toHaveBeenCalledWith("helmBranch", "main", {"shouldValidate": true})
+  expect(setValue).toBeCalledTimes(5);
 })
 
 test("destructHelmUrl github without path", () => {
@@ -130,32 +134,32 @@ test("destructHelmUrl github without path", () => {
   const fullUrl = "https://api.github.com/repos/zupit/examplerepo/contents?ref=main"
 
   destructHelmUrl(fullUrl, githubProvider, setValue)
-  expect(setValue).toHaveBeenCalledWith("helmOrganization", "zupit")
-  expect(setValue).toHaveBeenCalledWith("helmRepository", "examplerepo")
-  expect(setValue).toHaveBeenCalledWith("helmBranch", "main")
+  expect(setValue).toHaveBeenCalledWith("helmUrl", "https://api.github.com", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmOrganization", "zupit", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmRepository", "examplerepo", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmBranch", "main", {"shouldValidate": true});
+  expect(setValue).toBeCalledTimes(5);
 })
-
 
 test("destructHelmUrl gitlab with full url", () => {
   const setValue = jest.fn()
-  const fullUrl = "https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files/examplepath?ref=main"
+  const fullUrl = "https://gitlab.com/api/v4/projects/123456/repository?path=examplepath&ref=main"
 
   destructHelmUrl(fullUrl, gitlabProvider, setValue)
-  expect(setValue).toHaveBeenCalledWith("helmOrganization", "zupit")
-  expect(setValue).toHaveBeenCalledWith("helmRepository", "examplerepo")
-  expect(setValue).toHaveBeenCalledWith("helmPath", "examplepath")
-  expect(setValue).toHaveBeenCalledWith("helmBranch", "main")
-  expect(setValue).toHaveBeenCalledWith("helmGitlabUrl", "https://examplegitlab.com")
-  expect(setValue).toBeCalledTimes(5)
+  expect(setValue).toHaveBeenCalledWith("helmUrl", "https://gitlab.com", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmProjectId", "123456", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmPath", "examplepath", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmBranch", "main", {"shouldValidate": true});
+  expect(setValue).toBeCalledTimes(4);
 })
 
 test("destructHelmUrl gitlab without path", () => {
   const setValue = jest.fn()
-  const fullUrl = "https://examplegitlab.com/api/v4/projects/zupit%2Fexamplerepo/repository/files?ref=main"
+  const fullUrl = "https://gitlab.com/api/v4/projects/123456/repository?ref=main"
 
   destructHelmUrl(fullUrl, gitlabProvider, setValue)
-  expect(setValue).toHaveBeenCalledWith("helmOrganization", "zupit")
-  expect(setValue).toHaveBeenCalledWith("helmRepository", "examplerepo")
-  expect(setValue).toHaveBeenCalledWith("helmBranch", "main")
-  expect(setValue).toBeCalledTimes(4)
+  expect(setValue).toHaveBeenCalledWith("helmUrl", "https://gitlab.com", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmProjectId", "123456", {"shouldValidate": true});
+  expect(setValue).toHaveBeenCalledWith("helmBranch", "main", {"shouldValidate": true});
+  expect(setValue).toBeCalledTimes(4);
 })

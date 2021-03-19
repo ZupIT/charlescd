@@ -83,6 +83,7 @@ const FormModule = ({ module, onChange }: Props) => {
   } = useForm<Helm>({ mode: 'onChange' });
   const { register, control, handleSubmit, formState: { isValid } } = form;
   const fieldArray = useFieldArray({ control, name: 'components', keyName: 'fieldId' });
+  console.log('fieldArray', fieldArray);
   const workspace = getWorkspace();
   const helmGitProvider = workspace?.gitProvider;
 
@@ -217,7 +218,7 @@ const FormModule = ({ module, onChange }: Props) => {
             defaultValue={module?.gitRepositoryAddress}
             ref={register({ required: true })}
           />
-          {!isEditing && <Components fieldArray={fieldArray} />}
+          {!isEditing && <Components key="components" fieldArray={fieldArray} />}
           <Styled.Helm>
             <Styled.Title color="light">
               {!isEditing
@@ -228,6 +229,7 @@ const FormModule = ({ module, onChange }: Props) => {
           {helmGitProvider && renderGitHelm()}
           <Can I="write" a="modules" isDisabled={!isValid || !isHelmValid} passThrough>
             <Styled.Button
+              id="submit"
               type="submit"
               size="EXTRA_SMALL"
               isLoading={saveLoading || updateStatus === 'pending'}

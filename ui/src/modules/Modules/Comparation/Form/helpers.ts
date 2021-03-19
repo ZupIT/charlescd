@@ -99,12 +99,14 @@ const destructGithub = (
   const helmUrl = `${splitProtocol[0]}//${baseUrl}`
   const organization = splitUrl[reposPosition + 1];
   const repository = splitUrl[reposPosition + 2]
+  const branch = params.get('ref');
+  const path = params.get('path');
 
   setValue('helmUrl', helmUrl, { shouldValidate: true });
   setValue('helmOrganization', organization, { shouldValidate: true });
   setValue('helmRepository', repository, { shouldValidate: true });
-  setValue('helmBranch', params.get('ref'), { shouldValidate: true });
-  setValue('helmPath', params.get('path'), { shouldValidate: true });
+  setValue('helmBranch', branch, { shouldValidate: true });
+  setValue('helmPath', path, { shouldValidate: true });
 };
 
 const destructGitlab = (
@@ -118,11 +120,13 @@ const destructGitlab = (
   const leftInfo = url.slice(baseUrlLocation + baseUrlFind.length + 1);
   const infoSplit = leftInfo.split('/');
   const projectId = infoSplit[0];
+  const branch = params.get('ref');
+  const path = params.get('path');
 
   setValue('helmUrl', baseUrl, { shouldValidate: true });
   setValue('helmProjectId', projectId, { shouldValidate: true });
-  setValue('helmBranch', params.get('ref'), { shouldValidate: true });
-  setValue('helmPath', params.get('path'), { shouldValidate: true });
+  setValue('helmBranch', branch, { shouldValidate: true });
+  setValue('helmPath', path, { shouldValidate: true });
 };
 
 export const destructHelmUrl = (
