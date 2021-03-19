@@ -210,6 +210,14 @@ constraints:
       maintenance_write:
         - GET
 
+  - pattern: /v1/webhooks/**
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+        - DELETE
+
 managementConstraints:
   - pattern: /v2/users/{email:.+}
     methods:

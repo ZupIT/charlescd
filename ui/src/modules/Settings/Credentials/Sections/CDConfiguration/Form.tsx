@@ -29,7 +29,7 @@ import { Props } from '../interfaces';
 import { useCDConfiguration } from './hooks';
 import Styled from './styled';
 
-const FormCDConfiguration = ({ onFinish }: Props) => {
+const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
   const { responseAdd, save, loadingAdd, loadingSave } = useCDConfiguration();
   const formMethods = useForm<CDConfiguration>({
     mode: 'onChange'

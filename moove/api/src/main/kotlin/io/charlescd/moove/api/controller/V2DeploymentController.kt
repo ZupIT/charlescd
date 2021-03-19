@@ -17,10 +17,7 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.deployment.CreateDeploymentInteractor
-import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
-import io.charlescd.moove.application.deployment.FindDeploymentsHistoryForCircleInteractor
-import io.charlescd.moove.application.deployment.FindDeploymentsHistoryInteractor
+import io.charlescd.moove.application.deployment.*
 import io.charlescd.moove.application.deployment.request.CreateDeploymentRequest
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
@@ -42,7 +39,8 @@ class V2DeploymentController(
     private val deploymentCallbackInteractor: DeploymentCallbackInteractor,
     private val createDeploymentInteractor: CreateDeploymentInteractor,
     private val findDeploymentsHistoryForCircleInteractor: FindDeploymentsHistoryForCircleInteractor,
-    private val findDeploymentsHistoryInteractor: FindDeploymentsHistoryInteractor
+    private val findDeploymentsHistoryInteractor: FindDeploymentsHistoryInteractor,
+    private val undeployInteractor: UndeployInteractor
 ) {
     @ApiOperation(value = "Create Deployment")
     @ApiImplicitParam(
@@ -59,6 +57,17 @@ class V2DeploymentController(
         @Valid @RequestBody createDeploymentRequest: CreateDeploymentRequest
     ): DeploymentResponse {
         return this.createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+    }
+
+    @ApiOperation(value = "Undeploy Deployment")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/{deploymentId}/undeploy")
+    fun undeploy(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("deploymentId") deploymentId: String
+    ) {
+        return this.undeployInteractor.execute(workspaceId, authorization, deploymentId)
     }
 
     @ApiOperation(value = "Deployment Callback")

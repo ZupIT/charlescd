@@ -154,6 +154,11 @@ const Credentials = ({ onClickHelp }: Props) => {
           getNewActions={getActions}
         />
       )}
+      <Section.Webhook
+        form={form}
+        setForm={setForm}
+        data={workspace.webhookConfiguration}
+      />
       <Section.UserGroup
         form={form}
         setForm={setForm}
