@@ -25,20 +25,30 @@ import React, {
 import Card from 'core/components/Card';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { dateFrom } from 'core/utils/date';
 import Styled from './styled';
 
 export interface Props {
-  circle: string;
-  deployedAt: string;
+  icon?: string;
+  iconColor?: string;
+  title: string;
+  description: string;
   children: ReactNode;
+  action?: ReactNode;
   footer?: ReactNode;
   onClick?: Function;
 }
 
 const CardCircle = forwardRef(
   (
-    { circle, deployedAt, children, onClick }: Props,
+    {
+      icon = 'circle',
+      iconColor = 'light',
+      title,
+      description,
+      children,
+      action,
+      onClick
+    }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
     const cardRef = useRef<HTMLDivElement>(null) as MutableRefObject<
@@ -52,16 +62,19 @@ const CardCircle = forwardRef(
     };
 
     const renderHeader = () => (
-      <Card.Header icon={<Icon name="circles" size="15px" color="success" />} />
+      <Card.Header
+        icon={<Icon name={icon} size="15px" color={iconColor} />}
+        action={action}
+      />
     );
 
     const renderBody = () => (
       <Styled.CardBody>
         <Text.h4 color="light" align="left">
-          {circle}
+          {title}
         </Text.h4>
         <Text.h5 color="light" align="left">
-          Deployed at {dateFrom(deployedAt)}
+          {description}
         </Text.h5>
         {children}
       </Styled.CardBody>

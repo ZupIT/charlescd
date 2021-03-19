@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
-export interface Props {
+export interface Props<T> {
   onFinish: Function;
+  data?: T;
 }

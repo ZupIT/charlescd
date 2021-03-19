@@ -44,7 +44,7 @@ const registryPlaceholder: Option = {
   HARBOR: 'harbor.exampleapi.com'
 };
 
-const FormRegistry = ({ onFinish }: Props) => {
+const FormRegistry = ({ onFinish }: Props<Registry>) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
   const [registryType, setRegistryType] = useState('');
   const [registryName, setRegistryName] = useState('');
