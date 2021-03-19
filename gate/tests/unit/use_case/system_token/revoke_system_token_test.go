@@ -3,13 +3,14 @@ package system_token
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
+	"github.com/ZupIT/charlescd/gate/tests/unit/utils"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
 func (st *SystemTokenSuite) TestRevokeSystemToken() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
@@ -43,7 +44,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenIDNotFound() {
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).
@@ -60,7 +61,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 	systemToken.Revoked = true
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()

@@ -1,0 +1,10 @@
+p, admin, /*
+p, public, /credentials/{service}/{id}, GET
+p, public, /credentials/*, POST
+p, public, /v2/deployments/{id:.+}/callback, POST
+p, public, /v2/builds/{id:.+}/callback, POST
+p, public, /actuator/health, GET
+p, public, /swagger-ui.html, GET
+p, public, /webjars/*, GET
+p, public, /swagger-resources/*, GET
+p, public, /v2/api-docs, GET

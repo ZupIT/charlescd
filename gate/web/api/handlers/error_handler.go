@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func HandlerError(echoCtx echo.Context, ctx context.Context, err error) error {
+func HandleError(echoCtx echo.Context, ctx context.Context, err error) error  {
 	logging.LogErrorFromCtx(ctx, err)
 	return echoCtx.JSON(getErrorStatusCode(logging.GetErrorType(err)), err)
 }
@@ -20,6 +20,8 @@ func getErrorStatusCode(errType string) int {
 		return http.StatusUnprocessableEntity
 	case logging.NotFoundError:
 		return http.StatusNotFound
+	case logging.ForbiddenError:
+		return http.StatusForbidden
 	default:
 		return http.StatusInternalServerError
 	}
