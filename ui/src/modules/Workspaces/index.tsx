@@ -28,6 +28,7 @@ import { isRequired, maxLength } from 'core/utils/validations';
 import { removeWizard } from 'modules/Settings/helpers';
 import Modal from 'core/components/Modal';
 import Styled from './styled';
+import { clearWorkspace } from 'core/utils/workspace';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -54,6 +55,10 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
       logout();
     }
   }, [email]);
+
+  useEffect(() => {
+    clearWorkspace();
+  }, []);
 
   useEffect(() => {
     if (saveWorkspaceResponse) {

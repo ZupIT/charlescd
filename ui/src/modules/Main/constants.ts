@@ -17,6 +17,15 @@
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 
+export type MenuType = {
+  id: string,
+  icon: string,
+  text: string,
+  to: string,
+  action?: string,
+  subject?: string
+};
+
 export const workspaceMenu = [
   {
     id: genMenuId(routes.circles),
