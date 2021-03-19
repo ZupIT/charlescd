@@ -23,6 +23,7 @@ import { AllTheProviders } from "unit-test/testUtils";
 import { Module, Author } from "modules/Modules/interfaces/Module";
 import { Actions, Subjects } from "core/utils/abilities";
 import userEvent from "@testing-library/user-event";
+import { saveWorkspace } from 'core/utils/workspace';
 
 interface fakeCanProps {
   I?: Actions;
@@ -67,6 +68,10 @@ jest.mock('containers/Can', () => {
       return <div>{children}</div>;
     }
   };
+});
+
+beforeAll(() => {
+  saveWorkspace({ id: '123', name: 'Workspace', gitProvider: 'GITHUB' });
 });
 
 test("component for edit mode render", async () => {
@@ -126,7 +131,7 @@ test('should validate blank in optional helm path', async () => {
     </AllTheProviders>
   );
 
-  const pathInput = screen.getByTestId('input-text-helmPath');
+  const pathInput = await screen.findByTestId('input-text-helmPath');
   await act(async () => userEvent.type(pathInput, '   '))
   await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
 });
@@ -142,7 +147,7 @@ test('should validate blank in optional branch path', async () => {
     </AllTheProviders>
   );
 
-  const branchInput = screen.getByTestId('input-text-helmBranch');
+  const branchInput = await screen.findByTestId('input-text-helmBranch');
   await act(async () => userEvent.type(branchInput, '   '))
   await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
 });
@@ -158,7 +163,7 @@ test('should not show error when optional field is empty (helm path)', async () 
     </AllTheProviders>
   );
 
-  const helmPath = screen.getByTestId('input-text-helmPath');
+  const helmPath = await screen.findByTestId('input-text-helmPath');
   await act(async () => userEvent.type(helmPath, ''))
   await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
 });
@@ -174,7 +179,7 @@ test('should not show error when optional field is empty (helm branch)', async (
     </AllTheProviders>
   );
 
-  const helmBranch = screen.getByTestId('input-text-helmBranch');
+  const helmBranch = await screen.findByTestId('input-text-helmBranch');
   await act(async () => userEvent.type(helmBranch, ''))
   await waitFor(() => expect(screen.queryByText('This field is required')).not.toBeInTheDocument());
 });
