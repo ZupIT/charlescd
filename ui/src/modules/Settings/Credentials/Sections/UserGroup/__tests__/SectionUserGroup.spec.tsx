@@ -20,19 +20,63 @@ import userEvent from '@testing-library/user-event';
 import { saveProfile } from 'core/utils/profile';
 import { getProfileByKey } from 'core/utils/profile';
 import find from 'lodash/find';
-import {userGroups, userGroup} from './fixtures';
+import {userGroups, userGroupsWithSameUser, userGroup} from './fixtures';
 import SectionUserGroup from '../';
 
-// const mockPush = jest.fn();
+test('should remove a user group (maintainer user)', async () => {
+  render(
+    <SectionUserGroup 
+      form=''
+      setForm={() => jest.fn()}
+      data={userGroups}
+    />
+  );
 
-// jest.mock('react-router-dom', () => ({
-//   ...jest.requireActual('react-router-dom'),
-//   useHistory: () => ({
-//     push: jest.fn().mockImplementation(mockPush)
-//   })
-// }));
+  const userGroup1 = await screen.findByTestId('user-group-1');
+  const removeIcon = userGroup1.querySelector('[data-testid="icon-cancel"]');
 
-test('should remove a user group', async () => {
+  userEvent.click(removeIcon);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+
+  const confirmRemove = screen.getByTestId('button-default-continue');
+  userEvent.click(confirmRemove);
+
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  
+  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+});
+
+test('should remove a user group when I (maintainer) belongs to two user groups of a workspace', async () => {
+  render(
+    <SectionUserGroup 
+      form=''
+      setForm={() => jest.fn()}
+      data={userGroupsWithSameUser}
+    />
+  );
+
+  const userGroup1 = await screen.findByTestId('user-group-1');
+  const removeIcon = userGroup1.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(removeIcon);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+
+  const confirmRemove = screen.getByTestId('button-default-continue');
+  userEvent.click(confirmRemove);
+
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  
+  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+});
+
+test('should remove a user group (root user)', async () => {
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: false
+  });
+
   render(
     <SectionUserGroup 
       form=''
@@ -108,15 +152,6 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
   userEvent.click(removeIcon);
   expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
 
-  const userLoggedEmail = getProfileByKey('email');
-  const loggedUserEmailBelongsToSomeUsergroup = find(userGroups, (usergroup) => {
-    return find(usergroup.users, (user) => {
-      return user.email === userLoggedEmail;
-    });
-  });
-
-  expect(loggedUserEmailBelongsToSomeUsergroup).not.toBeUndefined();
-
   const confirmRemove = screen.getByTestId('button-default-continue');
   userEvent.click(confirmRemove);
 
@@ -132,8 +167,7 @@ test('should remove a user group (I am a root user), and not be redirected to wo
 
 });
 
-test('should cancel removal of a user group', async () => {
-  
+test('should cancel removal of a user group (maintainer user)', async () => {
   render(
     <SectionUserGroup 
       form=''
@@ -155,6 +189,37 @@ test('should cancel removal of a user group', async () => {
   
   expect(screen.getByText('devx user group')).toBeInTheDocument();
 });
+
+test('should cancel removal of a user group (root user)', async () => {
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: false
+  });
+
+  render(
+    <SectionUserGroup 
+      form=''
+      setForm={() => jest.fn()}
+      data={userGroups}
+    />
+  );
+
+  const userGroup1 = await screen.findByTestId('user-group-1');
+  const removeIcon = userGroup1.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(removeIcon);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+
+  const cancelRemove = screen.getByTestId('button-default-dismiss');
+  userEvent.click(cancelRemove);
+
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  
+  expect(screen.getByText('devx user group')).toBeInTheDocument();
+});
+
 
 test('should render modal that confirms user group deletion', async () => {
   const modalDescription = "When you remove a user group, all the users associated to the group will no longer access the workspace. Do you want to continue?"
