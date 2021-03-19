@@ -28,7 +28,7 @@ import { Props } from '../interfaces';
 import { useCDConfiguration } from './hooks';
 import Styled from './styled';
 
-const FormDeploymentConfiguration = ({ onFinish }: Props) => {
+const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration>) => {
   const { responseAdd, save, loadingAdd, loadingSave } = useCDConfiguration();
   const formMethods = useForm<DeploymentConfiguration>({
     mode: 'onChange'
