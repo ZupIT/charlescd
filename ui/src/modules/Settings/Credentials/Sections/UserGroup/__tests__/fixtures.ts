@@ -71,6 +71,32 @@ export const userGroups = [
   }
 ];
 
+export const userGroupsWithSameUser = [
+  {
+    id: '1',
+    name: 'devx user group',
+    users: [
+      {
+        id: '12',
+        name: 'user 1',
+        email: 'user1@gmail.com'
+      }
+    ]
+  },
+  {
+    id: '2',
+    name: 'metrics user group',
+    users: [
+      {
+        id: '12',
+        name: 'user 1',
+        email: 'user1@gmail.com'
+      }
+    ]
+  }
+];
+
+
 export const userGroup = [
   {
     id: '1',
