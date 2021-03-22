@@ -22,6 +22,8 @@ import { getProfileByKey } from 'core/utils/profile';
 import find from 'lodash/find';
 import {userGroups, userGroupsWithSameUser, userGroup} from './fixtures';
 import SectionUserGroup from '../';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 
 test('should remove a user group (maintainer user)', async () => {
   render(
@@ -116,7 +118,8 @@ test('should remove a user group that I do not belong to', async () => {
 
   userEvent.click(removeIcon);
   expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
-
+  
+  // TODO remove
   const userLoggedEmail = getProfileByKey('email');
   const loggedUserEmailNotInAnyUsergroup = find(userGroups, (usergroup) => {
     return find(usergroup.users, (user) => {
@@ -136,18 +139,20 @@ test('should remove a user group that I do not belong to', async () => {
 
 test('should remove a user group that I (maintainer) belong to, and be redirected to workspaces', async () => {
   saveProfile({ id: '123', name: 'user 1', email: 'user1@gmail.com' });
+  const history = createMemoryHistory()
 
   render(
-    <SectionUserGroup 
-      form=''
-      setForm={() => jest.fn()}
-      data={userGroups}
-    />
+    <Router history={history}>
+      <SectionUserGroup 
+        form=''
+        setForm={() => jest.fn()}
+        data={userGroups}
+      />
+    </Router>
   );
 
   const userGroupDevx = await screen.findByTestId('user-group-1');
   const removeIcon = userGroupDevx.querySelector('[data-testid="icon-cancel"]');
-  
 
   userEvent.click(removeIcon);
   expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
@@ -158,6 +163,42 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
   
   expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+  expect(history.location.pathname).toBe('/workspaces');
+});
+
+test.only('should remove a user group (I am a root user), and not be redirected to workspaces', async () => {
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: false
+  });
+
+  const history = createMemoryHistory()
+
+  render(
+    <Router history={history}>
+      <SectionUserGroup 
+        form=''
+        setForm={() => jest.fn()}
+        data={userGroups}
+      />
+    </Router>
+  );
+
+  const userGroupDevx = await screen.findByTestId('user-group-1');
+  const removeIcon = userGroupDevx.querySelector('[data-testid="icon-cancel"]');
+
+  userEvent.click(removeIcon);
+  expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
+
+  const confirmRemove = screen.getByTestId('button-default-continue');
+  userEvent.click(confirmRemove);
+
+  await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  
+  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+  expect(history.location.pathname).not.toBe('/workspaces');
 });
 
 test('should cancel removal of a user group (maintainer user)', async () => {
@@ -254,7 +295,7 @@ test('should close modal', async () => {
   expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument();
 });
 
-test('should close modal when clicking outside modal', async () => {
+test('should close modal when clicking outside', async () => {
   render(
     <div data-testid="wrapper-modal">
       <SectionUserGroup 
