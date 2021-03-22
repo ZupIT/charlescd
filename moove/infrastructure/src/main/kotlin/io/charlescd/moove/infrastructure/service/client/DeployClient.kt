@@ -21,6 +21,7 @@ import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
 import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
 import io.charlescd.moove.infrastructure.service.client.response.DeployResponse
 import io.charlescd.moove.infrastructure.service.client.response.GetDeployCdConfigurationsResponse
+import io.charlescd.moove.infrastructure.service.client.response.LogResponse
 import io.charlescd.moove.infrastructure.service.client.response.UndeployResponse
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
@@ -54,4 +55,12 @@ interface DeployClient {
     fun getCdConfigurations(
         @RequestHeader("x-workspace-id") workspaceId: String
     ): List<GetDeployCdConfigurationsResponse>
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = ["v2/deployments/{deploymentId}/logs"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun getDeploymentLogs(@PathVariable("deploymentId") deploymentId: String): LogResponse
 }

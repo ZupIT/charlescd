@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type customerror struct {
+type Customerror struct {
 	ID         uuid.UUID
 	Title      string            `json:"title"`
 	Detail     string            `json:"detail"`
@@ -17,12 +17,12 @@ type customerror struct {
 	Meta       map[string]string `json:"meta"`
 }
 
-func (err customerror) Error() string {
+func (err Customerror) Error() string {
 	return err.Detail
 }
 
 func WithLogFields(err error, operations ...string) logrus.Fields {
-	customerr, ok := err.(customerror)
+	customerr, ok := err.(Customerror)
 	if !ok {
 		customerr = New("Internal error", err.Error(), nil, operations...)
 	}
@@ -37,7 +37,7 @@ func WithLogFields(err error, operations ...string) logrus.Fields {
 }
 
 func WithOperation(err error, operation ...string) error {
-	customerr, ok := err.(*customerror)
+	customerr, ok := err.(*Customerror)
 	if !ok {
 		return New("Internal error", err.Error(), nil, operation...)
 	}
@@ -47,7 +47,7 @@ func WithOperation(err error, operation ...string) error {
 }
 
 func WithMeta(err error, meta map[string]string, operations ...string) error {
-	customerr, ok := err.(*customerror)
+	customerr, ok := err.(*Customerror)
 	if !ok {
 		return New("Internal error", err.Error(), meta, operations...)
 	}
@@ -59,7 +59,7 @@ func WithMeta(err error, meta map[string]string, operations ...string) error {
 	return customerr
 }
 
-func New(title string, detail string, meta map[string]string, operations ...string) customerror {
+func New(title string, detail string, meta map[string]string, operations ...string) Customerror {
 	var newMeta map[string]string
 	if meta == nil {
 		newMeta = map[string]string{
@@ -70,7 +70,7 @@ func New(title string, detail string, meta map[string]string, operations ...stri
 		newMeta["timestamp"] = time.Now().String()
 	}
 
-	return customerror{
+	return Customerror{
 		ID:         uuid.New(),
 		Title:      title,
 		Detail:     detail,

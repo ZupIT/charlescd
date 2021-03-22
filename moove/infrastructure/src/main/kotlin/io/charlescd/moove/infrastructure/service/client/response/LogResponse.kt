@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-package deployment
+package io.charlescd.moove.infrastructure.service.client.response
 
-import (
-	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"k8s.io/client-go/rest"
-	"octopipe/pkg/log"
+import java.time.LocalDateTime
+
+data class LogResponse(
+    val id: String,
+
+    val logs: List<Log>
 )
 
-type MainUseCases interface {
-	NewDeployment(
-		action string,
-		update bool,
-		namespace string,
-		manifest map[string]interface{},
-		config *rest.Config,
-		kubectl kube.Kubectl,
-		event *log.Aggregator,
-	) UseCases
-}
 
-type DeploymentMain struct{}
-
-func NewDeploymentMain() MainUseCases {
-	return &DeploymentMain{}
-}
+data class Log(
+    val type: String,
+    val title: String,
+    val details: String?
+)

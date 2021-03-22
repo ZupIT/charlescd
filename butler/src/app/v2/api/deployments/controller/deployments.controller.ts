@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-import { Body, Controller, Headers, Param, Post, UnprocessableEntityException, UsePipes, ValidationPipe } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  UnprocessableEntityException,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common'
 import { validate as uuidValidate } from 'uuid'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
@@ -24,13 +34,17 @@ import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
+import { FindDeploymentLogsByIdUsecase } from '../use-cases/find-deployment-logs-by-id.usecase'
+import { LogEntity } from '../entity/logs.entity'
+import { ReadLogsDto } from '../dto/read-logs.dto'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
 
   constructor(
     private createDeploymentUseCase: CreateDeploymentUseCase,
-    private createUndeploymentUseCase: CreateUndeploymentUseCase
+    private createUndeploymentUseCase: CreateUndeploymentUseCase,
+    private findDeploymentLogsByIdUseCase: FindDeploymentLogsByIdUsecase
   ) { }
 
   @Post('/')
@@ -44,6 +58,14 @@ export class DeploymentsController {
   ): Promise<ReadDeploymentDto> {
     const processedIncomingCircleId = this.processIncomingCircleIdHeader(incomingCircleId)
     return this.createDeploymentUseCase.execute(createDeploymentRequestDto, processedIncomingCircleId)
+  }
+
+  @Get('/:id/logs')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  public async findDeploymentEvents(
+      @Param('id') deploymentId: string,
+  ): Promise<ReadLogsDto> {
+    return this.findDeploymentLogsByIdUseCase.execute(deploymentId)
   }
 
   @Post('/:id/undeploy')

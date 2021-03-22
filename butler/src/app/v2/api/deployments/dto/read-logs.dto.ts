@@ -14,33 +14,19 @@
  * limitations under the License.
  */
 
-import { IsEnum, IsNotEmpty } from 'class-validator'
-import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
-import { ExecutionTypeEnum } from '../enums'
-import { ApiProperty } from '@nestjs/swagger'
 import { Log } from '../interfaces/log.interface'
 
-export class DeploymentNotificationRequestDto {
+export class ReadLogsDto {
 
-  @ApiProperty({ enum: DeploymentStatusEnum })
-  @IsNotEmpty()
-  @IsEnum(DeploymentStatusEnum)
-  public status: DeploymentStatusEnum
+  public readonly id: string
 
-  @ApiProperty({ enum: ExecutionTypeEnum })
-  @IsNotEmpty()
-  public type: ExecutionTypeEnum
-
-  @IsNotEmpty()
-  public logs: Log[]
+  public readonly logs: Log[]
 
   constructor(
-    status: DeploymentStatusEnum,
-    type: ExecutionTypeEnum,
-    logs: Log[]
+    id: string,
+    logs: Log[],
   ) {
-    this.status = status
-    this.type = type
+    this.id = id
     this.logs = logs
   }
 }

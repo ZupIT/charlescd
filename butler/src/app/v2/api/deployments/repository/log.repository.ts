@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package deployment
+import { EntityRepository, Repository } from 'typeorm'
+import { LogEntity } from '../entity/logs.entity'
 
-import (
-	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"k8s.io/client-go/rest"
-	"octopipe/pkg/log"
-)
+@EntityRepository(LogEntity)
+export class LogRepository extends Repository<LogEntity> {
 
-type MainUseCases interface {
-	NewDeployment(
-		action string,
-		update bool,
-		namespace string,
-		manifest map[string]interface{},
-		config *rest.Config,
-		kubectl kube.Kubectl,
-		event *log.Aggregator,
-	) UseCases
-}
+  public async findDeploymentLogs(deploymentId: string): Promise<LogEntity | undefined> {
+    return this.createQueryBuilder('v2logs')
+      .leftJoinAndSelect('v2logs.deployment', 'deployment')
+      .andWhere('deployment.id = :deploymentId', { deploymentId })
+      .getOne()
+  }
 
-type DeploymentMain struct{}
-
-func NewDeploymentMain() MainUseCases {
-	return &DeploymentMain{}
 }

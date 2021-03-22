@@ -526,7 +526,8 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
       name: 'Trigger Failure Webhook',
       payload: {
         status: DeploymentStatusEnum.FAILED,
-        type: ExecutionTypeEnum.UNDEPLOYMENT
+        type: ExecutionTypeEnum.UNDEPLOYMENT,
+        logs: []
       },
       refId: '8',
       requisiteStageRefIds: [
@@ -551,7 +552,8 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
       name: 'Trigger Success Webhook',
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
-        type: ExecutionTypeEnum.UNDEPLOYMENT
+        type: ExecutionTypeEnum.UNDEPLOYMENT,
+        logs: []
       },
       refId: '9',
       requisiteStageRefIds: [
