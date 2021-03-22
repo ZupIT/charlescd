@@ -115,20 +115,9 @@ test('should remove a user group that I do not belong to', async () => {
   const userGroupDevx = await screen.findByTestId('user-group-1');
   const removeIcon = userGroupDevx.querySelector('[data-testid="icon-cancel"]');
   
-
   userEvent.click(removeIcon);
   expect(screen.getByText('Do you want to remove this user group?')).toBeInTheDocument();
   
-  // TODO remove
-  const userLoggedEmail = getProfileByKey('email');
-  const loggedUserEmailNotInAnyUsergroup = find(userGroups, (usergroup) => {
-    return find(usergroup.users, (user) => {
-      return user.email === userLoggedEmail;
-    });
-  });
-
-  expect(loggedUserEmailNotInAnyUsergroup).toBeUndefined();
-
   const confirmRemove = screen.getByTestId('button-default-continue');
   userEvent.click(confirmRemove);
 
@@ -166,7 +155,7 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
   expect(history.location.pathname).toBe('/workspaces');
 });
 
-test.only('should remove a user group (I am a root user), and not be redirected to workspaces', async () => {
+test('should remove a user group (I am a root user), and not be redirected to workspaces', async () => {
   saveProfile({
     id: '1',
     name: 'Charles Admin',
