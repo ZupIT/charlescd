@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.infrastructure.service.client.request
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 
@@ -34,10 +35,14 @@ class CircleMatcherRequest(
     val active: Boolean
 )
 
-data class Node(
+data class Node @JsonCreator constructor(
+    @JsonProperty("type")
     val type: NodeTypeRequest?,
+    @JsonProperty("logicalOperator")
     val logicalOperator: LogicalOperatorRequest?,
+    @JsonProperty("clauses")
     val clauses: List<Node>?,
+    @JsonProperty("content")
     val content: Rule?
 ) {
     enum class NodeTypeRequest {
@@ -50,9 +55,12 @@ data class Node(
         OR
     }
 
-    data class Rule(
+    data class Rule @JsonCreator constructor(
+        @JsonProperty("key")
         val key: String?,
+        @JsonProperty("condition")
         val condition: String?,
+        @JsonProperty("value")
         val value: List<String>?
     )
 }
