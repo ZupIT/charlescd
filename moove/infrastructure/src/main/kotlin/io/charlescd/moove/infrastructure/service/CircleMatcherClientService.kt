@@ -53,10 +53,10 @@ class CircleMatcherClientService(
         this.circleMatcherClient.delete(URI(matcherUri), reference)
     }
 
-    override fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String) {
+    override fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String, active: Boolean) {
         this.circleMatcherClient.createImport(
             URI(matcherUri),
-            createImportRequest(nodes, circle, null, false)
+            createImportRequest(nodes, circle, null, active)
         )
     }
 
@@ -129,23 +129,12 @@ class CircleMatcherClientService(
         circles.forEach { circle ->
             if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
                 val rules = jdbcKeyValueRuleRepository.findByCircle(circle.id)
-                rules.map { it.rule }.chunked(100).forEach { createImport(circle, it, matcherUri /*,circle.active*/) }
+                rules.map { it.rule }.chunked(100).forEach {
+                    createImport(circle, it, matcherUri, circle.active)
+                }
             } else {
                 create(circle, matcherUri, circle.active)
             }
-
-            // Get rules from key_value table if the circle is SIMPLE_KV
-//            if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
-//                val rules = keyValueService.findByCircle(circle.id)
-//                val jsonList = csvSegmentationService.createJsonNodeList(rules)
-//                jsonList.chunked(100).map {
-//                    this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
-//                }
-//            } else {
-//                this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
-//            }
-            // To get this to work, first we need to guarantee that will be only on rule per circle the key_value table,
-            // y removing old ones all the time we save them            create(it, matcherUri, it.active)
         }
     }
 }

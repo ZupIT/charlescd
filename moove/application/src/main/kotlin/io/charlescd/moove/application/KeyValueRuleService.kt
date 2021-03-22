@@ -24,13 +24,13 @@ import javax.inject.Named
 class KeyValueRuleService(private val keyValueRuleRepository: KeyValueRuleRepository) {
 
     fun save(rules: List<KeyValueRule>) {
-        ensureUniquenessFor(rules)
+        ensureConsistencyFor(rules.map { it.circleId })
         this.keyValueRuleRepository.saveAll(rules)
     }
 
-    private fun ensureUniquenessFor(rules: List<KeyValueRule>) {
-        rules.forEach {
-            delete(it.circleId)
+    private fun ensureConsistencyFor(circleIds: List<String>) {
+        circleIds.forEach {
+            delete(it)
         }
     }
 

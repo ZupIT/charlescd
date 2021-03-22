@@ -32,7 +32,7 @@ interface CircleMatcherService {
 
     fun delete(reference: String, matcherUri: String)
 
-    fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String)
+    fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String, active: Boolean = false)
 
     fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String, active: Boolean)
 
