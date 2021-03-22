@@ -62,7 +62,7 @@ class CircleFixture {
                 DEFAULT_REFERENCE,
                 Fixtures.user().build(),
                 LocalDateTime.now(),
-                MatcherTypeEnum.SIMPLE_KV,
+                MatcherTypeEnum.REGULAR,
                 null,
                 null,
                 null,

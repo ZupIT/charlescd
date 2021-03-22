@@ -20,21 +20,20 @@ package io.charlescd.moove.infrastructure.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.Circles
-import io.charlescd.moove.domain.SimpleCircle
-import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.infrastructure.repository.JdbcKeyValueRuleRepository
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
 import io.charlescd.moove.infrastructure.service.client.request.Node
-import java.net.URI
 import org.springframework.stereotype.Service
+import java.net.URI
 
 @Service
 class CircleMatcherClientService(
     private val circleMatcherClient: CircleMatcherClient,
+    private val jdbcKeyValueRuleRepository: JdbcKeyValueRuleRepository,
     private val objectMapper: ObjectMapper
 ) : CircleMatcherService {
 
@@ -127,6 +126,26 @@ class CircleMatcherClientService(
     }
 
     override fun saveAllFor(circles: Circles, matcherUri: String) {
-        circles.forEach { create(it, matcherUri, it.active) }
+        circles.forEach { circle ->
+            if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
+                val rules = jdbcKeyValueRuleRepository.findByCircle(circle.id)
+                rules.map { it.rule }.chunked(100).forEach { createImport(circle, it, matcherUri /*,circle.active*/) }
+            } else {
+                create(circle, matcherUri, circle.active)
+            }
+
+            // Get rules from key_value table if the circle is SIMPLE_KV
+//            if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
+//                val rules = keyValueService.findByCircle(circle.id)
+//                val jsonList = csvSegmentationService.createJsonNodeList(rules)
+//                jsonList.chunked(100).map {
+//                    this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
+//                }
+//            } else {
+//                this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
+//            }
+            // To get this to work, first we need to guarantee that will be only on rule per circle the key_value table,
+            // y removing old ones all the time we save them            create(it, matcherUri, it.active)
+        }
     }
 }

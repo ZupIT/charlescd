@@ -18,9 +18,11 @@ package io.charlescd.moove.infrastructure.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.Circles
+import io.charlescd.moove.domain.KeyValueRule
 import io.charlescd.moove.domain.SimpleCircle
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.fixture.Fixtures
+import io.charlescd.moove.infrastructure.repository.JdbcKeyValueRuleRepository
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
@@ -33,8 +35,10 @@ class CircleMatcherClientServiceTest extends Specification {
 
     private CircleMatcherClient circleMatcherClient = Mock(CircleMatcherClient)
 
+    private JdbcKeyValueRuleRepository jdbcKeyValueRuleRepository = Mock(JdbcKeyValueRuleRepository)
+
     void setup() {
-        this.circleMatcherService = new CircleMatcherClientService(circleMatcherClient, new ObjectMapper())
+        this.circleMatcherService = new CircleMatcherClientService(circleMatcherClient, jdbcKeyValueRuleRepository, new ObjectMapper())
     }
 
     def "should create a new circle segmentation on circle matcher"() {
@@ -170,10 +174,32 @@ class CircleMatcherClientServiceTest extends Specification {
     def "should find the circles from workspace and create at circle-matcher"() {
         given:
         def matcherUri = "http://circle-matcher.com"
-        def circles = new Circles([Fixtures.circle().build(), Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()])
+        def firstCircle = Fixtures.circle().build()
+        def secondCircle = Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()
+        def circles = new Circles([firstCircle, secondCircle])
         when:
         circleMatcherService.saveAllFor(circles, matcherUri)
         then:
         2 * circleMatcherClient.create(new URI(matcherUri), _)
+    }
+
+//    def "should find the circles from workspace and create at circle-matcher"() {
+//        given:
+//        def matcherUri = "http://circle-matcher.com"
+//        def firstCircle = Fixtures.circle().build()
+//        def secondCircle = Fixtures.circle().withId("ae806b2a-557b-45c5-91be-1e1db909bef6").build()
+//        def circles = new Circles([firstCircle, secondCircle])
+//        when:
+//        circleMatcherService.saveAllFor(circles, matcherUri)
+//        then:
+//        // 2 * jdbcKeyValueRuleRepository.findByCircle(_) >> [createDummyKeyValueRule(firstCircle.id), createDummyKeyValueRule(secondCircle.id)]
+//        2 * circleMatcherClient.create(new URI(matcherUri), _)
+//        // 2 * circleMatcherClient.createImport(new URI(matcherUri), _)
+//    }
+
+    def createDummyKeyValueRule(String circleId) {
+        def rules = "{\"type\": \"RULE\", \"content\": {\"key\": \"username\", \"value\": [\"b65d36da-887d-44f0-b92c-c5b4c732b6a4\"], \"condition\": \"EQUAL\"}, \"logicalOperator\": \"OR\"}"
+        def rulesNodes = new ObjectMapper().readTree(rules)
+        return new KeyValueRule("acf42f7c-9885-43df-8994-4db2659b74a0", rulesNodes, circleId)
     }
 }
