@@ -76,7 +76,6 @@ test('render Credentials default component', async () => {
   );
 
   render(<Credentials />);
-  screen.debug()
 
   const credentialsElement = await screen.findByTestId("credentials");
   expect(credentialsElement).toBeInTheDocument();
