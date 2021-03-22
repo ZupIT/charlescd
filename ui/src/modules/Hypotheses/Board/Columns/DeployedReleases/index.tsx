@@ -21,6 +21,7 @@ import { Column as ColumnProps } from 'modules/Hypotheses/Board/interfaces';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import Card from 'core/components/Card';
 import routes from 'core/constants/routes';
+import { dateFrom } from 'core/utils/date';
 import Styled from './styled';
 
 interface Props {
@@ -33,8 +34,10 @@ const DeployedReleases = ({ column }: Props) => {
   const renderDeployment = (deployment: Deployment) => (
     <Card.Circle
       key={deployment?.id}
-      circle={deployment?.circle?.name}
-      deployedAt={deployment?.deployedAt}
+      icon="circles"
+      iconColor="success"
+      title={deployment?.circle?.name}
+      description={`Deployed at ${dateFrom(deployment?.deployedAt)}`}
       onClick={() =>
         history.push(
           `${routes.circlesComparation}?circle=${deployment?.circle?.id}`

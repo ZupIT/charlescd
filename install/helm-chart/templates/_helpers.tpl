@@ -60,6 +60,9 @@ If release name contains chart name it will be used as a full name.
 {{- if contains "octopipe" .RangeContext.name }}
 {{ include "test.octopipe-envs" .}}
 {{- end -}}
+{{- if contains "hermes" .RangeContext.name }}
+{{ include "test.hermes-envs" .}}
+{{- end -}}
 {{- end -}}
 
 
@@ -266,8 +269,48 @@ env:
     value: {{ .ChartContext.AppVersion }}
 {{- end -}}
 
-
-
+{{- define "test.hermes-envs" -}}
+env:
+  - name: DB_HOST
+    value: "{{ .RangeContext.database.host}}"
+  - name: DB_PORT
+    value: "{{ .RangeContext.database.port}}"
+  - name: DB_USER
+    value: "{{ .RangeContext.database.user}}"
+  - name: DB_PASSWORD
+    value: "{{ .RangeContext.database.password}}"
+  - name: DB_NAME
+    value: "{{ .RangeContext.database.name}}"
+  - name: DB_SSL
+    value: "disable"
+  - name: ENCRYPTION_KEY
+    valueFrom:
+      secretKeyRef:
+        name: "hermes-aes256-key"
+        key: "encryption-key"
+  - name: AMQP_URL
+    value: "{{ .RangeContext.amqp.url}}"
+  - name: AMQP_MESSAGE_QUEUE
+    value: "{{ .RangeContext.amqp.message.queue}}"
+  - name: AMQP_MESSAGE_ROUTING_KEY
+    value: "{{ .RangeContext.amqp.message.routingKey}}"
+  - name: AMQP_MESSAGE_EXCHANGE
+    value: "{{ .RangeContext.amqp.message.exchange}}"
+  - name: AMQP_WAIT_MESSAGE_QUEUE
+    value: "{{ .RangeContext.amqp.waitMessage.queue}}"
+  - name: AMQP_AMQP_WAIT_MESSAGE_EXCHANGE
+    value: "{{ .RangeContext.amqp.waitMessage.exchange}}"
+  - name: PUBLISHER_TIME
+    value: "{{ .RangeContext.publisher.time}}"
+  - name: PUBLISHER_ATTEMPTS
+    value: "{{ .RangeContext.publisher.attempts}}"
+  - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
+    value: "{{ .RangeContext.consumer.messageRetry.expiration}}"
+  - name: CONSUMER_MESSAGE_RETRY_ATTEMPTS
+    value: "{{ .RangeContext.consumer.messageRetry.attempts}}"
+  - name: SUBSCRIPTION_REGISTER_LIMIT
+    value: "{{ .RangeContext.subscriptionRegisterLimit}}"
+{{- end -}}
 
 {{/*
 Create chart name and version as used by the chart label.

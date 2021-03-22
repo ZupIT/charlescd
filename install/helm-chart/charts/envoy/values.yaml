@@ -10,6 +10,8 @@ octopipe:
   enabled: true
 compass:
   enabled: true
+hermes:
+  enabled: true
 cors:
   enabled: true
   hosts: []

@@ -25,7 +25,7 @@ import { Props } from '../interfaces';
 import { useCircleMatcher } from './hooks';
 import Styled from './styled';
 
-const FormCircleMatcher = ({ onFinish }: Props) => {
+const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   const { responseAdd, save, loadingAdd } = useCircleMatcher();
   const { register, handleSubmit, formState: { isValid } } = useForm<CircleMatcher>({
     mode: 'onChange'

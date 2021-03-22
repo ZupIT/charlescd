@@ -49,6 +49,9 @@ public abstract class SegmentationRequest {
     @NotNull
     private Boolean isDefault;
 
+    @Valid
+    private Integer percentage;
+
     @NotNull
     private Boolean active;
 
@@ -111,10 +114,18 @@ public abstract class SegmentationRequest {
         this.isDefault = isDefault;
     }
 
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+
     public Segmentation toSegmentation() {
         return new Segmentation(
-            this.name, this.node, this.reference, this.circleId, this.type, this.workspaceId, this.isDefault,
-                this.active, this.createdAt
+                this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, percentage,
+                active, createdAt
         );
     }
 
@@ -134,4 +145,7 @@ public abstract class SegmentationRequest {
         this.active = active;
     }
 
+    public boolean hasValidPercentage() {
+        return this.percentage >= 0 && this.percentage <= 100;
+    }
 }
