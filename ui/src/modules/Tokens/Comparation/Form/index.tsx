@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Can from 'containers/Can';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Token } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import Text from 'core/components/Text';
 import ContentIcon from 'core/components/ContentIcon';
-import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Styled from './styled';
 
