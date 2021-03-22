@@ -63,6 +63,11 @@ const Title = styled(Text.h2)`
   margin-bottom: 20px;
 `;
 
+const Description = styled.div`
+  margin-top: 15px;
+  margin-bottom: 15px;
+`;
+
 const ContinueButton = styled(DefaultButton)`
   padding: 5px;
   margin-top: 15px;
@@ -104,5 +109,6 @@ export default {
   Content,
   Background,
   Title,
+  Description,
   Wrapper
 };
