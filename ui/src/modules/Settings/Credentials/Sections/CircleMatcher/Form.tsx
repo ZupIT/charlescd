@@ -27,7 +27,7 @@ import Styled from './styled';
 import Modal from 'core/components/Modal';
 import { isEmpty } from 'lodash';
 
-const FormCircleMatcher = ({ onFinish }: Props) => {
+const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   const [circleMatcher, setCircleMatcher] = useState<string>();
   const isConfimation = !isEmpty(circleMatcher);
   const { responseAdd, save, loadingAdd } = useCircleMatcher();

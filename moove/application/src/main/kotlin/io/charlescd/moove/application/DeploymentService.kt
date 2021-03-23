@@ -20,7 +20,9 @@ package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.Deployment
 import io.charlescd.moove.domain.DeploymentStatusEnum
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
+import java.util.*
 import javax.inject.Named
 
 @Named
@@ -30,8 +32,12 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         return this.deploymentRepository.save(deployment)
     }
 
-    fun findByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
-        return this.deploymentRepository.findByCircleIdAndWorkspaceId(circleId, workspaceId)
+    fun update(deployment: Deployment): Deployment {
+        return this.deploymentRepository.update(deployment)
+    }
+
+    fun findByCircleIdAndStatus(circleId: String, status: DeploymentStatusEnum): Optional<Deployment> {
+        return this.deploymentRepository.find(circleId, status)
     }
 
     fun updateStatus(id: String, status: DeploymentStatusEnum) {
@@ -40,6 +46,22 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
 
     fun deleteByCircleId(circleId: String) {
         deploymentRepository.deleteByCircleId(circleId)
+    }
+
+    fun find(id: String): Deployment {
+        return this.deploymentRepository.findById(
+            id
+        ).orElseThrow {
+            NotFoundException("deployment", id)
+        }
+    }
+
+    fun findByIdAndWorkspace(id: String, workspaceId: String): Deployment {
+        return this.deploymentRepository.find(
+            id, workspaceId
+        ).orElseThrow {
+            NotFoundException("deployment", id)
+        }
     }
 
     fun findLastActive(circleId: String): Deployment? {

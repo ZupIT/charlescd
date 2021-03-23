@@ -77,6 +77,13 @@ data:
                       prefix_rewrite: "/"
                       cluster: charlescd-compass
                   {{- end}}
+                  {{ if .Values.hermes.enabled }}
+                  - match:
+                      prefix: "/hermes/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-hermes
+                  {{- end}}
                   {{ if .Values.ui.enabled }}
                   - match:
                       prefix: "/"
@@ -211,6 +218,22 @@ data:
                 address:
                   socket_address:
                     address: charlescd-compass
+                    port_value: 8080
+      {{- end}}
+      {{ if .Values.hermes.enabled }}
+      - name: charlescd-hermes
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-hermes
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-hermes
                     port_value: 8080
       {{- end}}
     admin:
