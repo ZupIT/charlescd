@@ -52,8 +52,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 new CircleService(circleRepository),
                 deployService,
                 new WorkspaceService(workspaceRepository, userRepository),
-                new DeploymentConfigurationService(deploymentConfigurationRepository)
-                new WebhookEventService(hermesService, new BuildService(buildRepository)))
+                new DeploymentConfigurationService(deploymentConfigurationRepository),
+                new WebhookEventService(hermesService, new BuildService(buildRepository))
         )
     }
 
@@ -296,6 +296,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def circle = getCircle(true)
         def workspaceId = TestUtils.workspaceId
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
         def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
         def authorization = TestUtils.authorization
@@ -309,6 +311,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
@@ -354,10 +357,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
-
-        def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
-        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, LocalDateTime.now().plusDays(1), LocalDateTime.now(), false)
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
 
         def workspace = TestUtils.workspace
 
@@ -369,6 +370,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * hermesService.notifySubscriptionEvent(_)
@@ -412,6 +414,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def author = TestUtils.user
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
         def workspace = TestUtils.workspace
 
@@ -423,6 +427,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * hermesService.notifySubscriptionEvent(_)
@@ -442,6 +447,9 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
+
         def percentageCircle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 20)
         def deployedPercentageCircle = new Circle('5d058a02-6406-4aea-be8c-3315ee202a56', 'Circle percentage', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
@@ -450,7 +458,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
         def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", deploymentConfigId)
         def authorization = TestUtils.authorization
         when:
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
@@ -460,6 +468,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
         0 * deployService.undeploy(_, _)
@@ -478,6 +487,9 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
+
         def percentageCircle = getCircle(false,20)
         def deployedPercentageCircle = getCircle(false, 90)
         def deployedPercentageCircle2 = getCircle(false, 10)
@@ -495,6 +507,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage

@@ -37,7 +37,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     private val circleService: CircleService,
     private val deployService: DeployService,
     private val workspaceService: WorkspaceService,
-    private val deploymentConfigurationService: DeploymentConfigurationService
+    private val deploymentConfigurationService: DeploymentConfigurationService,
     private val webhookEventService: WebhookEventService
 ) : CreateDeploymentInteractor {
 
@@ -53,10 +53,11 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
         val user = userService.findByAuthorizationToken(authorization)
         val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         val deployment = createDeployment(request, workspaceId, user)
+
         if (build.canBeDeployed()) {
             checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
-            deploy(deployment, build, workspace)
+            deploy(deployment, build, workspace, deploymentConfiguration)
             return DeploymentResponse.from(deployment, build)
         } else {
             notifyEvent(workspaceId, WebhookEventStatusEnum.FAIL, deployment)
@@ -102,9 +103,9 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
             webhookEventService.notifyDeploymentEvent(workspaceId, WebhookEventTypeEnum.DEPLOY, WebhookEventSubTypeEnum.START_DEPLOY, status, deployment, error)
     }
 
-    private fun deploy(deployment: Deployment, build: Build, workspace: Workspace) {
+    private fun deploy(deployment: Deployment, build: Build, workspace: Workspace, deploymentConfiguration: DeploymentConfiguration) {
         try {
-            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
+            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), deploymentConfiguration)
             notifyEvent(workspace.id, WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
             notifyEvent(workspace.id, WebhookEventStatusEnum.FAIL, deployment, ex.message)

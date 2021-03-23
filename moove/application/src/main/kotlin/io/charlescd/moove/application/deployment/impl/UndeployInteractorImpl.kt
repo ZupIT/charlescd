@@ -18,42 +18,44 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-import io.charlescd.moove.application.DeploymentService
-import io.charlescd.moove.application.UserService
-import io.charlescd.moove.application.WebhookEventService
+import io.charlescd.moove.application.*
 import io.charlescd.moove.application.deployment.UndeployInteractor
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.DeployService
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Named
 open class UndeployInteractorImpl @Inject constructor(
     private val deploymentService: DeploymentService,
     private val userService: UserService,
     private val deployService: DeployService,
-    private val webhookEventService: WebhookEventService
+    private val webhookEventService: WebhookEventService,
+    private val workspaceService: WorkspaceService,
+    private val deploymentConfigurationService: DeploymentConfigurationService
 ) : UndeployInteractor {
 
     @Transactional
     override fun execute(workspaceId: String, authorization: String, id: String) {
         val deployment: Deployment = getDeployment(id, workspaceId)
-        updateDeploymentStatus(deployment)
-        undeploy(authorization, deployment)
-    }
+        val workspace = workspaceService.find(workspaceId)
+        validateWorkspace(workspace)
 
-    private fun updateDeploymentStatus(deployment: Deployment): Deployment {
-        return deploymentService.update(deployment.copy(status = DeploymentStatusEnum.UNDEPLOYING))
+        val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
+        undeploy(authorization, deployment, deploymentConfiguration)
+        setNotDeployedStatus(deployment)
     }
 
     private fun getAuthorId(authorization: String): String {
         return userService.findByAuthorizationToken(authorization).id
     }
 
-    private fun undeploy(authorization: String, deployment: Deployment) {
+    private fun undeploy(authorization: String, deployment: Deployment, deploymentConfiguration: DeploymentConfiguration) {
         try {
-            deployService.undeploy(deployment.id, getAuthorId(authorization))
+            deployService.undeploy(deployment.id, getAuthorId(authorization), deploymentConfiguration)
             notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
             notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.FAIL, deployment, ex.message!!)
@@ -75,12 +77,24 @@ open class UndeployInteractorImpl @Inject constructor(
             )
     }
 
+    private fun setNotDeployedStatus(deployment: Deployment) {
+        try {
+            deploymentService.update(deployment.copy(status = DeploymentStatusEnum.NOT_DEPLOYED, undeployedAt = LocalDateTime.now()))
+        } catch (ex: Exception) {
+            throw ex
+        }
+    }
+
     private fun getDeployment(deploymentId: String, workspaceId: String): Deployment {
         try {
-            return deploymentService.findByIdAndWorkspace(deploymentId, workspaceId)
+            return deploymentService.findByIdAndWorkspaceId(deploymentId, workspaceId)
         } catch (ex: Exception) {
             notifyEvent(workspaceId, WebhookEventStatusEnum.FAIL, null, ex.message!!)
             throw ex
         }
+    }
+
+    private fun validateWorkspace(workspace: Workspace) {
+        workspace.deploymentConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING)
     }
 }
