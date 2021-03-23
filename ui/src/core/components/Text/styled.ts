@@ -35,7 +35,7 @@ const Text = styled.span<Props>`
   font-weight: ${({ weight }) => weight};
   color: ${({ theme, color }) => theme.text[color]};
   text-align: ${({ align }) => align};
-  line-height: 140%;
+  line-height: ${({ fontSize }) => fontSize};
 `;
 
 export default {
