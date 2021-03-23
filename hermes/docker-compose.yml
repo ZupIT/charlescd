@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:11.8-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=charlescd_hermes
+      - POSTGRES_PASSWORD=charlescd_hermes
+      - MAX_CONNECTIONS=300
+    networks:
+      - development
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    ports:
+        - 5672:5672
+        - 15672:15672
+
+networks:
+  development:
+    driver: bridge

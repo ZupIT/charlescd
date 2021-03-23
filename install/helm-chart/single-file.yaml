@@ -26,6 +26,20 @@ metadata:
 imagePullSecrets:
     []
 ---
+# Source: charlescd/charts/rabbitmq/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+secrets:
+  - name: charlescd-rabbitmq
+---
 # Source: charlescd/templates/service-account.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -46,8 +60,24 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "ZjJqNGJpd0wwRQ=="
-  postgresql-password: "UXRTeEpSd2NoZQ=="
+  postgresql-postgres-password: "d3RORkU5VGRNWA=="
+  postgresql-password: "d1lXUkRjOFc3cw=="
+---
+# Source: charlescd/charts/rabbitmq/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  rabbitmq-password: "YUdWeWJXVno="
+  rabbitmq-erlang-cookie: "TGNkRGJ1cDFNUjJ0UTZ1c0ZQbFlxTzQ1V3licnV5SVk="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -90,6 +120,15 @@ metadata:
 type: Opaque
 data:
   encryption-key: OGVhMzY4OGYtYmUxOS00YWU2LTljNmMtZDFhNjAzNjAyYTJm
+---
+# Source: charlescd/templates/charlescd-secrets.yaml
+apiVersion: v1
+data:
+  encryption-key: Yjg0NDVkMDUtMzliOC00YTkxLWEwOWMtZDRhN2VkOGRlZmRj
+kind: Secret
+metadata:
+  name: hermes-aes256-key
+type: Opaque
 ---
 # Source: charlescd/charts/envoy/templates/envoy-conf.yml
 apiVersion: v1
@@ -162,6 +201,12 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-compass
+                  
+                  - match:
+                      prefix: "/hermes/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-hermes
                   
                   - match:
                       prefix: "/"
@@ -290,6 +335,21 @@ data:
                 address:
                   socket_address:
                     address: charlescd-compass
+                    port_value: 8080
+      
+      - name: charlescd-hermes
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-hermes
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-hermes
                     port_value: 8080
     admin:
       access_log_path: "/dev/stdout"
@@ -1771,6 +1831,38 @@ data:
     
     run-batch
     stop-embedded-server
+---
+# Source: charlescd/charts/rabbitmq/templates/configuration.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: charlescd-rabbitmq-config
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+data:
+  rabbitmq.conf: |-
+    ## Username and password
+    ##
+    default_user = charlescd_hermes
+    default_pass = aGVybWVz
+    ## Clustering
+    ##
+    cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
+    cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
+    cluster_formation.node_cleanup.interval = 10
+    cluster_formation.node_cleanup.only_log_warning = true
+    cluster_partition_handling = autoheal
+    # queue master locator
+    queue_master_locator = min-masters
+    # enable guest user
+    loopback_users.guest = false
+    #default_vhost = charles-vhost
+    #disk_free_limit.absolute = 50MB
+    #load_definitions = /app/load_definition.json
 ---
 # Source: charlescd/charts/redis/templates/configmap-scripts.yaml
 apiVersion: v1
@@ -5660,28 +5752,34 @@ metadata:
 data:
   charles-init.sh: |
     #!/bin/bash
-    export PGUSER=postgres
-    export PGPASSWORD=firstpassword
-    psql -c "CREATE DATABASE charlescd_butler"
-    psql -c "CREATE USER charlescd_butler WITH PASSWORD '3f2Yq8R4HhDCnefR'"
-    psql -c "ALTER DATABASE charlescd_butler OWNER TO charlescd_butler"
-    psql -d charlescd_butler -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE charlescd_moove"
-    psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
-    psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
-    psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE charlescd_villager"
-    psql -c "CREATE USER charlescd_villager WITH PASSWORD 'ZkQ67Lnhs2bM3MPN'"
-    psql -c "ALTER DATABASE charlescd_villager OWNER TO charlescd_villager"
-    psql -d charlescd_villager -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE keycloak"
-    psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
-    psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
-
-    psql -c "CREATE DATABASE charlescd_compass"
-    psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
-    psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
-    psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+      psql -c "CREATE DATABASE charlescd_butler"
+      psql -c "CREATE USER charlescd_butler WITH PASSWORD '3f2Yq8R4HhDCnefR'"
+      psql -c "ALTER DATABASE charlescd_butler OWNER TO charlescd_butler"
+      psql -d charlescd_butler -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_compass"
+      psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+      psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+      psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_hermes"
+      psql -c "CREATE USER charlescd_hermes WITH PASSWORD 'aGVybWVz'"
+      psql -c "ALTER DATABASE charlescd_hermes OWNER TO charlescd_hermes"
+      psql -d charlescd_hermes -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_moove"
+      psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
+      psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
+      psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_villager"
+      psql -c "CREATE USER charlescd_villager WITH PASSWORD 'ZkQ67Lnhs2bM3MPN'"
+      psql -c "ALTER DATABASE charlescd_villager OWNER TO charlescd_villager"
+      psql -d charlescd_villager -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE keycloak"
+      psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
+      psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
 ---
 # Source: charlescd/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -5895,6 +5993,25 @@ rules:
       - create
       - patch
 ---
+# Source: charlescd/charts/rabbitmq/templates/role.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: charlescd-rabbitmq-endpoint-reader
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+---
 # Source: charlescd/charts/ingress-nginx/templates/controller-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -5915,6 +6032,25 @@ subjects:
   - kind: ServiceAccount
     name: charlescd-ingress-nginx
     namespace: charles
+---
+# Source: charlescd/charts/rabbitmq/templates/rolebinding.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: charlescd-rabbitmq-endpoint-reader
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+subjects:
+  - kind: ServiceAccount
+    name: charlescd-rabbitmq
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: charlescd-rabbitmq-endpoint-reader
 ---
 # Source: charlescd/charts/envoy/templates/envoy-service.yml
 apiVersion: v1
@@ -6092,6 +6228,70 @@ spec:
     app.kubernetes.io/instance: charlescd
     role: primary
 ---
+# Source: charlescd/charts/rabbitmq/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: charlescd-rabbitmq-headless
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+spec:
+  clusterIP: None
+  ports:
+    - name: epmd
+      port: 4369
+      targetPort: epmd
+    - name: amqp
+      port: 5672
+      targetPort: amqp
+    - name: dist
+      port: 25672
+      targetPort: dist
+    - name: http-stats
+      port: 15672
+      targetPort: stats
+  selector: 
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/instance: charlescd
+---
+# Source: charlescd/charts/rabbitmq/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: amqp
+      nodePort: null
+    - name: epmd
+      port: 4369
+      targetPort: epmd
+      nodePort: null
+    - name: dist
+      port: 25672
+      targetPort: dist
+      nodePort: null
+    - name: http-stats
+      port: 15672
+      targetPort: stats
+      nodePort: null
+  selector: 
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/instance: charlescd
+---
 # Source: charlescd/charts/redis/templates/headless-svc.yaml
 apiVersion: v1
 kind: Service
@@ -6181,6 +6381,21 @@ spec:
     
   selector:
     app: charlescd-compass
+---
+# Source: charlescd/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: charlescd-hermes
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    
+  selector:
+    app: charlescd-hermes
 ---
 # Source: charlescd/templates/service.yaml
 apiVersion: v1
@@ -6430,8 +6645,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: 3f2Yq8R4HhDCnefR
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_butler -U charlescd_butler;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
@@ -6463,7 +6681,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.1
+          image: zupcharles/charlescd-butler:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6480,7 +6698,12 @@ spec:
               port: 3000
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 256Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6521,7 +6744,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.1
+          image: zupcharles/charlescd-circle-matcher:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6571,8 +6794,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: C1UinUu6N0vc
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_compass -U charlescd_compass;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
@@ -6623,7 +6849,106 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.1
+          image: zupcharles/charlescd-compass:0.6.0
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+              httpGet:
+                path: /health
+                port: 8080
+              initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+          resources:
+              limits:
+                cpu: 128m
+                memory: 128Mi
+              requests:
+                cpu: 64m
+                memory: 64Mi
+---
+# Source: charlescd/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: charlescd-hermes
+  namespace: charles
+  labels:
+    app: charlescd-hermes
+    version: charlescd-hermes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: charlescd-hermes
+      version: charlescd-hermes
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: charlescd-hermes
+        version: charlescd-hermes
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: aGVybWVz
+          command: ['sh', '-c', 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_hermes -U charlescd_hermes;
+            do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: charlescd-hermes
+                    
+          env:
+            - name: DB_HOST
+              value: "charlescd-postgresql"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "charlescd_hermes"
+            - name: DB_PASSWORD
+              value: "aGVybWVz"
+            - name: DB_NAME
+              value: "charlescd_hermes"
+            - name: DB_SSL
+              value: "disable"
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "hermes-aes256-key"
+                  key: "encryption-key"
+            - name: AMQP_URL
+              value: "amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/"
+            - name: AMQP_MESSAGE_QUEUE
+              value: "queue-message"
+            - name: AMQP_MESSAGE_ROUTING_KEY
+              value: "routing-key-message"
+            - name: AMQP_MESSAGE_EXCHANGE
+              value: "exchange-message"
+            - name: AMQP_WAIT_MESSAGE_QUEUE
+              value: "queue-message-wait"
+            - name: AMQP_AMQP_WAIT_MESSAGE_EXCHANGE
+              value: "exchange-message-wait"
+            - name: PUBLISHER_TIME
+              value: "@every 5s"
+            - name: PUBLISHER_ATTEMPTS
+              value: "3"
+            - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
+              value: "30000"
+            - name: CONSUMER_MESSAGE_RETRY_ATTEMPTS
+              value: "3"
+            - name: SUBSCRIPTION_REGISTER_LIMIT
+              value: "5"
+          image: zupcharles/charlescd-hermes:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6668,8 +6993,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: 7Qs2KuM9gYzw48BS
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_moove -U charlescd_moove;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
@@ -6710,7 +7038,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.1
+          image: zupcharles/charlescd-moove:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6727,7 +7055,12 @@ spec:
               port: 8080
             initialDelaySeconds: 180
           resources:
-              {}
+              limits:
+                cpu: 1
+                memory: 1024Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6765,7 +7098,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.1
+          image: zupcharles/charlescd-octopipe:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6782,7 +7115,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 512m
+                memory: 1Gi
+              requests:
+                cpu: 512m
+                memory: 1Gi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6827,7 +7165,9 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
-          image: zupcharles/charlescd-ui:0.6.1
+            - name: REACT_APP_CHARLES_VERSION
+              value: 
+          image: zupcharles/charlescd-ui:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6844,7 +7184,12 @@ spec:
               port: 3000
             initialDelaySeconds: 20
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 128Mi
+              requests:
+                cpu: 64m
+                memory: 64Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6872,8 +7217,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: ZkQ67Lnhs2bM3MPN
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_villager -U charlescd_villager;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
@@ -6893,7 +7241,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.1
+          image: zupcharles/charlescd-villager:0.6.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6910,7 +7258,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 256m
+                memory: 512Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/hpa.yaml
 apiVersion: autoscaling/v2beta2
@@ -6925,7 +7278,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: charlescd-circle-matcher
-  minReplicas: 3
+  minReplicas: 1
   maxReplicas: 10
   metrics:
     - type: Resource
@@ -6968,8 +7321,8 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
         
       containers:
@@ -7235,6 +7588,184 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: charlescd/charts/rabbitmq/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+spec:
+  serviceName: charlescd-rabbitmq-headless
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+      app.kubernetes.io/instance: charlescd
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rabbitmq
+        helm.sh/chart: rabbitmq-8.9.1
+        app.kubernetes.io/instance: charlescd
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/config: cefd48a7bdc5d27ebbbb3cec3ba8633667894291ab320066430a07fd64077b5c
+        checksum/secret: e29519e6cefdeb511832c7eee1a143732db14736309c7a417d1069aa715c4f76
+    spec:
+      
+      serviceAccountName: charlescd-rabbitmq
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: rabbitmq
+                    app.kubernetes.io/instance: charlescd
+                namespaces:
+                  - charles
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: rabbitmq
+          image: docker.io/bitnami/rabbitmq:3.8.11-debian-10-r0
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: K8S_SERVICE_NAME
+              value: "charlescd-rabbitmq-headless"
+            - name: K8S_ADDRESS_TYPE
+              value: hostname
+            - name: RABBITMQ_FORCE_BOOT
+              value: "no"
+            - name: RABBITMQ_NODE_NAME
+              value: "rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: K8S_HOSTNAME_SUFFIX
+              value: ".$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: RABBITMQ_MNESIA_DIR
+              value: "/bitnami/rabbitmq/mnesia/$(RABBITMQ_NODE_NAME)"
+            - name: RABBITMQ_LDAP_ENABLE
+              value: "no"
+            - name: RABBITMQ_LOGS
+              value: "-"
+            - name: RABBITMQ_ULIMIT_NOFILES
+              value: "65536"
+            - name: RABBITMQ_USE_LONGNAME
+              value: "true"
+            - name: RABBITMQ_ERL_COOKIE
+              valueFrom:
+                secretKeyRef:
+                  name: charlescd-rabbitmq
+                  key: rabbitmq-erlang-cookie
+            - name: RABBITMQ_USERNAME
+              value: "charlescd_hermes"
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: charlescd-rabbitmq
+                  key: rabbitmq-password
+            - name: RABBITMQ_PLUGINS
+              value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
+          ports:
+            - name: amqp
+              containerPort: 5672
+            - name: dist
+              containerPort: 25672
+            - name: stats
+              containerPort: 15672
+            - name: epmd
+              containerPort: 4369
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - rabbitmq-diagnostics -q ping
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 20
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits: {}
+            requests: {}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/bash
+                  - -ec
+                  - |
+                    if [[ -f /opt/bitnami/scripts/rabbitmq/nodeshutdown.sh ]]; then
+                        /opt/bitnami/scripts/rabbitmq/nodeshutdown.sh -t "120" -d  "false"
+                    else
+                        rabbitmqctl stop_app
+                    fi
+          volumeMounts:
+            - name: configuration
+              mountPath: /bitnami/rabbitmq/conf
+            - name: data
+              mountPath: /bitnami/rabbitmq/mnesia
+      volumes:
+        - name: configuration
+          configMap:
+            name: charlescd-rabbitmq-config
+            items:
+              - key: rabbitmq.conf
+                path: rabbitmq.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: rabbitmq
+          app.kubernetes.io/instance: charlescd
       spec:
         accessModes:
           - "ReadWriteOnce"

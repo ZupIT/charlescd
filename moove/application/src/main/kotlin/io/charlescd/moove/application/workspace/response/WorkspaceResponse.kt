@@ -22,10 +22,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
 import io.charlescd.moove.application.usergroup.response.UserGroupResponse
-import io.charlescd.moove.domain.DeploymentConfiguration
-import io.charlescd.moove.domain.GitConfiguration
-import io.charlescd.moove.domain.MetricConfiguration
-import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.*
 import java.time.LocalDateTime
 
 data class WorkspaceResponse(
@@ -38,6 +35,7 @@ data class WorkspaceResponse(
     val circleMatcherUrl: String? = null,
     val metricConfiguration: MetricConfigurationResponse? = null,
     val deploymentConfiguration: DeploymentConfigurationResponse? = null,
+    val webhookConfiguration: List<WebhookConfigurationResponse>,
     val userGroups: List<UserGroupResponse>,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime
@@ -49,7 +47,8 @@ data class WorkspaceResponse(
             gitConfiguration: GitConfiguration? = null,
             registryConfigurationName: String? = null,
             metricConfiguration: MetricConfiguration? = null,
-            deploymentConfiguration: DeploymentConfiguration? = null
+            deploymentConfiguration: DeploymentConfiguration? = null,
+            webhookConfiguration: List<WebhookConfiguration> = emptyList()
         ): WorkspaceResponse {
             return WorkspaceResponse(
                 id = workspace.id,
@@ -83,6 +82,19 @@ data class WorkspaceResponse(
                         name = it.name,
                         gitProvider = it.gitProvider
                     )
+                },
+                webhookConfiguration = webhookConfiguration.map {
+                    WebhookConfigurationResponse(
+                        id = it.id,
+                        description = it.description,
+                        url = it.url,
+                        workspaceId = it.workspaceId,
+                        events = it.events,
+                        lastDelivery = WebhookLastDeliveryResponse(
+                            status = it.lastDelivery.status,
+                            details = it.lastDelivery.details
+                        )
+                    )
                 }
             )
         }
@@ -96,5 +108,19 @@ data class WorkspaceResponse(
     data class RegistryConfigurationResponse(
         val name: String,
         val id: String
+    )
+
+    data class WebhookConfigurationResponse(
+        val id: String,
+        val description: String,
+        val url: String,
+        val workspaceId: String,
+        val events: List<String>,
+        val lastDelivery: WebhookLastDeliveryResponse
+    )
+
+    data class WebhookLastDeliveryResponse(
+        val status: Long,
+        val details: String
     )
 }

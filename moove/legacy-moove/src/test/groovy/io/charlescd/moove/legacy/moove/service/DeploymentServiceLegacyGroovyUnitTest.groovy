@@ -19,7 +19,6 @@ package io.charlescd.moove.legacy.moove.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
-import io.charlescd.moove.legacy.moove.api.DeployApi
 import io.charlescd.moove.legacy.repository.DeploymentRepository
 import io.charlescd.moove.legacy.repository.entity.*
 import spock.lang.Specification
@@ -32,10 +31,9 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
     private DeploymentServiceLegacy service
     private static final JsonNode JSON_NODE = new ObjectMapper().createObjectNode()
     private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
-    private DeployApi deployApi = Mock(DeployApi)
 
     def setup() {
-        this.service = new DeploymentServiceLegacy(deploymentRepository, deployApi)
+        this.service = new DeploymentServiceLegacy(deploymentRepository)
         this.service.MOOVE_BASE_PATH = "http://fake-moove/base-path"
     }
 

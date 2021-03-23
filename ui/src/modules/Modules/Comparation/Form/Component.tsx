@@ -58,7 +58,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
   const watchFields = watch();
   const isEdit = !isEmpty(component);
   const history = useHistory();
-  const [editMoreOptions, setEditMoreOptions] = useState(false);
+  const [isAdvancedOptions, setIsAdvancedOptions] = useState(false);
 
   useEffect(() => {
     const form = getValues();
@@ -105,6 +105,23 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
     }
   };
 
+  const renderMoreOptions = () => (
+    <Styled.Components.AdvancedOptions>
+      <Styled.Input
+        label="Enter host value"
+        name="hostValue"
+        defaultValue={component?.hostValue}
+        ref={register()}
+      />
+      <Styled.Input
+        label="Enter gateway name"
+        name="gatewayName"
+        defaultValue={component?.gatewayName}
+        ref={register()}
+      />
+    </Styled.Components.AdvancedOptions>
+  )
+
   return (
     <Styled.Content>
       <Styled.Icon name="arrow-left" color="dark" onClick={() => onClose()} />
@@ -136,29 +153,15 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           />
         </Styled.FieldPopover>
         <Styled.Subtitle
-          onClick={() => setEditMoreOptions(!editMoreOptions)}
+          data-testid="subtitle-advanced-options"
+          onClick={() => setIsAdvancedOptions(!isAdvancedOptions)}
           color="dark"
         >
-          {editMoreOptions ? 'Hide ' : 'Show '}
+          {isAdvancedOptions ? 'Hide ' : 'Show '}
           advanced options (be careful, do not change this if you are not using
           istio gateway)
         </Styled.Subtitle>
-        <Styled.Components.AdvancedOptionWrapper
-          showMoreOptions={editMoreOptions}
-        >
-          <Styled.Input
-            label="Enter host value"
-            name="hostValue"
-            defaultValue={component?.hostValue}
-            ref={register({})}
-          />
-          <Styled.Input
-            label="Enter gateway name"
-            name="gatewayName"
-            defaultValue={component?.gatewayName}
-            ref={register({})}
-          />
-        </Styled.Components.AdvancedOptionWrapper>
+        {isAdvancedOptions && renderMoreOptions()}
         <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
           <Styled.Button
             id="save-edit-module"

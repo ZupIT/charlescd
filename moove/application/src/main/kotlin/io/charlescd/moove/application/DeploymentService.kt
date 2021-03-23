@@ -22,6 +22,7 @@ import io.charlescd.moove.domain.Deployment
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
+import java.util.*
 import javax.inject.Named
 
 @Named
@@ -37,6 +38,10 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
 
     fun findByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
         return this.deploymentRepository.findByCircleIdAndWorkspaceId(circleId, workspaceId)
+    }
+
+    fun findByCircleIdAndStatus(circleId: String, status: DeploymentStatusEnum): Optional<Deployment> {
+        return this.deploymentRepository.find(circleId, status)
     }
 
     fun updateStatus(id: String, status: DeploymentStatusEnum) {

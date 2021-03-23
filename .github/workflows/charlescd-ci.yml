@@ -52,8 +52,10 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd butler
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
 
   build_and_push_alpha_circle_matcher:
     runs-on: ubuntu-latest
@@ -96,8 +98,10 @@ jobs:
           IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
         run: |
           cd circle-matcher
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
 
   build_and_push_alpha_compass:
     runs-on: ubuntu-latest
@@ -138,8 +142,10 @@ jobs:
           IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
         run: |
           cd compass
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
 
   build_and_push_alpha_moove:
     runs-on: ubuntu-latest
@@ -184,8 +190,10 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd moove/web
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
 
   build_and_push_alpha_octopipe:
     runs-on: ubuntu-latest
@@ -226,8 +234,10 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd octopipe
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
 
   build_and_push_alpha_ui:
     runs-on: ubuntu-latest
@@ -277,8 +287,10 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd ui
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
 
   build_and_push_alpha_villager:
     runs-on: ubuntu-latest
@@ -323,8 +335,10 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd villager
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
 
   notify-team:
     runs-on: ubuntu-latest
@@ -343,4 +357,4 @@ jobs:
         
       - name: ping
         run: |
-          curl -X POST -H "Content-Type: Application/json" -d '{"text":"New alpha images builded with tag: ${{ steps.get_version.outputs.VERSION }}"}' ${{ secrets.GCHAT_SRE_WEBHOOK }}
+          curl -X POST -H "Content-Type: Application/json" -d '{"text":"New alpha images builded with tag: alpha-${{ steps.get_version.outputs.VERSION }} and alpha-latest"}' ${{ secrets.GCHAT_SRE_WEBHOOK }}

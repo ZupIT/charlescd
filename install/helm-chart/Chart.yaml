@@ -38,4 +38,8 @@ dependencies:
     condition: ingress.enabled
   - name: metacontroller
     condition: CharlesApplications.butler.enabled
+  - name: rabbitmq
+    version: 8.9.1
+    repository: https://charts.bitnami.com/bitnami
+    condition: rabbitmq.enabled
 appVersion: 0.6.1

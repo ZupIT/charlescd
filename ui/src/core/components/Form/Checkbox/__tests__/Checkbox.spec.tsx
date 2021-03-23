@@ -21,6 +21,8 @@ import { dark as checkboxTheme } from 'core/assets/themes/checkbox';
 import Checkbox from '..'
 
 const props = {
+  name: 'deploy',
+  value: 'DEPLOY',
   label: 'Deploy'
 }
 

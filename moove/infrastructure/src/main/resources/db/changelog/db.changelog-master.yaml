@@ -257,3 +257,7 @@ databaseChangeLog:
       file: db/changelog/includes/20210301151000_create_table_deployment_configurations.yaml
   - include:
       file: db/changelog/includes/20210301165000_alter_table_workspaces_add_deployment_config_column.yaml
+  - include:
+      file: db/changelog/includes/20201007113800_alter_table_circles_add_percentage_column.yaml
+  - include:
+      file: db/changelog/includes/20210217183000_remove_hypotheses_from_roles_description.yaml

@@ -18,5 +18,6 @@ package io.charlescd.circlematcher.domain;
 
 public enum SegmentationType {
     SIMPLE_KV,
-    REGULAR
+    REGULAR,
+    PERCENTAGE
 }
