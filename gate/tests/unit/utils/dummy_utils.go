@@ -53,12 +53,10 @@ func GetDummyPermissions() []domain.Permission {
 		{
 			ID:        uuid.New(),
 			Name:      "circles_write",
-			CreatedAt: time.Now(),
 		},
 		{
 			ID:        uuid.New(),
 			Name:      "deploy_write",
-			CreatedAt: time.Now(),
 		},
 	}
 }

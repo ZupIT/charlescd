@@ -12,5 +12,4 @@ type User struct {
 	Email     string
 	IsRoot    bool
 	CreatedAt time.Time
-	WorkspacesPermissions  []WorkspacePermission
 }

@@ -13,6 +13,5 @@ func UserModelToDomain(user models.User) domain.User {
 		Email:     user.Email,
 		IsRoot:    user.IsRoot,
 		CreatedAt: user.CreatedAt,
-		WorkspacesPermissions: nil, //TODO
 	}
 }

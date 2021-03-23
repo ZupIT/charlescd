@@ -15,7 +15,7 @@ type UserRepository interface {
 }
 
 type userRepository struct {
-	db      *gorm.DB
+	db *gorm.DB
 }
 
 func NewUserRepository(db *gorm.DB) (UserRepository, error) {
@@ -37,14 +37,11 @@ func (userRepository userRepository) ExistsByEmail(email string) (bool, error) {
 	return true, nil
 }
 
-
 func (userRepository userRepository) GetByEmail(email string) (domain.User, error) {
-
 	var user models.User
 
-	res := userRepository.db.Model(models.SystemToken{}).
+	res := userRepository.db.Model(models.User{}).
 		Where("email = ?", email).
-		Preload("Permissions").
 		First(&user)
 
 	if res.Error != nil {

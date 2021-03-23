@@ -10,7 +10,7 @@ type SystemToken struct {
 	ID          uuid.UUID
 	Name        string
 	Revoked     bool
-	Permissions []Permission `gorm:"many2many:system_tokens_permissions;"`
+	Permissions []Permission   `gorm:"many2many:system_tokens_permissions;"`
 	Workspaces  pq.StringArray `gorm:"type:varchar(36)[]"`
 	CreatedAt   *time.Time
 	RevokedAt   *time.Time

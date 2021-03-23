@@ -4,13 +4,14 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 )
 
-type AuthorizationInput struct {
-	Path string
+type Input struct {
+	Path   string
 	Method string
 }
 
-func (input AuthorizationInput) InputToDomain() domain.Authorization {
+func (input Input) InputToDomain() domain.Authorization {
 	return domain.Authorization{
-		Path: input.Path,
+		Path:   input.Path,
+		Method: input.Method,
 	}
 }

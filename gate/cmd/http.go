@@ -23,23 +23,28 @@ import (
 
 type server struct {
 	persistenceManager persistenceManager
-	serviceManager serviceManager
-	httpServer     *echo.Echo
-	enforcer *casbin.Enforcer
+	serviceManager     serviceManager
+	httpServer         *echo.Echo
+	enforcer           *casbin.Enforcer
 }
 
 type customBinder struct{}
 
 type CustomValidator struct {
-	validator *validator.Validate
+	validator  *validator.Validate
 	translator *ut.UniversalTranslator
 }
 
 func newServer(pm persistenceManager, sm serviceManager) (server, error) {
+	enforcer, err := casbinEnforcer()
+	if err != nil {
+		return server{}, err
+	}
 	return server{
-		persistenceManager:   pm,
-		serviceManager: sm,
-		httpServer: createHttpServerInstance(),
+		persistenceManager: pm,
+		serviceManager:     sm,
+		httpServer:         createHttpServerInstance(),
+		enforcer:           enforcer,
 	}, nil
 }
 
@@ -102,6 +107,15 @@ func buildCustomValidator() *CustomValidator {
 	}
 }
 
+func casbinEnforcer() (*casbin.Enforcer, error) {
+	enforcer, err := casbin.NewEnforcer("./resources/auth.conf", "./resources/policy.csv")
+	if err != nil {
+		return nil, err
+	}
+
+	return enforcer, nil
+}
+
 func (server server) registerRoutes() {
 	server.httpServer.GET("/health", handlers.Health())
 	server.httpServer.GET("/metrics", handlers.Metrics())
@@ -120,7 +134,7 @@ func (server server) registerRoutes() {
 
 			authorization := v1.Group("/authorization")
 			{
-				authorization.POST("", handlers.DoAuthorization(authorizationInteractor.NewDoAuthorization(server.enforcer, server.persistenceManager.userRepository, server.serviceManager.authTokenService)))
+				authorization.POST("", handlers.DoAuthorization(authorizationInteractor.NewDoAuthorization(server.enforcer, server.persistenceManager.userRepository, server.persistenceManager.workspaceRepository, server.serviceManager.authTokenService)))
 			}
 		}
 	}

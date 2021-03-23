@@ -1,6 +1,6 @@
 package domain
 
 type Authorization struct {
-	Path 		string
-	Method 		string
+	Path   string
+	Method string
 }

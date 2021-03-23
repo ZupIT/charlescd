@@ -8,5 +8,5 @@ import (
 type Permission struct {
 	ID        uuid.UUID
 	Name      string
-	CreatedAt time.Time
+	CreatedAt *time.Time `json:"-"`
 }
