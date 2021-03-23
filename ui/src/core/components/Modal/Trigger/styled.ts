@@ -60,7 +60,7 @@ const Content = styled.div`
 
 const Title = styled(Text.h2)`
   text-align: left;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 `;
 
 const Description = styled.div`
@@ -69,7 +69,7 @@ const Description = styled.div`
 
 const ContinueButton = styled(DefaultButton)`
   padding: 5px;
-  margin-top: 15px;
+  margin-top: 0;
   margin-left: 15px;
   align-items: center;
   height: 40px;
@@ -83,7 +83,7 @@ const ContinueButton = styled(DefaultButton)`
 const DismissButton = styled(DefaultButton)`
   cursor: pointer;
   padding: 5px;
-  margin-top: 15px;
+  margin-top: 0;
   align-items: center;
   height: 40px;
   width: 160px;
