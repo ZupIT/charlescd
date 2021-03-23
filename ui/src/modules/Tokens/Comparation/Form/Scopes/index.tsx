@@ -14,41 +14,21 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import Page from 'core/components/Page';
-import { slideInLeft } from 'core/assets/style/animate';
+import ContentIcon from 'core/components/ContentIcon';
+import Text from 'core/components/Text';
+import { SetValue } from '../interfaces';
 
-const ScrollX = styled(Page.Content)`
-  overflow-y: hidden;
-  overflow-x: auto;
-`;
+interface Props {
+  setValue: SetValue;
+}
 
-const Wrapper = styled.div`
-  animation: 0.2s ${slideInLeft} linear;
-  display: flex;
-  flex-direction: row;
-`;
+const Scopes = ({ setValue }: Props) => {
 
-const Actions = styled.div`
-  margin-left: auto;
-  display: flex;
-  flex-direction: row;
+  return (
+    <ContentIcon icon="scopes">
+      <Text.h2 color="light">Scopes</Text.h2>
+    </ContentIcon>
+  )
+}
 
-  > :last-child {
-    margin-left: 36px;
-  }
-`;
-
-const Tab = styled.div`
-
-  .tabpanel-content {
-    padding-right: 0px;
-  }
-`;
-
-export default {
-  ScrollX,
-  Wrapper,
-  Actions,
-  Tab
-};
+export default Scopes;

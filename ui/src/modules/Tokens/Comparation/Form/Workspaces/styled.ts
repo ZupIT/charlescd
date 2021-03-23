@@ -15,56 +15,25 @@
  */
 
 import styled from 'styled-components';
-import FormComponent from 'core/components/Form';
 import ButtonComponent from 'core/components/Button';
-import IconComponent from 'core/components/Icon';
-import Text from 'core/components/Text';
 
-const Title = styled(Text.h2)`
-  display: flex;
-  align-items: center;
-
-  > :last-child {
-    margin-left: 10px;
-  }
-`;
-
-const Subtitle = styled(Text.h5)`
-  margin: 10px 0px;
+const Button = styled(ButtonComponent.Rounded)`
+  margin-top: 10px;
 `;
 
 const Content = styled.div`
   display: flex;
-  flex-direction: column;
-  margin-top: 40px;
-  margin-left: 8px;
-`;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 10px;
 
-const Form = styled.form`
   > * {
-    margin-top: 20px;
+    margin-right: 10px;
+    margin-bottom: 10px;
   }
 `;
 
-const Input = styled(FormComponent.Input)`
-  width: 271px;
-  margin-bottom: 12px;
-`;
-
-const Button = styled(ButtonComponent.Default)`
-  margin-top: 10px;
-`;
-
-const Icon = styled(IconComponent)`
-  margin-bottom: 30px;
-`;
-
 export default {
-  Content,
-  Title,
-  Subtitle,
-  Form,
-  Input,
   Button,
-  Icon
-};
+  Content,
+}

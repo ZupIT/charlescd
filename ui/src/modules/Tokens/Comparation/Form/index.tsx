@@ -18,60 +18,36 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Token } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
-import Text from 'core/components/Text';
 import ContentIcon from 'core/components/ContentIcon';
 import Form from 'core/components/Form';
+import Workspaces from './Workspaces';
+import Scopes from './Scopes';
 import Styled from './styled';
 
 const FormToken = () => {
   const { save, status } = useSave();
-  const [title, setTitle] = useState<String>('');
 
-  const { register, handleSubmit, watch, formState: { isValid } } = useForm<Token>({
-    mode: 'onChange'
+  const { register, handleSubmit, watch, setValue, getValues, formState: { isValid } } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      name: '',
+      workspaces: null,
+      scopes: null
+    }
   });
 
   const name = watch('name') as string;
+  const workspaces = watch('workspaces') as string[];
+  console.log('workspaces', workspaces);
+  console.log('values', getValues());
 
   const onSubmit = (token: Token) => {
     save(token);
   };
 
-  const onAddWorkspace = () => {
-    console.log('onAddWorkspace');
-  }
-
   const onAddTitle = () => {
     console.log('handleTitle');
   }
-
-  useEffect(() => {
-    console.log('name', name)
-  }, [name]);
-
-  const Workspaces = () => (
-    <ContentIcon icon="workspaces">
-      <Text.h2 color="light">Associated Workspaces</Text.h2>
-      <Styled.Add
-        name="plus-circle"
-        icon="plus-circle"
-        color="dark"
-        onClick={onAddWorkspace}
-      >
-        Add workspaces
-      </Styled.Add>
-    </ContentIcon>
-  )
-
-  const Scopes = () => (
-    <Styled.Button
-      type="submit"
-      size="EXTRA_SMALL"
-      isLoading={status.isPending}
-    >
-      Generate token
-    </Styled.Button>
-  )
 
   return (
     <Styled.Content>
@@ -83,8 +59,16 @@ const FormToken = () => {
             onClickSave={onAddTitle}
           />
         </ContentIcon>
-        <Workspaces />
-        <Scopes />
+        {name && <Workspaces setValue={setValue} />}
+        {workspaces && <Scopes setValue={setValue} />}
+        {workspaces && <Styled.Button
+          type="submit"
+          size="EXTRA_SMALL"
+          isDisabled={!isValid}
+          isLoading={status.isPending}
+        >
+          Generate token
+        </Styled.Button>}
       </Styled.Form>
     </Styled.Content>
   );
