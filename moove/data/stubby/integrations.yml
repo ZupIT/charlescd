@@ -245,3 +245,14 @@
     status: 204
     headers:
       content-type: application/json
+
+- request:
+    method: POST
+    url: ^/api/v1/subscriptions/publish
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
