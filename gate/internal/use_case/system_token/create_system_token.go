@@ -33,34 +33,34 @@ func NewCreateSystemToken(systemTokenRepository repository.SystemTokenRepository
 func (createSystemToken createSystemToken) Execute(authorization string, input CreateSystemTokenInput) (domain.SystemToken, error) {
 	var authToken, err = createSystemToken.authTokenService.ParseAuthorizationToken(authorization)
 	if err != nil {
-		return domain.SystemToken{}, logging.NewError("Unable to parse authorization", err, logging.BusinessError, nil, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
 	userExists, err := createSystemToken.userRepository.ExistsByEmail(authToken.Email)
 	if err != nil {
-		return domain.SystemToken{}, logging.NewError("Unable to find user by email", err, logging.BusinessError, nil, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
 	if !userExists {
-		return domain.SystemToken{}, logging.NewError("User not found", errors.New("user not found"), logging.BusinessError, nil, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("User not found", errors.New("user not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
 	permissions, err := createSystemToken.permissionRepository.FindAll(input.Permissions)
 	if err != nil {
-		return domain.SystemToken{}, logging.WithOperation(err, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
 	if len(permissions) != len(input.Permissions) {
-		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
 	workspacesFound, err := createSystemToken.workspaceRepository.ExistsByIds(input.Workspaces)
 	if err != nil {
-		return domain.SystemToken{}, logging.WithOperation(err, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
 	if int(workspacesFound) < len(input.Workspaces) {
-		return domain.SystemToken{}, logging.NewError("Some workspaces were not found", errors.New("some workspaces were not found"), logging.BusinessError, nil, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("Some workspaces were not found", errors.New("some workspaces were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
 	systemToken := CreateSystemTokenInput.InputToDomain(input)
@@ -70,7 +70,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 
 	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken, permissions)
 	if err != nil {
-		return domain.SystemToken{}, logging.WithOperation(err, "createSystemToken.Execute")
+		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
 	return savedSystemToken, nil

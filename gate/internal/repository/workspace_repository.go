@@ -23,7 +23,7 @@ func (workspaceRepository workspaceRepository) ExistsByIds(workspaceIds []string
 	res := workspaceRepository.db.Table("workspaces").Where("id IN ?", workspaceIds).Count(&count)
 
 	if res.Error != nil {
-		return 0, handleWorkspaceError("Find all workspaces failed", "repository.ExistsByIds.Count", res.Error, logging.NotFoundError)
+		return 0, handleWorkspaceError("Find all workspaces failed", "WorkspaceRepository.ExistsByIds.Count", res.Error, logging.NotFoundError)
 	}
 
 	return count, nil

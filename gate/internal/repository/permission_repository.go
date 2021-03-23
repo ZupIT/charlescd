@@ -26,7 +26,7 @@ func (permissionRepository permissionRepository) FindAll(permissionNames []strin
 	res := permissionRepository.db.Table("permissions").Where("name IN ?", permissionNames).Find(&permissions)
 
 	if res.Error != nil {
-		return []domain.Permission{}, handlePermissionError("Find all permissions failed", "repository.FindAll.Find", res.Error, logging.NotFoundError)
+		return []domain.Permission{}, handlePermissionError("Find all permissions failed", "PermissionRepository.FindAll.Find", res.Error, logging.NotFoundError)
 	}
 
 	return mapper.PermissionsModelToDomains(permissions), nil

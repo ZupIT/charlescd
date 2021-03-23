@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"gorm.io/gorm"
@@ -24,11 +23,11 @@ func (userRepository userRepository) ExistsByEmail(email string) (bool, error) {
 
 	res := userRepository.db.Model(models.User{}).Where("email = ?", email).Count(&count)
 	if res.Error != nil {
-		return false, handleUserError("Find user by email failed", "repository.UserRepository.FindByEmail", res.Error, logging.InternalError)
+		return false, handleUserError("Find user by email failed", "UserRepository.ExistsByEmail.Count", res.Error, logging.InternalError)
 	}
 
 	if count < 1 {
-		return false, handleUserError("User not found", "repository.UserRepository.FindByEmail", errors.New("user not found"), logging.NotFoundError)
+		return false, nil
 	}
 
 	return true, nil
