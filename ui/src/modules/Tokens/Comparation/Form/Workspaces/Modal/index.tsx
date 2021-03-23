@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import Modal from 'core/components/Modal';
+import { useState } from 'react';
+import Select from 'core/components/Form/Select/Single/Select';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
+import { options, Option } from './constants';
+import Styled from './styled';
 
 interface Props {
   onClose: Function;
@@ -22,11 +27,42 @@ interface Props {
 }
 
 const AddWorkspaces = ({ onClose, onContinue }: Props) => {
+  const [type, setType] = useState<Option>();
+  const isIndividual = type?.value === 'INDIVIDUAL';
+
+  const onClick = () => console.log('onClick Item');
+
+  const Item = () => (
+    <Styled.Item>
+      <Styled.Description>
+        <Text.h4 color="light">Workspace 1</Text.h4>
+        <Styled.Subtitle>
+          <Text.h4 fontStyle="italic" color="dark">Owned by:</Text.h4>{` `}
+          <Text.h4 color="light">mateus.cruz@zup.com.br</Text.h4>
+        </Styled.Subtitle>
+      </Styled.Description>
+      <Icon name="plus-circle" color="dark" onClick={onClick} />
+    </Styled.Item>
+  )
+
+  const Content = () => (
+    <Styled.Content>
+      <Item />
+    </Styled.Content>
+  );
 
   return (
-    <Modal.Default onClose={() => onClose()}>
-      Add Workspaces
-    </Modal.Default>
+    <Styled.Modal onClose={() => onClose()}>
+      <Styled.Header>
+        Add Workspaces
+        <Select
+          options={options}
+          placeholder="Define the workspaces that will be associated"
+          onChange={option => setType(option)}
+        />
+      </Styled.Header>
+      {isIndividual && <Content />}
+    </Styled.Modal>
   )
 }
 

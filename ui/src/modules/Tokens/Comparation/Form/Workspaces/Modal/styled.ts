@@ -15,69 +15,51 @@
  */
 
 import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
 
-const Wrapper = styled.div`
-  z-index: ${({ theme }) => theme.zIndex.OVER_3};
-  align-items: center;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    width: 408px;
+    padding: 35px 0 28px 0;
+  }
+
+  .modal-content {
+    min-height: 450px;
+  }
 `;
 
-const Placeholder = styled.div`
-  padding: 60px 135.5px 87.5px 135.5px;
+const Header = styled.div`
+  padding: 0 40px;
+`;
+
+const Content = styled.div`
+  margin-top: 22px;
+`;
+
+const Item = styled.div`
+  border-top: 1px solid #3A3A3C;
+  border-bottom: 1px solid #3A3A3C;
+  height: 90px;
+  padding: 0 40px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 `;
 
-const Background = styled.div`
-  background: ${({ theme }) => theme.modal.default.screen};
-  width: 100%;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  position: fixed;
+const Subtitle = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: ${({ theme }) => theme.zIndex.OVER_3};
-  opacity: 0.8;
+  flex-direction: row;
+  margin-top: 5px;
 `;
 
-const Dialog = styled.div`
-  position: relative;
-  width: auto;
-  max-width: 500px;
-  margin: 1.75rem auto;
-  min-height: calc(100% - (1.75rem * 2));
-`;
-
-const Container = styled.div`
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: ${({ theme }) => theme.modal.default.background};
-  z-index: ${({ theme }) => theme.zIndex.OVER_4};
-  color: ${({ theme }) => theme.modal.default.text};
-  padding: 35px 41px 28px 40px;
-  top: 15%;
-  transform: translate(-50%, 0);
-  text-align: left;
-  opacity: 1.2;
-  width: 543px;
-  height: calc(100vh - 262px);
-`;
+const Description = styled.div``;
 
 export default {
-  Wrapper,
-  Placeholder,
-  Background,
-  Dialog,
-  Container
+  Content,
+  Modal,
+  Header,
+  Item,
+  Subtitle,
+  Description
 }
