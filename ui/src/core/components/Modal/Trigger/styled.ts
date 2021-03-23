@@ -64,8 +64,7 @@ const Title = styled(Text.h2)`
 `;
 
 const Description = styled.div`
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin: 20px 0 20px 0;
 `;
 
 const ContinueButton = styled(DefaultButton)`
