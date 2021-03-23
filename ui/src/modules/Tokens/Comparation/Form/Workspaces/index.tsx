@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import map from 'lodash/map';
 import ContentIcon from 'core/components/ContentIcon';
 import Card from 'core/components/Card';
 import Text from 'core/components/Text';
+import Modal from './Modal';
 import { SetValue } from '../interfaces';
 import Styled from './styled';
 
@@ -29,16 +30,14 @@ interface Props {
 const data = ['Workspace 1', 'Workspace 2', 'Workspace 3'];
 
 const Workspaces = ({ setValue }: Props) => {
-  // const [workspaces, setWorkspaces] = useState<string[]>(data);
+  const [isOpen, setIsOpen] = useState<boolean>();
+  const [workspaces, setWorkspaces] = useState<string[]>(data);
 
   useEffect(() => {
-    console.log('data', data)
-    setValue('workspaces', data, { shouldValidate: true });
-  }, [setValue]);
+    setValue('workspaces', workspaces);
+  }, [setValue, workspaces]);
 
-  const onAddWorkspace = () => {
-    console.log('onAddWorkspace', onAddWorkspace);
-  }
+  const toggleIsOpen = () => setIsOpen(!isOpen);
 
   const renderItems = () =>
     map(data, (workspace) => (
@@ -50,20 +49,23 @@ const Workspaces = ({ setValue }: Props) => {
     ))
 
   return (
-    <ContentIcon icon="workspaces">
-      <Text.h2 color="light">Associated Workspaces</Text.h2>
-      <Styled.Content>
-        {data && renderItems()}
-      </Styled.Content>
-      <Styled.Button
-        name="plus-circle"
-        icon="plus-circle"
-        color="dark"
-        onClick={onAddWorkspace}
-      >
-        Add workspaces
-      </Styled.Button>
-    </ContentIcon>
+    <Fragment>
+      {isOpen && <Modal onClose={toggleIsOpen} onContinue={setWorkspaces} />}
+      <ContentIcon icon="workspaces">
+        <Text.h2 color="light">Associated Workspaces</Text.h2>
+        <Styled.Content>
+          {data && renderItems()}
+        </Styled.Content>
+        <Styled.Button
+          name="plus-circle"
+          icon="plus-circle"
+          color="dark"
+          onClick={toggleIsOpen}
+        >
+          Add workspaces
+        </Styled.Button>
+      </ContentIcon>
+    </Fragment>
   )
 }
 

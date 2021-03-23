@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-import { useRef } from 'react';
-import Styled from './styled';
+import Modal from 'core/components/Modal';
 
 interface Props {
-  isOpen: boolean;
+  onClose: Function;
+  onContinue: Function;
 }
 
-const Modal = ({ isOpen }: Props) => {
-  const modalRef = useRef<HTMLDivElement>();
+const AddWorkspaces = ({ onClose, onContinue }: Props) => {
 
-  const render = () => (
-    <Styled.Wrapper>
-      <Styled.Background />
-      <Styled.Dialog ref={modalRef}>
-        <Styled.Container>
-          Modal
-        </Styled.Container>
-      </Styled.Dialog>
-    </Styled.Wrapper>
+  return (
+    <Modal.Default onClose={() => onClose()}>
+      Add Workspaces
+    </Modal.Default>
   )
-
-  return isOpen && render()
 }
 
-export default Modal;
+export default AddWorkspaces;

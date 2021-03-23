@@ -16,6 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import Input from 'core/components/Form/Input';
+import Text from 'core/components/Text';
 
 const Wrapper = styled.div`
   display: flex;
@@ -55,7 +56,13 @@ const InputTitle = styled(Input)`
   }
 `;
 
+const Error = styled(Text.h6)`
+  position: absolute;
+  top: 43px;
+`;
+
 export default {
   Wrapper,
-  InputTitle
+  InputTitle,
+  Error
 };

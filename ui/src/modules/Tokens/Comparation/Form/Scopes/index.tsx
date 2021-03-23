@@ -14,19 +14,40 @@
  * limitations under the License.
  */
 
+import { useEffect, useState } from 'react';
+import xor from 'lodash/xor';
 import ContentIcon from 'core/components/ContentIcon';
+import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { SetValue } from '../interfaces';
+import Styled from './styled';
 
 interface Props {
   setValue: SetValue;
 }
 
 const Scopes = ({ setValue }: Props) => {
+  const [scopes, setScopes] = useState<string[]>();
+
+  const addScope = (value: string) => {
+    setScopes(xor(scopes, [value]));
+  }
+
+  useEffect(() => {
+    setValue('permissions', scopes);
+  }, [setValue, scopes]);
 
   return (
     <ContentIcon icon="scopes">
       <Text.h2 color="light">Scopes</Text.h2>
+      <Styled.Content>
+        <Form.Checkbox
+          label="Modules"
+          value="UNDEPLOY"
+          description="Give full access to our module API"
+          onChange={() => addScope('module_write')}
+        />
+      </Styled.Content>
     </ContentIcon>
   )
 }
