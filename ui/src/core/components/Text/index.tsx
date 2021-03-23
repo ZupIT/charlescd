@@ -38,7 +38,7 @@ const Text = (props: Props) => {
     align = 'left',
     fontStyle = 'normal',
     fontSize,
-    lineHeight = 1,
+    lineHeight,
     children,
     className,
     onClick

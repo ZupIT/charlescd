@@ -67,9 +67,7 @@ const Trigger = forwardRef(({
             {title}
           </Styled.Title>
           <Styled.Description>
-            <Text.h4 lineHeight={1.3} color="light">
-              {children}
-            </Text.h4>
+            {children}
           </Styled.Description>
           <Styled.Buttons className="modal-buttons">
             <Styled.Button.Dismiss
