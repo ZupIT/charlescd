@@ -146,6 +146,7 @@ export class CreateDeploymentUseCase {
         circleId: circleId,
         componentName: component.componentName,
         imageUrl: component.buildImageUrl,
+        tag: component.buildImageTag,
         namespace: namespace,
         repo: {
           provider: gitProvider,

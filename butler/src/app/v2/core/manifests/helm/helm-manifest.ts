@@ -51,7 +51,7 @@ export class HelmManifest implements Manifest {
       this.consoleLoggerService.log('START:SAVING CHART LOCALLY', chartPath)
       await this.saveChartFiles(chartPath, chart)
       this.consoleLoggerService.log('START:GENERATE MANIFEST')
-      const manifest =  await this.template(chartPath, config.componentName, config.namespace, config.imageUrl, config.circleId)
+      const manifest =  await this.template(chartPath, config)
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
     } finally {
@@ -82,8 +82,8 @@ export class HelmManifest implements Manifest {
     rimraf(dir, (error) => this.consoleLoggerService.error('ERROR:CLEANING FILES UP FAILED', error))
   }
 
-  private async template(chartPath: string, componentName: string, namespace: string, imageUrl: string, circleId: string): Promise<KubernetesManifest[]> {
-    const args = this.formatArguments(chartPath, componentName, namespace, imageUrl, circleId)
+  private async template(chartPath: string, config: ManifestConfig): Promise<KubernetesManifest[]> {
+    const args = this.formatArguments(chartPath, config)
     this.consoleLoggerService.log('HELM COMMAND ARGS', args)
     const manifestString = await this.executeCommand(args)
     this.consoleLoggerService.log('MANIFEST GENERATED', manifestString)
@@ -111,16 +111,16 @@ export class HelmManifest implements Manifest {
     })
   }
 
-  private formatArguments(chartPath: string, componentName: string, namespace: string, imageUrl: string, circleId: string) {
-    const chart = `${chartPath}${path.sep}${componentName}`
-    const valuesFile = this.getValuesFile(chartPath, componentName)
-    const command = ['template', componentName, chart, '-f', valuesFile]
-    if(namespace) {
+  private formatArguments(chartPath: string, config: ManifestConfig) {
+    const chart = `${chartPath}${path.sep}${config.componentName}`
+    const valuesFile = this.getValuesFile(chartPath, config.componentName)
+    const command = ['template', config.componentName, chart, '-f', valuesFile]
+    if (config.namespace) {
       command.push('--namespace')
-      command.push(namespace)
+      command.push(config.namespace)
     }
 
-    const overrideValues = this.toStringArray(this.extractCustomValues(componentName, imageUrl, circleId))
+    const overrideValues = this.toStringArray(this.extractCustomValues(config))
     if(overrideValues) {
       command.push('--set')
       command.push(overrideValues)
@@ -132,11 +132,14 @@ export class HelmManifest implements Manifest {
     return `${chartPath}${path.sep}${componentName}${path.sep}${componentName}.yaml`
   }
 
-  private extractCustomValues(componentName: string, imageUrl: string, circleId: string): Record<string, string | undefined> {
+  private extractCustomValues(config: ManifestConfig): Record<string, string | undefined> {
+    // TODO remove this when possible. Here only because of manifest backward compatibility
     return {
-      name: componentName,
-      'image.tag': imageUrl,
-      circleId: circleId
+      name: config.componentName,
+      'image.tag': config.imageUrl,
+      circleId: config.circleId,
+      component: config.componentName,
+      tag: config.tag
     }
   }
 
