@@ -83,7 +83,6 @@ const FormModule = ({ module, onChange }: Props) => {
   } = useForm<Helm>({ mode: 'onChange' });
   const { register, control, handleSubmit, formState: { isValid } } = form;
   const fieldArray = useFieldArray({ control, name: 'components', keyName: 'fieldId' });
-  console.log('fieldArray', fieldArray);
   const workspace = getWorkspace();
   const helmGitProvider = workspace?.gitProvider;
 
