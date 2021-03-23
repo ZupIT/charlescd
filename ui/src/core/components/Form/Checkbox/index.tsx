@@ -25,7 +25,7 @@ import React, {
 import Styled from './styled';
 
 interface Props {
-  name: string;
+  name?: string;
   value: string;
   label: string;
   description?: string;

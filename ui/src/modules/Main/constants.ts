@@ -110,6 +110,12 @@ export const rootMainMenu = [
     to: routes.workspaces
   },
   {
+    id: genMenuId(routes.tokens),
+    icon: 'token',
+    text: 'Access tokens',
+    to: routes.tokens
+  },
+  {
     id: genMenuId(routes.users),
     icon: 'user',
     text: 'Users',
