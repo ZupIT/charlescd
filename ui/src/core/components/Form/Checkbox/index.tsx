@@ -30,6 +30,7 @@ interface Props {
   label: string;
   description?: string;
   active?: boolean;
+  disabled?: boolean;
   defaultChecked?: boolean;
   onChange?: (value: boolean) => void;
   className?: string;
@@ -43,6 +44,7 @@ const Checkbox = forwardRef(
       label,
       description,
       active,
+      disabled,
       defaultChecked,
       onChange,
       className,
@@ -70,6 +72,7 @@ const Checkbox = forwardRef(
           <Styled.Input
             type="checkbox"
             data-testid={`checkbox-input-${label}`}
+            disabled={disabled}
             ref={checkboxRef}
             name={name}
             value={value}

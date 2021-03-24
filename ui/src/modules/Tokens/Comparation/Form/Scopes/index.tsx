@@ -26,22 +26,35 @@ import { actionTemplate, displayAction, subjectTemplate } from './helpers';
 import { useFormContext } from 'react-hook-form';
 
 const Scopes = () => {
-  const { register, setValue, getValues } = useFormContext();
+  const { register, setValue, getValues, watch } = useFormContext();
 
   console.log('SCOPE');
 
-  const onChangeSubject = (subject: Subjects) => {
-    const { permissions } = getValues();
-    const newPermissions = [`${subject}_write`, `${subject}_read`];
-    setValue('permissions', xor(permissions, newPermissions));
+  const onChangeSubject = (subject: Subjects, checked: boolean) => {
+    const values = getValues();
+    const rules = [`${subject}_write`, `${subject}_read`];
+    const permissions = checked
+      ? [...values.permissions, ...rules]
+      : xor(values.permissions, rules);
+
+    setValue('permissions', permissions);
   }
 
   const onChangeAction = (action: Actions, subject: Subjects, checked: boolean) => {
-    const { permissions } = getValues();
-    if (action === 'write') {
-      const permission = [`${subject}_read`];
-      setValue('permissions', xor(permissions, permission));
+    const values = getValues();
+
+    if (action === 'write' && checked) {
+      setValue('permissions', [...values.permissions, `${subject}_read`]);
     }
+    
+    if (action === 'write') {
+      setValue(`subjects.${subject}`, checked);
+    }
+
+  }
+
+  const isOptionDisabled = (action: Actions, subject: Subjects) => {
+    return action === 'read' ? watch(`subjects.${subject}`) : false;
   }
 
   const renderActions = (subject: Subjects) => (
@@ -52,6 +65,7 @@ const Scopes = () => {
           ref={register()}
           name="permissions"
           value={`${subject}_${action}`}
+          disabled={isOptionDisabled(action, subject)}
           onChange={(checked: boolean) => onChangeAction(action, subject, checked)}
           description={actionTemplate(action, subject)}
         />
@@ -63,11 +77,11 @@ const Scopes = () => {
     map(subjects, (subject, index: number) => (
       <React.Fragment key={subject}>
         <Form.Checkbox
-          name="subjects"
+          name={`subjects.${subject}`}
           label={subject}
           ref={register()}
           value=""
-          onChange={() => onChangeSubject(subject)}
+          onChange={(checked: boolean) => onChangeSubject(subject, checked)}
           description={subjectTemplate(subject)}
         />
         {renderActions(subject)}
