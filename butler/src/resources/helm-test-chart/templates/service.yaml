@@ -4,6 +4,9 @@ metadata:
   labels:
     app: {{ .Values.name }}
     service: {{ .Values.name }}
+    component: {{ .Values.component }}
+    tag: {{ .Values.tag }}
+    circleId: {{ .Values.circleId }}
   name: {{ .Values.name }}
   namespace: {{ .Release.Namespace }}
 spec:

@@ -40,9 +40,10 @@ describe('Generate K8s manifest by helm', () => {
       token: 'my-token'
     },
     componentName: 'helm-test-chart',
-    imageUrl: 'latest',
+    imageUrl: 'test/latest',
     namespace: 'my-namespace',
-    circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a'
+    circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a',
+    tag: 'tag-example'
   }
 
   const repositoryStrategyFactory = mockStratetyFactory(async config => await readFiles(basePath, config.resourceName))

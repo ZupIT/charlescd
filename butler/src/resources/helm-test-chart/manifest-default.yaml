@@ -6,6 +6,9 @@ metadata:
   labels:
     app: helm-test-chart
     service: helm-test-chart
+    component: helm-test-chart
+    tag: tag-example
+    circleId: f5d23a57-5607-4306-9993-477e1598cc2a
   name: helm-test-chart
   namespace: default
 spec:
@@ -27,6 +30,9 @@ metadata:
   labels:
     app: helm-test-chart
     version: helm-test-chart
+    component: helm-test-chart
+    tag: tag-example
+    circleId: f5d23a57-5607-4306-9993-477e1598cc2a
 spec:
   replicas: 1
   selector:
@@ -43,7 +49,7 @@ spec:
     spec:
       containers:
         - name: helm-test-chart
-          image: latest
+          image: test/latest
           livenessProbe:
             failureThreshold: 3
             httpGet:

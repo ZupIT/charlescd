@@ -6,6 +6,9 @@ metadata:
   labels:
     app: {{ .Values.name }}
     version: {{ .Values.name }}
+    component: {{ .Values.component }}
+    tag: {{ .Values.tag }}
+    circleId: {{ .Values.circleId }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
