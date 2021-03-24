@@ -105,8 +105,8 @@ export class CreateRoutesManifestsUseCase {
   }
 
   private checkEmptySpecs(observed: PartialRouteHookParams): boolean {
-    const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1beta1'])
-    const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1beta1'])
+    const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1alpha3'])
+    const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1alpha3'])
     if (emptyDestinationRules || emptyVirtualServices) {
       return true
     }
@@ -114,9 +114,9 @@ export class CreateRoutesManifestsUseCase {
   }
 
   private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
-    const destionRulesCircles : string[] = JSON.parse(observed.children['DestinationRule.networking.istio.io/v1beta1'][spec.metadata.name].metadata.annotations.circles)
+    const destionRulesCircles : string[] = JSON.parse(observed.children['DestinationRule.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
     const desiredDestinationRulePresent = destionRulesCircles.includes(circleId)
-    const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1beta1'][spec.metadata.name].metadata.annotations.circles)
+    const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
     const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
     if (desiredDestinationRulePresent && desiredVirtualServicePresent) {
       return true

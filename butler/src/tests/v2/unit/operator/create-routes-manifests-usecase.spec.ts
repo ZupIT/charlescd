@@ -58,8 +58,8 @@ describe('Hook Routes Manifest Creation', () => {
         }
       },
       children: {
-        'VirtualService.networking.istio.io/v1beta1': {},
-        'DestinationRule.networking.istio.io/v1beta1': {}
+        'VirtualService.networking.istio.io/v1alpha3': {},
+        'DestinationRule.networking.istio.io/v1alpha3': {}
       },
       finalizing: true
     }
@@ -122,8 +122,8 @@ describe('Compare observed routes state with desired routes state', () => {
         }
       },
       children: {
-        'DestinationRule.networking.istio.io/v1beta1': {},
-        'VirtualService.networking.istio.io/v1beta1': {}
+        'DestinationRule.networking.istio.io/v1alpha3': {},
+        'VirtualService.networking.istio.io/v1alpha3': {}
       }
     }
     const desired : SpecsUnion[] = []
@@ -163,7 +163,7 @@ describe('Compare observed routes state with desired routes state', () => {
         }
       },
       children: {
-        'DestinationRule.networking.istio.io/v1beta1': {
+        'DestinationRule.networking.istio.io/v1alpha3': {
           abobora: {
             kind: 'DestinationRule',
             metadata: {
@@ -185,7 +185,7 @@ describe('Compare observed routes state with desired routes state', () => {
             }
           }
         },
-        'VirtualService.networking.istio.io/v1beta1': {
+        'VirtualService.networking.istio.io/v1alpha3': {
           abobora: {
             kind: 'VirtualService',
             metadata: {
@@ -315,8 +315,8 @@ describe('Compare observed routes state with desired routes state', () => {
         }
       },
       children: {
-        'DestinationRule.networking.istio.io/v1beta1': {},
-        'VirtualService.networking.istio.io/v1beta1': {}
+        'DestinationRule.networking.istio.io/v1alpha3': {},
+        'VirtualService.networking.istio.io/v1alpha3': {}
       }
     }
 

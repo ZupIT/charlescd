@@ -21,11 +21,11 @@ export interface PartialRouteHookParams {
   children: PartialRouteChildren
 }
 
+//TODO improve this interface. We shouldn't have the apiVersion hardcorded
 interface PartialRouteChildren {
-  'VirtualService.networking.istio.io/v1beta1': PartialChildVirtualServiceSpec,
-  'DestinationRule.networking.istio.io/v1beta1': PartialChildDestinationRuleSpec
+  'VirtualService.networking.istio.io/v1alpha3': PartialChildVirtualServiceSpec,
+  'DestinationRule.networking.istio.io/v1alpha3': PartialChildDestinationRuleSpec,
 }
-
 
 interface PartialChildVirtualServiceSpec {
   [key: string]: PartialVirtualServiceSpec

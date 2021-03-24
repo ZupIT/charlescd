@@ -20,12 +20,13 @@ import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/param
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { DeploymentUtils } from './deployment.utils'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { AppConstants } from '../../constants'
 
 const IstioUndeploymentManifestsUtils = {
 
   getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
-      apiVersion: 'networking.istio.io/v1beta1',
+      apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
@@ -42,49 +43,10 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getEmptyVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent): VirtualServiceSpec => {
-    return {
-      apiVersion: 'networking.istio.io/v1beta1',
-      kind: 'VirtualService',
-      metadata: {
-        name: component.name,
-        namespace: `${deployment.namespace}`,
-        annotations: {
-          circles: JSON.stringify([])
-        }
-
-      },
-      spec: {
-        gateways: component.gatewayName ? [component.gatewayName] : [],
-        hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  'unreachable-cookie-name': {
-                    exact: 'unreachable-cookie - value'
-                  }
-                }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'unreachable-app-name'
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  },
-
   getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
     const istioSubsets = IstioUndeploymentManifestsUtils.getActiveComponentsSubsets(deployment.circleId, activeByName)
     return {
-      apiVersion: 'networking.istio.io/v1beta1',
+      apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'DestinationRule',
       metadata: {
         name: component.name,

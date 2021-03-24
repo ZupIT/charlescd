@@ -20,12 +20,13 @@ import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
 import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
+import { AppConstants } from '../../constants'
 
 const IstioDeploymentManifestsUtils = {
 
   getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
-      apiVersion: 'networking.istio.io/v1beta1',
+      apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
@@ -46,7 +47,7 @@ const IstioDeploymentManifestsUtils = {
 
   getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
     return {
-      apiVersion: 'networking.istio.io/v1beta1',
+      apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'DestinationRule',
       metadata: {
         name: component.name,

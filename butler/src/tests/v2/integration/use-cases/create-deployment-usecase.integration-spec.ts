@@ -68,7 +68,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
-        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        id: 'f5d23a57-5607-4306-9993-477e1598cc2a',
         default: true
       },
       git: {
@@ -80,7 +80,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
-          buildImageTag: 'v2',
+          buildImageTag: 'tag-example',
           componentName: 'A'
         }
       ],
@@ -91,7 +91,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 
     const component1 = new ComponentEntity(
       UrlConstants.helmRepository,
-      'v2',
+      'tag-example',
       'imageurl.com',
       'A',
       '777765f8-bb29-49f7-bf2b-3ec956a71583',
@@ -124,7 +124,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const sameCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       'baa226a2-97f1-4e1b-b05a-d758839408f9',
       'user-1',
-      '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      'f5d23a57-5607-4306-9993-477e1598cc2a',
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
