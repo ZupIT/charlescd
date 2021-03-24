@@ -57,11 +57,11 @@ spec:
     apiVersion: charlescd.io/v1
     resource: charlesroutes
   childResources:
-  - apiVersion: networking.istio.io/v1beta1
+  - apiVersion: networking.istio.io/v1alpha3
     resource: virtualservices
     updateStrategy:
       method: InPlace
-  - apiVersion: networking.istio.io/v1beta1
+  - apiVersion: networking.istio.io/v1alpha3
     resource: destinationrules
     updateStrategy:
       method: InPlace
