@@ -28,6 +28,7 @@ interface Props {
   readOnly?: boolean;
   onClickSave?: () => void;
   isDisabled?: boolean;
+  error?: string;
 }
 const InputTitle = React.forwardRef(
   (
@@ -39,7 +40,8 @@ const InputTitle = React.forwardRef(
       resume,
       onClickSave,
       readOnly,
-      isDisabled
+      isDisabled,
+      error
     }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
@@ -70,6 +72,7 @@ const InputTitle = React.forwardRef(
           placeholder={placeholder}
           defaultValue={defaultValue}
         />
+        {error && <Styled.Error color="error">{error}</Styled.Error>}
         {!isResumed && !readOnly && (
           <Button.Default
             id="submit"

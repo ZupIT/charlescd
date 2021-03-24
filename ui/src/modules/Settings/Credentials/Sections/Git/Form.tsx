@@ -31,7 +31,7 @@ import { buildConnectionPayload } from './helpers';
 import isEqual from 'lodash/isEqual';
 import Styled from './styled';
 
-const FormGit = ({ onFinish }: Props) => {
+const FormGit = ({ onFinish }: Props<GitFormData>) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useGit();
   const [gitType, setGitType] = useState('');
   const [lastTestedForm, setLastTestedForm] = useState<GitFormData>();

@@ -16,6 +16,7 @@
 
 import CardBase from 'core/components/Card/Base';
 import CardConfig from 'core/components/Card/Config';
+import CardMain from 'core/components/Card/Main';
 import CardCircle from 'core/components/Card/Circle';
 import CardHeader from 'core/components/Card/Header';
 import CardBody from 'core/components/Card/Body';
@@ -26,6 +27,7 @@ import CardBoard from 'core/components/Card/Board';
 
 const Card = {
   Base: CardBase,
+  Main: CardMain,
   Body: CardBody,
   Circle: CardCircle,
   Release: CardRelease,

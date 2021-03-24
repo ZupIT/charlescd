@@ -273,7 +273,7 @@ class UserServiceTest extends Specification {
         notThrown()
     }
 
-    private User getDummyUser(String email) {
+    private static User getDummyUser(String email) {
         new User("qwerty-12345-asdf-98760", "charles", email, "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
     }
 }

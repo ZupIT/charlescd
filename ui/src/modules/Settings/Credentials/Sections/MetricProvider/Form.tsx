@@ -31,7 +31,7 @@ import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
 import DocumentationLink from 'core/components/DocumentationLink';
 
-const FormMetricProvider = ({ onFinish }: Props) => {
+const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
   const {
     response: testConnectionResponse,
