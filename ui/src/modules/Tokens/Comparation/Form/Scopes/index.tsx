@@ -14,39 +14,71 @@
  * limitations under the License.
  */
 
-import { useEffect, useState } from 'react';
+import React from 'react';
+import map from 'lodash/map';
 import xor from 'lodash/xor';
 import ContentIcon from 'core/components/ContentIcon';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import { SetValue } from '../interfaces';
+import { Actions, Subjects, actions, subjects } from 'core/utils/abilities';
 import Styled from './styled';
+import { actionTemplate, displayAction, subjectTemplate } from './helpers';
+import { useFormContext } from 'react-hook-form';
 
-interface Props {
-  setValue: SetValue;
-}
+const Scopes = () => {
+  const { register, setValue, getValues } = useFormContext();
 
-const Scopes = ({ setValue }: Props) => {
-  const [scopes, setScopes] = useState<string[]>();
+  console.log('SCOPE');
 
-  const addScope = (value: string) => {
-    setScopes(xor(scopes, [value]));
+  const onChangeSubject = (subject: Subjects) => {
+    const { permissions } = getValues();
+    const newPermissions = [`${subject}_write`, `${subject}_read`];
+    setValue('permissions', xor(permissions, newPermissions));
   }
 
-  useEffect(() => {
-    setValue('permissions', scopes);
-  }, [setValue, scopes]);
+  const onChangeAction = (action: Actions, subject: Subjects, checked: boolean) => {
+    const { permissions } = getValues();
+    if (action === 'write') {
+      const permission = [`${subject}_read`];
+      setValue('permissions', xor(permissions, permission));
+    }
+  }
+
+  const renderActions = (subject: Subjects) => (
+    map(actions, (action: Actions) => (
+      <Styled.Content left displayAction={displayAction(subject)} key={`${subject}_${action}`}>
+        <Form.Checkbox
+          label={action}
+          ref={register()}
+          name="permissions"
+          value={`${subject}_${action}`}
+          onChange={(checked: boolean) => onChangeAction(action, subject, checked)}
+          description={actionTemplate(action, subject)}
+        />
+      </Styled.Content>
+    ))
+  )
+
+  const renderSubjects = () =>
+    map(subjects, (subject, index: number) => (
+      <React.Fragment key={subject}>
+        <Form.Checkbox
+          name="subjects"
+          label={subject}
+          ref={register()}
+          value=""
+          onChange={() => onChangeSubject(subject)}
+          description={subjectTemplate(subject)}
+        />
+        {renderActions(subject)}
+      </React.Fragment>
+    ));
 
   return (
     <ContentIcon icon="scopes">
       <Text.h2 color="light">Scopes</Text.h2>
       <Styled.Content>
-        <Form.Checkbox
-          label="Modules"
-          value="UNDEPLOY"
-          description="Give full access to our module API"
-          onChange={() => addScope('module_write')}
-        />
+        {renderSubjects()}
       </Styled.Content>
     </ContentIcon>
   )
