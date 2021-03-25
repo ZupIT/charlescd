@@ -54,7 +54,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
-	workspacesFound, err := createSystemToken.workspaceRepository.ExistsByIds(input.Workspaces)
+	workspacesFound, err := createSystemToken.workspaceRepository.CountByIds(input.Workspaces)
 	if err != nil {
 		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
