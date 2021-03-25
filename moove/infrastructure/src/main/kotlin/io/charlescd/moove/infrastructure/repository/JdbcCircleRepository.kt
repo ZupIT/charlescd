@@ -370,7 +370,8 @@ class JdbcCircleRepository(
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,
                            circle_user.photo_url       AS circle_user_photo_url,
-                           circle_user.created_at      AS circle_user_created_at
+                           circle_user.created_at      AS circle_user_created_at,
+                           FALSE                       AS circle_active
                     FROM circles
                              LEFT JOIN users circle_user ON circles.user_id = circle_user.id
                              LEFT JOIN deployments ON circles.id = deployments.circle_id
