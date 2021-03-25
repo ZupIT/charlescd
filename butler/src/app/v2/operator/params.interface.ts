@@ -21,9 +21,10 @@ export interface RouteHookParams {
   finalizing: boolean
 }
 
+//TODO improve this interface. We shouldn't have the apiVersion hardcorded
 export interface RouteChildren {
-  'VirtualService.networking.istio.io/v1beta1': ChildVirtualServiceSpec,
-  'DestinationRule.networking.istio.io/v1beta1': ChildDestinationRuleSpec
+  'VirtualService.networking.istio.io/v1alpha3': ChildVirtualServiceSpec,
+  'DestinationRule.networking.istio.io/v1alpha3': ChildDestinationRuleSpec
 }
 
 export interface HookParams {

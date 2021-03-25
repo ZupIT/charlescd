@@ -170,7 +170,7 @@ describe('Reconcile deployment usecase spec', () => {
               version: 'hello-kubernetes',
               circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
               deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-              component: 'helm-test-chart',
+              component: 'hello-kubernetes',
               tag: 'tag-example'
             }
           },

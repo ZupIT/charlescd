@@ -19,6 +19,7 @@ import * as path from 'path'
 import * as yaml from 'js-yaml'
 
 import { KubernetesManifest } from '../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { AppConstants } from '../../../app/v2/core/constants'
 
 const basePath = path.join(__dirname, '../../../', 'resources/helm-test-chart')
 
@@ -31,6 +32,7 @@ export const customManifests = (appName: string, namespace: string, image: strin
   const service = manifests[0]
   service.metadata.labels.app = appName
   service.metadata.labels.service = appName
+  service.metadata.labels.component = appName
   service.metadata.name = appName
   service.metadata.namespace = namespace
   service.spec.selector.app = appName
@@ -38,6 +40,7 @@ export const customManifests = (appName: string, namespace: string, image: strin
   const deployment = manifests[1]
   deployment.metadata.labels.app = appName
   deployment.metadata.labels.version = appName
+  deployment.metadata.labels.component = appName
   deployment.metadata.name = appName
   deployment.metadata.namespace = namespace
   deployment.spec.selector.matchLabels.app = appName
@@ -52,7 +55,7 @@ export const customManifests = (appName: string, namespace: string, image: strin
 
 export const routesManifests: KubernetesManifest[] = [
   {
-    apiVersion: 'networking.istio.io/v1beta1',
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
     kind: 'DestinationRule',
     metadata: {
       name: 'hello-kubernetes',
@@ -76,7 +79,7 @@ export const routesManifests: KubernetesManifest[] = [
     },
   } as KubernetesManifest,
   {
-    apiVersion: 'networking.istio.io/v1beta1',
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
     kind: 'VirtualService',
     metadata: {
       name: 'hello-kubernetes',
