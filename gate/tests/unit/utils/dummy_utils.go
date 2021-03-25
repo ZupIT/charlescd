@@ -3,6 +3,7 @@ package utils
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/service"
+	"github.com/ZupIT/charlescd/gate/internal/use_case/authorization"
 	"github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
@@ -67,5 +68,12 @@ func GetDummyPage() domain.Page {
 		PageSize:   20,
 		Sort:       "sort",
 		Total:      2,
+	}
+}
+
+func GetDummyAuthorizationInput(path string, method string) authorization.Input {
+	return authorization.Input{
+		Path: path,
+		Method: method,
 	}
 }

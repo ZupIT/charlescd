@@ -5,7 +5,6 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/ZupIT/charlescd/gate/internal/service"
-	"github.com/casbin/casbin/v2"
 )
 
 type DoAuthorization interface {
@@ -13,13 +12,13 @@ type DoAuthorization interface {
 }
 
 type doAuthorization struct {
-	enforcer            *casbin.Enforcer
+	enforcer            service.SecurityFilterService
 	userRepository      repository.UserRepository
 	workspaceRepository repository.WorkspaceRepository
 	authTokenService    service.AuthTokenService
 }
 
-func NewDoAuthorization(enforcer *casbin.Enforcer, userRepository repository.UserRepository, workspaceRepository repository.WorkspaceRepository, authTokenService service.AuthTokenService) DoAuthorization {
+func NewDoAuthorization(enforcer service.SecurityFilterService, userRepository repository.UserRepository, workspaceRepository repository.WorkspaceRepository, authTokenService service.AuthTokenService) DoAuthorization {
 	return doAuthorization{
 		enforcer:            enforcer,
 		userRepository:      userRepository,
@@ -48,10 +47,6 @@ func (doAuthorization doAuthorization) Execute(authorizationToken string, worksp
 
 	if allowed {
 		return nil
-	}
-
-	if workspaceId == "" {
-		return handleAuthError("Forbidden", "invalid workspace", "Authorizer", logging.ForbiddenError)
 	}
 
 	userToken, err := doAuthorization.authTokenService.ParseAuthorizationToken(authorizationToken)

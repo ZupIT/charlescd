@@ -6,12 +6,15 @@ import (
 
 type serviceManager struct {
 	authTokenService service.AuthTokenService
+	securityFilter   service.SecurityFilterService
 }
 
 func prepareServices() (serviceManager, error) {
-	authTokenService:= service.NewAuthTokenService()
+	authTokenService := service.NewAuthTokenService()
+	securityFilter := service.NewSecurityFilterService()
 
 	return serviceManager{
 		authTokenService: authTokenService,
+		securityFilter:   securityFilter,
 	}, nil
 }
