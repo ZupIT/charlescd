@@ -12,7 +12,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenPublicPath() {
 	var method = "GET"
 	var systemToken = utils.GetDummySystemToken()
 
-	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
 }
@@ -24,7 +24,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutWorkspacePerm
 
 	as.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 
-	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.ForbiddenError, logging.GetErrorType(err))
@@ -37,7 +37,7 @@ func (as *AuthorizeSuite) TestAuthorizeNotFoundSystemToken() {
 
 	as.systemTokenRepository.On("FindById", systemToken.ID).Return(domain.SystemToken{}, logging.NewError("Token not found", logging.CustomError{}, logging.NotFoundError, nil, "unit.GetById.First")).Once()
 
-	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.NotFoundError, logging.GetErrorType(err))
@@ -50,7 +50,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 
 	as.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 
-	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspace-id", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspace-id", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
 }
@@ -62,7 +62,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutPermissionToW
 
 	as.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 
-	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspace-id", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeSystemToken.Execute(systemToken.ID.String(), "workspace-id", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.ForbiddenError, logging.GetErrorType(err))

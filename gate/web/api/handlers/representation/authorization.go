@@ -1,7 +1,7 @@
 package representation
 
 import (
-	"github.com/ZupIT/charlescd/gate/internal/use_case/authorization"
+	"github.com/ZupIT/charlescd/gate/internal/domain"
 )
 
 type AuthorizationRequest struct {
@@ -9,8 +9,8 @@ type AuthorizationRequest struct {
 	Method string `json:"method" validate:"required,notblank"`
 }
 
-func (authorizationRequest AuthorizationRequest) RequestToInput() authorization.Input {
-	return authorization.Input{
+func (authorizationRequest AuthorizationRequest) RequestToDomain() domain.Authorization {
+	return domain.Authorization{
 		Path: authorizationRequest.Path,
 		Method: authorizationRequest.Method,
 	}

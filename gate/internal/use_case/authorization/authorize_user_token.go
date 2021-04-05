@@ -2,13 +2,14 @@ package authorization
 
 import (
 	"errors"
+	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/ZupIT/charlescd/gate/internal/service"
 )
 
 type AuthorizeUserToken interface {
-	Execute(authorizationToken string, workspaceId string, input Input) error
+	Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error
 }
 
 type authorizeUserToken struct {
@@ -27,8 +28,8 @@ func NewAuthorizeUserToken(securityFilterService service.SecurityFilterService, 
 	}
 }
 
-func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, workspaceId string, input Input) error {
-	allowed, err := authorizeUserToken.securityFilterService.Authorize("public", input.Path, input.Method)
+func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error {
+	allowed, err := authorizeUserToken.securityFilterService.Authorize("public", authorization.Path, authorization.Method)
 	if err != nil {
 		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.userToken")
 	}
@@ -40,7 +41,7 @@ func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, 
 		return logging.NewError("Forbidden", errors.New("invalid authorization token"), logging.ForbiddenError, nil, "authorize.userToken")
 	}
 
-	allowed, err = authorizeUserToken.securityFilterService.Authorize("management", input.Path, input.Method)
+	allowed, err = authorizeUserToken.securityFilterService.Authorize("management", authorization.Path, authorization.Method)
 	if err != nil {
 		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.userToken")
 	}
@@ -67,7 +68,7 @@ func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, 
 	userPermission, err := authorizeUserToken.workspaceRepository.GetUserPermissionAtWorkspace(workspaceId, user.ID.String())
 	for _, ps := range userPermission {
 		for _, p := range ps {
-			allowed, err = authorizeUserToken.securityFilterService.Authorize(p.Name, input.Path, input.Method)
+			allowed, err = authorizeUserToken.securityFilterService.Authorize(p.Name, authorization.Path, authorization.Method)
 			if err != nil {
 				return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.userToken")
 			}

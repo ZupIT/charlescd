@@ -2,6 +2,7 @@ package authorization
 
 import (
 	"errors"
+	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/ZupIT/charlescd/gate/internal/service"
@@ -9,7 +10,7 @@ import (
 )
 
 type AuthorizeSystemToken interface {
-	Execute(authorizationToken string, workspaceId string, input Input) error
+	Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error
 }
 
 type authorizeSystemToken struct {
@@ -24,8 +25,8 @@ func NewAuthorizeSystemToken(enforcer service.SecurityFilterService, systemToken
 	}
 }
 
-func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken string, workspaceId string, input Input) error {
-	allowed, err := authorizeSystemToken.enforcer.Authorize("public", input.Path, input.Method)
+func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error {
+	allowed, err := authorizeSystemToken.enforcer.Authorize("public", authorization.Path, authorization.Method)
 	if err != nil {
 		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.systemToken")
 	}
@@ -44,7 +45,7 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 	}
 
 	for _, st := range systemToken.Permissions {
-		allowed, err = authorizeSystemToken.enforcer.Authorize(st.Name, input.Path, input.Method)
+		allowed, err = authorizeSystemToken.enforcer.Authorize(st.Name, authorization.Path, authorization.Method)
 		if err != nil {
 			return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.systemToken")
 		}

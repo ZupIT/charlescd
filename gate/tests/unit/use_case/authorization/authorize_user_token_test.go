@@ -11,7 +11,7 @@ func (as *AuthorizeSuite) TestAuthorizeUserTokenPublicPath() {
 	var path = "/actuator/health"
 	var method = "GET"
 
-	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
 }
@@ -20,7 +20,7 @@ func (as *AuthorizeSuite) TestAuthorizeUserTokenManagementPath() {
 	var path = "/v2/users"
 	var method = "GET"
 
-	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
 }
@@ -29,7 +29,7 @@ func (as *AuthorizeSuite) TestAuthorizeEmptyUserToken() {
 	var path = "/v2/users"
 	var method = "GET"
 
-	err := as.authorizeUserToken.Execute("", "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute("", "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.ForbiddenError, logging.GetErrorType(err))
@@ -42,7 +42,7 @@ func (as *AuthorizeSuite) TestAuthorizeRootUserTokenClosedPath() {
 
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()
 
-	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
 }
@@ -56,7 +56,7 @@ func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithoutPermissi
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()
 	as.workspaceRepository.On("GetUserPermissionAtWorkspace", "workspaceId", user.ID.String()).Return(permissions, nil).Once()
 
-	err := as.authorizeUserToken.Execute(utils.GetDummyAuthorization(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute(utils.GetDummyAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.ForbiddenError, logging.GetErrorType(err))
@@ -71,7 +71,7 @@ func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithPermissions
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()
 	as.workspaceRepository.On("GetUserPermissionAtWorkspace", "workspaceId", user.ID.String()).Return(permissions, nil).Once()
 
-	err := as.authorizeUserToken.Execute(utils.GetDummyAuthorization(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute(utils.GetDummyAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
 }
@@ -83,7 +83,7 @@ func (as *AuthorizeSuite) TestAuthorizeNotFoundUser() {
 
 	as.userRepository.On("GetByEmail", user.Email).Return(domain.User{}, logging.NewError("User not found", logging.CustomError{}, logging.NotFoundError, nil, "unit.GetByEmail.First")).Once()
 
-	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.NotFoundError, logging.GetErrorType(err))
@@ -96,7 +96,7 @@ func (as *AuthorizeSuite) TestAuthorizeInvalidToken() {
 
 	as.userRepository.On("GetByEmail", user.Email).Return(domain.User{}, logging.NewError("User not found", logging.CustomError{}, logging.NotFoundError, nil, "unit.GetByEmail.First")).Once()
 
-	err := as.authorizeUserToken.Execute("Bearer invalid.auth.token", "workspaceId", utils.GetDummyAuthorizationInput(path, method))
+	err := as.authorizeUserToken.Execute("Bearer invalid.auth.token", "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.InternalError, logging.GetErrorType(err))

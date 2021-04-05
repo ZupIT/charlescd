@@ -29,14 +29,14 @@ func DoAuthorization(authorizeUserToken authorizationInteractor.AuthorizeUserTok
 		var workspaceId = echoCtx.Request().Header.Get("x-workspace-id")
 
 		if systemToken != "" {
-			err := authorizeSystemToken.Execute(systemToken, workspaceId, request.RequestToInput())
+			err := authorizeSystemToken.Execute(systemToken, workspaceId, request.RequestToDomain())
 			if err != nil {
 				return HandleError(echoCtx, ctx, err)
 			}
 		} else {
 			var userToken = echoCtx.Request().Header.Get("Authorization")
 
-			err := authorizeUserToken.Execute(userToken, workspaceId, request.RequestToInput())
+			err := authorizeUserToken.Execute(userToken, workspaceId, request.RequestToDomain())
 			if err != nil {
 				return HandleError(echoCtx, ctx, err)
 			}
