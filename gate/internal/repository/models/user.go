@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/google/uuid"
-	"github.com/lib/pq"
 	"time"
 )
 
@@ -13,5 +12,4 @@ type User struct {
 	Email      string
 	IsRoot     bool
 	CreatedAt  time.Time
-	Workspaces pq.StringArray `gorm:"type:varchar(36)[]"`
 }
