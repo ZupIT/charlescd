@@ -15,9 +15,9 @@
  */
 
 import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
-import { RouteHookParams } from './params.interface'
-import { HookReconcileResponseDto } from './hook-reconcile-response.dto'
-import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
+import { RouteHookParams } from '../interfaces/params.interface'
+import { HookReconcileResponseDto } from '../dto/hook-reconcile-response.dto'
+import { CreateRoutesManifestsUseCase } from '../use-cases/create-routes-manifests.usecase'
 
 @Controller('/')
 export class RoutesHookController {

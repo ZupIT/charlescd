@@ -1,10 +1,9 @@
 import 'jest'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
-import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 import { UrlConstants } from '../../integration/test-constants'
 import { reconcileFixtures, reconcileFixturesParams } from './params'
-import { deploymentFixture } from '../../fixtures/deployment-entity.fixture'
+import { ReconcileUtils } from '../../../../app/v2/operator/utils/reconcile.utils'
 
 
 describe('Deployment on existing circle', () => {
@@ -12,15 +11,13 @@ describe('Deployment on existing circle', () => {
   it('returns empty array for the first reconcile loop on same circle that already had deployments', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const currentDeployment = reconcileFixtures.currentDeploymentId
-    const reconcile = new ReconcileDeployment()
-    expect(reconcile.specsByDeployment(params, currentDeployment)).toEqual([])
+    expect(ReconcileUtils.specsByDeployment(params, currentDeployment)).toEqual([])
   })
 
   it('returns list of previous deployment specs', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const previousDeployment = reconcileFixtures.previousDeploymentId
-    const reconcile = new ReconcileDeployment()
-    const ids = reconcile.specsByDeployment(params, previousDeployment).map(s => s.metadata.labels.deploymentId)
+    const ids = ReconcileUtils.specsByDeployment(params, previousDeployment).map(s => s.metadata.labels.deploymentId)
     expect(ids).toEqual([previousDeployment, previousDeployment])
   })
 
@@ -28,15 +25,13 @@ describe('Deployment on existing circle', () => {
     const params = reconcileFixturesParams.paramsWithPreviousDeployment
     const previousDeployment = reconcileFixtures.previousDeploymentId
     const currentDeployment = reconcileFixtures.currentDeploymentId
-    const reconcile = new ReconcileDeployment()
-    const currentSpecs = reconcile.specsByDeployment(params, currentDeployment)
-    const previousSpecs = reconcile.specsByDeployment(params, previousDeployment)
-    expect(reconcile.checkConditions(currentSpecs)).toEqual(false)
-    expect(reconcile.checkConditions(previousSpecs)).toEqual(true)
+    const currentSpecs = ReconcileUtils.specsByDeployment(params, currentDeployment)
+    const previousSpecs = ReconcileUtils.specsByDeployment(params, previousDeployment)
+    expect(ReconcileUtils.checkConditions(currentSpecs)).toEqual(false)
+    expect(ReconcileUtils.checkConditions(previousSpecs)).toEqual(true)
   })
 
   it('concatenates deployments and services from previous and current deployment', () => {
-    const reconcile = new ReconcileDeployment()
     const previousComponents = [
       new ComponentEntityV2(
         UrlConstants.helmRepository,
@@ -131,7 +126,7 @@ describe('Deployment on existing circle', () => {
         }
       }
     ]
-    const concat = reconcile.concatWithPrevious(previousDeployment, currentComponents)
+    const concat = ReconcileUtils.concatWithPrevious(previousDeployment, currentComponents)
     const expected = [
       {
         kind: 'Deployment',

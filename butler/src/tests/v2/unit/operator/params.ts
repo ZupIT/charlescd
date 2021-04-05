@@ -1,4 +1,4 @@
-import { HookParams } from '../../../../app/v2/operator/params.interface'
+import { HookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 
 export const reconcileFixtures = {
   currentDeploymentId: '8210509b-2432-4e2c-bfc3-af01be918816',

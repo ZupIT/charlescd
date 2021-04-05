@@ -1,4 +1,4 @@
-import { Http } from '../core/integrations/interfaces/k8s-manifest.interface'
+import { Http } from '../../core/integrations/interfaces/k8s-manifest.interface'
 
 export interface RouteHookParams {
   controller?: Record<string, unknown>

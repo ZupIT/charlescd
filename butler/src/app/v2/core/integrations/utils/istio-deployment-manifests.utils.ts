@@ -19,7 +19,7 @@ import { Component } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
 import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
-import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
+import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/interfaces/params.interface'
 import { AppConstants } from '../../constants'
 
 const IstioDeploymentManifestsUtils = {

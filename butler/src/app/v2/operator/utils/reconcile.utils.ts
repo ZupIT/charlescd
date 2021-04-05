@@ -1,21 +1,20 @@
-import { Injectable } from '@nestjs/common'
 import { uniqWith } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
-import { HookParams, SpecMetadata, SpecStatus } from '../params.interface'
+import { HookParams, SpecMetadata, SpecStatus } from '../interfaces/params.interface'
 
-@Injectable()
-export class ReconcileDeployment {
-  public concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]) : KubernetesManifest[] {
+export class ReconcileUtils {
+
+  public static concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]) : KubernetesManifest[] {
     const rawSpecs = previousDeployment.components.flatMap(c => c.manifests)
-    const previousSpecs = this.addMetadata(rawSpecs, previousDeployment)
+    const previousSpecs = ReconcileUtils.addMetadata(rawSpecs, previousDeployment)
     const allSpecs = specs.concat(previousSpecs)
     // TODO verify if this filter is necessary
     const uniqByNameAndKind = uniqWith(allSpecs, (a, b) => a.metadata?.name === b.metadata?.name && a.kind === b.kind)
     return uniqByNameAndKind
   }
 
-  public addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2) : KubernetesManifest[] {
+  public static addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2) : KubernetesManifest[] {
     return spec.map((s: KubernetesManifest) => {
       if (!s.metadata) {
         throw new Error('Invalid manifest. Field metadata is not present.')
@@ -37,7 +36,7 @@ export class ReconcileDeployment {
     })
   }
 
-  public checkConditions(specs: { metadata: SpecMetadata, status: SpecStatus }[]): boolean {
+  public static checkConditions(specs: { metadata: SpecMetadata, status: SpecStatus }[]): boolean {
     if (specs.length === 0) {
       return false
     }
@@ -64,10 +63,9 @@ export class ReconcileDeployment {
     })
   }
 
-  public specsByDeployment(params: HookParams, currentDeploymentId: string): { metadata: SpecMetadata, status: SpecStatus }[] {
+  public static specsByDeployment(params: HookParams, currentDeploymentId: string): { metadata: SpecMetadata, status: SpecStatus }[] {
     return Object.entries(params.children['Deployment.apps/v1'])
       .map(c => c[1])
       .filter(p => p.metadata.labels.deploymentId === currentDeploymentId)
   }
-
 }

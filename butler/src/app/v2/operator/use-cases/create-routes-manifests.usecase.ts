@@ -25,8 +25,8 @@ import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manif
 import { DeploymentUtils } from '../../core/integrations/utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../../core/integrations/utils/istio-deployment-manifests.utils'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../params.interface'
-import { PartialRouteHookParams, SpecsUnion } from '../partial-params.interface'
+import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../interfaces/params.interface'
+import { PartialRouteHookParams, SpecsUnion } from '../interfaces/partial-params.interface'
 
 @Injectable()
 export class CreateRoutesManifestsUseCase {
@@ -42,7 +42,7 @@ export class CreateRoutesManifestsUseCase {
     let specs: (VirtualServiceSpec | DestinationRuleSpec)[] = []
     let services : KubernetesObject[] = []
     for (const c of hookParams.parent.spec.circles) {
-      const deployment = await this.retriveDeploymentFor(c.id)
+      const deployment = await this.retrieveDeploymentFor(c.id)
       const activeComponents = await this.componentsRepository.findHealthyActiveComponents()
       const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
       services = services.concat(deployment.components.flatMap(c => c.manifests).filter(m => m.kind === 'Service'))
@@ -124,7 +124,7 @@ export class CreateRoutesManifestsUseCase {
     return false
   }
 
-  private async retriveDeploymentFor(id: string): Promise<DeploymentEntityV2> {
+  private async retrieveDeploymentFor(id: string): Promise<DeploymentEntityV2> {
     const deployment = await this.deploymentRepository.findOneOrFail({ circleId: id, current: true }, { relations: ['components'] })
     return deployment
   }

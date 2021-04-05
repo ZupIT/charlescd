@@ -24,10 +24,10 @@ import { ExecutionRepository } from '../../api/deployments/repository/execution.
 import { NotificationStatusEnum } from '../../core/enums/notification-status.enum'
 import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
-import { MooveService } from '../../core/integrations/moove/moove.service'
+import { MooveService } from '../../core/integrations/moove'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { HookParams } from '../params.interface'
-import { ReconcileDeployment } from './reconcile-deployments.usecase'
+import { HookParams } from '../interfaces/params.interface'
+import { ReconcileUtils } from '../utils/reconcile.utils'
 
 @Injectable()
 export class ReconcileDeploymentUsecase {
@@ -37,7 +37,6 @@ export class ReconcileDeploymentUsecase {
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly reconcileUseCase: ReconcileDeployment,
     private readonly executionRepository: ExecutionRepository,
     private readonly mooveService: MooveService
   ) { }
@@ -50,14 +49,14 @@ export class ReconcileDeploymentUsecase {
       return { children: [] }
     }
     const rawSpecs = deployment.components.flatMap(c => c.manifests).filter(e => e.kind !== 'Service')
-    const specs = this.reconcileUseCase.addMetadata(rawSpecs, deployment)
+    const specs = ReconcileUtils.addMetadata(rawSpecs, deployment)
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
     }
-    const currentDeploymentSpecs = this.reconcileUseCase.specsByDeployment(params, deployment.id)
+    const currentDeploymentSpecs = ReconcileUtils.specsByDeployment(params, deployment.id)
 
-    const allReady = this.reconcileUseCase.checkConditions(currentDeploymentSpecs)
-    if (allReady === false) {
+    const allReady = ReconcileUtils.checkConditions(currentDeploymentSpecs)
+    if (!allReady) {
       const previousDeploymentId = deployment.previousDeploymentId
 
       if (previousDeploymentId === null) {
@@ -65,7 +64,7 @@ export class ReconcileDeploymentUsecase {
         return { children: specs, resyncAfterSeconds: 5 }
       }
       const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = this.reconcileUseCase.concatWithPrevious(previousDeployment, specs)
+      const currentAndPrevious = ReconcileUtils.concatWithPrevious(previousDeployment, specs)
       return { children: currentAndPrevious.filter(e => e.kind !== 'Service'), resyncAfterSeconds: 5 }
     }
 

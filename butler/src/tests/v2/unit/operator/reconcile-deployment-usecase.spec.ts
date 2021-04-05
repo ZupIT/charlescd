@@ -22,11 +22,10 @@ import {
   deployComponentsFixture,
   deploymentWithManifestFixture
 } from '../../fixtures/deployment-entity.fixture'
-import { HookParams } from '../../../../app/v2/operator/params.interface'
+import { HookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-cases/reconcile-deployment.usecase'
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
-import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
 import { MooveService } from '../../../../app/v2/core/integrations/moove'
 import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
 import { HttpService } from '@nestjs/common'
@@ -46,7 +45,6 @@ describe('Reconcile deployment usecase spec', () => {
   const mooveService = new MooveService(new HttpService(), consoleLoggerService)
 
   const k8sClient = new K8sClient(consoleLoggerService, envConfiguration)
-  const reconcileDeployment = new ReconcileDeployment()
 
   let hookParams: HookParams
 
@@ -252,7 +250,6 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       consoleLoggerService,
-      reconcileDeployment,
       executionRepository,
       mooveService
     )
