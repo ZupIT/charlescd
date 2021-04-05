@@ -11,7 +11,10 @@ type serviceManager struct {
 
 func prepareServices() (serviceManager, error) {
 	authTokenService := service.NewAuthTokenService()
-	securityFilter := service.NewSecurityFilterService()
+	securityFilter, err := service.NewSecurityFilterService()
+	if err != nil {
+		return serviceManager{}, err
+	}
 
 	return serviceManager{
 		authTokenService: authTokenService,

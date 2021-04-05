@@ -7,68 +7,69 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/service"
 )
 
-type DoAuthorization interface {
+type AuthorizeUserToken interface {
 	Execute(authorizationToken string, workspaceId string, input Input) error
 }
 
-type doAuthorization struct {
-	enforcer            service.SecurityFilterService
-	userRepository      repository.UserRepository
-	workspaceRepository repository.WorkspaceRepository
-	authTokenService    service.AuthTokenService
+type authorizeUserToken struct {
+	securityFilterService service.SecurityFilterService
+	userRepository        repository.UserRepository
+	workspaceRepository   repository.WorkspaceRepository
+	authTokenService      service.AuthTokenService
 }
 
-func NewDoAuthorization(enforcer service.SecurityFilterService, userRepository repository.UserRepository, workspaceRepository repository.WorkspaceRepository, authTokenService service.AuthTokenService) DoAuthorization {
-	return doAuthorization{
-		enforcer:            enforcer,
-		userRepository:      userRepository,
-		workspaceRepository: workspaceRepository,
-		authTokenService:    authTokenService,
+func NewAuthorizeUserToken(securityFilterService service.SecurityFilterService, userRepository repository.UserRepository, workspaceRepository repository.WorkspaceRepository, authTokenService service.AuthTokenService) AuthorizeUserToken {
+	return authorizeUserToken{
+		securityFilterService: securityFilterService,
+		userRepository:        userRepository,
+		workspaceRepository:   workspaceRepository,
+		authTokenService:      authTokenService,
 	}
 }
 
-func (doAuthorization doAuthorization) Execute(authorizationToken string, workspaceId string, input Input) error {
-	allowed, err := doAuthorization.enforcer.Enforce("public", input.Path, input.Method)
+func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, workspaceId string, input Input) error {
+	allowed, err := authorizeUserToken.securityFilterService.Authorize("public", input.Path, input.Method)
 	if err != nil {
-		return handleAuthError("Forbidden", "forbidden", "Authorizer", logging.InternalError)
+		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.userToken")
 	}
 	if allowed {
 		return nil
 	}
 
 	if authorizationToken == "" {
-		return handleAuthError("Forbidden", "invalid authorization token", "Authorizer", logging.ForbiddenError)
+		return logging.NewError("Forbidden", errors.New("invalid authorization token"), logging.ForbiddenError, nil, "authorize.userToken")
 	}
 
-	allowed, err = doAuthorization.enforcer.Enforce("management", input.Path, input.Method)
+	allowed, err = authorizeUserToken.securityFilterService.Authorize("management", input.Path, input.Method)
 	if err != nil {
-		return handleAuthError("Forbidden", "forbidden", "Authorizer", logging.InternalError)
+		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.userToken")
 	}
 
 	if allowed {
 		return nil
 	}
 
-	userToken, err := doAuthorization.authTokenService.ParseAuthorizationToken(authorizationToken)
+	userToken, err := authorizeUserToken.authTokenService.ParseAuthorizationToken(authorizationToken)
 	if err != nil {
-		return handleAuthError("Forbidden", "invalid authorization token", "Authorizer", logging.ForbiddenError)
+		return logging.WithOperation(err, "authorize.userToken")
 	}
 
-	user, err := doAuthorization.userRepository.GetByEmail(userToken.Email)
+	user, err := authorizeUserToken.userRepository.GetByEmail(userToken.Email)
 	if err != nil {
-		return handleAuthError("Forbidden", "invalid user", "Authorizer", logging.ForbiddenError)
+		return logging.WithOperation(err, "authorize.userToken")
+
 	}
 
 	if user.IsRoot {
 		return nil
 	}
 
-	userPermission, err := doAuthorization.workspaceRepository.GetUserPermissionAtWorkspace(workspaceId, user.ID.String())
+	userPermission, err := authorizeUserToken.workspaceRepository.GetUserPermissionAtWorkspace(workspaceId, user.ID.String())
 	for _, ps := range userPermission {
 		for _, p := range ps {
-			allowed, err = doAuthorization.enforcer.Enforce(p.Name, input.Path, input.Method)
+			allowed, err = authorizeUserToken.securityFilterService.Authorize(p.Name, input.Path, input.Method)
 			if err != nil {
-				return handleAuthError("Forbidden", "forbidden", "Authorizer", logging.InternalError)
+				return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.userToken")
 			}
 
 			if allowed {
@@ -77,9 +78,5 @@ func (doAuthorization doAuthorization) Execute(authorizationToken string, worksp
 		}
 	}
 
-	return handleAuthError("Forbidden", "forbidden", "Authorizer", logging.ForbiddenError)
-}
-
-func handleAuthError(message string, details string, operation string, errType string) error {
-	return logging.NewError(message, errors.New(details), errType, nil, operation)
+	return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.userToken")
 }

@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func DoAuthorization(doAuthorization authorizationInteractor.DoAuthorization) echo.HandlerFunc {
+func DoAuthorization(authorizeUserToken authorizationInteractor.AuthorizeUserToken, authorizeSystemToken authorizationInteractor.AuthorizeSystemToken) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		ctx := echoCtx.Request().Context()
 		var request representation.AuthorizationRequest
@@ -20,17 +20,26 @@ func DoAuthorization(doAuthorization authorizationInteractor.DoAuthorization) ec
 
 		validationErr := echoCtx.Validate(request)
 		if validationErr != nil {
-			validationErr = logging.WithOperation(validationErr, "doAuthorization.InputValidation")
+			validationErr = logging.WithOperation(validationErr, "authorizeUserToken.InputValidation")
 			logging.LogErrorFromCtx(ctx, validationErr)
 			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
 		}
 
-		var authorizationToken = echoCtx.Request().Header.Get("Authorization")
+		var systemToken = echoCtx.Request().Header.Get("x-charles-token")
 		var workspaceId = echoCtx.Request().Header.Get("x-workspace-id")
 
-		err := doAuthorization.Execute(authorizationToken, workspaceId, request.RequestToInput())
-		if err != nil {
-			return HandleError(echoCtx, ctx, err)
+		if systemToken != "" {
+			err := authorizeSystemToken.Execute(systemToken, workspaceId, request.RequestToInput())
+			if err != nil {
+				return HandleError(echoCtx, ctx, err)
+			}
+		} else {
+			var userToken = echoCtx.Request().Header.Get("Authorization")
+
+			err := authorizeUserToken.Execute(userToken, workspaceId, request.RequestToInput())
+			if err != nil {
+				return HandleError(echoCtx, ctx, err)
+			}
 		}
 
 		return echoCtx.JSON(http.StatusNoContent, nil)

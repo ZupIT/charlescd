@@ -7,7 +7,6 @@ import (
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
-	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -25,7 +24,6 @@ type server struct {
 	persistenceManager persistenceManager
 	serviceManager     serviceManager
 	httpServer         *echo.Echo
-	enforcer           *casbin.Enforcer
 }
 
 type customBinder struct{}
@@ -36,15 +34,10 @@ type CustomValidator struct {
 }
 
 func newServer(pm persistenceManager, sm serviceManager) (server, error) {
-	enforcer, err := casbinEnforcer()
-	if err != nil {
-		return server{}, err
-	}
 	return server{
 		persistenceManager: pm,
 		serviceManager:     sm,
 		httpServer:         createHttpServerInstance(),
-		enforcer:           enforcer,
 	}, nil
 }
 
@@ -107,15 +100,6 @@ func buildCustomValidator() *CustomValidator {
 	}
 }
 
-func casbinEnforcer() (*casbin.Enforcer, error) {
-	enforcer, err := casbin.NewEnforcer("./resources/auth.conf", "./resources/policy.csv")
-	if err != nil {
-		return nil, err
-	}
-
-	return enforcer, nil
-}
-
 func (server server) registerRoutes() {
 	server.httpServer.GET("/health", handlers.Health())
 	server.httpServer.GET("/metrics", handlers.Metrics())
@@ -134,7 +118,9 @@ func (server server) registerRoutes() {
 
 			authorization := v1.Group("/authorization")
 			{
-				authorization.POST("", handlers.DoAuthorization(authorizationInteractor.NewDoAuthorization(server.enforcer, server.persistenceManager.userRepository, server.persistenceManager.workspaceRepository, server.serviceManager.authTokenService)))
+				authorization.POST("", handlers.DoAuthorization(
+					authorizationInteractor.NewAuthorizeUserToken(server.serviceManager.securityFilter, server.persistenceManager.userRepository, server.persistenceManager.workspaceRepository, server.serviceManager.authTokenService),
+					authorizationInteractor.NewAuthorizeSystemToken(server.serviceManager.securityFilter, server.persistenceManager.systemTokenRepository)))
 			}
 		}
 	}

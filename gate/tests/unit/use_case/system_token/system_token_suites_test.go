@@ -3,7 +3,7 @@ package system_token
 import (
 	"github.com/ZupIT/charlescd/gate/internal/service"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
-	repositoryMocks "github.com/ZupIT/charlescd/gate/tests/unit/mocks/repository"
+	"github.com/ZupIT/charlescd/gate/tests/unit/mocks"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
@@ -14,18 +14,18 @@ type SystemTokenSuite struct {
 	getSystemToken        systemTokenInteractor.GetSystemToken
 	getAllSystemToken     systemTokenInteractor.GetAllSystemToken
 	revokeSystemToken     systemTokenInteractor.RevokeSystemToken
-	systemTokenRepository *repositoryMocks.SystemTokenRepository
-	permissionRepository  *repositoryMocks.PermissionRepository
-	userRepository        *repositoryMocks.UserRepository
-	workspaceRepository   *repositoryMocks.WorkspaceRepository
+	systemTokenRepository *mocks.SystemTokenRepository
+	permissionRepository  *mocks.PermissionRepository
+	userRepository        *mocks.UserRepository
+	workspaceRepository   *mocks.WorkspaceRepository
 	authTokenService      service.AuthTokenService
 }
 
 func (st *SystemTokenSuite) SetupSuite() {
-	st.systemTokenRepository = new(repositoryMocks.SystemTokenRepository)
-	st.permissionRepository = new(repositoryMocks.PermissionRepository)
-	st.userRepository = new(repositoryMocks.UserRepository)
-	st.workspaceRepository = new(repositoryMocks.WorkspaceRepository)
+	st.systemTokenRepository = new(mocks.SystemTokenRepository)
+	st.permissionRepository = new(mocks.PermissionRepository)
+	st.userRepository = new(mocks.UserRepository)
+	st.workspaceRepository = new(mocks.WorkspaceRepository)
 	st.authTokenService = service.NewAuthTokenService()
 	st.createSystemToken = systemTokenInteractor.NewCreateSystemToken(st.systemTokenRepository, st.permissionRepository, st.userRepository, st.workspaceRepository, st.authTokenService)
 	st.getSystemToken = systemTokenInteractor.NewGetSystemToken(st.systemTokenRepository)
