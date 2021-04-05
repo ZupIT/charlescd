@@ -23,16 +23,17 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 )
 
-func SystemTokenDomainToModel(systemToken domain.SystemToken) models.SystemToken {
+func SystemTokenDomainToModel(systemToken domain.SystemToken, permissions []domain.Permission) models.SystemToken {
 	return models.SystemToken{
 		ID:          systemToken.ID,
 		Name:        systemToken.Name,
 		Revoked:     systemToken.Revoked,
-		Permissions: PermissionsDomainToModels(systemToken.Permissions),
+		Permissions: PermissionsDomainToModels(permissions),
+		Workspaces: systemToken.Workspaces,
 		CreatedAt:   systemToken.CreatedAt,
 		RevokedAt:   systemToken.RevokedAt,
 		LastUsedAt:  systemToken.LastUsedAt,
-		AuthorEmail: systemToken.AuthorEmail,
+		Author: systemToken.Author,
 	}
 }
 
@@ -41,11 +42,12 @@ func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken
 		ID:          systemToken.ID,
 		Name:        systemToken.Name,
 		Revoked:     systemToken.Revoked,
-		Permissions: PermissionsModelsToDomains(systemToken.Permissions),
+		Permissions: PermissionsModelToDomains(systemToken.Permissions),
+		Workspaces: systemToken.Workspaces,
 		CreatedAt:   systemToken.CreatedAt,
 		RevokedAt:   systemToken.RevokedAt,
 		LastUsedAt:  systemToken.LastUsedAt,
-		AuthorEmail: systemToken.AuthorEmail,
+		Author: systemToken.Author,
 	}
 }
 

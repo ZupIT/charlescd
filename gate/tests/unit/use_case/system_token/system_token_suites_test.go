@@ -19,26 +19,33 @@
 package system_token
 
 import (
-	"testing"
-	"time"
-
-	"github.com/ZupIT/charlescd/gate/internal/domain"
+	"github.com/ZupIT/charlescd/gate/internal/service"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
-	mocks "github.com/ZupIT/charlescd/gate/tests/unit/mocks/repository"
-	"github.com/google/uuid"
+	repositoryMocks "github.com/ZupIT/charlescd/gate/tests/unit/mocks/repository"
 	"github.com/stretchr/testify/suite"
+	"testing"
 )
 
 type SystemTokenSuite struct {
 	suite.Suite
+	createSystemToken     systemTokenInteractor.CreateSystemToken
 	getSystemToken        systemTokenInteractor.GetSystemToken
 	getAllSystemToken     systemTokenInteractor.GetAllSystemToken
 	revokeSystemToken     systemTokenInteractor.RevokeSystemToken
-	systemTokenRepository *mocks.SystemTokenRepository
+	systemTokenRepository *repositoryMocks.SystemTokenRepository
+	permissionRepository  *repositoryMocks.PermissionRepository
+	userRepository        *repositoryMocks.UserRepository
+	workspaceRepository   *repositoryMocks.WorkspaceRepository
+	authTokenService      service.AuthTokenService
 }
 
 func (st *SystemTokenSuite) SetupSuite() {
-	st.systemTokenRepository = new(mocks.SystemTokenRepository)
+	st.systemTokenRepository = new(repositoryMocks.SystemTokenRepository)
+	st.permissionRepository = new(repositoryMocks.PermissionRepository)
+	st.userRepository = new(repositoryMocks.UserRepository)
+	st.workspaceRepository = new(repositoryMocks.WorkspaceRepository)
+	st.authTokenService = service.NewAuthTokenService()
+	st.createSystemToken = systemTokenInteractor.NewCreateSystemToken(st.systemTokenRepository, st.permissionRepository, st.userRepository, st.workspaceRepository, st.authTokenService)
 	st.getSystemToken = systemTokenInteractor.NewGetSystemToken(st.systemTokenRepository)
 	st.getAllSystemToken = systemTokenInteractor.NewGetAllSystemToken(st.systemTokenRepository)
 	st.revokeSystemToken = systemTokenInteractor.NewRevokeSystemToken(st.systemTokenRepository)
@@ -52,13 +59,3 @@ func TestSuite(t *testing.T) {
 	suite.Run(t, new(SystemTokenSuite))
 }
 
-func getDummySystemToken() domain.SystemToken {
-	createdAt := time.Now()
-	return domain.SystemToken{
-		ID:          uuid.New(),
-		Name:        "SystemToken Test",
-		AuthorEmail: "joe.doe@email.com",
-		CreatedAt:   &createdAt,
-		Revoked:     false,
-	}
-}

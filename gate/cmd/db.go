@@ -34,6 +34,9 @@ import (
 
 type persistenceManager struct {
 	systemTokenRepository repository.SystemTokenRepository
+	permissionRepository repository.PermissionRepository
+	userRepository repository.UserRepository
+	workspaceRepository repository.WorkspaceRepository
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -92,12 +95,30 @@ func runMigrations(sqlDb *sql.DB) error {
 }
 
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
-	stRepo, err := repository.NewSystemTokenRepository(db)
+	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
 	}
 
+	permissionRepo, err := repository.NewPermissionRepository(db)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate permission repository with error: %s", err.Error()))
+	}
+
+	userRepo, err := repository.NewUserRepository(db)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate user repository with error: %s", err.Error()))
+	}
+
+	workspaceRepo, err := repository.NewWorkspaceRepository(db)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate workspace repository with error: %s", err.Error()))
+	}
+
 	return persistenceManager{
-		systemTokenRepository: stRepo,
+		systemTokenRepository: systemTokenRepo,
+		permissionRepository: permissionRepo,
+		userRepository: userRepo,
+		workspaceRepository: workspaceRepo,
 	}, nil
 }

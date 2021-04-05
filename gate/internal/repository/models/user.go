@@ -16,29 +16,19 @@
  *
  */
 
-package handlers
+package models
 
 import (
-	"context"
-	"github.com/ZupIT/charlescd/gate/internal/logging"
-	"github.com/labstack/echo/v4"
-	"net/http"
+	"github.com/google/uuid"
+	"time"
 )
 
-func HandleError(echoCtx echo.Context, ctx context.Context, err error) error  {
-	logging.LogErrorFromCtx(ctx, err)
-	return echoCtx.JSON(getErrorStatusCode(logging.GetErrorType(err)), err)
+type User struct {
+	ID        uuid.UUID
+	Name      string
+	PhotoUrl  string
+	Email     string
+	IsRoot    bool
+	CreatedAt time.Time
 }
 
-func getErrorStatusCode(errType string) int {
-	switch errType {
-	case logging.ParseError, logging.IllegalParamError:
-		return http.StatusBadRequest
-	case logging.BusinessError:
-		return http.StatusUnprocessableEntity
-	case logging.NotFoundError:
-		return http.StatusNotFound
-	default:
-		return http.StatusInternalServerError
-	}
-}

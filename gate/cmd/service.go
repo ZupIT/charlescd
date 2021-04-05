@@ -16,29 +16,20 @@
  *
  */
 
-package handlers
+package main
 
 import (
-	"context"
-	"github.com/ZupIT/charlescd/gate/internal/logging"
-	"github.com/labstack/echo/v4"
-	"net/http"
+	"github.com/ZupIT/charlescd/gate/internal/service"
 )
 
-func HandleError(echoCtx echo.Context, ctx context.Context, err error) error  {
-	logging.LogErrorFromCtx(ctx, err)
-	return echoCtx.JSON(getErrorStatusCode(logging.GetErrorType(err)), err)
+type serviceManager struct {
+	authTokenService service.AuthTokenService
 }
 
-func getErrorStatusCode(errType string) int {
-	switch errType {
-	case logging.ParseError, logging.IllegalParamError:
-		return http.StatusBadRequest
-	case logging.BusinessError:
-		return http.StatusUnprocessableEntity
-	case logging.NotFoundError:
-		return http.StatusNotFound
-	default:
-		return http.StatusInternalServerError
-	}
+func prepareServices() (serviceManager, error) {
+	authTokenService:= service.NewAuthTokenService()
+
+	return serviceManager{
+		authTokenService: authTokenService,
+	}, nil
 }

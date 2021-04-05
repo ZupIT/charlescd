@@ -16,29 +16,31 @@
  *
  */
 
-package handlers
+package system_token
 
 import (
-	"context"
-	"github.com/ZupIT/charlescd/gate/internal/logging"
-	"github.com/labstack/echo/v4"
-	"net/http"
+	"github.com/ZupIT/charlescd/gate/internal/domain"
+	"github.com/google/uuid"
+	"time"
 )
 
-func HandleError(echoCtx echo.Context, ctx context.Context, err error) error  {
-	logging.LogErrorFromCtx(ctx, err)
-	return echoCtx.JSON(getErrorStatusCode(logging.GetErrorType(err)), err)
+type CreateSystemTokenInput struct {
+	Name string
+	Permissions []string
+	Workspaces []string
 }
 
-func getErrorStatusCode(errType string) int {
-	switch errType {
-	case logging.ParseError, logging.IllegalParamError:
-		return http.StatusBadRequest
-	case logging.BusinessError:
-		return http.StatusUnprocessableEntity
-	case logging.NotFoundError:
-		return http.StatusNotFound
-	default:
-		return http.StatusInternalServerError
+func (input CreateSystemTokenInput) InputToDomain() domain.SystemToken {
+	createdAt := time.Now()
+	return domain.SystemToken{
+		ID:          uuid.New(),
+		Name:        input.Name,
+		Revoked:     false,
+		Permissions: []domain.Permission{},
+		Workspaces: input.Workspaces,
+		CreatedAt:   &createdAt,
+		RevokedAt:   nil,
+		LastUsedAt:  nil,
+		Author: "",
 	}
 }

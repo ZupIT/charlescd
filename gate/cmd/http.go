@@ -20,35 +20,43 @@ package main
 
 import (
 	"fmt"
-
+	"github.com/ZupIT/charlescd/gate/internal/logging"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
 	"github.com/casbin/casbin/v2"
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/leebenson/conform"
+	"reflect"
+	"strings"
 )
 
 type server struct {
 	persistenceManager persistenceManager
-	httpServer         *echo.Echo
-	enforcer           *casbin.Enforcer
+	serviceManager serviceManager
+	httpServer     *echo.Echo
+	enforcer *casbin.Enforcer
 }
 
 type customBinder struct{}
 
 type CustomValidator struct {
 	validator *validator.Validate
+	translator *ut.UniversalTranslator
 }
 
-func newServer(pm persistenceManager) (server, error) {
+func newServer(pm persistenceManager, sm serviceManager) (server, error) {
 	return server{
-		persistenceManager: pm,
-		httpServer:         createHttpServerInstance(),
+		persistenceManager:   pm,
+		serviceManager: sm,
+		httpServer: createHttpServerInstance(),
 	}, nil
 }
 
@@ -80,7 +88,11 @@ func (cb customBinder) Bind(i interface{}, echoCtx echo.Context) (err error) {
 }
 
 func (cv *CustomValidator) Validate(i interface{}) error {
-	return cv.validator.Struct(i)
+	err := cv.validator.Struct(i)
+	if err != nil {
+		return logging.NewValidationError(err, cv.translator)
+	}
+	return nil
 }
 
 func buildCustomValidator() *CustomValidator {
@@ -88,8 +100,23 @@ func buildCustomValidator() *CustomValidator {
 	if err := v.RegisterValidation("notblank", validators.NotBlank); err != nil {
 		return nil
 	}
+	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+	defaultLang := en.New()
+	uniTranslator := ut.New(defaultLang, defaultLang)
 
-	return &CustomValidator{validator: v}
+	defaultTrans, _ := uniTranslator.GetTranslator("en")
+	_ = enTranslations.RegisterDefaultTranslations(v, defaultTrans)
+
+	return &CustomValidator{
+		validator:  v,
+		translator: uniTranslator,
+	}
 }
 
 func (server server) registerRoutes() {
@@ -100,11 +127,12 @@ func (server server) registerRoutes() {
 	{
 		v1 := api.Group("/v1")
 		{
-			st := v1.Group("/system-token")
+			systemToken := v1.Group("/system-token")
 			{
-				st.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
-				st.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
-				st.POST("/:id/revoke", handlers.RevokeSytemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
+				systemToken.POST("", handlers.CreateSystemToken(systemTokenInteractor.NewCreateSystemToken(server.persistenceManager.systemTokenRepository, server.persistenceManager.permissionRepository, server.persistenceManager.userRepository, server.persistenceManager.workspaceRepository, server.serviceManager.authTokenService)))
+				systemToken.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
+				systemToken.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
+				systemToken.POST("/:id/revoke", handlers.RevokeSytemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 		}
 	}

@@ -20,24 +20,28 @@ package representation
 
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
+	"github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
 	"time"
 )
 
 type SystemTokenRequest struct {
-	Name        string   `json:"name" validate:"required,notblank"`
-	Permissions []string `json:"permissions" validate:"required,notnull"`
-	Author      string   `json:"author" validate:"required,notblank"`
+	Name string `json:"name" validate:"required,notblank"`
+	Permissions []string `json:"permissions" validate:"min=1,dive,notblank"`
+	Workspaces []string `json:"workspaces" validate:"required"`
 }
 
 type SystemTokenResponse struct {
-	ID          uuid.UUID            `json:"id"`
-	Name        string               `json:"name"`
-	Permissions []PermissionResponse `json:"permissions"`
-	CreatedAt   *time.Time           `json:"created_at"`
-	RevokedAt   *time.Time           `json:"revoked_at"`
-	LastUsedAt  *time.Time           `json:"last_used_at"`
-	Author      string               `json:"author"`
+	ID uuid.UUID `json:"id"`
+	Name string `json:"name"`
+	Permissions []string `json:"permissions"`
+	Workspaces []string `json:"workspaces"`
+	Revoked bool `json:"revoked"`
+	CreatedAt *time.Time `json:"created_at"`
+	RevokedAt *time.Time `json:"revoked_at"`
+	LastUsedAt *time.Time `json:"last_used_at"`
+	Author string `json:"author"`
 }
 
 type PageSystemTokenResponse struct {
@@ -48,29 +52,25 @@ type PageSystemTokenResponse struct {
 	TotalPages int                   `json:"totalPages"`
 }
 
-func (systemTokenRequest SystemTokenRequest) RequestToDomain(author string) domain.SystemToken {
-	createdAt := time.Now()
-	return domain.SystemToken{
-		ID:          uuid.New(),
+func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.CreateSystemTokenInput {
+	return system_token.CreateSystemTokenInput{
 		Name:        systemTokenRequest.Name,
-		Revoked:     false,
-		Permissions: []domain.Permission{},
-		CreatedAt:   &createdAt,
-		RevokedAt:   &time.Time{},
-		LastUsedAt:  &time.Time{},
-		AuthorEmail: author,
+		Permissions: systemTokenRequest.Permissions,
+		Workspaces:  systemTokenRequest.Workspaces,
 	}
 }
 
 func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 	return SystemTokenResponse{
-		ID:          systemToken.ID,
-		Name:        systemToken.Name,
-		Permissions: PermissionsToResponse(systemToken.Permissions),
-		CreatedAt:   systemToken.CreatedAt,
-		RevokedAt:   systemToken.RevokedAt,
-		LastUsedAt:  systemToken.LastUsedAt,
-		Author:      systemToken.AuthorEmail,
+		ID: systemToken.ID,
+		Name: systemToken.Name,
+		Permissions: mapper.GetPermissionModelsName(systemToken.Permissions),
+		Workspaces: systemToken.Workspaces,
+		Revoked: systemToken.Revoked,
+		CreatedAt: systemToken.CreatedAt,
+		RevokedAt: systemToken.RevokedAt,
+		LastUsedAt: systemToken.LastUsedAt,
+		Author: systemToken.Author,
 	}
 }
 

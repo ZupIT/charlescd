@@ -20,12 +20,13 @@ package system_token
 
 import (
 	"github.com/ZupIT/charlescd/gate/internal/logging"
+	"github.com/ZupIT/charlescd/gate/tests/unit/utils"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
 func (st *SystemTokenSuite) TestGetByID() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil)
 	result, err := st.getSystemToken.Execute(systemToken.ID)
@@ -37,7 +38,7 @@ func (st *SystemTokenSuite) TestGetByID() {
 }
 
 func (st *SystemTokenSuite) TestErrorGetByIDNotFound() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).
 		Return(systemToken, logging.NewError("Not found error", logging.CustomError{}, logging.NotFoundError, nil))
@@ -51,7 +52,7 @@ func (st *SystemTokenSuite) TestErrorGetByIDNotFound() {
 }
 
 func (st *SystemTokenSuite) TestErrorGetByIDInternalError() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).
 		Return(systemToken, logging.NewError("Internal error", logging.CustomError{}, logging.InternalError, nil))

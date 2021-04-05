@@ -14,20 +14,20 @@ type SystemTokenRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: systemToken
-func (_m *SystemTokenRepository) Create(systemToken domain.SystemToken) (domain.SystemToken, error) {
-	ret := _m.Called(systemToken)
+// Create provides a mock function with given fields: systemToken, permissions
+func (_m *SystemTokenRepository) Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error) {
+	ret := _m.Called(systemToken, permissions)
 
 	var r0 domain.SystemToken
-	if rf, ok := ret.Get(0).(func(domain.SystemToken) domain.SystemToken); ok {
-		r0 = rf(systemToken)
+	if rf, ok := ret.Get(0).(func(domain.SystemToken, []domain.Permission) domain.SystemToken); ok {
+		r0 = rf(systemToken, permissions)
 	} else {
 		r0 = ret.Get(0).(domain.SystemToken)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(domain.SystemToken) error); ok {
-		r1 = rf(systemToken)
+	if rf, ok := ret.Get(1).(func(domain.SystemToken, []domain.Permission) error); ok {
+		r1 = rf(systemToken, permissions)
 	} else {
 		r1 = ret.Error(1)
 	}
