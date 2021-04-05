@@ -14,19 +14,29 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ButtonComponent from 'core/components/Button';
 
 const Button = styled(ButtonComponent.Rounded)`
   margin-top: 10px;
 `;
 
-const Content = styled.div`
+interface ContentProps {
+  left?: boolean;
+  displayAction?: boolean;
+}
+
+const Content = styled.div<ContentProps>`
   margin-top: 10px;
+  display: ${({ displayAction = true }) => displayAction ? 'block' : 'none' };
 
   > * {
     margin-bottom: 10px;
   }
+
+  ${({ left }) => left && css`
+    margin-left: 35px;
+  `}
 `;
 
 export default {

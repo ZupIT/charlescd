@@ -12,8 +12,8 @@ type WorkspaceRepository struct {
 	mock.Mock
 }
 
-// ExistsByIds provides a mock function with given fields: workspaceIds
-func (_m *WorkspaceRepository) ExistsByIds(workspaceIds []string) (int64, error) {
+// CountByIds provides a mock function with given fields: workspaceIds
+func (_m *WorkspaceRepository) CountByIds(workspaceIds []string) (int64, error) {
 	ret := _m.Called(workspaceIds)
 
 	var r0 int64

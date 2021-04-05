@@ -15,7 +15,7 @@
  */
 
 import { useEffect, Fragment } from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { Token } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
@@ -28,48 +28,52 @@ import Styled from './styled';
 const FormToken = () => {
   const { save, status } = useSave();
 
+  const methods = useForm<Token>({ mode: 'onChange' });
   const {
     register, handleSubmit, watch,
     setValue, errors, formState: { isValid }
-  } = useForm<Token>({ mode: 'onChange' });
+  } = methods;
 
-  useEffect(() => {
-    register({ name: "workspaces" }, { required: isRequired() });
-    register({ name: "permissions" }, { required: isRequired() });
-  }, [register]);
+  // useEffect(() => {
+  //   register({ name: "workspaces" }, { required: isRequired() });
+  //   register({ name: "permissions" }, { required: isRequired() });
+  // }, [register]);
 
-  const name = watch('name') as string;
-  const workspaces = watch('workspaces') as string[];
+  // const name = watch('name') as string;
+  // const workspaces = watch('workspaces') as string[];
 
   const onSubmit = (token: Token) => {
-    save(token);
+    console.log(token);
+    // save(token);
   };
 
   return (
     <Styled.Content>
-      <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-        <ContentIcon icon="token">
-          <Form.InputTitle
-            name="name"
-            ref={register(isRequiredAndNotBlank)}
-            error={errors?.name?.message}
-          />
-        </ContentIcon>
-        {name && <Workspaces setValue={setValue} />}
-        {name && workspaces && (
-          <Fragment>
-            <Scopes setValue={setValue} />
-            <Styled.Button
-              type="submit"
-              size="EXTRA_SMALL"
-              isDisabled={!isValid}
-              isLoading={status.isPending}
-            >
-              Generate token
-            </Styled.Button>
-          </Fragment>
-        )}
-      </Styled.Form>
+      <FormProvider {...methods}>
+        <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+          {/* <ContentIcon icon="token">
+            <Form.InputTitle
+              name="name"
+              ref={register(isRequiredAndNotBlank)}
+              error={errors?.name?.message}
+            />
+          </ContentIcon>
+          {name && <Workspaces setValue={setValue} />} */}
+          {/* {name && workspaces && ( */}
+            <Fragment>
+              <Scopes />
+              <Styled.Button
+                type="submit"
+                size="EXTRA_SMALL"
+                // isDisabled={!isValid}
+                isLoading={status.isPending}
+              >
+                Generate token
+              </Styled.Button>
+            </Fragment>
+          {/* )} */}
+        </Styled.Form>
+      </FormProvider>
     </Styled.Content>
   );
 };
