@@ -26,7 +26,7 @@ export class FindDeploymentLogsByIdUsecase {
         private readonly logsRepository: LogRepository
   ){}
     
-  public async execute(deploymentId: string): Promise<ReadLogsDto> {
+  public async execute(deploymentId: string, workspaceId: string): Promise<ReadLogsDto> {
     const deploymentLogs = await this.logsRepository.findDeploymentLogs(deploymentId)
     if (!deploymentLogs) {
       throw  new NotFoundException(`No logs found associated with the deployment: ${deploymentId}`)

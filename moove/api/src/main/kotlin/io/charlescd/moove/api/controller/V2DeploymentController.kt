@@ -40,7 +40,8 @@ class V2DeploymentController(
     private val createDeploymentInteractor: CreateDeploymentInteractor,
     private val findDeploymentsHistoryForCircleInteractor: FindDeploymentsHistoryForCircleInteractor,
     private val findDeploymentsHistoryInteractor: FindDeploymentsHistoryInteractor,
-    private val undeployInteractor: UndeployInteractor
+    private val undeployInteractor: UndeployInteractor,
+    private val findDeploymentLogsInteractor: FindDeploymentLogsInteractor
 ) {
     @ApiOperation(value = "Create Deployment")
     @ApiImplicitParam(
@@ -103,5 +104,16 @@ class V2DeploymentController(
         pageRequest: PageRequest
     ): SummarizedDeploymentHistoryResponse {
         return this.findDeploymentsHistoryInteractor.execute(workspaceId, filters, pageRequest)
+    }
+
+    @ApiOperation(value = "Get deployment logs")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/{deploymentId}/logs")
+    fun deploymentLogs(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("deploymentId") deploymentId: String
+    ) {
+        return this.findDeploymentLogsInteractor.execute(workspaceId, authorization, deploymentId)
     }
 }

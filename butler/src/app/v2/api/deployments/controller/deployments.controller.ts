@@ -64,8 +64,9 @@ export class DeploymentsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async findDeploymentEvents(
       @Param('id') deploymentId: string,
+      @Headers('x-workspace-id') workspaceId: string | undefined,
   ): Promise<ReadLogsDto> {
-    return this.findDeploymentLogsByIdUseCase.execute(deploymentId)
+    return this.findDeploymentLogsByIdUseCase.execute(deploymentId, workspaceId)
   }
 
   @Post('/:id/undeploy')

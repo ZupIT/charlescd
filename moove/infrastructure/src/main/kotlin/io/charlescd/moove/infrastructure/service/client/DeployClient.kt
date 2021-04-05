@@ -62,5 +62,8 @@ interface DeployClient {
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun getDeploymentLogs(@PathVariable("deploymentId") deploymentId: String): LogResponse
+    fun getDeploymentLogs(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable("deploymentId") deploymentId: String
+    ): LogResponse
 }

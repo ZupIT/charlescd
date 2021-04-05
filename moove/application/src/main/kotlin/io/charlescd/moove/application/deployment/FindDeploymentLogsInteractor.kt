@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository } from 'typeorm'
-import { LogEntity } from '../entity/logs.entity'
+package io.charlescd.moove.application.deployment
 
-@EntityRepository(LogEntity)
-export class LogRepository extends Repository<LogEntity> {
+import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
+import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
+import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.infrastructure.service.client.response.LogResponse
 
-  public async findDeploymentLogs(deploymentId: string, workspaceId: string): Promise<LogEntity | undefined> {
-    return this.createQueryBuilder('v2logs')
-      .leftJoinAndSelect('v2logs.deployment', 'deployment')
-      .leftJoinAndSelect('deployment.cdConfiguration', 'c')
-      .andWhere('deployment.id = :deploymentId', { deploymentId })
-      .andWhere('c.workspaceId = :workspaceId', { workspaceId })
-      .getOne()
-  }
+interface FindDeploymentLogsInteractor {
 
+    fun execute(workspaceId: String, authorization: String, deploymentId: String): LogResponse
 }
