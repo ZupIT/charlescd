@@ -182,7 +182,7 @@ export class ReceiveNotificationUseCase {
   }
 
   private async getDeploymentLogs(deploymentNotificationDto: DeploymentNotificationRequestDto, deployment: DeploymentEntityV2) {
-    const deploymentLogs = await this.logRepository.findDeploymentLogs(deployment.id, deployment.cdConfiguration.workspaceId)
+    const deploymentLogs = await this.logRepository.findDeploymentLogs(deployment.id)
     if (deploymentLogs) {
       deploymentLogs.concatLogs(deploymentNotificationDto.logs)
       return deploymentLogs
