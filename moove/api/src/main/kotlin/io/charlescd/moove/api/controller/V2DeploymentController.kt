@@ -25,6 +25,7 @@ import io.charlescd.moove.application.deployment.response.DeploymentHistoryRespo
 import io.charlescd.moove.application.deployment.response.DeploymentResponse
 import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
 import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.infrastructure.service.client.response.LogResponse
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
@@ -113,7 +114,7 @@ class V2DeploymentController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("deploymentId") deploymentId: String
-    ) {
+    ): LogResponse {
         return this.findDeploymentLogsInteractor.execute(workspaceId, authorization, deploymentId)
     }
 }
