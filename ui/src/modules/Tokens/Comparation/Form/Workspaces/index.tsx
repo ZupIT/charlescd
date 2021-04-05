@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import map from 'lodash/map';
 import ContentIcon from 'core/components/ContentIcon';
 import Card from 'core/components/Card';
 import Text from 'core/components/Text';
 import Modal from './Modal';
-import { SetValue } from '../interfaces';
 import Styled from './styled';
-
-interface Props {
-  setValue: SetValue;
-}
+import { isRequired } from 'core/utils/validations';
 
 const data = ['Workspace 1', 'Workspace 2', 'Workspace 3'];
 
-const Workspaces = ({ setValue }: Props) => {
+const Workspaces = () => {
+  console.log('RENDER Workspaces');
+  const { register, setValue } = useFormContext();
   const [isOpen, setIsOpen] = useState<boolean>();
-  const [workspaces, setWorkspaces] = useState<string[]>(data);
 
   useEffect(() => {
-    setValue('workspaces', workspaces);
-  }, [setValue, workspaces]);
+    register({ name: "workspaces" }, { required: isRequired() });
+  }, [register]);
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
@@ -48,9 +46,16 @@ const Workspaces = ({ setValue }: Props) => {
       />
     ))
 
+  const renderModal = () => 
+    isOpen &&
+      <Modal
+        onClose={toggleIsOpen}
+        onContinue={workspaces => setValue('workspaces', workspaces)}
+      />
+  
   return (
     <Fragment>
-      {isOpen && <Modal onClose={toggleIsOpen} onContinue={setWorkspaces} />}
+      {renderModal()}
       <ContentIcon icon="workspaces">
         <Text.h2 color="light">Associated Workspaces</Text.h2>
         <Styled.Content>

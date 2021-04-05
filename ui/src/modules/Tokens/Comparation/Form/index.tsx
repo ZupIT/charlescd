@@ -43,7 +43,7 @@ const FormToken = () => {
   // const workspaces = watch('workspaces') as string[];
 
   const onSubmit = (token: Token) => {
-    console.log(token);
+    console.log('FormToken onSubmit', token);
     // save(token);
   };
 
@@ -57,9 +57,9 @@ const FormToken = () => {
               ref={register(isRequiredAndNotBlank)}
               error={errors?.name?.message}
             />
-          </ContentIcon>
-          {name && <Workspaces setValue={setValue} />} */}
-          {/* {name && workspaces && ( */}
+          </ContentIcon> */}
+          <Workspaces />
+          {/* {name && workspaces && (
             <Fragment>
               <Scopes />
               <Styled.Button

@@ -27,7 +27,7 @@ import Styled from './styled';
 interface Props {
   name?: string;
   value: string;
-  label: string;
+  label?: string;
   description?: string;
   active?: boolean;
   defaultChecked?: boolean;
@@ -79,9 +79,9 @@ const Checkbox = forwardRef(
             {...rest}
           />
           <Styled.Toggle data-testid={`checkbox-toggle-${label}`} />
-          <Styled.Label data-testid={`checkbox-${label}`} color="light">
+          {label && <Styled.Label data-testid={`checkbox-${label}`} color="light">
             {label}
-          </Styled.Label>
+          </Styled.Label>}
         </Styled.Checkbox>
 
         {description && renderDescription()}

@@ -24,7 +24,7 @@ export const options: Option[] = [
     label: 'Allow access for all workspaces'
   },
   {
-    value: 'INDIVIDUAL',
+    value: 'MANUAL',
     label: 'Only specific workspaces'
   }
 ]

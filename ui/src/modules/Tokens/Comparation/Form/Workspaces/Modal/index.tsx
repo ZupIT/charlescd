@@ -14,42 +14,36 @@
  * limitations under the License.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import xor from 'lodash/xor';
 import Select from 'core/components/Form/Select/Single/Select';
-import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
+import Button from 'core/components/Button';
+import List from './Content/List';
 import { options, Option } from './constants';
 import Styled from './styled';
 
 interface Props {
   onClose: Function;
-  onContinue: Function;
+  onContinue: (workspaces: string) => void;
 }
 
 const AddWorkspaces = ({ onClose, onContinue }: Props) => {
+  console.log('RENDER AddWorkspaces');
   const [type, setType] = useState<Option>();
-  const isIndividual = type?.value === 'INDIVIDUAL';
+  const [workspaces, setWorkspaces] = useState<string[]>();
+  const isManual = type?.value === 'MANUAL';
 
-  const onClick = () => console.log('onClick Item');
+  useEffect(() => {
+    console.log('workspaces', workspaces);
+  }, [workspaces]);
 
-  const Item = () => (
-    <Styled.Item>
-      <Styled.Description>
-        <Text.h4 color="light">Workspace 1</Text.h4>
-        <Styled.Subtitle>
-          <Text.h4 fontStyle="italic" color="dark">Owned by:</Text.h4>{` `}
-          <Text.h4 color="light">mateus.cruz@zup.com.br</Text.h4>
-        </Styled.Subtitle>
-      </Styled.Description>
-      <Icon name="plus-circle" color="dark" onClick={onClick} />
-    </Styled.Item>
-  )
+  const toggleWorkspace = (id: string) => {
+    console.log('id', id);
+    setWorkspaces(xor(workspaces, [id]));
+  };
 
-  const Content = () => (
-    <Styled.Content>
-      <Item />
-    </Styled.Content>
-  );
+  const renderList = () => 
+    isManual && <List selecteds={workspaces} onSelect={toggleWorkspace} />
 
   return (
     <Styled.Modal onClose={() => onClose()}>
@@ -58,10 +52,18 @@ const AddWorkspaces = ({ onClose, onContinue }: Props) => {
         <Select
           options={options}
           placeholder="Define the workspaces that will be associated"
-          onChange={option => setType(option)}
+          onChange={setType}
         />
       </Styled.Header>
-      {isIndividual && <Content />}
+      {renderList()}
+      <Styled.Item>
+        <Button.Default
+          type="button"
+          size="SMALL"
+        >
+          Next
+        </Button.Default>
+      </Styled.Item>
     </Styled.Modal>
   )
 }

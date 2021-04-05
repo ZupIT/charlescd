@@ -16,15 +16,17 @@
 
 import styled from 'styled-components';
 import ComponentModal from 'core/components/Modal';
+import { SearchInput } from 'core/components/Form';
 
 const Modal = styled(ComponentModal.Default)`
   .modal-container {
-    width: 408px;
+    width: 543px;
     padding: 35px 0 28px 0;
   }
 
   .modal-content {
-    min-height: 450px;
+    overflow-y: hidden;
+    min-height: 400px;
   }
 `;
 
@@ -32,19 +34,39 @@ const Header = styled.div`
   padding: 0 40px;
 `;
 
+const Search = styled(SearchInput)`
+  margin-top: 5px;
+  margin-bottom: 20px;
+  width: 100%;
+
+  > input {
+    background-color: transparent;
+  }
+`;
+
 const Content = styled.div`
   margin-top: 22px;
+  max-height: 500px;
+  overflow-y: auto;
+`;
+
+const Empty = styled.div`
+  margin: 48px 30px 18px 30px;
 `;
 
 const Item = styled.div`
   border-top: 1px solid #3A3A3C;
   border-bottom: 1px solid #3A3A3C;
-  height: 90px;
+  height: 70px;
   padding: 0 40px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+
+  :last-child {
+    border-bottom: hidden;
+  }
 `;
 
 const Subtitle = styled.div`
@@ -57,8 +79,10 @@ const Description = styled.div``;
 
 export default {
   Content,
+  Empty,
   Modal,
   Header,
+  Search,
   Item,
   Subtitle,
   Description
