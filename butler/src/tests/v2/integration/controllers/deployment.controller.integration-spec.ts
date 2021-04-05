@@ -25,6 +25,7 @@ import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfac
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
+import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -54,6 +55,7 @@ describe('DeploymentController v2', () => {
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
   })
+
   it('returns error message for empty payload', async() => {
     const createDeploymentRequest = {}
     const errorResponse = {
@@ -615,5 +617,230 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .expect(response => {
         expect(response.body).toEqual(errorResponse)
       })
+  })
+
+  it('returns an error when there is one active default deployment on the same namespace with a different circle id', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com:someTag',
+          buildImageTag: 'someTag',
+          componentName: 'my-component',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1'
+        },
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl2.com:anotherTag',
+          buildImageTag: 'anotherTag',
+          componentName: 'my-other-component'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl
+    }
+
+    const sameNamespaceActiveDeployment = new DeploymentEntityV2(
+      '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3',
+      '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      'ad03d665-f689-42aa-b1de-d19653e89b86',
+      UrlConstants.deploymentCallbackUrl,
+      [
+        new ComponentEntityV2(
+          UrlConstants.helmRepository,
+          'currenttag',
+          'imageurl.com:currenttag',
+          'my-component',
+          '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          'host-value-1',
+          'gateway-name-1',
+          []
+        )
+      ],
+      true,
+      'default',
+      120,
+    )
+    sameNamespaceActiveDeployment.current = true
+
+    await manager.save(sameNamespaceActiveDeployment)
+
+    const errorResponse = {
+      error: 'Conflict',
+      message: 'Invalid circle id. Namespace already has an active default deployment with a different circle id.',
+      statusCode: 409
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(409)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('allows a default circle deployment when there is one active default deployment on a different namespace', async() => {
+    const encryptedToken = `
+-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: true
+      },
+      git: {
+        token: Buffer.from(encryptedToken).toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com:someTag',
+          buildImageTag: 'someTag',
+          componentName: 'my-component',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1'
+        },
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl2.com:anotherTag',
+          buildImageTag: 'anotherTag',
+          componentName: 'my-other-component'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl
+    }
+
+    const differentNamespaceActiveDeployment = new DeploymentEntityV2(
+      '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3',
+      '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      'ad03d665-f689-42aa-b1de-d19653e89b86',
+      UrlConstants.deploymentCallbackUrl,
+      [
+        new ComponentEntityV2(
+          UrlConstants.helmRepository,
+          'currenttag',
+          'imageurl.com:currenttag',
+          'my-component',
+          '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          'host-value-1',
+          'gateway-name-1',
+          []
+        )
+      ],
+      true,
+      'test2',
+      120,
+    )
+    differentNamespaceActiveDeployment.current = true
+
+    await manager.save(differentNamespaceActiveDeployment)
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
+  })
+
+  it('allows a circle deployment when there is one active circle deployment on the same namespace', async() => {
+    const encryptedToken = `
+-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
+      },
+      git: {
+        token: Buffer.from(encryptedToken).toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com:someTag',
+          buildImageTag: 'someTag',
+          componentName: 'my-component',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1'
+        },
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl2.com:anotherTag',
+          buildImageTag: 'anotherTag',
+          componentName: 'my-other-component'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl
+    }
+
+    const differentNamespaceActiveDeployment = new DeploymentEntityV2(
+      '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3',
+      '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      'ad03d665-f689-42aa-b1de-d19653e89b86',
+      UrlConstants.deploymentCallbackUrl,
+      [
+        new ComponentEntityV2(
+          UrlConstants.helmRepository,
+          'currenttag',
+          'imageurl.com:currenttag',
+          'my-component',
+          '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          'host-value-1',
+          'gateway-name-1',
+          []
+        )
+      ],
+      false,
+      'default',
+      120,
+    )
+    differentNamespaceActiveDeployment.current = true
+
+    await manager.save(differentNamespaceActiveDeployment)
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
   })
 })

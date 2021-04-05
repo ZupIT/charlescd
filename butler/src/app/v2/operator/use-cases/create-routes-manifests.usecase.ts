@@ -51,6 +51,7 @@ export class CreateRoutesManifestsUseCase {
     const healthStatus = this.getRoutesStatus(hookParams, specs)
     await this.updateRouteStatus(healthStatus)
     const children = [...specs, ...services]
+    this.consoleLoggerService.log('STEP:ROUTES_RECONCILE_OBJECT', { children: children, resyncAfterSeconds: 5 })
     return { children: children, resyncAfterSeconds: 5 }
   }
 

@@ -25,6 +25,7 @@ import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
 import { JoiValidationPipe } from '../pipes/joi-validation-pipe'
 import { GitTokenDecryptionPipe } from '../pipes/git-token-decryption.pipe'
+import { DefaultCircleUniquenessPipe } from '../pipes/default-circle-uniqueness.pipe'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -37,6 +38,7 @@ export class DeploymentsController {
   @Post('/')
   @UsePipes(GitTokenDecryptionPipe)
   @UsePipes(DeploymentUniquenessPipe)
+  @UsePipes(DefaultCircleUniquenessPipe)
   @UsePipes(new JoiValidationPipe())
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
