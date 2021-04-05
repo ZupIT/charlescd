@@ -46,6 +46,7 @@ const Tab = ({ param }: Props) => {
   const { getModuleById, response } = useFindModule();
   const { removeModule } = useDeleteModule(module);
   const isLoading = isEmpty(module) && id !== NEW_TAB;
+  const hasTabActions = id !== NEW_TAB && mode !== 'component'; 
 
   useEffect(() => {
     if (response) {
@@ -80,7 +81,7 @@ const Tab = ({ param }: Props) => {
     );
   };
 
-  const renderActions = () => (
+  const renderActions = () => hasTabActions && (
     <Styled.Actions>
       <Dropdown>
         <Can I="write" a="modules" passThrough>
