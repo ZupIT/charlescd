@@ -16,6 +16,7 @@ require (
 	github.com/leebenson/conform v1.2.2
 	github.com/lib/pq v1.8.0
 	github.com/nleof/goyesql v1.0.1 // indirect
+	github.com/pkosilo/gorm-crypto v1.0.0
 	github.com/prometheus/client_golang v1.9.0
 	github.com/stretchr/testify v1.6.0
 	github.com/vektra/mockery/v2 v2.6.0
