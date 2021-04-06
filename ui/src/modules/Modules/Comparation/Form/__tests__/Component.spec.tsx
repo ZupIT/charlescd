@@ -226,3 +226,25 @@ test("component to not render more option", async () => {
 
   await waitFor(() => expect(componentHostValue?.value).toEqual(""));
 });
+
+test('should validate name component max length', async () => {
+  const longText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do e.';
+
+  render(
+    <AllTheProviders>
+      <Component
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        component={{}}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const nameComponentInput = screen.getByLabelText('Enter name component');
+  userEvent.type(nameComponentInput, longText);
+  
+  userEvent.click(screen.getByRole('button'));
+  expect(await screen.findAllByRole("alert")).toHaveLength(1);
+});
