@@ -16,9 +16,6 @@
 
 package io.charlescd.moove.application.deployment
 
-import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
-import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
-import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.infrastructure.service.client.response.LogResponse
 
 interface FindDeploymentLogsInteractor {

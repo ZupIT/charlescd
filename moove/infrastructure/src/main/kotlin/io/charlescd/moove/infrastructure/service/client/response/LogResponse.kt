@@ -16,14 +16,10 @@
 
 package io.charlescd.moove.infrastructure.service.client.response
 
-import java.time.LocalDateTime
-
 data class LogResponse(
     val id: String,
-
     val logs: List<Log>
 )
-
 
 data class Log(
     val type: String,
