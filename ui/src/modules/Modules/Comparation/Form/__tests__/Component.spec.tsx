@@ -122,7 +122,7 @@ test("component for show advanced options", async () => {
   const componentButton: any = container.querySelector("span");
   const advancedOptions = screen.getByTestId('button-default-save-edit-module');
   expect(container.innerHTML).toMatch("Show");
-  act(() => userEvent.click(componentButton));
+  await act(async () => userEvent.click(componentButton));
 
   expect(advancedOptions).toBeInTheDocument();
 });
