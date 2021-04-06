@@ -1,1 +1,1 @@
-ALTER TABLE system_tokens ADD token_value text;
+ALTER TABLE system_tokens ADD token bytea;

@@ -69,7 +69,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 
 	systemToken.Author = authToken.Email
 	systemToken.Permissions = permissions
-	systemToken.TokenValue = strings.ReplaceAll(uuid.New().String(), "-", "")
+	systemToken.Token = strings.ReplaceAll(uuid.New().String(), "-", "")
 
 	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken, permissions)
 	if err != nil {
