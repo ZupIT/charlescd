@@ -38,6 +38,14 @@ export const isNotBlank = (value: string | any) => {
 
 export const trimValue = (value: unknown) => isString(value) ? value?.trim() : value;
 
+export const isRequiredAndNotBlank = {
+  required: true,
+  validate: {
+    notBlank: isNotBlank
+  },
+  setValueAs: trimValue
+} as const;
+
 export const maxLength = (value = 64, message?: string) => ({
   value: value,
   message: message || `The maximum value of this field is ${value}.`
@@ -52,14 +60,6 @@ export const isRequired = () => ({
   value: true,
   message: 'This field is required'
 });
-
-export const isRequiredAndNotBlank = {
-  required: isRequired(),
-  validate: {
-    notBlank: isNotBlank
-  },
-  setValueAs: trimValue
-} as const;
 
 export const emailPattern = () => ({
   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,

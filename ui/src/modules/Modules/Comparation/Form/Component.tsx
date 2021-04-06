@@ -60,6 +60,8 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
   const history = useHistory();
   const [isAdvancedOptions, setIsAdvancedOptions] = useState(false);
 
+  console.log('COMPONENT');
+
   useEffect(() => {
     const form = getValues();
     const moreOptionsModel: MoreOptionsModel = {
