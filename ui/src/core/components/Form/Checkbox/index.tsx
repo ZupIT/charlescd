@@ -16,7 +16,6 @@
 
 import React, {
   Fragment,
-  useState,
   Ref,
   useRef,
   forwardRef,
@@ -53,12 +52,10 @@ const Checkbox = forwardRef(
     ref: Ref<HTMLInputElement>
   ) => {
     const checkboxRef = useRef<HTMLInputElement>(null);
-    // const [isChecked, setIsChecked] = useState(active);
 
     useImperativeHandle(ref, () => checkboxRef.current);
 
     const onCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-      // setIsChecked(!isChecked);
       onChange && onChange(event.target.checked);
     };
 
@@ -76,7 +73,6 @@ const Checkbox = forwardRef(
             ref={checkboxRef}
             name={name}
             value={value}
-            // checked={isChecked}
             onChange={onCheck}
             defaultChecked={defaultChecked}
             {...rest}
