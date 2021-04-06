@@ -45,7 +45,7 @@ export class LogEntity {
       return new ReadLogsDto(this.id, this.logs)
     }
 
-    public concatLogs(logsConcat: Log[]) {
+    public concatLogs(logsConcat: Log[]): void {
       this.logs = this.logs.concat(logsConcat)
     }
 }

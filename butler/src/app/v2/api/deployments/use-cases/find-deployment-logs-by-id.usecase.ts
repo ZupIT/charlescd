@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { InjectRepository } from '@nestjs/typeorm'
-import { LogEntity } from '../entity/logs.entity'
 import { LogRepository } from '../repository/log.repository'
 import { NotFoundException } from '@nestjs/common'
 import { ReadLogsDto } from '../dto/read-logs.dto'

@@ -28,7 +28,7 @@ export class CreateLogsTable20210324110300 implements MigrationInterface {
              CONSTRAINT "fk_v2deployments" FOREIGN KEY ( "deployment_id" ) REFERENCES "public"."v2deployments" ( "id" )     
         )`)
   }
-  public async down(queryRunner: QueryRunner): Promise<any> {
+  public async down(queryRunner: QueryRunner): Promise<void> {
     return await queryRunner.dropTable(`
     v2logs`)
   }

@@ -35,7 +35,6 @@ import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usec
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
 import { FindDeploymentLogsByIdUsecase } from '../use-cases/find-deployment-logs-by-id.usecase'
-import { LogEntity } from '../entity/logs.entity'
 import { ReadLogsDto } from '../dto/read-logs.dto'
 
 @Controller('v2/deployments')
