@@ -20,6 +20,7 @@ type SystemTokenResponse struct {
 	Permissions []string `json:"permissions"`
 	Workspaces []string `json:"workspaces"`
 	Revoked bool `json:"revoked"`
+	TokenValue string `json:"token_value,omitempty"`
 	CreatedAt *time.Time `json:"created_at"`
 	RevokedAt *time.Time `json:"revoked_at"`
 	LastUsedAt *time.Time `json:"last_used_at"`
@@ -42,13 +43,14 @@ func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.Creat
 	}
 }
 
-func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
+func DomainToResponse(systemToken domain.SystemToken, tokenValue string) SystemTokenResponse {
 	return SystemTokenResponse{
 		ID: systemToken.ID,
 		Name: systemToken.Name,
 		Permissions: mapper.GetPermissionModelsName(systemToken.Permissions),
 		Workspaces: systemToken.Workspaces,
 		Revoked: systemToken.Revoked,
+		TokenValue: tokenValue,
 		CreatedAt: systemToken.CreatedAt,
 		RevokedAt: systemToken.RevokedAt,
 		LastUsedAt: systemToken.LastUsedAt,
@@ -59,7 +61,7 @@ func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
 func DomainsToResponses(systemTokens []domain.SystemToken) []SystemTokenResponse {
 	var systemTokenResponse []SystemTokenResponse
 	for _, permission := range systemTokens {
-		systemTokenResponse = append(systemTokenResponse, DomainToResponse(permission))
+		systemTokenResponse = append(systemTokenResponse, DomainToResponse(permission, ""))
 	}
 	return systemTokenResponse
 }

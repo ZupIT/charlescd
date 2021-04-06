@@ -3,6 +3,7 @@ package mapper
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
+	gormcrypto "github.com/pkosilo/gorm-crypto"
 )
 
 func SystemTokenDomainToModel(systemToken domain.SystemToken, permissions []domain.Permission) models.SystemToken {
@@ -12,6 +13,7 @@ func SystemTokenDomainToModel(systemToken domain.SystemToken, permissions []doma
 		Revoked:     systemToken.Revoked,
 		Permissions: PermissionsDomainToModels(permissions),
 		Workspaces: systemToken.Workspaces,
+		TokenValue: gormcrypto.EncryptedValue{Raw: systemToken.TokenValue},
 		CreatedAt:   systemToken.CreatedAt,
 		RevokedAt:   systemToken.RevokedAt,
 		LastUsedAt:  systemToken.LastUsedAt,
@@ -26,6 +28,7 @@ func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken
 		Revoked:     systemToken.Revoked,
 		Permissions: PermissionsModelToDomains(systemToken.Permissions),
 		Workspaces: systemToken.Workspaces,
+		TokenValue: systemToken.TokenValue.Raw.(string),
 		CreatedAt:   systemToken.CreatedAt,
 		RevokedAt:   systemToken.RevokedAt,
 		LastUsedAt:  systemToken.LastUsedAt,
