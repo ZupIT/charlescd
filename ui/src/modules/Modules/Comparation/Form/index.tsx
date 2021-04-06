@@ -208,8 +208,8 @@ const FormModule = ({ module, onChange }: Props) => {
             name="name"
             defaultValue={module?.name}
             ref={register({...isRequiredAndNotBlank, maxLength: maxLength(50)})}
+            error={errors?.name?.message}
           />
-          {errors.name && <p>{errors.name.message}</p>}
           <Styled.Input
             label="URL git"
             name="gitRepositoryAddress"
