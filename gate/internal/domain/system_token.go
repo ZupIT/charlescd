@@ -11,6 +11,7 @@ type SystemToken struct {
 	Revoked     bool
 	Permissions []Permission
 	Workspaces  []string
+	TokenValue  string
 	CreatedAt   *time.Time
 	RevokedAt   *time.Time
 	LastUsedAt  *time.Time

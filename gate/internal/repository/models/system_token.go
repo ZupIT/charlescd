@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/pkosilo/gorm-crypto"
 	"time"
 )
 
@@ -12,6 +13,7 @@ type SystemToken struct {
 	Revoked     bool
 	Permissions []Permission `gorm:"many2many:system_tokens_permissions;"`
 	Workspaces  pq.StringArray `gorm:"type:varchar(36)[]"`
+	TokenValue  gormcrypto.EncryptedValue
 	CreatedAt   *time.Time
 	RevokedAt   *time.Time
 	LastUsedAt  *time.Time
