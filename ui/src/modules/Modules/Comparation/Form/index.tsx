@@ -34,7 +34,7 @@ import {
   getHelmFieldsValidations
 } from './helpers';
 import Styled from './styled';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { isRequiredAndNotBlank, maxLength } from 'core/utils/validations';
 import Select from 'core/components/Form/Select/Single/Select';
 import { gitProviders } from 'modules/Settings/Credentials/Sections/CDConfiguration/constants';
 import { Option } from 'core/components/Form/Select/interfaces';
@@ -84,7 +84,7 @@ const FormModule = ({ module, onChange }: Props) => {
     setValue: setHelmValue,
     errors: helmErrors
   } = useForm<Helm>({ mode: "onChange" });
-  const { register, control, handleSubmit, formState: { isValid } } = form;
+  const { register, control, handleSubmit, formState: { isValid, errors } } = form;
   const fieldArray = useFieldArray({ control, name: 'components', keyName: 'fieldId' });
   const [helmGitProvider, setHelmGitProvider] = useState<Option>(null);
 
@@ -207,8 +207,9 @@ const FormModule = ({ module, onChange }: Props) => {
             label="Name the module"
             name="name"
             defaultValue={module?.name}
-            ref={register(isRequiredAndNotBlank)}
+            ref={register({...isRequiredAndNotBlank, maxLength: maxLength(50)})}
           />
+          {errors.name && <p>{errors.name.message}</p>}
           <Styled.Input
             label="URL git"
             name="gitRepositoryAddress"
