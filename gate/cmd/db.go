@@ -27,6 +27,9 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	pgMigrate "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	gormcrypto "github.com/pkosilo/gorm-crypto"
+	"github.com/pkosilo/gorm-crypto/algorithms"
+	"github.com/pkosilo/gorm-crypto/serialization"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -46,6 +49,11 @@ func prepareDatabase() (persistenceManager, error) {
 	}
 
 	err = runMigrations(sqlDB)
+	if err != nil {
+		return persistenceManager{}, err
+	}
+
+	err = initCryptoLib()
 	if err != nil {
 		return persistenceManager{}, err
 	}
@@ -91,6 +99,15 @@ func runMigrations(sqlDb *sql.DB) error {
 		return err
 	}
 
+	return nil
+}
+
+func initCryptoLib() error {
+	aes, err := algorithms.NewAES256GCM([]byte(configuration.Get("ENCRYPTION_KEY")))
+	if err != nil {
+		return err
+	}
+	gormcrypto.Init(aes, serialization.NewJSON())
 	return nil
 }
 
