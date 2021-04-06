@@ -35,6 +35,7 @@ func GetDummySystemToken() domain.SystemToken {
 		Revoked:     false,
 		Permissions: nil,
 		Workspaces:  nil,
+		Token:       "System Token Value",
 		CreatedAt:   &createdTime,
 		RevokedAt:   nil,
 		LastUsedAt:  nil,

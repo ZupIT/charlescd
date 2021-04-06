@@ -37,10 +37,11 @@ func (input CreateSystemTokenInput) InputToDomain() domain.SystemToken {
 		Name:        input.Name,
 		Revoked:     false,
 		Permissions: []domain.Permission{},
-		Workspaces: input.Workspaces,
+		Workspaces:  input.Workspaces,
+		Token:       "",
 		CreatedAt:   &createdAt,
 		RevokedAt:   nil,
 		LastUsedAt:  nil,
-		Author: "",
+		Author:      "",
 	}
 }

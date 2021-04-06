@@ -50,7 +50,7 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 		return domain.SystemToken{}, handleSystemTokenError("Save system token failed", "SystemTokenRepository.Create.Save", res.Error, logging.InternalError)
 	}
 
-	return systemToken, nil
+	return mapper.SystemTokenModelToDomain(systemTokenToSave, systemTokenToSave.Token.Raw.(string)), nil
 }
 
 func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
@@ -91,7 +91,7 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 		}
 		return domain.SystemToken{}, handleSystemTokenError("Find token failed", "SystemTokenRepository.FindById.First", res.Error, logging.InternalError)
 	}
-	return mapper.SystemTokenModelToDomain(systemToken), nil
+	return mapper.SystemTokenModelToDomain(systemToken, ""), nil
 }
 
 func (systemTokenRepository systemTokenRepository) Update(systemToken domain.SystemToken) error {

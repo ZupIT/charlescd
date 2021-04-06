@@ -33,15 +33,16 @@ type SystemTokenRequest struct {
 }
 
 type SystemTokenResponse struct {
-	ID uuid.UUID `json:"id"`
-	Name string `json:"name"`
-	Permissions []string `json:"permissions"`
-	Workspaces []string `json:"workspaces"`
-	Revoked bool `json:"revoked"`
-	CreatedAt *time.Time `json:"created_at"`
-	RevokedAt *time.Time `json:"revoked_at"`
-	LastUsedAt *time.Time `json:"last_used_at"`
-	Author string `json:"author"`
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Permissions []string   `json:"permissions"`
+	Workspaces  []string   `json:"workspaces"`
+	Revoked     bool       `json:"revoked"`
+	Token       string     `json:"token,omitempty"`
+	CreatedAt   *time.Time `json:"created_at"`
+	RevokedAt   *time.Time `json:"revoked_at"`
+	LastUsedAt  *time.Time `json:"last_used_at"`
+	Author      string     `json:"author"`
 }
 
 type PageSystemTokenResponse struct {
@@ -60,24 +61,25 @@ func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.Creat
 	}
 }
 
-func DomainToResponse(systemToken domain.SystemToken) SystemTokenResponse {
+func DomainToResponse(systemToken domain.SystemToken, tokenValue string) SystemTokenResponse {
 	return SystemTokenResponse{
-		ID: systemToken.ID,
-		Name: systemToken.Name,
+		ID:          systemToken.ID,
+		Name:        systemToken.Name,
 		Permissions: mapper.GetPermissionModelsName(systemToken.Permissions),
-		Workspaces: systemToken.Workspaces,
-		Revoked: systemToken.Revoked,
-		CreatedAt: systemToken.CreatedAt,
-		RevokedAt: systemToken.RevokedAt,
-		LastUsedAt: systemToken.LastUsedAt,
-		Author: systemToken.Author,
+		Workspaces:  systemToken.Workspaces,
+		Revoked:     systemToken.Revoked,
+		Token:       tokenValue,
+		CreatedAt:   systemToken.CreatedAt,
+		RevokedAt:   systemToken.RevokedAt,
+		LastUsedAt:  systemToken.LastUsedAt,
+		Author:      systemToken.Author,
 	}
 }
 
 func DomainsToResponses(systemTokens []domain.SystemToken) []SystemTokenResponse {
 	var systemTokenResponse []SystemTokenResponse
 	for _, permission := range systemTokens {
-		systemTokenResponse = append(systemTokenResponse, DomainToResponse(permission))
+		systemTokenResponse = append(systemTokenResponse, DomainToResponse(permission, ""))
 	}
 	return systemTokenResponse
 }

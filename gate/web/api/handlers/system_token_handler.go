@@ -53,7 +53,7 @@ func CreateSystemToken(createSystemToken systemTokenInteractor.CreateSystemToken
 			return HandleError(echoCtx, ctx, err)
 		}
 
-		return echoCtx.JSON(http.StatusCreated, representation.DomainToResponse(createdSystemToken))
+		return echoCtx.JSON(http.StatusCreated, representation.DomainToResponse(createdSystemToken, createdSystemToken.Token))
 	}
 }
 
@@ -96,7 +96,7 @@ func GetSystemToken(getSystemToken systemTokenInteractor.GetSystemToken) echo.Ha
 		if err != nil {
 			return HandleError(echoCtx, ctx, err)
 		}
-		return echoCtx.JSON(http.StatusOK, representation.DomainToResponse(systemToken))
+		return echoCtx.JSON(http.StatusOK, representation.DomainToResponse(systemToken, ""))
 	}
 }
 
