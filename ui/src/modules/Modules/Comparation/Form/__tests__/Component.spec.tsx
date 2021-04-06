@@ -74,6 +74,60 @@ jest.mock('containers/Can', () => {
   };
 });
 
+test('should render create component default', async () => {
+  const advancedOptionsText = 'Show advanced options (be careful, do not change this if you are not using istio gateway)';
+
+  render(
+    <AllTheProviders>
+      <Component
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        component={{}}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  expect(await screen.findByText('Create component')).toBeInTheDocument();
+
+  const subtitle = 'use the fields below to add the component:';
+  expect(screen.getByText(subtitle)).toBeInTheDocument();
+
+  expect(screen.getByLabelText('Enter name component')).toBeInTheDocument();
+  expect(screen.getByLabelText('Latency Threshold (ms)')).toBeInTheDocument();
+  expect(screen.getByLabelText('Http Error Threshold (%)')).toBeInTheDocument();
+  expect(screen.getByText(advancedOptionsText)).toBeInTheDocument();
+  expect(screen.getByRole('button')).toHaveTextContent('Save');
+});
+
+test('should render edit component default', async () => {
+  const advancedOptionsText = 'Show advanced options (be careful, do not change this if you are not using istio gateway)';
+
+  render(
+    <AllTheProviders>
+      <Component
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        component={fakeComponent}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  expect(await screen.findByText('Edit component')).toBeInTheDocument();
+
+  const subtitle = 'use the fields below to add the component:';
+  expect(screen.getByText(subtitle)).toBeInTheDocument();
+
+  expect(screen.getByLabelText('Enter name component')).toBeInTheDocument();
+  expect(screen.getByLabelText('Latency Threshold (ms)')).toBeInTheDocument();
+  expect(screen.getByLabelText('Http Error Threshold (%)')).toBeInTheDocument();
+  expect(screen.getByText(advancedOptionsText)).toBeInTheDocument();
+  expect(screen.getByRole('button')).toHaveTextContent('Edit');
+});
+
 test("component for edit mode render", async () => {
   const { container } = render(
     <AllTheProviders>
