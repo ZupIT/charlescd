@@ -53,7 +53,6 @@ const fakeComponentWithoutMoreOptions: ComponentInterface = {
   errorThreshold: "30",
 };
 
-
 const fakeModule: Module = {
   gitRepositoryAddress: "fake-github",
   helmRepository: "fake-api",
@@ -74,7 +73,6 @@ jest.mock('containers/Can', () => {
     }
   };
 });
-
 
 test("component for edit mode render", async () => {
   const { container } = render(
