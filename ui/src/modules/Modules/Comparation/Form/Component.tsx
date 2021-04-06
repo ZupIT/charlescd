@@ -143,7 +143,6 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           })}
           error={errors?.name?.message}
         />
-        {console.log('error:',errors.name)}
         <Styled.Number
           label="Latency Threshold (ms)"
           name="latencyThreshold"
