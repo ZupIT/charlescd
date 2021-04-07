@@ -24,7 +24,9 @@ import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.infrastructure.repository.JdbcKeyValueRuleRepository
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.transaction.Transactional
@@ -35,7 +37,7 @@ open class DeploymentCallbackInteractorImpl(
     private val webhookEventService: WebhookEventService,
     private val circleMatcherService: CircleMatcherService,
     private val workspaceService: WorkspaceService,
-    private val csvSegmentationService: CsvSegmentationService
+    private val keyValueRuleRepository: KeyValueRuleRepository
 ) : DeploymentCallbackInteractor {
 
     @Transactional
@@ -82,9 +84,11 @@ open class DeploymentCallbackInteractorImpl(
             val workspace = this.workspaceService.find(circle.workspaceId)
             val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
             if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
-                val jsonList = csvSegmentationService.createJsonNodeList(circle.rules)
-                jsonList.chunked(100).map {
-                    this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
+                val rules = keyValueRuleRepository.findByCircle(circle.id)
+                rules.map { keyValueRule ->
+                    keyValueRule.rule.chunked(100).map {
+                        this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
+                    }
                 }
             } else {
                 this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
