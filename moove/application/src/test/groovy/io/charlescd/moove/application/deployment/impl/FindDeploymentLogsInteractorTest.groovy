@@ -18,7 +18,6 @@ package io.charlescd.moove.application.deployment.impl
 
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
-import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -26,6 +25,8 @@ import io.charlescd.moove.infrastructure.service.client.DeployClient
 import io.charlescd.moove.infrastructure.service.client.response.Log
 import io.charlescd.moove.infrastructure.service.client.response.LogResponse
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 class FindDeploymentLogsInteractorTest extends Specification {
     def userRepository = Mock(UserRepository)
@@ -41,7 +42,7 @@ class FindDeploymentLogsInteractorTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
         def deploymentId = '083337ef-6177-4a24-b32e-f7429336ec20'
-        def log = new Log("INFO", "log title", "log details")
+        def log = new Log("INFO", "log title", "log details", LocalDateTime.now().toString())
         def logResponse = new LogResponse(
                 "id",
                 [log]
