@@ -329,7 +329,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", false, null)
         def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, LocalDateTime.now().plusDays(1), LocalDateTime.now(), false)
 
         def workspace = TestUtils.workspace
@@ -416,9 +416,9 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
 
         def percentageCircle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 20)
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, false, 20)
         def deployedPercentageCircle = new Circle('5d058a02-6406-4aea-be8c-3315ee202a56', 'Circle percentage', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                    author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 90)
+                    author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, false, 90)
         def deployedPercentagesCirclePage = new Page([deployedPercentageCircle], 0, 5, 1)
 
         def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
@@ -503,7 +503,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, workspaceId, 20)
+                author, LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, workspaceId, false, 20)
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
         deploymentList.add(getDeployment(deploymentStatusEnum, LocalDateTime.now().minusDays(1), undeployedAt, isDefaultCircle))
@@ -516,12 +516,12 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     private static Circle getCircle(Boolean defaultCircle) {
         return new Circle("5d4c9492-6f83-11ea-bc55-0242ac130003", 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, defaultCircle, TestUtils.workspaceId, null)
+                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, defaultCircle, TestUtils.workspaceId, false, null)
     }
 
     private static Circle getCircle(Boolean defaultCircle, Integer percentage) {
         return new Circle("5d4c9492-6f83-11ea-bc55-0242ac130003", 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, defaultCircle, TestUtils.workspaceId, percentage)
+                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, defaultCircle, TestUtils.workspaceId, false, percentage)
     }
 
     private static String getCircleId() {
