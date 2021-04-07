@@ -35,7 +35,6 @@ import {
   SpinnakerConfigurationDataSchema
 } from './app/v2/core/validations/schemas'
 import { Request, Response, Router } from 'express'
-import { AppLoggerMiddleware } from './app/v2/core/config/middleware'
 
 const healtCheckRouter = Router()
 healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
@@ -70,7 +69,6 @@ async function bootstrap() {
   app.use(morgan('dev'))
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
-  app.use(new AppLoggerMiddleware().use)
   app.use(rTracer.expressMiddleware())
   app.use(healtCheckRouter)
   SwaggerModule.setup('/api/swagger', app, document)
