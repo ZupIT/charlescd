@@ -24,5 +24,6 @@ data class LogResponse(
 data class Log(
     val type: String,
     val title: String,
-    val details: String?
+    val details: String?,
+    val timestamp: String
 )
