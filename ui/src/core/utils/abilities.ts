@@ -37,9 +37,8 @@ const setUserAbilities = () => {
   const permissions = getPermissions();
   const { can, rules } = new AbilityBuilder<AppAbility>();
 
-  console.log('setUserAbilities: isRoot()', isRoot());
-
   if (isRoot()) {
+    can('root' as Actions, 'root' as Subjects);
     forEach(subjects, subject => {
       forEach(actions, action => {
         const act = action as Actions;

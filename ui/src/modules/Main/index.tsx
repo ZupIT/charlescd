@@ -60,12 +60,12 @@ const Main = () => {
             <PrivateRoute
               path={routes.users}
               component={Users}
-              allowedRoles={['root']}
+              allowedRoles={['root_root']}
             />
             <PrivateRoute
               path={routes.groups}
               component={Groups}
-              allowedRoles={['root']}
+              allowedRoles={['root_root']}
             />
             <PrivateRoute
               path={routes.circles}
