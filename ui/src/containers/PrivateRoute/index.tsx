@@ -32,6 +32,10 @@ const PrivateRoute = ({
   ...rest
 }: Props) => {
   const isAuthorizedByUser = allowedRoute || isAllowed(allowedRoles);
+  console.log('PrivateRoute: allowedRoute: ', allowedRoute);
+  console.log('PrivateRoute: RETURN (isAuthrizedByUser): ', isAuthorizedByUser);
+  console.log('======= end ======');
+
 
   return (
     <Route

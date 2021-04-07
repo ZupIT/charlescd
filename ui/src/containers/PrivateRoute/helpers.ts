@@ -25,5 +25,10 @@ export const isAllowed = (allowedRoles: string[]) => {
     
   });
 
+  console.log('======= start ======');
+  console.log('isAllowed: rule: ', rule);
+  console.log('isAllowed: ability: ', ability.rules);
+  console.log('isAllowed: RETURN (!isEmpty(rule)): ', !isEmpty(rule));
+
   return !isEmpty(rule);
 };
