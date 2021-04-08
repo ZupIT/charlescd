@@ -16,10 +16,13 @@
 
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 
-export const resolveParams = (param: string) => {
+export type Mode = 'create' | 'view';
+
+export const resolveParams = (param: string): [ string, Mode ] => {
   const [id, initMode] = param?.split('~');
-  const mode = param === NEW_TAB ? 'edit' : 'view';
-  return [id, initMode || mode];
+  const mode = param === NEW_TAB ? 'create' : 'view';
+
+  return [id, (initMode || mode) as Mode];
 };
 
 export const pathModuleById = (id: string) => {

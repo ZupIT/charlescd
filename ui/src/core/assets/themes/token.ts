@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-export interface Token {
-  id: string,
-  name: string,
-  permissions: string[],
-  subjects?: { [k: string]: boolean },
-  workspaces: string[],
-  author: string
+import { COLOR_BLACK_MARLIN } from '../colors';
+
+export const light = {};
+
+
+export const dark = {
+  scope: {
+    view: {
+      background: COLOR_BLACK_MARLIN
+    }
+  }
 };

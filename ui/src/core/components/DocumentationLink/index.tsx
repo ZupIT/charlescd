@@ -25,8 +25,8 @@ const DocumentationLink = ({
   return (
     <>
       <Styled.DocumentationLink target="_blank" href={documentationLink}>
-        {text}
-      </Styled.DocumentationLink>{' '}
+        {` ${text} `}
+      </Styled.DocumentationLink>
     </>
   );
 };

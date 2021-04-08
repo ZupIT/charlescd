@@ -51,6 +51,7 @@ import { dark as darkSummary } from './summary';
 import { dark as darkLog } from './log';
 import { dark as darkSlider } from './slider';
 import { zIndex } from '../zindex';
+import { dark as darkToken } from './token';
 
 const common = {
   zIndex
@@ -97,7 +98,8 @@ const dark = {
   navTabs: darkNavTabs,
   summary: darkSummary,
   log: darkLog,
-  slider: darkSlider
+  slider: darkSlider,
+  token: darkToken
 };
 
 export type ThemeScheme = typeof dark;

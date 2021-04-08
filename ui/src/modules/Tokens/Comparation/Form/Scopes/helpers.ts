@@ -16,6 +16,8 @@
 
 import { Actions, Subjects } from 'core/utils/abilities';
 import includes from 'lodash/includes';
+import find from 'lodash/find';
+import reduceRight from 'lodash/reduceRight';
 
 export const subjectTemplate = (subject: Subjects) =>
   `Give full access to our ${subject.toLowerCase()} API`;
@@ -30,3 +32,22 @@ export const displayAction = (subject: Subjects) => {
   const subjectsWithAction: Subjects[] = ['modules', 'circles'];
   return includes(subjectsWithAction, subject);
 }
+
+export const getScopes = (permissions: string[]) => {
+  return reduceRight(permissions?.sort(), (result, permission) => {
+    const [subject, action] = permission?.split('_');
+    const found = find(result, r => r.subject === subject && r.permission !== 'read');
+
+    return found
+      ? result
+      : [
+        ...result,
+        {
+          subject,
+          permission: action === 'write' ? 'All permissions' : 'read'
+        }
+      ]
+  }, []);
+}
+
+
