@@ -100,7 +100,7 @@ func GetSystemToken(getSystemToken systemTokenInteractor.GetSystemToken) echo.Ha
 	}
 }
 
-func RevokeSytemToken(revokeSystemToken systemTokenInteractor.RevokeSystemToken) echo.HandlerFunc {
+func RevokeSystemToken(revokeSystemToken systemTokenInteractor.RevokeSystemToken) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		ctx := echoCtx.Request().Context()
 		uuid, parseErr := uuidPkg.Parse(echoCtx.Param("id"))
@@ -117,5 +117,25 @@ func RevokeSytemToken(revokeSystemToken systemTokenInteractor.RevokeSystemToken)
 		}
 
 		return echoCtx.JSON(http.StatusNoContent, nil)
+	}
+}
+
+func RegenerateSystemToken(regenerateToken systemTokenInteractor.RegenerateSystemToken) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		ctx := echoCtx.Request().Context()
+		uuid, parseErr := uuidPkg.Parse(echoCtx.Param("id"))
+
+		if parseErr != nil {
+			logging.LogErrorFromCtx(ctx, parseErr)
+			return echoCtx.JSON(http.StatusBadRequest, logging.NewError("Parse id failed", parseErr, logging.ParseError, nil))
+		}
+
+		systemToken, err := regenerateToken.Execute(uuid)
+
+		if err != nil {
+			return HandleError(echoCtx, ctx, err)
+		}
+
+		return echoCtx.JSON(http.StatusOK, systemToken)
 	}
 }
