@@ -16,11 +16,12 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.charlescd.moove.application.*
+import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
@@ -28,6 +29,7 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
+import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
@@ -48,7 +50,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
     private CircleMatcherService circleMatcherService
     private WorkspaceService workspaceService
-    private CsvSegmentationService csvSegmentationService
+    private KeyValueRuleRepository keyValueRuleRepository
     private WebhookEventService webhookEventService
     private DeploymentService deploymentService
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
@@ -58,13 +60,13 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         this.circleMatcherService = Mock(CircleMatcherService)
         this.webhookEventService = new WebhookEventService(hermesService, new BuildService(buildRepository))
         this.deploymentService = new DeploymentService(deploymentRepository)
-        this.csvSegmentationService = new CsvSegmentationService(objectMapper);
+        this.keyValueRuleRepository = Mock(KeyValueRuleRepository);
         this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(
                 deploymentService,
                 webhookEventService,
                 circleMatcherService,
                 workspaceService,
-                csvSegmentationService
+                keyValueRuleRepository
         )
     }
 
@@ -514,10 +516,14 @@ class DeploymentCallbackInteractorImplTest extends Specification {
     }
 
     def "when callback is of a circle created with csv should create the correct list of nodes "() {
+
         given:
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
-
-        def circle = getCircle(false)
+        def keyValueRule = getKeyValueRule("user", "charles" )
+        def secondKeyValueRule = getKeyValueRule("user", "admin" )
+        def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
+                LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false,
+                workspaceId, false, null)
         def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
                 "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
@@ -541,17 +547,28 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
 
-        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
+        1 * keyValueRuleRepository.findByCircle(circle.id) >> [keyValueRule,secondKeyValueRule]
+
+        1 * this.circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
             def circleCompare = arguments[0]
             def reference = arguments[1]
-            def matcherUrl = arguments[2]
-            def active = arguments[3]
+            def nodes = arguments[2]
+            def matcherUrl = arguments[3]
+            def active = arguments[4]
 
             assert circleCompare instanceof Circle
             assert circleCompare.id == circle.id
             assert matcherUrl.toString() == workspace.circleMatcherUrl
             assert reference == circle.reference
             assert active == false
+            assert nodes instanceof List<JsonNode>
+            assert nodes.size() == 2
+            def ruleCompare = objectMapper.treeToValue(nodes[0],NodePart.class)
+            def SecondRuleCompare = objectMapper.treeToValue(nodes[1],NodePart.class)
+            assert ruleCompare.content.key == "user"
+            assert ruleCompare.content.value[0] == "charles"
+            assert SecondRuleCompare.content.key == "user"
+            assert SecondRuleCompare.content.value[0] == "admin"
         }
 
     }
@@ -587,6 +604,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         1 * this.deploymentRepository.update(_)
 
         1 * this.hermesService.notifySubscriptionEvent(_)
+
+        1 * keyValueRuleRepository.findByCircle(circle.id) >> []
 
         1 * this.buildRepository.findById(buildId) >> Optional.of(getBuild(DeploymentStatusEnum.DEPLOYED, circle))
 
@@ -673,5 +692,20 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         deployments.add(deployment)
         return deployments
     }
+
+    private static NodePart getNodePart(String key, String value) {
+        def rulePart = new NodePart.RulePart(key, NodePart.ConditionEnum.EQUAL, [value])
+        return new NodePart(NodePart.NodeTypeRequest.RULE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
+    }
+
+    private static KeyValueRule getKeyValueRule(String key, String value)  {
+        def nodePart = getNodePart(key, value)
+        def jsonNode = new ObjectMapper().valueToTree(nodePart)
+        return new KeyValueRule("8c6e4281-ae17-415c-b904-e5514aff6bc1", jsonNode, TestUtils.cirleId)
+    }
+
+
+
+
 
 }

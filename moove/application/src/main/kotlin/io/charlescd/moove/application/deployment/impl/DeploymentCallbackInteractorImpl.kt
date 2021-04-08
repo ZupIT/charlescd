@@ -85,10 +85,8 @@ open class DeploymentCallbackInteractorImpl(
             val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
             if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
                 val rules = keyValueRuleRepository.findByCircle(circle.id)
-                rules.map { keyValueRule ->
-                    keyValueRule.rule.chunked(100).map {
-                        this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
-                    }
+                rules.map { it.rule }.chunked(100).forEach {
+                    this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
                 }
             } else {
                 this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
