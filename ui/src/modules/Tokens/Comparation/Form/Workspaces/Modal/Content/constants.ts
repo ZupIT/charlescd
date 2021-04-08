@@ -14,39 +14,5 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import ButtonComponent from 'core/components/Button';
-
-const Button = styled(ButtonComponent.Rounded)`
-  margin-top: 10px;
-`;
-
-const ShowMore = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 10px;
-
-  > span {
-    margin-left: 10px;
-  }
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: 10px;
-
-  > * {
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
-`;
-
-export default {
-  Button,
-  ShowMore,
-  Content,
-}
+export const MIN_ITEMS = 4;
+export const MAX_ITEMS = 10;

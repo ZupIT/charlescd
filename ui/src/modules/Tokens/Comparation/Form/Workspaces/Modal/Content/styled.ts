@@ -15,38 +15,30 @@
  */
 
 import styled from 'styled-components';
-import ButtonComponent from 'core/components/Button';
+import { Input } from 'core/components/Form';
 
-const Button = styled(ButtonComponent.Rounded)`
-  margin-top: 10px;
-`;
+const Search = styled(Input)`
+  margin-top: 5px;
+  margin-bottom: 20px;
+  margin: 5px 40px 20px;
 
-const ShowMore = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 10px;
-
-  > span {
-    margin-left: 10px;
+  > input {
+    background-color: transparent;
   }
 `;
 
 const Content = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 22px;
+  height: 300px;
+  overflow-y: auto;
+`;
 
-  > * {
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
+const Empty = styled.div`
+  margin: 48px 30px 18px 30px;
 `;
 
 export default {
-  Button,
-  ShowMore,
+  Search,
   Content,
+  Empty,
 }

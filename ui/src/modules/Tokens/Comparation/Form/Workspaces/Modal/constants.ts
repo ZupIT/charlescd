@@ -14,39 +14,17 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import ButtonComponent from 'core/components/Button';
+export type Option = {
+  [key: string]: string;
+};
 
-const Button = styled(ButtonComponent.Rounded)`
-  margin-top: 10px;
-`;
-
-const ShowMore = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 10px;
-
-  > span {
-    margin-left: 10px;
+export const options: Option[] = [
+  {
+    value: 'ALL',
+    label: 'Allow access for all workspaces'
+  },
+  {
+    value: 'MANUAL',
+    label: 'Only specific workspaces'
   }
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: 10px;
-
-  > * {
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
-`;
-
-export default {
-  Button,
-  ShowMore,
-  Content,
-}
+]

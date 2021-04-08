@@ -36,7 +36,7 @@ const FormToken = ({ mode }: Props) => {
   const methods = useForm<Token>({ mode: 'onChange' });
   const {
     register, handleSubmit, watch,
-    setValue, errors, formState: { isValid }
+    errors, formState: { isValid }
   } = methods;
 
   const name = watch('name') as string;
@@ -58,7 +58,7 @@ const FormToken = ({ mode }: Props) => {
               error={errors?.name?.message}
             />
           </ContentIcon>
-          {name && <Workspaces setValue={setValue} />}
+          {name && <Workspaces mode={mode} />}
           {name && workspaces && (
             <Fragment>
               <Scopes mode={mode} />

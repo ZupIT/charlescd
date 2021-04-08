@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import styled from 'styled-components';
 import IconComponent, { Props as IconProps } from 'core/components/Icon';
 import InputComponent from 'core/components/Form/Input';
@@ -53,6 +52,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   height: 40px;
+  width: 100%;
 
   :focus-within {
     background-color: ${({ theme }) => theme.input.focus.background};

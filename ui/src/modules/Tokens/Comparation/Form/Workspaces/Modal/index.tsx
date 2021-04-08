@@ -14,20 +14,60 @@
  * limitations under the License.
  */
 
-import Modal from 'core/components/Modal';
+import { memo, useState } from 'react';
+import xorBy from 'lodash/xorBy';
+import isEmpty from 'lodash/isEmpty';
+import first from 'lodash/first';
+import last from 'lodash/last';
+import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
+import Select from 'core/components/Form/Select/Single/Select';
+import Button from 'core/components/Button';
+import List from './Content/List';
+import { options, Option } from './constants';
+import Styled from './styled';
 
 interface Props {
+  workspaces: WorkspacePaginationItem[];
   onClose: Function;
-  onContinue: Function;
+  onContinue: (workspaces: WorkspacePaginationItem[]) => void;
 }
 
-const AddWorkspaces = ({ onClose, onContinue }: Props) => {
+const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
+  const [draft, setDraft] = useState<WorkspacePaginationItem[]>(workspaces);
+  const isAddMode = isEmpty(draft);
+  const [type, setType] = useState<Option>(isAddMode ? first(options) : last(options));
+  const isManual = type?.value === 'MANUAL';
+
+  const toggleWorkspace = (workspace: WorkspacePaginationItem) => {
+    setDraft(xorBy(draft, [workspace], 'id'));
+  };
+
+  const renderList = () => 
+    isManual && <List draft={draft} onSelect={toggleWorkspace} />
 
   return (
-    <Modal.Default onClose={() => onClose()}>
-      Add Workspaces
-    </Modal.Default>
+    <Styled.Modal onClose={() => onClose()}>
+      <Styled.Header>
+        Add Workspaces
+        <Select
+          options={options}
+          defaultValue={type}
+          placeholder="Define the workspaces that will be associated"
+          onChange={setType}
+        />
+      </Styled.Header>
+      {renderList()}
+      <Styled.Item>
+        <Button.Default
+          type="button"
+          size="SMALL"
+          onClick={() => onContinue(draft)}
+        >
+          {`${isAddMode ? 'Add' : 'Save'}`}
+        </Button.Default>
+      </Styled.Item>
+    </Styled.Modal>
   )
 }
 
-export default AddWorkspaces;
+export default memo(AddWorkspaces);

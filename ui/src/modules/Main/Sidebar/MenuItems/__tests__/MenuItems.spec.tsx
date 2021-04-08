@@ -15,23 +15,40 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, fireEvent, screen } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import MenuItems from '../index';
+import { saveProfile } from 'core/utils/profile';
+import {dark as sidebarDarkTheme} from 'core/assets/themes/sidebar';
+
+const originalWindow = { ...window };
+
+beforeEach(() => {
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.workspaces
+  };
+});
+
+afterEach(() => {
+  window = originalWindow;
+});
 
 test('renders sidebar menu Items', async () => {
-  const { getByTestId } = render(
+  render(
     <MenuItems isExpanded expandMenu={() => jest.fn()} />
   );
 
-  const links = getByTestId('sidebar-links');
+  const links = screen.getByTestId('sidebar-links');
 
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
-  expect(getByTestId(workspacesId)).toBeInTheDocument();
-  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
+  expect(screen.getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
 });
 
@@ -41,19 +58,19 @@ test('testing outside click menu Items', async () => {
     isExpanded: true
   };
 
-  const { getByTestId } = render(
+  render(
     <div onClick={onOutSideCick} data-testid="external-div">
       <MenuItems isExpanded={props.isExpanded} expandMenu={() => jest.fn()} />
     </div>
   );
-  const externalDiv = getByTestId('external-div');
-  const links = getByTestId('sidebar-links');
+  const externalDiv = screen.getByTestId('external-div');
+  const links = screen.getByTestId('sidebar-links');
 
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
-  expect(getByTestId(workspacesId)).toBeInTheDocument();
-  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
+  expect(screen.getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
   fireEvent.click(externalDiv);
   expect(props.isExpanded).toBeTruthy();
@@ -64,18 +81,127 @@ test('testing expand menu click', async () => {
 
   const isExpanded = false;
 
-  const { getByTestId } = render(
+  render(
     <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
   );
-  const links = getByTestId('sidebar-links');
+  const links = screen.getByTestId('sidebar-links');
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
-  expect(getByTestId(workspacesId)).toBeInTheDocument();
-  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
+  expect(screen.getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
 
   fireEvent.click(links.children[1]);
 
   expect(onClickExpand).toHaveBeenCalled();
+});
+
+test('should show main menu for non-root user', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
+});
+
+test('should show workspace menu', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.circles
+  };
+
+  localStorage.setItem('workspace', '1234567890');
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Circles')).toBeInTheDocument();
+  expect(screen.queryByText('Hypotheses')).not.toBeInTheDocument();
+  expect(screen.getByText('Modules')).toBeInTheDocument();
+  expect(screen.getByText('Metrics')).toBeInTheDocument();
+  expect(screen.getByText('Settings')).toBeInTheDocument();
+  expect(screen.queryByText('Workspaces')).not.toBeInTheDocument();
+});
+
+test('should render root main menu when route is /users/compare', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.usersComparation
+  };
+
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: true
+  });
+
+  localStorage.setItem('workspace', '1234567890');
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.getByText('Users')).toBeInTheDocument();
+  expect(screen.getByText('User Group')).toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
+  expect(screen.getByTestId('menu-users')).toHaveStyle(`backgroundColor: ${sidebarDarkTheme.menuBgActive}`);
+
+});
+
+test('should show root main menu', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: true
+  });
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.getByText('Users')).toBeInTheDocument();
+  expect(screen.getByText('User Group')).toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
+});
+
+test('should show main menu', () => {
+  const onClickExpand = jest.fn();
+  const isExpanded = true;
+
+  saveProfile({
+    id: '1',
+    name: 'Charles Admin',
+    email: 'charles@admin',
+    root: false
+  });
+
+  render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+
+  expect(screen.getByText('Workspaces')).toBeInTheDocument();
+  expect(screen.queryByText('Users')).not.toBeInTheDocument();
+  expect(screen.queryByText('User Group')).not.toBeInTheDocument();
+  expect(screen.getByText('Account')).toBeInTheDocument();
 });

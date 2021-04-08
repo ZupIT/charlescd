@@ -15,69 +15,75 @@
  */
 
 import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
+import { SearchInput } from 'core/components/Form';
 
-const Wrapper = styled.div`
-  z-index: ${({ theme }) => theme.zIndex.OVER_3};
-  align-items: center;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    width: 543px;
+    padding: 35px 0 28px 0;
+  }
+
+  .modal-content {
+    overflow-y: hidden;
+    min-height: 400px;
+  }
 `;
 
-const Placeholder = styled.div`
-  padding: 60px 135.5px 87.5px 135.5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+const Header = styled.div`
+  padding: 0 40px;
 `;
 
-const Background = styled.div`
-  background: ${({ theme }) => theme.modal.default.screen};
+const Search = styled(SearchInput)`
+  margin-top: 5px;
+  margin-bottom: 20px;
   width: 100%;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  position: fixed;
+
+  > input {
+    background-color: transparent;
+  }
+`;
+
+const Content = styled.div`
+  margin-top: 22px;
+  max-height: 500px;
+  overflow-y: auto;
+`;
+
+const Empty = styled.div`
+  margin: 48px 30px 18px 30px;
+`;
+
+const Item = styled.div`
+  border-top: 1px solid #3A3A3C;
+  border-bottom: 1px solid #3A3A3C;
+  height: 70px;
+  padding: 0 40px;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  z-index: ${({ theme }) => theme.zIndex.OVER_3};
-  opacity: 0.8;
+  justify-content: space-between;
+
+  :last-child {
+    border: hidden;
+  }
 `;
 
-const Dialog = styled.div`
-  position: relative;
-  width: auto;
-  max-width: 500px;
-  margin: 1.75rem auto;
-  min-height: calc(100% - (1.75rem * 2));
-`;
-
-const Container = styled.div`
-  position: fixed;
+const Subtitle = styled.div`
   display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: ${({ theme }) => theme.modal.default.background};
-  z-index: ${({ theme }) => theme.zIndex.OVER_4};
-  color: ${({ theme }) => theme.modal.default.text};
-  padding: 35px 41px 28px 40px;
-  top: 15%;
-  transform: translate(-50%, 0);
-  text-align: left;
-  opacity: 1.2;
-  width: 543px;
-  height: calc(100vh - 262px);
+  flex-direction: row;
+  margin-top: 5px;
 `;
+
+const Description = styled.div``;
 
 export default {
-  Wrapper,
-  Placeholder,
-  Background,
-  Dialog,
-  Container
+  Content,
+  Empty,
+  Modal,
+  Header,
+  Search,
+  Item,
+  Subtitle,
+  Description
 }
