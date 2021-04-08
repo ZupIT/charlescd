@@ -22,17 +22,19 @@ import last from 'lodash/last';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Select from 'core/components/Form/Select/Single/Select';
 import Button from 'core/components/Button';
+import Text from 'core/components/Text';
 import List from './Content/List';
 import { options, Option } from './constants';
 import Styled from './styled';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 interface Props {
   workspaces: WorkspacePaginationItem[];
-  onClose: Function;
+  onClose: () => void;
   onContinue: (workspaces: WorkspacePaginationItem[]) => void;
 }
 
-const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
+const Modal = ({ workspaces, onClose, onContinue }: Props) => {
   const [draft, setDraft] = useState<WorkspacePaginationItem[]>(workspaces);
   const isAddMode = isEmpty(draft);
   const [type, setType] = useState<Option>(isAddMode ? first(options) : last(options));
@@ -42,13 +44,10 @@ const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
     setDraft(xorBy(draft, [workspace], 'id'));
   };
 
-  const renderList = () => 
-    isManual && <List draft={draft} onSelect={toggleWorkspace} />
-
   return (
-    <Styled.Modal onClose={() => onClose()}>
+    <Styled.Modal onClose={onClose}>
       <Styled.Header>
-        Add Workspaces
+        <Text.h2 color="light">Add Workspaces</Text.h2>
         <Select
           options={options}
           defaultValue={type}
@@ -56,7 +55,17 @@ const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
           onChange={setType}
         />
       </Styled.Header>
-      {renderList()}
+      <Styled.Caption>
+        <Text.h5 color="dark">
+          *This token will have access only to the selected workspaces. Read our 
+          <DocumentationLink
+            documentationLink="https://docs.charlescd.io"
+            text="documentation"
+          />
+          for further details.
+        </Text.h5>
+      </Styled.Caption>
+      {isManual && <List draft={draft} onSelect={toggleWorkspace} />}
       <Styled.Item>
         <Button.Default
           type="button"
@@ -70,4 +79,4 @@ const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
   )
 }
 
-export default memo(AddWorkspaces);
+export default memo(Modal);

@@ -59,7 +59,7 @@ const FormToken = ({ mode }: Props) => {
             />
           </ContentIcon>
           {name && <Workspaces mode={mode} />}
-          {name && workspaces && (
+          {workspaces && (
             <Fragment>
               <Scopes mode={mode} />
               <Styled.Button

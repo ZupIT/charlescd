@@ -14,31 +14,7 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import { Input } from 'core/components/Form';
 
-const Search = styled(Input)`
-  margin-top: 5px;
-  margin-bottom: 20px;
-  margin: 5px 40px 20px;
-
-  > input {
-    background-color: transparent;
-  }
-`;
-
-const Content = styled.div`
-  margin-top: 22px;
-  height: 300px;
-  overflow-y: auto;
-`;
-
-const Empty = styled.div`
-  margin: 48px 40px 18px;
-`;
-
-export default {
-  Search,
-  Content,
-  Empty,
-}
+export const checkProps = (isChecked: boolean) => isChecked
+  ? { name: "checkmark-circle", color: "success" }
+  : { name: "plus-circle", color: "dark" }

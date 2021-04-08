@@ -65,17 +65,6 @@ const List = ({ draft, onSelect }: Props) => {
       />
     ))
 
-  const Content = () => (
-    <InfiniteScroll
-      hasMore={!last}
-      loadMore={loadMore}
-      isLoading={status === 'pending'}
-      loader={<Loader />}
-    >
-      {isEmpty(workspaces) && status !== 'pending' ? <Empty /> : renderItems()}
-    </InfiniteScroll>
-  );
-
   return (
     <Fragment>
       <Styled.Search
@@ -85,7 +74,14 @@ const List = ({ draft, onSelect }: Props) => {
         maxLength={64}
       />
       <Styled.Content>
-        <Content />
+        <InfiniteScroll
+          hasMore={!last}
+          loadMore={loadMore}
+          isLoading={status === 'pending'}
+          loader={<Loader />}
+        >
+          {isEmpty(workspaces) && status !== 'pending' ? <Empty /> : renderItems()}
+        </InfiniteScroll>
       </Styled.Content>
     </Fragment>
   );

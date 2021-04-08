@@ -18,6 +18,7 @@ import { useState, memo } from 'react';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
+import { checkProps } from './helpers';
 import Styled from '../styled';
 
 interface Props {
@@ -34,12 +35,6 @@ const Item = ({ workspace, selected, onChange }: Props) => {
     onChange(workspace);
   }
 
-  const Toggle = () => (
-    isChecked 
-      ? <Icon name="checkmark-circle" color="success" size="22px" onClick={onClick} />
-      : <Icon name="plus-circle" color="dark" size="22px" onClick={onClick} />
-  );
-
   return (
     <Styled.Item>
       <Styled.Description>
@@ -49,7 +44,7 @@ const Item = ({ workspace, selected, onChange }: Props) => {
           <Text.h4 color="light">mateus.cruz@zup.com.br</Text.h4>
         </Styled.Subtitle>
       </Styled.Description>
-      <Toggle />
+      <Icon { ...checkProps(isChecked) } size="22px" onClick={onClick} />
     </Styled.Item>
   )
 }

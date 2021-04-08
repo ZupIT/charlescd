@@ -26,12 +26,16 @@ const Modal = styled(ComponentModal.Default)`
 
   .modal-content {
     overflow-y: hidden;
-    min-height: 400px;
+    min-height: 200px;
   }
 `;
 
 const Header = styled.div`
   padding: 0 40px;
+
+  > :last-child {
+    margin-top: 20px;
+  }
 `;
 
 const Search = styled(SearchInput)`
@@ -77,6 +81,10 @@ const Subtitle = styled.div`
 
 const Description = styled.div``;
 
+const Caption = styled.div`
+  margin: 10px 40px;
+`;
+
 export default {
   Content,
   Empty,
@@ -85,5 +93,6 @@ export default {
   Search,
   Item,
   Subtitle,
-  Description
+  Description,
+  Caption
 }
