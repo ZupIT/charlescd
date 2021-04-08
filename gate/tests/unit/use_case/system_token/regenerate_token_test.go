@@ -42,14 +42,7 @@ func (st *SystemTokenSuite) TestRegenerateSystemToken() {
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
 
 	require.NotNil(st.T(), result)
-	require.NotEqual(st.T(), result.Token, systemToken.Token)
-	require.Equal(st.T(), result.ID, result.ID)
-	require.Equal(st.T(), result.Name, result.Name)
-	require.Equal(st.T(), result.Revoked, result.Revoked)
-	require.Equal(st.T(), result.RevokedAt, result.RevokedAt)
-	require.Equal(st.T(), result.Permissions, result.Permissions)
-	require.Equal(st.T(), result.LastUsedAt, result.LastUsedAt)
-	require.Equal(st.T(), result.CreatedAt, result.CreatedAt)
+	require.NotEqual(st.T(), result, systemToken.Token)
 }
 
 func (st *SystemTokenSuite) TestRegenerateSystemTokenIDNotFound() {
@@ -64,7 +57,7 @@ func (st *SystemTokenSuite) TestRegenerateSystemTokenIDNotFound() {
 
 	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", id))
-	require.Equal(st.T(), response, domain.SystemToken{})
+	require.Equal(st.T(), response, "")
 }
 
 func (st *SystemTokenSuite) TestRegenerateSystemTokenErrorWhenUpdating() {
@@ -82,7 +75,7 @@ func (st *SystemTokenSuite) TestRegenerateSystemTokenErrorWhenUpdating() {
 	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
-	require.Equal(st.T(), response, domain.SystemToken{})
+	require.Equal(st.T(), response, "")
 }
 
 func (st *SystemTokenSuite) TestRegenerateSystemTokenIfTokenIsAlreadyRevoked() {
@@ -98,5 +91,5 @@ func (st *SystemTokenSuite) TestRegenerateSystemTokenIfTokenIsAlreadyRevoked() {
 
 	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
-	require.Equal(st.T(), response, domain.SystemToken{})
+	require.Equal(st.T(), response, "")
 }

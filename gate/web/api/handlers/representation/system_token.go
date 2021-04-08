@@ -27,9 +27,9 @@ import (
 )
 
 type SystemTokenRequest struct {
-	Name string `json:"name" validate:"required,notblank"`
+	Name        string   `json:"name" validate:"required,notblank"`
 	Permissions []string `json:"permissions" validate:"min=1,dive,notblank"`
-	Workspaces []string `json:"workspaces" validate:"required"`
+	Workspaces  []string `json:"workspaces" validate:"required"`
 }
 
 type SystemTokenResponse struct {
@@ -51,6 +51,10 @@ type PageSystemTokenResponse struct {
 	Size       int                   `json:"size"`
 	Last       bool                  `json:"last"`
 	TotalPages int                   `json:"totalPages"`
+}
+
+type RegenerateTokenResponse struct {
+	Token string `json:"token"`
 }
 
 func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.CreateSystemTokenInput {
@@ -92,4 +96,8 @@ func DomainsToPageResponse(systemToken []domain.SystemToken, page domain.Page) P
 		Last:       page.IsLast(),
 		TotalPages: page.TotalPages(),
 	}
+}
+
+func ToRegenerateTokenResponse(token string) RegenerateTokenResponse {
+	return RegenerateTokenResponse{Token: token}
 }

@@ -130,12 +130,12 @@ func RegenerateSystemToken(regenerateToken systemTokenInteractor.RegenerateSyste
 			return echoCtx.JSON(http.StatusBadRequest, logging.NewError("Parse id failed", parseErr, logging.ParseError, nil))
 		}
 
-		systemToken, err := regenerateToken.Execute(uuid)
+		token, err := regenerateToken.Execute(uuid)
 
 		if err != nil {
 			return HandleError(echoCtx, ctx, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, systemToken)
+		return echoCtx.JSON(http.StatusOK, representation.ToRegenerateTokenResponse(token))
 	}
 }
