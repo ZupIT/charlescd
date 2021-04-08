@@ -102,7 +102,7 @@ const ComponentsWrapper = styled.div`
 `;
 
 const ComponentInput = styled(FormComponent.Input)`
-  width: 155px;
+  width: 165px;
   margin-right: 20px;
 `;
 

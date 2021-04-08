@@ -122,6 +122,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
       />
     </Styled.Components.AdvancedOptions>
   )
+  // TODO enter name comp onchange
 
   return (
     <Styled.Content>
