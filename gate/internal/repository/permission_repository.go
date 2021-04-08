@@ -28,6 +28,7 @@ import (
 
 type PermissionRepository interface {
 	FindAll(permissions []string) ([]domain.Permission, error)
+	FindBySystemTokenId(systemTokenId string) ([]domain.Permission, error)
 }
 
 type permissionRepository struct {
@@ -50,6 +51,31 @@ func (permissionRepository permissionRepository) FindAll(permissionNames []strin
 	return mapper.PermissionsModelToDomains(permissions), nil
 }
 
+func (permissionRepository permissionRepository) FindBySystemTokenId(systemTokenId string) ([]domain.Permission, error) {
+	var permissions []models.Permission
+
+	res := permissionRepository.db.Raw(findPermissionsBySystemTokenIdQuery, systemTokenId).Scan(&permissions)
+
+	if res.Error != nil {
+		return []domain.Permission{}, handlePermissionError("Find all permissions failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
+	}
+
+	return mapper.PermissionsModelToDomains(permissions), nil
+}
+
 func handlePermissionError(message string, operation string, err error, errType string) error {
 	return logging.NewError(message, err, errType, nil, operation)
 }
+
+const findPermissionsBySystemTokenIdQuery = `
+	select
+		id,
+		name,
+		created_at
+	from
+		permissions p
+	inner join system_tokens_permissions stp on
+		p.id = stp.permission_id
+	where
+		stp .system_token_id = ?
+`

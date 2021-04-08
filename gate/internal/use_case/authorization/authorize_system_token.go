@@ -24,7 +24,6 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/ZupIT/charlescd/gate/internal/service"
-	"github.com/google/uuid"
 )
 
 type AuthorizeSystemToken interface {
@@ -34,12 +33,16 @@ type AuthorizeSystemToken interface {
 type authorizeSystemToken struct {
 	enforcer              service.SecurityFilterService
 	systemTokenRepository repository.SystemTokenRepository
+	permissionRepository repository.PermissionRepository
 }
 
-func NewAuthorizeSystemToken(enforcer service.SecurityFilterService, systemTokenRepository repository.SystemTokenRepository) AuthorizeSystemToken {
+func NewAuthorizeSystemToken(enforcer service.SecurityFilterService,
+	systemTokenRepository repository.SystemTokenRepository,
+	permissionRepository repository.PermissionRepository) AuthorizeSystemToken {
 	return authorizeSystemToken{
 		enforcer:              enforcer,
 		systemTokenRepository: systemTokenRepository,
+		permissionRepository: permissionRepository,
 	}
 }
 
@@ -53,7 +56,7 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 		return nil
 	}
 
-	systemToken, err := authorizeSystemToken.systemTokenRepository.FindById(uuid.MustParse(authorizationToken))
+	systemToken, err := authorizeSystemToken.systemTokenRepository.FindByToken(authorizationToken)
 	if err != nil {
 		return logging.WithOperation(err, "authorize.systemToken")
 	}
@@ -62,8 +65,9 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 		return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
 	}
 
-	for _, st := range systemToken.Permissions {
-		allowed, err = authorizeSystemToken.enforcer.Authorize(st.Name, authorization.Path, authorization.Method)
+	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenId(systemToken.ID.String())
+	for _, p := range permissions {
+		allowed, err = authorizeSystemToken.enforcer.Authorize(p.Name, authorization.Path, authorization.Method)
 		if err != nil {
 			return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.systemToken")
 		}
