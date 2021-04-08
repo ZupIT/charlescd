@@ -17,30 +17,51 @@
 import React from 'react';
 import map from 'lodash/map';
 import xor from 'lodash/xor';
+import filter from 'lodash/filter';
+import capitalize from 'lodash/capitalize';
+import includes from 'lodash/includes';
 import ContentIcon from 'core/components/ContentIcon';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Actions, Subjects, actions, subjects } from 'core/utils/abilities';
 import Styled from './styled';
-import { actionTemplate, displayAction, subjectTemplate } from './helpers';
+import { actionTemplate, displayAction, getScopes, subjectTemplate } from './helpers';
 import { useFormContext } from 'react-hook-form';
+import { Mode } from '../../helpers';
+import Icon from 'core/components/Icon';
+import DocumentationLink from 'core/components/DocumentationLink';
 
-const Scopes = () => {
-  const { register, setValue, getValues } = useFormContext();
+interface Props {
+  mode: Mode;
+}
 
-  console.log('SCOPE');
+const Scopes = ({ mode }: Props) => {
+  const { register, setValue, getValues, watch } = useFormContext();
 
-  const onChangeSubject = (subject: Subjects) => {
-    const { permissions } = getValues();
-    const newPermissions = [`${subject}_write`, `${subject}_read`];
-    setValue('permissions', xor(permissions, newPermissions));
+  const onChangeSubject = (subject: Subjects, checked: boolean) => {
+    const values = getValues();
+    const rules = [`${subject}_write`, `${subject}_read`];
+    const permissions = checked
+      ? [...values.permissions, ...rules]
+      : xor(values.permissions, rules);
+
+    setValue('permissions', permissions);
   }
 
   const onChangeAction = (action: Actions, subject: Subjects, checked: boolean) => {
-    const { permissions } = getValues();
+    const values = getValues();
+
     if (action === 'write') {
-      const permission = [`${subject}_read`];
-      setValue('permissions', xor(permissions, permission));
+      setValue(`subjects.${subject}`, checked);
+
+      if (checked) {
+        setValue('permissions', [...values.permissions, `${subject}_read`]);
+      }
+
+    } else if (!checked) {
+      const rules = filter(values.permissions, permission => !includes(permission, subject));
+      setValue('permissions', rules);
+      setValue(`subjects.${subject}`, false);
     }
   }
 
@@ -48,7 +69,7 @@ const Scopes = () => {
     map(actions, (action: Actions) => (
       <Styled.Content left displayAction={displayAction(subject)} key={`${subject}_${action}`}>
         <Form.Checkbox
-          label={action}
+          label={capitalize(action)}
           ref={register()}
           name="permissions"
           value={`${subject}_${action}`}
@@ -60,25 +81,58 @@ const Scopes = () => {
   )
 
   const renderSubjects = () =>
-    map(subjects, (subject, index: number) => (
+    map(subjects, (subject: Subjects) => (
       <React.Fragment key={subject}>
         <Form.Checkbox
-          name="subjects"
-          label={subject}
+          name={`subjects.${subject}`}
+          label={capitalize(subject)}
           ref={register()}
           value=""
-          onChange={() => onChangeSubject(subject)}
+          onChange={(checked: boolean) => onChangeSubject(subject, checked)}
           description={subjectTemplate(subject)}
         />
         {renderActions(subject)}
       </React.Fragment>
     ));
+  
+  const renderView = () => {
+    const scopes = getScopes(watch('permissions'));
+
+    return (
+      <Styled.View>
+        <Styled.ViewHead>
+          <Text.h5 color="dark">Scopes</Text.h5>
+          <Text.h5 color="dark">Permissions</Text.h5>
+        </Styled.ViewHead>
+        {map(scopes, ({ subject, permission }, index)=> (
+          <Styled.ViewItem key={index}>
+            <Styled.ViewScope>
+              <Icon name="checkmark" size="12px" color="light" />
+              <Text.h4 color="light">{capitalize(subject)}</Text.h4>
+            </Styled.ViewScope>
+            <Text.h4 color="light">{capitalize(permission)}</Text.h4>
+          </Styled.ViewItem>
+        ))}
+      </Styled.View>
+    )
+  }
 
   return (
     <ContentIcon icon="scopes">
       <Text.h2 color="light">Scopes</Text.h2>
       <Styled.Content>
-        {renderSubjects()}
+        <Styled.Description>
+          <Text.h5 color="dark">
+            Scopes define the actions that a given token can perform. Your access token can be
+            created with one or more scopes. Read our  
+            <DocumentationLink
+              documentationLink="https://docs.charlescd.io"
+              text="documentation"
+            />
+            for further details.
+          </Text.h5>
+        </Styled.Description>
+        {mode === 'create' ? renderSubjects() : renderView()}
       </Styled.Content>
     </ContentIcon>
   )
