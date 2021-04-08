@@ -17,6 +17,8 @@
 import { memo, useState } from 'react';
 import xorBy from 'lodash/xorBy';
 import isEmpty from 'lodash/isEmpty';
+import first from 'lodash/first';
+import last from 'lodash/last';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Select from 'core/components/Form/Select/Single/Select';
 import Button from 'core/components/Button';
@@ -31,9 +33,9 @@ interface Props {
 }
 
 const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
-  const [type, setType] = useState<Option>();
   const [draft, setDraft] = useState<WorkspacePaginationItem[]>(workspaces);
   const isAddMode = isEmpty(draft);
+  const [type, setType] = useState<Option>(isAddMode ? first(options) : last(options));
   const isManual = type?.value === 'MANUAL';
 
   const toggleWorkspace = (workspace: WorkspacePaginationItem) => {
@@ -49,6 +51,7 @@ const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
         Add Workspaces
         <Select
           options={options}
+          defaultValue={type}
           placeholder="Define the workspaces that will be associated"
           onChange={setType}
         />

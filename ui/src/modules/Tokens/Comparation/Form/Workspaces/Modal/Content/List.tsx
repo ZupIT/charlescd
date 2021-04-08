@@ -18,10 +18,11 @@ import { memo, Fragment, useCallback, useEffect, useState } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import some from 'lodash/some';
+import debounce from 'lodash/debounce';
 import InfiniteScroll from 'core/components/InfiniteScroll';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
-import Text from 'core/components/Text';
 import Item from './Item';
+import Empty from './Empty';
 import { useWorkspaces } from '../hooks';
 import Loader from './loader';
 import Styled from './styled';
@@ -35,12 +36,14 @@ const List = ({ draft, onSelect }: Props) => {
   const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
   const [name, setName] = useState<string>('');
 
-  const handleChange = useCallback((value: string) => {
+  const onSearch = useCallback((value: string) => {
     const page = 0;
     setName(value);
     resetWorkspaces();
     getWorkspaces(value, page);
   }, [getWorkspaces, resetWorkspaces]);
+
+  const handleChange = debounce(onSearch, 700);
 
   useEffect(() => {
     if (status === 'idle') {
@@ -62,20 +65,14 @@ const List = ({ draft, onSelect }: Props) => {
       />
     ))
 
-  const renderEmpty = () => (
-    <Styled.Empty>
-      <Text.h3 color="dark">No workspace was found</Text.h3>
-    </Styled.Empty>
-  );
-
-  const renderContent = () => (
+  const Content = () => (
     <InfiniteScroll
       hasMore={!last}
       loadMore={loadMore}
       isLoading={status === 'pending'}
       loader={<Loader />}
     >
-      {isEmpty(workspaces) && status !== 'pending' ? renderEmpty() : renderItems()}
+      {isEmpty(workspaces) && status !== 'pending' ? <Empty /> : renderItems()}
     </InfiniteScroll>
   );
 
@@ -88,7 +85,7 @@ const List = ({ draft, onSelect }: Props) => {
         maxLength={64}
       />
       <Styled.Content>
-        {renderContent()}
+        <Content />
       </Styled.Content>
     </Fragment>
   );
