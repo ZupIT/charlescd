@@ -53,27 +53,163 @@ export const customManifests = (appName: string, namespace: string, image: strin
   return [service, deployment]
 }
 
-export const routesManifests: KubernetesManifest[] = [
+export const routesManifestsSameNamespace: KubernetesManifest[] = [
   {
     apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
     kind: 'DestinationRule',
     metadata: {
-      name: 'hello-kubernetes',
+      name: 'A',
       namespace: 'namespace',
       annotations: {
-        circles: '["b46fd548-0082-4021-ba80-a50703c44a3b"]'
+        circles: '["circle-1","circle-2"]'
       }
     },
     spec: {
-      host: 'hello-kubernetes',
+      host: 'A',
       subsets: [
         {
           labels: {
-            component: 'hello-kubernetes',
-            tag: 'build-image-tag',
-            circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+            component: 'A',
+            tag: 'v1',
+            circleId: 'circle-1',
           },
-          name: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+          name: 'circle-1',
+        },
+        {
+          labels: {
+            component: 'A',
+            tag: 'v2',
+            circleId: 'circle-2',
+          },
+          name: 'circle-2',
+        }
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'A',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-1","circle-2"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'A',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=circle-2.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'circle-2'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-1'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-1'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-1'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-2"]'
+      }
+    },
+    spec: {
+      host: 'B',
+      subsets: [
+        {
+          labels: {
+            component: 'B',
+            tag: 'v2',
+            circleId: 'circle-2',
+          },
+          name: 'circle-2',
         },
       ],
     },
@@ -82,42 +218,636 @@ export const routesManifests: KubernetesManifest[] = [
     apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
     kind: 'VirtualService',
     metadata: {
-      name: 'hello-kubernetes',
+      name: 'B',
       namespace: 'namespace',
       annotations: {
-        circles: '["b46fd548-0082-4021-ba80-a50703c44a3b"]'
+        circles: '["circle-2"]'
       }
     },
     spec: {
       gateways: [
       ],
       hosts: [
-        'hello-kubernetes',
+        'B',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=circle-2.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'circle-2'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+]
+
+export const routesManifestsSameNamespaceWithService: KubernetesManifest[] = [
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'A',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-1","circle-2"]'
+      }
+    },
+    spec: {
+      host: 'A',
+      subsets: [
+        {
+          labels: {
+            component: 'A',
+            tag: 'v1',
+            circleId: 'circle-1',
+          },
+          name: 'circle-1',
+        },
+        {
+          labels: {
+            component: 'A',
+            tag: 'v2',
+            circleId: 'circle-2',
+          },
+          name: 'circle-2',
+        }
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'A',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-1","circle-2"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'A',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=circle-2.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'circle-2'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-1'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-1'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-1'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-2"]'
+      }
+    },
+    spec: {
+      host: 'B',
+      subsets: [
+        {
+          labels: {
+            component: 'B',
+            tag: 'v2',
+            circleId: 'circle-2',
+          },
+          name: 'circle-2',
+        },
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-2"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'B',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=circle-2.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'circle-2'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      labels: {
+        app: 'A',
+        circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a',
+        component: 'A',
+        service: 'A',
+        tag: 'tag-example'
+      },
+      name: 'A',
+      namespace: 'namespace'
+    },
+    spec: {
+      ports: [
+        {
+          name: 'http',
+          port: 80,
+          targetPort: 80
+        }
+      ],
+      selector: {
+        app: 'A'
+      },
+      type: 'ClusterIP'
+    }
+  } as KubernetesManifest
+]
+
+export const routesManifestsDiffNamespace: KubernetesManifest[] = [
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'A',
+      namespace: 'diff-namespace',
+      annotations: {
+        circles: '["circle-1"]'
+      }
+    },
+    spec: {
+      host: 'A',
+      subsets: [
+        {
+          labels: {
+            component: 'A',
+            tag: 'v1',
+            circleId: 'circle-1',
+          },
+          name: 'circle-1',
+        }
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'A',
+      namespace: 'diff-namespace',
+      annotations: {
+        circles: '["circle-1"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'A',
       ],
       http: [
         {
           route: [
             {
               destination: {
-                host: 'hello-kubernetes',
-                subset: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                host: 'A',
+                subset: 'circle-1'
               },
               headers: {
                 request: {
                   set: {
-                    'x-circle-source': 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  },
+                    'x-circle-source': 'circle-1'
+                  }
                 },
                 response: {
                   set: {
-                    'x-circle-source': 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  },
-                },
-              },
-            },
+                    'x-circle-source': 'circle-1'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'A',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-2"]'
+      }
+    },
+    spec: {
+      host: 'A',
+      subsets: [
+        {
+          labels: {
+            component: 'A',
+            tag: 'v2',
+            circleId: 'circle-2',
+          },
+          name: 'circle-2',
+        }
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'A',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-2"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'A',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=circle-2.*'
+                }
+              }
+            }
           ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'circle-2'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-2"]'
+      }
+    },
+    spec: {
+      host: 'B',
+      subsets: [
+        {
+          labels: {
+            component: 'B',
+            tag: 'v2',
+            circleId: 'circle-2',
+          },
+          name: 'circle-2',
         },
       ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["circle-2"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'B',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=circle-2.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'circle-2'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'circle-2'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'circle-2'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     },
   } as KubernetesManifest,
 ]
