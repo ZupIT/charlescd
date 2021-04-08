@@ -21,13 +21,12 @@ import Text from 'core/components/Text';
 import Styled from '../styled';
 
 interface Props {
-  key: string;
   selected: boolean;
   workspace: WorkspacePaginationItem;
   onChange: (workspace: WorkspacePaginationItem) => void;
 }
 
-const Item = ({ key, workspace, selected, onChange }: Props) => {
+const Item = ({ workspace, selected, onChange }: Props) => {
   const [isChecked, setIsChecked] = useState<boolean>(selected);
 
   const onClick = () => {
@@ -42,7 +41,7 @@ const Item = ({ key, workspace, selected, onChange }: Props) => {
   );
 
   return (
-    <Styled.Item key={key} data-testid={key}>
+    <Styled.Item>
       <Styled.Description>
         <Text.h4 color="light">{workspace.name}</Text.h4>
         <Styled.Subtitle>
