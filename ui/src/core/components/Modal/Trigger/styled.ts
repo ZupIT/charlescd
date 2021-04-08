@@ -86,7 +86,7 @@ const DismissButton = styled(DefaultButton)`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  background-color: transparent;
+  background-color: ${({ theme }) => theme.modal.trigger.dismiss};
 `;
 
 const CloseButtonContainer = styled.div`
