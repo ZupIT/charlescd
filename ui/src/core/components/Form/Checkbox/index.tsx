@@ -16,7 +16,6 @@
 
 import React, {
   Fragment,
-  useState,
   Ref,
   useRef,
   forwardRef,
@@ -30,6 +29,7 @@ interface Props {
   label?: string;
   description?: string;
   active?: boolean;
+  disabled?: boolean;
   defaultChecked?: boolean;
   onChange?: (value: boolean) => void;
   className?: string;
@@ -43,6 +43,7 @@ const Checkbox = forwardRef(
       label,
       description,
       active,
+      disabled,
       defaultChecked,
       onChange,
       className,
@@ -51,12 +52,10 @@ const Checkbox = forwardRef(
     ref: Ref<HTMLInputElement>
   ) => {
     const checkboxRef = useRef<HTMLInputElement>(null);
-    // const [isChecked, setIsChecked] = useState(active);
 
     useImperativeHandle(ref, () => checkboxRef.current);
 
     const onCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-      // setIsChecked(!isChecked);
       onChange && onChange(event.target.checked);
     };
 
@@ -70,10 +69,10 @@ const Checkbox = forwardRef(
           <Styled.Input
             type="checkbox"
             data-testid={`checkbox-input-${label}`}
+            disabled={disabled}
             ref={checkboxRef}
             name={name}
             value={value}
-            // checked={isChecked}
             onChange={onCheck}
             defaultChecked={defaultChecked}
             {...rest}

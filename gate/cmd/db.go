@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package main
 
 import (
@@ -9,6 +27,9 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	pgMigrate "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	gormcrypto "github.com/pkosilo/gorm-crypto"
+	"github.com/pkosilo/gorm-crypto/algorithms"
+	"github.com/pkosilo/gorm-crypto/serialization"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -16,6 +37,9 @@ import (
 
 type persistenceManager struct {
 	systemTokenRepository repository.SystemTokenRepository
+	permissionRepository repository.PermissionRepository
+	userRepository repository.UserRepository
+	workspaceRepository repository.WorkspaceRepository
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -25,6 +49,11 @@ func prepareDatabase() (persistenceManager, error) {
 	}
 
 	err = runMigrations(sqlDB)
+	if err != nil {
+		return persistenceManager{}, err
+	}
+
+	err = initCryptoLib()
 	if err != nil {
 		return persistenceManager{}, err
 	}
@@ -73,13 +102,40 @@ func runMigrations(sqlDb *sql.DB) error {
 	return nil
 }
 
+func initCryptoLib() error {
+	aes, err := algorithms.NewAES256GCM([]byte(configuration.Get("ENCRYPTION_KEY")))
+	if err != nil {
+		return err
+	}
+	gormcrypto.Init(aes, serialization.NewJSON())
+	return nil
+}
+
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
-	stRepo, err := repository.NewSystemTokenRepository(db)
+	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
 	}
 
+	permissionRepo, err := repository.NewPermissionRepository(db)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate permission repository with error: %s", err.Error()))
+	}
+
+	userRepo, err := repository.NewUserRepository(db)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate user repository with error: %s", err.Error()))
+	}
+
+	workspaceRepo, err := repository.NewWorkspaceRepository(db)
+	if err != nil {
+		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate workspace repository with error: %s", err.Error()))
+	}
+
 	return persistenceManager{
-		systemTokenRepository: stRepo,
+		systemTokenRepository: systemTokenRepo,
+		permissionRepository: permissionRepo,
+		userRepository: userRepo,
+		workspaceRepository: workspaceRepo,
 	}, nil
 }

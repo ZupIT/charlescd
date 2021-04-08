@@ -373,7 +373,7 @@ CharlesApplications:
     subscriptionRegisterLimit: 5
 
   gate:
-    enabled: true
+    enabled: false
     name: charlescd-gate
     sidecarIstio:
       enabled: true

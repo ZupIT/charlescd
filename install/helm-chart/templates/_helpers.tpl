@@ -331,6 +331,11 @@ env:
     value: "disable"
   - name: ENV
     value: "PROD"
+  - name: ENCRYPTION_KEY
+    valueFrom:
+      secretKeyRef:
+        name: "gate-aes256-key"
+        key: "encryption-key"
 {{- end -}}
 
 {{/*

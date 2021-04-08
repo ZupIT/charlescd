@@ -1,15 +1,34 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package system_token
 
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
+	"github.com/ZupIT/charlescd/gate/tests/unit/utils"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
 func (st *SystemTokenSuite) TestRevokeSystemToken() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
@@ -43,7 +62,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenIDNotFound() {
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).
@@ -60,7 +79,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {
-	systemToken := getDummySystemToken()
+	systemToken := utils.GetDummySystemToken()
 	systemToken.Revoked = true
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()

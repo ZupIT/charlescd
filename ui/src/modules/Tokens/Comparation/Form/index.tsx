@@ -14,64 +14,64 @@
  * limitations under the License.
  */
 
-import { useEffect, Fragment } from 'react';
+import { Fragment } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Token } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
 import Form from 'core/components/Form';
-import { isRequired, isRequiredAndNotBlank } from 'core/utils/validations';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
 import Styled from './styled';
+import { Mode } from '../helpers';
 
-const FormToken = () => {
+interface Props {
+  mode?: Mode;
+}
+
+const FormToken = ({ mode }: Props) => {
   const { save, status } = useSave();
 
   const methods = useForm<Token>({ mode: 'onChange' });
   const {
     register, handleSubmit, watch,
-    setValue, errors, formState: { isValid }
+    errors, formState: { isValid }
   } = methods;
 
-  // useEffect(() => {
-  //   register({ name: "workspaces" }, { required: isRequired() });
-  //   register({ name: "permissions" }, { required: isRequired() });
-  // }, [register]);
-
-  // const name = watch('name') as string;
-  // const workspaces = watch('workspaces') as string[];
+  const name = watch('name') as string;
+  const workspaces = watch('workspaces') as string[];
 
   const onSubmit = (token: Token) => {
-    console.log('FormToken onSubmit', token);
-    // save(token);
+    const { subjects, ...rest } = token;
+    save(rest);
   };
 
   return (
     <Styled.Content>
       <FormProvider {...methods}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-          {/* <ContentIcon icon="token">
+          <ContentIcon icon="token">
             <Form.InputTitle
               name="name"
               ref={register(isRequiredAndNotBlank)}
               error={errors?.name?.message}
             />
-          </ContentIcon> */}
-          <Workspaces />
-          {/* {name && workspaces && (
+          </ContentIcon>
+          {name && <Workspaces />}
+          {name && workspaces && (
             <Fragment>
-              <Scopes />
+              <Scopes mode={mode} />
               <Styled.Button
                 type="submit"
                 size="EXTRA_SMALL"
-                // isDisabled={!isValid}
+                isDisabled={!isValid}
                 isLoading={status.isPending}
               >
                 Generate token
               </Styled.Button>
             </Fragment>
-          {/* )} */}
+          )}
         </Styled.Form>
       </FormProvider>
     </Styled.Content>

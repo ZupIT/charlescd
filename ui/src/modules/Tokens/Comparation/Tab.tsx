@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
-import { copyToClipboard } from 'core/utils/clipboard';
 import TabPanel from 'core/components/TabPanel';
 import routes from 'core/constants/routes';
-import Dropdown from 'core/components/Dropdown';
-import Text from 'core/components/Text';
-import Can from 'containers/Can';
-import { delParam, updateParam } from 'core/utils/path';
+import { delParam } from 'core/utils/path';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import Form from './Form';
 import { Token } from '../interfaces';
 import { useFind, useRemove } from '../hooks';
-import { resolveParams, pathModuleById } from './helpers';
+import { resolveParams } from './helpers';
 // import FormModule from './Form';
 // import ViewModule from './View';
 import Loader from './Loaders';
@@ -60,15 +56,7 @@ const Tab = ({ param }: Props) => {
 
   const renderTabs = () => (
     <Styled.Tab>
-      {mode === 'view' && (
-        // <ViewToken
-        //   token={token}
-        //   mode={mode}
-        //   onChange={update}
-        // />
-        <Text.h4>Hello Token</Text.h4>
-      )}
-      {mode === 'edit' && <Form />}
+      <Form mode={mode} />
     </Styled.Tab>
   );
 
