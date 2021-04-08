@@ -14,39 +14,23 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import ButtonComponent from 'core/components/Button';
+import ContentLoader from 'react-content-loader';
 
-const Button = styled(ButtonComponent.Rounded)`
-  margin-top: 10px;
-`;
+const ListLoader = () => (
+  <div>
+    <ContentLoader
+      speed={1}
+      width={543}
+      height={300}
+      backgroundColor="#3a393c"
+      foregroundColor="#2c2b2e"
+    >
+      <rect x="0" y="0" rx="2" ry="2" width="543" height="72" />
+      <rect x="0" y="74" rx="2" ry="2" width="543" height="72" />
+      <rect x="0" y="148" rx="2" ry="2" width="543" height="72" />
+      <rect x="0" y="222" rx="2" ry="2" width="543" height="72" />
+    </ContentLoader>
+  </div>
+);
 
-const ShowMore = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 10px;
-
-  > span {
-    margin-left: 10px;
-  }
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: 10px;
-
-  > * {
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
-`;
-
-export default {
-  Button,
-  ShowMore,
-  Content,
-}
+export default ListLoader;

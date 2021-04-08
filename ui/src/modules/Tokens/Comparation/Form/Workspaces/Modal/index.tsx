@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { useEffect, useState } from 'react';
-import xor from 'lodash/xor';
+import { memo, useState } from 'react';
+import xorBy from 'lodash/xorBy';
+import isEmpty from 'lodash/isEmpty';
+import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Select from 'core/components/Form/Select/Single/Select';
 import Button from 'core/components/Button';
 import List from './Content/List';
@@ -23,27 +25,23 @@ import { options, Option } from './constants';
 import Styled from './styled';
 
 interface Props {
+  workspaces: WorkspacePaginationItem[];
   onClose: Function;
-  onContinue: (workspaces: string) => void;
+  onContinue: (workspaces: WorkspacePaginationItem[]) => void;
 }
 
-const AddWorkspaces = ({ onClose, onContinue }: Props) => {
-  console.log('RENDER AddWorkspaces');
+const AddWorkspaces = ({ workspaces, onClose, onContinue }: Props) => {
   const [type, setType] = useState<Option>();
-  const [workspaces, setWorkspaces] = useState<string[]>();
+  const [draft, setDraft] = useState<WorkspacePaginationItem[]>(workspaces);
+  const isAddMode = isEmpty(draft);
   const isManual = type?.value === 'MANUAL';
 
-  useEffect(() => {
-    console.log('workspaces', workspaces);
-  }, [workspaces]);
-
-  const toggleWorkspace = (id: string) => {
-    console.log('id', id);
-    setWorkspaces(xor(workspaces, [id]));
+  const toggleWorkspace = (workspace: WorkspacePaginationItem) => {
+    setDraft(xorBy(draft, [workspace], 'id'));
   };
 
   const renderList = () => 
-    isManual && <List selecteds={workspaces} onSelect={toggleWorkspace} />
+    isManual && <List draft={draft} onSelect={toggleWorkspace} />
 
   return (
     <Styled.Modal onClose={() => onClose()}>
@@ -60,12 +58,13 @@ const AddWorkspaces = ({ onClose, onContinue }: Props) => {
         <Button.Default
           type="button"
           size="SMALL"
+          onClick={() => onContinue(draft)}
         >
-          Next
+          {`${isAddMode ? 'Add' : 'Save'}`}
         </Button.Default>
       </Styled.Item>
     </Styled.Modal>
   )
 }
 
-export default AddWorkspaces;
+export default memo(AddWorkspaces);

@@ -14,37 +14,39 @@
  * limitations under the License.
  */
 
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { memo, Fragment, useCallback, useEffect, useState } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
+import some from 'lodash/some';
 import InfiniteScroll from 'core/components/InfiniteScroll';
+import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Text from 'core/components/Text';
 import Item from './Item';
 import { useWorkspaces } from '../hooks';
-import Styled from '../styled';
+import Loader from './loader';
+import Styled from './styled';
 
 interface Props {
-  selecteds: string[];
-  onSelect: (id: string) => void;
+  draft: WorkspacePaginationItem[];
+  onSelect: (workspace: WorkspacePaginationItem) => void;
 }
 
-const List = ({ selecteds, onSelect }: Props) => {
+const List = ({ draft, onSelect }: Props) => {
   const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
   const [name, setName] = useState<string>('');
 
-  const onSearch = useCallback((name: string) => {
+  const handleChange = useCallback((value: string) => {
     const page = 0;
+    setName(value);
     resetWorkspaces();
-    getWorkspaces(name, page);
+    getWorkspaces(value, page);
   }, [getWorkspaces, resetWorkspaces]);
 
-  // useEffect(() => {
-  //   if (status === 'idle') getWorkspaces();
-  // }, [getWorkspaces, status]);
-
   useEffect(() => {
-    onSearch(name);
-  }, [name, onSearch]);
+    if (status === 'idle') {
+      getWorkspaces();
+    }
+  }, [getWorkspaces, status]);
 
   const loadMore = (page: number) => {
     getWorkspaces(name, page);
@@ -53,10 +55,10 @@ const List = ({ selecteds, onSelect }: Props) => {
   const renderItems = () => 
     map(workspaces, (workspace, index) => (
       <Item
-        key={workspace?.id}
-        index={index}
+        key={`item-${index}-${workspace?.id}`}
         workspace={workspace}
-        onChange={id => onSelect(id)}
+        selected={some(draft, workspace)}
+        onChange={workspace => onSelect(workspace)}
       />
     ))
 
@@ -71,7 +73,7 @@ const List = ({ selecteds, onSelect }: Props) => {
       hasMore={!last}
       loadMore={loadMore}
       isLoading={status === 'pending'}
-      loader={<Fragment>Loading..</Fragment>}
+      loader={<Loader />}
     >
       {isEmpty(workspaces) && status !== 'pending' ? renderEmpty() : renderItems()}
     </InfiniteScroll>
@@ -82,10 +84,9 @@ const List = ({ selecteds, onSelect }: Props) => {
       <Styled.Search
         resume
         label="Filter workspaces"
-        onSearch={setName}
+        onChange={e => handleChange(e.currentTarget.value)}
         maxLength={64}
       />
-      {/* <Styled.Search label="Filter workspaces" onChange={onSearch} /> */}
       <Styled.Content>
         {renderContent()}
       </Styled.Content>
@@ -93,4 +94,4 @@ const List = ({ selecteds, onSelect }: Props) => {
   );
 }
 
-export default List;
+export default memo(List);

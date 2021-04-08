@@ -65,7 +65,7 @@ const Item = styled.div`
   justify-content: space-between;
 
   :last-child {
-    border-bottom: hidden;
+    border: hidden;
   }
 `;
 

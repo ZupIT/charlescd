@@ -21,31 +21,28 @@ import Text from 'core/components/Text';
 import Styled from '../styled';
 
 interface Props {
-  index: number;
+  key: string;
+  selected: boolean;
   workspace: WorkspacePaginationItem;
-  onChange: (id: string) => void;
+  onChange: (workspace: WorkspacePaginationItem) => void;
 }
 
-type Toggle = { id: string };
+const Item = ({ key, workspace, selected, onChange }: Props) => {
+  const [isChecked, setIsChecked] = useState<boolean>(selected);
 
-const Item = ({ index, workspace, onChange }: Props) => {
-  console.log('RENDER Item');
-  // const { register } = useFormContext();
-  const [isChecked, setIsChecked] = useState<boolean>();
-
-  const onClick = (id: string) => {
+  const onClick = () => {
     setIsChecked(!isChecked);
-    onChange(id);
+    onChange(workspace);
   }
 
-  const Toggle = ({ id }: Toggle) => (
+  const Toggle = () => (
     isChecked 
-      ? <Icon name="checkmark-circle" color="success" size="22px" onClick={() => onClick(id)} />
-      : <Icon name="plus-circle" color="dark" size="22px" onClick={() => onClick(id)} />
+      ? <Icon name="checkmark-circle" color="success" size="22px" onClick={onClick} />
+      : <Icon name="plus-circle" color="dark" size="22px" onClick={onClick} />
   );
 
   return (
-    <Styled.Item data-testid={workspace.id}>
+    <Styled.Item key={key} data-testid={key}>
       <Styled.Description>
         <Text.h4 color="light">{workspace.name}</Text.h4>
         <Styled.Subtitle>
@@ -53,12 +50,7 @@ const Item = ({ index, workspace, onChange }: Props) => {
           <Text.h4 color="light">mateus.cruz@zup.com.br</Text.h4>
         </Styled.Subtitle>
       </Styled.Description>
-      <Toggle id={workspace.id} />
-      {/* <Form.Checkbox
-        ref={register()}
-        name={`workspaces[${index}]`}
-        value={workspace.id}
-      /> */}
+      <Toggle />
     </Styled.Item>
   )
 }
