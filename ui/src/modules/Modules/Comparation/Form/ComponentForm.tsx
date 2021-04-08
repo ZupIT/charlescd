@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Styled from './styled';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { Component } from 'modules/Modules/interfaces/Component';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { isRequiredAndNotBlank, maxLength } from 'core/utils/validations';
 
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const ComponentForm = ({ field, fields, index, remove }: Props) => {
-  const { register, unregister } = useFormContext();
+  const { register, unregister, formState: {errors} } = useFormContext();
   const [editMoreOptions, setEditMoreOptions] = useState(false);
   const one = 1;
 
@@ -41,7 +41,8 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         <Styled.Components.Input
           label="Enter name"
           name={`components[${index}].name`}
-          ref={register(isRequiredAndNotBlank)}
+          ref={register({...isRequiredAndNotBlank, maxLength: maxLength(50)})}
+          error={errors?.components?.[index]?.name?.message}
           defaultValue={field.name}
         />
         <Styled.Components.Number
