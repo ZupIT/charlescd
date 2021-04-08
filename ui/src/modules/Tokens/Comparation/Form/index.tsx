@@ -58,7 +58,6 @@ const FormToken = ({ mode }: Props) => {
               error={errors?.name?.message}
             />
           </ContentIcon>
-          <Workspaces mode="create" />
           {name && <Workspaces mode={mode} />}
           {name && workspaces && (
             <Fragment>
