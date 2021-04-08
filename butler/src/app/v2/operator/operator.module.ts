@@ -10,7 +10,7 @@ import { LogsModule } from '../core/logs/logs.module'
 import { TimeoutScheduler } from './cron/timeout.scheduler'
 import { DeploymentsHookController } from './controller/deployments.hook.controller'
 import { RoutesHookController } from './controller/routes.hook.controller'
-import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
+import { ReconcileRoutesUsecase } from './use-cases/reconcile-routes.usecase'
 import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
 
 @Module({
@@ -31,7 +31,7 @@ import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.use
   providers: [
     K8sClient,
     MooveService,
-    CreateRoutesManifestsUseCase,
+    ReconcileRoutesUsecase,
     ReconcileDeploymentUsecase,
     TimeoutScheduler
   ]

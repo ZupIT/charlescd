@@ -226,7 +226,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const expectedError = {
       errors: [
         {
-          detail: 'unable to decrypt "token"',
+          detail: 'Unable to decrypt "token"',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -234,7 +234,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           source: {
             pointer: 'git.token'
           },
-          status: 500
+          status: 400
         }
       ]
     }
@@ -242,7 +242,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'ab1c7726-a274-4fc3-9ec1-44e3563d58af')
-      .expect(500)
+      .expect(400)
       .expect(response => {
         expect(response.body).toEqual(expectedError)
       })
@@ -842,5 +842,67 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
+  })
+
+  it('returns correct error when git token is not valid', async() => {
+    const encryptedToken = 'invalid-token'
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
+      },
+      git: {
+        token: Buffer.from(encryptedToken).toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com:someTag',
+          buildImageTag: 'someTag',
+          componentName: 'my-component',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1'
+        },
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl2.com:anotherTag',
+          buildImageTag: 'anotherTag',
+          componentName: 'my-other-component'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl
+    }
+
+    const errorResponse = {
+      errors: [
+        {
+          detail: 'Unable to decrypt "token"',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'git.token'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
   })
 })

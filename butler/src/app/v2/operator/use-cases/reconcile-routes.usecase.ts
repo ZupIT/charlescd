@@ -29,7 +29,7 @@ import { PartialRouteHookParams, SpecsUnion } from '../interfaces/partial-params
 import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
 
 @Injectable()
-export class CreateRoutesManifestsUseCase {
+export class ReconcileRoutesUsecase {
 
   constructor(
     private readonly deploymentRepository: DeploymentRepositoryV2,

@@ -20,7 +20,7 @@ import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repos
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { RouteHookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 import { PartialRouteHookParams, SpecsUnion } from '../../../../app/v2/operator/interfaces/partial-params.interface'
-import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
+import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/reconcile-routes.usecase'
 import {
   componentsFixtureCircle1,
   componentsFixtureCircle1DiffNamespace,
@@ -112,7 +112,7 @@ describe('Hook Routes Manifest Creation', () => {
     )
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -127,7 +127,7 @@ describe('Hook Routes Manifest Creation', () => {
     jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(async() => { throw new Error('Error') })
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -144,7 +144,7 @@ describe('Hook Routes Manifest Creation', () => {
     )
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -161,7 +161,7 @@ describe('Hook Routes Manifest Creation', () => {
     )
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -176,7 +176,7 @@ describe('Hook Routes Manifest Creation', () => {
     const findSpy = jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId')
     const updateSpy = jest.spyOn(deploymentRepository, 'updateRouteStatus')
 
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -224,7 +224,7 @@ describe('Compare observed routes state with desired routes state', () => {
       }
     }
     const desired : SpecsUnion[] = []
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -350,7 +350,7 @@ describe('Compare observed routes state with desired routes state', () => {
       }
     ]
 
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -459,7 +459,7 @@ describe('Compare observed routes state with desired routes state', () => {
         }
       }
     ]
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService

@@ -17,13 +17,13 @@
 import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
 import { RouteHookParams } from '../interfaces/params.interface'
 import { HookReconcileResponseDto } from '../dto/hook-reconcile-response.dto'
-import { CreateRoutesManifestsUseCase } from '../use-cases/create-routes-manifests.usecase'
+import { ReconcileRoutesUsecase } from '../use-cases/reconcile-routes.usecase'
 
 @Controller('/')
 export class RoutesHookController {
 
   constructor(
-    private readonly createRoutesUseCase: CreateRoutesManifestsUseCase
+    private readonly createRoutesUseCase: ReconcileRoutesUsecase
   ) { }
 
   @Post('/v2/operator/routes/hook/reconcile')
