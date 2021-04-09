@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { dark as checkboxTheme } from 'core/assets/themes/checkbox';
@@ -24,7 +23,7 @@ const props = {
   name: 'deploy',
   value: 'DEPLOY',
   label: 'Deploy'
-}
+};
 
 test('renders Checkbox default values', async () => {
   render(<Checkbox {...props} />);
