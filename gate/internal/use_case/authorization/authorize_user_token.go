@@ -79,9 +79,9 @@ func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, 
 
 	}
 
-	//if user.IsRoot {
-	//	return nil
-	//}
+	if user.IsRoot {
+		return nil
+	}
 
 	userPermission, err := authorizeUserToken.workspaceRepository.GetUserPermissionAtWorkspace(workspaceId, user.ID.String())
 	for _, ps := range userPermission {

@@ -35,7 +35,7 @@ func (_m *PermissionRepository) FindAll(permissions []string) ([]domain.Permissi
 	return r0, r1
 }
 
-// FindBySystemTokenId provides a mock function with given fields: systemTokenId
+// FindPermissionsBySystemTokenId provides a mock function with given fields: systemTokenId
 func (_m *PermissionRepository) FindPermissionsBySystemTokenId(systemTokenId string) ([]domain.Permission, error) {
 	ret := _m.Called(systemTokenId)
 

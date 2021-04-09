@@ -34,12 +34,25 @@ func GetDummySystemToken() domain.SystemToken {
 		Name:        "System Token Test",
 		Revoked:     false,
 		Permissions: GetDummyPermissions(),
-		Workspaces: []string{"workspace-id"},
+		Workspaces:  GetDummySimpleWorkspaces(),
 		Token:       "System Token Value",
 		CreatedAt:   &createdTime,
 		RevokedAt:   nil,
 		LastUsedAt:  nil,
 		Author:      "charlesadmin@admin",
+	}
+}
+
+func GetDummySimpleWorkspaces() []domain.SimpleWorkspace {
+	return []domain.SimpleWorkspace{
+		{
+			ID:   uuid.New(),
+			Name: "Workspace Name",
+		},
+		{
+			ID:   uuid.New(),
+			Name: "Workspace Name",
+		},
 	}
 }
 
@@ -67,19 +80,19 @@ func GetDummyCreateSystemTokenInput() system_token.CreateSystemTokenInput {
 	return system_token.CreateSystemTokenInput{
 		Name:        "System Token Test",
 		Permissions: []string{"circles_write", "deploy_write"},
-		Workspaces: []string{"workspace1", "workspace2"},
+		Workspaces:  []string{"workspace1", "workspace2"},
 	}
 }
 
 func GetDummyPermissions() []domain.Permission {
 	return []domain.Permission{
 		{
-			ID:        uuid.New(),
-			Name:      "circles_write",
+			ID:   uuid.New(),
+			Name: "circles_write",
 		},
 		{
-			ID:        uuid.New(),
-			Name:      "deploy_write",
+			ID:   uuid.New(),
+			Name: "deploy_write",
 		},
 	}
 }
@@ -95,7 +108,7 @@ func GetDummyPage() domain.Page {
 
 func GetDummyAuthorizationAuthorization(path string, method string) domain.Authorization {
 	return domain.Authorization{
-		Path: path,
+		Path:   path,
 		Method: method,
 	}
 }

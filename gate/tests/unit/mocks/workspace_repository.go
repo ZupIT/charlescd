@@ -12,20 +12,45 @@ type WorkspaceRepository struct {
 	mock.Mock
 }
 
-// CountByIds provides a mock function with given fields: workspaceIds
-func (_m *WorkspaceRepository) FindByIds(workspaceIds []string) (int64, error) {
+// FindByIds provides a mock function with given fields: workspaceIds
+func (_m *WorkspaceRepository) FindByIds(workspaceIds []string) ([]domain.SimpleWorkspace, error) {
 	ret := _m.Called(workspaceIds)
 
-	var r0 int64
-	if rf, ok := ret.Get(0).(func([]string) int64); ok {
+	var r0 []domain.SimpleWorkspace
+	if rf, ok := ret.Get(0).(func([]string) []domain.SimpleWorkspace); ok {
 		r0 = rf(workspaceIds)
 	} else {
-		r0 = ret.Get(0).(int64)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.SimpleWorkspace)
+		}
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func([]string) error); ok {
 		r1 = rf(workspaceIds)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindWorkspacesBySystemTokenId provides a mock function with given fields: systemTokenId
+func (_m *WorkspaceRepository) FindWorkspacesBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
+	ret := _m.Called(systemTokenId)
+
+	var r0 []domain.SimpleWorkspace
+	if rf, ok := ret.Get(0).(func(string) []domain.SimpleWorkspace); ok {
+		r0 = rf(systemTokenId)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.SimpleWorkspace)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(systemTokenId)
 	} else {
 		r1 = ret.Error(1)
 	}
