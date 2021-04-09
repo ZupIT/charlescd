@@ -105,7 +105,7 @@ const Scopes = ({ mode }: Props) => {
           <Text.h5 color="dark">Permissions</Text.h5>
         </Styled.ViewHead>
         {map(scopes, ({ subject, permission }, index)=> (
-          <Styled.ViewItem key={index}>
+          <Styled.ViewItem key={index} data-testid={subject}>
             <Styled.ViewScope>
               <Icon name="checkmark" size="12px" color="light" />
               <Text.h4 color="light">{capitalize(subject)}</Text.h4>
