@@ -28,7 +28,6 @@ interface Props {
   value: string;
   label?: string;
   description?: string;
-  active?: boolean;
   disabled?: boolean;
   defaultChecked?: boolean;
   onChange?: (value: boolean) => void;
@@ -42,7 +41,6 @@ const Checkbox = forwardRef(
       value,
       label,
       description,
-      active,
       disabled,
       defaultChecked,
       onChange,

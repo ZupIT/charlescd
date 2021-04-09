@@ -35,7 +35,7 @@ test('renders Checkbox default values', async () => {
 });
 
 test('renders Checkbox default values and checked', async () => {
-  render(<Checkbox {...props} active />);
+  render(<Checkbox {...props} defaultChecked />);
 
   const element = await screen.findByTestId(`checkbox-${props.label}`);
   const toggle = await screen.findByTestId(`checkbox-toggle-${props.label}`);
