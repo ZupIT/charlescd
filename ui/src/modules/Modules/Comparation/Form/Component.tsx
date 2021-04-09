@@ -48,7 +48,7 @@ interface Props {
 }
 
 const Component = ({ component, module, onClose, onUpdate }: Props) => {
-  const { register, handleSubmit, watch, getValues, errors } = useForm();
+  const { register, handleSubmit, watch, getValues, errors } = useForm({mode: 'onChange'});
   const [isDisabled, setIsDisabled] = useState(true);
   const {
     saveComponent,
@@ -122,7 +122,6 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
       />
     </Styled.Components.AdvancedOptions>
   )
-  // TODO enter name comp onchange
 
   return (
     <Styled.Content>
