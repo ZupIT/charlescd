@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-export interface Token {
+export interface TokenPaginationItem {
   id: string,
   name: string,
   permissions: string[],
+  subjects?: { [k: string]: boolean },
   workspaces: string[],
   author: string
-};
+}
 
-export type TokenCreate = {
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  subjects?: { [k: string]: boolean }
+export interface TokenPagination {
+  content: TokenPaginationItem[];
+  page: number;
+  size: number;
+  totalPages: number;
+  last: boolean;
 }

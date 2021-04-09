@@ -43,7 +43,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
   const toggleWorkspace = (workspace: WorkspacePaginationItem) => {
     setDraft(xorBy(draft, [workspace], 'id'));
   };
-
+  
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>

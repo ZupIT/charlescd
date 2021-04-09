@@ -14,61 +14,77 @@
  * limitations under the License.
  */
 
-import { useCallback, useState } from 'react';
-import { FetchStatuses, useFetchData, useFetchStatus } from 'core/providers/base/hooks';
+import { useCallback, useRef, useState } from 'react';
+import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
 import { findAll, findById, remove, create } from 'core/providers/tokens';
-import { Pagination } from 'core/interfaces/Pagination';
-import { Token } from './interfaces';
-import { mockTokens, mockToken } from './fixtures';
+import { TokenPagination, TokenPaginationItem } from './interfaces/TokenPagination';
+import { Token, TokenCreate } from './interfaces';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import { useDispatch } from 'core/state/hooks';
 
-export const useFindAll = () => {
-  // const fetchData = useFetchData<Token[]>(findAll);
-  const [response, setResponse] = useState<Pagination<Token>>();
-  const status = useFetchStatus();
+type TokenResponse = {
+  tokens: TokenPaginationItem[],
+  status: FetchStatuses,
+  last: boolean,
+}
 
-  const getAll = useCallback(async (name: string, page: number) => {
-    try {
-      status.pending();
+export const useFindAll = (): {
+  getTokens: Function,
+  resetTokens: Function,
+  data: TokenResponse,
+} => {
+  const getAll = useFetchData<TokenPagination>(findAll);
+  const reset = useRef<boolean>(false);
+  const [data, setData] = useState<TokenResponse>({
+    tokens: [],
+    status: 'idle',
+    last: true
+  });
+  const resetTokens = () => reset.current = true;
 
-      // const data = await fetchData();
+  const getTokens = useCallback(
+    async (name: string, page: string) => {
+      try {
+        setData({ ...data, status: 'pending' });
+        const res = await getAll({ name, page });
+        setData({
+          tokens: reset.current
+            ? res.content
+            : [...data.tokens, ...res.content],
+          last: res.last,
+          status: 'resolved'
+        });
 
-      setResponse(mockTokens);
-
-      status.resolved();
-
-      return mockTokens;
-    } catch (e) {
-      status.rejected();
-    }
-  }, [status]);
+        reset.current = false;
+      } catch (e) {
+        setData({ ...data, status: 'rejected' });
+      }
+    }, [getAll, data]);
 
   return {
-    getAll,
-    response,
-    status
-  };
+    getTokens,
+    resetTokens,
+    data
+  }
 };
 
 export const useFind = () => {
-  // const fetchData = useFetchData<Token>(findById);
+  const fetchData = useFetchData<Token>(findById);
   const [response, setResponse] = useState<Token>();
-  const status = useFetchStatus();
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const getById = useCallback(async (id: string) => {
     try {
-      status.pending();
+      setStatus('pending');
+      const data = await fetchData(id);
+      setStatus('resolved');
+      setResponse(data);
 
-      // const data = await fetchData(id);
-
-      setResponse(mockToken);
-
-      status.resolved();
-
-      return mockToken;
+      return data;
     } catch (e) {
-      status.rejected();
+      setStatus('rejected');
     }
-  }, [status]);
+  }, [fetchData]);
 
   return {
     getById,
@@ -78,22 +94,20 @@ export const useFind = () => {
 };
 
 export const useRemove = () => {
-  // const fetchData = useFetchData<Token[]>(remove);
-  const status = useFetchStatus();
+  const fetchData = useFetchData<Token>(remove);
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const removeById = useCallback(async (id: string) => {
     try {
-      status.pending();
+      setStatus('pending');
+      const data = await fetchData(id);
+      setStatus('resolved');
 
-      // const data = await fetchData(id);
-
-      status.resolved();
-
-      return mockTokens;
+      return data;
     } catch (e) {
-      status.rejected();
+      setStatus('rejected');
     }
-  }, [status]);
+  }, [fetchData]);
 
   return {
     removeById,
@@ -102,18 +116,25 @@ export const useRemove = () => {
 };
 
 export const useSave = () => {
-  const saveToken = useFetchData<Token[]>(create);
+  const saveToken = useFetchData<Token>(create);
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const dispatch = useDispatch();
 
-  const save = useCallback(async (token: Token) => {
+  const save = useCallback(async (token: TokenCreate) => {
     try {
       setStatus('pending');
       await saveToken(token);
       setStatus('resolved');
     } catch (e) {
+      dispatch(
+        toogleNotification({
+          status: 'error',
+          text: e?.message
+        })
+      );
       setStatus('rejected');
     }
-  }, [saveToken]);
+  }, [saveToken, dispatch]);
 
   return {
     save,
