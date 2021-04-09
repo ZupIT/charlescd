@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from "react";
-import { render, waitFor, screen, act } from "@testing-library/react";
+import { render, waitFor, screen, act, fireEvent } from "@testing-library/react";
 import FormModule from "../";
 import * as UpdateModuleHook from '../../../hooks/module';
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
@@ -318,4 +318,31 @@ test('should not show error when typing whitespaces followed by some value', asy
   const helmBranch = screen.getByTestId('input-text-helmBranch');
   await act(async () => userEvent.type(helmBranch, '   some value'))
   await waitFor(() => expect(screen.queryByText('No whitespaces')).not.toBeInTheDocument());
+});
+
+test('should validate name component field max length', async () => {
+  const longText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do e.';
+
+  const { container } = render(
+    <AllTheProviders>
+      <FormModule
+        onChange={mockOnChange}
+        module={null}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const componentName: any = container.querySelector(
+    "input[name='components[0].name']"
+  );
+
+  fireEvent.input(componentName, {
+    target: {
+      value: longText
+    }
+  });
+
+  expect(componentName.value).toEqual(longText);
+  expect(await screen.findAllByRole('alert')).toHaveLength(1);
 });
