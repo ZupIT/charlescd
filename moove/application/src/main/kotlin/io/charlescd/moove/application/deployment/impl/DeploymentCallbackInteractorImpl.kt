@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-import io.charlescd.moove.application.CsvSegmentationService
 import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.WebhookEventService
 import io.charlescd.moove.application.WorkspaceService
@@ -26,7 +25,6 @@ import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
-import io.charlescd.moove.infrastructure.repository.JdbcKeyValueRuleRepository
 import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Named
