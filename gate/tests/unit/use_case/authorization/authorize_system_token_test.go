@@ -67,7 +67,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 	var systemToken = utils.GetDummySystemToken()
 
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
-	as.permissionRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
+	as.permissionRepository.On("FindPermissionsBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspace-id", utils.GetDummyAuthorizationAuthorization(path, method))
 
@@ -80,7 +80,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutPermissionToW
 	var systemToken = utils.GetDummySystemToken()
 
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
-	as.permissionRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
+	as.permissionRepository.On("FindPermissionsBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspace-id", utils.GetDummyAuthorizationAuthorization(path, method))
 

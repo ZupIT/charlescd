@@ -24,14 +24,15 @@ import (
 )
 
 type SystemToken struct {
-	ID          uuid.UUID
-	Name        string
-	Revoked     bool
-	Permissions []Permission
-	Workspaces  []string
-	Token       string
-	CreatedAt   *time.Time
-	RevokedAt   *time.Time
-	LastUsedAt  *time.Time
-	Author      string
+	ID            uuid.UUID
+	Name          string
+	Revoked       bool
+	Permissions   []Permission
+	Workspaces    []SimpleWorkspace
+	AllWorkspaces bool
+	Token         string
+	CreatedAt     *time.Time
+	RevokedAt     *time.Time
+	LastUsedAt    *time.Time
+	Author        string
 }

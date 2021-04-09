@@ -16,15 +16,13 @@
  *
  */
 
-package models
+package domain
 
 import (
 	"github.com/google/uuid"
-	"time"
 )
 
-type Permission struct {
-	ID        uuid.UUID
-	Name      string
-	CreatedAt *time.Time `gorm:"-"`
+type SimpleWorkspace struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }

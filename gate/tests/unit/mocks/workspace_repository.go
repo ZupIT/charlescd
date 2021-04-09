@@ -13,7 +13,7 @@ type WorkspaceRepository struct {
 }
 
 // CountByIds provides a mock function with given fields: workspaceIds
-func (_m *WorkspaceRepository) CountByIds(workspaceIds []string) (int64, error) {
+func (_m *WorkspaceRepository) FindByIds(workspaceIds []string) (int64, error) {
 	ret := _m.Called(workspaceIds)
 
 	var r0 int64

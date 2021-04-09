@@ -31,7 +31,7 @@ import (
 )
 
 type SystemTokenRepository interface {
-	Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error)
+	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
 	FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
 	FindByToken(token string) (domain.SystemToken, error)
@@ -46,9 +46,9 @@ func NewSystemTokenRepository(db *gorm.DB) (SystemTokenRepository, error) {
 	return systemTokenRepository{db: db}, nil
 }
 
-func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error) {
+func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken) (domain.SystemToken, error) {
 	systemToken.ID = uuid.New()
-	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken, permissions)
+	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken)
 
 	if err := systemTokenRepository.db.Transaction(
 		func(tx *gorm.DB) error {
@@ -57,8 +57,15 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 				return res.Error
 			}
 
-			for i := range permissions {
-				res = systemTokenRepository.db.Exec(insertSystemTokenPermissionsQuery, systemTokenToSave.ID, permissions[i].ID)
+			for _, permission := range systemTokenToSave.Permissions {
+				res = systemTokenRepository.db.Exec(insertSystemTokenPermissionsQuery, systemTokenToSave.ID, permission.ID)
+				if res.Error != nil {
+					return res.Error
+				}
+			}
+
+			for _, workspace := range systemTokenToSave.Workspaces {
+				res = systemTokenRepository.db.Exec(insertSystemTokenWorkspacesQuery, systemTokenToSave.ID, workspace.ID)
 				if res.Error != nil {
 					return res.Error
 				}
@@ -81,6 +88,7 @@ func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Pa
 		Offset(page.Offset()).
 		Limit(page.PageSize).
 		Preload("Permissions").
+		Preload("Workspaces").
 		Find(&systemTokens)
 	if res.Error != nil {
 		return []domain.SystemToken{}, page, handleSystemTokenError("Find all tokens failed", "SystemTokenRepository.FindAll.Find", res.Error, logging.InternalError)
@@ -102,6 +110,7 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 	res := systemTokenRepository.db.Model(models.SystemToken{}).
 		Where("id = ?", id).
 		Preload("Permissions").
+		Preload("Workspaces").
 		First(&systemToken)
 
 	if res.Error != nil {
@@ -130,7 +139,7 @@ func (systemTokenRepository systemTokenRepository) FindByToken(token string) (do
 
 func (systemTokenRepository systemTokenRepository) Update(systemToken domain.SystemToken) error {
 
-	systemTokenToUpdate := mapper.SystemTokenDomainToModel(systemToken, systemToken.Permissions)
+	systemTokenToUpdate := mapper.SystemTokenDomainToModel(systemToken)
 
 	if res := systemTokenRepository.db.Model(models.SystemToken{}).
 		Where("id = ?", systemToken.ID).Updates(&systemTokenToUpdate); res.Error != nil {
@@ -149,7 +158,7 @@ func insertSystemTokenMap(systemToken models.SystemToken) map[string]interface{}
 		"id":         systemToken.ID,
 		"name":       systemToken.Name,
 		"revoked":    systemToken.Revoked,
-		"workspaces": systemToken.Workspaces,
+		"all_workspaces": systemToken.AllWorkspaces,
 		"token": clause.Expr{
 			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
 			Vars: []interface{}{
@@ -171,6 +180,13 @@ const insertSystemTokenPermissionsQuery = `
 	VALUES (?, ?)
 `
 
+const insertSystemTokenWorkspacesQuery = `
+	INSERT INTO "system_tokens_workspaces" (
+		"system_token_id",
+		"workspace_id")
+	VALUES (?, ?)
+`
+
 const findSystemTokenFromTokenQuery = `
 	select
 		*
@@ -180,12 +196,12 @@ const findSystemTokenFromTokenQuery = `
 			id,
 			name,
 			revoked,
-			workspaces,
 			created_at,
 			revoked_at,
 			last_used_at,
 			author_email,
-			pgp_sym_decrypt(token::bytea, '64971923d21a4887a3acf1ad15961bbc', 'cipher-algo=aes256') as token_decrypted
+			pgp_sym_decrypt(token::bytea, '64971923d21a4887a3acf1ad15961bbc', 'cipher-algo=aes256') as token_decrypted,
+			all_workspaces
 		from
 			system_tokens) as st
 	where

@@ -25,23 +25,25 @@ import (
 )
 
 type CreateSystemTokenInput struct {
-	Name string
-	Permissions []string
-	Workspaces []string
+	Name          string
+	Permissions   []string
+	Workspaces    []string
+	AllWorkspaces bool
 }
 
 func (input CreateSystemTokenInput) InputToDomain() domain.SystemToken {
 	createdAt := time.Now()
 	return domain.SystemToken{
-		ID:          uuid.New(),
-		Name:        input.Name,
-		Revoked:     false,
-		Permissions: []domain.Permission{},
-		Workspaces:  input.Workspaces,
-		Token:       "",
-		CreatedAt:   &createdAt,
-		RevokedAt:   nil,
-		LastUsedAt:  nil,
-		Author:      "",
+		ID:            uuid.New(),
+		Name:          input.Name,
+		Revoked:       false,
+		Permissions:   []domain.Permission{},
+		Workspaces:    []domain.SimpleWorkspace{},
+		AllWorkspaces: input.AllWorkspaces,
+		Token:         "",
+		CreatedAt:     &createdAt,
+		RevokedAt:     nil,
+		LastUsedAt:    nil,
+		Author:        "",
 	}
 }

@@ -74,12 +74,12 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
-	workspacesFound, err := createSystemToken.workspaceRepository.CountByIds(input.Workspaces)
+	workspaces, err := createSystemToken.workspaceRepository.FindByIds(input.Workspaces)
 	if err != nil {
 		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
-	if int(workspacesFound) < len(input.Workspaces) {
+	if len(workspaces) < len(input.Workspaces) {
 		return domain.SystemToken{}, logging.NewError("Some workspaces were not found", errors.New("some workspaces were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
@@ -87,9 +87,10 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 
 	systemToken.Author = authToken.Email
 	systemToken.Permissions = permissions
+	systemToken.Workspaces = workspaces
 	systemToken.Token = strings.ReplaceAll(uuid.New().String(), "-", "")
 
-	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken, permissions)
+	savedSystemToken, err := createSystemToken.systemTokenRepository.Create(systemToken)
 	if err != nil {
 		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}

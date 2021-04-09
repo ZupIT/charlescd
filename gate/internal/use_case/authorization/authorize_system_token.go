@@ -35,15 +35,19 @@ type authorizeSystemToken struct {
 	enforcer              service.SecurityFilterService
 	systemTokenRepository repository.SystemTokenRepository
 	permissionRepository  repository.PermissionRepository
+	workspaceRepository   repository.WorkspaceRepository
 }
 
 func NewAuthorizeSystemToken(enforcer service.SecurityFilterService,
 	systemTokenRepository repository.SystemTokenRepository,
-	permissionRepository repository.PermissionRepository) AuthorizeSystemToken {
+	permissionRepository repository.PermissionRepository,
+	workspaceRepository repository.WorkspaceRepository,
+) AuthorizeSystemToken {
 	return authorizeSystemToken{
 		enforcer:              enforcer,
 		systemTokenRepository: systemTokenRepository,
 		permissionRepository:  permissionRepository,
+		workspaceRepository:   workspaceRepository,
 	}
 }
 
@@ -62,11 +66,18 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 		return logging.WithOperation(err, "authorize.systemToken")
 	}
 
-	if !contains(systemToken.Workspaces, workspaceId) {
-		return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
+	if !systemToken.AllWorkspaces {
+		workspaces, err := authorizeSystemToken.workspaceRepository.FindWorkspacesBySystemTokenId(systemToken.ID.String())
+		if err != nil {
+			return logging.WithOperation(err, "authorize.systemToken")
+		}
+
+		if !contains(workspaces, workspaceId) {
+			return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
+		}
 	}
 
-	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenId(systemToken.ID.String())
+	permissions, err := authorizeSystemToken.permissionRepository.FindPermissionsBySystemTokenId(systemToken.ID.String())
 	if err != nil {
 		return logging.WithOperation(err, "authorize.systemToken")
 	}
@@ -84,9 +95,9 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 	return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
 }
 
-func contains(s []string, e string) bool {
+func contains(s []domain.SimpleWorkspace, e string) bool {
 	for _, a := range s {
-		if a == e {
+		if a.ID.String() == e {
 			return true
 		}
 	}
