@@ -22,6 +22,7 @@ import * as WorkspaceHooks from '../hooks';
 import {user} from './fixtures';
 import * as StateHooks from 'core/state/hooks';
 import Workspaces from '../';
+import { saveProfile } from 'core/utils/profile';
 
 const originalWindow = { ...window };
 
@@ -53,7 +54,7 @@ jest.mock('react-cookies', () => {
 });
 
 test('render Workspace modal', async () => {
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  saveProfile({id: '1', name: 'Charles Admin', email: 'charlesadmin@admin', root: true});
   
   render(<Workspaces selectedWorkspace={jest.fn()} />);
   
@@ -68,12 +69,10 @@ test('render Workspace modal', async () => {
 });
 
 test('render Workspace and see a placeholder', async () => {
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
-  
+  saveProfile({id: '1', name: 'Charles Admin', email: 'charlesadmin@admin', root: true});
   render(<Workspaces selectedWorkspace={jest.fn()} />);
 
-  expect(await screen.findByTestId('placeholder-empty-workspaces')).toBeInTheDocument();
+  expect(await screen.findByTestId('icon-empty-workspaces')).toBeInTheDocument();
   expect(screen.getByText('Hello, Charles Admin!')).toBeInTheDocument();
   expect(screen.getByText('Select or create a workspace in the side menu.')).toBeInTheDocument();
 });
