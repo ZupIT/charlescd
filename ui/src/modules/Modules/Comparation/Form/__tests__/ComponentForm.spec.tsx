@@ -102,6 +102,8 @@ test("componentForm for more Options render", () => {
   expect(screen.getByText(/Show advanced/)).toBeInTheDocument();
 });
 
+// TODO add test to guarantee margin top is 16px margin bottom 0px
+
 test("renders inputs with values", async () => {
   const { container } = render(
     <ThemeProviderWrapper>
