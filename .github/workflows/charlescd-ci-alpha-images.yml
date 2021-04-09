@@ -1,0 +1,360 @@
+name: charlescd-ci-alpha-images
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build_and_push_alpha_butler:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - run: npm ci
+      working-directory: ./butler
+      
+    - run: npm run build --if-present
+      working-directory: ./butler
+      env:
+        CI: true
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: charlescd-butler
+        IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+      run: |
+        cd butler
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_circle_matcher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up GraalVM
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: '21.0.0.java11'
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        working-directory: ./circle-matcher
+        run: mvn -B clean install -Djfr.unsupported.vm=true
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-circle-matcher
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          cd circle-matcher
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_compass:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "^1.14.2"
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-compass
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          cd compass
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_moove:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Set up JDK 1.11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11
+
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+          
+    - name: Build with Maven
+      working-directory: ./moove
+      run: mvn -B clean install
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: charlescd-moove
+        IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+      run: |
+        cd moove/web
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_octopipe:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.14.2'
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: octopipe
+        IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+      run: |
+        cd octopipe
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_ui:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - run: yarn install
+      working-directory: ./ui
+    - run: yarn build
+      working-directory: ./ui
+    - run: yarn test
+      working-directory: ./ui
+      env:
+        CI: true
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: charlescd-ui
+        IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+      run: |
+        cd ui
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_villager:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Set up JDK 1.11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11
+
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('./villager/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+          
+    - name: Build with Maven
+      working-directory: ./villager
+      run: mvn -B clean install
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: charlescd-villager
+        IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+      run: |
+        cd villager
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  notify-team:
+    runs-on: ubuntu-latest
+    needs: [ build_and_push_alpha_butler,
+             build_and_push_alpha_circle_matcher,
+             build_and_push_alpha_moove,
+             build_and_push_alpha_octopipe,
+             build_and_push_alpha_ui,
+             build_and_push_alpha_villager,
+             build_and_push_alpha_compass
+    ]
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+        
+      - name: ping
+        run: |
+          curl -X POST -H "Content-Type: Application/json" -d '{"text":"New alpha images builded with tag: alpha-${{ steps.get_version.outputs.VERSION }} and alpha-latest"}' ${{ secrets.GCHAT_SRE_WEBHOOK }}

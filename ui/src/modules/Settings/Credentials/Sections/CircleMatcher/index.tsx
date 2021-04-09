@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
+import Text from 'core/components/Text';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
+import Modal from 'core/components/Modal';
 import { FORM_CIRCLE_MATCHER } from './constants';
 import { useCircleMatcher } from './hooks';
 import FormCircleMatcher from './Form';
@@ -30,16 +32,39 @@ interface Props {
 }
 
 const CircleMatcher = ({ form, setForm, data }: Props) => {
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [isAction, setIsAction] = useState(true);
-  const { remove, responseRemove, loadingRemove } = useCircleMatcher();
+  const [isLoading, setIsLoading] = useState(false);
+  const { remove, responseRemove } = useCircleMatcher();
 
   useEffect(() => {
     setIsAction(true);
+    setShowConfirmation(false);
   }, [responseRemove]);
 
   useEffect(() => {
     if (data) setIsAction(false);
   }, [data]);
+
+  const onRemove = () => {
+    setIsLoading(true);
+    remove();
+  };
+
+  const renderConfirmation = () => (
+    <Modal.Trigger
+      title="Remove Circle Matcher"
+      dismissLabel="Cancel"
+      continueLabel="Yes, remove"
+      isLoading={isLoading}
+      onContinue={() => onRemove()}
+      onDismiss={() => setShowConfirmation(false)}
+    >
+      <Text.h4 color="light">
+        This operation will remove all data from this workspace to the Circle Matcher.
+      </Text.h4>
+    </Modal.Trigger>
+  );
 
   const renderSection = () => (
     <Section
@@ -53,8 +78,7 @@ const CircleMatcher = ({ form, setForm, data }: Props) => {
         <Card.Config
           icon="circle-matcher"
           description={data}
-          isLoading={loadingRemove}
-          onClose={() => remove()}
+          onClose={() => setShowConfirmation(true)}
         />
       )}
     </Section>
@@ -67,7 +91,12 @@ const CircleMatcher = ({ form, setForm, data }: Props) => {
       </Layer>
     );
 
-  return form ? renderForm() : renderSection();
+  return (
+    <Fragment>
+      {showConfirmation && renderConfirmation()}
+      {form ? renderForm() : renderSection()}
+    </Fragment>
+  )
 };
 
 export default CircleMatcher;
