@@ -58,11 +58,11 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           defaultValue={field.errorThreshold}
         />
       </Styled.Components.Wrapper>
-      <Styled.Subtitle onClick={() => handleMoreOptions(index)} color="dark">
+      <Styled.Options onClick={() => handleMoreOptions(index)} color="dark">
         {editMoreOptions ? 'Hide and clean ' : 'Show '}
         advanced options (be careful, do not change this if you are not using
         istio gateway)
-      </Styled.Subtitle>
+      </Styled.Options>
       {editMoreOptions && (
         <>
           <Styled.FieldPopover>
