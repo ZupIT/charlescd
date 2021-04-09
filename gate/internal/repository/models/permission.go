@@ -26,5 +26,5 @@ import (
 type Permission struct {
 	ID        uuid.UUID
 	Name      string
-	CreatedAt *time.Time `json:"-"`
+	CreatedAt *time.Time `gorm:"-"`
 }
