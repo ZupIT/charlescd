@@ -28,6 +28,7 @@ import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
+import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
@@ -45,28 +46,35 @@ class DeploymentCallbackInteractorImplTest extends Specification {
     private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
     private HermesService hermesService = Mock(HermesService)
     private BuildRepository buildRepository = Mock(BuildRepository)
+    private CircleRepository circleRepository = Mock(CircleRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-    private UserRepository userRepository = Mock(UserRepository)
+    private KeyValueRuleRepository keyValueRuleRepository
 
+    private UserRepository userRepository = Mock(UserRepository)
     private CircleMatcherService circleMatcherService
     private WorkspaceService workspaceService
-    private KeyValueRuleRepository keyValueRuleRepository
+    private KeyValueRuleService keyValueRuleService
     private WebhookEventService webhookEventService
     private DeploymentService deploymentService
+    private CircleService circleService
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
 
     void setup() {
         this.workspaceService = new WorkspaceService(workspaceRepository, userRepository)
         this.circleMatcherService = Mock(CircleMatcherService)
+        this.circleService = new CircleService(circleRepository)
         this.webhookEventService = new WebhookEventService(hermesService, new BuildService(buildRepository))
         this.deploymentService = new DeploymentService(deploymentRepository)
         this.keyValueRuleRepository = Mock(KeyValueRuleRepository);
+        this.keyValueRuleService = new KeyValueRuleService(keyValueRuleRepository)
+
         this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(
                 deploymentService,
                 webhookEventService,
                 circleMatcherService,
                 workspaceService,
-                keyValueRuleRepository
+                circleService,
+                keyValueRuleService
         )
     }
 
@@ -549,6 +557,8 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * keyValueRuleRepository.findByCircle(circle.id) >> [keyValueRule,secondKeyValueRule]
 
+        1 * circleRepository.update(_) >> circle
+
         1 * this.circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
             def circleCompare = arguments[0]
             def reference = arguments[1]
@@ -703,9 +713,4 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         def jsonNode = new ObjectMapper().valueToTree(nodePart)
         return new KeyValueRule("8c6e4281-ae17-415c-b904-e5514aff6bc1", jsonNode, TestUtils.cirleId)
     }
-
-
-
-
-
 }

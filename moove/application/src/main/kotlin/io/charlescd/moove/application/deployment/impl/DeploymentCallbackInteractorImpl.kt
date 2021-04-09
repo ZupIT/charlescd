@@ -16,14 +16,15 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import io.charlescd.moove.application.CircleService
 import io.charlescd.moove.application.DeploymentService
+import io.charlescd.moove.application.KeyValueRuleService
 import io.charlescd.moove.application.WebhookEventService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
 import io.charlescd.moove.domain.*
-import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import java.time.LocalDateTime
 import java.util.*
@@ -36,7 +37,8 @@ open class DeploymentCallbackInteractorImpl(
     private val webhookEventService: WebhookEventService,
     private val circleMatcherService: CircleMatcherService,
     private val workspaceService: WorkspaceService,
-    private val keyValueRuleRepository: KeyValueRuleRepository
+    private val circleService: CircleService,
+    private val keyValueRuleService: KeyValueRuleService
 ) : DeploymentCallbackInteractor {
 
     @Transactional
@@ -83,20 +85,24 @@ open class DeploymentCallbackInteractorImpl(
             val workspace = this.workspaceService.find(circle.workspaceId)
             val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
             if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
-                val updatedCircle = updateCircleMetadata(circle)
-                val rules = keyValueRuleRepository.findByCircle(circle.id)
-                rules.map { it.rule }.chunked(100).forEach {
-                    this.circleMatcherService.updateImport(updatedCircle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
-                }
+                this.updateImportOnMatcherAndSave(circle, workspace.circleMatcherUrl!!, isActive)
             } else {
                 this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
             }
         }
     }
 
-    private fun updateCircleMetadata(circle: Circle) = circle.copy(
+    private fun updateImportOnMatcherAndSave(circle: Circle, matcherUrl: String, active: Boolean) {
+        val updatedCircle = updateCircleMetadata(circle)
+        val rules = keyValueRuleService.findByCircle(circle.id)
+        rules.map { it.rule }.chunked(100).forEach {
+            this.circleMatcherService.updateImport(updatedCircle, circle.reference, it, matcherUrl, active)
+        }
+    }
+
+    private fun updateCircleMetadata(circle: Circle) = circleService.update(circle.copy(
             reference = UUID.randomUUID().toString()
-    )
+    ))
 
     private fun isSuccessCallback(deploymentStatus: DeploymentRequestStatus): Boolean {
         return deploymentStatus === DeploymentRequestStatus.SUCCEEDED || deploymentStatus === DeploymentRequestStatus.UNDEPLOYED
