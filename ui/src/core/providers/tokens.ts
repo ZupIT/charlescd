@@ -45,5 +45,8 @@ export const findById = (id: string) => baseRequest(`${endpoint}/${id}`);
 export const create = (token: Token) =>
   postRequest(`${endpoint}`, token);
 
-export const remove = (id: string) =>
+export const revoke = (id: string) =>
   deleteRequest(`${endpoint}/${id}`);
+
+  export const regenerate = (id: string) =>
+    deleteRequest(`${endpoint}/${id}`);
