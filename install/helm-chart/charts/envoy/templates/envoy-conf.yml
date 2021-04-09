@@ -84,6 +84,13 @@ data:
                       prefix_rewrite: "/"
                       cluster: charlescd-hermes
                   {{- end}}
+                  {{ if .Values.gate.enabled }}
+                  - match:
+                      prefix: "/gate/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-gate
+                  {{- end}}
                   {{ if .Values.ui.enabled }}
                   - match:
                       prefix: "/"
@@ -93,13 +100,6 @@ data:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
-                  {{- end}}
-                  {{ if .Values.gate.enabled }}
-                  - match:
-                      prefix: "/gate/"
-                    route:
-                      prefix_rewrite: "/"
-                      cluster: charlescd-gate
                   {{- end}}
               http_filters:
               {{ if .Values.cors.enabled }}
