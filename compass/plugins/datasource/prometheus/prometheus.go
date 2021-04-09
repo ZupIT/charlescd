@@ -117,7 +117,9 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 
 	v1Api := v1.NewAPI(apiClient)
 	namedLabels := "__name__"
-	labelValues, _, err := v1Api.LabelValues(context.Background(), namedLabels, time.Now(), time.Now())
+	endTime := time.Now()
+	startTime := endTime.AddDate(0, 0, -1)
+	labelValues, _, err := v1Api.LabelValues(context.Background(), namedLabels, startTime, endTime)
 	if err != nil {
 		return nil, err
 	}
