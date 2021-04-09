@@ -242,9 +242,16 @@ test('should validate name component max length', async () => {
     </AllTheProviders>
   );
 
-  const nameComponentInput = screen.getByLabelText('Enter name component');
-  userEvent.type(nameComponentInput, longText);
+  const nameComponentInput = screen.getByTestId('input-text-name');
+
+  act(() => {
+    userEvent.type(nameComponentInput, longText);
+  });
   
-  userEvent.click(screen.getByRole('button'));
-  expect(await screen.findAllByRole("alert")).toHaveLength(1);
+  expect(nameComponentInput).toHaveValue(longText);
+
+  const button = screen.getByRole('button');
+  userEvent.click(button);
+
+  expect(await screen.findAllByRole('alert')).toHaveLength(1);
 });
