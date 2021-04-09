@@ -20,6 +20,7 @@ import MetricProvider from './MetricProvider';
 import CDConfiguration from './CDConfiguration';
 import UserGroup from './UserGroup';
 import MetricAction from './MetricAction';
+import Webhook from './Webhook';
 
 export default {
   Registry,
@@ -27,5 +28,6 @@ export default {
   MetricProvider,
   CDConfiguration,
   UserGroup,
-  MetricAction
+  MetricAction,
+  Webhook
 };

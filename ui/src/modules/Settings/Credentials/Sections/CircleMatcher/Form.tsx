@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
@@ -24,8 +24,12 @@ import { CircleMatcher } from './interfaces';
 import { Props } from '../interfaces';
 import { useCircleMatcher } from './hooks';
 import Styled from './styled';
+import Modal from 'core/components/Modal';
+import { isEmpty } from 'lodash';
 
-const FormCircleMatcher = ({ onFinish }: Props) => {
+const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
+  const [circleMatcher, setCircleMatcher] = useState<string>();
+  const isConfimation = !isEmpty(circleMatcher);
   const { responseAdd, save, loadingAdd } = useCircleMatcher();
   const { register, handleSubmit, formState: { isValid } } = useForm<CircleMatcher>({
     mode: 'onChange'
@@ -35,9 +39,28 @@ const FormCircleMatcher = ({ onFinish }: Props) => {
     if (responseAdd) onFinish();
   }, [onFinish, responseAdd]);
 
+  useEffect(() => {
+    if (!loadingAdd) setCircleMatcher(null);
+  }, [loadingAdd]);
+
   const onSubmit = ({ url }: CircleMatcher) => {
-    save(url);
+    setCircleMatcher(url);
   };
+
+  const renderConfirmation = () => (
+    <Modal.Trigger
+      title="Add Circle Matcher"
+      dismissLabel="Cancel"
+      continueLabel="Yes, save"
+      isLoading={loadingAdd}
+      onContinue={() => save(circleMatcher)}
+      onDismiss={() => setCircleMatcher(null)}
+    >
+      <Text.h4 color="light">
+        This operation will syncronize all data from this workspace to the Circle Matcher.
+      </Text.h4>
+    </Modal.Trigger>
+  );
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
@@ -57,19 +80,22 @@ const FormCircleMatcher = ({ onFinish }: Props) => {
   );
 
   return (
-    <Styled.Content>
-      <Text.h2 color="light">
-        Add Circle Matcher
-        <Popover
-          title="Why we ask for Circle Matcher?"
-          icon="info"
-          link={`${CHARLES_DOC}/reference/circle-matcher`}
-          linkLabel="View documentation"
-          description="Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. Consult the our documentation for further details."
-        />
-      </Text.h2>
-      {renderForm()}
-    </Styled.Content>
+    <Fragment>
+      {isConfimation && renderConfirmation()}
+      <Styled.Content>
+        <Text.h2 color="light">
+          Add Circle Matcher
+          <Popover
+            title="Why we ask for Circle Matcher?"
+            icon="info"
+            link={`${CHARLES_DOC}/reference/circle-matcher`}
+            linkLabel="View documentation"
+            description="Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. Consult the our documentation for further details."
+          />
+        </Text.h2>
+        {renderForm()}
+      </Styled.Content>
+    </Fragment>
   );
 };
 

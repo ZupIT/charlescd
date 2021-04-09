@@ -20,10 +20,9 @@ package io.charlescd.moove.infrastructure.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.SimpleCircle
-import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.CircleMatcherService
+import io.charlescd.moove.infrastructure.repository.JdbcKeyValueRuleRepository
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
@@ -34,18 +33,19 @@ import org.springframework.stereotype.Service
 @Service
 class CircleMatcherClientService(
     private val circleMatcherClient: CircleMatcherClient,
+    private val jdbcKeyValueRuleRepository: JdbcKeyValueRuleRepository,
     private val objectMapper: ObjectMapper
 ) : CircleMatcherService {
 
-    override fun create(circle: Circle, matcherUri: String) {
-        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, false))
+    override fun create(circle: Circle, matcherUri: String, active: Boolean) {
+        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, active))
     }
 
-    override fun update(circle: Circle, previousReference: String, matcherUri: String, isActive: Boolean) {
+    override fun update(circle: Circle, previousReference: String, matcherUri: String, active: Boolean) {
         this.circleMatcherClient.update(
             URI(matcherUri),
             previousReference,
-            createMatcherRequest(circle, isActive, previousReference)
+            createMatcherRequest(circle, active, previousReference)
         )
     }
 
@@ -53,10 +53,10 @@ class CircleMatcherClientService(
         this.circleMatcherClient.delete(URI(matcherUri), reference)
     }
 
-    override fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String) {
+    override fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String, active: Boolean) {
         this.circleMatcherClient.createImport(
             URI(matcherUri),
-            createImportRequest(nodes, circle, null, false)
+            createImportRequest(nodes, circle, null, active)
         )
     }
 
@@ -120,4 +120,21 @@ class CircleMatcherClientService(
             percentage = circle.percentage,
             active = isActive
         )
+
+    override fun deleteAllFor(circles: Circles, matcherUri: String) {
+        circles.getReferences().forEach { delete(it, matcherUri) }
+    }
+
+    override fun saveAllFor(circles: Circles, matcherUri: String) {
+        circles.forEach { circle ->
+            if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
+                val rules = jdbcKeyValueRuleRepository.findByCircle(circle.id)
+                rules.map { it.rule }.chunked(100).forEach {
+                    createImport(circle, it, matcherUri, circle.active)
+                }
+            } else {
+                create(circle, matcherUri, circle.active)
+            }
+        }
+    }
 }

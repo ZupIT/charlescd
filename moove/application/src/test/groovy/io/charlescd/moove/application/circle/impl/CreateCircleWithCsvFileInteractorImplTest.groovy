@@ -124,7 +124,7 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
 
         1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
-        1 * this.circleMatcherService.createImport(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.createImport(_, _, _, _) >> { arguments ->
             def circle = arguments[0]
             def nodes = arguments[1]
             def matcherUri = arguments[2]
@@ -220,7 +220,7 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
 
         1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
-        1 * this.circleMatcherService.createImport(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.createImport(_, _, _, _) >> { arguments ->
             def circle = arguments[0]
             def nodes = arguments[1]
             def matcherUri = arguments[2]
