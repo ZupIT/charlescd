@@ -16,7 +16,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
-import { findAll, findById, remove, create } from 'core/providers/tokens';
+import { findAll, findById, revoke, regenerate, create } from 'core/providers/tokens';
 import { TokenPagination, TokenPaginationItem } from './interfaces/TokenPagination';
 import { Token, TokenCreate } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -93,15 +93,17 @@ export const useFind = () => {
   };
 };
 
-export const useRemove = () => {
-  const fetchData = useFetchData<Token>(remove);
+export const useRevoke = () => {
+  const fetchData = useFetchData<Token>(revoke);
+  const [response, setResponse] = useState<Token>();
   const [status, setStatus] = useState<FetchStatuses>('idle');
 
-  const removeById = useCallback(async (id: string) => {
+  const revokeById = useCallback(async (id: string) => {
     try {
       setStatus('pending');
       const data = await fetchData(id);
       setStatus('resolved');
+      setResponse(data);
 
       return data;
     } catch (e) {
@@ -110,21 +112,53 @@ export const useRemove = () => {
   }, [fetchData]);
 
   return {
-    removeById,
+    revokeById,
+    response,
+    status
+  };
+};
+
+type TokenRegenerated = { token: string };
+
+export const useRegenerate = () => {
+  const fetchData = useFetchData<TokenRegenerated>(regenerate);
+  const [response, setResponse] = useState<TokenRegenerated>();
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+
+  const regenerateById = useCallback(async (id: string) => {
+    try {
+      setStatus('pending');
+      const data = await fetchData(id);
+      setStatus('resolved');
+      setResponse(data);
+
+      return data;
+    } catch (e) {
+      setStatus('rejected');
+    }
+  }, [fetchData]);
+
+  return {
+    regenerateById,
+    response,
     status
   };
 };
 
 export const useSave = () => {
   const saveToken = useFetchData<Token>(create);
+  const [response, setResponse] = useState<Token>();
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const dispatch = useDispatch();
 
   const save = useCallback(async (token: TokenCreate) => {
     try {
       setStatus('pending');
-      await saveToken(token);
+      const data = await saveToken(token);
       setStatus('resolved');
+      setResponse(data);
+
+      return data;
     } catch (e) {
       dispatch(
         toogleNotification({
@@ -138,6 +172,7 @@ export const useSave = () => {
 
   return {
     save,
+    response,
     status
   };
 };

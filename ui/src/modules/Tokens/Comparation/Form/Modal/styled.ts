@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-export interface Token {
-  id: string,
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  token?: string;
-  author: string
-};
+import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
 
-export type TokenCreate = {
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  allWorkspaces: boolean,
-  subjects?: { [k: string]: boolean }
-}
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    min-height: 150px;
+    width: 543px;
+  }
+
+  .modal-content {
+    overflow: unset;
+
+    > :first-child {
+      margin-bottom: 24px;
+    }
+
+    > :not(:first-child) {
+      margin-bottom: 10px;
+    }
+  }
+
+  strong {
+    color: ${({ theme }) => theme.text.light};
+  }
+`;
+
+export default {
+  Modal
+};
