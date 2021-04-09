@@ -25,4 +25,6 @@ interface KeyValueRuleRepository {
     fun saveAll(rules: List<KeyValueRule>)
 
     fun delete(circleId: String)
+
+    fun findByCircle(circleId: String): List<KeyValueRule>
 }

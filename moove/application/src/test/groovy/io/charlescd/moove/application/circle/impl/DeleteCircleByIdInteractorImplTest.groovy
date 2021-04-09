@@ -200,6 +200,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
                 null,
                 isDefault,
                 workspaceId,
+                false,
                 null
         )
     }

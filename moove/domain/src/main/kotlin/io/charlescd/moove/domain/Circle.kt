@@ -32,6 +32,7 @@ data class Circle(
     val importedAt: LocalDateTime? = null,
     val defaultCircle: Boolean,
     val workspaceId: String,
+    val active: Boolean = false,
     val percentage: Int? = null
 ) {
     companion object {

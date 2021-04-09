@@ -46,7 +46,7 @@ open class UpdateCircleWithCsvFileInteractorImpl(
     @Transactional
     override fun execute(request: UpdateCircleWithCsvRequest, workspaceId: String): CircleResponse {
         val circle = circleService.findByIdAndWorkspaceId(request.id, workspaceId)
-        var updatedCircle: Circle
+        val updatedCircle: Circle
 
         if (request.shouldUpdateSegmentation()) {
             csvSegmentationService.validate(request.content!!, request.keyName!!)
