@@ -28,6 +28,7 @@ import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.infrastructure.repository.JdbcKeyValueRuleRepository
 import java.time.LocalDateTime
+import java.util.*
 import javax.inject.Named
 import javax.transaction.Transactional
 
@@ -84,15 +85,20 @@ open class DeploymentCallbackInteractorImpl(
             val workspace = this.workspaceService.find(circle.workspaceId)
             val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
             if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
+                val updatedCircle = updateCircleMetadata(circle)
                 val rules = keyValueRuleRepository.findByCircle(circle.id)
                 rules.map { it.rule }.chunked(100).forEach {
-                    this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
+                    this.circleMatcherService.updateImport(updatedCircle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
                 }
             } else {
                 this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
             }
         }
     }
+
+    private fun updateCircleMetadata(circle: Circle) = circle.copy(
+            reference = UUID.randomUUID().toString()
+    )
 
     private fun isSuccessCallback(deploymentStatus: DeploymentRequestStatus): Boolean {
         return deploymentStatus === DeploymentRequestStatus.SUCCEEDED || deploymentStatus === DeploymentRequestStatus.UNDEPLOYED
