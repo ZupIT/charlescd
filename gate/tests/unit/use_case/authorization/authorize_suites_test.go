@@ -19,12 +19,13 @@
 package main
 
 import (
+	"testing"
+
 	"github.com/ZupIT/charlescd/gate/internal/service"
 	"github.com/ZupIT/charlescd/gate/internal/use_case/authorization"
 	"github.com/ZupIT/charlescd/gate/tests/unit/mocks"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type AuthorizeSuite struct {
@@ -36,13 +37,15 @@ type AuthorizeSuite struct {
 	userRepository        *mocks.UserRepository
 	authTokenService      service.AuthTokenService
 	systemTokenRepository *mocks.SystemTokenRepository
+	permissionRepository  *mocks.PermissionRepository
 }
 
 func (as *AuthorizeSuite) SetupSuite() {
 	as.userRepository = new(mocks.UserRepository)
 	as.systemTokenRepository = new(mocks.SystemTokenRepository)
+	as.permissionRepository = new(mocks.PermissionRepository)
 	as.workspaceRepository = new(mocks.WorkspaceRepository)
-	as.authorizeSystemToken = authorization.NewAuthorizeSystemToken(as.securityFilterService, as.systemTokenRepository)
+	as.authorizeSystemToken = authorization.NewAuthorizeSystemToken(as.securityFilterService, as.systemTokenRepository, as.permissionRepository)
 	as.authorizeUserToken = authorization.NewAuthorizeUserToken(as.securityFilterService, as.userRepository, as.workspaceRepository, as.authTokenService)
 	as.authTokenService = service.NewAuthTokenService()
 	as.securityFilterService, _ = service.NewSecurityFilterService()

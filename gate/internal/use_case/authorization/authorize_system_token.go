@@ -20,6 +20,7 @@ package authorization
 
 import (
 	"errors"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
@@ -33,7 +34,7 @@ type AuthorizeSystemToken interface {
 type authorizeSystemToken struct {
 	enforcer              service.SecurityFilterService
 	systemTokenRepository repository.SystemTokenRepository
-	permissionRepository repository.PermissionRepository
+	permissionRepository  repository.PermissionRepository
 }
 
 func NewAuthorizeSystemToken(enforcer service.SecurityFilterService,
@@ -42,7 +43,7 @@ func NewAuthorizeSystemToken(enforcer service.SecurityFilterService,
 	return authorizeSystemToken{
 		enforcer:              enforcer,
 		systemTokenRepository: systemTokenRepository,
-		permissionRepository: permissionRepository,
+		permissionRepository:  permissionRepository,
 	}
 }
 
@@ -66,6 +67,10 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 	}
 
 	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenId(systemToken.ID.String())
+	if err != nil {
+		return logging.WithOperation(err, "authorize.systemToken")
+	}
+
 	for _, p := range permissions {
 		allowed, err = authorizeSystemToken.enforcer.Authorize(p.Name, authorization.Path, authorization.Method)
 		if err != nil {
