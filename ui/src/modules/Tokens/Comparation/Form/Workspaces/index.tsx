@@ -37,7 +37,7 @@ interface Props {
 }
 
 const Workspaces = ({ mode }: Props) => {
-  const { register, setValue, watch } = useFormContext();
+  const { register, setValue, watch, trigger } = useFormContext();
   const [isOpen, setIsOpen] = useState<boolean>();
   const [isShowMore, setIsShowMore] = useState<boolean>();
   const workspaces = watch('workspaces') as WorkspacePaginationItem[];
@@ -55,6 +55,7 @@ const Workspaces = ({ mode }: Props) => {
   const onContinue = (draft: WorkspacePaginationItem[]) => {
     toggleIsOpen();
     setValue('workspaces', draft);
+    trigger('workspaces');
   }
 
   const renderItems = () => (

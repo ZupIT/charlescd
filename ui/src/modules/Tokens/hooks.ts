@@ -15,8 +15,8 @@
  */
 
 import { useCallback, useState } from 'react';
-import { useFetchData, useFetchStatus } from 'core/providers/base/hooks';
-import { findAll, findById, remove } from 'core/providers/tokens';
+import { FetchStatuses, useFetchData, useFetchStatus } from 'core/providers/base/hooks';
+import { findAll, findById, remove, create } from 'core/providers/tokens';
 import { Pagination } from 'core/interfaces/Pagination';
 import { Token } from './interfaces';
 import { mockTokens, mockToken } from './fixtures';
@@ -102,22 +102,18 @@ export const useRemove = () => {
 };
 
 export const useSave = () => {
-  // const fetchData = useFetchData<Token[]>(remove);
-  const status = useFetchStatus();
+  const saveToken = useFetchData<Token[]>(create);
+  const [status, setStatus] = useState<FetchStatuses>('idle');
 
   const save = useCallback(async (token: Token) => {
     try {
-      status.pending();
-
-      // const data = await fetchData(token);
-
-      status.resolved();
-
-      return mockTokens;
+      setStatus('pending');
+      await saveToken(token);
+      setStatus('resolved');
     } catch (e) {
-      status.rejected();
+      setStatus('rejected');
     }
-  }, [status]);
+  }, [saveToken]);
 
   return {
     save,

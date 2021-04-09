@@ -30,13 +30,14 @@ import { useFormContext } from 'react-hook-form';
 import { Mode } from '../../helpers';
 import Icon from 'core/components/Icon';
 import DocumentationLink from 'core/components/DocumentationLink';
+import { atLeastOne } from 'core/utils/validations';
 
 interface Props {
   mode: Mode;
 }
 
 const Scopes = ({ mode }: Props) => {
-  const { register, setValue, getValues, watch } = useFormContext();
+  const { register, setValue, getValues, watch, trigger } = useFormContext();
 
   const onChangeSubject = (subject: Subjects, checked: boolean) => {
     const values = getValues();
@@ -46,6 +47,7 @@ const Scopes = ({ mode }: Props) => {
       : xor(values.permissions, rules);
 
     setValue('permissions', permissions);
+    trigger('permissions');
   }
 
   const onChangeAction = (action: Actions, subject: Subjects, checked: boolean) => {
@@ -70,7 +72,7 @@ const Scopes = ({ mode }: Props) => {
       <Styled.Content left displayAction={displayAction(subject)} key={`${subject}_${action}`}>
         <Form.Checkbox
           label={capitalize(action)}
-          ref={register()}
+          ref={register({ validate: atLeastOne })}
           name="permissions"
           value={`${subject}_${action}`}
           onChange={(checked: boolean) => onChangeAction(action, subject, checked)}
