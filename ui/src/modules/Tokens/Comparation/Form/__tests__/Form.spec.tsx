@@ -17,9 +17,7 @@
 import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { workspaces } from './fixtures';
 import Form  from '..';
-import selectEvent from 'react-select-event';
 
 test('Render Token Form in create mode', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'token' }));
