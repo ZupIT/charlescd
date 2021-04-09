@@ -49,8 +49,8 @@ it('should generate the correct destination rules manifest with one circle and o
   ).toEqual(twoSubsetsDr)
 })
 
-// generate destination rules with empty subsets
+// TODO generate destination rules with empty subsets
 
-// generate correct virtual services
+// TODO generate correct virtual services
 
-// generate virtual services with empty rules
+// TODO generate virtual services with empty rules
