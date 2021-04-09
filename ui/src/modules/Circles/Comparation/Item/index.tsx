@@ -46,6 +46,7 @@ import LayerComponents from './Layer/Components';
 import LayerMetricsGroups from './Layer/MetricsGroups';
 import CreateSegments from './CreateSegments';
 import MetricsGroups from './MetricsGroups';
+import DeployHistory from './History';
 import Loader from './Loaders';
 import {
   isDefaultCircle,
@@ -309,6 +310,13 @@ const CirclesComparationItem = ({
           </LabeledIcon>
         </Can>
       )}
+      <LabeledIcon
+        icon="plus-circle"
+        marginContent="5px"
+        onClick={() => setActiveSection(SECTIONS.HISTORY)}
+        >
+          <Text.h5 color="dark">History</Text.h5>
+      </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>
   );
@@ -363,6 +371,9 @@ const CirclesComparationItem = ({
         )}
         {activeSection === SECTIONS.GROUP_METRICS && (
           <MetricsGroups id={id} onGoBack={() => setActiveSection(undefined)} />
+        )}
+        {activeSection === SECTIONS.HISTORY && (
+          <DeployHistory id={id} onGoBack={() => setActiveSection(undefined)} />
         )}
       </>
     );

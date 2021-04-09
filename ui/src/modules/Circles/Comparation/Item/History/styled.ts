@@ -14,9 +14,34 @@
  * limitations under the License.
  */
 
-export enum SECTIONS {
-  SEGMENTS = 'SEGMENTS',
-  RELEASE = 'RELEASE',
-  GROUP_METRICS = 'GROUP_METRICS',
-  HISTORY = 'HISTORY'
-}
+import styled from 'styled-components';
+import ComponentIcon from 'core/components/Icon';
+import { slideInRight } from 'core/assets/style/animate';
+import LayerComponent from 'core/components/Layer';
+
+
+const Icon = styled(ComponentIcon)`
+  animation: ${slideInRight} 1s forwards;
+  margin-bottom: 20px;
+  margin-top: 22px;
+`;
+
+const Layer = styled(LayerComponent)`
+  margin-top: 20px;
+  margin-left: 40px;
+`;
+
+const Title = styled.div`
+  display: flex;
+
+  span {
+    margin-left: 15px;
+    margin-top: 2px;
+  }
+`;
+
+export default {
+  Icon,
+  Layer,
+  Title
+};
