@@ -111,24 +111,49 @@ data:
                   "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
                   inline_code: |
                     function envoy_on_request(request_handle)
-                      local token = request_handle:headers():get("authorization")
-                      local request = require("luajit-init")
-                      local response = request.send(
-                        "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
-                        {
-                          headers = {
-                            authorization = token
-                          }
-                        }
-                      )
-                      request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
-                      request_handle:logInfo(response.code)
-                      if response.code ~= 200 then
+                      local user_token = request_handle:headers():get("authorization")
+                      local system_token = request_handle:headers():get("x-charles-token")
+                      if user_token ~= nil and system_token ~= nil then
+                        request_handle:logInfo("LUASCRIPT:DOUBLE_TOKEN_HEADER")
                         request_handle:respond({
-                          [":status"] = response.code
-                        }, response.body)
+                          [":status"] = "400"
+                        }, "You must not use Authorization and X-Charles-Token on the same request")
                       end
                     end
+              - name: envoy.filters.http.lua
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                  inline_code: |
+                    function envoy_on_request(request_handle)
+                      local user_token = request_handle:headers():get("authorization")
+                      if user_token ~= nil then
+                        local request = require("luajit-init")
+                        local response = request.send(
+                          "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
+                          {
+                            headers = {
+                              authorization = user_token
+                            }
+                          }
+                        )
+                        request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
+                        request_handle:logInfo(response.code)
+                        if response.code ~= 200 then
+                          request_handle:respond({
+                            [":status"] = response.code
+                          }, response.body)
+                        end
+                      end
+                    end
+              - name: envoy.filters.http.ext_authz
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+                  http_service:
+                      server_uri:
+                        uri: http://charles-stubby4j:10003/authorize
+                        cluster: external-auth-server
+                        timeout: 2.0s
+                  failure_mode_allow: false
               - name: envoy.filters.http.router
                 typed_config: {}
 
@@ -259,6 +284,19 @@ data:
                     address: charlescd-gate
                     port_value: 8080
       {{- end}}
+      - name: external-auth-server
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        load_assignment:
+          cluster_name: external-auth-server
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charles-stubby4j
+                    port_value: 8883
     admin:
       access_log_path: "/dev/stdout"
       address:
