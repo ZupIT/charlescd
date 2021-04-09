@@ -70,7 +70,7 @@ const Workspaces = ({ mode }: Props) => {
   const ShowMore = () => (
     size(workspaces) > MIN_ITEMS &&
       <Styled.ShowMore
-        data-testid="circle-list-container-button"
+        data-testid="showmore-toggle"
         onClick={toggleShowMore}
       >
         <Icon
