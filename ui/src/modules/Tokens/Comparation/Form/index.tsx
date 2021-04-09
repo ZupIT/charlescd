@@ -66,7 +66,7 @@ const FormToken = ({ mode }: Props) => {
                 type="submit"
                 size="EXTRA_SMALL"
                 isDisabled={!isValid}
-                isLoading={status.isPending}
+                isLoading={status === 'pending'}
               >
                 Generate token
               </Styled.Button>
