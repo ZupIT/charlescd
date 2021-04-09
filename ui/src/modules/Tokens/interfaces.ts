@@ -26,5 +26,6 @@ export type TokenCreate = {
   name: string,
   permissions: string[],
   workspaces: string[],
+  allWorkspaces: boolean,
   subjects?: { [k: string]: boolean }
 }

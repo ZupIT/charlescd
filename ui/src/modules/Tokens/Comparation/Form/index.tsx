@@ -42,17 +42,14 @@ const FormToken = ({ mode }: Props) => {
 
   const name = watch('name') as string;
   const workspaces = watch('workspaces') as string[];
+  const allWorkspaces = watch('allWorkspaces') as boolean;
 
   const onSubmit = (token: TokenCreate) => {
-    const ws = map(token?.workspaces, 'id');
+    const ws = !token.allWorkspaces ? map(token?.workspaces, 'id') : [];
     const { subjects, ...rest } = token;
-    save({
-      ...rest,
-      workspaces: ws
-    });
-  };
 
-  console.log('FORM');
+    save({ ...rest, workspaces: ws });
+  };
 
   return (
     <Styled.Content>
@@ -66,7 +63,7 @@ const FormToken = ({ mode }: Props) => {
             />
           </ContentIcon>
           {name && <Workspaces mode={mode} />}
-          {workspaces && (
+          {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
               <Styled.Button
