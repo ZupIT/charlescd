@@ -14,20 +14,69 @@
  * limitations under the License.
  */
 
-import Modal from 'core/components/Modal';
+import { memo, useState } from 'react';
+import xorBy from 'lodash/xorBy';
+import isEmpty from 'lodash/isEmpty';
+import first from 'lodash/first';
+import last from 'lodash/last';
+import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
+import Select from 'core/components/Form/Select/Single/Select';
+import Button from 'core/components/Button';
+import Text from 'core/components/Text';
+import List from './Content/List';
+import { options, Option } from './constants';
+import Styled from './styled';
+import DocumentationLink from 'core/components/DocumentationLink';
 
 interface Props {
-  onClose: Function;
-  onContinue: Function;
+  workspaces: WorkspacePaginationItem[];
+  onClose: () => void;
+  onContinue: (workspaces: WorkspacePaginationItem[]) => void;
 }
 
-const AddWorkspaces = ({ onClose, onContinue }: Props) => {
+const Modal = ({ workspaces, onClose, onContinue }: Props) => {
+  const [draft, setDraft] = useState<WorkspacePaginationItem[]>(workspaces);
+  const isAddMode = isEmpty(draft);
+  const [type, setType] = useState<Option>(isAddMode ? first(options) : last(options));
+  const isManual = type?.value === 'MANUAL';
+
+  const toggleWorkspace = (workspace: WorkspacePaginationItem) => {
+    setDraft(xorBy(draft, [workspace], 'id'));
+  };
 
   return (
-    <Modal.Default onClose={() => onClose()}>
-      Add Workspaces
-    </Modal.Default>
+    <Styled.Modal onClose={onClose}>
+      <Styled.Header>
+        <Text.h2 color="light">Add Workspaces</Text.h2>
+        <Select
+          options={options}
+          defaultValue={type}
+          placeholder="Define the workspaces that will be associated"
+          onChange={setType}
+        />
+      </Styled.Header>
+      <Styled.Caption>
+        <Text.h5 color="dark">
+          *This token will have access only to the selected workspaces. Read our 
+          <DocumentationLink
+            documentationLink="https://docs.charlescd.io"
+            text="documentation"
+          />
+          for further details.
+        </Text.h5>
+      </Styled.Caption>
+      {isManual && <List draft={draft} onSelect={toggleWorkspace} />}
+      <Styled.Item>
+        <Button.Default
+          type="button"
+          size="SMALL"
+          onClick={() => onContinue(draft)}
+        >
+          {`${isAddMode ? 'Add' : 'Save'}`}
+        </Button.Default>
+      </Styled.Item>
+    </Styled.Modal>
   )
 }
 
-export default AddWorkspaces;
+export default memo(Modal);

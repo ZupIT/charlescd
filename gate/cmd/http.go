@@ -131,7 +131,8 @@ func (server server) registerRoutes() {
 				systemToken.POST("", handlers.CreateSystemToken(systemTokenInteractor.NewCreateSystemToken(server.persistenceManager.systemTokenRepository, server.persistenceManager.permissionRepository, server.persistenceManager.userRepository, server.persistenceManager.workspaceRepository, server.serviceManager.authTokenService)))
 				systemToken.GET("/:id", handlers.GetSystemToken(systemTokenInteractor.NewGetSystemToken(server.persistenceManager.systemTokenRepository)))
 				systemToken.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
-				systemToken.POST("/:id/revoke", handlers.RevokeSytemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
+				systemToken.POST("/:id/revoke", handlers.RevokeSystemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
+				systemToken.PUT("/:id/regenerate", handlers.RegenerateSystemToken(systemTokenInteractor.NewRegenerateSystemToken(server.persistenceManager.systemTokenRepository)))
 			}
 
 			authorize := v1.Group("/authorize")

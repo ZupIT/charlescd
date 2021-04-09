@@ -14,45 +14,13 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import ButtonComponent from 'core/components/Button';
 import Text from 'core/components/Text';
+import Styled from './styled';
 
-const Button = styled(ButtonComponent.Rounded)`
-  margin-top: 10px;
-`;
+const Empty = () => (
+  <Styled.Empty>
+    <Text.h3 color="dark">No workspace was found</Text.h3>
+  </Styled.Empty>
+);
 
-const ShowMore = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 10px;
-
-  > span {
-    margin-left: 10px;
-  }
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: 10px;
-
-  > * {
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
-`;
-
-const Caption = styled(Text.h5)`
-  margin-top: 10px;
-`;
-
-export default {
-  Button,
-  ShowMore,
-  Content,
-  Caption
-}
+export default Empty;

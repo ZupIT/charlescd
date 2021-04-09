@@ -29,8 +29,9 @@ import (
 type SystemTokenSuite struct {
 	suite.Suite
 	createSystemToken     systemTokenInteractor.CreateSystemToken
-	getSystemToken        systemTokenInteractor.GetSystemToken
 	getAllSystemToken     systemTokenInteractor.GetAllSystemToken
+	getSystemToken        systemTokenInteractor.GetSystemToken
+	regenerateSystemToken systemTokenInteractor.RegenerateSystemToken
 	revokeSystemToken     systemTokenInteractor.RevokeSystemToken
 	systemTokenRepository *mocks.SystemTokenRepository
 	permissionRepository  *mocks.PermissionRepository
@@ -46,8 +47,9 @@ func (st *SystemTokenSuite) SetupSuite() {
 	st.workspaceRepository = new(mocks.WorkspaceRepository)
 	st.authTokenService = service.NewAuthTokenService()
 	st.createSystemToken = systemTokenInteractor.NewCreateSystemToken(st.systemTokenRepository, st.permissionRepository, st.userRepository, st.workspaceRepository, st.authTokenService)
-	st.getSystemToken = systemTokenInteractor.NewGetSystemToken(st.systemTokenRepository)
 	st.getAllSystemToken = systemTokenInteractor.NewGetAllSystemToken(st.systemTokenRepository)
+	st.getSystemToken = systemTokenInteractor.NewGetSystemToken(st.systemTokenRepository)
+	st.regenerateSystemToken = systemTokenInteractor.NewRegenerateSystemToken(st.systemTokenRepository)
 	st.revokeSystemToken = systemTokenInteractor.NewRevokeSystemToken(st.systemTokenRepository)
 }
 
@@ -58,4 +60,3 @@ func (st *SystemTokenSuite) SetupTest() {
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(SystemTokenSuite))
 }
-
