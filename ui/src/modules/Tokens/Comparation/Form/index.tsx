@@ -16,9 +16,10 @@
 
 import { Fragment } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { Token } from 'modules/Tokens/interfaces';
+import { TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
+import map from 'lodash/map';
 import Form from 'core/components/Form';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import Workspaces from './Workspaces';
@@ -33,7 +34,7 @@ interface Props {
 const FormToken = ({ mode }: Props) => {
   const { save, status } = useSave();
 
-  const methods = useForm<Token>({ mode: 'onChange' });
+  const methods = useForm<TokenCreate>({ mode: 'onChange' });
   const {
     register, handleSubmit, watch,
     errors, formState: { isValid }
@@ -41,10 +42,13 @@ const FormToken = ({ mode }: Props) => {
 
   const name = watch('name') as string;
   const workspaces = watch('workspaces') as string[];
+  const allWorkspaces = watch('allWorkspaces') as boolean;
 
-  const onSubmit = (token: Token) => {
+  const onSubmit = (token: TokenCreate) => {
+    const ws = !token.allWorkspaces ? map(token?.workspaces, 'id') : [];
     const { subjects, ...rest } = token;
-    save(rest);
+
+    save({ ...rest, workspaces: ws });
   };
 
   return (
@@ -59,7 +63,7 @@ const FormToken = ({ mode }: Props) => {
             />
           </ContentIcon>
           {name && <Workspaces mode={mode} />}
-          {workspaces && (
+          {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
               <Styled.Button
