@@ -31,7 +31,7 @@ import DocumentationLink from 'core/components/DocumentationLink';
 interface Props {
   workspaces: WorkspacePaginationItem[];
   onClose: () => void;
-  onContinue: (workspaces: WorkspacePaginationItem[]) => void;
+  onContinue: (workspaces: WorkspacePaginationItem[], type: Option) => void;
 }
 
 const Modal = ({ workspaces, onClose, onContinue }: Props) => {
@@ -43,7 +43,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
   const toggleWorkspace = (workspace: WorkspacePaginationItem) => {
     setDraft(xorBy(draft, [workspace], 'id'));
   };
-
+  
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
@@ -70,7 +70,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         <Button.Default
           type="button"
           size="SMALL"
-          onClick={() => onContinue(draft)}
+          onClick={() => onContinue(draft, type)}
         >
           {`${isAddMode ? 'Add' : 'Save'}`}
         </Button.Default>

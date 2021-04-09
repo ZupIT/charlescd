@@ -18,7 +18,9 @@ import { useCallback, useRef, useState } from 'react';
 import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
 import { findAll, findById, remove, create } from 'core/providers/tokens';
 import { TokenPagination, TokenPaginationItem } from './interfaces/TokenPagination';
-import { Token } from './interfaces';
+import { Token, TokenCreate } from './interfaces';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import { useDispatch } from 'core/state/hooks';
 
 type TokenResponse = {
   tokens: TokenPaginationItem[],
@@ -114,20 +116,25 @@ export const useRemove = () => {
 };
 
 export const useSave = () => {
-  const fetchData = useFetchData<Token>(create);
+  const saveToken = useFetchData<Token>(create);
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const dispatch = useDispatch();
 
-  const save = useCallback(async (token: Token) => {
+  const save = useCallback(async (token: TokenCreate) => {
     try {
       setStatus('pending');
-      const data = await fetchData(token);
+      await saveToken(token);
       setStatus('resolved');
-
-      return data;
     } catch (e) {
+      dispatch(
+        toogleNotification({
+          status: 'error',
+          text: e?.message
+        })
+      );
       setStatus('rejected');
     }
-  }, [fetchData]);
+  }, [saveToken, dispatch]);
 
   return {
     save,
