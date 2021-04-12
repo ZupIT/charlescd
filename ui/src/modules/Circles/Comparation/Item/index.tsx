@@ -312,7 +312,7 @@ const CirclesComparationItem = ({
       )}
       {circle?.deployment && (
         <LabeledIcon
-          icon="plus-circle"
+          icon="clock"
           marginContent="5px"
           onClick={() => setActiveSection(SECTIONS.HISTORY)}
           >

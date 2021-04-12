@@ -47,7 +47,7 @@ const DeployHistory = ({ onGoBack, deploymentId }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <Styled.Title>
-          <Icon name="plus-circle" color="dark" size={'25px'} />
+          <Icon name="clock" color="dark" size={'25px'} />
           <Text.h2 color="light">History</Text.h2>
         </Styled.Title>
         {/* <Styled.CircleRowWrapper>
