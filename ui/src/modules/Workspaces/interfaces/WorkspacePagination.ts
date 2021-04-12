@@ -24,6 +24,7 @@ interface Users {
 export interface WorkspacePaginationItem {
   id: string;
   name: string;
+  authorEmail?: string;
   users: Users;
   status?: string;
 }
