@@ -57,7 +57,7 @@ const FormToken = ({ mode, data }: Props) => {
   const toggleModalCopy = () => setIsModalCopy(!isModalCopy);
 
   useEffect(() => {
-    if (response) {
+    if (response?.token) {
       setIsModalCopy(!isModalCopy);
     }
   }, [setIsModalCopy, isModalCopy, response])
