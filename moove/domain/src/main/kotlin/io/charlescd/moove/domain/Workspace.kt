@@ -38,4 +38,8 @@ data class Workspace(
             WorkspaceStatusEnum.INCOMPLETE
         }
     }
+
+    fun hasCircleMatcher(): Boolean {
+        return circleMatcherUrl?.isNotBlank() == true
+    }
 }

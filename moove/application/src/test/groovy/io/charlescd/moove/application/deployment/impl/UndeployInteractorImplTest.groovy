@@ -171,7 +171,7 @@ class UndeployInteractorImplTest extends Specification {
 
     private static Circle getCircle(Boolean defaultCircle) {
         return new Circle("5d4c9492-6f83-11ea-bc55-0242ac130003", 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, defaultCircle, TestUtils.workspaceId, null)
+                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, defaultCircle, TestUtils.workspaceId, false, null)
     }
 
     private static String getBuildId() {
