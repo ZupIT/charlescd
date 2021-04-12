@@ -20,10 +20,12 @@ package repository
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
+	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
 )
 
@@ -33,11 +35,20 @@ type WorkspaceRepository interface {
 }
 
 type workspaceRepository struct {
-	db *gorm.DB
+	queries goyesql.Queries
+	db      *gorm.DB
 }
 
-func NewWorkspaceRepository(db *gorm.DB) (WorkspaceRepository, error) {
-	return workspaceRepository{db: db}, nil
+func NewWorkspaceRepository(db *gorm.DB, queriesPath string) (WorkspaceRepository, error) {
+	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "system_token_queries.sql"))
+	if err != nil {
+		return workspaceRepository{}, err
+	}
+
+	return workspaceRepository{
+		queries: queries,
+		db:      db,
+	}, nil
 }
 
 func (workspaceRepository workspaceRepository) CountByIds(workspaceIds []string) (int64, error) {
@@ -55,7 +66,7 @@ func (workspaceRepository workspaceRepository) CountByIds(workspaceIds []string)
 func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(workspaceId string, userId string) ([][]domain.Permission, error) {
 	var permissionsJson []json.RawMessage
 
-	res := workspaceRepository.db.Raw(findUserPermissionsAtWorkspaceQuery, workspaceId, userId).Scan(&permissionsJson)
+	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-user-permissions-at-workspace"], workspaceId, userId).Scan(&permissionsJson)
 	if res.Error != nil {
 		return [][]domain.Permission{}, handleWorkspaceError("Find User permissions at Workspace", "repository.GetUserPermissionAtWorkspace.Scan", res.Error, logging.InternalError)
 	}
@@ -81,12 +92,3 @@ func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(work
 func handleWorkspaceError(message string, operation string, err error, errType string) error {
 	return logging.NewError(message, err, errType, nil, operation)
 }
-
-const findUserPermissionsAtWorkspaceQuery = `
-	select wug.permissions
-	from workspaces w
-		inner join workspaces_user_groups wug on wug.workspace_id = ?
-		inner join user_groups ug on ug.id  = wug.user_group_id
-		inner join user_groups_users ugu on ugu.user_group_id = ug.id 
-		inner join users u on ? = ugu.user_id
-`

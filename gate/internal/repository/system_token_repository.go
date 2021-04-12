@@ -26,6 +26,7 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
+	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -39,11 +40,20 @@ type SystemTokenRepository interface {
 }
 
 type systemTokenRepository struct {
-	db *gorm.DB
+	queries goyesql.Queries
+	db      *gorm.DB
 }
 
-func NewSystemTokenRepository(db *gorm.DB) (SystemTokenRepository, error) {
-	return systemTokenRepository{db: db}, nil
+func NewSystemTokenRepository(db *gorm.DB, queriesPath string) (SystemTokenRepository, error) {
+	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "system_token_queries.sql"))
+	if err != nil {
+		return systemTokenRepository{}, err
+	}
+
+	return systemTokenRepository{
+		queries: queries,
+		db:      db,
+	}, nil
 }
 
 func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error) {
@@ -58,7 +68,7 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 			}
 
 			for i := range permissions {
-				res = systemTokenRepository.db.Exec(insertSystemTokenPermissionsQuery, systemTokenToSave.ID, permissions[i].ID)
+				res = systemTokenRepository.db.Table("system_tokens_permissions").Create(insertSystemTokenPermissionsMap(systemTokenToSave.ID, permissions[i].ID))
 				if res.Error != nil {
 					return res.Error
 				}
@@ -116,7 +126,7 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 func (systemTokenRepository systemTokenRepository) FindByToken(token string) (domain.SystemToken, error) {
 	var systemToken models.SystemToken
 
-	res := systemTokenRepository.db.Raw(findSystemTokenFromTokenQuery, token).First(&systemToken)
+	res := systemTokenRepository.db.Raw(systemTokenRepository.queries["find-system-token-from-token"], token).First(&systemToken)
 
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
@@ -164,30 +174,9 @@ func insertSystemTokenMap(systemToken models.SystemToken) map[string]interface{}
 	}
 }
 
-const insertSystemTokenPermissionsQuery = `
-	INSERT INTO "system_tokens_permissions" (
-		"system_token_id",
-		"permission_id")
-	VALUES (?, ?)
-`
-
-const findSystemTokenFromTokenQuery = `
-	select
-		*
-	from
-		(
-		select
-			id,
-			name,
-			revoked,
-			workspaces,
-			created_at,
-			revoked_at,
-			last_used_at,
-			author_email,
-			pgp_sym_decrypt(token::bytea, '64971923d21a4887a3acf1ad15961bbc', 'cipher-algo=aes256') as token_decrypted
-		from
-			system_tokens) as st
-	where
-		token_decrypted = ?
-`
+func insertSystemTokenPermissionsMap(systemTokenId, permissionId uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{
+		"system_token_id": systemTokenId,
+		"permission_id":   permissionId,
+	}
+}
