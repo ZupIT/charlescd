@@ -22,7 +22,7 @@ import routes from 'core/constants/routes';
 import Menu from './Menu';
 
 const Placeholder = React.lazy(() => import('./Placeholder'));
-const TokensComparation = React.lazy(() => import('./Comparation'));
+const Comparation = React.lazy(() => import('./Comparation'));
 
 const Tokens = () => (
   <Page>
@@ -35,7 +35,7 @@ const Tokens = () => (
           <PrivateRoute
             allowedRoles={['modules_read', 'modules_write']}
             path={routes.tokensComparation}
-            component={TokensComparation}
+            component={Comparation}
           />
           <Route path={routes.tokens} component={Placeholder} />
         </Switch>

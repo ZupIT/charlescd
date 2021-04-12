@@ -178,9 +178,9 @@ data:
 
                       local path = ""
 
-                      if path_without_params == nil then 
+                      if path_without_params == nil then
                         path = url_decoded
-                      else 
+                      else
                         path = path_without_params
                       end
 

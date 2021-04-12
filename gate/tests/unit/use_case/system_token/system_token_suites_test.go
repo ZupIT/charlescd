@@ -32,6 +32,7 @@ type SystemTokenSuite struct {
 	getSystemToken        systemTokenInteractor.GetSystemToken
 	getAllSystemToken     systemTokenInteractor.GetAllSystemToken
 	revokeSystemToken     systemTokenInteractor.RevokeSystemToken
+	regenerateSystemToken systemTokenInteractor.RegenerateSystemToken
 	systemTokenRepository *repositoryMocks.SystemTokenRepository
 	permissionRepository  *repositoryMocks.PermissionRepository
 	userRepository        *repositoryMocks.UserRepository
@@ -49,6 +50,7 @@ func (st *SystemTokenSuite) SetupSuite() {
 	st.getSystemToken = systemTokenInteractor.NewGetSystemToken(st.systemTokenRepository)
 	st.getAllSystemToken = systemTokenInteractor.NewGetAllSystemToken(st.systemTokenRepository)
 	st.revokeSystemToken = systemTokenInteractor.NewRevokeSystemToken(st.systemTokenRepository)
+	st.regenerateSystemToken = systemTokenInteractor.NewRegenerateSystemToken(st.systemTokenRepository)
 }
 
 func (st *SystemTokenSuite) SetupTest() {
@@ -58,4 +60,3 @@ func (st *SystemTokenSuite) SetupTest() {
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(SystemTokenSuite))
 }
-

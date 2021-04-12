@@ -14,64 +14,87 @@
  * limitations under the License.
  */
 
-import { useEffect, Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { Token } from 'modules/Tokens/interfaces';
+import { TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
+import map from 'lodash/map';
 import Form from 'core/components/Form';
-import { isRequired, isRequiredAndNotBlank } from 'core/utils/validations';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
+import ModalCopy from './Modal';
 import Styled from './styled';
 
-const FormToken = () => {
-  const { save, status } = useSave();
+interface Props {
+  mode?: Mode;
+}
 
-  const methods = useForm<Token>({ mode: 'onChange' });
+const FormToken = ({ mode }: Props) => {
+  const { save, response, status } = useSave();
+  const [isModalCopy, setIsModalCopy] = useState<boolean>();
+  const methods = useForm<TokenCreate>({ mode: 'onChange' });
   const {
     register, handleSubmit, watch,
-    setValue, errors, formState: { isValid }
+    errors, formState: { isValid }
   } = methods;
 
-  // useEffect(() => {
-  //   register({ name: "workspaces" }, { required: isRequired() });
-  //   register({ name: "permissions" }, { required: isRequired() });
-  // }, [register]);
+  const name = watch('name') as string;
+  const workspaces = watch('workspaces') as string[];
+  const allWorkspaces = watch('allWorkspaces') as boolean;
 
-  // const name = watch('name') as string;
-  // const workspaces = watch('workspaces') as string[];
+  const onSubmit = (token: TokenCreate) => {
+    const ws = !token.allWorkspaces ? map(token?.workspaces, 'id') : [];
+    const { subjects, ...rest } = token;
 
-  const onSubmit = (token: Token) => {
-    console.log(token);
-    // save(token);
+    save({ ...rest, workspaces: ws });
   };
+  
+  const toggleModalCopy = () => setIsModalCopy(!isModalCopy);
+
+  useEffect(() => {
+    if (response?.token) {
+      setIsModalCopy(!isModalCopy);
+    }
+  }, [setIsModalCopy, isModalCopy, response])
+
+  const ModalNewToken = () => (
+    <ModalCopy
+      title="Your token has been registered!"
+      description="You can now use the token according to the settings you have created."
+      token={response?.token}
+      onClose={toggleModalCopy}
+    />
+  )
 
   return (
     <Styled.Content>
+      {isModalCopy && <ModalNewToken />}
       <FormProvider {...methods}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-          {/* <ContentIcon icon="token">
+          <ContentIcon icon="token">
             <Form.InputTitle
               name="name"
               ref={register(isRequiredAndNotBlank)}
               error={errors?.name?.message}
             />
           </ContentIcon>
-          {name && <Workspaces setValue={setValue} />} */}
-          {/* {name && workspaces && ( */}
+          {name && <Workspaces mode={mode} />}
+          {(workspaces || allWorkspaces) && (
             <Fragment>
-              <Scopes />
+              <Scopes mode={mode} />
               <Styled.Button
                 type="submit"
                 size="EXTRA_SMALL"
-                // isDisabled={!isValid}
-                isLoading={status.isPending}
+                isDisabled={!isValid}
+                isLoading={status === 'pending'}
               >
                 Generate token
               </Styled.Button>
             </Fragment>
-          {/* )} */}
+          )}
         </Styled.Form>
       </FormProvider>
     </Styled.Content>

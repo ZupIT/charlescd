@@ -17,8 +17,9 @@
 import React, { useEffect, useState } from 'react';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, isRoot, logout } from 'core/utils/auth';
+import { isRoot, logout } from 'core/utils/auth';
 import Menu from './Menu';
+import { clearWorkspace } from 'core/utils/workspace';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -28,13 +29,16 @@ import { isRequired, maxLength } from 'core/utils/validations';
 import { removeWizard } from 'modules/Settings/helpers';
 import Modal from 'core/components/Modal';
 import Styled from './styled';
+import { getProfileByKey } from 'core/utils/profile';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
 }
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
-  const { name: profileName, email } = getAccessTokenDecoded();
+  const profileName = getProfileByKey('name');
+  const email = getProfileByKey('email');
+
   const [toggleModal, setToggleModal] = useState(false);
   const {
     save,
@@ -66,6 +70,10 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const onSubmit = ({ name }: Record<string, string>) => {
     save({ name });
   };
+
+  useEffect(() => {
+    clearWorkspace();
+  }, []);
 
   const renderModal = () =>
     isRoot() && (

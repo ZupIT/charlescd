@@ -39,7 +39,59 @@ const Content = styled.div<ContentProps>`
   `}
 `;
 
+const Description = styled.div`
+  width: 550px;
+  margin-bottom: 32px;
+`;
+
+const View = styled.div``;
+
+const ViewHead = styled.div`
+  display: flex;
+  margin-bottom: 10px;
+
+  * {
+    flex-grow: 1;
+    flex-basis: 50%;
+  }
+  
+  >:first-child {
+    padding-left: 10px;
+  }
+`;
+
+const ViewItem = styled.div`
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-radius: 4px;
+  background-color: ${({ theme }) => theme.token.scope.view.background};
+  padding-left: 10px;
+  margin-bottom: 10px;
+
+  * {
+    flex-grow: 1;
+    flex-basis: 50%;
+  }
+`;
+
+const ViewScope = styled.div`
+  display: flex;
+  align-items: center;
+
+  >:first-child{
+    flex-grow: 0;
+    flex-basis: auto;
+    padding-right: 10px;
+  }
+`;
+
 export default {
   Button,
-  Content
+  Content,
+  Description,
+  View,
+  ViewHead,
+  ViewItem,
+  ViewScope
 }

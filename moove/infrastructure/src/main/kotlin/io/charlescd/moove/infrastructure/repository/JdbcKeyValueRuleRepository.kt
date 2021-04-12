@@ -18,13 +18,17 @@ package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.KeyValueRule
 import io.charlescd.moove.domain.repository.KeyValueRuleRepository
+import io.charlescd.moove.infrastructure.repository.mapper.KeyValueExtractor
 import java.sql.PreparedStatement
 import java.sql.Types
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
-class JdbcKeyValueRuleRepository(private val jdbcTemplate: JdbcTemplate) : KeyValueRuleRepository {
+class JdbcKeyValueRuleRepository(
+    private val jdbcTemplate: JdbcTemplate,
+    private val keyValueExtractor: KeyValueExtractor
+) : KeyValueRuleRepository {
 
     override fun saveAll(rules: List<KeyValueRule>) {
         createKeyValueRules(rules)
@@ -48,5 +52,18 @@ class JdbcKeyValueRuleRepository(private val jdbcTemplate: JdbcTemplate) : KeyVa
         val statement = "DELETE FROM key_value_rules WHERE circle_id = ?"
 
         this.jdbcTemplate.update(statement, circleId)
+    }
+
+    override fun findByCircle(circleId: String): List<KeyValueRule> {
+        val statement = """
+            SELECT key_value.id     AS key_value_id, 
+                key_value.rule      AS key_value_rule, 
+                key_value.circle_id AS key_value_circle_id
+            FROM key_value_rules key_value 
+            WHERE circle_id = ?
+        """
+
+        val result = this.jdbcTemplate.query(statement, arrayOf(circleId), keyValueExtractor)
+        return result?.toList() ?: emptyList()
     }
 }

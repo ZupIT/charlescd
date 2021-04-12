@@ -1,11 +1,13 @@
-name: charlescd-ci
+name: charlescd-ci-staging
 
+# Charles branchs of beta images, pre-release must have name in format of version starting at patch .0 charlescd-release-<VERSION>.0
+# ex: charlescd-release-1.1.0
 on:
   push:
-    branches: [ main ]
+    branches: [ charlescd-release-*.0 ]
 
 jobs:
-  build_and_push_alpha_butler:
+  build_and_push_beta_butler:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -32,7 +34,7 @@ jobs:
 
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -52,12 +54,12 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd butler
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
 
-  build_and_push_alpha_circle_matcher:
+  build_and_push_beta_circle_matcher:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -78,7 +80,7 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -98,12 +100,12 @@ jobs:
           IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
         run: |
           cd circle-matcher
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
 
-  build_and_push_alpha_compass:
+  build_and_push_beta_compass:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -122,7 +124,7 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -142,12 +144,12 @@ jobs:
           IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
         run: |
           cd compass
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
 
-  build_and_push_alpha_moove:
+  build_and_push_beta_moove:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -170,7 +172,7 @@ jobs:
 
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -190,12 +192,12 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd moove/web
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
 
-  build_and_push_alpha_octopipe:
+  build_and_push_beta_octopipe:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -214,7 +216,7 @@ jobs:
 
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -234,12 +236,12 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd octopipe
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
 
-  build_and_push_alpha_ui:
+  build_and_push_beta_ui:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -267,7 +269,7 @@ jobs:
 
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -287,12 +289,12 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd ui
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
 
-  build_and_push_alpha_villager:
+  build_and_push_beta_villager:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -315,7 +317,7 @@ jobs:
 
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -335,26 +337,24 @@ jobs:
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd villager
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
 
   notify-team:
     runs-on: ubuntu-latest
-    needs: [ build_and_push_alpha_butler,
-             build_and_push_alpha_circle_matcher,
-             build_and_push_alpha_moove,
-             build_and_push_alpha_octopipe,
-             build_and_push_alpha_ui,
-             build_and_push_alpha_villager,
-             build_and_push_alpha_compass
+    needs: [ build_and_push_beta_butler,
+             build_and_push_beta_circle_matcher,
+             build_and_push_beta_moove,
+             build_and_push_beta_octopipe,
+             build_and_push_beta_ui,
+             build_and_push_beta_villager,
+             build_and_push_beta_compass
     ]
     steps:
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
         
-      - name: ping
-        run: |
-          curl -X POST -H "Content-Type: Application/json" -d '{"text":"New alpha images builded with tag: alpha-${{ steps.get_version.outputs.VERSION }} and alpha-latest"}' ${{ secrets.GCHAT_SRE_WEBHOOK }}
+      # uninstall and install on staging every time to ensure full package working

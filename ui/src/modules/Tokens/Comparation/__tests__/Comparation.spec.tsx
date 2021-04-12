@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
-import ModulesComparation  from '..';
+import Comparation  from '..';
 
 const originalWindow = { ...window };
 
@@ -26,20 +25,20 @@ beforeEach(() => {
 
   window.location = {
     ...window.location,
-    pathname: '/modules/compare',
-    search: '?module=3f126d1b-c776-4c26-831d-b9ca148be910' 
+    pathname: '/tokens/compare',
+    search: '?token=3f126d1b-c776-4c26-831d-b9ca148be910' 
   };
 });
 
 afterEach(() => {
+  // eslint-disable-next-line no-native-reassign
   window = originalWindow;
-
 });
 
-test('render Modules comparation', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  render(<ModulesComparation />);
+test('render Tokens comparation', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'token' }));
+  render(<Comparation />);
 
-  const tabpanel = await screen.findByTestId('tabpanel-workspace');
+  const tabpanel = await screen.findByTestId('tabpanel-token');
   expect(tabpanel).toBeInTheDocument();
 });
