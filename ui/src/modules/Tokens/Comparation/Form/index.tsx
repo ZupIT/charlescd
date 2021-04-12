@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Token, TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
@@ -47,6 +47,7 @@ const FormToken = ({ mode, data }: Props) => {
     register, handleSubmit, watch,
     errors, formState: { isValid }
   } = methods;
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const name = watch('name') as string;
   const workspaces = watch('workspaces') as string[];
@@ -58,6 +59,11 @@ const FormToken = ({ mode, data }: Props) => {
 
     save({ ...rest, workspaces: ws });
   };
+
+  useEffect(() => {
+    nameRef.current?.click();
+    nameRef.current?.focus();
+  }, [nameRef]);
   
   useEffect(() => {
     if (response?.token) {
@@ -88,7 +94,10 @@ const FormToken = ({ mode, data }: Props) => {
           <ContentIcon icon="token">
             <Form.InputTitle
               name="name"
-              ref={register(isRequiredAndNotBlank)}
+              ref={self => {
+                nameRef.current = self;
+                return register(self, isRequiredAndNotBlank);
+              }}
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
             />
