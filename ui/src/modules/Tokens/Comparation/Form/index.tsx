@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Token, TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
@@ -54,13 +54,16 @@ const FormToken = ({ mode, data }: Props) => {
     save({ ...rest, workspaces: ws });
   };
   
-  const toggleModalCopy = () => setIsModalCopy(!isModalCopy);
+  const toggleModalCopy = useCallback(() => setIsModalCopy(!isModalCopy), [isModalCopy]);
+
+  console.log('FORM');
 
   useEffect(() => {
     if (response?.token) {
-      setIsModalCopy(!isModalCopy);
+      console.log('show Modal', response?.token);
+      // toggleModalCopy();
     }
-  }, [setIsModalCopy, isModalCopy, response])
+  }, [response?.token]);
 
   const ModalNewToken = () => (
     <ModalCopy
@@ -73,7 +76,7 @@ const FormToken = ({ mode, data }: Props) => {
 
   return (
     <Styled.Content>
-      {isModalCopy && <ModalNewToken />}
+      {/* {isModalCopy && <ModalNewToken />} */}
       <FormProvider {...methods}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <ContentIcon icon="token">

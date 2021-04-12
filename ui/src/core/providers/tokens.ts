@@ -16,7 +16,7 @@
 
 import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 import { Token } from 'modules/Tokens/interfaces';
-import { baseRequest, deleteRequest, postRequest } from './base';
+import { baseRequest, deleteRequest, postRequest, putRequest } from './base';
 
 const endpoint = '/gate/api/v1/system-token';
 
@@ -48,5 +48,5 @@ export const create = (token: Token) =>
 export const revoke = (id: string) =>
   deleteRequest(`${endpoint}/${id}`);
 
-  export const regenerate = (id: string) =>
-    deleteRequest(`${endpoint}/${id}`);
+export const regenerate = (id: string) =>
+  putRequest(`${endpoint}/${id}/regenerate`);

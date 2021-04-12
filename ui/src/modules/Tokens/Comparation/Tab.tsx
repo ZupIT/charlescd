@@ -46,11 +46,10 @@ const Tab = ({ param }: Props) => {
   const [token, setToken] = useState<Token>(null);
   const { getById, response } = useFind();
   const { revokeById } = useRevoke();
-  const { regenerateById, response: regenerated } = useRegenerate();
+  const { regenerateById, response: regenerated, status } = useRegenerate();
   const isLoading = isEmpty(token) && id !== NEW_TAB;
 
   const toggleRevoke = () => setIsRevoke(!isRevoke);
-  const toggleRegenerate = () => setIsRegenerate(!isRegenerate);
 
   useEffect(() => {
     if (response) {
@@ -65,10 +64,11 @@ const Tab = ({ param }: Props) => {
   }, [id, getById]);
 
   useEffect(() => {
-    if (regenerated) {
-      setIsNewToken(!isNewToken);
+    if (regenerated && status === 'resolved') {
+      setIsNewToken(true);
+      setIsRegenerate(false);
     }
-  }, [setIsNewToken, isNewToken, regenerated]);
+  }, [regenerated, status]);
 
   const handleRevoke = () => {
     toggleRevoke();
@@ -76,7 +76,6 @@ const Tab = ({ param }: Props) => {
   };
 
   const handleRegenerate = () => {
-    toggleRegenerate();
     regenerateById(id);
   };
 
@@ -93,7 +92,7 @@ const Tab = ({ param }: Props) => {
           <LabeledIcon
             icon="revoke"
             marginContent="5px"
-            onClick={toggleRegenerate}
+            onClick={() => setIsRegenerate(true)}
           >
             <Text.h5 color="dark">Regenerate token</Text.h5>
           </LabeledIcon>
@@ -114,13 +113,14 @@ const Tab = ({ param }: Props) => {
       title="Your token has been regenerated!"
       description="You can now use the token according to the settings you have created."
       token={regenerated?.token}
+      onClose={() => setIsNewToken(false)}
     />
   );
 
   return (
     <Styled.Tab>
       {isRevoke && <ModalRevoke onClose={toggleRevoke} onContinue={handleRevoke} />}
-      {isRegenerate && <ModalRegenerate onClose={toggleRegenerate} onContinue={handleRegenerate} />}
+      {isRegenerate && <ModalRegenerate onClose={() => setIsRegenerate(false)} onContinue={handleRegenerate} />}
       {isNewToken && <ModalNewToken />}
       <TabPanel
         name="token"
