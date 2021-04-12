@@ -86,7 +86,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 
 	var workspaceIds = make([]string, 0)
 	for _, w := range workspaces {
-		workspaceIds = append(workspaceIds, w.Id.String())
+		workspaceIds = append(workspaceIds, w.ID.String())
 	}
 
 	if !unorderedEquals(workspaceIds, input.Workspaces) {

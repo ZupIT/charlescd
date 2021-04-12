@@ -24,13 +24,13 @@ import (
 )
 
 type PermissionResponse struct {
-	Id   uuid.UUID
+	ID   uuid.UUID
 	Name string
 }
 
 func PermissionToResponse(permission domain.Permission) PermissionResponse {
 	return PermissionResponse{
-		Id:   permission.Id,
+		ID:   permission.ID,
 		Name: permission.Name,
 	}
 }

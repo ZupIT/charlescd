@@ -47,7 +47,7 @@ func NewSystemTokenRepository(db *gorm.DB) (SystemTokenRepository, error) {
 }
 
 func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken) (domain.SystemToken, error) {
-	systemToken.Id = uuid.New()
+	systemToken.ID = uuid.New()
 	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken)
 
 	if err := systemTokenRepository.db.Transaction(
@@ -58,14 +58,14 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 			}
 
 			for _, permission := range systemTokenToSave.Permissions {
-				res = systemTokenRepository.db.Exec(insertSystemTokenPermissionsQuery, systemTokenToSave.Id, permission.Id)
+				res = systemTokenRepository.db.Exec(insertSystemTokenPermissionsQuery, systemTokenToSave.ID, permission.ID)
 				if res.Error != nil {
 					return res.Error
 				}
 			}
 
 			for _, workspace := range systemTokenToSave.Workspaces {
-				res = systemTokenRepository.db.Exec(insertSystemTokenWorkspacesQuery, systemTokenToSave.Id, workspace.Id)
+				res = systemTokenRepository.db.Exec(insertSystemTokenWorkspacesQuery, systemTokenToSave.ID, workspace.ID)
 				if res.Error != nil {
 					return res.Error
 				}
@@ -142,7 +142,7 @@ func (systemTokenRepository systemTokenRepository) Update(systemToken domain.Sys
 	systemTokenToUpdate := mapper.SystemTokenDomainToModel(systemToken)
 
 	if res := systemTokenRepository.db.Model(models.SystemToken{}).
-		Where("id = ?", systemToken.Id).Updates(&systemTokenToUpdate); res.Error != nil {
+		Where("id = ?", systemToken.ID).Updates(&systemTokenToUpdate); res.Error != nil {
 		return handleSystemTokenError("Update system token failed", "SystemTokenRepository.Update.Updates", res.Error, logging.InternalError)
 	}
 
@@ -155,7 +155,7 @@ func handleSystemTokenError(message string, operation string, err error, errType
 
 func insertSystemTokenMap(systemToken models.SystemToken) map[string]interface{} {
 	return map[string]interface{}{
-		"id":         systemToken.Id,
+		"id":         systemToken.ID,
 		"name":       systemToken.Name,
 		"revoked":    systemToken.Revoked,
 		"all_workspaces": systemToken.AllWorkspaces,

@@ -6,7 +6,7 @@ import (
 )
 
 type UserGroup struct {
-	Id        string
+	ID        string
 	Name      string
 	Author    uuid.UUID `gorm:"column:user_id"`
 	CreatedAt *time.Time

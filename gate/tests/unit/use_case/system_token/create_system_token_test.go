@@ -201,7 +201,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFoundAll() {
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	systemTokenInput.Permissions = append(systemTokenInput.Permissions, "hypothesis_read")
 	permissions := append(utils.GetDummyPermissions(), domain.Permission{
-		Id:   uuid.New(),
+		ID:   uuid.New(),
 		Name: "maintenance_write",
 	})
 

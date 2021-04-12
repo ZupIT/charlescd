@@ -24,7 +24,7 @@ import (
 )
 
 type SystemToken struct {
-	Id            uuid.UUID
+	ID            uuid.UUID
 	Name          string
 	Revoked       bool
 	Permissions   []Permission

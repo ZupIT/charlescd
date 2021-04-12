@@ -25,7 +25,7 @@ import (
 
 func UserModelToDomain(user models.User) domain.User {
 	return domain.User{
-		Id:        user.Id,
+		ID:        user.ID,
 		Name:      user.Name,
 		PhotoUrl:  user.PhotoUrl,
 		Email:     user.Email,
