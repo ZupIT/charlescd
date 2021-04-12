@@ -53,6 +53,7 @@ const Wrapper = styled.div`
   justify-content: center;
   height: 40px;
   width: 100%;
+  box-sizing: border-box;
 
   :focus-within {
     background-color: ${({ theme }) => theme.input.focus.background};

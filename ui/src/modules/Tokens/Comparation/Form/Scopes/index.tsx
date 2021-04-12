@@ -41,7 +41,9 @@ const Scopes = ({ mode }: Props) => {
 
   const onChangeSubject = (subject: Subjects, checked: boolean) => {
     const values = getValues();
-    const rules = [`${subject}_write`, `${subject}_read`];
+    const rules = displayAction(subject)
+      ? [`${subject}_write`, `${subject}_read`]
+      : [`${subject}_write`];
     const permissions = checked
       ? [...values.permissions, ...rules]
       : xor(values.permissions, rules);
