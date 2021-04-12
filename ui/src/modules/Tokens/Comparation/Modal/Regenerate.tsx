@@ -20,24 +20,18 @@ import Text from 'core/components/Text';
 interface Props {
   onClose: Function;
   onContinue: Function;
+  isLoading?: boolean;
 }
 
-const ModalRegenerate = ({ onClose, onContinue }: Props) => {
-  const handleDismiss = () => {
-    console.log('handleDismiss')
-  }
-
-  const handleContinue = () => {
-    console.log('handleContinue')
-  }
-
+const ModalRegenerate = ({ onClose, onContinue, isLoading }: Props) => {
   return (
     <Modal.Trigger
       title="Are you sure you want to regenerate this token?"
       dismissLabel="Cancel, keep token"
       continueLabel="Yes, regenerate token"
-      onContinue={handleContinue}
-      onDismiss={handleDismiss}
+      onContinue={onContinue}
+      onDismiss={onClose}
+      isLoading={isLoading}
     >
       <Text.h4 color="light">
         Any application or script using this token will no loger be able ato accesss Charles C.D. APIs.
