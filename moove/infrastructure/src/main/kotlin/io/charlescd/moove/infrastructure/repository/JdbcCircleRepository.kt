@@ -40,7 +40,7 @@ class JdbcCircleRepository(
 
     companion object {
         const val BASE_QUERY_STATEMENT = """
-                SELECT circles.id                  AS circle_id,
+                SELECT DISTINCT circles.id         AS circle_id,
                        circles.name                AS circle_name,
                        circles.reference           AS circle_reference,
                        circles.created_at          AS circle_created_at,
@@ -55,9 +55,14 @@ class JdbcCircleRepository(
                        circle_user.name            AS circle_user_name,
                        circle_user.email           AS circle_user_email,
                        circle_user.photo_url       AS circle_user_photo_url,
-                       circle_user.created_at      AS circle_user_created_at
+                       circle_user.created_at      AS circle_user_created_at,
+                       CASE 
+                        WHEN (deployments.status NOT IN ('NOT_DEPLOYED', 'DEPLOY_FAILED')) THEN TRUE 
+                        ELSE FALSE 
+                       END AS circle_active
                 FROM circles
                          LEFT JOIN users circle_user ON circles.user_id = circle_user.id
+                         LEFT JOIN deployments ON circles.id = deployments.circle_id
                 WHERE 1 = 1
               """
     }
@@ -329,7 +334,8 @@ class JdbcCircleRepository(
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,
                            circle_user.photo_url       AS circle_user_photo_url,
-                           circle_user.created_at      AS circle_user_created_at
+                           circle_user.created_at      AS circle_user_created_at,
+                           TRUE                        AS circle_active
                     FROM circles
                              LEFT JOIN users circle_user ON circles.user_id = circle_user.id
                              INNER JOIN deployments ON circles.id = deployments.circle_id
@@ -364,7 +370,8 @@ class JdbcCircleRepository(
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,
                            circle_user.photo_url       AS circle_user_photo_url,
-                           circle_user.created_at      AS circle_user_created_at
+                           circle_user.created_at      AS circle_user_created_at,
+                           FALSE                       AS circle_active
                     FROM circles
                              LEFT JOIN users circle_user ON circles.user_id = circle_user.id
                              LEFT JOIN deployments ON circles.id = deployments.circle_id
@@ -406,7 +413,11 @@ class JdbcCircleRepository(
                            circle_user.name            AS circle_user_name,
                            circle_user.email           AS circle_user_email,
                            circle_user.photo_url       AS circle_user_photo_url,
-                           circle_user.created_at      AS circle_user_created_at
+                           circle_user.created_at      AS circle_user_created_at,
+                           CASE 
+                            WHEN (deployments.status NOT IN ('NOT_DEPLOYED', 'DEPLOY_FAILED')) THEN TRUE 
+                            ELSE FALSE 
+                           END AS circle_active
                     FROM circles
                              INNER JOIN users circle_user ON circles.user_id = circle_user.id
                              LEFT JOIN deployments ON circles.id = deployments.circle_id
@@ -567,6 +578,15 @@ class JdbcCircleRepository(
         ) { rs, _ ->
             rs.getInt(1)
         } ?: 0
+    }
+
+    override fun findByWorkspaceId(workspaceId: String): Circles {
+        val statement = StringBuilder(BASE_QUERY_STATEMENT)
+            .appendln("AND circles.workspace_id = ?")
+
+        return Circles(
+            this.jdbcTemplate.query(statement.toString(), arrayOf(workspaceId), circleExtractor)!!
+        )
     }
 
     override fun countPercentageByWorkspaceId(workspaceId: String): Int {

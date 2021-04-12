@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { Token } from 'modules/Tokens/interfaces';
+import { TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
+import map from 'lodash/map';
 import Form from 'core/components/Form';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
+import ModalCopy from './Modal';
 import Styled from './styled';
-import { Mode } from '../helpers';
 
 interface Props {
   mode?: Mode;
 }
 
 const FormToken = ({ mode }: Props) => {
-  const { save, status } = useSave();
-
-  const methods = useForm<Token>({ mode: 'onChange' });
+  const { save, response, status } = useSave();
+  const [isModalCopy, setIsModalCopy] = useState<boolean>();
+  const methods = useForm<TokenCreate>({ mode: 'onChange' });
   const {
     register, handleSubmit, watch,
     errors, formState: { isValid }
@@ -41,14 +43,35 @@ const FormToken = ({ mode }: Props) => {
 
   const name = watch('name') as string;
   const workspaces = watch('workspaces') as string[];
+  const allWorkspaces = watch('allWorkspaces') as boolean;
 
-  const onSubmit = (token: Token) => {
+  const onSubmit = (token: TokenCreate) => {
+    const ws = !token.allWorkspaces ? map(token?.workspaces, 'id') : [];
     const { subjects, ...rest } = token;
-    save(rest);
+
+    save({ ...rest, workspaces: ws });
   };
+  
+  const toggleModalCopy = () => setIsModalCopy(!isModalCopy);
+
+  useEffect(() => {
+    if (response?.token) {
+      setIsModalCopy(!isModalCopy);
+    }
+  }, [setIsModalCopy, isModalCopy, response])
+
+  const ModalNewToken = () => (
+    <ModalCopy
+      title="Your token has been registered!"
+      description="You can now use the token according to the settings you have created."
+      token={response?.token}
+      onClose={toggleModalCopy}
+    />
+  )
 
   return (
     <Styled.Content>
+      {isModalCopy && <ModalNewToken />}
       <FormProvider {...methods}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <ContentIcon icon="token">
@@ -59,14 +82,14 @@ const FormToken = ({ mode }: Props) => {
             />
           </ContentIcon>
           {name && <Workspaces mode={mode} />}
-          {workspaces && (
+          {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
               <Styled.Button
                 type="submit"
                 size="EXTRA_SMALL"
                 isDisabled={!isValid}
-                isLoading={status.isPending}
+                isLoading={status === 'pending'}
               >
                 Generate token
               </Styled.Button>

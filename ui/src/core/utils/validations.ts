@@ -70,3 +70,6 @@ export const urlPattern = () => ({
   value: /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/,
   message: 'Entered value does not match URL format with HTTP/HTTPS protocol.'
 });
+
+export const atLeastOne = (values: string[]) =>
+  values?.length ? true : 'At least one must be checked';

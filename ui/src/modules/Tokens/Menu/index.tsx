@@ -18,6 +18,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
+import debounce from 'lodash/debounce';
 import Can from 'containers/Can';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -26,20 +27,16 @@ import { addParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { isParamExists } from 'core/utils/path';
 import InfiniteScroll from 'core/components/InfiniteScroll';
-// import { useDispatch, useGlobalState } from 'core/state/hooks';
-// import { resetModulesAction } from '../state/actions';
 import { useFindAll } from '../hooks';
 import { Token } from '../interfaces';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 
 const TokensMenu = () => {
-  // const dispatch = useDispatch();
   const history = useHistory();
   const [name, setName] = useState<string>('');
-  const { getAll, response, status } = useFindAll();
-  // const { list } = useGlobalState(({ modules }) => modules);
-  const isEmptyList = isEmpty(response?.content) && !status.isPending;
+  const { getTokens, resetTokens, data: { status, tokens, last } } = useFindAll();
+  const isEmptyList = isEmpty(tokens) && status !== 'pending';
 
   const handleCreate = () => {
     if (!isParamExists('token', NEW_TAB)) {
@@ -47,18 +44,23 @@ const TokensMenu = () => {
     }
   };
 
-  const onChange = useCallback(() => {
+  const onSearch = useCallback((value: string) => {
     const page = 0;
-    // dispatch(resetModulesAction());
-    getAll(name, page);
-  }, [getAll, name]);
+    setName(value);
+    resetTokens();
+    getTokens(value, page);
+  }, [getTokens, resetTokens]);
+
+  const debounceSearch = debounce(onSearch, 700);
 
   useEffect(() => {
-    onChange();
-  }, [name, onChange]);
+    if (status === 'idle') {
+      getTokens();
+    }
+  }, [getTokens, status]);
 
   const loadMore = (page: number) => {
-    getAll(name, page);
+    getTokens(name, page);
   };
 
   const renderItem = ({ id, name }: Token) => (
@@ -75,17 +77,17 @@ const TokensMenu = () => {
     </Styled.Empty>
   );
 
-  const renderList = (data: Token[]) =>
-    map(data, item => renderItem(item))
+  const renderList = () =>
+    map(tokens, token => renderItem(token))
 
   const renderContent = () => (
     <InfiniteScroll
-      hasMore={!response?.last}
+      hasMore={!last}
       loadMore={loadMore}
-      isLoading={status.isPending}
+      isLoading={status === 'pending'}
       loader={<Styled.Loader />}
     >
-      {isEmptyList ? renderEmpty() : renderList(response?.content)}
+      {isEmptyList ? renderEmpty() : renderList()}
     </InfiniteScroll>
   );
 
@@ -101,7 +103,10 @@ const TokensMenu = () => {
         </Can>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={setName} />
+        <Styled.SearchInput
+          resume
+          onSearch={debounceSearch}
+        />
         {renderContent()}
       </Styled.Content>
     </Fragment>

@@ -76,7 +76,7 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
         1 * userRepository.findById(authorId) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * circleRepository.save(_) >> circle
-        1 * circleMatcherService.create(circle, workspace.circleMatcherUrl)
+        1 * circleMatcherService.create(circle, workspace.circleMatcherUrl, false)
 
 
         notThrown(NotFoundException)
@@ -179,6 +179,7 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
                 null,
                 false,
                 workspaceId,
+                false,
                 percentage
         )
     }

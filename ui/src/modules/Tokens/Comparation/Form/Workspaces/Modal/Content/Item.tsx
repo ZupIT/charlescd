@@ -36,7 +36,7 @@ const Item = ({ workspace, selected, onChange }: Props) => {
   }
 
   return (
-    <Styled.Item>
+    <Styled.Item data-testid={`item-${workspace?.id}`}>
       <Styled.Description>
         <Text.h4 color="light">{workspace.name}</Text.h4>
         <Styled.Subtitle>

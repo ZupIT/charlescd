@@ -20,10 +20,12 @@ package repository
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
+	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
 )
 
@@ -34,11 +36,20 @@ type WorkspaceRepository interface {
 }
 
 type workspaceRepository struct {
-	db *gorm.DB
+	queries goyesql.Queries
+	db      *gorm.DB
 }
 
-func NewWorkspaceRepository(db *gorm.DB) (WorkspaceRepository, error) {
-	return workspaceRepository{db: db}, nil
+func NewWorkspaceRepository(db *gorm.DB, queriesPath string) (WorkspaceRepository, error) {
+	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "system_token_queries.sql"))
+	if err != nil {
+		return workspaceRepository{}, err
+	}
+
+	return workspaceRepository{
+		queries: queries,
+		db:      db,
+	}, nil
 }
 
 func (workspaceRepository workspaceRepository) FindByIds(workspaceIds []string) ([]domain.SimpleWorkspace, error) {
@@ -56,7 +67,7 @@ func (workspaceRepository workspaceRepository) FindByIds(workspaceIds []string) 
 func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(workspaceId string, userId string) ([][]domain.Permission, error) {
 	var permissionsJson []json.RawMessage
 
-	res := workspaceRepository.db.Raw(findUserPermissionsAtWorkspaceQuery, workspaceId, userId).Scan(&permissionsJson)
+	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-user-permissions-at-workspace"], workspaceId, userId).Scan(&permissionsJson)
 	if res.Error != nil {
 		return [][]domain.Permission{}, handleWorkspaceError("Find User permissions at Workspace", "repository.GetUserPermissionAtWorkspace.Scan", res.Error, logging.InternalError)
 	}
@@ -82,7 +93,7 @@ func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(work
 func (workspaceRepository workspaceRepository) FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
 	var workspaces []models.Workspace
 
-	res := workspaceRepository.db.Raw(findWorkspacesBySystemTokenIdQuery, systemTokenId).Scan(&workspaces)
+	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-workspaces-by-system-token-id"], systemTokenId).Scan(&workspaces)
 
 	if res.Error != nil {
 		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces by system token id failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
@@ -94,29 +105,3 @@ func (workspaceRepository workspaceRepository) FindBySystemTokenId(systemTokenId
 func handleWorkspaceError(message string, operation string, err error, errType string) error {
 	return logging.NewError(message, err, errType, nil, operation)
 }
-
-const findUserPermissionsAtWorkspaceQuery = `
-	SELECT wug.permissions
-	FROM workspaces w
-		INNER JOIN workspaces_user_groups wug ON
-			wug.workspace_id = ?
-		INNER JOIN user_groups ug ON
-			ug.id = wug.user_group_id
-		INNER JOIN user_groups_users ugu ON
-			ugu.user_group_id = ug.id 
-		INNER JOIN users u ON
-			? = ugu.user_id
-`
-
-const findWorkspacesBySystemTokenIdQuery = `
-	SELECT
-		id,
-		name,
-		created_at
-	FROM
-		workspaces w
-	INNER JOIN system_tokens_workspaces stw ON
-		p.id = stw.workspace_id
-	WHERE
-		stw .system_token_id = ?
-`

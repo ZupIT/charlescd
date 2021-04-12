@@ -112,12 +112,14 @@ func initCryptoLib() error {
 }
 
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
-	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
+	queriesPath := configuration.Get("QUERIES_PATH")
+
+	systemTokenRepo, err := repository.NewSystemTokenRepository(db, queriesPath)
 	if err != nil {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
 	}
 
-	permissionRepo, err := repository.NewPermissionRepository(db)
+	permissionRepo, err := repository.NewPermissionRepository(db, queriesPath)
 	if err != nil {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate permission repository with error: %s", err.Error()))
 	}
@@ -127,7 +129,7 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate user repository with error: %s", err.Error()))
 	}
 
-	workspaceRepo, err := repository.NewWorkspaceRepository(db)
+	workspaceRepo, err := repository.NewWorkspaceRepository(db, queriesPath)
 	if err != nil {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate workspace repository with error: %s", err.Error()))
 	}

@@ -323,7 +323,7 @@ CharlesApplications:
         password: 7Qs2KuM9gYzw48BS
 
   hermes:
-    enabled: true
+    enabled: false
     name: charlescd-hermes
     sidecarIstio:
       enabled: true
@@ -355,7 +355,7 @@ CharlesApplications:
       password: aGVybWVz
       name: charlescd_hermes
     amqp:
-      url: amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/
+      url: amqp://guest:guest@charlescd-rabbitmq:5672/
       message:
         queue: queue-message
         routingKey: routing-key-message
@@ -368,7 +368,7 @@ CharlesApplications:
       attempts: 3
     consumer:
       messageRetry:
-        expiration: 30000
+        expiration: 60000
         attempts: 3
     subscriptionRegisterLimit: 5
 
@@ -404,6 +404,9 @@ CharlesApplications:
       user: charlescd_moove
       password: 7Qs2KuM9gYzw48BS
       name: charlescd_moove
+    policyPath: ./resources/policy.csv
+    authConfPath: ./resources/auth.conf
+    queiresPath: ./internal/repository/queries/
 
 postgresql:
   enabled: true
@@ -550,11 +553,11 @@ ingress-nginx:
       annotations: {}
 
 rabbitmq:
-  enabled: true
+  enabled: false
   fullnameOverride: charlescd-rabbitmq
   auth:
-    username: charlescd_hermes
-    password: aGVybWVz
+    username: guest
+    password: guest
   configuration: |-
     ## Username and password
     ##

@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 import size from 'lodash/size';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
-import { isRequired } from 'core/utils/validations';
 import ContentIcon from 'core/components/ContentIcon';
 import Card from 'core/components/Card';
 import Text from 'core/components/Text';
@@ -31,30 +30,45 @@ import { MAX_ITEMS, MIN_ITEMS } from './Modal/Content/constants';
 import Modal from './Modal';
 import { iconByMode, labelByMode } from './helpers';
 import Styled from './styled';
+import { Option } from './Modal/constants';
 
 interface Props {
   mode?: Mode;
 }
 
 const Workspaces = ({ mode }: Props) => {
-  const { register, setValue, watch } = useFormContext();
+  const { register, setValue, getValues, watch, trigger } = useFormContext();
   const [isOpen, setIsOpen] = useState<boolean>();
   const [isShowMore, setIsShowMore] = useState<boolean>();
   const workspaces = watch('workspaces') as WorkspacePaginationItem[];
   const preview = isShowMore ? take(workspaces, MAX_ITEMS) : take(workspaces, MIN_ITEMS)
   const isAddMode = isEmpty(preview);
 
+  const validateWorkspaces = useCallback(() => {
+    const { allWorkspaces, workspaces } = getValues();
+
+    return allWorkspaces || workspaces?.length ? true : 'required';
+  }, [getValues]);
+
   useEffect(() => {
-    register({ name: "workspaces" }, { required: isRequired() });
-  }, [register]);
+    register({ name: "allWorkspaces" });
+    register({ name: "workspaces" }, { validate: validateWorkspaces });
+  }, [register, validateWorkspaces]);
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
   const toggleShowMore = () => setIsShowMore(!isShowMore);
 
-  const onContinue = (draft: WorkspacePaginationItem[]) => {
+  const onContinue = (draft: WorkspacePaginationItem[], option: Option) => {
     toggleIsOpen();
-    setValue('workspaces', draft);
+    if (option.value === 'ALL') {
+      setValue('allWorkspaces', true);
+    } else {
+      setValue('workspaces', draft);
+      setValue('allWorkspaces', false);
+    }
+
+    trigger('workspaces');
   }
 
   const renderItems = () => (
@@ -70,7 +84,7 @@ const Workspaces = ({ mode }: Props) => {
   const ShowMore = () => (
     size(workspaces) > MIN_ITEMS &&
       <Styled.ShowMore
-        data-testid="circle-list-container-button"
+        data-testid="showmore-toggle"
         onClick={toggleShowMore}
       >
         <Icon
@@ -97,7 +111,7 @@ const Workspaces = ({ mode }: Props) => {
         <Text.h2 color="light">Associated Workspaces</Text.h2>
         <Styled.Caption color="dark">Your token have access only on these workspaces</Styled.Caption>
         <Styled.Content>
-          {preview && renderItems()}
+          {preview && !watch('allWorkspaces') && renderItems()}
         </Styled.Content>
         <ShowMore />
         {mode === 'create' && <Styled.Button

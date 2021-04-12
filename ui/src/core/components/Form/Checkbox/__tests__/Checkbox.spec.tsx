@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { dark as checkboxTheme } from 'core/assets/themes/checkbox';
@@ -24,7 +23,7 @@ const props = {
   name: 'deploy',
   value: 'DEPLOY',
   label: 'Deploy'
-}
+};
 
 test('renders Checkbox default values', async () => {
   render(<Checkbox {...props} />);
@@ -35,7 +34,7 @@ test('renders Checkbox default values', async () => {
 });
 
 test('renders Checkbox default values and checked', async () => {
-  render(<Checkbox {...props} active />);
+  render(<Checkbox {...props} defaultChecked />);
 
   const element = await screen.findByTestId(`checkbox-${props.label}`);
   const toggle = await screen.findByTestId(`checkbox-toggle-${props.label}`);
