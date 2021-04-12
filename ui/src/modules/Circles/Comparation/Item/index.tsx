@@ -375,7 +375,7 @@ const CirclesComparationItem = ({
           <MetricsGroups id={id} onGoBack={() => setActiveSection(undefined)} />
         )}
         {activeSection === SECTIONS.HISTORY && (
-          <DeployHistory deploymentId={circle.deployment.id} onGoBack={() => setActiveSection(undefined)} />
+          <DeployHistory id={id} onGoBack={() => setActiveSection(undefined)} />
         )}
       </>
     );

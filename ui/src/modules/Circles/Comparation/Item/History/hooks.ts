@@ -20,26 +20,26 @@ import {
   useFetchStatus,
   FetchStatus
 } from 'core/providers/base/hooks';
-import { findDeployLogsByCircleId } from 'core/providers/deployment';
+import { getDeployHistoryByCircleId } from 'core/providers/deployment';
 
-export const useCircleDeployLogs = (): {
-  getCircleDeployLogs: Function;
-  logs: any[];
+export const useCircleDeployHistory = (): {
+  getCircleDeployHistory: Function;
+  history: any[];
   status: FetchStatus;
 } => {
-  const getCircleDeployLogsData = useFetchData<any[]>(
-    findDeployLogsByCircleId
+  const getCircleDeployHistoryData = useFetchData<any[]>(
+    getDeployHistoryByCircleId
   );
   const status = useFetchStatus();
-  const [logs, setLogs] = useState([]);
+  const [history, setHistory] = useState([]);
 
-  const getCircleDeployLogs = useCallback(
-    async (deploymentId: string) => {
+  const getCircleDeployHistory = useCallback(
+    async (circleId: string) => {
       try {
         status.pending();
-        const logsResponse = await getCircleDeployLogsData(deploymentId);
+        const logsResponse = await getCircleDeployHistoryData(circleId);
 
-        setLogs(logsResponse);
+        setHistory(logsResponse);
         status.resolved();
 
         return logsResponse;
@@ -47,12 +47,12 @@ export const useCircleDeployLogs = (): {
         status.rejected();
       }
     },
-    [getCircleDeployLogsData, status]
+    [getCircleDeployHistoryData, status]
   );
 
   return {
-    getCircleDeployLogs,
-    logs,
+    getCircleDeployHistory,
+    history,
     status
   };
 };

@@ -15,26 +15,26 @@
  */
 
 import React, { useEffect } from 'react';
-import { useCircleDeployLogs } from './hooks';
+import { useCircleDeployHistory } from './hooks';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
 
 type Props = {
-  deploymentId: string;
+  id: string;
   onGoBack: Function;
 }
 
-const DeployHistory = ({ onGoBack, deploymentId }: Props) => {
-  const { getCircleDeployLogs, logs, status} = useCircleDeployLogs();
+const DeployHistory = ({ onGoBack, id }: Props) => {
+  const { getCircleDeployHistory, history, status} = useCircleDeployHistory();
 
   useEffect(() => {
     if (status.isIdle) {
-      getCircleDeployLogs(deploymentId);
+      getCircleDeployHistory(id);
     }
-  }, [getCircleDeployLogs, deploymentId, status.isIdle]);
+  }, [getCircleDeployHistory, id, status.isIdle]);
 
-  console.log(deploymentId, logs);
+  console.log(id, history);
 
   return (
     <>
@@ -63,7 +63,27 @@ const DeployHistory = ({ onGoBack, deploymentId }: Props) => {
               ))}
           </InfiniteScroll>
               </Styled.CircleRowWrapper> */}
-        <>asdf</>
+        <>
+          <Styled.DeploymentRow>
+            <Styled.TableRow>
+              <Styled.TableTextName color="light" title="My tip">
+                namenamenamenamenamenamenamenamenamenamena
+              </Styled.TableTextName>
+              <Styled.TableDeployStatus>
+                <Styled.Dot status="undeployed"/>
+                <Styled.TabledeployStatusName color="light">
+                  Deploy Failed
+                </Styled.TabledeployStatusName>
+              </Styled.TableDeployStatus>
+              <Styled.TableExpand name="expand" color="grey" size={'20px'} onClick={() => console.log('expand')}/>
+            </Styled.TableRow>
+            <Styled.ReleaseRow>
+              <Styled.TableTextRelease color="light" title="My tip">
+                releasereleasereleasereleasereleasereleaserelease
+              </Styled.TableTextRelease>
+            </Styled.ReleaseRow>
+          </Styled.DeploymentRow>
+        </>
       </Styled.Layer>
     </>
   );

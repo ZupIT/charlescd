@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
+import ComponentText from 'core/components/Text';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 
@@ -33,6 +34,7 @@ const Layer = styled(LayerComponent)`
 
 const Title = styled.div`
   display: flex;
+  margin-bottom: 20px;
 
   span {
     margin-left: 15px;
@@ -40,8 +42,98 @@ const Title = styled.div`
   }
 `;
 
+const DeploymentRow = styled.div`
+  position: relative;
+  background-color: ${({ theme }) =>
+    theme.circleDeploymentHistory.content.table};
+  margin-bottom: 5px;
+  border-radius: 4px;
+  height: 100px;
+`;
+
+const TableRow = styled.div`
+  display: flex;
+  padding-top: 5px;
+  padding-bottom: 10px;
+`;
+
+const ReleaseRow = styled.div`
+  margin: 0 10px 0 10px;
+  border-radius: 4px;
+  height: 40px;
+  background-color: ${({ theme }) =>
+    theme.circleDeploymentHistory.content.release};
+  
+`;
+
+const TableTextName = styled(ComponentText.h4)`
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 120px;
+`;
+
+const TableTextRelease = styled(ComponentText.h4)`
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  padding-top: 10px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 510px;
+`;
+
+const TableExpand = styled(ComponentIcon)`
+  margin-top: 15px;
+  margin-right: 10px;
+`;
+
+type DotProps = {
+  status: string;
+}
+
+const Dot = styled.div<DotProps>`
+  height: 16px;
+  width: 16px;
+  background-color: ${({ theme, status }) => 
+  theme.circleDeploymentHistory.execution[status]};
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+`;
+
+const TableDeployStatus = styled.div`
+
+`;
+
+const TabledeployStatusName = styled(ComponentText.h4)`
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 120px;
+`;
+
 export default {
   Icon,
   Layer,
-  Title
+  Title,
+  DeploymentRow,
+  TableRow,
+  TableDeployStatus,
+  TableTextName,
+  TableTextRelease,
+  TableExpand,
+  TabledeployStatusName,
+  Dot,
+  ReleaseRow
 };

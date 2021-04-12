@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-import { CreateDeployment } from 'modules/Circles/Release/interfaces/Deployment';
-import { postRequest, baseRequest } from './base';
+import {
+  COLOR_BASTILLE,
+  COLOR_MOUNTAIN_MEADOW,
+  COLOR_FREE_SPEECH_BLUE,
+  COLOR_RED_ORANGE,
+  COLOR_PURPLE_HEART,
+  COLOR_BLACK_MARLIN
+} from '../colors';
 
-const v2Endpoint = '/moove/v2/deployments';
+export const light = {};
 
-export const createDeployment = (data: CreateDeployment) =>
-  postRequest(v2Endpoint, data);
-
-export const undeploy = (deploymentId: string) =>
-  postRequest(`${v2Endpoint}/${deploymentId}/undeploy`);
-
-export const getDeployHistoryByCircleId = (circleId: string) =>
-  baseRequest(`${v2Endpoint}/${circleId}/history`);
-
-export const findDeployLogsByDeploymentId = (deploymentId: string) =>
-  baseRequest(`${v2Endpoint}/${deploymentId}/logs`);
+export const dark = {
+  content: {
+    table: COLOR_BASTILLE,
+    release: COLOR_BLACK_MARLIN
+  },
+  execution: {
+    deploying: COLOR_FREE_SPEECH_BLUE,
+    deployed: COLOR_MOUNTAIN_MEADOW,
+    failed: COLOR_RED_ORANGE,
+    undeployed: COLOR_PURPLE_HEART
+  } as Record<string, string>
+};
