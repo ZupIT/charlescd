@@ -110,4 +110,5 @@ const (
 	IllegalParamError = "IllegalParamError"
 	ParseError        = "ParseError"
 	BusinessError     = "BusinessError"
+	ForbiddenError    = "ForbiddenError"
 )

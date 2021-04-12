@@ -28,7 +28,7 @@ import (
 
 func (st *SystemTokenSuite) TestCreateSystemToken() {
 	systemToken := utils.GetDummySystemToken()
-	authorization := utils.GetDummyAuthorization()
+	authorization := utils.GetDummyRootAuthorization()
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
@@ -148,7 +148,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithUserNotFound() {
 }
 
 func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionRepositoryError() {
-	authorization := utils.GetDummyAuthorization()
+	authorization := utils.GetDummyRootAuthorization()
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 
@@ -171,7 +171,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionRepositoryError()
 }
 
 func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFound() {
-	authorization := utils.GetDummyAuthorization()
+	authorization := utils.GetDummyRootAuthorization()
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 
@@ -195,7 +195,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFound() {
 
 func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceRepositoryError() {
 	systemToken := utils.GetDummySystemToken()
-	authorization := utils.GetDummyAuthorization()
+	authorization := utils.GetDummyRootAuthorization()
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
@@ -226,7 +226,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceRepositoryError() 
 
 func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceNotFound() {
 	systemToken := utils.GetDummySystemToken()
-	authorization := utils.GetDummyAuthorization()
+	authorization := utils.GetDummyRootAuthorization()
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
@@ -256,7 +256,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceNotFound() {
 }
 
 func (st *SystemTokenSuite) TestCreateSystemTokenWithSystemTokenRepositoryError() {
-	authorization := utils.GetDummyAuthorization()
+	authorization := utils.GetDummyRootAuthorization()
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()

@@ -19,23 +19,35 @@
 package repository
 
 import (
+	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
+	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
 )
 
 type PermissionRepository interface {
 	FindAll(permissions []string) ([]domain.Permission, error)
+	FindBySystemTokenId(systemTokenId string) ([]domain.Permission, error)
 }
 
 type permissionRepository struct {
+	queries goyesql.Queries
 	db      *gorm.DB
 }
 
-func NewPermissionRepository(db *gorm.DB) (PermissionRepository, error) {
-	return permissionRepository{db: db}, nil
+func NewPermissionRepository(db *gorm.DB, queriesPath string) (PermissionRepository, error) {
+	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "permission_queries.sql"))
+	if err != nil {
+		return permissionRepository{}, err
+	}
+
+	return permissionRepository{
+		queries: queries,
+		db:      db,
+	}, nil
 }
 
 func (permissionRepository permissionRepository) FindAll(permissionNames []string) ([]domain.Permission, error) {
@@ -45,6 +57,18 @@ func (permissionRepository permissionRepository) FindAll(permissionNames []strin
 
 	if res.Error != nil {
 		return []domain.Permission{}, handlePermissionError("Find all permissions failed", "PermissionRepository.FindAll.Find", res.Error, logging.InternalError)
+	}
+
+	return mapper.PermissionsModelToDomains(permissions), nil
+}
+
+func (permissionRepository permissionRepository) FindBySystemTokenId(systemTokenId string) ([]domain.Permission, error) {
+	var permissions []models.Permission
+
+	res := permissionRepository.db.Raw(permissionRepository.queries["find-permissions-by-system-token-id"], systemTokenId).Scan(&permissions)
+
+	if res.Error != nil {
+		return []domain.Permission{}, handlePermissionError("Find all permissions failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
 	}
 
 	return mapper.PermissionsModelToDomains(permissions), nil

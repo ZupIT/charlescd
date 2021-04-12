@@ -404,6 +404,9 @@ CharlesApplications:
       user: charlescd_moove
       password: 7Qs2KuM9gYzw48BS
       name: charlescd_moove
+    policyPath: ./resources/policy.csv
+    authConfPath: ./resources/auth.conf
+    queiresPath: ./internal/repository/queries/
 
 postgresql:
   enabled: true
