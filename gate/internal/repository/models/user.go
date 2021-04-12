@@ -24,10 +24,10 @@ import (
 )
 
 type User struct {
-	ID         uuid.UUID
-	Name       string
-	PhotoUrl   string
-	Email      string
-	IsRoot     bool
-	CreatedAt  time.Time
+	Id        uuid.UUID
+	Name      string
+	PhotoUrl  string
+	Email     string
+	IsRoot    bool
+	CreatedAt time.Time
 }

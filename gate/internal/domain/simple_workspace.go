@@ -23,6 +23,6 @@ import (
 )
 
 type SimpleWorkspace struct {
-	ID   uuid.UUID `json:"id"`
+	Id   uuid.UUID `json:"id"`
 	Name string    `json:"name"`
 }

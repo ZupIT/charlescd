@@ -34,7 +34,7 @@ type SystemTokenRequest struct {
 }
 
 type SystemTokenResponse struct {
-	ID            uuid.UUID                `json:"id"`
+	Id            uuid.UUID                `json:"id"`
 	Name          string                   `json:"name"`
 	Permissions   []string                 `json:"permissions"`
 	Workspaces    []domain.SimpleWorkspace `json:"workspaces"`
@@ -70,7 +70,7 @@ func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.Creat
 
 func DomainToResponse(systemToken domain.SystemToken, tokenValue string) SystemTokenResponse {
 	return SystemTokenResponse{
-		ID:            systemToken.ID,
+		Id:            systemToken.Id,
 		Name:          systemToken.Name,
 		Permissions:   mapper.GetPermissionModelsName(systemToken.Permissions),
 		Workspaces:    systemToken.Workspaces,

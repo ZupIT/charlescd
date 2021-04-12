@@ -30,15 +30,15 @@ import (
 func (st *SystemTokenSuite) TestRegenerateSystemToken() {
 	systemToken := utils.GetDummySystemToken()
 
-	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
+	st.systemTokenRepository.On("FindById", systemToken.Id).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
 
-	result, err := st.regenerateSystemToken.Execute(systemToken.ID)
+	result, err := st.regenerateSystemToken.Execute(systemToken.Id)
 
 	require.Nil(st.T(), err)
 
 	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.Id))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
 
 	require.NotNil(st.T(), result)
@@ -63,17 +63,17 @@ func (st *SystemTokenSuite) TestRegenerateSystemTokenIDNotFound() {
 func (st *SystemTokenSuite) TestRegenerateSystemTokenErrorWhenUpdating() {
 	systemToken := utils.GetDummySystemToken()
 
-	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
+	st.systemTokenRepository.On("FindById", systemToken.Id).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).
 		Return(logging.NewError("Update system token failed", logging.CustomError{}, logging.InternalError, nil)).Once()
 
-	response, err := st.regenerateSystemToken.Execute(systemToken.ID)
+	response, err := st.regenerateSystemToken.Execute(systemToken.Id)
 
 	require.Error(st.T(), err)
 	require.Equal(st.T(), logging.InternalError, logging.GetErrorType(err))
 
 	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.Id))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
 	require.Equal(st.T(), response, "")
 }
@@ -82,14 +82,14 @@ func (st *SystemTokenSuite) TestRegenerateSystemTokenIfTokenIsAlreadyRevoked() {
 	systemToken := utils.GetDummySystemToken()
 	systemToken.Revoked = true
 
-	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
+	st.systemTokenRepository.On("FindById", systemToken.Id).Return(systemToken, nil).Once()
 
-	response, err := st.regenerateSystemToken.Execute(systemToken.ID)
+	response, err := st.regenerateSystemToken.Execute(systemToken.Id)
 
 	require.Error(st.T(), err)
 	require.Equal(st.T(), logging.BusinessError, logging.GetErrorType(err))
 
 	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.Id))
 	require.Equal(st.T(), response, "")
 }

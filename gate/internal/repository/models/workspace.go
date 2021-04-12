@@ -6,7 +6,7 @@ import (
 )
 
 type Workspace struct {
-	ID                      uuid.UUID
+	Id                      uuid.UUID
 	Name                    string
 	Author                  uuid.UUID `gorm:"column:user_id"`
 	CreatedAt               *time.Time

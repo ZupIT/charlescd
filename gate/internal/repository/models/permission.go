@@ -24,7 +24,7 @@ import (
 )
 
 type Permission struct {
-	ID        uuid.UUID
+	Id        uuid.UUID
 	Name      string
 	CreatedAt *time.Time `gorm:"-"`
 }

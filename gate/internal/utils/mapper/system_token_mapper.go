@@ -25,7 +25,7 @@ import (
 
 func SystemTokenDomainToModel(systemToken domain.SystemToken) models.SystemToken {
 	return models.SystemToken{
-		ID:            systemToken.ID,
+		Id:            systemToken.Id,
 		Name:          systemToken.Name,
 		Revoked:       systemToken.Revoked,
 		Permissions:   PermissionsDomainToModels(systemToken.Permissions),
@@ -41,7 +41,7 @@ func SystemTokenDomainToModel(systemToken domain.SystemToken) models.SystemToken
 
 func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken {
 	return domain.SystemToken{
-		ID:            systemToken.ID,
+		Id:            systemToken.Id,
 		Name:          systemToken.Name,
 		Revoked:       systemToken.Revoked,
 		Permissions:   PermissionsModelToDomains(systemToken.Permissions),

@@ -30,7 +30,7 @@ import (
 func GetDummySystemToken() domain.SystemToken {
 	createdTime := time.Now()
 	return domain.SystemToken{
-		ID:          uuid.New(),
+		Id:          uuid.New(),
 		Name:        "System Token Test",
 		Revoked:     false,
 		Permissions: GetDummyPermissions(),
@@ -46,12 +46,12 @@ func GetDummySystemToken() domain.SystemToken {
 func GetDummySimpleWorkspaces() []domain.SimpleWorkspace {
 	return []domain.SimpleWorkspace{
 		{
-			ID:   uuid.New(),
+			Id:   uuid.New(),
 			Name: "Workspace Name",
 		},
 		{
-			ID:   uuid.New(),
-			Name: "Workspace Name",
+			Id:   uuid.New(),
+			Name: "Workspace Name 2",
 		},
 	}
 }
@@ -87,11 +87,11 @@ func GetDummyCreateSystemTokenInput() system_token.CreateSystemTokenInput {
 func GetDummyPermissions() []domain.Permission {
 	return []domain.Permission{
 		{
-			ID:   uuid.New(),
+			Id:   uuid.New(),
 			Name: "circles_write",
 		},
 		{
-			ID:   uuid.New(),
+			Id:   uuid.New(),
 			Name: "deploy_write",
 		},
 	}
@@ -115,7 +115,7 @@ func GetDummyAuthorizationAuthorization(path string, method string) domain.Autho
 
 func GetDummyRootUser() domain.User {
 	return domain.User{
-		ID:        uuid.New(),
+		Id:        uuid.New(),
 		Name:      "Charles Admin",
 		PhotoUrl:  "",
 		Email:     "charlesadmin@admin",
@@ -126,7 +126,7 @@ func GetDummyRootUser() domain.User {
 
 func GetDummyUser() domain.User {
 	return domain.User{
-		ID:        uuid.New(),
+		Id:        uuid.New(),
 		Name:      "John Doe",
 		PhotoUrl:  "",
 		Email:     "johndoe@email.com",

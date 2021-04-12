@@ -55,7 +55,7 @@ func LogErrorFromCtx(ctx context.Context, err error) {
 		internalErr, okErr := err.(*CustomError)
 		if okErr {
 			logger.Errorw(internalErr.Message,
-				"error-id", internalErr.ID,
+				"error-id", internalErr.Id,
 				"details", internalErr.Detail,
 				"operations", internalErr.Operations,
 				"meta-info", internalErr.Meta)

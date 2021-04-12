@@ -25,8 +25,8 @@ import (
 
 func WorkspaceModelToSimpleDomain(workspace models.Workspace) domain.SimpleWorkspace {
 	return domain.SimpleWorkspace{
-		ID:        workspace.ID,
-		Name:      workspace.Name,
+		Id:   workspace.Id,
+		Name: workspace.Name,
 	}
 }
 
@@ -40,8 +40,8 @@ func WorkspacesModelToDomains(simpleWorkspaces []models.Workspace) []domain.Simp
 
 func WorkspaceDomainToModel(workspace domain.SimpleWorkspace) models.Workspace {
 	return models.Workspace{
-		ID:        workspace.ID,
-		Name:      workspace.Name,
+		Id:   workspace.Id,
+		Name: workspace.Name,
 	}
 }
 

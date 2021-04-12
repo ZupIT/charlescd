@@ -24,7 +24,7 @@ import (
 )
 
 type SystemToken struct {
-	ID            uuid.UUID
+	Id            uuid.UUID
 	Name          string
 	Revoked       bool
 	Permissions   []Permission `gorm:"many2many:system_tokens_permissions;"`

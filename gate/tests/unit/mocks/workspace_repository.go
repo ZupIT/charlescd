@@ -35,8 +35,8 @@ func (_m *WorkspaceRepository) FindByIds(workspaceIds []string) ([]domain.Simple
 	return r0, r1
 }
 
-// FindWorkspacesBySystemTokenId provides a mock function with given fields: systemTokenId
-func (_m *WorkspaceRepository) FindWorkspacesBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
+// FindBySystemTokenId provides a mock function with given fields: systemTokenId
+func (_m *WorkspaceRepository) FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
 	ret := _m.Called(systemTokenId)
 
 	var r0 []domain.SimpleWorkspace

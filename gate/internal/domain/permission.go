@@ -23,6 +23,6 @@ import (
 )
 
 type Permission struct {
-	ID        uuid.UUID
-	Name      string
+	Id   uuid.UUID
+	Name string
 }

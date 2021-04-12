@@ -30,7 +30,7 @@ import (
 type WorkspaceRepository interface {
 	FindByIds(workspaceIds []string) ([]domain.SimpleWorkspace, error)
 	GetUserPermissionAtWorkspace(workspaceId string, userId string) ([][]domain.Permission, error)
-	FindWorkspacesBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error)
+	FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error)
 }
 
 type workspaceRepository struct {
@@ -79,13 +79,13 @@ func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(work
 	return permissionsListDomain, nil
 }
 
-func (workspaceRepository workspaceRepository) FindWorkspacesBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
+func (workspaceRepository workspaceRepository) FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
 	var workspaces []models.Workspace
 
 	res := workspaceRepository.db.Raw(findWorkspacesBySystemTokenIdQuery, systemTokenId).Scan(&workspaces)
 
 	if res.Error != nil {
-		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces failed", "PermissionRepository.FindWorkspacesBySystemTokenId.Find", res.Error, logging.InternalError)
+		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces by system token id failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
 	}
 
 	return mapper.WorkspacesModelToDomains(workspaces), nil
@@ -96,23 +96,27 @@ func handleWorkspaceError(message string, operation string, err error, errType s
 }
 
 const findUserPermissionsAtWorkspaceQuery = `
-	select wug.permissions
-	from workspaces w
-		inner join workspaces_user_groups wug on wug.workspace_id = ?
-		inner join user_groups ug on ug.id  = wug.user_group_id
-		inner join user_groups_users ugu on ugu.user_group_id = ug.id 
-		inner join users u on ? = ugu.user_id
+	SELECT wug.permissions
+	FROM workspaces w
+		INNER JOIN workspaces_user_groups wug ON
+			wug.workspace_id = ?
+		INNER JOIN user_groups ug ON
+			ug.id = wug.user_group_id
+		INNER JOIN user_groups_users ugu ON
+			ugu.user_group_id = ug.id 
+		INNER JOIN users u ON
+			? = ugu.user_id
 `
 
 const findWorkspacesBySystemTokenIdQuery = `
-	select
+	SELECT
 		id,
 		name,
 		created_at
-	from
+	FROM
 		workspaces w
-	inner join system_tokens_workspaces stw on
+	INNER JOIN system_tokens_workspaces stw ON
 		p.id = stw.workspace_id
-	where
+	WHERE
 		stw .system_token_id = ?
 `

@@ -29,7 +29,7 @@ import (
 )
 
 type CustomError struct {
-	ID         uuid.UUID         `json:"id"`
+	Id         uuid.UUID         `json:"id"`
 	Message    string            `json:"message"`
 	Detail     string            `json:"detail"`
 	Operations []string          `json:"-"`
@@ -77,7 +77,7 @@ func GetErrorDetails(err error) string {
 
 func NewError(message string, err error, typeError string, meta map[string]string, operations ...string) error {
 	return &CustomError{
-		ID:         uuid.New(),
+		Id:         uuid.New(),
 		Message:    message,
 		Meta:       meta,
 		Detail:     err.Error(),
@@ -97,7 +97,7 @@ func NewValidationError(validationError error, uniTranslator *ut.UniversalTransl
 	}
 
 	return &CustomError{
-		ID:        uuid.New(),
+		Id:        uuid.New(),
 		Message:   "Invalid Inputs",
 		Meta:      meta,
 		Timestamp: strconv.FormatInt(time.Now().Unix(), 10),

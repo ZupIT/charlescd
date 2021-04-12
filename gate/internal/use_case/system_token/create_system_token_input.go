@@ -34,7 +34,7 @@ type CreateSystemTokenInput struct {
 func (input CreateSystemTokenInput) InputToDomain() domain.SystemToken {
 	createdAt := time.Now()
 	return domain.SystemToken{
-		ID:            uuid.New(),
+		Id:            uuid.New(),
 		Name:          input.Name,
 		Revoked:       false,
 		Permissions:   []domain.Permission{},

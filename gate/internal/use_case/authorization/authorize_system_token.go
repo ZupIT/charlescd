@@ -67,7 +67,7 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 	}
 
 	if !systemToken.AllWorkspaces {
-		workspaces, err := authorizeSystemToken.workspaceRepository.FindWorkspacesBySystemTokenId(systemToken.ID.String())
+		workspaces, err := authorizeSystemToken.workspaceRepository.FindBySystemTokenId(systemToken.Id.String())
 		if err != nil {
 			return logging.WithOperation(err, "authorize.systemToken")
 		}
@@ -77,7 +77,7 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 		}
 	}
 
-	permissions, err := authorizeSystemToken.permissionRepository.FindPermissionsBySystemTokenId(systemToken.ID.String())
+	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenId(systemToken.Id.String())
 	if err != nil {
 		return logging.WithOperation(err, "authorize.systemToken")
 	}
@@ -97,7 +97,7 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 
 func contains(s []domain.SimpleWorkspace, e string) bool {
 	for _, a := range s {
-		if a.ID.String() == e {
+		if a.Id.String() == e {
 			return true
 		}
 	}

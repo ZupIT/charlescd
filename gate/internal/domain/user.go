@@ -24,7 +24,7 @@ import (
 )
 
 type User struct {
-	ID        uuid.UUID
+	Id        uuid.UUID
 	Name      string
 	PhotoUrl  string
 	Email     string
