@@ -109,7 +109,15 @@ const Workspaces = ({ mode }: Props) => {
       {renderModal()}
       <ContentIcon icon="workspaces">
         <Text.h2 color="light">Associated Workspaces</Text.h2>
-        <Styled.Caption color="dark">Your token have access only on these workspaces</Styled.Caption>
+        <Styled.Caption color="dark">
+        </Styled.Caption>
+        <Styled.Caption color="dark">
+          {
+            watch('allWorkspaces')
+              ? 'Your token has access to all workspaces'
+              : 'Your token have access only on these workspaces'
+          }
+        </Styled.Caption>
         <Styled.Content>
           {preview && !watch('allWorkspaces') && renderItems()}
         </Styled.Content>
