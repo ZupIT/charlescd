@@ -21,6 +21,7 @@ COPY --from=builder /app/gate/out/gate .
 COPY --from=builder /app/gate/resources/migrations resources/migrations
 COPY --from=builder /app/gate/resources/auth.conf resources/
 COPY --from=builder /app/gate/resources/policy.csv resources/
+COPY --from=builder /app/gate/internal/repository/queries internal/repository/queries
 
 EXPOSE 8080
 
