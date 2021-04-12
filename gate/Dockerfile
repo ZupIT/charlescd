@@ -19,6 +19,8 @@ FROM alpine:3.12.0
 
 COPY --from=builder /app/gate/out/gate .
 COPY --from=builder /app/gate/resources/migrations resources/migrations
+COPY --from=builder /app/gate/resources/auth.conf resources/
+COPY --from=builder /app/gate/resources/policy.csv resources/
 
 EXPOSE 8080
 
