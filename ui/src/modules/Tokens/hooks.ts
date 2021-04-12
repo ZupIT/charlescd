@@ -21,7 +21,7 @@ import { TokenPagination } from './interfaces/TokenPagination';
 import { Token, TokenCreate } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
-import { clearTokens, loadedTokens, updateTokens } from './state/actions';
+import { clearTokens, loadedTokens } from './state/actions';
 
 export const useFindAll = (): {
   getTokens: Function,
