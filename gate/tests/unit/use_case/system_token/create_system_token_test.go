@@ -32,15 +32,16 @@ func (st *SystemTokenSuite) TestCreateSystemToken() {
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
+	workspaces := utils.GetDummySimpleWorkspaces()
 
 	systemToken.Permissions = permissions
-	systemToken.Workspaces = systemTokenInput.Workspaces
+	systemToken.Workspaces = workspaces
 	systemToken.Author = authToken.Email
 
 	st.userRepository.On("ExistsByEmail", authToken.Email).Return(true, nil).Once()
 	st.permissionRepository.On("FindAll", systemTokenInput.Permissions).Return(permissions, nil).Once()
-	st.workspaceRepository.On("CountByIds", systemTokenInput.Workspaces).Return(int64(2), nil).Once()
-	st.systemTokenRepository.On("Create", mock.AnythingOfType("domain.SystemToken"), mock.AnythingOfType("[]domain.Permission")).Return(systemToken, nil).Once()
+	st.workspaceRepository.On("FindByIds", systemTokenInput.Workspaces).Return(workspaces, nil).Once()
+	st.systemTokenRepository.On("Create", mock.AnythingOfType("domain.SystemToken")).Return(systemToken, nil).Once()
 
 	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
 
@@ -54,8 +55,8 @@ func (st *SystemTokenSuite) TestCreateSystemToken() {
 
 	require.True(st.T(), st.userRepository.AssertCalled(st.T(), "ExistsByEmail", "charlesadmin@admin"))
 	require.True(st.T(), st.permissionRepository.AssertCalled(st.T(), "FindAll", systemTokenInput.Permissions))
-	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "CountByIds", systemTokenInput.Workspaces))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Create", mock.AnythingOfType("domain.SystemToken"), mock.AnythingOfType("[]domain.Permission")))
+	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "FindByIds", systemTokenInput.Workspaces))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Create", mock.AnythingOfType("domain.SystemToken")))
 
 	createdSystemToken := st.systemTokenRepository.Calls[0].Parent.Calls[0].Arguments.Get(0).(domain.SystemToken)
 	require.NotNil(st.T(), createdSystemToken)
@@ -199,14 +200,15 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceRepositoryError() 
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
+	workspaces := utils.GetDummySimpleWorkspaces()
 
 	systemToken.Permissions = permissions
-	systemToken.Workspaces = systemTokenInput.Workspaces
+	systemToken.Workspaces = workspaces
 	systemToken.Author = authToken.Email
 
 	st.userRepository.On("ExistsByEmail", authToken.Email).Return(true, nil).Once()
 	st.permissionRepository.On("FindAll", systemTokenInput.Permissions).Return(permissions, nil).Once()
-	st.workspaceRepository.On("CountByIds", systemTokenInput.Workspaces).Return(int64(0), logging.NewError("Find all workspaces failed", logging.CustomError{}, logging.InternalError, nil, "repository.CountByIds.Count")).Once()
+	st.workspaceRepository.On("FindByIds", systemTokenInput.Workspaces).Return([]domain.SimpleWorkspace{}, logging.NewError("Find all workspaces failed", logging.CustomError{}, logging.InternalError, nil, "repository.FindByIds.Count")).Once()
 
 	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
 
@@ -221,7 +223,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceRepositoryError() 
 
 	require.True(st.T(), st.userRepository.AssertCalled(st.T(), "ExistsByEmail", "charlesadmin@admin"))
 	require.True(st.T(), st.permissionRepository.AssertCalled(st.T(), "FindAll", systemTokenInput.Permissions))
-	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "CountByIds", systemTokenInput.Workspaces))
+	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "FindByIds", systemTokenInput.Workspaces))
 }
 
 func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceNotFound() {
@@ -230,14 +232,15 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceNotFound() {
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
+	workspaces := utils.GetDummySimpleWorkspaces()
 
 	systemToken.Permissions = permissions
-	systemToken.Workspaces = systemTokenInput.Workspaces
+	systemToken.Workspaces = workspaces
 	systemToken.Author = authToken.Email
 
 	st.userRepository.On("ExistsByEmail", authToken.Email).Return(true, nil).Once()
 	st.permissionRepository.On("FindAll", systemTokenInput.Permissions).Return(permissions, nil).Once()
-	st.workspaceRepository.On("CountByIds", systemTokenInput.Workspaces).Return(int64(0), nil).Once()
+	st.workspaceRepository.On("FindByIds", systemTokenInput.Workspaces).Return([]domain.SimpleWorkspace{}, nil).Once()
 
 	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
 
@@ -252,7 +255,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceNotFound() {
 
 	require.True(st.T(), st.userRepository.AssertCalled(st.T(), "ExistsByEmail", "charlesadmin@admin"))
 	require.True(st.T(), st.permissionRepository.AssertCalled(st.T(), "FindAll", systemTokenInput.Permissions))
-	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "CountByIds", systemTokenInput.Workspaces))
+	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "FindByIds", systemTokenInput.Workspaces))
 }
 
 func (st *SystemTokenSuite) TestCreateSystemTokenWithSystemTokenRepositoryError() {
@@ -260,11 +263,12 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithSystemTokenRepositoryError(
 	authToken := utils.GetDummyAuthToken()
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
+	workspaces := utils.GetDummySimpleWorkspaces()
 
 	st.userRepository.On("ExistsByEmail", authToken.Email).Return(true, nil).Once()
 	st.permissionRepository.On("FindAll", systemTokenInput.Permissions).Return(permissions, nil).Once()
-	st.workspaceRepository.On("CountByIds", systemTokenInput.Workspaces).Return(int64(2), nil).Once()
-	st.systemTokenRepository.On("Create", mock.AnythingOfType("domain.SystemToken"), mock.AnythingOfType("[]domain.Permission")).Return(domain.SystemToken{}, logging.NewError("Save system token failed", logging.CustomError{}, logging.InternalError, nil, "unit.Create.Save")).Once()
+	st.workspaceRepository.On("FindByIds", systemTokenInput.Workspaces).Return(workspaces, nil).Once()
+	st.systemTokenRepository.On("Create", mock.AnythingOfType("domain.SystemToken")).Return(domain.SystemToken{}, logging.NewError("Save system token failed", logging.CustomError{}, logging.InternalError, nil, "unit.Create.Save")).Once()
 
 	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
 
@@ -279,6 +283,6 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithSystemTokenRepositoryError(
 
 	require.True(st.T(), st.userRepository.AssertCalled(st.T(), "ExistsByEmail", "charlesadmin@admin"))
 	require.True(st.T(), st.permissionRepository.AssertCalled(st.T(), "FindAll", systemTokenInput.Permissions))
-	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "CountByIds", systemTokenInput.Workspaces))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Create", mock.AnythingOfType("domain.SystemToken"), mock.AnythingOfType("[]domain.Permission")))
+	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "FindByIds", systemTokenInput.Workspaces))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Create", mock.AnythingOfType("domain.SystemToken")))
 }

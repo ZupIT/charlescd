@@ -20,16 +20,15 @@ import Text from 'core/components/Text';
 interface Props {
   onClose?: Function;
   onContinue?: Function;
+  isLoading?: boolean;
 }
 
-const ModalRevoke = ({ onClose, onContinue }: Props) => {
+const ModalRevoke = ({ onClose, onContinue, isLoading }: Props) => {
   const handleDismiss = () => {
-    console.log('handleDismiss');
     onClose();
   }
 
   const handleContinue = () => {
-    console.log('handleContinue');
     onContinue();
   }
 
@@ -38,6 +37,7 @@ const ModalRevoke = ({ onClose, onContinue }: Props) => {
       title="Are you sure you want to revoke this token?"
       dismissLabel="Cancel, keep token"
       continueLabel="Yes, revoke token"
+      isLoading={isLoading}
       onContinue={handleContinue}
       onDismiss={handleDismiss}
     >

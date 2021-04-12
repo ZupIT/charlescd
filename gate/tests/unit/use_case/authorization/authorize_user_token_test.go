@@ -59,6 +59,7 @@ func (as *AuthorizeSuite) TestAuthorizeRootUserTokenClosedPath() {
 	var user = utils.GetDummyRootUser()
 
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()
+	as.workspaceRepository.On("GetUserPermissionAtWorkspace", "workspaceId", user.ID).Once()
 
 	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
@@ -69,7 +70,7 @@ func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithoutPermissi
 	var path = "/v2/workspaces/users"
 	var method = "GET"
 	var user = utils.GetDummyUser()
-	var permissions = [][]domain.Permission{ utils.GetDummyPermissions() }
+	var permissions = [][]domain.Permission{utils.GetDummyPermissions()}
 
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()
 	as.workspaceRepository.On("GetUserPermissionAtWorkspace", "workspaceId", user.ID.String()).Return(permissions, nil).Once()
@@ -84,7 +85,7 @@ func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithPermissions
 	var path = "/v2/circles/"
 	var method = "POST"
 	var user = utils.GetDummyUser()
-	var permissions = [][]domain.Permission{ utils.GetDummyPermissions() }
+	var permissions = [][]domain.Permission{utils.GetDummyPermissions()}
 
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()
 	as.workspaceRepository.On("GetUserPermissionAtWorkspace", "workspaceId", user.ID.String()).Return(permissions, nil).Once()

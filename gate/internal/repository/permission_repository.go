@@ -68,7 +68,7 @@ func (permissionRepository permissionRepository) FindBySystemTokenId(systemToken
 	res := permissionRepository.db.Raw(permissionRepository.queries["find-permissions-by-system-token-id"], systemTokenId).Scan(&permissions)
 
 	if res.Error != nil {
-		return []domain.Permission{}, handlePermissionError("Find all permissions failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
+		return []domain.Permission{}, handlePermissionError("Find all permissions by system token id failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
 	}
 
 	return mapper.PermissionsModelToDomains(permissions), nil

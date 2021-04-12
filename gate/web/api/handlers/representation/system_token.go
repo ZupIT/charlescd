@@ -27,22 +27,24 @@ import (
 )
 
 type SystemTokenRequest struct {
-	Name        string   `json:"name" validate:"required,notblank"`
-	Permissions []string `json:"permissions" validate:"min=1,dive,notblank"`
-	Workspaces  []string `json:"workspaces" validate:"required"`
+	Name          string   `json:"name" validate:"required,notblank"`
+	Permissions   []string `json:"permissions" validate:"min=1,dive,notblank"`
+	Workspaces    []string `json:"workspaces" validate:"required"`
+	AllWorkspaces bool     `json:"allWorkspaces"`
 }
 
 type SystemTokenResponse struct {
-	ID          uuid.UUID  `json:"id"`
-	Name        string     `json:"name"`
-	Permissions []string   `json:"permissions"`
-	Workspaces  []string   `json:"workspaces"`
-	Revoked     bool       `json:"revoked"`
-	Token       string     `json:"token,omitempty"`
-	CreatedAt   *time.Time `json:"created_at"`
-	RevokedAt   *time.Time `json:"revoked_at"`
-	LastUsedAt  *time.Time `json:"last_used_at"`
-	Author      string     `json:"author"`
+	ID            uuid.UUID                `json:"id"`
+	Name          string                   `json:"name"`
+	Permissions   []string                 `json:"permissions"`
+	Workspaces    []domain.SimpleWorkspace `json:"workspaces"`
+	AllWorkspaces bool                     `json:"allWorkspaces"`
+	Revoked       bool                     `json:"revoked"`
+	Token         string                   `json:"token,omitempty"`
+	CreatedAt     *time.Time               `json:"created_at"`
+	RevokedAt     *time.Time               `json:"revoked_at"`
+	LastUsedAt    *time.Time               `json:"last_used_at"`
+	Author        string                   `json:"author"`
 }
 
 type PageSystemTokenResponse struct {
@@ -59,24 +61,26 @@ type RegenerateTokenResponse struct {
 
 func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.CreateSystemTokenInput {
 	return system_token.CreateSystemTokenInput{
-		Name:        systemTokenRequest.Name,
-		Permissions: systemTokenRequest.Permissions,
-		Workspaces:  systemTokenRequest.Workspaces,
+		Name:          systemTokenRequest.Name,
+		Permissions:   systemTokenRequest.Permissions,
+		Workspaces:    systemTokenRequest.Workspaces,
+		AllWorkspaces: systemTokenRequest.AllWorkspaces,
 	}
 }
 
 func DomainToResponse(systemToken domain.SystemToken, tokenValue string) SystemTokenResponse {
 	return SystemTokenResponse{
-		ID:          systemToken.ID,
-		Name:        systemToken.Name,
-		Permissions: mapper.GetPermissionModelsName(systemToken.Permissions),
-		Workspaces:  systemToken.Workspaces,
-		Revoked:     systemToken.Revoked,
-		Token:       tokenValue,
-		CreatedAt:   systemToken.CreatedAt,
-		RevokedAt:   systemToken.RevokedAt,
-		LastUsedAt:  systemToken.LastUsedAt,
-		Author:      systemToken.Author,
+		ID:            systemToken.ID,
+		Name:          systemToken.Name,
+		Permissions:   mapper.GetPermissionModelsName(systemToken.Permissions),
+		Workspaces:    systemToken.Workspaces,
+		AllWorkspaces: systemToken.AllWorkspaces,
+		Revoked:       systemToken.Revoked,
+		Token:         tokenValue,
+		CreatedAt:     systemToken.CreatedAt,
+		RevokedAt:     systemToken.RevokedAt,
+		LastUsedAt:    systemToken.LastUsedAt,
+		Author:        systemToken.Author,
 	}
 }
 

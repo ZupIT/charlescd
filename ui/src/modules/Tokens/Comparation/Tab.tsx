@@ -27,8 +27,6 @@ import Form from './Form';
 import { Token } from '../interfaces';
 import { useFind, useRevoke, useRegenerate } from '../hooks';
 import { resolveParams } from './helpers';
-// import FormModule from './Form';
-// import ViewModule from './View';
 import ModalRevoke from './Modal/Revoke';
 import ModalRegenerate from './Modal/Regenerate';
 import ModalCopy from './Form/Modal';
@@ -47,12 +45,11 @@ const Tab = ({ param }: Props) => {
   const [isNewToken, setIsNewToken] = useState<boolean>();
   const [token, setToken] = useState<Token>(null);
   const { getById, response } = useFind();
-  const { revokeById } = useRevoke();
-  const { regenerateById, response: regenerated } = useRegenerate();
+  const { revokeById, status: revokeStatus } = useRevoke();
+  const { regenerateById, response: regenerated, status } = useRegenerate();
   const isLoading = isEmpty(token) && id !== NEW_TAB;
 
   const toggleRevoke = () => setIsRevoke(!isRevoke);
-  const toggleRegenerate = () => setIsRegenerate(!isRegenerate);
 
   useEffect(() => {
     if (response) {
@@ -61,30 +58,35 @@ const Tab = ({ param }: Props) => {
   }, [response, setToken]);
 
   useEffect(() => {
+    if (revokeStatus === 'resolved') {
+      delParam('token', routes.tokensComparation, history, param);
+    }
+  }, [revokeStatus, history, param]);
+
+  useEffect(() => {
     if (id !== NEW_TAB) {
       getById(id);
     }
   }, [id, getById]);
 
   useEffect(() => {
-    if (regenerated) {
-      setIsNewToken(!isNewToken);
+    if (regenerated && status === 'resolved') {
+      setIsNewToken(true);
+      setIsRegenerate(false);
     }
-  }, [setIsNewToken, isNewToken, regenerated]);
+  }, [regenerated, status]);
 
   const handleRevoke = () => {
-    toggleRevoke();
     revokeById(id);
   };
 
   const handleRegenerate = () => {
-    toggleRegenerate();
     regenerateById(id);
   };
 
   const renderTabs = () => (
     <Styled.Tab>
-      <Form mode={mode} />
+      <Form mode={mode} data={response} />
     </Styled.Tab>
   );
 
@@ -95,7 +97,7 @@ const Tab = ({ param }: Props) => {
           <LabeledIcon
             icon="revoke"
             marginContent="5px"
-            onClick={toggleRegenerate}
+            onClick={() => setIsRegenerate(true)}
           >
             <Text.h5 color="dark">Regenerate token</Text.h5>
           </LabeledIcon>
@@ -116,13 +118,25 @@ const Tab = ({ param }: Props) => {
       title="Your token has been regenerated!"
       description="You can now use the token according to the settings you have created."
       token={regenerated?.token}
+      onClose={() => setIsNewToken(false)}
     />
   );
 
   return (
     <Styled.Tab>
-      {isRevoke && <ModalRevoke onClose={toggleRevoke} onContinue={handleRevoke} />}
-      {isRegenerate && <ModalRegenerate onClose={toggleRegenerate} onContinue={handleRegenerate} />}
+      {isRevoke && (
+        <ModalRevoke
+          onClose={toggleRevoke}
+          onContinue={handleRevoke}
+          isLoading={revokeStatus === 'pending'}
+        />)}
+      {isRegenerate && (
+        <ModalRegenerate
+          onClose={() => setIsRegenerate(false)}
+          onContinue={handleRegenerate}
+          isLoading={status === 'pending'}
+        />
+      )}
       {isNewToken && <ModalNewToken />}
       <TabPanel
         name="token"

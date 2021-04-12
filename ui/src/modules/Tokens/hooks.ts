@@ -14,57 +14,42 @@
  * limitations under the License.
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
 import { findAll, findById, revoke, regenerate, create } from 'core/providers/tokens';
-import { TokenPagination, TokenPaginationItem } from './interfaces/TokenPagination';
+import { TokenPagination } from './interfaces/TokenPagination';
 import { Token, TokenCreate } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
-
-type TokenResponse = {
-  tokens: TokenPaginationItem[],
-  status: FetchStatuses,
-  last: boolean,
-}
+import { clearTokens, loadedTokens } from './state/actions';
 
 export const useFindAll = (): {
   getTokens: Function,
   resetTokens: Function,
-  data: TokenResponse,
+  status: FetchStatuses,
 } => {
   const getAll = useFetchData<TokenPagination>(findAll);
-  const reset = useRef<boolean>(false);
-  const [data, setData] = useState<TokenResponse>({
-    tokens: [],
-    status: 'idle',
-    last: true
-  });
-  const resetTokens = () => reset.current = true;
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const dispatch = useDispatch();
+  const resetTokens = useCallback(() => dispatch(clearTokens()), [dispatch]);
 
   const getTokens = useCallback(
     async (name: string, page: string) => {
       try {
-        setData({ ...data, status: 'pending' });
+        setStatus('pending');
+        resetTokens();
         const res = await getAll({ name, page });
-        setData({
-          tokens: reset.current
-            ? res.content
-            : [...data.tokens, ...res.content],
-          last: res.last,
-          status: 'resolved'
-        });
-
-        reset.current = false;
+        dispatch(loadedTokens(res));
+        setStatus('resolved');
       } catch (e) {
-        setData({ ...data, status: 'rejected' });
+        setStatus('rejected');
       }
-    }, [getAll, data]);
+    }, [getAll, resetTokens, dispatch]);
 
   return {
     getTokens,
     resetTokens,
-    data
+    status
   }
 };
 
@@ -97,11 +82,13 @@ export const useRevoke = () => {
   const fetchData = useFetchData<Token>(revoke);
   const [response, setResponse] = useState<Token>();
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const { getTokens } = useFindAll();
 
   const revokeById = useCallback(async (id: string) => {
     try {
       setStatus('pending');
       const data = await fetchData(id);
+      await getTokens();
       setStatus('resolved');
       setResponse(data);
 
@@ -109,7 +96,7 @@ export const useRevoke = () => {
     } catch (e) {
       setStatus('rejected');
     }
-  }, [fetchData]);
+  }, [fetchData, getTokens]);
 
   return {
     revokeById,
@@ -149,12 +136,14 @@ export const useSave = () => {
   const saveToken = useFetchData<Token>(create);
   const [response, setResponse] = useState<Token>();
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const { getTokens } = useFindAll();
   const dispatch = useDispatch();
 
   const save = useCallback(async (token: TokenCreate) => {
     try {
       setStatus('pending');
       const data = await saveToken(token);
+      await getTokens();
       setStatus('resolved');
       setResponse(data);
 
@@ -168,7 +157,7 @@ export const useSave = () => {
       );
       setStatus('rejected');
     }
-  }, [saveToken, dispatch]);
+  }, [saveToken, dispatch, getTokens]);
 
   return {
     save,

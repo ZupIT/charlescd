@@ -139,7 +139,7 @@ func (server server) registerRoutes() {
 			{
 				authorize.POST("", handlers.DoAuthorization(
 					authorizationInteractor.NewAuthorizeUserToken(server.serviceManager.securityFilter, server.persistenceManager.userRepository, server.persistenceManager.workspaceRepository, server.serviceManager.authTokenService),
-					authorizationInteractor.NewAuthorizeSystemToken(server.serviceManager.securityFilter, server.persistenceManager.systemTokenRepository, server.persistenceManager.permissionRepository)))
+					authorizationInteractor.NewAuthorizeSystemToken(server.serviceManager.securityFilter, server.persistenceManager.systemTokenRepository, server.persistenceManager.permissionRepository, server.persistenceManager.workspaceRepository)))
 			}
 		}
 	}
