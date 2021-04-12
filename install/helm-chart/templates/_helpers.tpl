@@ -331,11 +331,17 @@ env:
     value: "disable"
   - name: ENV
     value: "PROD"
+  - name: POLICY_PATH
+    value: "{{ .RangeContext.policyPath}}"
+  - name: AUTH_CONF_PATH
+    value: "{{ .RangeContext.authConfPath}}"
   - name: ENCRYPTION_KEY
     valueFrom:
       secretKeyRef:
         name: "gate-aes256-key"
         key: "encryption-key"
+  - name: QUERIES_PATH
+    value: "{{ .RangeContext.queiresPath}}"
 {{- end -}}
 
 {{/*

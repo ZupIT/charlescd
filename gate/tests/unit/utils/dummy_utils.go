@@ -33,8 +33,8 @@ func GetDummySystemToken() domain.SystemToken {
 		ID:          uuid.New(),
 		Name:        "System Token Test",
 		Revoked:     false,
-		Permissions: nil,
-		Workspaces:  nil,
+		Permissions: GetDummyPermissions(),
+		Workspaces: []string{"workspace-id"},
 		Token:       "System Token Value",
 		CreatedAt:   &createdTime,
 		RevokedAt:   nil,
@@ -51,8 +51,12 @@ func GetDummyAuthToken() service.AuthToken {
 	}
 }
 
-func GetDummyAuthorization() string {
+func GetDummyRootAuthorization() string {
 	return "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTU4MjQzNjgsImlhdCI6MTYxMjU1Mzc4NiwiYXV0aF90aW1lIjoxNjEyNTM1NDE0LCJqdGkiOiI0ZTQ4YWQwNS00M2RkLTQ3NDYtYTc1YS1kYmVjZmIxMDVjNzUiLCJpc3MiOiJodHRwOi8vc2FtcGxlLmlkbS5jb20vYXV0aC9yZWFsbXMvc2FtcGxlLXJlYWxtIiwic3ViIjoiYTRlZGJlMDItZWViOC00N2NiLWFlOTctY2I0NDg2ZmIxZTE0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2FtcGxlLWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiJkZDUzMzc5My01MGE5LTQ0ODAtODE1Ni03MWI1N2JlOWYyYTEiLCJhY3IiOiIwIiwibmFtZSI6IkNoYXJsZXMgQWRtaW4iLCJlbWFpbCI6ImNoYXJsZXNhZG1pbkBhZG1pbiJ9.a4lB--p4k4I-628Tw9anvaHUFc6vNrFhyja03H8hwkI"
+}
+
+func GetDummyAuthorization() string {
+	return "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTU4MjQzNjgsImlhdCI6MTYxMjU1Mzc4NiwiYXV0aF90aW1lIjoxNjEyNTM1NDE0LCJqdGkiOiI0ZTQ4YWQwNS00M2RkLTQ3NDYtYTc1YS1kYmVjZmIxMDVjNzUiLCJpc3MiOiJodHRwOi8vc2FtcGxlLmlkbS5jb20vYXV0aC9yZWFsbXMvc2FtcGxlLXJlYWxtIiwic3ViIjoiYTRlZGJlMDItZWViOC00N2NiLWFlOTctY2I0NDg2ZmIxZTE0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2FtcGxlLWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiJkZDUzMzc5My01MGE5LTQ0ODAtODE1Ni03MWI1N2JlOWYyYTEiLCJhY3IiOiIwIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2huZG9lQGVtYWlsLmNvbSJ9.W7FNE-sQkCpJUjBjGoK7eE8Mgf92Mn56IL_vFWDAw4A"
 }
 
 func GetDummyAuthorizationNotFound() string {
@@ -72,12 +76,10 @@ func GetDummyPermissions() []domain.Permission {
 		{
 			ID:        uuid.New(),
 			Name:      "circles_write",
-			CreatedAt: time.Now(),
 		},
 		{
 			ID:        uuid.New(),
 			Name:      "deploy_write",
-			CreatedAt: time.Now(),
 		},
 	}
 }
@@ -88,5 +90,34 @@ func GetDummyPage() domain.Page {
 		PageSize:   20,
 		Sort:       "sort",
 		Total:      2,
+	}
+}
+
+func GetDummyAuthorizationAuthorization(path string, method string) domain.Authorization {
+	return domain.Authorization{
+		Path: path,
+		Method: method,
+	}
+}
+
+func GetDummyRootUser() domain.User {
+	return domain.User{
+		ID:        uuid.New(),
+		Name:      "Charles Admin",
+		PhotoUrl:  "",
+		Email:     "charlesadmin@admin",
+		IsRoot:    true,
+		CreatedAt: time.Now(),
+	}
+}
+
+func GetDummyUser() domain.User {
+	return domain.User{
+		ID:        uuid.New(),
+		Name:      "John Doe",
+		PhotoUrl:  "",
+		Email:     "johndoe@email.com",
+		IsRoot:    false,
+		CreatedAt: time.Now(),
 	}
 }

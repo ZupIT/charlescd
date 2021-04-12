@@ -16,15 +16,9 @@
  *
  */
 
-package models
+package domain
 
-import (
-	"github.com/google/uuid"
-	"time"
-)
-
-type Permission struct {
-	ID        uuid.UUID
-	Name      string
-	CreatedAt *time.Time `gorm:"-"`
+type Authorization struct {
+	Path   string
+	Method string
 }

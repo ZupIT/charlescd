@@ -86,6 +86,27 @@ func (_m *SystemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, err
 	return r0, r1
 }
 
+// FindByToken provides a mock function with given fields: token
+func (_m *SystemTokenRepository) FindByToken(token string) (domain.SystemToken, error) {
+	ret := _m.Called(token)
+
+	var r0 domain.SystemToken
+	if rf, ok := ret.Get(0).(func(string) domain.SystemToken); ok {
+		r0 = rf(token)
+	} else {
+		r0 = ret.Get(0).(domain.SystemToken)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(token)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Update provides a mock function with given fields: systemToken
 func (_m *SystemTokenRepository) Update(systemToken domain.SystemToken) error {
 	ret := _m.Called(systemToken)

@@ -19,38 +19,67 @@
 package repository
 
 import (
+	"fmt"
+	"github.com/ZupIT/charlescd/gate/internal/configuration"
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
+	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error)
 	FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
+	FindByToken(token string) (domain.SystemToken, error)
 	Update(systemToken domain.SystemToken) error
 }
 
 type systemTokenRepository struct {
+	queries goyesql.Queries
 	db      *gorm.DB
 }
 
-func NewSystemTokenRepository(db *gorm.DB) (SystemTokenRepository, error) {
-	return systemTokenRepository{db: db}, nil
+func NewSystemTokenRepository(db *gorm.DB, queriesPath string) (SystemTokenRepository, error) {
+	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "system_token_queries.sql"))
+	if err != nil {
+		return systemTokenRepository{}, err
+	}
+
+	return systemTokenRepository{
+		queries: queries,
+		db:      db,
+	}, nil
 }
 
 func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error) {
 	systemToken.ID = uuid.New()
 	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken, permissions)
 
-	if res := systemTokenRepository.db.Table("system_tokens").Create(&systemTokenToSave); res.Error != nil {
-		return domain.SystemToken{}, handleSystemTokenError("Save system token failed", "SystemTokenRepository.Create.Save", res.Error, logging.InternalError)
+	if err := systemTokenRepository.db.Transaction(
+		func(tx *gorm.DB) error {
+			res := systemTokenRepository.db.Table("system_tokens").Create(insertSystemTokenMap(systemTokenToSave))
+			if res.Error != nil {
+				return res.Error
+			}
+
+			for i := range permissions {
+				res = systemTokenRepository.db.Table("system_tokens_permissions").Create(insertSystemTokenPermissionsMap(systemTokenToSave.ID, permissions[i].ID))
+				if res.Error != nil {
+					return res.Error
+				}
+			}
+
+			return nil
+		}); err != nil {
+		return domain.SystemToken{}, handleSystemTokenError("Save system token failed", "SystemTokenRepository.Create.Save", err, logging.InternalError)
 	}
 
-	return mapper.SystemTokenModelToDomain(systemTokenToSave, systemTokenToSave.Token.Raw.(string)), nil
+	return mapper.SystemTokenModelToDomain(systemTokenToSave), nil
 }
 
 func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
@@ -77,7 +106,7 @@ func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Pa
 	return mapper.SystemTokensModelToDomains(systemTokens), page, nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error)  {
+func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
 	var systemToken models.SystemToken
 
 	res := systemTokenRepository.db.Model(models.SystemToken{}).
@@ -91,7 +120,22 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 		}
 		return domain.SystemToken{}, handleSystemTokenError("Find token failed", "SystemTokenRepository.FindById.First", res.Error, logging.InternalError)
 	}
-	return mapper.SystemTokenModelToDomain(systemToken, ""), nil
+	return mapper.SystemTokenModelToDomain(systemToken), nil
+}
+
+func (systemTokenRepository systemTokenRepository) FindByToken(token string) (domain.SystemToken, error) {
+	var systemToken models.SystemToken
+
+	res := systemTokenRepository.db.Raw(systemTokenRepository.queries["find-system-token-from-token"], token).First(&systemToken)
+
+	if res.Error != nil {
+		if res.Error.Error() == "record not found" {
+			return domain.SystemToken{}, handleSystemTokenError("Token not found", "SystemTokenRepository.FindById.First", res.Error, logging.NotFoundError)
+		}
+		return domain.SystemToken{}, handleSystemTokenError("Find token failed", "SystemTokenRepository.FindById.First", res.Error, logging.InternalError)
+	}
+
+	return mapper.SystemTokenModelToDomain(systemToken), nil
 }
 
 func (systemTokenRepository systemTokenRepository) Update(systemToken domain.SystemToken) error {
@@ -108,4 +152,31 @@ func (systemTokenRepository systemTokenRepository) Update(systemToken domain.Sys
 
 func handleSystemTokenError(message string, operation string, err error, errType string) error {
 	return logging.NewError(message, err, errType, nil, operation)
+}
+
+func insertSystemTokenMap(systemToken models.SystemToken) map[string]interface{} {
+	return map[string]interface{}{
+		"id":         systemToken.ID,
+		"name":       systemToken.Name,
+		"revoked":    systemToken.Revoked,
+		"workspaces": systemToken.Workspaces,
+		"token": clause.Expr{
+			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
+			Vars: []interface{}{
+				fmt.Sprintf("%s", systemToken.Token),
+				fmt.Sprintf("%s", configuration.Get("ENCRYPTION_KEY")),
+			},
+		},
+		"created_at":   systemToken.CreatedAt,
+		"revoked_at":   systemToken.RevokedAt,
+		"last_used_at": systemToken.LastUsedAt,
+		"author_email": systemToken.Author,
+	}
+}
+
+func insertSystemTokenPermissionsMap(systemTokenId, permissionId uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{
+		"system_token_id": systemTokenId,
+		"permission_id":   permissionId,
+	}
 }

@@ -21,10 +21,10 @@ package main
 import (
 	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
+	authorizationInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/authorization"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
-	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -40,23 +40,22 @@ import (
 
 type server struct {
 	persistenceManager persistenceManager
-	serviceManager serviceManager
-	httpServer     *echo.Echo
-	enforcer *casbin.Enforcer
+	serviceManager     serviceManager
+	httpServer         *echo.Echo
 }
 
 type customBinder struct{}
 
 type CustomValidator struct {
-	validator *validator.Validate
+	validator  *validator.Validate
 	translator *ut.UniversalTranslator
 }
 
 func newServer(pm persistenceManager, sm serviceManager) (server, error) {
 	return server{
-		persistenceManager:   pm,
-		serviceManager: sm,
-		httpServer: createHttpServerInstance(),
+		persistenceManager: pm,
+		serviceManager:     sm,
+		httpServer:         createHttpServerInstance(),
 	}, nil
 }
 
@@ -134,6 +133,13 @@ func (server server) registerRoutes() {
 				systemToken.GET("", handlers.GetAllSystemTokens(systemTokenInteractor.NewGetAllSystemToken(server.persistenceManager.systemTokenRepository)))
 				systemToken.POST("/:id/revoke", handlers.RevokeSystemToken(systemTokenInteractor.NewRevokeSystemToken(server.persistenceManager.systemTokenRepository)))
 				systemToken.PUT("/:id/regenerate", handlers.RegenerateSystemToken(systemTokenInteractor.NewRegenerateSystemToken(server.persistenceManager.systemTokenRepository)))
+			}
+
+			authorize := v1.Group("/authorize")
+			{
+				authorize.POST("", handlers.DoAuthorization(
+					authorizationInteractor.NewAuthorizeUserToken(server.serviceManager.securityFilter, server.persistenceManager.userRepository, server.persistenceManager.workspaceRepository, server.serviceManager.authTokenService),
+					authorizationInteractor.NewAuthorizeSystemToken(server.serviceManager.securityFilter, server.persistenceManager.systemTokenRepository, server.persistenceManager.permissionRepository)))
 			}
 		}
 	}

@@ -38,6 +38,8 @@ func getErrorStatusCode(errType string) int {
 		return http.StatusUnprocessableEntity
 	case logging.NotFoundError:
 		return http.StatusNotFound
+	case logging.ForbiddenError:
+		return http.StatusForbidden
 	default:
 		return http.StatusInternalServerError
 	}
