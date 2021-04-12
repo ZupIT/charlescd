@@ -27,8 +27,6 @@ import Form from './Form';
 import { Token } from '../interfaces';
 import { useFind, useRevoke, useRegenerate } from '../hooks';
 import { resolveParams } from './helpers';
-// import FormModule from './Form';
-// import ViewModule from './View';
 import ModalRevoke from './Modal/Revoke';
 import ModalRegenerate from './Modal/Regenerate';
 import ModalCopy from './Form/Modal';
@@ -84,7 +82,7 @@ const Tab = ({ param }: Props) => {
 
   const renderTabs = () => (
     <Styled.Tab>
-      <Form mode={mode} />
+      <Form mode={mode} data={response} />
     </Styled.Tab>
   );
 

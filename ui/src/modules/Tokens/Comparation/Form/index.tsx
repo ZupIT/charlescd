@@ -16,7 +16,7 @@
 
 import { Fragment, useState, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { TokenCreate } from 'modules/Tokens/interfaces';
+import { Token, TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
 import map from 'lodash/map';
@@ -27,15 +27,17 @@ import Workspaces from './Workspaces';
 import Scopes from './Scopes';
 import ModalCopy from './Modal';
 import Styled from './styled';
+import { isEmpty } from 'lodash';
 
 interface Props {
   mode?: Mode;
+  data?: Token;
 }
 
-const FormToken = ({ mode }: Props) => {
+const FormToken = ({ mode, data }: Props) => {
   const { save, response, status } = useSave();
   const [isModalCopy, setIsModalCopy] = useState<boolean>();
-  const methods = useForm<TokenCreate>({ mode: 'onChange' });
+  const methods = useForm<TokenCreate>({ mode: 'onChange', defaultValues: data });
   const {
     register, handleSubmit, watch,
     errors, formState: { isValid }
@@ -78,6 +80,7 @@ const FormToken = ({ mode }: Props) => {
             <Form.InputTitle
               name="name"
               ref={register(isRequiredAndNotBlank)}
+              readOnly={!isEmpty(data)}
               error={errors?.name?.message}
             />
           </ContentIcon>
@@ -85,14 +88,16 @@ const FormToken = ({ mode }: Props) => {
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
-              <Styled.Button
-                type="submit"
-                size="EXTRA_SMALL"
-                isDisabled={!isValid}
-                isLoading={status === 'pending'}
-              >
-                Generate token
-              </Styled.Button>
+              {mode === 'create' && (
+                <Styled.Button
+                  type="submit"
+                  size="EXTRA_SMALL"
+                  isDisabled={!isValid}
+                  isLoading={status === 'pending'}
+                >
+                  Generate token
+                </Styled.Button>
+              )}
             </Fragment>
           )}
         </Styled.Form>
