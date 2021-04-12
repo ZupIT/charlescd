@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import { Token } from '../interfaces';
 import { TokenPagination } from '../interfaces/TokenPagination';
 
 export enum ACTION_TYPES {
   loadedTokens = 'TOKENS/LOADED',
-  clearTokens = 'TOKENS/CLEAR'
+  clearTokens = 'TOKENS/CLEAR',
+  updateTokens = 'TOKENS/UPDATE'
 }
 
 interface LoadedTokens {
@@ -39,4 +41,17 @@ export const clearTokens = (): ClearTokens => ({
   type: ACTION_TYPES.clearTokens
 })
 
-export type TokensActionTypes = LoadedTokens | ClearTokens;
+interface UpdateTokens {
+  type: typeof ACTION_TYPES.updateTokens;
+  payload: Token;
+}
+
+export const updateTokens = (payload: Token): UpdateTokens => ({
+  type: ACTION_TYPES.updateTokens,
+  payload
+})
+
+export type TokensActionTypes =
+  LoadedTokens
+  | ClearTokens
+  | UpdateTokens;

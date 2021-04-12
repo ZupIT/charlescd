@@ -16,6 +16,7 @@
 
 import { TokensActionTypes, ACTION_TYPES } from './actions';
 import { TokenPagination } from '../interfaces/TokenPagination';
+import map from 'lodash/map';
 
 export interface TokensState {
   list: TokenPagination;
@@ -51,6 +52,21 @@ export const tokensReducer = (
         list: {
           ...state.list,
           content: []
+        }
+      };
+    }
+    case ACTION_TYPES.updateTokens: {
+      const { payload } = action;
+      const newToken = payload;
+      const content = map(state.list.content, token => {
+        return token?.id === newToken?.id ? newToken : token;
+      });
+
+      return {
+        ...state,
+        list: {
+          ...state.list,
+          content
         }
       };
     }

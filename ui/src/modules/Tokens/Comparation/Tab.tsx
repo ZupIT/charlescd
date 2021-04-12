@@ -45,7 +45,7 @@ const Tab = ({ param }: Props) => {
   const [isNewToken, setIsNewToken] = useState<boolean>();
   const [token, setToken] = useState<Token>(null);
   const { getById, response } = useFind();
-  const { revokeById } = useRevoke();
+  const { revokeById, status: revokeStatus } = useRevoke();
   const { regenerateById, response: regenerated, status } = useRegenerate();
   const isLoading = isEmpty(token) && id !== NEW_TAB;
 
@@ -56,6 +56,12 @@ const Tab = ({ param }: Props) => {
       setToken(response);
     }
   }, [response, setToken]);
+
+  useEffect(() => {
+    if (revokeStatus === 'resolved') {
+      delParam('token', routes.tokensComparation, history, param)
+    }
+  }, [revokeStatus, history, param]);
 
   useEffect(() => {
     if (id !== NEW_TAB) {
@@ -73,7 +79,7 @@ const Tab = ({ param }: Props) => {
   const handleRevoke = () => {
     toggleRevoke();
     revokeById(id);
-  };
+};
 
   const handleRegenerate = () => {
     regenerateById(id);

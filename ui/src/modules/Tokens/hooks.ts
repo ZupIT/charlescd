@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
 import { findAll, findById, revoke, regenerate, create } from 'core/providers/tokens';
 import { TokenPagination } from './interfaces/TokenPagination';
 import { Token, TokenCreate } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
-import { clearTokens, loadedTokens } from './state/actions';
+import { clearTokens, loadedTokens, updateTokens } from './state/actions';
 
 export const useFindAll = (): {
   getTokens: Function,
@@ -142,6 +142,7 @@ export const useSave = () => {
     try {
       setStatus('pending');
       const data = await saveToken(token);
+      dispatch(updateTokens(data))
       setStatus('resolved');
       setResponse(data);
 

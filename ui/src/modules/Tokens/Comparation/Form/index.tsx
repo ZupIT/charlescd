@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Fragment, useState, useEffect, useCallback } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Token, TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
@@ -28,6 +28,10 @@ import Scopes from './Scopes';
 import ModalCopy from './Modal';
 import Styled from './styled';
 import { isEmpty } from 'lodash';
+import { updateParam } from 'core/utils/path';
+import routes from 'core/constants/routes';
+import { useHistory } from 'react-router';
+import { NEW_TAB } from 'core/components/TabPanel/constants';
 
 interface Props {
   mode?: Mode;
@@ -38,6 +42,7 @@ const FormToken = ({ mode, data }: Props) => {
   const { save, response, status } = useSave();
   const [isModalCopy, setIsModalCopy] = useState<boolean>();
   const methods = useForm<TokenCreate>({ mode: 'onChange', defaultValues: data });
+  const history = useHistory();
   const {
     register, handleSubmit, watch,
     errors, formState: { isValid }
@@ -54,29 +59,31 @@ const FormToken = ({ mode, data }: Props) => {
     save({ ...rest, workspaces: ws });
   };
   
-  const toggleModalCopy = useCallback(() => setIsModalCopy(!isModalCopy), [isModalCopy]);
-
-  console.log('FORM');
-
   useEffect(() => {
     if (response?.token) {
-      console.log('show Modal', response?.token);
-      // toggleModalCopy();
+      setIsModalCopy(true);
+      updateParam(
+        'token',
+        routes.tokensComparation,
+        history,
+        NEW_TAB,
+        `${response?.id}`
+      );
     }
-  }, [response?.token]);
+  }, [response, history]);
 
   const ModalNewToken = () => (
     <ModalCopy
       title="Your token has been registered!"
       description="You can now use the token according to the settings you have created."
       token={response?.token}
-      onClose={toggleModalCopy}
+      onClose={() => setIsModalCopy(false)}
     />
   )
 
   return (
     <Styled.Content>
-      {/* {isModalCopy && <ModalNewToken />} */}
+      {isModalCopy && <ModalNewToken />}
       <FormProvider {...methods}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <ContentIcon icon="token">
