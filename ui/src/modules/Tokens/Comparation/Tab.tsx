@@ -59,7 +59,7 @@ const Tab = ({ param }: Props) => {
 
   useEffect(() => {
     if (revokeStatus === 'resolved') {
-      delParam('token', routes.tokensComparation, history, param)
+      delParam('token', routes.tokensComparation, history, param);
     }
   }, [revokeStatus, history, param]);
 
@@ -77,9 +77,8 @@ const Tab = ({ param }: Props) => {
   }, [regenerated, status]);
 
   const handleRevoke = () => {
-    toggleRevoke();
     revokeById(id);
-};
+  };
 
   const handleRegenerate = () => {
     regenerateById(id);
@@ -125,8 +124,19 @@ const Tab = ({ param }: Props) => {
 
   return (
     <Styled.Tab>
-      {isRevoke && <ModalRevoke onClose={toggleRevoke} onContinue={handleRevoke} />}
-      {isRegenerate && <ModalRegenerate onClose={() => setIsRegenerate(false)} onContinue={handleRegenerate} />}
+      {isRevoke && (
+        <ModalRevoke
+          onClose={toggleRevoke}
+          onContinue={handleRevoke}
+          isLoading={revokeStatus === 'pending'}
+        />)}
+      {isRegenerate && (
+        <ModalRegenerate
+          onClose={() => setIsRegenerate(false)}
+          onContinue={handleRegenerate}
+          isLoading={status === 'pending'}
+        />
+      )}
       {isNewToken && <ModalNewToken />}
       <TabPanel
         name="token"

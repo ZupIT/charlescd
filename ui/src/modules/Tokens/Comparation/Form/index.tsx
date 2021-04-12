@@ -61,7 +61,6 @@ const FormToken = ({ mode, data }: Props) => {
   
   useEffect(() => {
     if (response?.token) {
-      setIsModalCopy(true);
       updateParam(
         'token',
         routes.tokensComparation,

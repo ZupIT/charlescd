@@ -88,7 +88,7 @@ export const useRevoke = () => {
     try {
       setStatus('pending');
       const data = await fetchData(id);
-      getTokens();
+      await getTokens();
       setStatus('resolved');
       setResponse(data);
 
@@ -136,13 +136,14 @@ export const useSave = () => {
   const saveToken = useFetchData<Token>(create);
   const [response, setResponse] = useState<Token>();
   const [status, setStatus] = useState<FetchStatuses>('idle');
+  const { getTokens } = useFindAll();
   const dispatch = useDispatch();
 
   const save = useCallback(async (token: TokenCreate) => {
     try {
       setStatus('pending');
       const data = await saveToken(token);
-      dispatch(updateTokens(data))
+      await getTokens();
       setStatus('resolved');
       setResponse(data);
 
@@ -156,7 +157,7 @@ export const useSave = () => {
       );
       setStatus('rejected');
     }
-  }, [saveToken, dispatch]);
+  }, [saveToken, dispatch, getTokens]);
 
   return {
     save,
