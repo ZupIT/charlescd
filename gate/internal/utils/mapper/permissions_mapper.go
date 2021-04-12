@@ -25,15 +25,15 @@ import (
 
 func PermissionModelToDomain(permission models.Permission) domain.Permission {
 	return domain.Permission{
-		ID:        permission.ID,
-		Name:      permission.Name,
+		ID:   permission.ID,
+		Name: permission.Name,
 	}
 }
 
 func PermissionDomainToModel(permission domain.Permission) models.Permission {
 	return models.Permission{
-		ID:        permission.ID,
-		Name:      permission.Name,
+		ID:   permission.ID,
+		Name: permission.Name,
 	}
 }
 

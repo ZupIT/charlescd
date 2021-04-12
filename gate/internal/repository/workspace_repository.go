@@ -30,8 +30,9 @@ import (
 )
 
 type WorkspaceRepository interface {
-	CountByIds(workspaceIds []string) (int64, error)
+	FindByIds(workspaceIds []string) ([]domain.SimpleWorkspace, error)
 	GetUserPermissionAtWorkspace(workspaceId string, userId string) ([][]domain.Permission, error)
+	FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error)
 }
 
 type workspaceRepository struct {
@@ -51,16 +52,16 @@ func NewWorkspaceRepository(db *gorm.DB, queriesPath string) (WorkspaceRepositor
 	}, nil
 }
 
-func (workspaceRepository workspaceRepository) CountByIds(workspaceIds []string) (int64, error) {
-	var count int64
+func (workspaceRepository workspaceRepository) FindByIds(workspaceIds []string) ([]domain.SimpleWorkspace, error) {
+	var workspaces []models.Workspace
 
-	res := workspaceRepository.db.Table("workspaces").Where("id IN ?", workspaceIds).Count(&count)
+	res := workspaceRepository.db.Table("workspaces").Where("id IN ?", workspaceIds).Scan(&workspaces)
 
 	if res.Error != nil {
-		return 0, handleWorkspaceError("Find all workspaces failed", "WorkspaceRepository.CountByIds.Count", res.Error, logging.InternalError)
+		return []domain.SimpleWorkspace{}, handleWorkspaceError("Find all workspaces failed", "WorkspaceRepository.CountByIds.Count", res.Error, logging.InternalError)
 	}
 
-	return count, nil
+	return mapper.WorkspacesModelToDomains(workspaces), nil
 }
 
 func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(workspaceId string, userId string) ([][]domain.Permission, error) {
@@ -87,6 +88,18 @@ func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(work
 	}
 
 	return permissionsListDomain, nil
+}
+
+func (workspaceRepository workspaceRepository) FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
+	var workspaces []models.Workspace
+
+	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-workspaces-by-system-token-id"], systemTokenId).Scan(&workspaces)
+
+	if res.Error != nil {
+		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces by system token id failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
+	}
+
+	return mapper.WorkspacesModelToDomains(workspaces), nil
 }
 
 func handleWorkspaceError(message string, operation string, err error, errType string) error {

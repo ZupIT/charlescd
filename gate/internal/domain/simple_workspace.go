@@ -16,18 +16,13 @@
  *
  */
 
-package models
+package domain
 
 import (
 	"github.com/google/uuid"
-	"time"
 )
 
-type User struct {
-	ID        uuid.UUID
-	Name      string
-	PhotoUrl  string
-	Email     string
-	IsRoot    bool
-	CreatedAt time.Time
+type SimpleWorkspace struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }

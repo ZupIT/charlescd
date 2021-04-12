@@ -23,33 +23,35 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 )
 
-func SystemTokenDomainToModel(systemToken domain.SystemToken, permissions []domain.Permission) models.SystemToken {
+func SystemTokenDomainToModel(systemToken domain.SystemToken) models.SystemToken {
 	return models.SystemToken{
-		ID:          systemToken.ID,
-		Name:        systemToken.Name,
-		Revoked:     systemToken.Revoked,
-		Permissions: PermissionsDomainToModels(permissions),
-		Workspaces:  systemToken.Workspaces,
-		Token:       systemToken.Token,
-		CreatedAt:   systemToken.CreatedAt,
-		RevokedAt:   systemToken.RevokedAt,
-		LastUsedAt:  systemToken.LastUsedAt,
-		Author:      systemToken.Author,
+		ID:            systemToken.ID,
+		Name:          systemToken.Name,
+		Revoked:       systemToken.Revoked,
+		Permissions:   PermissionsDomainToModels(systemToken.Permissions),
+		Workspaces:    WorkspacesDomainToModels(systemToken.Workspaces),
+		AllWorkspaces: systemToken.AllWorkspaces,
+		Token:         systemToken.Token,
+		CreatedAt:     systemToken.CreatedAt,
+		RevokedAt:     systemToken.RevokedAt,
+		LastUsedAt:    systemToken.LastUsedAt,
+		Author:        systemToken.Author,
 	}
 }
 
 func SystemTokenModelToDomain(systemToken models.SystemToken) domain.SystemToken {
 	return domain.SystemToken{
-		ID:          systemToken.ID,
-		Name:        systemToken.Name,
-		Revoked:     systemToken.Revoked,
-		Permissions: PermissionsModelToDomains(systemToken.Permissions),
-		Workspaces:  systemToken.Workspaces,
-		Token:       systemToken.Token,
-		CreatedAt:   systemToken.CreatedAt,
-		RevokedAt:   systemToken.RevokedAt,
-		LastUsedAt:  systemToken.LastUsedAt,
-		Author:      systemToken.Author,
+		ID:            systemToken.ID,
+		Name:          systemToken.Name,
+		Revoked:       systemToken.Revoked,
+		Permissions:   PermissionsModelToDomains(systemToken.Permissions),
+		Workspaces:    WorkspacesModelToDomains(systemToken.Workspaces),
+		AllWorkspaces: systemToken.AllWorkspaces,
+		Token:         systemToken.Token,
+		CreatedAt:     systemToken.CreatedAt,
+		RevokedAt:     systemToken.RevokedAt,
+		LastUsedAt:    systemToken.LastUsedAt,
+		Author:        systemToken.Author,
 	}
 }
 

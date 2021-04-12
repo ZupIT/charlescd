@@ -45,7 +45,7 @@ func (as *AuthorizeSuite) SetupSuite() {
 	as.systemTokenRepository = new(mocks.SystemTokenRepository)
 	as.permissionRepository = new(mocks.PermissionRepository)
 	as.workspaceRepository = new(mocks.WorkspaceRepository)
-	as.authorizeSystemToken = authorization.NewAuthorizeSystemToken(as.securityFilterService, as.systemTokenRepository, as.permissionRepository)
+	as.authorizeSystemToken = authorization.NewAuthorizeSystemToken(as.securityFilterService, as.systemTokenRepository, as.permissionRepository, as.workspaceRepository)
 	as.authorizeUserToken = authorization.NewAuthorizeUserToken(as.securityFilterService, as.userRepository, as.workspaceRepository, as.authTokenService)
 	as.authTokenService = service.NewAuthTokenService()
 	as.securityFilterService, _ = service.NewSecurityFilterService()

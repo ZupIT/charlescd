@@ -32,7 +32,7 @@ import (
 )
 
 type SystemTokenRepository interface {
-	Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error)
+	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
 	FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
 	FindByToken(token string) (domain.SystemToken, error)
@@ -56,9 +56,9 @@ func NewSystemTokenRepository(db *gorm.DB, queriesPath string) (SystemTokenRepos
 	}, nil
 }
 
-func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken, permissions []domain.Permission) (domain.SystemToken, error) {
+func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken) (domain.SystemToken, error) {
 	systemToken.ID = uuid.New()
-	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken, permissions)
+	systemTokenToSave := mapper.SystemTokenDomainToModel(systemToken)
 
 	if err := systemTokenRepository.db.Transaction(
 		func(tx *gorm.DB) error {
@@ -67,8 +67,15 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 				return res.Error
 			}
 
-			for i := range permissions {
-				res = systemTokenRepository.db.Table("system_tokens_permissions").Create(insertSystemTokenPermissionsMap(systemTokenToSave.ID, permissions[i].ID))
+			for _, permission := range systemTokenToSave.Permissions {
+				res = systemTokenRepository.db.Table("system_tokens_permissions").Create(insertSystemTokenPermissionsMap(systemTokenToSave.ID, permission.ID))
+				if res.Error != nil {
+					return res.Error
+				}
+			}
+
+			for _, workspace := range systemTokenToSave.Workspaces {
+				res = systemTokenRepository.db.Table("system_tokens_workspaces").Create(insertSystemTokenWorkspacesMap(systemTokenToSave.ID, workspace.ID))
 				if res.Error != nil {
 					return res.Error
 				}
@@ -91,6 +98,7 @@ func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Pa
 		Offset(page.Offset()).
 		Limit(page.PageSize).
 		Preload("Permissions").
+		Preload("Workspaces").
 		Find(&systemTokens)
 	if res.Error != nil {
 		return []domain.SystemToken{}, page, handleSystemTokenError("Find all tokens failed", "SystemTokenRepository.FindAll.Find", res.Error, logging.InternalError)
@@ -112,6 +120,7 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 	res := systemTokenRepository.db.Model(models.SystemToken{}).
 		Where("id = ?", id).
 		Preload("Permissions").
+		Preload("Workspaces").
 		First(&systemToken)
 
 	if res.Error != nil {
@@ -140,7 +149,7 @@ func (systemTokenRepository systemTokenRepository) FindByToken(token string) (do
 
 func (systemTokenRepository systemTokenRepository) Update(systemToken domain.SystemToken) error {
 
-	systemTokenToUpdate := mapper.SystemTokenDomainToModel(systemToken, systemToken.Permissions)
+	systemTokenToUpdate := mapper.SystemTokenDomainToModel(systemToken)
 
 	if res := systemTokenRepository.db.Model(models.SystemToken{}).
 		Where("id = ?", systemToken.ID).Updates(&systemTokenToUpdate); res.Error != nil {
@@ -156,10 +165,10 @@ func handleSystemTokenError(message string, operation string, err error, errType
 
 func insertSystemTokenMap(systemToken models.SystemToken) map[string]interface{} {
 	return map[string]interface{}{
-		"id":         systemToken.ID,
-		"name":       systemToken.Name,
-		"revoked":    systemToken.Revoked,
-		"workspaces": systemToken.Workspaces,
+		"id":             systemToken.ID,
+		"name":           systemToken.Name,
+		"revoked":        systemToken.Revoked,
+		"all_workspaces": systemToken.AllWorkspaces,
 		"token": clause.Expr{
 			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
 			Vars: []interface{}{
@@ -178,5 +187,12 @@ func insertSystemTokenPermissionsMap(systemTokenId, permissionId uuid.UUID) map[
 	return map[string]interface{}{
 		"system_token_id": systemTokenId,
 		"permission_id":   permissionId,
+	}
+}
+
+func insertSystemTokenWorkspacesMap(systemTokenId, workspaceId uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{
+		"system_token_id": systemTokenId,
+		"workspace_id":    workspaceId,
 	}
 }
