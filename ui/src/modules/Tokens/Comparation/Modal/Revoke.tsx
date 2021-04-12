@@ -24,12 +24,10 @@ interface Props {
 
 const ModalRevoke = ({ onClose, onContinue }: Props) => {
   const handleDismiss = () => {
-    console.log('handleDismiss');
     onClose();
   }
 
   const handleContinue = () => {
-    console.log('handleContinue');
     onContinue();
   }
 

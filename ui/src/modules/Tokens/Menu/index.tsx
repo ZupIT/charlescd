@@ -31,11 +31,13 @@ import { useFindAll } from '../hooks';
 import { Token } from '../interfaces';
 import MenuItem from './MenuItem';
 import Styled from './styled';
+import { useGlobalState } from 'core/state/hooks';
 
 const TokensMenu = () => {
   const history = useHistory();
   const [name, setName] = useState<string>('');
-  const { getTokens, resetTokens, data: { status, tokens, last } } = useFindAll();
+  const { getTokens, resetTokens, status } = useFindAll();
+  const tokens = useGlobalState(({ tokens }) => tokens);
   const isEmptyList = isEmpty(tokens) && status !== 'pending';
 
   const handleCreate = () => {
@@ -78,11 +80,11 @@ const TokensMenu = () => {
   );
 
   const renderList = () =>
-    map(tokens, token => renderItem(token))
+    map(tokens.list.content, token => renderItem(token))
 
   const renderContent = () => (
     <InfiniteScroll
-      hasMore={!last}
+      hasMore={!tokens.list.last}
       loadMore={loadMore}
       isLoading={status === 'pending'}
       loader={<Styled.Loader />}
