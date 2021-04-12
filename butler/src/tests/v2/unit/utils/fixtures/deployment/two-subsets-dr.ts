@@ -1,6 +1,6 @@
 import { AppConstants } from '../../../../../../app/v2/core/constants'
 
-export const noRepeatedCircleDr = {
+export const twoSubsetsDr = {
   apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
   kind: 'DestinationRule',
   metadata: {
@@ -15,19 +15,19 @@ export const noRepeatedCircleDr = {
     subsets: [
       {
         labels: {
+          circleId: 'default-circle-id',
+          component: 'A',
+          tag: 'v1'
+        },
+        name: 'default-circle-id'
+      },
+      {
+        labels: {
           circleId: 'normal-circle-id',
           component: 'A',
           tag: 'v1'
         },
         name: 'normal-circle-id'
-      },
-      {
-        labels: {
-          circleId: 'default-circle-id',
-          component: 'A',
-          tag: 'v2'
-        },
-        name: 'default-circle-id'
       }
     ]
   }

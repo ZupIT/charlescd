@@ -18,18 +18,18 @@ import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
 import { groupBy, isEmpty } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
-import { Component } from '../../api/deployments/interfaces'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
-import { DeploymentUtils } from '../../core/integrations/utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../../core/integrations/utils/istio-deployment-manifests.utils'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../params.interface'
-import { PartialRouteHookParams, SpecsUnion } from '../partial-params.interface'
+import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../interfaces/params.interface'
+import { PartialRouteHookParams, SpecsUnion } from '../interfaces/partial-params.interface'
+import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
+import { ReconcileUtils } from '../utils/reconcile.utils'
 
 @Injectable()
-export class CreateRoutesManifestsUseCase {
+export class ReconcileRoutesUsecase {
 
   constructor(
     private readonly deploymentRepository: DeploymentRepositoryV2,
@@ -41,17 +41,60 @@ export class CreateRoutesManifestsUseCase {
     this.consoleLoggerService.log('START:EXECUTE_RECONCILE_ROUTE_MANIFESTS_USECASE')
     let specs: (VirtualServiceSpec | DestinationRuleSpec)[] = []
     let services : KubernetesObject[] = []
-    for (const c of hookParams.parent.spec.circles) {
-      const deployment = await this.retriveDeploymentFor(c.id)
-      const activeComponents = await this.componentsRepository.findHealthyActiveComponents()
-      const proxySpecs = this.createProxySpecsFor(deployment, activeComponents)
-      services = services.concat(deployment.components.flatMap(c => c.manifests).filter(m => m.kind === 'Service'))
-      specs = specs.concat(proxySpecs)
+
+    const componentSnapshots = await this.getDesiredComponentSnapshots(hookParams)
+    const namespacedComponentSnapshots = groupBy(componentSnapshots, component => component.deployment.namespace)
+    for (const namespace in namespacedComponentSnapshots) {
+      services = services.concat(ReconcileUtils.getComponentsServiceManifests(namespacedComponentSnapshots[namespace]))
+      specs = specs.concat(this.createProxyManifests(namespace, namespacedComponentSnapshots[namespace]))
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
     await this.updateRouteStatus(healthStatus)
-    const children = [...specs, ...services]
-    return { children: children, resyncAfterSeconds: 5 }
+    return { children: [...specs, ...services], resyncAfterSeconds: 5 }
+  }
+
+  private async getDesiredComponentSnapshots(hookParams: RouteHookParams): Promise<ComponentEntityV2[]> {
+    const observedCircles = hookParams.parent.spec.circles
+    const componentSnapshots = await Promise.all(observedCircles.map(circle =>
+      this.componentsRepository.findActiveComponentsByCircleId(circle.id)
+    ))
+    return componentSnapshots.flatMap(c => c)
+  }
+
+  private createProxyManifests(
+    namespace: string,
+    components: ComponentEntityV2[]
+  ): (VirtualServiceSpec | DestinationRuleSpec)[] {
+
+    const proxyManifests: (VirtualServiceSpec | DestinationRuleSpec)[] = []
+    const componentsNameMap = groupBy(components, 'name')
+    for (const componentName in componentsNameMap) {
+      proxyManifests.push(
+        ...this.createIstioManifests(componentName, namespace, componentsNameMap[componentName])
+      )
+    }
+    return proxyManifests
+  }
+
+  private createIstioManifests(
+    componentName: string,
+    namespace: string,
+    componentsByName: ComponentEntityV2[]
+  ): (VirtualServiceSpec | DestinationRuleSpec)[] {
+
+    const lastComponentSnapshot = this.getLastComponentSnapshot(componentsByName)
+    const destinationRules =
+      IstioDeploymentManifestsUtils.getDestinationRulesManifest(componentName, namespace, componentsByName)
+    const virtualService =
+      IstioDeploymentManifestsUtils.getVirtualServiceManifest(
+        componentName, namespace, lastComponentSnapshot.gatewayName, lastComponentSnapshot.hostValue, componentsByName
+      )
+    return [destinationRules, virtualService]
+  }
+
+  private getLastComponentSnapshot(components: ComponentEntityV2[]): ComponentEntityV2 {
+    const sortedArray = [...components].sort(ReconcileUtils.getCreatedAtTimeDiff)
+    return sortedArray[sortedArray.length - 1]
   }
 
   public getRoutesStatus(observed: PartialRouteHookParams, desired: SpecsUnion[]): {circle: string, component: string, status: boolean, kind: string}[] {
@@ -71,13 +114,9 @@ export class CreateRoutesManifestsUseCase {
     const results =  await Promise.all(Object.entries(components).flatMap(async c => {
       const circleId = c[0]
       const status = c[1]
-      if (status.every(s => s.status === true)) {
-        return await this.deploymentRepository.updateRouteStatus(circleId, true)
-      } else {
-        return await this.deploymentRepository.updateRouteStatus(circleId, false)
-      }
+      const allTrue = status.every(s => s.status === true)
+      return await this.deploymentRepository.updateRouteStatus(circleId, allTrue)
     }))
-
     return results
   }
 
@@ -89,28 +128,18 @@ export class CreateRoutesManifestsUseCase {
       kind: spec.kind,
       status: false
     }
-
     if (this.checkEmptySpecs(observed) === true) {
       baseResponse.status = false
       return baseResponse
     }
-
-    if (this.checkComponentExistsOnObserved(observed, spec, circleId)) {
-      baseResponse.status = true
-      return baseResponse
-    } else {
-      baseResponse.status = false
-      return baseResponse
-    }
+    baseResponse.status = this.checkComponentExistsOnObserved(observed, spec, circleId)
+    return baseResponse
   }
 
   private checkEmptySpecs(observed: PartialRouteHookParams): boolean {
     const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1alpha3'])
     const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1alpha3'])
-    if (emptyDestinationRules || emptyVirtualServices) {
-      return true
-    }
-    return false
+    return emptyDestinationRules || emptyVirtualServices
   }
 
   private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
@@ -118,33 +147,6 @@ export class CreateRoutesManifestsUseCase {
     const desiredDestinationRulePresent = destionRulesCircles.includes(circleId)
     const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
     const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
-    if (desiredDestinationRulePresent && desiredVirtualServicePresent) {
-      return true
-    }
-    return false
-  }
-
-  private async retriveDeploymentFor(id: string): Promise<DeploymentEntityV2> {
-    const deployment = await this.deploymentRepository.findOneOrFail({ circleId: id, current: true }, { relations: ['components'] })
-    return deployment
-  }
-
-  private createProxySpecsFor(deployment: DeploymentEntityV2, activeComponents: Component[]): (VirtualServiceSpec | DestinationRuleSpec)[] {
-    const proxySpecs: (VirtualServiceSpec | DestinationRuleSpec)[] = []
-    deployment.components.forEach(component => {
-      const manifests = this.createIstioProxiesManifestsFor(deployment, component, activeComponents)
-      manifests.forEach(m => proxySpecs.push(m))
-    })
-    return proxySpecs
-  }
-
-  private createIstioProxiesManifestsFor(deployment: DeploymentEntityV2,
-    newComponent: Component,
-    activeComponents: Component[]
-  ): (VirtualServiceSpec | DestinationRuleSpec)[] {
-    const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, newComponent.name)
-    const destinationRules = IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, newComponent, activeByName)
-    const virtualService = IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, newComponent, activeByName)
-    return [destinationRules, virtualService]
+    return desiredDestinationRulePresent && desiredVirtualServicePresent
   }
 }

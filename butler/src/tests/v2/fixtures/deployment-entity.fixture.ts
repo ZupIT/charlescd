@@ -26,43 +26,67 @@ export const deploymentFixture = new DeploymentEntityV2(
   60
 )
 
-export const deployComponentsFixture = [createDeployComponent()]
+export const componentsFixtureCircle1WithService = [
+  createDeployComponent('A', 'v1', 'circle-1', true, true, 'namespace')
+]
 
-function createDeployComponent() {
+export const componentsFixtureCircle1DiffNamespace = [
+  createDeployComponent('A', 'v1', 'circle-1', true, false, 'diff-namespace')
+]
+
+export const componentsFixtureCircle1 = [
+  createDeployComponent('A', 'v1', 'circle-1', true, false, 'namespace')
+]
+
+export const componentsFixtureCircle2 = [
+  createDeployComponent('A', 'v2', 'circle-2', false, false, 'namespace'),
+  createDeployComponent('B', 'v2', 'circle-2', false, false, 'namespace')
+]
+
+function createDeployComponent(
+  name: string,
+  tag: string,
+  circle: string,
+  defaultCircle: boolean,
+  withManifests: boolean,
+  namespace: string
+) {
   const component = new ComponentEntityV2(
     UrlConstants.helmRepository,
-    'build-image-tag',
+    tag,
     'build-image-url.com',
-    'hello-kubernetes',
+    name,
     'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
     null,
     null,
-    [],
+    withManifests? customManifests(name, namespace, 'image-url') : [],
     false
   )
 
   component.deployment = new DeploymentEntityV2(
     'b7d08a07-f29d-452e-a667-7a39820f3262',
     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
-    'b46fd548-0082-4021-ba80-a50703c44a3b',
+    circle,
     UrlConstants.deploymentCallbackUrl,
     [
       new ComponentEntityV2(
         UrlConstants.helmRepository,
-        'build-image-tag',
+        tag,
         'build-image-url.com',
-        'hello-kubernetes',
+        name,
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        [],
+        withManifests? customManifests(name, namespace, 'image-url') : [],
         false
       )
     ],
-    true,
-    'namespace',
+    defaultCircle,
+    namespace,
     60
   )
+  component.deployment.createdAt = new Date()
+
   return component
 }
 

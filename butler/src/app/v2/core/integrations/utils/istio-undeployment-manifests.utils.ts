@@ -16,7 +16,7 @@
 
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
-import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
+import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/interfaces/params.interface'
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { DeploymentUtils } from './deployment.utils'
 import { IstioManifestsUtils } from './istio-manifests.utilts'

@@ -40,6 +40,7 @@ export interface JsonAPIError {
 
 export class CreateDeploymentValidator {
   private params
+
   constructor(params: unknown) {
     this.params = params
   }

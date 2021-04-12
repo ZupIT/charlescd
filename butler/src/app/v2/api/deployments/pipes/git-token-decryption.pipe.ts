@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Injectable, InternalServerErrorException, PipeTransform } from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException, PipeTransform } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import * as openpgp from 'openpgp'
 import { AppConstants } from '../../../core/constants'
@@ -29,10 +29,10 @@ export class GitTokenDecryptionPipe implements PipeTransform {
       deploymentRequest.git.token = decryptedToken
       return deploymentRequest
     }
-    throw new InternalServerErrorException({
+    throw new BadRequestException({
       errors: [
         {
-          detail: 'unable to decrypt "token"',
+          detail: 'Unable to decrypt "token"',
           meta: {
             component: 'butler',
             timestamp: Date.now()
@@ -40,7 +40,7 @@ export class GitTokenDecryptionPipe implements PipeTransform {
           source: {
             pointer: 'git.token'
           },
-          status: 500
+          status: 400
         }
       ]
     })

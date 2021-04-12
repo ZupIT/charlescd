@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
-import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
+import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/reconcile-routes.usecase'
 import { deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
@@ -11,7 +11,7 @@ describe('Routes manifest use case', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let deploymentRepository: DeploymentRepositoryV2
-  let routeUseCase: CreateRoutesManifestsUseCase
+  let routeUseCase: ReconcileRoutesUsecase
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -28,7 +28,7 @@ describe('Routes manifest use case', () => {
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentRepository = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
-    routeUseCase = app.get<CreateRoutesManifestsUseCase>(CreateRoutesManifestsUseCase)
+    routeUseCase = app.get<ReconcileRoutesUsecase>(ReconcileRoutesUsecase)
   })
 
   afterAll(async() => {

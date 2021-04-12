@@ -18,25 +18,36 @@ import 'jest'
 import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
-import { RouteHookParams } from '../../../../app/v2/operator/params.interface'
-import { PartialRouteHookParams, SpecsUnion } from '../../../../app/v2/operator/partial-params.interface'
-import { CreateRoutesManifestsUseCase } from '../../../../app/v2/operator/use-cases/create-routes-manifests.usecase'
-import { deployComponentsFixture, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
-import { routesManifests } from '../../fixtures/manifests.fixture'
+import { RouteHookParams } from '../../../../app/v2/operator/interfaces/params.interface'
+import { PartialRouteHookParams, SpecsUnion } from '../../../../app/v2/operator/interfaces/partial-params.interface'
+import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/reconcile-routes.usecase'
+import {
+  componentsFixtureCircle1,
+  componentsFixtureCircle1DiffNamespace,
+  componentsFixtureCircle1WithService,
+  componentsFixtureCircle2,
+  deploymentFixture
+} from '../../fixtures/deployment-entity.fixture'
+import {
+  routesManifestsDiffNamespace,
+  routesManifestsSameNamespace,
+  routesManifestsSameNamespaceWithService
+} from '../../fixtures/manifests.fixture'
 
 describe('Hook Routes Manifest Creation', () => {
 
-  const deploymentRepository = new DeploymentRepositoryV2()
-  const componentsRepository = new ComponentsRepositoryV2()
-  const consoleLoggerService = new ConsoleLoggerService()
-
-  let hookParams: RouteHookParams
+  let deploymentRepository: DeploymentRepositoryV2
+  let componentsRepository: ComponentsRepositoryV2
+  let consoleLoggerService: ConsoleLoggerService
+  let hookParamsWith2Components: RouteHookParams
+  let hookParamsWithNoCircle: RouteHookParams
 
   beforeEach(() => {
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentFixture)
-    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
+    deploymentRepository = new DeploymentRepositoryV2()
+    componentsRepository = new ComponentsRepositoryV2()
+    consoleLoggerService = new ConsoleLoggerService()
 
-    hookParams = {
+    hookParamsWith2Components = {
       controller: {},
       parent: {
         apiVersion: 'charlescd.io/v1',
@@ -47,11 +58,25 @@ describe('Hook Routes Manifest Creation', () => {
             {
               components: [
                 {
-                  name: 'my-component',
-                  tag: 'my-tag'
+                  name: 'A',
+                  tag: 'v1'
                 }
               ],
-              id: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              id: 'circle-1',
+              default: true
+            },
+            {
+              components: [
+                {
+                  name: 'A',
+                  tag: 'v2'
+                },
+                {
+                  name: 'B',
+                  tag: 'v2'
+                }
+              ],
+              id: 'circle-2',
               default: false
             }
           ]
@@ -61,40 +86,112 @@ describe('Hook Routes Manifest Creation', () => {
         'VirtualService.networking.istio.io/v1alpha3': {},
         'DestinationRule.networking.istio.io/v1alpha3': {}
       },
-      finalizing: true
+      finalizing: false
+    }
+    hookParamsWithNoCircle = {
+      controller: {},
+      parent: {
+        apiVersion: 'charlescd.io/v1',
+        kind: 'CharlesRoutes',
+        metadata: {},
+        spec: {
+          circles: []
+        }
+      },
+      children: {
+        'VirtualService.networking.istio.io/v1alpha3': {},
+        'DestinationRule.networking.istio.io/v1alpha3': {}
+      },
+      finalizing: false
     }
   })
 
-  it('generate route manifest correctly', async() => {
+  it('generate route manifest correctly with one component in two different circles and same namespace', async() => {
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1 : componentsFixtureCircle2
+    )
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
-    jest.spyOn(componentsRepository, 'findHealthyActiveComponents').mockImplementation(async() => deployComponentsFixture)
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
     )
 
-    const manifests = await routeUseCase.execute(hookParams)
+    const manifests = await routeUseCase.execute(hookParamsWith2Components)
 
-    expect(manifests).toEqual({ children: routesManifests, resyncAfterSeconds: 5 })
+    expect(manifests).toEqual({ children: routesManifestsSameNamespace, resyncAfterSeconds: 5 })
   })
 
   it('throws exception when manifests generation fail', async() => {
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => { throw new Error('Error') })
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(async() => { throw new Error('Error') })
+    jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
     )
 
-    const manifests = routeUseCase.execute(hookParams)
+    const manifests = routeUseCase.execute(hookParamsWith2Components)
 
     await expect(manifests).rejects.toThrowError()
   })
+
+  it('generate route manifest correctly with kubernetes services manifests', async() => {
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1WithService : componentsFixtureCircle2
+    )
+    jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = await routeUseCase.execute(hookParamsWith2Components)
+
+    expect(manifests).toEqual({ children: routesManifestsSameNamespaceWithService, resyncAfterSeconds: 5 })
+  })
+
+  it('generate route manifest correctly with same component in different namespaces', async() => {
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1DiffNamespace : componentsFixtureCircle2
+    )
+    jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = await routeUseCase.execute(hookParamsWith2Components)
+
+    expect(manifests).toEqual({ children: routesManifestsDiffNamespace, resyncAfterSeconds: 5 })
+  })
+
+  it('returns an empty array when no circles are observed in the charlesroutes resource', async() => {
+    const findSpy = jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId')
+    const updateSpy = jest.spyOn(deploymentRepository, 'updateRouteStatus')
+
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = await routeUseCase.execute(hookParamsWithNoCircle)
+
+    expect(manifests).toEqual({ children: [], resyncAfterSeconds: 5 })
+    expect(updateSpy).toHaveBeenCalledTimes(0)
+    expect(findSpy).toHaveBeenCalledTimes(0)
+  })
 })
 
-
 describe('Compare observed routes state with desired routes state', () => {
+
   it('should return empty array when observed and desired states are empty', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
@@ -127,15 +224,15 @@ describe('Compare observed routes state with desired routes state', () => {
       }
     }
     const desired : SpecsUnion[] = []
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
     )
 
     expect(routeUseCase.getRoutesStatus(observed, desired)).toEqual([])
-
   })
+
   it('should return the objects with status true for all desired components', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
@@ -253,7 +350,7 @@ describe('Compare observed routes state with desired routes state', () => {
       }
     ]
 
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService
@@ -285,8 +382,8 @@ describe('Compare observed routes state with desired routes state', () => {
         status: true
       }
     ])
-
   })
+
   it('should return the objects with status false for all desired components when the observed state is does not have the routes', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
@@ -362,7 +459,7 @@ describe('Compare observed routes state with desired routes state', () => {
         }
       }
     ]
-    const routeUseCase = new CreateRoutesManifestsUseCase(
+    const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
       consoleLoggerService

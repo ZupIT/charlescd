@@ -181,7 +181,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           customManifests('D', 'my-namespace', 'imageurl.com')
         )
       ],
-      true,
+      false,
       'my-namespace',
       60
     )

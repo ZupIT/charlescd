@@ -8,12 +8,10 @@ import { K8sClient } from '../core/integrations/k8s/client'
 import { MooveService } from '../core/integrations/moove'
 import { LogsModule } from '../core/logs/logs.module'
 import { TimeoutScheduler } from './cron/timeout.scheduler'
-import { DeploymentsHookController } from './deployments.hook.controller'
-import { RoutesHookController } from './routes.hook.controller'
-import { CreateRoutesManifestsUseCase } from './use-cases/create-routes-manifests.usecase'
+import { DeploymentsHookController } from './controller/deployments.hook.controller'
+import { RoutesHookController } from './controller/routes.hook.controller'
+import { ReconcileRoutesUsecase } from './use-cases/reconcile-routes.usecase'
 import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
-import { ReconcileDeployment } from './use-cases/reconcile-deployments.usecase'
-
 
 @Module({
   imports: [
@@ -33,11 +31,11 @@ import { ReconcileDeployment } from './use-cases/reconcile-deployments.usecase'
   providers: [
     K8sClient,
     MooveService,
-    CreateRoutesManifestsUseCase,
+    ReconcileRoutesUsecase,
     ReconcileDeploymentUsecase,
-    ReconcileDeployment,
     TimeoutScheduler
   ]
 })
+
 export class OperatorModule {
 }

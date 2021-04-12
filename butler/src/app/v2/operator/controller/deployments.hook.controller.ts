@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common'
-import { KubernetesManifest } from '../core/integrations/interfaces/k8s-manifest.interface'
-import { HookParams } from './params.interface'
-import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
+import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
+import { HookParams } from '../interfaces/params.interface'
+import { ReconcileDeploymentUsecase } from '../use-cases/reconcile-deployment.usecase'
 
 @Controller('/')
 export class DeploymentsHookController {

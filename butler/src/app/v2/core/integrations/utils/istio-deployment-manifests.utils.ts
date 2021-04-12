@@ -19,93 +19,85 @@ import { Component } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 import { DeploymentUtils } from './deployment.utils'
 import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
-import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/params.interface'
+import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/interfaces/params.interface'
 import { AppConstants } from '../../constants'
 
 const IstioDeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
+  getVirtualServiceManifest: (
+    componentName: string,
+    namespace: string,
+    gatewayName: string | null,
+    hostValue: string | null,
+    componentSnapshots: Component[]
+  ): VirtualServiceSpec => {
+
     return {
       apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'VirtualService',
       metadata: {
-        name: `${component.name}`,
-        namespace: `${deployment.namespace}`,
+        name: componentName,
+        namespace: namespace,
         annotations: {
-          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+          circles: JSON.stringify(componentSnapshots.map(c => c.deployment.circleId))
         }
       },
       spec: {
-        gateways: component.gatewayName ? [component.gatewayName] : [],
-        hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
-        http: deployment.defaultCircle ?
-          IstioDeploymentManifestsUtils.getDefaultCircleHTTPRules(component, activeByName, deployment.circleId) :
-          IstioDeploymentManifestsUtils.getCircleHTTPRules(component, deployment.circleId, activeByName)
+        gateways: gatewayName ? [gatewayName] : [],
+        hosts: hostValue ? [hostValue, componentName] : [componentName],
+        http: IstioDeploymentManifestsUtils.getVirtualServiceHTTPRules(componentSnapshots)
       }
     }
   },
 
-  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
+  getDestinationRulesManifest: (
+    componentName: string,
+    namespace: string,
+    componentSnapshots: Component[]
+  ): DestinationRuleSpec => {
     return {
       apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'DestinationRule',
       metadata: {
-        name: component.name,
-        namespace: `${deployment.namespace}`,
+        name: componentName,
+        namespace: namespace,
         annotations: {
-          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+          circles: JSON.stringify(componentSnapshots.map(c => c.deployment.circleId))
         }
       },
       spec: {
-        host: component.name,
-        subsets: deployment?.components ? IstioDeploymentManifestsUtils.getDestinationRulesSubsets(component, deployment.circleId, activeByName) : []
+        host: componentName,
+        subsets: IstioDeploymentManifestsUtils.getDestinationRulesSubsets(componentSnapshots)
       }
     }
   },
 
-  getDestinationRulesSubsets: (newComponent: DeploymentComponent, circleId: string, activeByName: Component[]): Subset[] => {
+  getDestinationRulesSubsets: (componentSnapshots: Component[]): Subset[] => {
     const subsets: Subset[] = []
-    subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(newComponent, circleId))
-    activeByName.forEach(component => {
-      const activeCircleId = component.deployment.circleId
-      if (DeploymentUtils.isDistinctCircle(component, circleId)) {
-        subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
-      }
+    componentSnapshots.forEach(component => {
+      const circleId = component.deployment.circleId
+      subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, circleId))
     })
     return subsets
   },
 
-  getCircleHTTPRules: (newComponent: DeploymentComponent, circleId: string, activeByName: Component[]): Http[] => {
+  getVirtualServiceHTTPRules: (componentSnapshots: Component[]): Http[] => {
     const rules: Http[] = []
 
-    rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(newComponent.name, newComponent.imageTag, circleId))
-    rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(newComponent.name, newComponent.imageTag, circleId))
-
-    activeByName.forEach(component => {
+    componentSnapshots.forEach(component => {
       const activeCircleId = component.deployment.circleId
-      if (DeploymentUtils.isDistinctAndNotDefault(component, circleId)) {
+      if (!component.deployment.defaultCircle) {
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
         rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
       }
     })
 
-    const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && component.deployment.defaultCircle)
+    const defaultComponent: Component | undefined =
+      componentSnapshots.find(component => component.deployment && component.deployment.defaultCircle)
+
     if (defaultComponent && defaultComponent.deployment) {
       rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(defaultComponent.name,  defaultComponent.deployment.circleId))
     }
-    return rules
-  },
-
-  getDefaultCircleHTTPRules: (newComponent: DeploymentComponent, activeByName: Component[], circleId: string): Http[] => {
-    const rules: Http[] = []
-
-    activeByName.forEach(component => {
-      if (component.deployment && !component.deployment.defaultCircle) {
-        rules.push(IstioManifestsUtils.getVirtualServiceHTTPCookieCircleRule(component.name, component.imageTag, component.deployment.circleId))
-        rules.push(IstioManifestsUtils.getVirtualServiceHTTPHeaderCircleRule(component.name, component.imageTag, component.deployment.circleId))
-      }
-    })
-    rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(newComponent.name, circleId))
     return rules
   }
 }
