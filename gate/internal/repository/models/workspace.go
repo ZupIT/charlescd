@@ -12,9 +12,9 @@ type Workspace struct {
 	CreatedAt               *time.Time
 	UserGroups              []UserGroup `gorm:"many2many:workspaces_user_groups;"`
 	Status                  string
-	RegistryConfigurationId string
+	RegistryConfigurationId uuid.UUID
 	CircleMatcherUrl        string
-	GitConfigurationId      string
-	CdConfigurationId       string
-	MetricConfigurationId   string
+	GitConfigurationId      uuid.UUID
+	CdConfigurationId       uuid.UUID
+	MetricConfigurationId   uuid.UUID
 }
