@@ -22,6 +22,7 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/tests/unit/utils"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -178,6 +179,34 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFound() {
 
 	st.userRepository.On("ExistsByEmail", authToken.Email).Return(true, nil).Once()
 	st.permissionRepository.On("FindAll", systemTokenInput.Permissions).Return([]domain.Permission{}, nil).Once()
+
+	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
+
+	require.Zero(st.T(), result)
+	require.NotNil(st.T(), err)
+	require.Equal(st.T(), "some permissions were not found", err.Error())
+
+	require.Equal(st.T(), 1, len(st.userRepository.ExpectedCalls))
+	require.Equal(st.T(), 1, len(st.permissionRepository.ExpectedCalls))
+	require.Equal(st.T(), 0, len(st.workspaceRepository.ExpectedCalls))
+	require.Equal(st.T(), 0, len(st.systemTokenRepository.ExpectedCalls))
+
+	require.True(st.T(), st.userRepository.AssertCalled(st.T(), "ExistsByEmail", "charlesadmin@admin"))
+	require.True(st.T(), st.permissionRepository.AssertCalled(st.T(), "FindAll", systemTokenInput.Permissions))
+}
+
+func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFoundAll() {
+	authorization := utils.GetDummyRootAuthorization()
+	authToken := utils.GetDummyAuthToken()
+	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
+	systemTokenInput.Permissions = append(systemTokenInput.Permissions, "hypothesis_read")
+	permissions := append(utils.GetDummyPermissions(), domain.Permission{
+		Id:   uuid.New(),
+		Name: "maintenance_write",
+	})
+
+	st.userRepository.On("ExistsByEmail", authToken.Email).Return(true, nil).Once()
+	st.permissionRepository.On("FindAll", systemTokenInput.Permissions).Return(permissions, nil).Once()
 
 	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
 

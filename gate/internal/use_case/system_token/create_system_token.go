@@ -70,7 +70,12 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
-	if len(permissions) != len(input.Permissions) {
+	var permissionNames = make([]string, 0)
+	for _, p := range permissions {
+		permissionNames = append(permissionNames, p.Name)
+	}
+
+	if !unorderedEquals(permissionNames, input.Permissions) {
 		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
@@ -79,7 +84,12 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
-	if len(workspaces) < len(input.Workspaces) {
+	var workspaceIds = make([]string, 0)
+	for _, w := range workspaces {
+		workspaceIds = append(workspaceIds, w.Id.String())
+	}
+
+	if !unorderedEquals(workspaceIds, input.Workspaces) {
 		return domain.SystemToken{}, logging.NewError("Some workspaces were not found", errors.New("some workspaces were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
@@ -96,4 +106,17 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 	}
 
 	return savedSystemToken, nil
+}
+
+func unorderedEquals(first, second []string) bool {
+	if len(first) != len(second) {
+		return false
+	}
+
+	for i, value := range second {
+		if first[i] != value {
+			return false
+		}
+	}
+	return true
 }

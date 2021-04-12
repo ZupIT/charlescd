@@ -46,11 +46,11 @@ func GetDummySystemToken() domain.SystemToken {
 func GetDummySimpleWorkspaces() []domain.SimpleWorkspace {
 	return []domain.SimpleWorkspace{
 		{
-			Id:   uuid.New(),
+			Id:   uuid.MustParse("ddb90f09-146a-4c9d-95f8-2be4841e7e7e"),
 			Name: "Workspace Name",
 		},
 		{
-			Id:   uuid.New(),
+			Id:   uuid.MustParse("d2f0a275-4532-4730-8d20-81d00033ee0b"),
 			Name: "Workspace Name 2",
 		},
 	}
@@ -80,7 +80,7 @@ func GetDummyCreateSystemTokenInput() system_token.CreateSystemTokenInput {
 	return system_token.CreateSystemTokenInput{
 		Name:        "System Token Test",
 		Permissions: []string{"circles_write", "deploy_write"},
-		Workspaces:  []string{"workspace1", "workspace2"},
+		Workspaces:  []string{"ddb90f09-146a-4c9d-95f8-2be4841e7e7e", "d2f0a275-4532-4730-8d20-81d00033ee0b"},
 	}
 }
 
