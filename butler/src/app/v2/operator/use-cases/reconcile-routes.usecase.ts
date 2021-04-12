@@ -18,7 +18,6 @@ import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
 import { groupBy, isEmpty } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
-import { Component } from '../../api/deployments/interfaces'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
@@ -27,6 +26,7 @@ import { ConsoleLoggerService } from '../../core/logs/console'
 import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../interfaces/params.interface'
 import { PartialRouteHookParams, SpecsUnion } from '../interfaces/partial-params.interface'
 import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
+import { ReconcileUtils } from '../utils/reconcile.utils'
 
 @Injectable()
 export class ReconcileRoutesUsecase {
@@ -45,7 +45,7 @@ export class ReconcileRoutesUsecase {
     const componentSnapshots = await this.getDesiredComponentSnapshots(hookParams)
     const namespacedComponentSnapshots = groupBy(componentSnapshots, component => component.deployment.namespace)
     for (const namespace in namespacedComponentSnapshots) {
-      services = services.concat(namespacedComponentSnapshots[namespace].flatMap(c => c.manifests).filter(m => m.kind === 'Service'))
+      services = services.concat(ReconcileUtils.getComponentsServiceManifests(namespacedComponentSnapshots[namespace]))
       specs = specs.concat(this.createProxyManifests(namespace, namespacedComponentSnapshots[namespace]))
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
@@ -63,7 +63,7 @@ export class ReconcileRoutesUsecase {
 
   private createProxyManifests(
     namespace: string,
-    components: Component[]
+    components: ComponentEntityV2[]
   ): (VirtualServiceSpec | DestinationRuleSpec)[] {
 
     const proxyManifests: (VirtualServiceSpec | DestinationRuleSpec)[] = []
@@ -79,7 +79,7 @@ export class ReconcileRoutesUsecase {
   private createIstioManifests(
     componentName: string,
     namespace: string,
-    componentsByName: Component[]
+    componentsByName: ComponentEntityV2[]
   ): (VirtualServiceSpec | DestinationRuleSpec)[] {
 
     const lastComponentSnapshot = this.getLastComponentSnapshot(componentsByName)
@@ -92,10 +92,8 @@ export class ReconcileRoutesUsecase {
     return [destinationRules, virtualService]
   }
 
-  private getLastComponentSnapshot(components: Component[]): Component {
-    const sortedArray = [...components].sort(function(component1, component2){
-      return component1.deployment.createdAt.getTime() - component2.deployment.createdAt.getTime()
-    })
+  private getLastComponentSnapshot(components: ComponentEntityV2[]): ComponentEntityV2 {
+    const sortedArray = [...components].sort(ReconcileUtils.getCreatedAtTimeDiff)
     return sortedArray[sortedArray.length - 1]
   }
 

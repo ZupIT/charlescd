@@ -2,19 +2,20 @@ import { uniqWith } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { HookParams, SpecMetadata, SpecStatus } from '../interfaces/params.interface'
+import { KubernetesObject } from '@kubernetes/client-node'
+import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
 
 export class ReconcileUtils {
 
-  public static concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]) : KubernetesManifest[] {
+  public static concatWithPrevious(previousDeployment: DeploymentEntityV2, specs: KubernetesManifest[]): KubernetesManifest[] {
     const rawSpecs = previousDeployment.components.flatMap(c => c.manifests)
     const previousSpecs = ReconcileUtils.addMetadata(rawSpecs, previousDeployment)
     const allSpecs = specs.concat(previousSpecs)
     // TODO verify if this filter is necessary
-    const uniqByNameAndKind = uniqWith(allSpecs, (a, b) => a.metadata?.name === b.metadata?.name && a.kind === b.kind)
-    return uniqByNameAndKind
+    return uniqWith(allSpecs, ReconcileUtils.isNameAndKindEqual)
   }
 
-  public static addMetadata(spec : KubernetesManifest[], deployment: DeploymentEntityV2) : KubernetesManifest[] {
+  public static addMetadata(spec: KubernetesManifest[], deployment: DeploymentEntityV2): KubernetesManifest[] {
     return spec.map((s: KubernetesManifest) => {
       if (!s.metadata) {
         throw new Error('Invalid manifest. Field metadata is not present.')
@@ -67,5 +68,17 @@ export class ReconcileUtils {
     return Object.entries(params.children['Deployment.apps/v1'])
       .map(c => c[1])
       .filter(p => p.metadata.labels.deploymentId === currentDeploymentId)
+  }
+
+  public static getCreatedAtTimeDiff(component1: ComponentEntityV2, component2: ComponentEntityV2): number {
+    return component1.deployment.createdAt.getTime() - component2.deployment.createdAt.getTime()
+  }
+
+  public static isNameAndKindEqual(manifest1: KubernetesObject, manifest2: KubernetesObject): boolean {
+    return manifest1.metadata?.name === manifest2.metadata?.name && manifest1.kind === manifest2.kind
+  }
+
+  public static getComponentsServiceManifests(components: ComponentEntityV2[]): KubernetesObject[]  {
+    return components.flatMap(c => c.manifests).filter(m => m.kind === 'Service')
   }
 }

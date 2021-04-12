@@ -19,7 +19,7 @@ import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repos
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import {
-  deployComponentsFixture,
+  componentsFixtureCircle1,
   deploymentWithManifestFixture
 } from '../../fixtures/deployment-entity.fixture'
 import { HookParams } from '../../../../app/v2/operator/interfaces/params.interface'
@@ -53,7 +53,7 @@ describe('Reconcile deployment usecase spec', () => {
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
       new Execution(deploymentWithManifestFixture, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
-    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsFixtureCircle1)
 
     hookParams = {
       'controller': {
