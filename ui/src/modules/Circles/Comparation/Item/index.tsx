@@ -310,13 +310,15 @@ const CirclesComparationItem = ({
           </LabeledIcon>
         </Can>
       )}
-      <LabeledIcon
-        icon="plus-circle"
-        marginContent="5px"
-        onClick={() => setActiveSection(SECTIONS.HISTORY)}
-        >
-          <Text.h5 color="dark">History</Text.h5>
-      </LabeledIcon>
+      {circle?.deployment && (
+        <LabeledIcon
+          icon="plus-circle"
+          marginContent="5px"
+          onClick={() => setActiveSection(SECTIONS.HISTORY)}
+          >
+            <Text.h5 color="dark">History</Text.h5>
+        </LabeledIcon>
+      )}
       {renderDropdown()}
     </Styled.Actions>
   );
@@ -373,7 +375,7 @@ const CirclesComparationItem = ({
           <MetricsGroups id={id} onGoBack={() => setActiveSection(undefined)} />
         )}
         {activeSection === SECTIONS.HISTORY && (
-          <DeployHistory id={id} onGoBack={() => setActiveSection(undefined)} />
+          <DeployHistory deploymentId={circle.deployment.id} onGoBack={() => setActiveSection(undefined)} />
         )}
       </>
     );

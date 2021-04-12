@@ -14,17 +14,28 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useCircleDeployLogs } from './hooks';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
 
-interface Props {
-  id: string;
+type Props = {
+  deploymentId: string;
   onGoBack: Function;
 }
 
-const DeployHistory = ({ onGoBack, id }: Props) => {
+const DeployHistory = ({ onGoBack, deploymentId }: Props) => {
+  const { getCircleDeployLogs, logs, status} = useCircleDeployLogs();
+
+  useEffect(() => {
+    if (status.isIdle) {
+      getCircleDeployLogs(deploymentId);
+    }
+  }, [getCircleDeployLogs, deploymentId, status.isIdle]);
+
+  console.log(deploymentId, logs);
+
   return (
     <>
       <Styled.Layer data-testid="circles-deploy-history">
@@ -39,6 +50,20 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
           <Icon name="plus-circle" color="dark" size={'25px'} />
           <Text.h2 color="light">History</Text.h2>
         </Styled.Title>
+        {/* <Styled.CircleRowWrapper>
+          <InfiniteScroll
+            dataLength={circles.length}
+            next={loadMore}
+            hasMore={hasMoreData}
+            loader={<Loader.History />}
+            height={500}
+          >
+            {circles?.map(circle => (
+              <CircleRow circle={circle} key={circle.id} />
+              ))}
+          </InfiniteScroll>
+              </Styled.CircleRowWrapper> */}
+        <>asdf</>
       </Styled.Layer>
     </>
   );
