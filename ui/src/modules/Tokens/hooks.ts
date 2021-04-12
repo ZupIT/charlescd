@@ -148,11 +148,12 @@ export const useSave = () => {
       setResponse(data);
 
       return data;
-    } catch (e) {
+    } catch (error) {
+      const e = await error.json();
       dispatch(
         toogleNotification({
-          status: 'error',
-          text: e?.message
+          text: e?.message,
+          status: 'error'
         })
       );
       setStatus('rejected');
