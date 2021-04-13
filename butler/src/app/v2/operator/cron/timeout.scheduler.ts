@@ -7,6 +7,7 @@ import { ExecutionRepository } from '../../api/deployments/repository/execution.
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { MooveService } from '../../core/integrations/moove/moove.service'
 import { ConsoleLoggerService } from '../../core/logs/console'
+import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 
 @Injectable()
 export class TimeoutScheduler {
@@ -15,20 +16,34 @@ export class TimeoutScheduler {
     private readonly componentRepository: ComponentsRepositoryV2,
     private readonly k8sClient: K8sClient,
     private readonly executionRepository: ExecutionRepository,
+    private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly logger: ConsoleLoggerService
-  ) { }
+  ) {}
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   public async handleCron(): Promise<void> {
     const timedOutExecutions = await this.executionRepository.updateTimedOutExecutions()
-
-    await Promise.all(timedOutExecutions.map(async e => {
-      this.logger.log('TIMEOUT_NOTIFICATION', { executionId: e.id, deploymentId: e.deploymentId })
-      await this.notifyCallback(e)
-    }))
-
+    await Promise.all(
+      timedOutExecutions.map(async execution => this.handleExecutionTimeOut(execution))
+    )
     const activeComponents = await this.componentRepository.findActiveComponents()
     await this.k8sClient.applyRoutingCustomResource(activeComponents)
+  }
+
+  private async handleExecutionTimeOut(execution: Execution): Promise<void> {
+    this.logger.log('TIMEOUT_NOTIFICATION', { executionId: execution.id, deploymentId: execution.deploymentId })
+    await this.notifyCallback(execution)
+
+    // TODO use transaction
+    const deployment = await this.deploymentRepository.findOneOrFail({ id: execution.deploymentId })
+    await this.deploymentRepository.update({ id: deployment.id }, { current: false })
+    if (deployment.previousDeploymentId) {
+      await this.deploymentRepository.update({ id: deployment.previousDeploymentId }, { current: true })
+      const previousDeployment = await this.deploymentRepository.findOneOrFail({ id: deployment.previousDeploymentId })
+      await this.k8sClient.applyDeploymentCustomResource(previousDeployment)
+    } else {
+      await this.k8sClient.applyUndeploymentCustomResource(deployment)
+    }
   }
 
   private async notifyCallback(execution : Execution) {
@@ -40,5 +55,4 @@ export class TimeoutScheduler {
     )
     return await this.executionRepository.updateNotificationStatus(execution.id, notificationResponse.status)
   }
-
 }

@@ -42,20 +42,34 @@ export class ReconcileDeploymentUsecase {
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
+    // Get deployment and execution entities involved in the reconcile loop
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const execution = await this.executionRepository.findByDeploymentId(deployment.id)
+
+    // If the execution has a TIMED_OUT status, return an empty children array
     if (execution.status === DeploymentStatusEnum.TIMED_OUT) {
       this.consoleLoggerService.log('DEPLOYMENT_RECONCILE:TIMED_OUT_DEPLOYMENT', { executionId: execution.id, deploymentId: execution.deploymentId })
       return { children: [] }
     }
+
+    // Remove service manifests from the list
     const rawSpecs = deployment.components.flatMap(c => c.manifests).filter(e => e.kind !== 'Service')
+
+    // Insert charles metadata
     const specs = ReconcileUtils.addMetadata(rawSpecs, deployment)
+
+    // If nothing has been created yet, return the desired state
     if (isEmpty(params.children['Deployment.apps/v1'])) {
       return { children: specs, resyncAfterSeconds: 5 }
     }
+
+    // Get observed specs from the observed charlesdeployment
     const currentDeploymentSpecs = ReconcileUtils.specsByDeployment(params, deployment.id)
 
+    // Check if all resources are ready
     const allReady = ReconcileUtils.checkConditions(currentDeploymentSpecs)
+
+    // If not all resources are ready yet, concat the manifests from the previous deployment
     if (!allReady) {
       const previousDeploymentId = deployment.previousDeploymentId
 
@@ -68,6 +82,7 @@ export class ReconcileDeploymentUsecase {
       return { children: currentAndPrevious.filter(e => e.kind !== 'Service'), resyncAfterSeconds: 5 }
     }
 
+    // If all resources are ready, update the routing CRD
     const activeComponents = await this.componentRepository.findActiveComponents()
     try {
       await this.k8sClient.applyRoutingCustomResource(activeComponents)
@@ -76,8 +91,14 @@ export class ReconcileDeploymentUsecase {
       await this.deploymentRepository.updateHealthStatus(deployment.id, false)
       return { children: specs, resyncAfterSeconds: 5 }
     }
+
+    // Set the observed deployment's healthy state to true
     await this.deploymentRepository.updateHealthStatus(deployment.id, true)
+
+    // Notify success
     await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
+
+    // Return desired state
     return { children: specs }
   }
 
