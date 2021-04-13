@@ -29,11 +29,12 @@ import (
 	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"strings"
 )
 
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
-	FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
+	FindAll(name string, pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
 	FindById(id uuid.UUID) (domain.SystemToken, error)
 	FindByToken(token string) (domain.SystemToken, error)
 	Update(systemToken domain.SystemToken) error
@@ -89,11 +90,11 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 	return mapper.SystemTokenModelToDomain(systemTokenToSave), nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
+func (systemTokenRepository systemTokenRepository) FindAll(name string, pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
 	var systemTokens []models.SystemToken
 	var page = pageRequest
 
-	res := systemTokenRepository.db.Where("revoked = false").
+	res := systemTokenRepository.db.Where("revoked = false AND upper(name) like ?", "%" + strings.ToUpper(name) + "%").
 		Order(page.Sort).
 		Offset(page.Offset()).
 		Limit(page.PageSize).
