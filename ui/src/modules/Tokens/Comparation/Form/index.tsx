@@ -19,6 +19,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { Token, TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
+import Text from 'core/components/Text';
 import map from 'lodash/map';
 import Form from 'core/components/Form';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
@@ -26,12 +27,12 @@ import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
 import ModalCopy from './Modal';
-import Styled from './styled';
 import { isEmpty } from 'lodash';
 import { updateParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { useHistory } from 'react-router';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
+import Styled from './styled';
 
 interface Props {
   mode?: Mode;
@@ -87,6 +88,25 @@ const FormToken = ({ mode, data }: Props) => {
     />
   )
 
+  const LastUsed = () => (
+    data?.last_used_at
+      ? <Text.h5 color="dark">Last used at {data.last_used_at}</Text.h5>
+      : <Text.h5 color="dark">This token has not been used yet.</Text.h5>
+  )
+
+  const Author = () => (
+    data?.author
+      ? <Text.h5 color="dark">Created by {data.author}</Text.h5>
+      : <></>
+  )
+
+  const Info = () => (
+    <Styled.Info>
+      <Author />
+      <LastUsed />
+    </Styled.Info>
+  )
+
   return (
     <Styled.Content>
       {isModalCopy && <ModalNewToken />}
@@ -103,6 +123,7 @@ const FormToken = ({ mode, data }: Props) => {
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
             />
+            <Info />
           </ContentIcon>
           {name && <Workspaces mode={mode} />}
           {(workspaces || allWorkspaces) && (
