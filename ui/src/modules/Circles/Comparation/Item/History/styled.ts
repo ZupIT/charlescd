@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
 import ComponentText from 'core/components/Text';
+import ComponentModal from 'core/components/Modal';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 
@@ -46,14 +47,14 @@ const DeploymentRow = styled.div`
   position: relative;
   background-color: ${({ theme }) =>
     theme.circleDeploymentHistory.content.table};
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   border-radius: 4px;
   height: 100px;
 `;
 
 const TableRow = styled.div`
   display: flex;
-  padding-top: 5px;
+  padding-top: 10px;
   padding-bottom: 10px;
 `;
 
@@ -63,7 +64,6 @@ const ReleaseRow = styled.div`
   height: 40px;
   background-color: ${({ theme }) =>
     theme.circleDeploymentHistory.content.release};
-  
 `;
 
 const TableTextName = styled(ComponentText.h4)`
@@ -90,8 +90,14 @@ const TableTextRelease = styled(ComponentText.h4)`
 `;
 
 const TableExpand = styled(ComponentIcon)`
-  margin-top: 5px;
+  margin-top: 2px;
   margin-right: 5px;
+`;
+
+const TableDate = styled(ComponentText.h4)`
+  margin-top: 5px;
+  padding-left: 15px;
+  width: 155px;
 `;
 
 type DotProps = {
@@ -102,27 +108,29 @@ const Dot = styled.div<DotProps>`
   height: 16px;
   width: 16px;
   background-color: ${({ theme, status }) => 
-  theme.circleDeploymentHistory.execution[status]};
+    theme.circleDeploymentHistory.execution[status]};
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
-  margin-top: 10px;
+  margin-top: 5px;
 `;
 
 const TableDeployStatus = styled.div`
   display: flex;
+  margin-left: 10px;
 `;
 
-const TabledeployStatusName = styled(ComponentText.h4)`
+const TableDeployStatusName = styled(ComponentText.h4)`
   display: flex;
   align-items: center;
-  padding-left: 10px;
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 120px;
+  width: 110px;
 `;
+
+const ModalFull = styled(ComponentModal.FullScreen)``;
 
 export default {
   Icon,
@@ -134,7 +142,9 @@ export default {
   TableTextName,
   TableTextRelease,
   TableExpand,
-  TabledeployStatusName,
+  TableDeployStatusName,
   Dot,
-  ReleaseRow
+  ReleaseRow,
+  TableDate,
+  ModalFull
 };

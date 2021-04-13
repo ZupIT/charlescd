@@ -18,10 +18,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CircleRelease } from 'modules/Metrics/Circles/interfaces';
 import Text from 'core/components/Text';
-import { dateTimeFormatter } from 'core/utils/date';
+import { dateTimeFormatterWithTab } from 'core/utils/date';
 import Icon from 'core/components/Icon';
-import { getReleaseStatus } from 'modules/Metrics/Circles/History/helpers'
 import camelCase from 'lodash/camelCase';
+import LogModal from './Logs';
+import { getReleaseStatus } from './helpers';
 import { useCircleDeployHistory } from './hooks';
 import Loader from './Loaders';
 import Styled from './styled';
@@ -33,6 +34,7 @@ type Props = {
 
 const DeployHistory = ({ onGoBack, id }: Props) => {
   const page = useRef(0);
+  const [toggleModal, setToggleModal] = useState(false);
   const [releases, setReleases] = useState<CircleRelease[]>([]);
   const { getCircleReleases, response } = useCircleDeployHistory();
   const releasesResponse = response?.content;
@@ -58,8 +60,6 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
     getCircleReleases({ page: page.current }, id);
   };
 
-  console.log(id, releasesResponse);
-
   return (
     <>
       <Styled.Layer data-testid="circles-deploy-history">
@@ -82,28 +82,40 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
         height={690}
       >
         {releases?.map((release, index) => (
-          <Styled.DeploymentRow key={index}>
-            <Styled.TableRow>
-              <Styled.TableTextName color="light" title={release.authorName}>
-                {release.authorName}
-              </Styled.TableTextName>
-              <Styled.TableTextName color="light" >
-                {release.deployedAt ? dateTimeFormatter(release.deployedAt) : '-'}
-              </Styled.TableTextName>
-              <Styled.TableDeployStatus>
-                <Styled.Dot status={getReleaseStatus(release?.status)}/>
-                <Styled.TabledeployStatusName color="light">
-                  {camelCase(release.status)}
-                </Styled.TabledeployStatusName>
-              </Styled.TableDeployStatus>
-              <Styled.TableExpand name="expand" color="grey" size={'20px'} onClick={() => console.log('expand')}/>
-            </Styled.TableRow>
-            <Styled.ReleaseRow>
-              <Styled.TableTextRelease color="light" title={release.tag}>
-                {release.tag}
-              </Styled.TableTextRelease>
-            </Styled.ReleaseRow>
-          </Styled.DeploymentRow>
+          <>
+            {toggleModal && (
+              <LogModal 
+                onGoBack={() => setToggleModal(false)} 
+                deploymentId={release.id}
+              />)}
+            <Styled.DeploymentRow key={index}>
+              <Styled.TableRow>
+                <Styled.TableTextName color="light" title={release.authorName}>
+                  {release.authorName}
+                </Styled.TableTextName>
+                <Styled.TableDate color="light" >
+                  {release.deployedAt ? dateTimeFormatterWithTab(release.deployedAt) : '-'}
+                </Styled.TableDate>
+                <Styled.TableDeployStatus>
+                  <Styled.Dot status={getReleaseStatus(release?.status)}/>
+                  <Styled.TableDeployStatusName color="light">
+                    {camelCase(release.status)}
+                  </Styled.TableDeployStatusName>
+                </Styled.TableDeployStatus>
+                <Styled.TableExpand 
+                  name="expand" 
+                  color="light"
+                  size={'16px'}
+                  onClick={() => setToggleModal(true)}
+                />
+              </Styled.TableRow>
+              <Styled.ReleaseRow>
+                <Styled.TableTextRelease color="light" title={release.tag}>
+                  {release.tag}
+                </Styled.TableTextRelease>
+              </Styled.ReleaseRow>
+            </Styled.DeploymentRow>
+          </>
         ))}
         </InfiniteScroll>
       </Styled.Layer>

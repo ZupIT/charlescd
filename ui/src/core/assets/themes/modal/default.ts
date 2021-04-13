@@ -19,7 +19,8 @@ import {
   COLOR_RED_ORANGE,
   COLOR_LIGHT_DEFAULT,
   COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE
+  COLOR_GHOST_WHITE,
+  COLOR_PAYNES_GREY
 } from 'core/assets/colors';
 
 export const light = {};
@@ -29,5 +30,6 @@ export const dark = {
   background: COLOR_BASTILLE,
   continue: COLOR_RED_ORANGE,
   text: COLOR_LIGHT_DEFAULT,
-  dismiss: COLOR_GHOST_WHITE
+  dismiss: COLOR_GHOST_WHITE,
+  header: COLOR_PAYNES_GREY
 };

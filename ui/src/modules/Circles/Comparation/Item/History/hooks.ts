@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-import { useCallback } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import { useState, useCallback } from 'react';
+import { 
+  useFetch, 
+  useFetchData,
+  useFetchStatus 
+} from 'core/providers/base/hooks';
 import { buildParams, URLParams } from 'core/utils/query';
-import { getDeployHistoryByCircleId } from 'core/providers/deployment';
+import { 
+  getDeployHistoryByCircleId,
+  findDeployLogsByDeploymentId
+} from 'core/providers/deployment';
 import { CircleReleasesResponse } from 'modules/Metrics/Circles/interfaces';
+import { CircleDeploymentLogs } from './types'
 
 export const useCircleDeployHistory = () => {
   const [releasesData, getCircleData] = useFetch<CircleReleasesResponse>(
@@ -38,5 +46,32 @@ export const useCircleDeployHistory = () => {
     getCircleReleases,
     response,
     loading
+  };
+};
+
+export const useCircleDeployLogs = () => {
+  const getLogsDataRequest = useFetchData<CircleDeploymentLogs[]>(findDeployLogsByDeploymentId);
+  const [logsResponse, setLogsResponse] = useState([]);
+  const status = useFetchStatus();
+
+  const getLogsData = useCallback(async (deploymentId: string) => {
+    try {
+      status.pending();
+      const logsResponseData = await getLogsDataRequest(deploymentId);
+
+      setLogsResponse(logsResponseData);
+      status.resolved();
+
+      return logsResponseData;
+    } catch (e) {
+      status.rejected();
+      console.log(e);
+    }
+  }, [getLogsDataRequest, status]);
+
+  return {
+    getLogsData,
+    logsResponse,
+    status
   };
 };
