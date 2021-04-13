@@ -61,9 +61,10 @@ const FormToken = ({ mode, data }: Props) => {
   };
 
   useEffect(() => {
-    nameRef.current?.click();
-    nameRef.current?.focus();
-  }, [nameRef]);
+    if (mode === 'create') {
+      nameRef.current?.focus();
+    }
+  }, [mode, nameRef]);
   
   useEffect(() => {
     if (response?.token) {
@@ -98,6 +99,7 @@ const FormToken = ({ mode, data }: Props) => {
                 nameRef.current = self;
                 return register(self, isRequiredAndNotBlank);
               }}
+              defaultValue={data?.name}
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
             />
