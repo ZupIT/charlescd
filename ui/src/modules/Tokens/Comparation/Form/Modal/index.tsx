@@ -20,6 +20,7 @@ import InputAction from 'core/components/Form/InputAction';
 import { copyToClipboard } from 'core/utils/clipboard';
 import Styled from './styled';
 import DocumentationLink from 'core/components/DocumentationLink';
+import Icon from 'core/components/Icon';
 
 interface Props {
   title: string;
@@ -64,13 +65,13 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
         defaultValue={token}
         onClick={handleCopyToClipboard}
       />
-      <Text.h5 color="dark">
-        *You may be able to copy your new access token in the token options. Read our
-        <DocumentationLink
-          documentationLink="https://docs.charlescd.io"
-          text="documentation"
-        /> for further details.
-      </Text.h5>
+      <Styled.Warning>
+        <Icon name="warning" color="warning" />
+        <Text.h5 color="light">
+          Make sure you copy the above token now.
+          We don't store it and you will not be able to see it again.
+        </Text.h5>
+      </Styled.Warning>
     </Styled.Modal>
   );
 };

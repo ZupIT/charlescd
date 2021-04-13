@@ -40,6 +40,16 @@ const Modal = styled(ComponentModal.Default)`
   }
 `;
 
+const Warning = styled.div`
+  display: flex;
+  align-items: center;
+
+  >:first-child {
+    margin-right: 10px;
+  }
+`;
+
 export default {
-  Modal
+  Modal,
+  Warning
 };
