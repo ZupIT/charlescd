@@ -26,43 +26,49 @@ import (
 )
 
 func (st *SystemTokenSuite) TestGetAll() {
-	st.systemTokenRepository.On("FindAll", utils.GetDummyPage()).Return(
+	name := ""
+
+	st.systemTokenRepository.On("FindAll", name, utils.GetDummyPage()).Return(
 		[]domain.SystemToken{utils.GetDummySystemToken(), utils.GetDummySystemToken()},
 		utils.GetDummyPage(),
 		nil)
 
-	stList, _, err := st.getAllSystemToken.Execute(utils.GetDummyPage())
+	stList, _, err := st.getAllSystemToken.Execute(name, utils.GetDummyPage())
 
 	require.NotNil(st.T(), stList)
 	require.Nil(st.T(), err)
 	require.NotEmpty(st.T(), stList)
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", utils.GetDummyPage()))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", name, utils.GetDummyPage()))
 }
 
 func (st *SystemTokenSuite) TestGetAllEmpty() {
-	st.systemTokenRepository.On("FindAll", utils.GetDummyPage()).Return(
+	name := ""
+
+	st.systemTokenRepository.On("FindAll", name, utils.GetDummyPage()).Return(
 		[]domain.SystemToken{},
 		utils.GetDummyPage(),
 		nil)
 
-	stList, _, err := st.getAllSystemToken.Execute(utils.GetDummyPage())
+	stList, _, err := st.getAllSystemToken.Execute(name, utils.GetDummyPage())
 
 	require.NotNil(st.T(), stList)
 	require.Nil(st.T(), err)
 	require.Empty(st.T(), stList)
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", utils.GetDummyPage()))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", name, utils.GetDummyPage()))
 }
 
 func (st *SystemTokenSuite) TestErrorGetAllInternalError() {
-	st.systemTokenRepository.On("FindAll", utils.GetDummyPage()).Return(
+	name := ""
+
+	st.systemTokenRepository.On("FindAll", name, utils.GetDummyPage()).Return(
 		[]domain.SystemToken{},
 		utils.GetDummyPage(),
 		logging.NewError("Internal error", logging.CustomError{}, logging.InternalError, nil))
 
-	stList, _, err := st.getAllSystemToken.Execute(utils.GetDummyPage())
+	stList, _, err := st.getAllSystemToken.Execute(name, utils.GetDummyPage())
 
 	require.Error(st.T(), err)
 	require.Equal(st.T(), logging.InternalError, logging.GetErrorType(err))
 	require.Empty(st.T(), stList)
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", utils.GetDummyPage()))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindAll", name, utils.GetDummyPage()))
 }
