@@ -29,7 +29,7 @@ export const getDeployHistoryByCircleId = (
   params: URLSearchParams,
   circleId: string
 ) => {
-  params.append('size', '50');
+  params.append('size', '10');
   return baseRequest(`${v2Endpoint}/circle/${circleId}/history?${params}`);
 }
 

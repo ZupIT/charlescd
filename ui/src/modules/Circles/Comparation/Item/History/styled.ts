@@ -74,7 +74,7 @@ const TableTextName = styled(ComponentText.h4)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 120px;
+  width: 200px;
 `;
 
 const TableTextRelease = styled(ComponentText.h4)`
@@ -90,8 +90,8 @@ const TableTextRelease = styled(ComponentText.h4)`
 `;
 
 const TableExpand = styled(ComponentIcon)`
-  margin-top: 15px;
-  margin-right: 10px;
+  margin-top: 5px;
+  margin-right: 5px;
 `;
 
 type DotProps = {
@@ -106,10 +106,11 @@ const Dot = styled.div<DotProps>`
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
+  margin-top: 10px;
 `;
 
 const TableDeployStatus = styled.div`
-
+  display: flex;
 `;
 
 const TabledeployStatusName = styled(ComponentText.h4)`
