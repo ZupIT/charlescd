@@ -133,7 +133,8 @@ describe('TimeoutScheduler', () => {
 
     await timeoutScheduler.handleCron()
 
-    expect(deleteSpy).toHaveBeenCalledWith(savedDeployment)
+    const expectedDeployment = await manager.findOneOrFail(DeploymentEntityV2, { where: { id: savedDeployment.id } })
+    expect(deleteSpy).toHaveBeenCalledWith(expectedDeployment)
     expect(deleteSpy).toHaveBeenCalledTimes(1)
   })
 

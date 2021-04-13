@@ -35,8 +35,8 @@ export class TimeoutScheduler {
     await this.notifyCallback(execution)
 
     // TODO use transaction
+    await this.deploymentRepository.update({ id: execution.deploymentId }, { current: false })
     const deployment = await this.deploymentRepository.findOneOrFail({ id: execution.deploymentId })
-    await this.deploymentRepository.update({ id: deployment.id }, { current: false })
     if (deployment.previousDeploymentId) {
       await this.deploymentRepository.update({ id: deployment.previousDeploymentId }, { current: true })
       const previousDeployment = await this.deploymentRepository.findOneOrFail({ id: deployment.previousDeploymentId })
