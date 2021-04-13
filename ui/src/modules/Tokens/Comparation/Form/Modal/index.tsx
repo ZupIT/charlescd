@@ -67,7 +67,7 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
       />
       <Styled.Warning>
         <Icon name="warning" color="warning" />
-        <Text.h5 color="light">
+        <Text.h5 color="dark">
           Make sure you copy the above token now.
           We don't store it and you will not be able to see it again.
         </Text.h5>
