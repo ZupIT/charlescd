@@ -33,6 +33,7 @@ import routes from 'core/constants/routes';
 import { useHistory } from 'react-router';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import Styled from './styled';
+import { dateTimeFormatter } from 'core/utils/date';
 
 interface Props {
   mode?: Mode;
@@ -90,7 +91,7 @@ const FormToken = ({ mode, data }: Props) => {
 
   const LastUsed = () => (
     data?.last_used_at
-      ? <Text.h5 color="dark">Last used at {data.last_used_at}</Text.h5>
+      ? <Text.h5 color="dark">Last used at {dateTimeFormatter(data.last_used_at)}</Text.h5>
       : <Text.h5 color="dark">This token has not been used yet.</Text.h5>
   )
 
