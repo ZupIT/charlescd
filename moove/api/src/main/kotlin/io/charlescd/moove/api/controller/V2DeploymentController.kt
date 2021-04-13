@@ -109,7 +109,7 @@ class V2DeploymentController(
 
     @ApiOperation(value = "Get deployment logs")
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/{deploymentId}/logs")
+    @GetMapping("/{deploymentId}/logs")
     fun deploymentLogs(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
