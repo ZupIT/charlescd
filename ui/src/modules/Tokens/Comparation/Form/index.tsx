@@ -60,6 +60,17 @@ const FormToken = ({ mode, data }: Props) => {
     save({ ...rest, workspaces: ws });
   };
 
+  const onCloseModalCopy = () => {
+    updateParam(
+      'token',
+      routes.tokensComparation,
+      history,
+      NEW_TAB,
+      `${response?.id}`
+    );
+    setIsModalCopy(true);
+  };
+
   useEffect(() => {
     if (mode === 'create') {
       nameRef.current?.focus();
@@ -68,13 +79,7 @@ const FormToken = ({ mode, data }: Props) => {
   
   useEffect(() => {
     if (response?.token) {
-      updateParam(
-        'token',
-        routes.tokensComparation,
-        history,
-        NEW_TAB,
-        `${response?.id}`
-      );
+      setIsModalCopy(true);
     }
   }, [response, history]);
 
@@ -83,7 +88,7 @@ const FormToken = ({ mode, data }: Props) => {
       title="Your token has been registered!"
       description="You can now use the token according to the settings you have created."
       token={response?.token}
-      onClose={() => setIsModalCopy(false)}
+      onClose={onCloseModalCopy}
     />
   )
 
