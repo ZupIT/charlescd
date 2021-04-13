@@ -24,7 +24,10 @@ const Placeholder = () => {
     <PlaceholderComponent
       icon="empty-groups"
       title={`Hello, ${profileName}!`}
-      subtitle="Create access tokens using the side menu."
+      description="
+        if you need to integrate external systems with Charles,
+        consider creating a new access token using the side menu to have access to our API.
+      "
     />
   );
 };

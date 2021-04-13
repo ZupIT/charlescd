@@ -24,10 +24,20 @@ const Wrapper = styled.div`
 `;
 
 const Empty = styled.div`
-  margin: 48px 30px 18px 30px;
+  margin: 38px 30px 18px 30px;
+`;
+
+const Description = styled.div`
+  width: 580px;
+  margin-top: 16px;
+
+  >:first-child {
+    line-height: 24px;
+  }
 `;
 
 export default {
   Wrapper,
-  Empty
+  Empty,
+  Description
 };

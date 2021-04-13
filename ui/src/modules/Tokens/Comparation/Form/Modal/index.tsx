@@ -19,7 +19,6 @@ import Text from 'core/components/Text';
 import InputAction from 'core/components/Form/InputAction';
 import { copyToClipboard } from 'core/utils/clipboard';
 import Styled from './styled';
-import DocumentationLink from 'core/components/DocumentationLink';
 import Icon from 'core/components/Icon';
 
 interface Props {
