@@ -42,6 +42,8 @@ interface Props {
 
 const FormToken = ({ mode, data }: Props) => {
   const { save, response, status } = useSave();
+  const isModeCreate = mode === 'create';
+  const isModeView = mode === 'view';
   const [isModalCopy, setIsModalCopy] = useState<boolean>();
   const methods = useForm<TokenCreate>({ mode: 'onChange', defaultValues: data });
   const history = useHistory();
@@ -74,10 +76,10 @@ const FormToken = ({ mode, data }: Props) => {
   };
 
   useEffect(() => {
-    if (mode === 'create') {
+    if (isModeCreate) {
       nameRef.current?.focus();
     }
-  }, [mode, nameRef]);
+  }, [mode, nameRef, isModeCreate]);
   
   useEffect(() => {
     if (response?.token) {
@@ -129,13 +131,13 @@ const FormToken = ({ mode, data }: Props) => {
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
             />
-            <Info />
+            {isModeView && <Info />}
           </ContentIcon>
           {name && <Workspaces mode={mode} />}
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
-              {mode === 'create' && (
+              {isModeCreate && (
                 <Styled.Button
                   type="submit"
                   size="EXTRA_SMALL"
