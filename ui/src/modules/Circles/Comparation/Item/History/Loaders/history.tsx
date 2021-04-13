@@ -14,29 +14,20 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_MOUNTAIN_MEADOW,
-  COLOR_DODGER_BLUE,
-  COLOR_RED_ORANGE,
-  COLOR_PURPLE_HEART,
-  COLOR_BLACK_MARLIN,
-  COLOR_ORANGE_PEEL
-} from '../colors';
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-export const light = {};
-
-export const dark = {
-  content: {
-    table: COLOR_BASTILLE,
-    release: COLOR_BLACK_MARLIN
-  },
-  execution: {
-    deployed: COLOR_MOUNTAIN_MEADOW,
-    deploying: COLOR_DODGER_BLUE,
-    error: COLOR_RED_ORANGE,
-    failed: COLOR_RED_ORANGE,
-    undeploying: COLOR_ORANGE_PEEL,
-    notDeployed: COLOR_PURPLE_HEART,
-  } as Record<string, string>
-};
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height={160}
+    viewBox="0 0 1200 160"
+    backgroundColor="#3a3a3c"
+    foregroundColor="#2c2c2e"
+  >
+    <rect x="0" y="0" rx="0" ry="0" width="100%" height="35" />
+    <rect x="0" y="40" rx="0" ry="0" width="100%" height="35" />
+    <rect x="0" y="80" rx="0" ry="0" width="100%" height="35" />
+  </ContentLoader>
+);

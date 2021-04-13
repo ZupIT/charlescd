@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
-import { useCircleDeployHistory } from './hooks';
+import React, { useEffect, useState, useRef } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { CircleRelease } from 'modules/Metrics/Circles/interfaces';
 import Text from 'core/components/Text';
+import { dateTimeFormatter } from 'core/utils/date';
 import Icon from 'core/components/Icon';
+import { getReleaseStatus } from 'modules/Metrics/Circles/History/helpers'
+import camelCase from 'lodash/camelCase';
+import { useCircleDeployHistory } from './hooks';
+import Loader from './Loaders';
 import Styled from './styled';
 
 type Props = {
@@ -26,15 +32,33 @@ type Props = {
 }
 
 const DeployHistory = ({ onGoBack, id }: Props) => {
-  const { getCircleDeployHistory, history, status} = useCircleDeployHistory();
+  const page = useRef(0);
+  const [releases, setReleases] = useState<CircleRelease[]>([]);
+  const { getCircleReleases, response } = useCircleDeployHistory();
+  const releasesResponse = response?.content;
+  const hasMoreData = !response?.last;
 
   useEffect(() => {
-    if (status.isIdle) {
-      getCircleDeployHistory(id);
+    if (releasesResponse) {
+      setReleases((prevCircles: CircleRelease[]) => [
+        ...prevCircles,
+        ...releasesResponse
+      ]);
     }
-  }, [getCircleDeployHistory, id, status.isIdle]);
+  }, [releasesResponse]);
 
-  console.log(id, history);
+  useEffect(() => {
+    page.current = 0;
+    setReleases([]);
+    getCircleReleases({ page: 0 }, id);
+  }, [getCircleReleases, id]);
+
+  const loadMore = () => {
+    page.current++;
+    getCircleReleases({ page: page.current }, id);
+  };
+
+  console.log(id, releasesResponse);
 
   return (
     <>
@@ -50,40 +74,38 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
           <Icon name="clock" color="dark" size={'25px'} />
           <Text.h2 color="light">History</Text.h2>
         </Styled.Title>
-        {/* <Styled.CircleRowWrapper>
-          <InfiniteScroll
-            dataLength={circles.length}
-            next={loadMore}
-            hasMore={hasMoreData}
-            loader={<Loader.History />}
-            height={500}
-          >
-            {circles?.map(circle => (
-              <CircleRow circle={circle} key={circle.id} />
-              ))}
-          </InfiniteScroll>
-              </Styled.CircleRowWrapper> */}
-        <>
-          <Styled.DeploymentRow>
+        <InfiniteScroll
+        dataLength={releases.length}
+        next={loadMore}
+        hasMore={hasMoreData}
+        loader={<Loader.History />}
+        height={690}
+      >
+        {releases?.map((release, index) => (
+          <Styled.DeploymentRow key={index}>
             <Styled.TableRow>
-              <Styled.TableTextName color="light" title="My tip">
-                namenamenamenamenamenamenamenamenamenamena
+              <Styled.TableTextName color="light" title={release.authorName}>
+                {release.authorName}
+              </Styled.TableTextName>
+              <Styled.TableTextName color="light" >
+                {release.deployedAt ? dateTimeFormatter(release.deployedAt) : '-'}
               </Styled.TableTextName>
               <Styled.TableDeployStatus>
-                <Styled.Dot status="undeployed"/>
+                <Styled.Dot status={getReleaseStatus(release?.status)}/>
                 <Styled.TabledeployStatusName color="light">
-                  Deploy Failed
+                  {camelCase(release.status)}
                 </Styled.TabledeployStatusName>
               </Styled.TableDeployStatus>
               <Styled.TableExpand name="expand" color="grey" size={'20px'} onClick={() => console.log('expand')}/>
             </Styled.TableRow>
             <Styled.ReleaseRow>
-              <Styled.TableTextRelease color="light" title="My tip">
-                releasereleasereleasereleasereleasereleaserelease
+              <Styled.TableTextRelease color="light" title={release.tag}>
+                {release.tag}
               </Styled.TableTextRelease>
             </Styled.ReleaseRow>
           </Styled.DeploymentRow>
-        </>
+        ))}
+        </InfiniteScroll>
       </Styled.Layer>
     </>
   );

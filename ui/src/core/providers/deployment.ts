@@ -25,8 +25,13 @@ export const createDeployment = (data: CreateDeployment) =>
 export const undeploy = (deploymentId: string) =>
   postRequest(`${v2Endpoint}/${deploymentId}/undeploy`);
 
-export const getDeployHistoryByCircleId = (circleId: string) =>
-  baseRequest(`${v2Endpoint}/${circleId}/history`);
+export const getDeployHistoryByCircleId = (
+  params: URLSearchParams,
+  circleId: string
+) => {
+  params.append('size', '50');
+  return baseRequest(`${v2Endpoint}/circle/${circleId}/history?${params}`);
+}
 
 export const findDeployLogsByDeploymentId = (deploymentId: string) =>
   baseRequest(`${v2Endpoint}/${deploymentId}/logs`);

@@ -14,45 +14,29 @@
  * limitations under the License.
  */
 
-import { useState, useCallback } from 'react';
-import {
-  useFetchData,
-  useFetchStatus,
-  FetchStatus
-} from 'core/providers/base/hooks';
+import { useCallback } from 'react';
+import { useFetch } from 'core/providers/base/hooks';
+import { buildParams, URLParams } from 'core/utils/query';
 import { getDeployHistoryByCircleId } from 'core/providers/deployment';
+import { CircleReleasesResponse } from 'modules/Metrics/Circles/interfaces';
 
-export const useCircleDeployHistory = (): {
-  getCircleDeployHistory: Function;
-  history: any[];
-  status: FetchStatus;
-} => {
-  const getCircleDeployHistoryData = useFetchData<any[]>(
+export const useCircleDeployHistory = () => {
+  const [releasesData, getCircleData] = useFetch<CircleReleasesResponse>(
     getDeployHistoryByCircleId
   );
-  const status = useFetchStatus();
-  const [history, setHistory] = useState([]);
+  const { response, loading } = releasesData;
 
-  const getCircleDeployHistory = useCallback(
-    async (circleId: string) => {
-      try {
-        status.pending();
-        const logsResponse = await getCircleDeployHistoryData(circleId);
-
-        setHistory(logsResponse);
-        status.resolved();
-
-        return logsResponse;
-      } catch(e) {
-        status.rejected();
-      }
+  const getCircleReleases = useCallback(
+    (params: URLParams, circleId: string) => {
+      const urlParams = buildParams(params);
+      getCircleData(urlParams, circleId);
     },
-    [getCircleDeployHistoryData, status]
+    [getCircleData]
   );
 
   return {
-    getCircleDeployHistory,
-    history,
-    status
+    getCircleReleases,
+    response,
+    loading
   };
 };
