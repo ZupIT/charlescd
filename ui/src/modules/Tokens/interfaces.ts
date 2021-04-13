@@ -19,8 +19,13 @@ export interface Token {
   name: string,
   permissions: string[],
   workspaces: string[],
-  token?: string;
-  author: string
+  allWorkspaces?: boolean,
+  token?: string,
+  author: string,
+  revoked?: boolean,
+  created_at?: string,
+  revoked_at?: string,
+  last_used_at?: string,
 };
 
 export type TokenCreate = {

@@ -20,7 +20,8 @@ export interface TokenPaginationItem {
   permissions: string[],
   subjects?: { [k: string]: boolean },
   workspaces: string[],
-  author: string
+  author: string,
+  last_used_at?: string,
 }
 
 export interface TokenPagination {
