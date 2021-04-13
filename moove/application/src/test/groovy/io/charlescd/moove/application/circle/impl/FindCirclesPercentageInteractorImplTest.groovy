@@ -161,6 +161,7 @@ class FindCirclesPercentageInteractorImplTest extends Specification {
                 null,
                 isDefault,
                 workspaceId,
+                false,
                 null
         )
     }
@@ -177,6 +178,7 @@ class FindCirclesPercentageInteractorImplTest extends Specification {
                 null,
                 isDefault,
                 workspaceId,
+                false,
                 percentage
         )
     }
