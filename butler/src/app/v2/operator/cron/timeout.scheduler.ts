@@ -26,6 +26,8 @@ export class TimeoutScheduler {
     await Promise.all(
       timedOutExecutions.map(execution => this.handleExecutionTimeOut(execution))
     )
+
+    // TODO is this really necessary?
     const activeComponents = await this.componentRepository.findActiveComponents()
     await this.k8sClient.applyRoutingCustomResource(activeComponents)
   }
