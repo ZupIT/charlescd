@@ -52,7 +52,7 @@ test('render Token PlaceHolder', async () => {
   expect(screen.getByTestId('placeholder-empty-groups')).toBeInTheDocument();
 });
 
-test.only('render Token View mode', async () => {
+test('render Token View mode', async () => {
   const tokenID = 'abd6efc4-3b98-4049-8bdb-e8919c3d09f4';
 
   window.location = {
@@ -91,14 +91,16 @@ test.only('render Token View mode', async () => {
   );
 
   await waitFor(() => expect(screen.getByText('TOKEN 2')).toBeInTheDocument());
-  expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument());
   expect(screen.getByText('Your token has access to all workspaces (including new ones)')).toBeInTheDocument();
 
-  // const modules = await screen.findByTestId('modules');
-  // const circles = screen.getByTestId('circles');
+  const modules = screen.getByTestId('modules');
+  const circles = screen.getByTestId('circles');
+  const maintenance = screen.getByTestId('maintenance');
+  const deploy = screen.getByTestId('deploy');
 
-  // expect(modules).toHaveTextContent('ModulesAll permissions');
-  // expect(circles).toHaveTextContent('CirclesRead');
-
-  screen.debug();
+  expect(modules).toHaveTextContent('ModulesRead');
+  expect(circles).toHaveTextContent('CirclesAll permissions');
+  expect(deploy).toHaveTextContent('DeployAll permissions');
+  expect(maintenance).toHaveTextContent('MaintenanceAll permissions');
 });
