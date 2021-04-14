@@ -22,7 +22,7 @@ import ContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
 import map from 'lodash/map';
 import Form from 'core/components/Form';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { isNotBlank, isRequired, maxLength } from 'core/utils/validations';
 import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
@@ -125,7 +125,14 @@ const FormToken = ({ mode, data }: Props) => {
               name="name"
               ref={self => {
                 nameRef.current = self;
-                return register(self, isRequiredAndNotBlank);
+                return register(self, 
+                  {
+                    required: isRequired(),
+                    validate: {
+                      notBlank: isNotBlank,
+                    },
+                    maxLength: maxLength()
+                  });
               }}
               defaultValue={data?.name}
               readOnly={!isEmpty(data)}

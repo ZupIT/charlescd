@@ -68,28 +68,30 @@ const InputTitle = React.forwardRef(
 
     return (
       <Styled.Wrapper ref={wrapperRef}>
-        <Styled.InputTitle
-          readOnly={readOnly}
-          name={name}
-          ref={inputRef}
-          resume={isResumed || readOnly}
-          className={className}
-          onClick={() => setIsResumed(false)}
-          placeholder={placeholder}
-          defaultValue={defaultValue}
-        />
+        <Styled.Field>
+          <Styled.InputTitle
+            readOnly={readOnly}
+            name={name}
+            ref={inputRef}
+            resume={isResumed || readOnly}
+            className={className}
+            onClick={() => setIsResumed(false)}
+            placeholder={placeholder}
+            defaultValue={defaultValue}
+          />
+          {!isResumed && !readOnly && (
+            <Button.Default
+              id="submit"
+              type="submit"
+              size="EXTRA_SMALL"
+              onClick={onButtonClick}
+              isDisabled={isDisabled}
+            >
+              Save
+            </Button.Default>
+          )}
+        </Styled.Field>
         {error && <Styled.Error color="error">{error}</Styled.Error>}
-        {!isResumed && !readOnly && (
-          <Button.Default
-            id="submit"
-            type="submit"
-            size="EXTRA_SMALL"
-            onClick={onButtonClick}
-            isDisabled={isDisabled}
-          >
-            Save
-          </Button.Default>
-        )}
       </Styled.Wrapper>
     );
   }
