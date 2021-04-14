@@ -24,7 +24,7 @@ export class TimeoutScheduler {
   public async handleCron(): Promise<void> {
     const timedOutExecutions = await this.executionRepository.updateTimedOutExecutions()
     await Promise.all(
-      timedOutExecutions.map(async execution => this.handleExecutionTimeOut(execution))
+      timedOutExecutions.map(execution => this.handleExecutionTimeOut(execution))
     )
     const activeComponents = await this.componentRepository.findActiveComponents()
     await this.k8sClient.applyRoutingCustomResource(activeComponents)

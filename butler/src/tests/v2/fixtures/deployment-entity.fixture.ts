@@ -26,6 +26,29 @@ export const deploymentFixture = new DeploymentEntityV2(
   60
 )
 
+export const deploymentFixture2 = new DeploymentEntityV2(
+  'a62ce3b9-3029-42a8-9153-ace7a4d632bf',
+  'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+  'b46fd548-0082-4021-ba80-a50703c44a3b',
+  UrlConstants.deploymentCallbackUrl,
+  [
+    new ComponentEntityV2(
+      UrlConstants.helmRepository,
+      'build-image-tag2',
+      'build-image-url2.com',
+      'hello-kubernetes',
+      '8d5c7e37-5080-4d73-8992-4add6f9d68ea',
+      null,
+      null,
+      [],
+      false
+    )
+  ],
+  true,
+  'namespace',
+  60
+)
+
 export const componentsFixtureCircle1WithService = [
   createDeployComponent('A', 'v1', 'circle-1', true, true, 'namespace')
 ]

@@ -25,14 +25,10 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { TimeoutScheduler } from '../../../../app/v2/operator/cron/timeout.scheduler'
-import { deploymentFixture } from '../../fixtures/deployment-entity.fixture'
+import { deploymentFixture, deploymentFixture2 } from '../../fixtures/deployment-entity.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
-import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
-import * as http from 'http'
-
-type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
 describe('TimeoutScheduler', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -70,6 +66,8 @@ describe('TimeoutScheduler', () => {
   it('updates old unresolved deployments', async() => {
     const deployment = deploymentFixture
     deployment.current = true
+    deployment.healthy = false
+    deployment.routed = false
     const savedDeployment = await manager.save(DeploymentEntityV2, deployment)
     const execution = new Execution(savedDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     const savedExecution = await manager.save(Execution, execution)
@@ -87,6 +85,8 @@ describe('TimeoutScheduler', () => {
   it('does not update deployment that has not timed_out yet', async() => {
     const deployment = deploymentFixture
     deployment.current = true
+    deployment.healthy = false
+    deployment.routed = false
     const savedDeployment = await manager.save(DeploymentEntityV2, deployment)
     const execution = new Execution(savedDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     await manager.save(Execution, execution)
@@ -122,6 +122,8 @@ describe('TimeoutScheduler', () => {
 
     const deployment = deploymentFixture
     deployment.current = true
+    deployment.healthy = false
+    deployment.routed = false
     const savedDeployment = await manager.save(DeploymentEntityV2, deployment)
     const execution = new Execution(savedDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     const savedExecution = await manager.save(Execution, execution)
@@ -143,16 +145,18 @@ describe('TimeoutScheduler', () => {
       .mockImplementation(() => Promise.resolve())
 
     const previousDeployment = deploymentFixture
-    previousDeployment.id = 'a62ce3b9-3029-42a8-9153-ace7a4d632bf'
     previousDeployment.current = false
+    previousDeployment.healthy = true
+    previousDeployment.routed = true
     const savedPreviousDeployment = await manager.save(DeploymentEntityV2, previousDeployment)
     const previousExecution = new Execution(savedPreviousDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.SUCCEEDED)
     await manager.save(Execution, previousExecution)
 
-    const currentDeployment = deploymentFixture
-    currentDeployment.id = '18759ea9-b360-4739-918c-6f607710668e'
+    const currentDeployment = deploymentFixture2
     currentDeployment.previousDeploymentId = previousDeployment.id
     currentDeployment.current = true
+    currentDeployment.healthy = false
+    currentDeployment.routed = false
     const savedCurrentDeployment = await manager.save(DeploymentEntityV2, currentDeployment)
     const currentExecution = new Execution(savedCurrentDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     const currentSavedExecution = await manager.save(Execution, currentExecution)

@@ -41,16 +41,10 @@ export class ReconcileDeploymentUsecase {
     private readonly mooveService: MooveService
   ) { }
 
+  // TODO organize this method + remove comments
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     // Get deployment and execution entities involved in the reconcile loop
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
-    const execution = await this.executionRepository.findByDeploymentId(deployment.id)
-
-    // If the execution has a TIMED_OUT status, return an empty children array
-    if (execution.status === DeploymentStatusEnum.TIMED_OUT) {
-      this.consoleLoggerService.log('DEPLOYMENT_RECONCILE:TIMED_OUT_DEPLOYMENT', { executionId: execution.id, deploymentId: execution.deploymentId })
-      return { children: [] }
-    }
 
     // Remove service manifests from the list
     const rawSpecs = deployment.components.flatMap(c => c.manifests).filter(e => e.kind !== 'Service')
@@ -113,6 +107,5 @@ export class ReconcileDeploymentUsecase {
       )
       await this.executionRepository.updateNotificationStatus(execution.id, notificationResponse.status)
     }
-
   }
 }
