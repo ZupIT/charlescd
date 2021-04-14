@@ -34,7 +34,8 @@ export const getUndeploymentsSuccessWebhookStage = (deployment: Deployment, stag
   name: 'Trigger Success Webhook',
   payload: {
     status: DeploymentStatusEnum.SUCCEEDED,
-    type: ExecutionTypeEnum.UNDEPLOYMENT
+    type: ExecutionTypeEnum.UNDEPLOYMENT,
+    logs: []
   },
   refId: `${stageId}`,
   requisiteStageRefIds: deployment?.components ? getRequisiteStageRefIds(deployment.components) : [],
