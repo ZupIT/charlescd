@@ -15,6 +15,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { copyToClipboard } from 'core/utils/clipboard';
 import { useCircleDeployLogs } from './hooks';
 import Styled from './styled';
 
@@ -39,7 +40,10 @@ const LogsModal = ({ onGoBack, deploymentId }: Props) => {
   console.log(logsData, logLoagind);
 
   return (
-    <Styled.ModalFull onClose={() => onGoBack()}>
+    <Styled.ModalFull 
+      onClose={() => onGoBack()}
+      onCopy={() => copyToClipboard(JSON.stringify(logsData))}
+    >
       
     </Styled.ModalFull>
   );

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useRef } from 'react';
+import React from 'react';
 import Icon from 'core/components/Icon';
-import useOutsideClick from 'core/hooks/useClickOutside';
 import Styled from './styled';
 
 interface Props {
@@ -24,7 +23,7 @@ interface Props {
   className?: string;
   isOpen?: boolean;
   onClose: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
-  isOutsideClick?: boolean;
+  onCopy: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
 }
 
 const ModalFullScreen = ({
@@ -32,17 +31,8 @@ const ModalFullScreen = ({
   className,
   isOpen = true,
   onClose,
-  isOutsideClick
-}: Props) => {
-  const modalRef = useRef<HTMLDivElement>();
-
-  useOutsideClick(modalRef, () => {
-    if (isOutsideClick) {
-      onClose();
-    }
-  });
-
-  return (
+  onCopy
+}: Props) => (
     <Styled.Wrapper
       data-testid="modal-default"
       className={className}
@@ -51,12 +41,11 @@ const ModalFullScreen = ({
         <Styled.Container className="modal-container">
             <Styled.Header>
               <Icon name="collapse" color="light" size="18px" onClick={onClose} />
-              <Icon name="copy" color="light" size="18px" onClick={onClose} />
+              <Icon name="copy" color="light" size="18px" onClick={onCopy} />
             </Styled.Header>
             <Styled.Content className="modal-content">{children}</Styled.Content>
         </Styled.Container>
     </Styled.Wrapper>
   );
-};
 
 export default ModalFullScreen;
