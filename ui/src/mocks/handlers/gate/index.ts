@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import auth from './handlers/auth';
-import users from './handlers/users';
-import circleMatcher from './handlers/circleMatcher';
-import workspaces from './handlers/workspaces';
-import gate from './handlers/gate';
+import { rest } from 'msw';
+import { basePath } from 'core/providers/base';
+import { TOKENS_LIST } from './responses';
 
-export const handlers = [
-  ...auth,
-  ...users,
-  ...circleMatcher,
-  ...workspaces,
-  ...gate
-]
+export default [
+  rest.get(`${basePath}/gate/api/v1/system-token`, (req, res, ctx) => {
+    return res(
+      ctx.json(TOKENS_LIST)
+    )
+  }),
+];

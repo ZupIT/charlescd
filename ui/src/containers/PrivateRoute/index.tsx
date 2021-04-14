@@ -54,7 +54,6 @@ const PrivateRoute = ({
 
   const isAuthorizedByUser =
     allowedRoute || isAllowed(allowedRoles) || isRoot();
-
   return (
     <Route
       {...rest}
