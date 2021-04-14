@@ -61,9 +61,12 @@ export class ReconcileDeploymentUsecase {
     const currentDeploymentSpecs = ReconcileUtils.specsByDeployment(params, deployment.id)
 
     // Check if all resources are ready
+    // This method is returning 500 when the object state is not present
     const allReady = ReconcileUtils.checkConditions(currentDeploymentSpecs)
 
     // If not all resources are ready yet, concat the manifests from the previous deployment
+    // If we have a override on the same component with a different version, we will have
+    // two deployment manifests with the same name but different values (only one will be created)
     if (!allReady) {
       const previousDeploymentId = deployment.previousDeploymentId
 
