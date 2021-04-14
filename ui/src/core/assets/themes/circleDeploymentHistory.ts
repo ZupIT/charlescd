@@ -16,20 +16,27 @@
 
 import {
   COLOR_BASTILLE,
+  COLOR_MOUNTAIN_MEADOW,
+  COLOR_DODGER_BLUE,
   COLOR_RED_ORANGE,
-  COLOR_LIGHT_DEFAULT,
-  COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE,
-  COLOR_PAYNES_GREY
-} from 'core/assets/colors';
+  COLOR_PURPLE_HEART,
+  COLOR_BLACK_MARLIN,
+  COLOR_ORANGE_PEEL
+} from '../colors';
 
 export const light = {};
 
 export const dark = {
-  screen: COLOR_BLACK_RUSSIAN,
-  background: COLOR_BASTILLE,
-  continue: COLOR_RED_ORANGE,
-  text: COLOR_LIGHT_DEFAULT,
-  dismiss: COLOR_GHOST_WHITE,
-  header: COLOR_PAYNES_GREY
+  content: {
+    table: COLOR_BASTILLE,
+    release: COLOR_BLACK_MARLIN
+  },
+  execution: {
+    deployed: COLOR_MOUNTAIN_MEADOW,
+    deploying: COLOR_DODGER_BLUE,
+    error: COLOR_RED_ORANGE,
+    failed: COLOR_RED_ORANGE,
+    undeploying: COLOR_ORANGE_PEEL,
+    notDeployed: COLOR_PURPLE_HEART,
+  } as Record<string, string>
 };
