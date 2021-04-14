@@ -232,7 +232,7 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: octopipe
+        ECR_REPOSITORY: charlescd-octopipe
         IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
       run: |
         cd octopipe
