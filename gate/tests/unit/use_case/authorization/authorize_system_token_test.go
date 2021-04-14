@@ -26,7 +26,7 @@ import (
 )
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenPublicPath() {
-	var path = "/actuator/health"
+	var path = "/moove/actuator/health"
 	var method = "GET"
 	var systemToken = utils.GetDummySystemToken()
 
@@ -36,7 +36,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenPublicPath() {
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutWorkspacePermission() {
-	var path = "/v2/circles"
+	var path = "/moove/v2/circles"
 	var method = "GET"
 	var systemToken = utils.GetDummySystemToken()
 
@@ -50,7 +50,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutWorkspacePerm
 }
 
 func (as *AuthorizeSuite) TestAuthorizeNotFoundSystemToken() {
-	var path = "/v2/circles"
+	var path = "/moove/v2/circles"
 	var method = "GET"
 	var systemToken = utils.GetDummySystemToken()
 
@@ -63,7 +63,7 @@ func (as *AuthorizeSuite) TestAuthorizeNotFoundSystemToken() {
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWorkspace() {
-	var path = "/v2/circles"
+	var path = "/moove/v2/circles"
 	var method = "GET"
 	var systemToken = utils.GetDummySystemToken()
 	var workspaces = utils.GetDummySimpleWorkspaces()
@@ -78,7 +78,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutPermissionToWorkspace() {
-	var path = "/v2/webhook/publish"
+	var path = "/moove/v2/webhook/publish"
 	var method = "GET"
 	var systemToken = utils.GetDummySystemToken()
 

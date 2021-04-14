@@ -26,7 +26,7 @@ import (
 )
 
 func (as *AuthorizeSuite) TestAuthorizeUserTokenPublicPath() {
-	var path = "/actuator/health"
+	var path = "/moove/actuator/health"
 	var method = "GET"
 
 	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
@@ -35,7 +35,7 @@ func (as *AuthorizeSuite) TestAuthorizeUserTokenPublicPath() {
 }
 
 func (as *AuthorizeSuite) TestAuthorizeUserTokenManagementPath() {
-	var path = "/v2/users"
+	var path = "/moove/v2/users"
 	var method = "GET"
 
 	err := as.authorizeUserToken.Execute(utils.GetDummyRootAuthorization(), "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
@@ -44,7 +44,7 @@ func (as *AuthorizeSuite) TestAuthorizeUserTokenManagementPath() {
 }
 
 func (as *AuthorizeSuite) TestAuthorizeEmptyUserToken() {
-	var path = "/v2/users"
+	var path = "/moove/v2/users"
 	var method = "GET"
 
 	err := as.authorizeUserToken.Execute("", "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
@@ -54,7 +54,7 @@ func (as *AuthorizeSuite) TestAuthorizeEmptyUserToken() {
 }
 
 func (as *AuthorizeSuite) TestAuthorizeRootUserTokenClosedPath() {
-	var path = "/v2/workspaces/users"
+	var path = "/moove/v2/workspaces/users"
 	var method = "GET"
 	var user = utils.GetDummyRootUser()
 
@@ -67,7 +67,7 @@ func (as *AuthorizeSuite) TestAuthorizeRootUserTokenClosedPath() {
 }
 
 func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithoutPermissions() {
-	var path = "/v2/workspaces/users"
+	var path = "/moove/v2/workspaces/users"
 	var method = "GET"
 	var user = utils.GetDummyUser()
 	var permissions = [][]domain.Permission{utils.GetDummyPermissions()}
@@ -82,7 +82,7 @@ func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithoutPermissi
 }
 
 func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithPermissions() {
-	var path = "/v2/circles/"
+	var path = "/moove/v2/circles/"
 	var method = "POST"
 	var user = utils.GetDummyUser()
 	var permissions = [][]domain.Permission{utils.GetDummyPermissions()}
@@ -96,7 +96,7 @@ func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithPermissions
 }
 
 func (as *AuthorizeSuite) TestAuthorizeNotFoundUser() {
-	var path = "/v2/workspaces/users"
+	var path = "/moove/v2/workspaces/users"
 	var method = "GET"
 	var user = utils.GetDummyRootUser()
 
@@ -109,7 +109,7 @@ func (as *AuthorizeSuite) TestAuthorizeNotFoundUser() {
 }
 
 func (as *AuthorizeSuite) TestAuthorizeInvalidToken() {
-	var path = "/v2/workspaces/users"
+	var path = "/moove/v2/workspaces/users"
 	var method = "GET"
 	var user = utils.GetDummyRootUser()
 
