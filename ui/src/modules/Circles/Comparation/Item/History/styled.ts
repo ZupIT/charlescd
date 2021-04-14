@@ -18,8 +18,9 @@ import styled from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
 import ComponentText from 'core/components/Text';
 import ComponentModal from 'core/components/Modal';
-import { slideInRight } from 'core/assets/style/animate';
+import ComponentAceEditor from 'core/components/AceEditor';
 import LayerComponent from 'core/components/Layer';
+import { slideInRight } from 'core/assets/style/animate';
 
 
 const Icon = styled(ComponentIcon)`
@@ -55,7 +56,7 @@ const DeploymentRow = styled.div`
 const TableRow = styled.div`
   display: flex;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
 `;
 
 const ReleaseRow = styled.div`
@@ -69,7 +70,7 @@ const ReleaseRow = styled.div`
 const TableTextName = styled(ComponentText.h4)`
   display: flex;
   align-items: center;
-  padding-left: 10px;
+  padding-left: 20px;
 
   white-space: nowrap;
   overflow: hidden;
@@ -91,7 +92,7 @@ const TableTextRelease = styled(ComponentText.h4)`
 
 const TableExpand = styled(ComponentIcon)`
   margin-top: 2px;
-  margin-right: 5px;
+  margin-right: 13px;
 `;
 
 const TableDate = styled(ComponentText.h4)`
@@ -132,6 +133,11 @@ const TableDeployStatusName = styled(ComponentText.h4)`
 
 const ModalFull = styled(ComponentModal.FullScreen)``;
 
+const AceEditor = styled(ComponentAceEditor)`
+  padding: 10px 0;
+  height: 97%;
+`;
+
 export default {
   Icon,
   Layer,
@@ -146,5 +152,6 @@ export default {
   Dot,
   ReleaseRow,
   TableDate,
-  ModalFull
+  ModalFull,
+  AceEditor
 };
