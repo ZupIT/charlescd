@@ -24,27 +24,29 @@ type Props = {
   onGoBack: Function;
 }
 
+const SPACER = 2;
+
 const LogsModal = ({ onGoBack, deploymentId }: Props) => {
   const { getLogsData } = useCircleDeployLogs();
   const [logsData, setLogsData] = useState([]);
-  const [logLoagind, setLogLoading] = useState(true);
 
   useEffect(() => {
-    setLogLoading(true);
     getLogsData(deploymentId).then(logsResponse => {
       setLogsData(logsResponse);
-    })
-    .finally(() => setLogLoading(false));
+    });
   }, [deploymentId, getLogsData]);
-
-  console.log(logsData, logLoagind);
 
   return (
     <Styled.ModalFull 
       onClose={() => onGoBack()}
       onCopy={() => copyToClipboard(JSON.stringify(logsData))}
     >
-      
+      <Styled.AceEditor
+        mode="json"
+        height="100%"
+        width="100%"
+        value={JSON.stringify(logsData, null, SPACER)}
+      />
     </Styled.ModalFull>
   );
 };
