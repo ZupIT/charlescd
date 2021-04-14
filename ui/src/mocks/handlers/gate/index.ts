@@ -16,7 +16,7 @@
 
 import { rest } from 'msw';
 import { basePath } from 'core/providers/base';
-import { TOKEN, TOKENS_LIST } from './responses';
+import { TOKEN, TOKENS_LIST, TOKEN_CREATE, TOKEN_REGENERATE } from './responses';
 
 export default [
   rest.get(`${basePath}/gate/api/v1/system-token`, (req, res, ctx) => {
@@ -29,4 +29,19 @@ export default [
       ctx.json(TOKEN)
     )
   }),
+  rest.post(`${basePath}/gate/api/v1/system-token/:token/revoke`, (req, res, ctx) => {
+    return res(
+      ctx.json({})
+    )
+  }),
+  rest.put(`${basePath}/gate/api/v1/system-token/:token/regenerate`, (req, res, ctx) => {
+    return res(
+      ctx.json(TOKEN_REGENERATE)
+    )
+  }),
+  rest.post(`${basePath}/gate/api/v1/system-token`, (req, res, ctx) => {
+    return res(
+      ctx.json(TOKEN_CREATE)
+    )
+  })
 ];

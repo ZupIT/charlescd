@@ -23,6 +23,8 @@ import { saveProfile } from 'core/utils/profile';
 import userEvent from '@testing-library/user-event';
 import { server, rest } from 'mocks/server';
 import { DEFAULT_TEST_BASE_URL } from 'setupTests';
+import { NEW_TAB } from 'core/components/TabPanel/constants';
+import { act } from 'react-dom/test-utils';
 
 const originalWindow = window;
 
@@ -103,4 +105,121 @@ test('render Token View mode', async () => {
   expect(circles).toHaveTextContent('CirclesAll permissions');
   expect(deploy).toHaveTextContent('DeployAll permissions');
   expect(maintenance).toHaveTextContent('MaintenanceAll permissions');
+});
+
+test('should revoke token', async () => {
+  const tokenID = 'abd6efc4-3b98-4049-8bdb-e8919c3d09f4';
+
+  window.location = {
+    ...window.location,
+    pathname: `${routes.tokensComparation}`,
+    search: `?token=${tokenID}`
+  };
+
+  server.use(
+    rest.post(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
+      return res(ctx.json({
+        "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
+        "name":"TOKEN 2",
+        "permissions":["maintenance_write"],
+        "workspaces": "",
+        "allWorkspaces": true,
+        "revoked": false,
+        "created_at": "2021-04-12T23:02:39.304307Z",
+        "revoked_at": "",
+        "last_used_at": "",
+        "author":"charlesadmin@admin"
+      }))
+    }),
+  );
+
+  render(
+    <MemoryRouter initialEntries={[`${routes.tokensComparation}?token=${tokenID}`]}>
+      <Token />
+    </MemoryRouter>
+  );
+
+  await waitFor(() => expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument());        
+  const revokeToken = screen.getByText('Revoke token');
+  userEvent.click(revokeToken);
+  await waitFor(() => expect(screen.getByText('Are you sure you want to revoke this token?')));
+  expect(screen.getByText('Yes, revoke token')).toBeInTheDocument();
+});
+
+
+test('should regenerate token', async () => {
+  const tokenID = 'abd6efc4-3b98-4049-8bdb-e8919c3d09f4';
+
+  window.location = {
+    ...window.location,
+    pathname: `${routes.tokensComparation}`,
+    search: `?token=${tokenID}`
+  };
+
+  server.use(
+    rest.post(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
+      return res(ctx.json({
+        "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
+        "name":"TOKEN 2",
+        "permissions":["maintenance_write"],
+        "workspaces": "",
+        "allWorkspaces": true,
+        "revoked": false,
+        "created_at": "2021-04-12T23:02:39.304307Z",
+        "revoked_at": "",
+        "last_used_at": "",
+        "author":"charlesadmin@admin"
+      }))
+    }),
+  );
+
+  render(
+    <MemoryRouter initialEntries={[`${routes.tokensComparation}?token=${tokenID}`]}>
+      <Token />
+    </MemoryRouter>
+  );
+
+  await waitFor(() => expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument());        
+  const regenerateToken= screen.getByText('Regenerate token');
+  userEvent.click(regenerateToken);
+  await waitFor(() => expect(screen.getByText('Are you sure you want to regenerate this token?')));
+  const confirmRegenerate = screen.getByText('Yes, regenerate token');
+  userEvent.click(confirmRegenerate);
+  await waitFor(() => expect(screen.getByText('Your token has been regenerated!')));
+});
+
+test('should create a token', async () => {
+  window.location = {
+    ...window.location,
+    pathname: `${routes.tokensComparation}`,
+    search: `?token=${NEW_TAB}`
+  };
+
+  render(
+    <MemoryRouter initialEntries={[`${routes.tokensComparation}?token=${NEW_TAB}`]}>
+      <Token />
+    </MemoryRouter>
+  );
+
+  await waitFor(() => expect(screen.getByText('TOKEN 1')).toBeInTheDocument());        
+
+  const name = screen.getByTestId('input-text-name');
+  await act(() => userEvent.type(name, 'New Token')); 
+  
+  const addWorkspace = await screen.findByText('Add workspaces');
+  userEvent.click(addWorkspace);
+
+  await waitFor(() => expect(screen.getByText('Allow access for all workspaces')).toBeInTheDocument());
+  const add = screen.getByText('Add');
+  userEvent.click(add);
+
+  await waitFor(() => expect(screen.getByText('Scopes')).toBeInTheDocument());
+  const modules = screen.getByTestId('checkbox-toggle-Modules');
+  userEvent.click(modules);
+
+  const generateToken = screen.getByText('Generate token');
+  await waitFor(() =>expect(generateToken).not.toBeDisabled());
+  userEvent.click(generateToken);
+
+  await waitFor(() => expect(screen.getByText('Your token has been registered!')));
 });

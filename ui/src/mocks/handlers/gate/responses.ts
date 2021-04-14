@@ -71,3 +71,12 @@ export const TOKEN = {
   "last_used_at": "",
   "author":"charlesadmin@admin"
 };
+
+export const TOKEN_CREATE = {
+  ...TOKEN,
+  "token": "afefef72305d48a8a5a95f2979af9a94",
+}
+
+export const TOKEN_REGENERATE = {
+  "token":"88a3de885b9a477c9413c9953526fa41"
+};
