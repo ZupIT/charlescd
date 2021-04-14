@@ -431,7 +431,8 @@ export const oneComponentCustomNamespace: SpinnakerPipeline = {
       name: 'Trigger Failure Webhook',
       payload: {
         status: DeploymentStatusEnum.FAILED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '8',
       requisiteStageRefIds: [
@@ -457,7 +458,8 @@ export const oneComponentCustomNamespace: SpinnakerPipeline = {
       name: 'Trigger Success Webhook',
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '9',
       requisiteStageRefIds: [
