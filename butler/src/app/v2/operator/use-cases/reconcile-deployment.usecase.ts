@@ -43,7 +43,7 @@ export class ReconcileDeploymentUsecase {
 
   // TODO organize this method + remove comments
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    // Get deployment and execution entities involved in the reconcile loop
+    // Get deployment entity involved in the reconcile loop
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
 
     // Remove service manifests from the list
