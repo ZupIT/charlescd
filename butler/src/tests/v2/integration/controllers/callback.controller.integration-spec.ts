@@ -35,6 +35,7 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
 
 let mock = express()
 
@@ -172,7 +173,7 @@ describe('CallbackController v2', () => {
 
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
-      .send({ status: 'SUCCEEDED', type: 'DEPLOYMENT' })
+      .send({ status: 'SUCCEEDED', type: 'DEPLOYMENT', logs: [] })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
@@ -271,7 +272,7 @@ describe('CallbackController v2', () => {
 
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
-      .send({ status: 'FAILED', type: 'DEPLOYMENT' })
+      .send({ status: 'FAILED', type: 'DEPLOYMENT', logs: [] })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
@@ -370,7 +371,7 @@ describe('CallbackController v2', () => {
 
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
-      .send({ status: 'SUCCEEDED', type: 'UNDEPLOYMENT' })
+      .send({ status: 'SUCCEEDED', type: 'UNDEPLOYMENT', logs: [] })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
@@ -469,12 +470,177 @@ describe('CallbackController v2', () => {
 
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
-      .send({ status: 'FAILED', type: 'UNDEPLOYMENT' })
+      .send({ status: 'FAILED', type: 'UNDEPLOYMENT', logs: [] })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
         expect(response.body).toEqual(expectedResponse)
       })
 
+  })
+
+  it('should save the deployment logs correctly on database', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await manager.save(cdConfiguration)
+
+    const components = new CreateComponentRequestDto(
+      '945595ee-d851-4841-a170-c171c0a7b1a2',
+      'build-image-url.com',
+      'build-image-tag',
+      'component-name',
+      undefined,
+      undefined
+    )
+
+    const modulesDto = new CreateModuleDeploymentDto(
+      '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
+      'http://helm-repo.com',
+      [components]
+    )
+
+    const deploymentDto = new CreateDeploymentRequestDto(
+      '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
+      'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
+      'http://localhost:9000/deploy/notifications/deployment',
+      cdConfiguration.id,
+      { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
+      DeploymentStatusEnum.SUCCEEDED,
+      [modulesDto],
+      false
+    )
+    const deploymentEntity = deploymentDto.toCircleEntity()
+    deploymentEntity.active = true
+    deploymentEntity.cdConfiguration = cdConfiguration
+    const savedDeployment = await manager.save(deploymentEntity)
+    const executionEntity = new Execution(
+      savedDeployment,
+      ExecutionTypeEnum.UNDEPLOYMENT,
+      '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+      DeploymentStatusEnum.CREATED,
+    )
+    executionEntity.finishedAt = DateUtils.now()
+    await manager.update(ComponentEntityV2, { deployment: savedDeployment }, { running: true })
+    const savedExecution = await manager.save(executionEntity)
+
+    const execution = await manager.findOneOrFail(Execution, { id: savedExecution.id }, { relations: ['deployment', 'deployment.components'] })
+    mock.post('/deploy/notifications/deployment', (req, res) => {
+      res.sendStatus(200)
+    })
+    const callbackData = {
+      status: 'SUCCEEDED',
+      type: 'DEPLOYMENT',
+      logs: [
+        {
+          type: 'INFO',
+          title:'Rendering helm manifests'
+        },
+        {
+          type: 'ERROR',
+          title: 'Get chart by github failed',
+          details: '{"message":"Not Found","documentation_url":"https://docs.github.com/rest/reference/repos#get-repository-content"}'
+        }
+      ] }
+
+    await request(app.getHttpServer())
+      .post(`/v2/executions/${execution.id}/notify`)
+      .send(callbackData)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
+    const logSaved = await manager.findOneOrFail(LogEntity, { where: { deploymentId: deploymentDto.deploymentId } } )
+    console.log(logSaved)
+    expect(logSaved.logs).toEqual(callbackData.logs)
+  })
+
+  it('should concat the undeployment logs with the deployment on  database', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await manager.save(cdConfiguration)
+
+    const components = new CreateComponentRequestDto(
+      '945595ee-d851-4841-a170-c171c0a7b1a2',
+      'build-image-url.com',
+      'build-image-tag',
+      'component-name',
+      undefined,
+      undefined
+    )
+
+    const modulesDto = new CreateModuleDeploymentDto(
+      '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
+      'http://helm-repo.com',
+      [components]
+    )
+
+    const deploymentDto = new CreateDeploymentRequestDto(
+      '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
+      'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
+      'http://localhost:9000/deploy/notifications/deployment',
+      cdConfiguration.id,
+      { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
+      DeploymentStatusEnum.SUCCEEDED,
+      [modulesDto],
+      false
+    )
+    const deploymentEntity = deploymentDto.toCircleEntity()
+    deploymentEntity.active = true
+    deploymentEntity.cdConfiguration = cdConfiguration
+    const savedDeployment = await manager.save(deploymentEntity)
+    const executionEntity = new Execution(
+      savedDeployment,
+      ExecutionTypeEnum.UNDEPLOYMENT,
+      '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+      DeploymentStatusEnum.CREATED,
+    )
+    executionEntity.finishedAt = DateUtils.now()
+    await manager.update(ComponentEntityV2, { deployment: savedDeployment }, { running: true })
+    const savedExecution = await manager.save(executionEntity)
+    const logRequest = new LogEntity(
+      deploymentDto.deploymentId,
+      [{
+        type: 'INFO',
+        title:'Rendering helm manifests',
+        timestamp: Date.now().toString()
+      },
+      {
+        type: 'ERROR',
+        title: 'Get chart by github failed',
+        details: '{"message":"Not Found","documentation_url":"https://docs.github.com/rest/reference/repos#get-repository-content"}',
+        timestamp: Date.now().toString()
+      }]
+    )
+    const logSaved = await manager.save(logRequest)
+    const execution = await manager.findOneOrFail(Execution, { id: savedExecution.id }, { relations: ['deployment', 'deployment.components'] })
+    mock.post('/deploy/notifications/deployment', (req, res) => {
+      res.sendStatus(200)
+    })
+    const callbackData = {
+      status: 'SUCCEEDED',
+      type: 'UNDEPLOYMENT',
+      logs: [
+        {
+          type: 'INFO',
+          title: 'Starting undeploy pipeline',
+          timestamp: Date.now().toString()
+        }] }
+
+    await request(app.getHttpServer())
+      .post(`/v2/executions/${execution.id}/notify`)
+      .send(callbackData)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
+    const logDatabase = await manager.findOneOrFail(LogEntity, { where: { deploymentId: deploymentDto.deploymentId } } )
+    const expectedLogs = logSaved.logs.concat(callbackData.logs)
+    expect(logDatabase.logs).toEqual(expectedLogs)
   })
 })
