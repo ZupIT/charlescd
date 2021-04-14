@@ -114,7 +114,7 @@ const Workspaces = ({ mode }: Props) => {
         <Styled.Caption color="dark">
           {
             watchAllWorkspaces
-              ? 'Your token has access to all workspaces'
+              ? 'Your token has access to all workspaces (including new ones)'
               : 'Your token have access only on these workspaces'
           }
         </Styled.Caption>
