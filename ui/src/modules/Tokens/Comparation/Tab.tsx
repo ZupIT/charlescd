@@ -51,6 +51,11 @@ const Tab = ({ param }: Props) => {
 
   const toggleRevoke = () => setIsRevoke(!isRevoke);
 
+  console.log('param', param);
+  console.log('isLoading', isLoading);
+  console.log('token', token);
+  console.log('id', id);
+
   useEffect(() => {
     if (response) {
       setToken(response);

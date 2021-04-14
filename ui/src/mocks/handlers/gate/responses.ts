@@ -31,11 +31,13 @@ export const TOKENS_LIST = {
     {
       "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
       "name":"TOKEN 2",
-      "permissions":["maintenance_write",
-      "deploy_write",
-      "circles_read",
-      "circles_write",
-      "modules_read"],
+      "permissions":[
+        "maintenance_write",
+        "deploy_write",
+        "circles_read",
+        "circles_write",
+        "modules_read"
+      ],
       "workspaces":null,
       "allWorkspaces":true,
       "revoked":false,
@@ -50,3 +52,22 @@ export const TOKENS_LIST = {
   "last":true,
   "totalPages":1
 }; 
+
+export const TOKEN = {
+  "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
+  "name":"TOKEN 2",
+  "permissions":[
+    "maintenance_write",
+    "deploy_write",
+    "circles_read",
+    "circles_write",
+    "modules_read"
+  ],
+  "workspaces": "",
+  "allWorkspaces": true,
+  "revoked": false,
+  "created_at": "2021-04-12T23:02:39.304307Z",
+  "revoked_at": "",
+  "last_used_at": "",
+  "author":"charlesadmin@admin"
+};

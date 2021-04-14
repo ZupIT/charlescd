@@ -19,9 +19,10 @@ import { MemoryRouter } from 'react-router-dom';
 import Token from '../index';
 import 'unit-test/setup-msw';
 import routes from 'core/constants/routes';
-import { createMemoryHistory } from 'history';
 import { saveProfile } from 'core/utils/profile';
 import userEvent from '@testing-library/user-event';
+import { server, rest } from 'mocks/server';
+import { DEFAULT_TEST_BASE_URL } from 'setupTests';
 
 const originalWindow = window;
 
@@ -57,8 +58,31 @@ test.only('render Token View mode', async () => {
   window.location = {
     ...window.location,
     pathname: `${routes.tokensComparation}`,
-    search: '?token='
+    search: `?token=${tokenID}`
   };
+
+  server.use(
+    rest.post(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
+      return res(ctx.json({
+        "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
+        "name":"TOKEN 2",
+        "permissions":[
+          "maintenance_write",
+          "deploy_write",
+          "circles_read",
+          "circles_write",
+          "modules_read"
+        ],
+        "workspaces": "",
+        "allWorkspaces": true,
+        "revoked": false,
+        "created_at": "2021-04-12T23:02:39.304307Z",
+        "revoked_at": "",
+        "last_used_at": "",
+        "author":"charlesadmin@admin"
+      }))
+    }),
+  );
 
   render(
     <MemoryRouter initialEntries={[`${routes.tokensComparation}?token=${tokenID}`]}>
@@ -66,10 +90,15 @@ test.only('render Token View mode', async () => {
     </MemoryRouter>
   );
 
-  await waitFor(() => expect(screen.getByText('TOKEN 1')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText('TOKEN 2')).toBeInTheDocument());
   expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument();
   expect(screen.getByText('Your token has access to all workspaces (including new ones)')).toBeInTheDocument();
 
+  // const modules = await screen.findByTestId('modules');
+  // const circles = screen.getByTestId('circles');
+
+  // expect(modules).toHaveTextContent('ModulesAll permissions');
+  // expect(circles).toHaveTextContent('CirclesRead');
 
   screen.debug();
 });

@@ -16,12 +16,17 @@
 
 import { rest } from 'msw';
 import { basePath } from 'core/providers/base';
-import { TOKENS_LIST } from './responses';
+import { TOKEN, TOKENS_LIST } from './responses';
 
 export default [
   rest.get(`${basePath}/gate/api/v1/system-token`, (req, res, ctx) => {
     return res(
       ctx.json(TOKENS_LIST)
+    )
+  }),
+  rest.get(`${basePath}/gate/api/v1/system-token/:token`, (req, res, ctx) => {
+    return res(
+      ctx.json(TOKEN)
     )
   }),
 ];
