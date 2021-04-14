@@ -37,7 +37,7 @@ export const deploymentFixture2 = new DeploymentEntityV2(
       'build-image-tag2',
       'build-image-url2.com',
       'hello-kubernetes',
-      '8d5c7e37-5080-4d73-8992-4add6f9d68ea',
+      'a9c654e2-245e-4c2f-8b31-e3fd81e4a5b3',
       null,
       null,
       [],

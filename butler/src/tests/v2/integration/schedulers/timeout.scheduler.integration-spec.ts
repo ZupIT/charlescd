@@ -61,6 +61,7 @@ describe('TimeoutScheduler', () => {
 
   afterEach(async() => {
     await fixtureUtilsService.clearDatabase()
+    jest.clearAllMocks()
   })
 
   it('updates old unresolved deployments', async() => {
@@ -178,5 +179,79 @@ describe('TimeoutScheduler', () => {
 
     expect(updateSpy).toHaveBeenCalledWith(expectedPreviousDeployment)
     expect(updateSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should update the CharlesRoutes resource when a timeout occurs and no components are active', async() => {
+    const updateSpy = jest.spyOn(k8sClient, 'applyRoutingCustomResource')
+      .mockImplementation(() => Promise.resolve())
+
+    const deployment = deploymentFixture
+    deployment.current = true
+    deployment.healthy = false
+    deployment.routed = false
+    const savedDeployment = await manager.save(DeploymentEntityV2, deployment)
+    const execution = new Execution(savedDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    const savedExecution = await manager.save(Execution, execution)
+
+    // Set created_at column on execution older thactiveComponentsan deployment timeout
+    const createdAt = DateUtils.now()
+    createdAt.setSeconds(createdAt.getSeconds() - deployment.timeoutInSeconds * 2)
+    await manager.update(Execution, savedExecution.id, { createdAt: createdAt })
+
+    await timeoutScheduler.handleCron()
+    expect(updateSpy).toHaveBeenCalledWith([])
+    expect(updateSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should update the CharlesRoutes resource when a timeout occurs and there is one previous deployment', async() => {
+    const updateSpy = jest.spyOn(k8sClient, 'applyRoutingCustomResource')
+      .mockImplementation(() => Promise.resolve())
+
+    const previousDeployment = deploymentFixture
+    previousDeployment.current = false
+    previousDeployment.healthy = true
+    previousDeployment.routed = true
+    const savedPreviousDeployment = await manager.save(DeploymentEntityV2, previousDeployment)
+    const previousExecution = new Execution(savedPreviousDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.SUCCEEDED)
+    await manager.save(Execution, previousExecution)
+
+    const currentDeployment = deploymentFixture2
+    currentDeployment.previousDeploymentId = previousDeployment.id
+    currentDeployment.current = true
+    currentDeployment.healthy = false
+    currentDeployment.routed = false
+    const savedCurrentDeployment = await manager.save(DeploymentEntityV2, currentDeployment)
+    const currentExecution = new Execution(savedCurrentDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    const currentSavedExecution = await manager.save(Execution, currentExecution)
+
+    // Set created_at column on execution older than deployment timeout
+    const createdAt = DateUtils.now()
+    createdAt.setSeconds(createdAt.getSeconds() - currentDeployment.timeoutInSeconds * 2)
+    await manager.update(Execution, currentSavedExecution.id, { createdAt: createdAt })
+
+    await timeoutScheduler.handleCron()
+
+    const expectedComponent = { ...deploymentFixture.components[0] }
+    expectedComponent.deployment = expect.anything()
+    expectedComponent.id = expect.anything()
+
+    expect(updateSpy).toHaveBeenCalledWith([expectedComponent])
+    expect(updateSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not update the CharlesRoutes resource when no timeout occurs', async() => {
+    const updateSpy = jest.spyOn(k8sClient, 'applyRoutingCustomResource')
+      .mockImplementation(() => Promise.resolve())
+
+    const deployment = deploymentFixture
+    deployment.current = true
+    deployment.healthy = false
+    deployment.routed = false
+    const savedDeployment = await manager.save(DeploymentEntityV2, deployment)
+    const execution = new Execution(savedDeployment, ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    await manager.save(Execution, execution)
+
+    await timeoutScheduler.handleCron()
+    expect(updateSpy).toHaveBeenCalledTimes(0)
   })
 })

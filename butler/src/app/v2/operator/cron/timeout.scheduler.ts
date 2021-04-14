@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { Execution } from '../../api/deployments/entity/execution.entity'
 import { DeploymentStatusEnum } from '../../api/deployments/enums/deployment-status.enum'
-import { ComponentsRepositoryV2 } from '../../api/deployments/repository/component.repository'
+import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
 import { K8sClient } from '../../core/integrations/k8s/client'
-import { MooveService } from '../../core/integrations/moove/moove.service'
+import { MooveService } from '../../core/integrations/moove'
 import { ConsoleLoggerService } from '../../core/logs/console'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
+import { EntityManager, getConnection } from 'typeorm'
+import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 
 @Injectable()
 export class TimeoutScheduler {
@@ -23,25 +25,30 @@ export class TimeoutScheduler {
   @Cron(CronExpression.EVERY_10_SECONDS)
   public async handleCron(): Promise<void> {
     const timedOutExecutions = await this.executionRepository.updateTimedOutExecutions()
-    await Promise.all(
-      timedOutExecutions.map(execution => this.handleExecutionTimeOut(execution))
-    )
 
-    // TODO is this really necessary?
-    const activeComponents = await this.componentRepository.findActiveComponents()
-    await this.k8sClient.applyRoutingCustomResource(activeComponents)
+    await Promise.all(timedOutExecutions.map(execution => this.handleExecutionTimeOut(execution)))
+    if (timedOutExecutions?.length) {
+      const activeComponents = await this.componentRepository.findActiveComponents()
+      await this.k8sClient.applyRoutingCustomResource(activeComponents)
+    }
   }
 
   private async handleExecutionTimeOut(execution: Execution): Promise<void> {
-    this.logger.log('TIMEOUT_NOTIFICATION', { executionId: execution.id, deploymentId: execution.deploymentId })
+    this.logger.log('STEP:NOTIFY_TIMEOUT', { executionId: execution.id, deploymentId: execution.deploymentId })
     await this.notifyCallback(execution)
 
-    // TODO use transaction
-    await this.deploymentRepository.update({ id: execution.deploymentId }, { current: false })
-    const deployment = await this.deploymentRepository.findOneOrFail({ id: execution.deploymentId })
+    await getConnection().transaction(async transactionManager => {
+      this.logger.log('STEP:ROLLBACK_TIMED_OUT_DEPLOYMENT')
+      await this.rollbackDeployment(execution, transactionManager)
+    })
+  }
+
+  private async rollbackDeployment(execution: Execution, transactionManager: EntityManager): Promise<void> {
+    await transactionManager.update(DeploymentEntityV2, { id: execution.deploymentId }, { current: false })
+    const deployment = await transactionManager.findOneOrFail(DeploymentEntityV2, { id: execution.deploymentId })
     if (deployment.previousDeploymentId) {
-      await this.deploymentRepository.update({ id: deployment.previousDeploymentId }, { current: true })
-      const previousDeployment = await this.deploymentRepository.findOneOrFail({ id: deployment.previousDeploymentId })
+      await transactionManager.update(DeploymentEntityV2, { id: deployment.previousDeploymentId }, { current: true })
+      const previousDeployment = await transactionManager.findOneOrFail(DeploymentEntityV2, { id: deployment.previousDeploymentId })
       await this.k8sClient.applyDeploymentCustomResource(previousDeployment)
     } else {
       await this.k8sClient.applyUndeploymentCustomResource(deployment)
