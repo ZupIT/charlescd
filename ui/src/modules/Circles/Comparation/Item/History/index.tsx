@@ -18,7 +18,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CircleRelease } from 'modules/Metrics/Circles/interfaces';
 import Text from 'core/components/Text';
-import { dateTimeFormatterWithTab } from 'core/utils/date';
+import { newDateTimeFormatter } from 'core/utils/date';
 import Icon from 'core/components/Icon';
 import camelCase from 'lodash/camelCase';
 import LogModal from './Logs';
@@ -94,7 +94,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
                   {release.authorName}
                 </Styled.TableTextName>
                 <Styled.TableDate color="light" >
-                  {release.deployedAt ? dateTimeFormatterWithTab(release.deployedAt) : '-'}
+                  {release.deployedAt ? newDateTimeFormatter(release.deployedAt) : '-'}
                 </Styled.TableDate>
                 <Styled.TableDeployStatus>
                   <Styled.Dot status={getReleaseStatus(release?.status)}/>
