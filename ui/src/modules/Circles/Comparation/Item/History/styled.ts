@@ -113,7 +113,7 @@ const Dot = styled.div<DotProps>`
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
-  margin-top: 5px;
+  margin-top: 4px;
 `;
 
 const TableDeployStatus = styled.div`

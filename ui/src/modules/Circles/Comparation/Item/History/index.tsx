@@ -21,6 +21,7 @@ import Text from 'core/components/Text';
 import { newDateTimeFormatter } from 'core/utils/date';
 import Icon from 'core/components/Icon';
 import camelCase from 'lodash/camelCase';
+import startCase from 'lodash/startCase';
 import LogModal from './Logs';
 import { getReleaseStatus } from './helpers';
 import { useCircleDeployHistory } from './hooks';
@@ -97,9 +98,9 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
                   {release.deployedAt ? newDateTimeFormatter(release.deployedAt) : '-'}
                 </Styled.TableDate>
                 <Styled.TableDeployStatus>
-                  <Styled.Dot status={getReleaseStatus(release?.status)}/>
+                  <Styled.Dot status={camelCase(getReleaseStatus(release.status))}/>
                   <Styled.TableDeployStatusName color="light">
-                    {camelCase(release.status)}
+                    {startCase(getReleaseStatus(release.status))}
                   </Styled.TableDeployStatusName>
                 </Styled.TableDeployStatus>
                 <Styled.TableExpand 
