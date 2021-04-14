@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCircleDeployLogs } from './hooks';
 import Styled from './styled';
 
@@ -24,15 +24,19 @@ type Props = {
 }
 
 const LogsModal = ({ onGoBack, deploymentId }: Props) => {
-  const { getLogsData, logsResponse, status } = useCircleDeployLogs();
+  const { getLogsData } = useCircleDeployLogs();
+  const [logsData, setLogsData] = useState([]);
+  const [logLoagind, setLogLoading] = useState(true);
 
   useEffect(() => {
-    if(status.idle) {
-      getLogsData(deploymentId)
-    }
-  }, [getLogsData, deploymentId, status.idle]);
+    setLogLoading(true);
+    getLogsData(deploymentId).then(logsResponse => {
+      setLogsData(logsResponse);
+    })
+    .finally(() => setLogLoading(false));
+  }, [deploymentId, getLogsData]);
 
-  console.log(logsResponse)
+  console.log(logsData, logLoagind);
 
   return (
     <Styled.ModalFull onClose={() => onGoBack()}>

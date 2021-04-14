@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { 
   useFetch, 
-  useFetchData,
-  useFetchStatus 
+  useFetchData
 } from 'core/providers/base/hooks';
 import { buildParams, URLParams } from 'core/utils/query';
 import { 
@@ -51,27 +50,20 @@ export const useCircleDeployHistory = () => {
 
 export const useCircleDeployLogs = () => {
   const getLogsDataRequest = useFetchData<CircleDeploymentLogs[]>(findDeployLogsByDeploymentId);
-  const [logsResponse, setLogsResponse] = useState([]);
-  const status = useFetchStatus();
 
-  const getLogsData = useCallback(async (deploymentId: string) => {
-    try {
-      status.pending();
-      const logsResponseData = await getLogsDataRequest(deploymentId);
+  const getLogsData = useCallback(
+    async (deploymentId: string) => {
+      try {
+        const logsResponseData = await getLogsDataRequest(deploymentId);
 
-      setLogsResponse(logsResponseData);
-      status.resolved();
-
-      return logsResponseData;
-    } catch (e) {
-      status.rejected();
-      console.log(e);
-    }
-  }, [getLogsDataRequest, status]);
+        return logsResponseData;
+      
+      } catch (e) {
+        console.log(e);
+      }
+    }, [getLogsDataRequest]);
 
   return {
-    getLogsData,
-    logsResponse,
-    status
+    getLogsData
   };
 };

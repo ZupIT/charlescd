@@ -50,7 +50,8 @@ const ModalFullScreen = ({
     >
         <Styled.Container className="modal-container">
             <Styled.Header>
-              <Icon name="cancel" color="dark" size="22px" onClick={onClose} />
+              <Icon name="collapse" color="light" size="18px" onClick={onClose} />
+              <Icon name="copy" color="light" size="18px" onClick={onClose} />
             </Styled.Header>
             <Styled.Content className="modal-content">{children}</Styled.Content>
         </Styled.Container>

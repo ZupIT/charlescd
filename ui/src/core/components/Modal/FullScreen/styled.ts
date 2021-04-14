@@ -15,7 +15,6 @@
  */
 
 import styled from 'styled-components';
-import Text from 'core/components/Text';
 
 interface WrapperProps {
   isOpen?: boolean;
@@ -35,8 +34,14 @@ const Wrapper = styled('div')<WrapperProps>`
 
 const Header = styled.div`
   background: ${({ theme }) => theme.modal.default.header};
-  height: 20px;
+  height: 40px;
   width: 100%;
+
+  i {
+    margin-top: 10px;
+    margin-left: 15px;
+    margin-right: 10px;
+  };
 `;
 
 const Container = styled.div`
@@ -46,7 +51,6 @@ const Container = styled.div`
   box-sizing: border-box;
   background: ${({ theme }) => theme.modal.default.background};
   color: ${({ theme }) => theme.modal.default.text};
-  padding: 35px 41px 28px 40px;
   text-align: left;
   opacity: 1.2;
   border-radius: 4px;
