@@ -323,7 +323,7 @@ CharlesApplications:
         password: 7Qs2KuM9gYzw48BS
 
   hermes:
-    enabled: false
+    enabled: true
     name: charlescd-hermes
     sidecarIstio:
       enabled: true
