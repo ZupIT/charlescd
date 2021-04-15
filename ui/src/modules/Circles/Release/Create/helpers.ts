@@ -144,7 +144,7 @@ export const checkComponentAndVersionMaxLength = ({tag, onError, setIsError} : P
   const componentNameLen = componentAndVersionSplited[0].length;
   const versionNameLen = componentAndVersionSplited[1].length;
 
-  if((componentNameLen + versionNameLen) > 60) {
+  if((componentNameLen + versionNameLen) > MAX_LENGTH) {
     onError(true);
     setIsError(true);
   } else {
