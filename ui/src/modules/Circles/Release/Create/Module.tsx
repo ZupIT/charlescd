@@ -32,6 +32,11 @@ interface Props {
   module?: Partial<ArrayField<Record<string, string>, 'id'>>;
 }
 
+interface TagProps {
+  artifact: string;
+  name: string
+}
+
 const Module = ({ index, onClose, isNotUnique }: Props) => {
   const { getAllModules, response: modules } = useFindAllModules();
   const [moduleOptions, setModuleOptions] = useState([]);
@@ -45,8 +50,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     control,
     getValues,
     setValue,
-    clearErrors,
-    watch
+    clearErrors
   } = useFormContext();
 
   useEffect(() => {
@@ -81,20 +85,27 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     name: string
   ) => {
     setValue(`${prefixName}.tag`, '');
-    const tag = await getComponentTag(moduleId, componentId, { name });
+    const tag: TagProps = await getComponentTag(moduleId, componentId, { name });
     
-    const componentAndVersion = tag.artifact.split('/')
-    const componentAndVersionSplited = componentAndVersion.split(':');
-    const componentNameLen = componentAndVersionSplited[0].lenght;
-    const versionNameLen = componentAndVersionSplited[1].lenght;
-
-    if((componentNameLen + versionNameLen) > 63) {
-      // max len is 63
-    }
+    checkComponentAndVersionMaxLength(tag)
 
     setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
     setIsEmptyTag(isEmpty(tag?.artifact));
   };
+
+  const checkComponentAndVersionMaxLength = ({artifact} : TagProps) => {
+    const componentAndVersion = artifact.split('/')
+    const componentAndVersionSplited = componentAndVersion[1].split(':');
+    const componentNameLen = componentAndVersionSplited[0].length;
+    const versionNameLen = componentAndVersionSplited[1].length;
+
+    if((componentNameLen + versionNameLen) > 63) {
+      // max len is 63
+      console.log('more than 63');
+    } else {
+      console.log('less than 63');
+    }
+  }
 
   const onSearchTag = () => {
     const componentId = getValues(`${prefixName}.component`);
