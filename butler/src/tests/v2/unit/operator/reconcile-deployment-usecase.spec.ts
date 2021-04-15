@@ -32,6 +32,11 @@ import { HttpService } from '@nestjs/common'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums/execution-type.enum'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { componentRawSpecs, reconcileFixtures, reconcileFixturesParams } from './params'
+import { ReconcileUtils } from '../../../../app/v2/operator/utils/reconcile.utils'
+import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { UrlConstants } from '../../integration/test-constants'
+import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 
 describe('Reconcile deployment usecase spec', () => {
 
@@ -161,7 +166,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
@@ -258,5 +263,242 @@ describe('Reconcile deployment usecase spec', () => {
 
     expect(reconcileObj).toEqual(expectedReconcileObj)
   })
-})
 
+  // TODO reconcile override with different tag but same component name (check if the desired state is concatenated
+  // correctly
+
+  // TODO create these legacy reconcile utils tests inside here
+  // it('returns empty array for the first reconcile loop on same circle that already had deployments', () => {
+  //   const params = reconcileFixturesParams.paramsWithPreviousDeployment
+  //   const currentDeployment = reconcileFixtures.currentDeploymentId
+  //   expect(ReconcileUtils.specsByDeployment(params, currentDeployment)).toEqual([])
+  // })
+  //
+  // it('returns list of previous deployment specs', () => {
+  //   const params = reconcileFixturesParams.paramsWithPreviousDeployment
+  //   const previousDeployment = reconcileFixtures.previousDeploymentId
+  //   const ids = ReconcileUtils.specsByDeployment(params, previousDeployment).map(s => s.metadata.labels.deploymentId)
+  //   expect(ids).toEqual([previousDeployment, previousDeployment])
+  // })
+  //
+  // it('returns false if current deployments specs are not ready but previous deployments are still running', () => {
+  //   const params = reconcileFixturesParams.paramsWithPreviousDeployment
+  //   const previousDeployment = reconcileFixtures.previousDeploymentId
+  //   const currentDeployment = reconcileFixtures.currentDeploymentId
+  //   const currentSpecs = ReconcileUtils.specsByDeployment(params, currentDeployment)
+  //   const previousSpecs = ReconcileUtils.specsByDeployment(params, previousDeployment)
+  //   expect(ReconcileUtils.checkConditions(currentSpecs)).toEqual(false)
+  //   expect(ReconcileUtils.checkConditions(previousSpecs)).toEqual(true)
+  // })
+  //
+  // it('concatenates deployments and services from previous and current deployment', () => {
+  //   const previousComponents = [
+  //     new ComponentEntityV2(
+  //       UrlConstants.helmRepository,
+  //       'v1',
+  //       'https://repository.com/B:v1',
+  //       'B',
+  //       '1c29210c-e313-4447-80e3-db89b2359138',
+  //       null,
+  //       null,
+  //       [
+  //         {
+  //           kind: 'Deployment',
+  //           metadata: {
+  //             name: 'previous'
+  //           }
+  //         },
+  //         {
+  //           kind: 'Service',
+  //           metadata: {
+  //             name: 'previous'
+  //           }
+  //         },
+  //         {
+  //           kind: 'Deployment',
+  //           metadata: {
+  //             name: 'current-2'
+  //           }
+  //         },
+  //         {
+  //           kind: 'Service',
+  //           metadata: {
+  //             name: 'current-2'
+  //           }
+  //         }
+  //       ]
+  //     )
+  //   ]
+  //   const previousDeployment = new DeploymentEntityV2(
+  //     reconcileFixtures.previousDeploymentId,
+  //     'some-author',
+  //     'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+  //     'some-url',
+  //     previousComponents,
+  //     false,
+  //     'my-namespace',
+  //     5
+  //   )
+  //
+  //   const currentComponents = [
+  //     {
+  //       kind: 'Deployment',
+  //       metadata: {
+  //         name: 'current-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Service',
+  //       metadata: {
+  //         name: 'current',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Deployment',
+  //       metadata: {
+  //         name: 'current-2-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Service',
+  //       metadata: {
+  //         name: 'current-2',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     }
+  //   ]
+  //   const concat = ReconcileUtils.concatWithPrevious(previousDeployment, currentComponents)
+  //   const expected = [
+  //     {
+  //       kind: 'Deployment',
+  //       metadata: {
+  //         name: 'current-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Service',
+  //       metadata: {
+  //         name: 'current',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Deployment',
+  //       metadata: {
+  //         name: 'current-2-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Service',
+  //       metadata: {
+  //         name: 'current-2',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.currentDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Deployment',
+  //       metadata: {
+  //         name: 'previous-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.previousDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       kind: 'Service',
+  //       metadata: {
+  //         name: 'previous',
+  //         namespace: 'my-namespace',
+  //         labels: {
+  //           'deploymentId': reconcileFixtures.previousDeploymentId,
+  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
+  //         }
+  //       }
+  //     }
+  //   ]
+  //   expect(concat).toEqual(expected)
+  // })
+  //
+  //
+  // it('should replace the deployment name with a concatenation of Release.Name, tag and circleId', () => {
+  //   const component = new ComponentEntityV2(
+  //     UrlConstants.helmRepository,
+  //     'v1',
+  //     'build-image-url.com',
+  //     'jilo',
+  //     'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
+  //     null,
+  //     null,
+  //     [...componentRawSpecs],
+  //     false
+  //   )
+  //   const deployment = new DeploymentEntityV2(
+  //     'b7d08a07-f29d-452e-a667-7a39820f3262',
+  //     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+  //     'custom-circle-id',
+  //     UrlConstants.deploymentCallbackUrl,
+  //     [
+  //       component
+  //     ],
+  //     false,
+  //     'custom-namespace',
+  //     60
+  //   )
+  //
+  //   const preparedManifests = ReconcileUtils.addMetadata(deployment)
+  //
+  //   const expectedLabels = {
+  //     app: 'jilo',
+  //     version: 'jilo',
+  //     deploymentId: deployment.id,
+  //     circleId: deployment.circleId
+  //   }
+  //
+  //   expect(preparedManifests).toHaveLength(2)
+  //   expect(preparedManifests[0].metadata?.labels).toBe(expectedLabels)
+  //   expect(preparedManifests[0].metadata?.name).toBe('jilo-v1-custom-circle-id')
+  //   expect(preparedManifests[0].metadata?.namespace).toBe('custom-namespace')
+  //   expect(preparedManifests[1].metadata?.labels).toBe(expectedLabels)
+  //   expect(preparedManifests[1].metadata?.name).toBe('jilo')
+  //   expect(preparedManifests[1].metadata?.namespace).toBe('custom-namespace')
+  // })
+})
