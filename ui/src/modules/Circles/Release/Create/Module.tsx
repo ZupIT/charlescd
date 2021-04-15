@@ -28,6 +28,7 @@ import { isRequiredAndNotBlank } from 'core/utils/validations';
 interface Props {
   index: number;
   onClose: () => void;
+  onError: (hasError: boolean) => void;
   isNotUnique?: boolean;
   module?: Partial<ArrayField<Record<string, string>, 'id'>>;
 }
@@ -37,11 +38,12 @@ interface TagProps {
   name: string
 }
 
-const Module = ({ index, onClose, isNotUnique }: Props) => {
+const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
   const { getAllModules, response: modules } = useFindAllModules();
   const [moduleOptions, setModuleOptions] = useState([]);
   const [componentOptions, setComponentOptions] = useState([]);
   const [isEmptyTag, setIsEmptyTag] = useState(false);
+  const [isError, setIsError] = useState(false);
   const prefixName = `modules[${index}]`;
   const { getComponentTag, status } = useComponentTags();
   const {
@@ -86,24 +88,27 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   ) => {
     setValue(`${prefixName}.tag`, '');
     const tag: TagProps = await getComponentTag(moduleId, componentId, { name });
-    
-    checkComponentAndVersionMaxLength(tag)
+
+    if(tag) checkComponentAndVersionMaxLength(tag);
 
     setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
     setIsEmptyTag(isEmpty(tag?.artifact));
   };
 
-  const checkComponentAndVersionMaxLength = ({artifact} : TagProps) => {
-    const componentAndVersion = artifact.split('/')
+  // TODO move to utils?
+  const checkComponentAndVersionMaxLength = (tag: TagProps) => {
+    const componentAndVersion = tag?.artifact.split('/')
     const componentAndVersionSplited = componentAndVersion[1].split(':');
     const componentNameLen = componentAndVersionSplited[0].length;
     const versionNameLen = componentAndVersionSplited[1].length;
 
-    if((componentNameLen + versionNameLen) > 63) {
-      // max len is 63
-      console.log('more than 63');
+    // TODO 63 as a const
+    if((componentNameLen + versionNameLen) >= 60) {
+      onError(true);
+      setIsError(true)
     } else {
-      console.log('less than 63');
+      onError(false);
+      setIsError(false)
     }
   }
 
@@ -161,7 +166,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           // eslint-disable-next-line react-hooks/exhaustive-deps
           onChange={useCallback(debounce(onSearchTag, 700), [])}
           isLoading={status.isPending}
-          hasError={isEmptyTag}
+          hasError={isEmptyTag || isError}
           label="Version name"
         />
         {isEmptyTag && (
