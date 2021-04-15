@@ -6740,9 +6740,9 @@ spec:
           - name: KEYCLOAK_CLIENT_ID
             value: "realm-charlescd"
           - name: RATELIMIT_CAPACITY
-            value: "4"
+            value: "5"
           - name: RATELIMIT_TOKENS
-            value: "4"
+            value: "5"
           - name: RATELIMIT_SECONDS
             value: "1"
           - name: KEYCLOAK_CLIENT_SECRET
