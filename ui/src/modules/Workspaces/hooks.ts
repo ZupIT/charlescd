@@ -57,14 +57,17 @@ export const useSaveWorkspace = (): {
   const { response, error, loading } = workspaceData;
 
   useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `${error.status}: ${error.statusText}`,
-          status: 'error'
-        })
-      );
-    }
+    (async () => {
+      if (error) {
+        const e = await error.json();
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
   }, [dispatch, error, response]);
 
   return { save, response, error, loading };
