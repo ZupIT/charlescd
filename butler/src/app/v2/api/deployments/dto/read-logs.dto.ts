@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_RED_ORANGE,
-  COLOR_LIGHT_DEFAULT,
-  COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE,
-  COLOR_PAYNES_GREY
-} from 'core/assets/colors';
+import { Log } from '../interfaces/log.interface'
 
-export const light = {};
+export class ReadLogsDto {
 
-export const dark = {
-  screen: COLOR_BLACK_RUSSIAN,
-  background: COLOR_BASTILLE,
-  continue: COLOR_RED_ORANGE,
-  text: COLOR_LIGHT_DEFAULT,
-  dismiss: COLOR_GHOST_WHITE,
-  header: COLOR_PAYNES_GREY
-};
+  public readonly id: string
+
+  public readonly logs: Log[]
+
+  constructor(
+    id: string,
+    logs: Log[],
+  ) {
+    this.id = id
+    this.logs = logs
+  }
+}

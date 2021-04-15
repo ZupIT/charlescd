@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_RED_ORANGE,
-  COLOR_LIGHT_DEFAULT,
-  COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE,
-  COLOR_PAYNES_GREY
-} from 'core/assets/colors';
+package io.charlescd.moove.application.deployment
 
-export const light = {};
+import io.charlescd.moove.infrastructure.service.client.response.LogResponse
 
-export const dark = {
-  screen: COLOR_BLACK_RUSSIAN,
-  background: COLOR_BASTILLE,
-  continue: COLOR_RED_ORANGE,
-  text: COLOR_LIGHT_DEFAULT,
-  dismiss: COLOR_GHOST_WHITE,
-  header: COLOR_PAYNES_GREY
-};
+interface FindDeploymentLogsInteractor {
+
+    fun execute(workspaceId: String, authorization: String, deploymentId: String): LogResponse
+}

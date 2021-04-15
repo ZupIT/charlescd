@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_RED_ORANGE,
-  COLOR_LIGHT_DEFAULT,
-  COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE,
-  COLOR_PAYNES_GREY
-} from 'core/assets/colors';
+export type Log = {
+  type: string;
+  title: string;
+  details: string;
+  timestamp: string;
+};
 
-export const light = {};
-
-export const dark = {
-  screen: COLOR_BLACK_RUSSIAN,
-  background: COLOR_BASTILLE,
-  continue: COLOR_RED_ORANGE,
-  text: COLOR_LIGHT_DEFAULT,
-  dismiss: COLOR_GHOST_WHITE,
-  header: COLOR_PAYNES_GREY
+export type CircleDeploymentLogs = {
+  id?: string;
+  logs?: Log[];
 };

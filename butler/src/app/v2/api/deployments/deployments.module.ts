@@ -34,6 +34,8 @@ import { GitLabRepository } from '../../core/integrations/gitlab/gitlab-reposito
 import { RepositoryStrategyFactory } from '../../core/integrations/repository-strategy-factory'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { ConsoleLoggerService } from '../../core/logs/console/console-logger.service'
+import { FindDeploymentLogsByIdUsecase } from './use-cases/find-deployment-logs-by-id.usecase'
+import { LogRepository } from './repository/log.repository'
 
 @Module({
   imports: [
@@ -43,7 +45,8 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
       Execution,
       ComponentsRepositoryV2,
       ExecutionRepository,
-      DeploymentRepositoryV2
+      DeploymentRepositoryV2,
+      LogRepository
     ])
   ],
   controllers: [
@@ -55,6 +58,7 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
     CreateUndeploymentUseCase,
     ReceiveNotificationUseCase,
     PaginatedExecutionsUseCase,
+    FindDeploymentLogsByIdUsecase,
     MooveService,
     ConsoleLoggerService,
     GitHubRepository,

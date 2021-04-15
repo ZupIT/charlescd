@@ -424,7 +424,7 @@ class JdbcDeploymentRepository(
 
     private fun createHistoryOrderByClause(): String {
         return """
-                ORDER BY deployments.created_at
+                ORDER BY deployments.created_at DESC
         """
     }
 

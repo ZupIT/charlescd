@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_RED_ORANGE,
-  COLOR_LIGHT_DEFAULT,
-  COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE,
-  COLOR_PAYNES_GREY
-} from 'core/assets/colors';
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-export const light = {};
-
-export const dark = {
-  screen: COLOR_BLACK_RUSSIAN,
-  background: COLOR_BASTILLE,
-  continue: COLOR_RED_ORANGE,
-  text: COLOR_LIGHT_DEFAULT,
-  dismiss: COLOR_GHOST_WHITE,
-  header: COLOR_PAYNES_GREY
-};
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height={200}
+    viewBox="0 0 1200 400"
+    backgroundColor="#3a3a3c"
+    foregroundColor="#2c2c2e"
+  >
+    <rect x="0" y="0" rx="0" ry="0" width="100%" height="100" />
+    <rect x="0" y="110" rx="0" ry="0" width="100%" height="100" />
+    <rect x="0" y="220" rx="0" ry="0" width="100%" height="100" />
+  </ContentLoader>
+);
