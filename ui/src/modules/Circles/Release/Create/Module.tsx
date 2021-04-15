@@ -54,6 +54,7 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
     setValue,
     clearErrors
   } = useFormContext();
+  const MAX_LENGTH = 60;
 
   useEffect(() => {
     getAllModules();
@@ -102,8 +103,7 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
     const componentNameLen = componentAndVersionSplited[0].length;
     const versionNameLen = componentAndVersionSplited[1].length;
 
-    // TODO 63 as a const
-    if((componentNameLen + versionNameLen) >= 60) {
+    if((componentNameLen + versionNameLen) >= MAX_LENGTH) {
       onError(true);
       setIsError(true)
     } else {
