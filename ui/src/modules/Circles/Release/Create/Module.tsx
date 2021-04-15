@@ -24,6 +24,7 @@ import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
+import {checkComponentAndVersionMaxLength} from './helpers';
 
 interface Props {
   index: number;
@@ -54,7 +55,6 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
     setValue,
     clearErrors
   } = useFormContext();
-  const MAX_LENGTH = 60;
 
   useEffect(() => {
     getAllModules();
@@ -90,27 +90,11 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
     setValue(`${prefixName}.tag`, '');
     const tag: TagProps = await getComponentTag(moduleId, componentId, { name });
 
-    if(tag) checkComponentAndVersionMaxLength(tag);
+    if(tag) checkComponentAndVersionMaxLength({tag, onError, setIsError});
 
     setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
     setIsEmptyTag(isEmpty(tag?.artifact));
   };
-
-  // TODO move to utils?
-  const checkComponentAndVersionMaxLength = (tag: TagProps) => {
-    const componentAndVersion = tag?.artifact.split('/')
-    const componentAndVersionSplited = componentAndVersion[1].split(':');
-    const componentNameLen = componentAndVersionSplited[0].length;
-    const versionNameLen = componentAndVersionSplited[1].length;
-
-    if((componentNameLen + versionNameLen) >= MAX_LENGTH) {
-      onError(true);
-      setIsError(true)
-    } else {
-      onError(false);
-      setIsError(false)
-    }
-  }
 
   const onSearchTag = () => {
     const componentId = getValues(`${prefixName}.component`);
