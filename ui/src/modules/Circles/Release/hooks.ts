@@ -123,7 +123,6 @@ export const useCreateDeployment = (): {
     (async () => {
       if (error) {
         const e = await error.json();
-
         dispatch(
           toogleNotification({
             text: `${error.status}: ${e?.message}`,
