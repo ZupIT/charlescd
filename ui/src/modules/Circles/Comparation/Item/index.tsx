@@ -333,7 +333,7 @@ const CirclesComparationItem = ({
   const renderPanelContent = () => (
     <>
       {action === 'Delete' && renderWarning()}
-      <LayerName name={circle?.name} onSave={saveCircleName} />
+      <LayerName name={circle?.name} onSave={saveCircleName} isDefault={circle?.default} />
       <LayerSegments
         circle={circle}
         isEditing={isEditing}
