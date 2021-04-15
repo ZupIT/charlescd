@@ -18,10 +18,7 @@ import 'jest'
 import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
-import {
-  componentsFixtureCircle1,
-  deploymentWithManifestFixture
-} from '../../fixtures/deployment-entity.fixture'
+import { componentsFixtureCircle1, deploymentWithManifestFixture } from '../../fixtures/deployment-entity.fixture'
 import { HookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-cases/reconcile-deployment.usecase'
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
@@ -32,11 +29,6 @@ import { HttpService } from '@nestjs/common'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums/execution-type.enum'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
-import { componentRawSpecs, reconcileFixtures, reconcileFixturesParams } from './params'
-import { ReconcileUtils } from '../../../../app/v2/operator/utils/reconcile.utils'
-import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { UrlConstants } from '../../integration/test-constants'
-import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 
 describe('Reconcile deployment usecase spec', () => {
 
