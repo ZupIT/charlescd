@@ -349,7 +349,8 @@ export const oneComponentSameTagSameCircle: SpinnakerPipeline = {
       name: 'Trigger Failure Webhook',
       payload: {
         status: DeploymentStatusEnum.FAILED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '7',
       requisiteStageRefIds: [
@@ -375,7 +376,8 @@ export const oneComponentSameTagSameCircle: SpinnakerPipeline = {
       name: 'Trigger Success Webhook',
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '8',
       requisiteStageRefIds: [
