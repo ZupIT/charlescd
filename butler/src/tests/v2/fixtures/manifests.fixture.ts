@@ -25,8 +25,6 @@ const basePath = path.join(__dirname, '../../../', 'resources/helm-test-chart')
 
 export const simpleManifests: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'))
 
-export const simpleManifestsJson = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'), null, { json: true })
-
 export const getSimpleManifests = (appName: string, namespace: string, image: string): KubernetesManifest[] => {
   const manifests = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'))
   const service = manifests[0]
@@ -51,6 +49,38 @@ export const getSimpleManifests = (appName: string, namespace: string, image: st
   deployment.spec.template.spec.containers[0].name = appName
 
   return [service, deployment]
+}
+
+export const getComplexManifests = (appName: string, namespace: string, image: string): KubernetesManifest[] => {
+  const manifests = yaml.safeLoadAll(fs.readFileSync(`${basePath}/complex-manifests.yaml`, 'utf-8'))
+  const service = manifests[0]
+  service.metadata.labels.app = appName
+  service.metadata.labels.service = appName
+  service.metadata.labels.component = appName
+  service.metadata.name = appName
+  service.metadata.namespace = namespace
+  service.spec.selector.app = appName
+
+  const deployment = manifests[1]
+  deployment.metadata.labels.app = appName
+  deployment.metadata.labels.version = appName
+  deployment.metadata.labels.component = appName
+  deployment.metadata.name = appName
+  deployment.metadata.namespace = namespace
+  deployment.spec.selector.matchLabels.app = appName
+  deployment.spec.selector.matchLabels.version = appName
+  deployment.spec.template.metadata.labels.app = appName
+  deployment.spec.template.metadata.labels.version = appName
+  deployment.spec.template.spec.containers[0].image = image
+  deployment.spec.template.spec.containers[0].name = appName
+
+  const secret = manifests[2]
+  secret.metadata.labels.app = appName
+  secret.metadata.labels.version = appName
+  secret.metadata.labels.component = appName
+  secret.metadata.namespace = namespace
+
+  return [service, deployment, secret]
 }
 
 export const routesManifestsSameNamespace: KubernetesManifest[] = [

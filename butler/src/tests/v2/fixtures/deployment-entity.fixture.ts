@@ -1,6 +1,6 @@
 import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
-import { getSimpleManifests } from './manifests.fixture'
+import { getComplexManifests, getSimpleManifests } from './manifests.fixture'
 import { UrlConstants } from '../integration/test-constants'
 
 export const deploymentFixture = new DeploymentEntityV2(
@@ -113,7 +113,7 @@ function createDeployComponent(
   return component
 }
 
-export const getDeploymentWithManifestFixture = () => {
+export const getDeploymentWithManifestFixture = (simpleManifests: boolean) => {
   const deployment = new DeploymentEntityV2(
     'b7d08a07-f29d-452e-a667-7a39820f3262',
     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
@@ -128,7 +128,9 @@ export const getDeploymentWithManifestFixture = () => {
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url.com'),
+        simpleManifests ?
+          getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url.com') :
+          getComplexManifests('hello-kubernetes', 'namespace', 'build-image-url.com'),
         false
       )
     ],
@@ -139,7 +141,7 @@ export const getDeploymentWithManifestFixture = () => {
   return deployment
 }
 
-export const getDeploymentWithManifestAndPreviousFixture = () => {
+export const getDeploymentWithManifestAndPreviousFixture = (simpleManifests: boolean) => {
   const deployment = new DeploymentEntityV2(
     'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
@@ -154,7 +156,9 @@ export const getDeploymentWithManifestAndPreviousFixture = () => {
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com'),
+        simpleManifests ?
+          getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com') :
+          getComplexManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com'),
         false
       )
     ],
@@ -162,7 +166,7 @@ export const getDeploymentWithManifestAndPreviousFixture = () => {
     'namespace',
     60
   )
-  const previousDeployment = getDeploymentWithManifestFixture()
+  const previousDeployment = getDeploymentWithManifestFixture(simpleManifests)
   deployment.previousDeploymentId = previousDeployment.id
   return deployment
 }

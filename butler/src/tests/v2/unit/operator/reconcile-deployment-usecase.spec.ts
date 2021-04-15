@@ -49,12 +49,6 @@ describe('Reconcile deployment usecase spec', () => {
   let hookParamsWithDeploymentNotReady: HookParams
 
   beforeEach(() => {
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture())
-    jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
-      new Execution(getDeploymentWithManifestFixture(), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
-    )
-    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsFixtureCircle1)
-
     hookParamsWithNothingCreated = {
       'controller': {
         'kind': 'CompositeController',
@@ -386,6 +380,12 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should generate the reconcile deployment object with the correct metadata changes', async() => {
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture(true))
+    jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
+      new Execution(getDeploymentWithManifestFixture(true), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    )
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsFixtureCircle1)
+
     const expectedReconcileObj = {
       children: [
         {
@@ -492,11 +492,11 @@ describe('Reconcile deployment usecase spec', () => {
 
   it('should generate the correct desired state with different deployment manifests when a override happens', async() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail')
-      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture())
-      .mockImplementationOnce(async() => getDeploymentWithManifestFixture())
+      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture(true))
+      .mockImplementationOnce(async() => getDeploymentWithManifestFixture(true))
 
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
-      new Execution(getDeploymentWithManifestAndPreviousFixture(), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+      new Execution(getDeploymentWithManifestAndPreviousFixture(true), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
 
     // this won't change the test outcome
@@ -690,14 +690,13 @@ describe('Reconcile deployment usecase spec', () => {
     expect(reconcileObj).toEqual(expectedReconcileObj)
   })
 
-  // TODO
   it('should generate the correct desired state without manifest repetition when a override happens', async() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail')
-      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture())
-      .mockImplementationOnce(async() => getDeploymentWithManifestFixture())
+      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture(false))
+      .mockImplementationOnce(async() => getDeploymentWithManifestFixture(false))
 
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
-      new Execution(getDeploymentWithManifestAndPreviousFixture(), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+      new Execution(getDeploymentWithManifestAndPreviousFixture(false), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
 
     // this won't change the test outcome
@@ -788,6 +787,25 @@ describe('Reconcile deployment usecase spec', () => {
               }
             }
           }
+        },
+        {
+          apiVersion: 'v1',
+          data: {
+            'secret-data': 'dGVzdA=='
+          },
+          kind: 'Secret',
+          metadata: {
+            labels: {
+              app: 'hello-kubernetes',
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              component: 'hello-kubernetes',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+              version: 'hello-kubernetes'
+            },
+            name: 'custom-secret',
+            namespace: 'namespace'
+          },
+          type: 'Opaque'
         },
         {
           apiVersion: 'apps/v1',
