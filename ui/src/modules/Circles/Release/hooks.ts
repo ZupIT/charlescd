@@ -86,7 +86,6 @@ export const useComposeBuild = (): {
     (async () => {
       if (error) {
         const e = await error.json();
-
         dispatch(
           toogleNotification({
             text: `${error.status}: ${e?.message}`,
