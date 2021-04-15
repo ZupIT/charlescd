@@ -239,13 +239,15 @@ const CirclesComparationItem = ({
 
   const renderDropdown = () => (
     <Dropdown>
-      <Can I="write" a="circles" passThrough>
-        <Dropdown.Item
-          icon="edit"
-          name="Edit segments"
-          onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
-        />
-      </Can>
+      {!circle?.default && (
+        <Can I="write" a="circles" passThrough>
+          <Dropdown.Item
+            icon="edit"
+            name="Edit segments"
+            onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
+          />
+        </Can>
+      )}
       {isUndeployable(circle) && (
         <Can I="write" a="deploy" passThrough>
           <Dropdown.Item
