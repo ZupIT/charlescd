@@ -65,7 +65,7 @@ func (userRepository userRepository) GetByEmail(email string) (domain.User, erro
 		if res.Error.Error() == "record not found" {
 			return domain.User{}, handleUserError("User not found", "unit.GetByEmail.First", res.Error, logging.NotFoundError)
 		}
-		return domain.User{}, handleSystemTokenError("Find user failed", "unit.GetByEmail.First", res.Error, logging.InternalError)
+		return domain.User{}, handleSystemTokenError("Find user failed", "UserRepository.GetByEmail.First", res.Error, logging.InternalError)
 	}
 	return mapper.UserModelToDomain(user), nil
 }

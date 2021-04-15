@@ -92,11 +92,11 @@ func DomainsToResponses(systemTokens []domain.SystemToken) []SystemTokenResponse
 	return systemTokenResponse
 }
 
-func DomainsToPageResponse(systemToken []domain.SystemToken, page domain.Page) PageSystemTokenResponse {
+func DomainsToPageResponse(systemTokens []domain.SystemToken, page domain.Page) PageSystemTokenResponse {
 	return PageSystemTokenResponse{
-		Content:    DomainsToResponses(systemToken),
+		Content:    DomainsToResponses(systemTokens),
 		Page:       page.PageNumber,
-		Size:       page.PageSize,
+		Size:       len(systemTokens),
 		Last:       page.IsLast(),
 		TotalPages: page.TotalPages(),
 	}

@@ -29,8 +29,10 @@ const Title = styled(Text.h2)`
   }
 `;
 
-const Subtitle = styled(Text.h5)`
-  margin: 10px 0px;
+const Info = styled.div`
+  > :first-child {
+    margin-bottom: 5px;
+  }
 `;
 
 const Content = styled.div`
@@ -62,7 +64,7 @@ const Icon = styled(IconComponent)`
 export default {
   Content,
   Title,
-  Subtitle,
+  Info,
   Form,
   Input,
   Button,

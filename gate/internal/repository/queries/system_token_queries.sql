@@ -4,7 +4,7 @@ from (
          select id,
                 name,
                 revoked,
-                workspaces,
+                all_workspaces,
                 created_at,
                 revoked_at,
                 last_used_at,

@@ -41,6 +41,7 @@ const Workspaces = ({ mode }: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>();
   const [isShowMore, setIsShowMore] = useState<boolean>();
   const workspaces = watch('workspaces') as WorkspacePaginationItem[];
+  const watchAllWorkspaces = watch('allWorkspaces') as boolean;
   const preview = isShowMore ? take(workspaces, MAX_ITEMS) : take(workspaces, MIN_ITEMS)
   const isAddMode = isEmpty(preview);
 
@@ -62,6 +63,7 @@ const Workspaces = ({ mode }: Props) => {
   const onContinue = (draft: WorkspacePaginationItem[], option: Option) => {
     toggleIsOpen();
     if (option.value === 'ALL') {
+      setValue('workspaces', []);
       setValue('allWorkspaces', true);
     } else {
       setValue('workspaces', draft);
@@ -109,9 +111,15 @@ const Workspaces = ({ mode }: Props) => {
       {renderModal()}
       <ContentIcon icon="workspaces">
         <Text.h2 color="light">Associated Workspaces</Text.h2>
-        <Styled.Caption color="dark">Your token have access only on these workspaces</Styled.Caption>
+        <Styled.Caption color="dark">
+          {
+            watchAllWorkspaces
+              ? 'Your token has access to all workspaces (including new ones)'
+              : 'Your token have access only on these workspaces'
+          }
+        </Styled.Caption>
         <Styled.Content>
-          {preview && !watch('allWorkspaces') && renderItems()}
+          {preview && !watchAllWorkspaces && renderItems()}
         </Styled.Content>
         <ShowMore />
         {mode === 'create' && <Styled.Button

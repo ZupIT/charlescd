@@ -44,10 +44,10 @@ test('render inputTitle component in view mode', () => {
     <InputTitle name={props.name} defaultValue={props.defaultValue} />
   );
 
-  const saveButton = screen.getByText('Save');
+  const saveButton = screen.queryByText('Save');
   const inputElement = screen.getByTestId(`input-text-${props.name}`);
 
-  expect(saveButton).toBeInTheDocument();
+  expect(saveButton).not.toBeInTheDocument();
   expect(inputElement).toBeInTheDocument();
 });
 

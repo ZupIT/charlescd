@@ -17,11 +17,47 @@
 import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
+import { Token } from 'modules/Tokens/interfaces';
 import Form  from '..';
+
+
+const token: Token = {
+  id: "f18b25e1-02e1-4c2f-9d5e-eef42f0fd83b",
+  name: "New Token",
+  permissions: ["modules_read"], 
+  workspaces: [],
+  allWorkspaces: true,
+  revoked: false,
+  created_at: "2021-04-12T22:16:26.359112Z",
+  revoked_at: null,
+  last_used_at: null,
+  author: "charlesadmin@admin"
+};
+
+test('Render Token Form in view mode and show Author', async () => {
+  render(<Form mode="view" data={token} />);
+
+  const TokenAuthor = await screen.findByText(`Created by ${token.author}`);
+  expect(TokenAuthor).toBeInTheDocument();
+});
+
+test('Render Token Form in view mode and token never used', async () => {
+  render(<Form mode="view" data={token} />);
+
+  const MessageTokenNotUsedYet = await screen.findByText('This token has not been used yet.');
+  expect(MessageTokenNotUsedYet).toBeInTheDocument();
+});
+
+// test('Render Token Form in view mode and token have been used', async () => {
+//   render(<Form mode="view" data={{ ...token, last_used_at: '2021-04-12T22:16:26.359112Z'} } />);
+
+//   const MessageTokenNotUsedYet = await screen.findByText('Last used at 12/04/2021 • 19:16:26');
+//   expect(MessageTokenNotUsedYet).toBeInTheDocument();
+// });
 
 test('Render Token Form in create mode', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'token' }));
-  render(<Form />);
+  render(<Form mode="create" />);
 
   const ContentToken = await screen.findByTestId('contentIcon-token');
   const ContentWorkspaces = screen.queryByTestId('contentIcon-workspaces');

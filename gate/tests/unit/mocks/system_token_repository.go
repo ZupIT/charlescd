@@ -35,13 +35,13 @@ func (_m *SystemTokenRepository) Create(systemToken domain.SystemToken) (domain.
 	return r0, r1
 }
 
-// FindAll provides a mock function with given fields: pageRequest
-func (_m *SystemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
-	ret := _m.Called(pageRequest)
+// FindAll provides a mock function with given fields: name, pageRequest
+func (_m *SystemTokenRepository) FindAll(name string, pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error) {
+	ret := _m.Called(name, pageRequest)
 
 	var r0 []domain.SystemToken
-	if rf, ok := ret.Get(0).(func(domain.Page) []domain.SystemToken); ok {
-		r0 = rf(pageRequest)
+	if rf, ok := ret.Get(0).(func(string, domain.Page) []domain.SystemToken); ok {
+		r0 = rf(name, pageRequest)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.SystemToken)
@@ -49,15 +49,15 @@ func (_m *SystemTokenRepository) FindAll(pageRequest domain.Page) ([]domain.Syst
 	}
 
 	var r1 domain.Page
-	if rf, ok := ret.Get(1).(func(domain.Page) domain.Page); ok {
-		r1 = rf(pageRequest)
+	if rf, ok := ret.Get(1).(func(string, domain.Page) domain.Page); ok {
+		r1 = rf(name, pageRequest)
 	} else {
 		r1 = ret.Get(1).(domain.Page)
 	}
 
 	var r2 error
-	if rf, ok := ret.Get(2).(func(domain.Page) error); ok {
-		r2 = rf(pageRequest)
+	if rf, ok := ret.Get(2).(func(string, domain.Page) error); ok {
+		r2 = rf(name, pageRequest)
 	} else {
 		r2 = ret.Error(2)
 	}

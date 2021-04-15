@@ -23,11 +23,12 @@ interface Props {
   icon: string;
   title?: string;
   subtitle?: string;
+  description?: string;
   children?: ReactNode;
   className?: string;
 }
 
-const Placeholder = ({ icon, title, subtitle, children, className }: Props) => (
+const Placeholder = ({ icon, title, subtitle, description, children, className }: Props) => (
   <Styled.Wrapper data-testid={`placeholder-${icon}`} className={className}>
     <Icon name={icon} />
     <Styled.Empty>
@@ -40,6 +41,13 @@ const Placeholder = ({ icon, title, subtitle, children, className }: Props) => (
         <Text.h1 color="dark" weight="bold" align="center">
           {subtitle}
         </Text.h1>
+      )}
+      {description && (
+        <Styled.Description>
+          <Text.h3 color="dark" align="center">
+            {description}
+          </Text.h3>
+        </Styled.Description>
       )}
     </Styled.Empty>
     {children}

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useImperativeHandle } from 'react';
+import React, { useRef, useState, useImperativeHandle, useEffect } from 'react';
 import Button from 'core/components/Button';
-import useOutsideClick from 'core/hooks/useClickOutside';
 import Styled from './styled';
 
 interface Props {
@@ -48,10 +47,17 @@ const InputTitle = React.forwardRef(
     const inputRef = useRef<HTMLInputElement>(null);
     const wrapperRef = useRef<HTMLDivElement>();
     const [isResumed, setIsResumed] = useState(resume);
-
-    useOutsideClick(wrapperRef, () => setIsResumed(true));
+    const isFocused = inputRef.current === document.activeElement;
 
     useImperativeHandle(ref, () => inputRef.current);
+
+    useEffect(() => {
+      if (isFocused) {
+        setIsResumed(false);
+      } else if (!isFocused && defaultValue) {
+        setIsResumed(true);
+      }
+    }, [isFocused, defaultValue]);
 
     const onButtonClick = () => {
       const input = inputRef.current;
@@ -62,28 +68,30 @@ const InputTitle = React.forwardRef(
 
     return (
       <Styled.Wrapper ref={wrapperRef}>
-        <Styled.InputTitle
-          readOnly={readOnly}
-          name={name}
-          ref={inputRef}
-          resume={isResumed || readOnly}
-          className={className}
-          onClick={() => setIsResumed(false)}
-          placeholder={placeholder}
-          defaultValue={defaultValue}
-        />
+        <Styled.Field>
+          <Styled.InputTitle
+            readOnly={readOnly}
+            name={name}
+            ref={inputRef}
+            resume={isResumed || readOnly}
+            className={className}
+            onClick={() => setIsResumed(false)}
+            placeholder={placeholder}
+            defaultValue={defaultValue}
+          />
+          {!isResumed && !readOnly && (
+            <Button.Default
+              id="submit"
+              type="submit"
+              size="EXTRA_SMALL"
+              onClick={onButtonClick}
+              isDisabled={isDisabled}
+            >
+              Save
+            </Button.Default>
+          )}
+        </Styled.Field>
         {error && <Styled.Error color="error">{error}</Styled.Error>}
-        {!isResumed && !readOnly && (
-          <Button.Default
-            id="submit"
-            type="submit"
-            size="EXTRA_SMALL"
-            onClick={onButtonClick}
-            isDisabled={isDisabled}
-          >
-            Save
-          </Button.Default>
-        )}
       </Styled.Wrapper>
     );
   }

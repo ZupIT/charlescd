@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Token, TokenCreate } from 'modules/Tokens/interfaces';
 import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
+import Text from 'core/components/Text';
 import map from 'lodash/map';
 import Form from 'core/components/Form';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { isNotBlank, isRequired, maxLength } from 'core/utils/validations';
 import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
 import ModalCopy from './Modal';
-import Styled from './styled';
 import { isEmpty } from 'lodash';
 import { updateParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { useHistory } from 'react-router';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
+import Styled from './styled';
+import { dateTimeFormatter } from 'core/utils/date';
 
 interface Props {
   mode?: Mode;
@@ -40,6 +42,8 @@ interface Props {
 
 const FormToken = ({ mode, data }: Props) => {
   const { save, response, status } = useSave();
+  const isModeCreate = mode === 'create';
+  const isModeView = mode === 'view';
   const [isModalCopy, setIsModalCopy] = useState<boolean>();
   const methods = useForm<TokenCreate>({ mode: 'onChange', defaultValues: data });
   const history = useHistory();
@@ -47,6 +51,7 @@ const FormToken = ({ mode, data }: Props) => {
     register, handleSubmit, watch,
     errors, formState: { isValid }
   } = methods;
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const name = watch('name') as string;
   const workspaces = watch('workspaces') as string[];
@@ -58,16 +63,27 @@ const FormToken = ({ mode, data }: Props) => {
 
     save({ ...rest, workspaces: ws });
   };
+
+  const onCloseModalCopy = () => {
+    updateParam(
+      'token',
+      routes.tokensComparation,
+      history,
+      NEW_TAB,
+      `${response?.id}`
+    );
+    setIsModalCopy(true);
+  };
+
+  useEffect(() => {
+    if (isModeCreate) {
+      nameRef.current?.focus();
+    }
+  }, [mode, nameRef, isModeCreate]);
   
   useEffect(() => {
     if (response?.token) {
-      updateParam(
-        'token',
-        routes.tokensComparation,
-        history,
-        NEW_TAB,
-        `${response?.id}`
-      );
+      setIsModalCopy(true);
     }
   }, [response, history]);
 
@@ -76,8 +92,27 @@ const FormToken = ({ mode, data }: Props) => {
       title="Your token has been registered!"
       description="You can now use the token according to the settings you have created."
       token={response?.token}
-      onClose={() => setIsModalCopy(false)}
+      onClose={onCloseModalCopy}
     />
+  )
+
+  const LastUsed = () => (
+    data?.last_used_at
+      ? <Text.h5 color="dark">Last used at {dateTimeFormatter(data.last_used_at)}</Text.h5>
+      : <Text.h5 color="dark">This token has not been used yet.</Text.h5>
+  )
+
+  const Author = () => (
+    data?.author
+      ? <Text.h5 color="dark">Created by {data.author}</Text.h5>
+      : <></>
+  )
+
+  const Info = () => (
+    <Styled.Info>
+      <Author />
+      <LastUsed />
+    </Styled.Info>
   )
 
   return (
@@ -88,16 +123,28 @@ const FormToken = ({ mode, data }: Props) => {
           <ContentIcon icon="token">
             <Form.InputTitle
               name="name"
-              ref={register(isRequiredAndNotBlank)}
+              ref={self => {
+                nameRef.current = self;
+                return register(self, 
+                  {
+                    required: isRequired(),
+                    validate: {
+                      notBlank: isNotBlank,
+                    },
+                    maxLength: maxLength()
+                  });
+              }}
+              defaultValue={data?.name}
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
             />
+            {isModeView && <Info />}
           </ContentIcon>
           {name && <Workspaces mode={mode} />}
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
-              {mode === 'create' && (
+              {isModeCreate && (
                 <Styled.Button
                   type="submit"
                   size="EXTRA_SMALL"

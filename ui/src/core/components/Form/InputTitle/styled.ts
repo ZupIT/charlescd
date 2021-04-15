@@ -20,6 +20,12 @@ import Text from 'core/components/Text';
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
+`;
+
+const Field = styled.div`
+  display: flex;
+  flex-direction: row;
   align-items: flex-end;
 `;
 
@@ -57,12 +63,12 @@ const InputTitle = styled(Input)`
 `;
 
 const Error = styled(Text.h6)`
-  position: absolute;
-  top: 43px;
+  margin-top: 3px;
 `;
 
 export default {
   Wrapper,
+  Field,
   InputTitle,
   Error
 };

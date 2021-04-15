@@ -62,6 +62,8 @@ func GetAllSystemTokens(getAllSystemToken systemTokenInteractor.GetAllSystemToke
 
 		ctx := echoCtx.Request().Context()
 
+		name := echoCtx.QueryParam("name")
+
 		pageNumber, _ := strconv.Atoi(echoCtx.QueryParam("page"))
 		pageSize, _ := strconv.Atoi(echoCtx.QueryParam("size"))
 		sort := echoCtx.QueryParam("sort")
@@ -73,7 +75,7 @@ func GetAllSystemTokens(getAllSystemToken systemTokenInteractor.GetAllSystemToke
 		}
 		pageRequest.FillDefaults()
 
-		systemTokens, page, err := getAllSystemToken.Execute(pageRequest)
+		systemTokens, page, err := getAllSystemToken.Execute(name, pageRequest)
 		if err != nil {
 			return HandleError(echoCtx, ctx, err)
 		}
