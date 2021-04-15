@@ -106,21 +106,21 @@ export class ReconcileDeploymentUsecase {
     deployment: DeploymentEntityV2
   ): KubernetesManifest {
 
-    if (!manifest.metadata) {
-      throw new Error('Invalid manifest. Field metadata is not present.')
+    manifest.metadata = {
+      ...manifest.metadata,
+      namespace: deployment.namespace,
+      labels: {
+        ...manifest.metadata?.labels,
+        'deploymentId': deployment.id,
+        'circleId': deployment.circleId
+      }
     }
 
-    if (manifest.kind === 'Deployment') { //TODO what about other resources such as StatefulSet, CronJob etc?
+    // TODO what about other resources such as StatefulSet, CronJob etc?
+    if (manifest.kind === 'Deployment') {
       manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
     }
 
-    manifest.metadata.namespace = deployment.namespace
-
-    manifest.metadata.labels = {
-      ...manifest.metadata.labels,
-      'deploymentId': deployment.id,
-      'circleId': deployment.circleId
-    }
     return manifest
   }
 

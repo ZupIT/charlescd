@@ -1042,4 +1042,10 @@ describe('Reconcile deployment usecase spec', () => {
     }
     expect(reconcileObj).toEqual(expectedReconcileObj)
   })
+
+  // TODO create unit test for the creation of the medatada field when the manifests don't have it
+
+  // TODO create unit test to check whether the metadata values butler insert are overriding the ones found correctly
+
+  // TODO create unit test to check if the labels are being inserted in the template field (e.g. Deployment, Statefulset)
 })

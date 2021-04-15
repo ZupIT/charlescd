@@ -28,8 +28,7 @@ export class TimeoutScheduler {
 
     await Promise.all(timedOutExecutions.map(execution => this.handleExecutionTimeOut(execution)))
     if (timedOutExecutions?.length) {
-      const activeComponents = await this.componentRepository.findActiveComponents()
-      await this.k8sClient.applyRoutingCustomResource(activeComponents)
+      await this.updateCharlesRoutes()
     }
   }
 
@@ -63,5 +62,10 @@ export class TimeoutScheduler {
       execution.deployment.circleId
     )
     return await this.executionRepository.updateNotificationStatus(execution.id, notificationResponse.status)
+  }
+
+  private async updateCharlesRoutes(): Promise<void> {
+    const activeComponents = await this.componentRepository.findActiveComponents()
+    await this.k8sClient.applyRoutingCustomResource(activeComponents)
   }
 }
