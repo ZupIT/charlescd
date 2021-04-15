@@ -26,6 +26,7 @@ import io.charlescd.moove.application.module.request.ComponentRequest
 import io.charlescd.moove.application.module.request.CreateModuleRequest
 import io.charlescd.moove.application.module.response.ModuleResponse
 import io.charlescd.moove.domain.Module
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.ModuleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
@@ -90,6 +91,30 @@ class CreateModuleInteractorImplTest extends Specification {
         assert response.components[0] instanceof ComponentResponse
         assert response.components[0].name == request.components[0].name
         assert response.components[0].createdAt != null
+    }
+
+    def "when there are component with the same name, should return error"() {
+        given:
+        def component1 = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
+        def component2 = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
+        def authorization = TestUtils.authorization
+        def workspaceId = TestUtils.workspaceId
+        def request = new CreateModuleRequest("CharlesCD", "http://github.com.br",
+                "http://github.com.br/helm", [component1, component2])
+
+        def author = TestUtils.user
+
+        when:
+        createModuleInteractor.execute(request, workspaceId, authorization)
+
+        then:
+        0 * moduleRepository.save(_)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        0 * workspaceRepository.find(workspaceId)
+
+        def exception = thrown(BusinessException)
+        assert exception.message == "duplicated.component.name.error"
     }
 }
 
