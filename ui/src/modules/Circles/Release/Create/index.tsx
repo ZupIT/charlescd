@@ -93,7 +93,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     });
   };
 
-  const myTemp = (hasError?: boolean) => {
+  const checkMaxLengthError = (hasError?: boolean) => {
     if(hasError)
       setError('Sum of component name and version name cannot be greater than 63 characters.');
     else
@@ -118,7 +118,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             index={index}
             module={module}
             onClose={() => remove(index)}
-            onError={myTemp}
+            onError={checkMaxLengthError}
             isNotUnique={isNotUnique}
           />
         ))}
