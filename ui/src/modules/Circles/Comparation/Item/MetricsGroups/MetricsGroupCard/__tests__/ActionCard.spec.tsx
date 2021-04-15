@@ -35,7 +35,7 @@ test('render Action Card', async () => {
   const status = screen.getByTestId('action-status-success');
   const nickname = screen.getByText('action');
   const actionType = screen.getByText('Circle promotion');
-  const triggeredAt = screen.getByText('08/10/2015 • 12:35:00');
+  const triggeredAt = screen.getByText('08/10/2015 | 12:35:00');
   const dropdown = await screen.findByTestId('icon-vertical-dots');
 
   expect(status).toBeInTheDocument();
