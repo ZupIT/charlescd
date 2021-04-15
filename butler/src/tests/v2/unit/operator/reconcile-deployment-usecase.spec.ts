@@ -31,6 +31,7 @@ import { HttpService } from '@nestjs/common'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { reconcileFixturesParams } from './params'
 
 describe('Reconcile deployment usecase spec', () => {
 
@@ -909,238 +910,136 @@ describe('Reconcile deployment usecase spec', () => {
     expect(reconcileObj).toEqual(expectedReconcileObj)
   })
 
-  // TODO create these legacy reconcile utils tests inside here
-  // it('returns empty array for the first reconcile loop on same circle that already had deployments', () => {
-  //   const params = reconcileFixturesParams.paramsWithPreviousDeployment
-  //   const currentDeployment = reconcileFixtures.currentDeploymentId
-  //   expect(ReconcileUtils.specsByDeployment(params, currentDeployment)).toEqual([])
-  // })
-  //
-  // it('returns list of previous deployment specs', () => {
-  //   const params = reconcileFixturesParams.paramsWithPreviousDeployment
-  //   const previousDeployment = reconcileFixtures.previousDeploymentId
-  //   const ids = ReconcileUtils.specsByDeployment(params, previousDeployment).map(s => s.metadata.labels.deploymentId)
-  //   expect(ids).toEqual([previousDeployment, previousDeployment])
-  // })
-  //
-  // it('returns false if current deployments specs are not ready but previous deployments are still running', () => {
-  //   const params = reconcileFixturesParams.paramsWithPreviousDeployment
-  //   const previousDeployment = reconcileFixtures.previousDeploymentId
-  //   const currentDeployment = reconcileFixtures.currentDeploymentId
-  //   const currentSpecs = ReconcileUtils.specsByDeployment(params, currentDeployment)
-  //   const previousSpecs = ReconcileUtils.specsByDeployment(params, previousDeployment)
-  //   expect(ReconcileUtils.checkConditions(currentSpecs)).toEqual(false)
-  //   expect(ReconcileUtils.checkConditions(previousSpecs)).toEqual(true)
-  // })
-  //
-  // it('concatenates deployments and services from previous and current deployment', () => {
-  //   const previousComponents = [
-  //     new ComponentEntityV2(
-  //       UrlConstants.helmRepository,
-  //       'v1',
-  //       'https://repository.com/B:v1',
-  //       'B',
-  //       '1c29210c-e313-4447-80e3-db89b2359138',
-  //       null,
-  //       null,
-  //       [
-  //         {
-  //           kind: 'Deployment',
-  //           metadata: {
-  //             name: 'previous'
-  //           }
-  //         },
-  //         {
-  //           kind: 'Service',
-  //           metadata: {
-  //             name: 'previous'
-  //           }
-  //         },
-  //         {
-  //           kind: 'Deployment',
-  //           metadata: {
-  //             name: 'current-2'
-  //           }
-  //         },
-  //         {
-  //           kind: 'Service',
-  //           metadata: {
-  //             name: 'current-2'
-  //           }
-  //         }
-  //       ]
-  //     )
-  //   ]
-  //   const previousDeployment = new DeploymentEntityV2(
-  //     reconcileFixtures.previousDeploymentId,
-  //     'some-author',
-  //     'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-  //     'some-url',
-  //     previousComponents,
-  //     false,
-  //     'my-namespace',
-  //     5
-  //   )
-  //
-  //   const currentComponents = [
-  //     {
-  //       kind: 'Deployment',
-  //       metadata: {
-  //         name: 'current-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Service',
-  //       metadata: {
-  //         name: 'current',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Deployment',
-  //       metadata: {
-  //         name: 'current-2-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Service',
-  //       metadata: {
-  //         name: 'current-2',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     }
-  //   ]
-  //   const concat = ReconcileUtils.concatWithPrevious(previousDeployment, currentComponents)
-  //   const expected = [
-  //     {
-  //       kind: 'Deployment',
-  //       metadata: {
-  //         name: 'current-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Service',
-  //       metadata: {
-  //         name: 'current',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Deployment',
-  //       metadata: {
-  //         name: 'current-2-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Service',
-  //       metadata: {
-  //         name: 'current-2',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.currentDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Deployment',
-  //       metadata: {
-  //         name: 'previous-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.previousDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     },
-  //     {
-  //       kind: 'Service',
-  //       metadata: {
-  //         name: 'previous',
-  //         namespace: 'my-namespace',
-  //         labels: {
-  //           'deploymentId': reconcileFixtures.previousDeploymentId,
-  //           'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
-  //         }
-  //       }
-  //     }
-  //   ]
-  //   expect(concat).toEqual(expected)
-  // })
-  //
-  //
-  // it('should replace the deployment name with a concatenation of Release.Name, tag and circleId', () => {
-  //   const component = new ComponentEntityV2(
-  //     UrlConstants.helmRepository,
-  //     'v1',
-  //     'build-image-url.com',
-  //     'jilo',
-  //     'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
-  //     null,
-  //     null,
-  //     [...componentRawSpecs],
-  //     false
-  //   )
-  //   const deployment = new DeploymentEntityV2(
-  //     'b7d08a07-f29d-452e-a667-7a39820f3262',
-  //     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
-  //     'custom-circle-id',
-  //     UrlConstants.deploymentCallbackUrl,
-  //     [
-  //       component
-  //     ],
-  //     false,
-  //     'custom-namespace',
-  //     60
-  //   )
-  //
-  //   const preparedManifests = ReconcileUtils.addMetadata(deployment)
-  //
-  //   const expectedLabels = {
-  //     app: 'jilo',
-  //     version: 'jilo',
-  //     deploymentId: deployment.id,
-  //     circleId: deployment.circleId
-  //   }
-  //
-  //   expect(preparedManifests).toHaveLength(2)
-  //   expect(preparedManifests[0].metadata?.labels).toBe(expectedLabels)
-  //   expect(preparedManifests[0].metadata?.name).toBe('jilo-v1-custom-circle-id')
-  //   expect(preparedManifests[0].metadata?.namespace).toBe('custom-namespace')
-  //   expect(preparedManifests[1].metadata?.labels).toBe(expectedLabels)
-  //   expect(preparedManifests[1].metadata?.name).toBe('jilo')
-  //   expect(preparedManifests[1].metadata?.namespace).toBe('custom-namespace')
-  // })
+  it('should return the desired manifests of the new deployment when there is no previous and it is not ready yet', async() => {
+    jest.spyOn(deploymentRepository, 'findOneOrFail')
+      .mockImplementation(async() => getDeploymentWithManifestFixture(false))
+
+    jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
+      new Execution(getDeploymentWithManifestAndPreviousFixture(false), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    )
+
+    // this won't change the test outcome
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => [])
+
+    const reconcileDeploymentUsecase = new ReconcileDeploymentUsecase(
+      k8sClient,
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService,
+      executionRepository,
+      mooveService
+    )
+
+    const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithDeploymentNotReady)
+
+    const expectedReconcileObj = {
+      children: [
+        {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          metadata: {
+            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            namespace: 'namespace',
+            labels: {
+              app: 'hello-kubernetes',
+              version: 'hello-kubernetes',
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+              component: 'hello-kubernetes',
+              tag: 'tag-example'
+            }
+          },
+          spec: {
+            replicas: 1,
+            selector: {
+              matchLabels: {
+                app: 'hello-kubernetes',
+                version: 'hello-kubernetes'
+              }
+            },
+            template: {
+              metadata: {
+                annotations: {
+                  'sidecar.istio.io/inject': 'true'
+                },
+                labels: {
+                  app: 'hello-kubernetes',
+                  version: 'hello-kubernetes'
+                }
+              },
+              spec: {
+                containers: [
+                  {
+                    name: 'hello-kubernetes',
+                    image: 'build-image-url.com',
+                    livenessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    readinessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    imagePullPolicy: 'Always',
+                    resources: {
+                      limits: {
+                        cpu: '128m',
+                        memory: '128Mi'
+                      },
+                      requests: {
+                        cpu: '64m',
+                        memory: '64Mi'
+                      }
+                    }
+                  }
+                ],
+                imagePullSecrets: [
+                  {
+                    name: 'realwavelab-registry'
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          apiVersion: 'v1',
+          data: {
+            'secret-data': 'dGVzdA=='
+          },
+          kind: 'Secret',
+          metadata: {
+            labels: {
+              app: 'hello-kubernetes',
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              component: 'hello-kubernetes',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+              version: 'hello-kubernetes'
+            },
+            name: 'custom-secret',
+            namespace: 'namespace'
+          },
+          type: 'Opaque'
+        },
+      ],
+      resyncAfterSeconds: 5
+    }
+    expect(reconcileObj).toEqual(expectedReconcileObj)
+  })
 })

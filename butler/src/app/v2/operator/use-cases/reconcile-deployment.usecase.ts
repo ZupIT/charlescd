@@ -42,7 +42,6 @@ export class ReconcileDeploymentUsecase {
     private readonly mooveService: MooveService
   ) { }
 
-  // TODO organize this method + remove comments
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const desiredManifests = this.getDesiredManifests(deployment)
@@ -52,7 +51,6 @@ export class ReconcileDeploymentUsecase {
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
 
-    // TODO move this to other methods
     const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
     if (!isDeploymentReady) {
       const previousDeploymentId = deployment.previousDeploymentId
@@ -68,8 +66,6 @@ export class ReconcileDeploymentUsecase {
       return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
 
-    // TODO move this to other methods
-    // If all resources are ready, update the routing CRD
     const activeComponents = await this.componentRepository.findActiveComponents()
     try {
       await this.k8sClient.applyRoutingCustomResource(activeComponents)
@@ -78,7 +74,7 @@ export class ReconcileDeploymentUsecase {
       await this.deploymentRepository.updateHealthStatus(deployment.id, false)
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
-    // Set the observed deployment's healthy state to true
+
     await this.deploymentRepository.updateHealthStatus(deployment.id, true)
     await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
     return { children: desiredManifests }
