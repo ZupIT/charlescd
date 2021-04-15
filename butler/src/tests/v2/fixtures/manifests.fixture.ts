@@ -23,12 +23,12 @@ import { AppConstants } from '../../../app/v2/core/constants'
 
 const basePath = path.join(__dirname, '../../../', 'resources/helm-test-chart')
 
-export const defaultManifests: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'))
+export const simpleManifests: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'))
 
-export const defaultManifestsJson = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'), null, { json: true })
+export const simpleManifestsJson = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'), null, { json: true })
 
-export const customManifests = (appName: string, namespace: string, image: string): KubernetesManifest[] => {
-  const manifests = yaml.safeLoadAll(fs.readFileSync(`${basePath}/manifest-default.yaml`, 'utf-8'))
+export const getSimpleManifests = (appName: string, namespace: string, image: string): KubernetesManifest[] => {
+  const manifests = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'))
   const service = manifests[0]
   service.metadata.labels.app = appName
   service.metadata.labels.service = appName

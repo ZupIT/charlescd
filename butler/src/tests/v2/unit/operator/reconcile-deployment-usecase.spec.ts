@@ -690,6 +690,207 @@ describe('Reconcile deployment usecase spec', () => {
     expect(reconcileObj).toEqual(expectedReconcileObj)
   })
 
+  // TODO
+  it('should generate the correct desired state without manifest repetition when a override happens', async() => {
+    jest.spyOn(deploymentRepository, 'findOneOrFail')
+      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture())
+      .mockImplementationOnce(async() => getDeploymentWithManifestFixture())
+
+    jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
+      new Execution(getDeploymentWithManifestAndPreviousFixture(), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    )
+
+    // this won't change the test outcome
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => [])
+
+    const expectedReconcileObj = {
+      children: [
+        {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          metadata: {
+            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            namespace: 'namespace',
+            labels: {
+              app: 'hello-kubernetes',
+              version: 'hello-kubernetes',
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+              component: 'hello-kubernetes',
+              tag: 'tag-example'
+            }
+          },
+          spec: {
+            replicas: 1,
+            selector: {
+              matchLabels: {
+                app: 'hello-kubernetes',
+                version: 'hello-kubernetes'
+              }
+            },
+            template: {
+              metadata: {
+                annotations: {
+                  'sidecar.istio.io/inject': 'true'
+                },
+                labels: {
+                  app: 'hello-kubernetes',
+                  version: 'hello-kubernetes'
+                }
+              },
+              spec: {
+                containers: [
+                  {
+                    name: 'hello-kubernetes',
+                    image: 'build-image-url.com',
+                    livenessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    readinessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    imagePullPolicy: 'Always',
+                    resources: {
+                      limits: {
+                        cpu: '128m',
+                        memory: '128Mi'
+                      },
+                      requests: {
+                        cpu: '64m',
+                        memory: '64Mi'
+                      }
+                    }
+                  }
+                ],
+                imagePullSecrets: [
+                  {
+                    name: 'realwavelab-registry'
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          metadata: {
+            name: 'hello-kubernetes-build-image-tag-2-b46fd548-0082-4021-ba80-a50703c44a3b',
+            namespace: 'namespace',
+            labels: {
+              app: 'hello-kubernetes',
+              version: 'hello-kubernetes',
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              deploymentId: 'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+              component: 'hello-kubernetes',
+              tag: 'tag-example'
+            }
+          },
+          spec: {
+            replicas: 1,
+            selector: {
+              matchLabels: {
+                app: 'hello-kubernetes',
+                version: 'hello-kubernetes'
+              }
+            },
+            template: {
+              metadata: {
+                annotations: {
+                  'sidecar.istio.io/inject': 'true'
+                },
+                labels: {
+                  app: 'hello-kubernetes',
+                  version: 'hello-kubernetes'
+                }
+              },
+              spec: {
+                containers: [
+                  {
+                    name: 'hello-kubernetes',
+                    image: 'build-image-url-2.com',
+                    livenessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    readinessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    imagePullPolicy: 'Always',
+                    resources: {
+                      limits: {
+                        cpu: '128m',
+                        memory: '128Mi'
+                      },
+                      requests: {
+                        cpu: '64m',
+                        memory: '64Mi'
+                      }
+                    }
+                  }
+                ],
+                imagePullSecrets: [
+                  {
+                    name: 'realwavelab-registry'
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      resyncAfterSeconds: 5
+    }
+
+    const reconcileDeploymentUsecase = new ReconcileDeploymentUsecase(
+      k8sClient,
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService,
+      executionRepository,
+      mooveService
+    )
+
+    const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithDeploymentNotReady)
+
+    expect(reconcileObj).toEqual(expectedReconcileObj)
+  })
+
   // TODO create these legacy reconcile utils tests inside here
   // it('returns empty array for the first reconcile loop on same circle that already had deployments', () => {
   //   const params = reconcileFixturesParams.paramsWithPreviousDeployment

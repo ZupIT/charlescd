@@ -26,7 +26,7 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { UndeploymentValidation } from '../../../../app/v2/api/deployments/pipes/undeployment-validation.pipe'
 import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
-import { defaultManifests } from '../../fixtures/manifests.fixture'
+import { simpleManifests } from '../../fixtures/manifests.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
@@ -50,7 +50,7 @@ describe('DeploymentCleanupHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     pipe = app.get<UndeploymentValidation>(UndeploymentValidation)
     manager = fixtureUtilsService.connection.manager
-    manifests = defaultManifests
+    manifests = simpleManifests
     TestSetupUtils.seApplicationConstants()
   })
 

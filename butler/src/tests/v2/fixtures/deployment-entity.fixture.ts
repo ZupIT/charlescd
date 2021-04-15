@@ -1,6 +1,6 @@
 import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
-import { customManifests } from './manifests.fixture'
+import { getSimpleManifests } from './manifests.fixture'
 import { UrlConstants } from '../integration/test-constants'
 
 export const deploymentFixture = new DeploymentEntityV2(
@@ -82,7 +82,7 @@ function createDeployComponent(
     'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
     null,
     null,
-    withManifests? customManifests(name, namespace, 'image-url') : [],
+    withManifests? getSimpleManifests(name, namespace, 'image-url') : [],
     false
   )
 
@@ -100,7 +100,7 @@ function createDeployComponent(
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        withManifests? customManifests(name, namespace, 'image-url') : [],
+        withManifests? getSimpleManifests(name, namespace, 'image-url') : [],
         false
       )
     ],
@@ -128,7 +128,7 @@ export const getDeploymentWithManifestFixture = () => {
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        customManifests('hello-kubernetes', 'namespace', 'build-image-url.com'),
+        getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url.com'),
         false
       )
     ],
@@ -154,7 +154,7 @@ export const getDeploymentWithManifestAndPreviousFixture = () => {
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        customManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com'),
+        getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com'),
         false
       )
     ],
