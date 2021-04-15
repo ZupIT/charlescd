@@ -113,25 +113,56 @@ function createDeployComponent(
   return component
 }
 
-export const deploymentWithManifestFixture = new DeploymentEntityV2(
-  'b7d08a07-f29d-452e-a667-7a39820f3262',
-  'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
-  'b46fd548-0082-4021-ba80-a50703c44a3b',
-  UrlConstants.deploymentCallbackUrl,
-  [
-    new ComponentEntityV2(
-      UrlConstants.helmRepository,
-      'build-image-tag',
-      'build-image-url.com',
-      'hello-kubernetes',
-      'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
-      null,
-      null,
-      customManifests('hello-kubernetes', 'namespace', 'build-image-tag'),
-      false
-    )
-  ],
-  true,
-  'namespace',
-  60
-)
+export const getDeploymentWithManifestFixture = () => {
+  const deployment = new DeploymentEntityV2(
+    'b7d08a07-f29d-452e-a667-7a39820f3262',
+    'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+    'b46fd548-0082-4021-ba80-a50703c44a3b',
+    UrlConstants.deploymentCallbackUrl,
+    [
+      new ComponentEntityV2(
+        UrlConstants.helmRepository,
+        'build-image-tag',
+        'build-image-url.com',
+        'hello-kubernetes',
+        'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
+        null,
+        null,
+        customManifests('hello-kubernetes', 'namespace', 'build-image-url.com'),
+        false
+      )
+    ],
+    true,
+    'namespace',
+    60
+  )
+  return deployment
+}
+
+export const getDeploymentWithManifestAndPreviousFixture = () => {
+  const deployment = new DeploymentEntityV2(
+    'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+    'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+    'b46fd548-0082-4021-ba80-a50703c44a3b',
+    UrlConstants.deploymentCallbackUrl,
+    [
+      new ComponentEntityV2(
+        UrlConstants.helmRepository,
+        'build-image-tag-2',
+        'build-image-url-2.com',
+        'hello-kubernetes',
+        'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
+        null,
+        null,
+        customManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com'),
+        false
+      )
+    ],
+    true,
+    'namespace',
+    60
+  )
+  const previousDeployment = getDeploymentWithManifestFixture()
+  deployment.previousDeploymentId = previousDeployment.id
+  return deployment
+}
