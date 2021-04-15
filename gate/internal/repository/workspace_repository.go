@@ -41,7 +41,7 @@ type workspaceRepository struct {
 }
 
 func NewWorkspaceRepository(db *gorm.DB, queriesPath string) (WorkspaceRepository, error) {
-	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "system_token_queries.sql"))
+	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "workspace_queries.sql"))
 	if err != nil {
 		return workspaceRepository{}, err
 	}
@@ -69,7 +69,7 @@ func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(work
 
 	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-user-permissions-at-workspace"], workspaceId, userId).Scan(&permissionsJson)
 	if res.Error != nil {
-		return [][]domain.Permission{}, handleWorkspaceError("Find User permissions at Workspace", "repository.GetUserPermissionAtWorkspace.Scan", res.Error, logging.InternalError)
+		return [][]domain.Permission{}, handleWorkspaceError("Find User permissions at Workspace", "WorkspaceRepository.GetUserPermissionAtWorkspace.Scan", res.Error, logging.InternalError)
 	}
 
 	var permissionsList = make([][]models.Permission, 0)
@@ -77,7 +77,7 @@ func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(work
 		var permissions []models.Permission
 		err := json.Unmarshal(p, &permissions)
 		if err != nil {
-			return [][]domain.Permission{}, handleWorkspaceError("Error unmarshalling permissions", "repository.GetUserPermissionAtWorkspace", res.Error, logging.InternalError)
+			return [][]domain.Permission{}, handleWorkspaceError("Error unmarshalling permissions", "WorkspaceRepository.GetUserPermissionAtWorkspace", res.Error, logging.InternalError)
 		}
 		permissionsList = append(permissionsList, permissions)
 	}
@@ -96,7 +96,7 @@ func (workspaceRepository workspaceRepository) FindBySystemTokenId(systemTokenId
 	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-workspaces-by-system-token-id"], systemTokenId).Scan(&workspaces)
 
 	if res.Error != nil {
-		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces by system token id failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
+		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces by system token id failed", "WorkspaceRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
 	}
 
 	return mapper.WorkspacesModelToDomains(workspaces), nil

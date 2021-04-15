@@ -12,5 +12,5 @@ SELECT id,
        created_at
 FROM workspaces w
          INNER JOIN system_tokens_workspaces stw ON
-    p.id = stw.workspace_id
+    w.id = stw.workspace_id
 WHERE stw.system_token_id = ?;
