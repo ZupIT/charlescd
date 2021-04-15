@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_RED_ORANGE,
-  COLOR_LIGHT_DEFAULT,
-  COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE,
-  COLOR_PAYNES_GREY
-} from 'core/assets/colors';
+package io.charlescd.moove.infrastructure.service.client.response
 
-export const light = {};
+data class LogResponse(
+    val id: String,
+    val logs: List<Log>
+)
 
-export const dark = {
-  screen: COLOR_BLACK_RUSSIAN,
-  background: COLOR_BASTILLE,
-  continue: COLOR_RED_ORANGE,
-  text: COLOR_LIGHT_DEFAULT,
-  dismiss: COLOR_GHOST_WHITE,
-  header: COLOR_PAYNES_GREY
-};
+data class Log(
+    val type: String,
+    val title: String,
+    val details: String?,
+    val timestamp: String
+)
