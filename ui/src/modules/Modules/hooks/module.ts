@@ -206,6 +206,7 @@ export const useUpdateModule = (): {
       setModuleId(id);
       try {
         await updateModulePromise(id, module);
+        dispatch(resetModulesAction());
         getAllModules();
         setStatus('resolved');
       } catch (error) {
