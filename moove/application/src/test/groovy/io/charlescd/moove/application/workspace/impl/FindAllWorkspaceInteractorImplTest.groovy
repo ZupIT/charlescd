@@ -65,9 +65,11 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
         given:
         def pageRequest = new PageRequest()
         def author = new User("author", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
-        def workspace = new Workspace("workspace-id", "workspace-name", author, LocalDateTime.now(), [], WorkspaceStatusEnum.INCOMPLETE, "registry-configuration-id",
+        def completeWorkspace = new Workspace("workspace-id", "workspace-name", author, LocalDateTime.now(), [], WorkspaceStatusEnum.COMPLETE, "registry-configuration-id",
                 "circle-matcher-url", "git-configuration-id", "cd-configuration-id", null)
-        def page = new Page([workspace], 0, 20, 1)
+        def incompleteWorkspace = new Workspace("workspace-id", "workspace-name", author, LocalDateTime.now(), [], WorkspaceStatusEnum.INCOMPLETE, "registry-configuration-id",
+                null, "git-configuration-id", "cd-configuration-id", null)
+        def page = new Page([completeWorkspace, incompleteWorkspace], 0, 20, 2)
 
         when:
         def response = this.findAllWorkspaceInteractor.execute(pageRequest, null)
@@ -83,17 +85,20 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
 
         assert response != null
         assert response.page == 0
-        assert response.size == 1
-        assert response.content.size() == 1
-        assert response.content[0].id == workspace.id
-        assert response.content[0].name == workspace.name
-        assert response.content[0].status == workspace.status.toString()
-        assert response.content[0].circleMatcherUrl == workspace.circleMatcherUrl
+        assert response.size == 2
+        assert response.content.size() == 2
+        assert response.content[0].id == completeWorkspace.id
+        assert response.content[0].name == completeWorkspace.name
+        assert response.content[0].status == completeWorkspace.status.toString()
+        assert response.content[0].circleMatcherUrl == completeWorkspace.circleMatcherUrl
         assert response.content[0].registryConfiguration == null
         assert response.content[0].gitConfiguration == null
         assert response.content[0].cdConfiguration == null
-        assert response.content[0].createdAt == workspace.createdAt
-        assert response.content[0].authorId == workspace.author.id
+        assert response.content[0].createdAt == completeWorkspace.createdAt
+        assert response.content[0].circleMatcherUrl == completeWorkspace.circleMatcherUrl
+        assert response.content[0].authorId == completeWorkspace.author.id
+        assert response.content[0].status == WorkspaceStatusEnum.COMPLETE.name()
+        assert response.content[1].status == WorkspaceStatusEnum.INCOMPLETE.name()
         assert response.totalPages == 1
         assert response.isLast
     }
