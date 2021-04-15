@@ -17,5 +17,6 @@
 import Trigger from './Trigger';
 import Default from './Default';
 import Wizard from './Wizard';
+import FullScreen from './FullScreen';
 
-export default { Default, Trigger, Wizard };
+export default { Default, Trigger, Wizard, FullScreen };

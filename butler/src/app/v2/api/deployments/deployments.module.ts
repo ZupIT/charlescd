@@ -39,6 +39,8 @@ import { CdStrategyFactory } from '../../core/integrations/cd-strategy-factory'
 import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
 import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
 import { ConsoleLoggerService } from '../../core/logs/console/console-logger.service'
+import { FindDeploymentLogsByIdUsecase } from './use-cases/find-deployment-logs-by-id.usecase'
+import { LogRepository } from './repository/log.repository'
 
 @Module({
   imports: [
@@ -50,7 +52,8 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
       CdConfigurationsRepository,
       ComponentsRepositoryV2,
       ExecutionRepository,
-      DeploymentRepositoryV2
+      DeploymentRepositoryV2,
+      LogRepository
     ])
   ],
   controllers: [
@@ -64,6 +67,7 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
     ReceiveNotificationUseCase,
     DeploymentHandlerUseCase,
     PaginatedExecutionsUseCase,
+    FindDeploymentLogsByIdUsecase,
     MooveService,
     DeploymentCleanupHandler,
     ConsoleLoggerService,
