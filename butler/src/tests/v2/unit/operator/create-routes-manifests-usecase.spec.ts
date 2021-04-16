@@ -24,14 +24,14 @@ import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/re
 import {
   componentsFixtureCircle1,
   componentsFixtureCircle1DiffNamespace,
-  componentsFixtureCircle1WithService,
+  componentsFixtureCircle1WithService, componentsFixtureCircle1WithServiceNoLabels,
   componentsFixtureCircle2,
   deploymentFixture
 } from '../../fixtures/deployment-entity.fixture'
 import {
   routesManifestsDiffNamespace,
   routesManifestsSameNamespace,
-  routesManifestsSameNamespaceWithService
+  routesManifestsSameNamespaceWithService, routesManifestsSameNamespaceWithServiceAndNoLabels
 } from '../../fixtures/manifests.fixture'
 
 describe('Hook Routes Manifest Creation', () => {
@@ -189,9 +189,22 @@ describe('Hook Routes Manifest Creation', () => {
     expect(findSpy).toHaveBeenCalledTimes(0)
   })
 
-  // TODO check if services manifest is overriding the pre-defined labels
+  it('should create manifest metadata labels/namespace for the services when they dont exist', async() => {
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1WithServiceNoLabels : componentsFixtureCircle2
+    )
+    jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
-  // TODO check if services manifests are creating the labels when the object does not exist
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = await routeUseCase.execute(hookParamsWith2Components)
+
+    expect(manifests).toEqual({ children: routesManifestsSameNamespaceWithServiceAndNoLabels, resyncAfterSeconds: 5 })
+  })
 })
 
 describe('Compare observed routes state with desired routes state', () => {

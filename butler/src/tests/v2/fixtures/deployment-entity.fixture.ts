@@ -1,7 +1,8 @@
 import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
-import { getComplexManifests, getSimpleManifests } from './manifests.fixture'
+import { getComplexManifests, getNoLabelsManifests, getSimpleManifests } from './manifests.fixture'
 import { UrlConstants } from '../integration/test-constants'
+import { KubernetesManifest } from '../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 
 export const deploymentFixture = new DeploymentEntityV2(
   'b7d08a07-f29d-452e-a667-7a39820f3262',
@@ -49,31 +50,42 @@ export const deploymentFixture2 = new DeploymentEntityV2(
   60
 )
 
-export const componentsFixtureCircle1WithService = [
-  createDeployComponent('A', 'v1', 'circle-1', true, true, 'namespace')
-]
+type ManifestType = 'simple' | 'complex' | 'noLabels' | 'noManifest'
 
-export const componentsFixtureCircle1DiffNamespace = [
-  createDeployComponent('A', 'v1', 'circle-1', true, false, 'diff-namespace')
-]
+const getManifests = (
+  manifestType: ManifestType,
+  name: string,
+  image: string,
+  namespace: string
+): KubernetesManifest[] => {
+  let manifests: KubernetesManifest[]
+  switch (manifestType) {
+    case 'simple':
+      manifests = getSimpleManifests(name, namespace, image)
+      break
+    case 'complex':
+      manifests = getComplexManifests(name, namespace, image)
+      break
+    case 'noLabels':
+      manifests = getNoLabelsManifests(name, image)
+      break
+    case 'noManifest':
+      manifests = []
+      break
+    default:
+      throw Error('Invalid manifest type')
+  }
+  return manifests
+}
 
-export const componentsFixtureCircle1 = [
-  createDeployComponent('A', 'v1', 'circle-1', true, false, 'namespace')
-]
-
-export const componentsFixtureCircle2 = [
-  createDeployComponent('A', 'v2', 'circle-2', false, false, 'namespace'),
-  createDeployComponent('B', 'v2', 'circle-2', false, false, 'namespace')
-]
-
-function createDeployComponent(
+const createDeployComponent = (
   name: string,
   tag: string,
   circle: string,
   defaultCircle: boolean,
-  withManifests: boolean,
+  manifestType: ManifestType,
   namespace: string
-) {
+) => {
   const component = new ComponentEntityV2(
     UrlConstants.helmRepository,
     tag,
@@ -82,7 +94,7 @@ function createDeployComponent(
     'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
     null,
     null,
-    withManifests? getSimpleManifests(name, namespace, 'image-url') : [],
+    getManifests(manifestType, name, 'build-image-url.com', namespace),
     false
   )
 
@@ -100,7 +112,7 @@ function createDeployComponent(
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        withManifests? getSimpleManifests(name, namespace, 'image-url') : [],
+        getManifests(manifestType, name, 'build-image-url.com', namespace),
         false
       )
     ],
@@ -113,7 +125,28 @@ function createDeployComponent(
   return component
 }
 
-export const getDeploymentWithManifestFixture = (simpleManifests: boolean): DeploymentEntityV2 => {
+export const componentsFixtureCircle1WithServiceNoLabels = [
+  createDeployComponent('A', 'v1', 'circle-1', true, 'noLabels', 'namespace')
+]
+
+export const componentsFixtureCircle1WithService = [
+  createDeployComponent('A', 'v1', 'circle-1', true, 'simple', 'namespace')
+]
+
+export const componentsFixtureCircle1DiffNamespace = [
+  createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'diff-namespace')
+]
+
+export const componentsFixtureCircle1 = [
+  createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace')
+]
+
+export const componentsFixtureCircle2 = [
+  createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace'),
+  createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace')
+]
+
+export const getDeploymentWithManifestFixture = (manifestType: ManifestType): DeploymentEntityV2 => {
   const deployment = new DeploymentEntityV2(
     'b7d08a07-f29d-452e-a667-7a39820f3262',
     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
@@ -128,9 +161,7 @@ export const getDeploymentWithManifestFixture = (simpleManifests: boolean): Depl
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        simpleManifests ?
-          getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url.com') :
-          getComplexManifests('hello-kubernetes', 'namespace', 'build-image-url.com'),
+        getManifests(manifestType, 'hello-kubernetes', 'build-image-url.com', 'namespace'),
         false
       )
     ],
@@ -141,7 +172,7 @@ export const getDeploymentWithManifestFixture = (simpleManifests: boolean): Depl
   return deployment
 }
 
-export const getDeploymentWithManifestAndPreviousFixture = (simpleManifests: boolean): DeploymentEntityV2 => {
+export const getDeploymentWithManifestAndPreviousFixture = (manifestType: ManifestType): DeploymentEntityV2 => {
   const deployment = new DeploymentEntityV2(
     'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
@@ -156,9 +187,7 @@ export const getDeploymentWithManifestAndPreviousFixture = (simpleManifests: boo
         'e82f9bbb-169b-4b11-b48f-7f4fc7561651',
         null,
         null,
-        simpleManifests ?
-          getSimpleManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com') :
-          getComplexManifests('hello-kubernetes', 'namespace', 'build-image-url-2.com'),
+        getManifests(manifestType, 'hello-kubernetes', 'build-image-url-2.com', 'namespace'),
         false
       )
     ],
@@ -166,7 +195,7 @@ export const getDeploymentWithManifestAndPreviousFixture = (simpleManifests: boo
     'namespace',
     60
   )
-  const previousDeployment = getDeploymentWithManifestFixture(simpleManifests)
+  const previousDeployment = getDeploymentWithManifestFixture(manifestType)
   deployment.previousDeploymentId = previousDeployment.id
   return deployment
 }
