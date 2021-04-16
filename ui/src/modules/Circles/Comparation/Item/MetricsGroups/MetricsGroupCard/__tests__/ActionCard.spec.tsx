@@ -44,11 +44,11 @@ test('render Action Card', async () => {
   expect(triggeredAt).toBeInTheDocument();
 
   userEvent.click(dropdown);
-  userEvent.click(screen.getByText('Edit action'));
+  expect(screen.getByText('Edit action')).toBeInTheDocument();
   userEvent.click(screen.getByText('Delete action'));
   userEvent.click(screen.getByText('Yes, delete'));
 
-  expect(action).toHaveBeenCalledTimes(2);
+  expect(action).toHaveBeenCalledTimes(1);
 });
 
 test('render Action Card and confirm delete', async () => {
