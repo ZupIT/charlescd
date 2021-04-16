@@ -312,15 +312,13 @@ const CirclesComparationItem = ({
           </LabeledIcon>
         </Can>
       )}
-      {circle?.deployment && (
-        <LabeledIcon
-          icon="clock"
-          marginContent="5px"
-          onClick={() => setActiveSection(SECTIONS.HISTORY)}
-          >
-            <Text.h5 color="dark">History</Text.h5>
-        </LabeledIcon>
-      )}
+      <LabeledIcon
+        icon="clock"
+        marginContent="5px"
+        onClick={() => setActiveSection(SECTIONS.HISTORY)}
+        >
+          <Text.h5 color="dark">History</Text.h5>
+      </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>
   );

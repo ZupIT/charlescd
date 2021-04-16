@@ -36,6 +36,6 @@ export const dark = {
     deployed: COLOR_MOUNTAIN_MEADOW,
     deployFailed: COLOR_RED_ORANGE,
     undeploying: COLOR_GOLD,
-    undeployed: COLOR_ORANGE_PEEL
+    undeploy: COLOR_ORANGE_PEEL
   } as Record<string, string>
 };
