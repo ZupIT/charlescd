@@ -157,6 +157,7 @@ export class ReconcileRoutesUsecase {
     })
   }
 
+  // TODO create a class that implements the KubernetesObject interface and move this method inside it
   private addCharlesMetadata(manifest: KubernetesManifest, deployment: DeploymentEntityV2): KubernetesManifest {
     manifest.metadata = {
       ...manifest.metadata,

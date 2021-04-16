@@ -100,6 +100,7 @@ export class ReconcileDeploymentUsecase {
     })
   }
 
+  // TODO create a class that implements the KubernetesObject interface and move this method inside it
   private addCharlesMetadata(
     manifest: KubernetesManifest & SpecTemplateManifest,
     component: ComponentEntityV2,
