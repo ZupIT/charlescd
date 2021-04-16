@@ -60,6 +60,12 @@ const Item = styled.div`
   }
 `;
 
+const WorkspaceItem = styled(Item)`
+  >span{
+    width: 100px;
+  }
+`;
+
 const Footer = styled.div``;
 
 const Logo = styled(IconComponent)`
@@ -200,5 +206,6 @@ export default {
   LinkText,
   Bottom,
   Footer,
-  Item
+  Item,
+  WorkspaceItem
 };
