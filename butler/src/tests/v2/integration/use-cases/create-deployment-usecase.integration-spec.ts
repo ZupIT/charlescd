@@ -22,7 +22,7 @@ import { AppModule } from '../../../../app/app.module'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
-import { customManifests } from '../../fixtures/manifests.fixture'
+import { getSimpleManifests } from '../../fixtures/manifests.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
@@ -97,7 +97,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '777765f8-bb29-49f7-bf2b-3ec956a71583',
       null,
       null,
-      customManifests('A', 'my-namespace', 'imageurl.com')
+      getSimpleManifests('A', 'my-namespace', 'imageurl.com')
     )
     component1.running = false
     component1.id = expect.anything()
@@ -110,7 +110,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '1c29210c-e313-4447-80e3-db89b2359138',
       null,
       null,
-      customManifests('B', 'my-namespace', 'imageurl.com')
+      getSimpleManifests('B', 'my-namespace', 'imageurl.com')
     )
     component2.running = false
     component2.id = expect.anything()
@@ -135,7 +135,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
           null,
           null,
-          customManifests('A', 'my-namespace', 'imageurl.com')
+          getSimpleManifests('A', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
           UrlConstants.helmRepository,
@@ -145,7 +145,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           '1c29210c-e313-4447-80e3-db89b2359138',
           null,
           null,
-          customManifests('B', 'my-namespace', 'imageurl.com')
+          getSimpleManifests('B', 'my-namespace', 'imageurl.com')
         )
       ],
       true,
@@ -168,7 +168,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           '46b83994-bfae-4f1e-84cd-0d18b59735bc',
           null,
           null,
-          customManifests('C', 'my-namespace', 'imageurl.com')
+          getSimpleManifests('C', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
           UrlConstants.helmRepository,
@@ -178,7 +178,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           '5ff6c5f3-fca5-440a-aaf5-ab3c25fdf0f5',
           null,
           null,
-          customManifests('D', 'my-namespace', 'imageurl.com')
+          getSimpleManifests('D', 'my-namespace', 'imageurl.com')
         )
       ],
       false,
@@ -201,7 +201,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           '222cd8db-3767-45d5-a415-7cca09cccf91',
           null,
           null,
-          customManifests('E', 'my-namespace', 'imageurl.com')
+          getSimpleManifests('E', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
           UrlConstants.helmRepository,
@@ -211,7 +211,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
           null,
           null,
-          customManifests('F', 'my-namespace', 'imageurl.com')
+          getSimpleManifests('F', 'my-namespace', 'imageurl.com')
         )
       ],
       false,

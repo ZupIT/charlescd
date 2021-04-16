@@ -37,6 +37,10 @@ const K8sClientStub = {
 
   applyRoutingCustomResource: async() => {
     return Promise.resolve()
+  },
+
+  client: {
+    delete: async() => Promise.resolve()
   }
 }
 

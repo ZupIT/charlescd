@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { HookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 
 export const reconcileFixtures = {
@@ -584,3 +600,141 @@ const firstDeploymentParams: HookParams = {
 export const reconcileFirstDeploymentParams = {
   paramsWithEmptyCircle: firstDeploymentParams
 }
+
+export const componentRawSpecs = [
+  {
+    apiVersion: 'apps/v1',
+    kind: 'Deployment',
+    metadata: {
+      generation: 1,
+      labels: {
+        app: 'jilo',
+        version: 'jilo'
+      },
+      name: 'jilo',
+      namespace: 'default',
+      resourceVersion: '6734',
+      uid: 'dfdfa186-2f7b-4e45-b740-0d87c2c0d6bf'
+    },
+    spec: {
+      progressDeadlineSeconds: 600,
+      replicas: 1,
+      revisionHistoryLimit: 10,
+      selector: {
+        matchLabels: {
+          app: 'jilo',
+          version: 'jilo'
+        }
+      },
+      strategy: {
+        rollingUpdate: {
+          maxSurge: '25%',
+          maxUnavailable: '25%'
+        },
+        type: 'RollingUpdate'
+      },
+      template: {
+        metadata: {
+          annotations: {
+            'sidecar.istio.io/inject': 'true'
+          },
+          creationTimestamp: null,
+          labels: {
+            app: 'jilo',
+            version: 'jilo'
+          }
+        },
+        spec: {
+          containers: [
+            {
+              args: [
+                '-text',
+                'hello'
+              ],
+              image: 'hashicorp/http-echo',
+              imagePullPolicy: 'Always',
+              livenessProbe: {
+                failureThreshold: 3,
+                httpGet: {
+                  path: '/',
+                  port: 5678,
+                  scheme: 'HTTP'
+                },
+                initialDelaySeconds: 30,
+                periodSeconds: 20,
+                successThreshold: 1,
+                timeoutSeconds: 1
+              },
+              name: 'jilo',
+              readinessProbe: {
+                failureThreshold: 3,
+                httpGet: {
+                  path: '/',
+                  port: 5678,
+                  scheme: 'HTTP'
+                },
+                initialDelaySeconds: 30,
+                periodSeconds: 20,
+                successThreshold: 1,
+                timeoutSeconds: 1
+              },
+              resources: {
+                limits: {
+                  cpu: '128m',
+                  memory: '128Mi'
+                },
+                requests: {
+                  cpu: '64m',
+                  memory: '64Mi'
+                }
+              },
+              terminationMessagePath: '/dev/termination-log',
+              terminationMessagePolicy: 'File'
+            }
+          ],
+          dnsPolicy: 'ClusterFirst',
+          restartPolicy: 'Always',
+          schedulerName: 'default-scheduler',
+          securityContext: {},
+          terminationGracePeriodSeconds: 30
+        }
+      }
+    }
+  },
+  {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      labels: {
+        app: 'jilo',
+        version: 'jilo'
+      },
+      name: 'jilo',
+      namespace: 'default',
+      resourceVersion: '6763',
+      uid: '1f2aa658-20aa-4a93-9c33-a2f2d2234d21'
+    },
+    spec: {
+      clusterIP: '10.97.147.13',
+      clusterIPs: [
+        '10.97.147.13'
+      ],
+      ports: [
+        {
+          name: 'http',
+          port: 80,
+          protocol: 'TCP',
+          targetPort: 80
+        }
+      ],
+      selector: {
+        app: 'jilo'
+      },
+      sessionAffinity: 'None',
+      type: 'ClusterIP'
+    },
+    status: {
+      loadBalancer: {}
+    }
+  }
+]

@@ -27,10 +27,7 @@ import java.net.URI
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.*
 
 // TODO remove url. It is currently needed here because we couldn't find another way to disable Ribbon (https://github.com/Netflix/ribbon).
 @FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
@@ -49,7 +46,7 @@ interface DeployClient {
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun undeploy(@PathVariable("deploymentId") deploymentId: String, @RequestBody request: UndeployRequest): UndeployResponse
+    fun undeploy(url: URI, @PathVariable("deploymentId") deploymentId: String, @RequestBody request: UndeployRequest): UndeployResponse
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(

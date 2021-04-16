@@ -45,7 +45,7 @@ export class ReconcileRoutesUsecase {
     const componentSnapshots = await this.getDesiredComponentSnapshots(hookParams)
     const namespacedComponentSnapshots = groupBy(componentSnapshots, component => component.deployment.namespace)
     for (const namespace in namespacedComponentSnapshots) {
-      services = services.concat(ReconcileUtils.getComponentsServiceManifests(namespacedComponentSnapshots[namespace]))
+      services = services.concat(this.getServicesWithMetadata(namespacedComponentSnapshots[namespace]))
       specs = specs.concat(this.createProxyManifests(namespace, namespacedComponentSnapshots[namespace]))
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
@@ -148,5 +148,26 @@ export class ReconcileRoutesUsecase {
     const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
     const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
     return desiredDestinationRulePresent && desiredVirtualServicePresent
+  }
+
+  private getServicesWithMetadata(components: ComponentEntityV2[]): KubernetesManifest[] {
+    return components.flatMap(component => {
+      const serviceManifests = ReconcileUtils.getComponentServiceManifests(component)
+      return serviceManifests.map(manifest => this.addCharlesMetadata(manifest, component.deployment))
+    })
+  }
+
+  // TODO create a class that implements the KubernetesObject interface and move this method inside it
+  private addCharlesMetadata(manifest: KubernetesManifest, deployment: DeploymentEntityV2): KubernetesManifest {
+    manifest.metadata = {
+      ...manifest.metadata,
+      namespace: deployment.namespace,
+      labels: {
+        ...manifest.metadata?.labels,
+        'deploymentId': deployment.id,
+        'circleId': deployment.circleId
+      }
+    }
+    return manifest
   }
 }

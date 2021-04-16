@@ -17,7 +17,6 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
-import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
@@ -26,11 +25,7 @@ import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
-import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
-import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
-import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
-import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
+import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -250,47 +245,6 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .expect(400)
       .expect(response => {
         expect(response.body).toEqual(expectedError)
-      })
-  })
-
-
-  it('returns the logs associated with the deployment on database', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-
-    const deploymentDto = new CreateDeploymentRequestDto(
-      '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
-      'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
-      'http://localhost:9000/deploy/notifications/deployment',
-      cdConfiguration.id,
-      { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
-      DeploymentStatusEnum.CREATED,
-      [],
-      false
-    )
-    const log = {
-      type: 'INFO',
-      title:'Rendering helm manifests',
-      timestamp: Date.now().toString()
-    }
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-    const logEntity = new LogEntity(deploymentDto.deploymentId, [log] )
-    const deploymentEntity = deploymentDto.toCircleEntity()
-    deploymentEntity.cdConfiguration = cdConfiguration
-    await manager.save(deploymentEntity)
-    await manager.save(logEntity)
-
-    await request(app.getHttpServer())
-      .get(`/v2/deployments/${deploymentDto.deploymentId}/logs`)
-      .set('x-workspace-id', deploymentEntity.cdConfiguration.workspaceId)
-      .expect(200)
-      .expect(response => {
-        expect(response.body.logs).toEqual(logEntity.logs)
       })
   })
 
