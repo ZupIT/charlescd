@@ -44,6 +44,7 @@ import { dark as darkSwitch } from './switch';
 import { dark as darkBoard } from './board';
 import { dark as darkCircleMatcher } from './circleMatcher';
 import { dark as darkCircleSegmentation } from './circleSegmentation';
+import { dark as darkCircleDeploymentHistory } from './circleDeploymentHistory';
 import { dark as darkCheckbox } from './checkbox';
 import { dark as darkCircleGroupMetrics } from './circleGroupMetrics';
 import { dark as darkNavTabs } from './navTabs';
@@ -94,6 +95,7 @@ const dark = {
   circleSegmentation: darkCircleSegmentation,
   checkbox: darkCheckbox,
   circleGroupMetrics: darkCircleGroupMetrics,
+  circleDeploymentHistory: darkCircleDeploymentHistory,
   navTabs: darkNavTabs,
   summary: darkSummary,
   log: darkLog,
