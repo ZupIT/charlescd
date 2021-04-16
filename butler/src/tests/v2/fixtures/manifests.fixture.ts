@@ -577,7 +577,8 @@ export const routesManifestsSameNamespaceWithService: KubernetesManifest[] = [
     metadata: {
       labels: {
         app: 'A',
-        circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a',
+        circleId: 'circle-1',
+        deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
         component: 'A',
         service: 'A',
         tag: 'tag-example'

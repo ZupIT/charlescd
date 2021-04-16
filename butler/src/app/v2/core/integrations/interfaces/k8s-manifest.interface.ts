@@ -81,4 +81,16 @@ export interface Subset {
   name: string
 }
 
+export type SpecTemplateManifest = {
+  spec?: {
+    template?: {
+      metadata?: {
+        labels?: {
+          [key: string]: string
+        }
+      }
+    }
+  }
+}
+
 export type KubernetesManifest = KubernetesObject

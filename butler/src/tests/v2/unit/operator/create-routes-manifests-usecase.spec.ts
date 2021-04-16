@@ -188,6 +188,10 @@ describe('Hook Routes Manifest Creation', () => {
     expect(updateSpy).toHaveBeenCalledTimes(0)
     expect(findSpy).toHaveBeenCalledTimes(0)
   })
+
+  // TODO check if services manifest is overriding the pre-defined labels
+
+  // TODO check if services manifests are creating the labels when the object does not exist
 })
 
 describe('Compare observed routes state with desired routes state', () => {

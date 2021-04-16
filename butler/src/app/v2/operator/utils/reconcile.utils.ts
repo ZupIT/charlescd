@@ -27,7 +27,7 @@ export class ReconcileUtils {
     return manifest1.metadata?.name === manifest2.metadata?.name && manifest1.kind === manifest2.kind
   }
 
-  public static getComponentsServiceManifests(components: ComponentEntityV2[]): KubernetesObject[]  {
-    return components.flatMap(c => c.manifests).filter(m => m.kind === 'Service')
+  public static getComponentServiceManifests(component: ComponentEntityV2): KubernetesObject[]  {
+    return component.manifests.filter(m => m.kind === 'Service')
   }
 }

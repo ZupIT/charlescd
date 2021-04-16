@@ -31,7 +31,6 @@ import { HttpService } from '@nestjs/common'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
-import { reconcileFixturesParams } from './params'
 
 describe('Reconcile deployment usecase spec', () => {
 
@@ -419,7 +418,9 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   app: 'hello-kubernetes',
-                  version: 'hello-kubernetes'
+                  version: 'hello-kubernetes',
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
                 }
               },
               spec: {
@@ -535,7 +536,9 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   app: 'hello-kubernetes',
-                  version: 'hello-kubernetes'
+                  version: 'hello-kubernetes',
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
                 }
               },
               spec: {
@@ -619,7 +622,9 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   app: 'hello-kubernetes',
-                  version: 'hello-kubernetes'
+                  version: 'hello-kubernetes',
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'e728a072-b0aa-4459-88ba-0f4a9b71ae54'
                 }
               },
               spec: {
@@ -735,7 +740,9 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   app: 'hello-kubernetes',
-                  version: 'hello-kubernetes'
+                  version: 'hello-kubernetes',
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
                 }
               },
               spec: {
@@ -838,7 +845,9 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   app: 'hello-kubernetes',
-                  version: 'hello-kubernetes'
+                  version: 'hello-kubernetes',
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'e728a072-b0aa-4459-88ba-0f4a9b71ae54'
                 }
               },
               spec: {
@@ -964,7 +973,9 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   app: 'hello-kubernetes',
-                  version: 'hello-kubernetes'
+                  version: 'hello-kubernetes',
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
                 }
               },
               spec: {

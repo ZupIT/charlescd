@@ -22,7 +22,7 @@ import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
 import { NotificationStatusEnum } from '../../core/enums/notification-status.enum'
-import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
+import { KubernetesManifest, SpecTemplateManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { MooveService } from '../../core/integrations/moove'
 import { ConsoleLoggerService } from '../../core/logs/console'
@@ -101,7 +101,7 @@ export class ReconcileDeploymentUsecase {
   }
 
   private addCharlesMetadata(
-    manifest: KubernetesManifest,
+    manifest: KubernetesManifest & SpecTemplateManifest,
     component: ComponentEntityV2,
     deployment: DeploymentEntityV2
   ): KubernetesManifest {
@@ -119,6 +119,14 @@ export class ReconcileDeploymentUsecase {
     // TODO what about other resources such as StatefulSet, CronJob etc?
     if (manifest.kind === 'Deployment') {
       manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
+    }
+
+    if (manifest.spec?.template?.metadata) {
+      manifest.spec.template.metadata.labels = {
+        ...manifest.spec.template.metadata.labels,
+        'deploymentId': deployment.id,
+        'circleId': deployment.circleId
+      }
     }
 
     return manifest
