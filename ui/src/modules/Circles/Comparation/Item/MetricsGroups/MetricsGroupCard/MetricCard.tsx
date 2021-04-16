@@ -97,12 +97,12 @@ const MetricCard = ({
       </Styled.MetricLastValue>
       <Styled.MetricDropdown>
         <NewDropDown icon="vertical-dots" size="16px">
-          <Dropdown.Item
+          <NewDropDown.Item
             icon="edit"
             name="Edit metric"
             onClick={() => handleEditMetric(metric, metricGroup)}
           />
-          <Dropdown.Item
+          <NewDropDown.Item
             icon="delete"
             name="Delete"
             onClick={() => handleDeleteMetric(metricGroup.id, metric.id)}
