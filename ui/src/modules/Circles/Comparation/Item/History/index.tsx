@@ -91,8 +91,8 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
               />)}
             <Styled.DeploymentRow key={index}>
               <Styled.TableRow>
-                <Styled.TableTextName color="light" title={release.authorName}>
-                  {release.authorName}
+                <Styled.TableTextName color="light" title={release.authorEmail}>
+                  {release.authorEmail}
                 </Styled.TableTextName>
                 <Styled.TableDate color="light" >
                   {release.deployedAt ? newDateTimeFormatter(release.deployedAt) : '-'}
