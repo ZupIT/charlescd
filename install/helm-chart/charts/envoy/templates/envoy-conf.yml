@@ -190,6 +190,7 @@ data:
                         [":method"] = "POST",
                         [":path"] = "/api/v1/authorize",
                         [":authority"] = "charlescd-gate",
+                        ["content-type"] = "application/json",
                         ["authorization"] = user_token,
                         ["x-charles-token"] = system_token
                       },
