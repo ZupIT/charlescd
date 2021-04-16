@@ -18,7 +18,6 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.application.module.request.CreateModuleRequest
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
