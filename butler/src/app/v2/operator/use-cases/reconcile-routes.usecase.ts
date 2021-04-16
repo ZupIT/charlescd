@@ -128,7 +128,7 @@ export class ReconcileRoutesUsecase {
       kind: spec.kind,
       status: false
     }
-    if (this.checkEmptySpecs(observed) === true) {
+    if (this.checkEmptySpecs(observed)) {
       baseResponse.status = false
       return baseResponse
     }
