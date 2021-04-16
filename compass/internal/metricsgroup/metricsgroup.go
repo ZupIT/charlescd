@@ -270,7 +270,7 @@ func (main Main) FindById(id string) (MetricsGroup, errors.Error) {
 	metricsGroup := MetricsGroup{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
-		return MetricsGroup{}, errors.NewError("FindById error", db.Error.Error()).
+		return MetricsGroup{}, errors.NewError("Find Metric Group By Id error", db.Error.Error()).
 			WithOperations("FindById.First")
 	}
 	return metricsGroup, nil
