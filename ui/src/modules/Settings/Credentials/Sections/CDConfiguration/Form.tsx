@@ -36,12 +36,9 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
     mode: 'onChange'
   });
   const { control, register, handleSubmit, formState: { isValid } } = formMethods;
-  const [configType, setConfigType] = useState('');
+  const configType = 'OCTOPIPE';
   const [providerType, setProviderType] = useState('');
-  const hasProvider = (
-    (isEmpty(providerType) && configType === 'OCTOPIPE')
-    || (!isEmpty(providerType) && configType !== 'OCTOPIPE')
-  );
+  const hasProvider = isEmpty(providerType);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -57,10 +54,6 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
       }
     });
   };
-
-  useEffect(() => {
-    if (configType === 'SPINNAKER') setProviderType('');
-  }, [configType]);
 
   const renderOthersFields = () =>
     providerType === 'GENERIC' && (
@@ -162,9 +155,6 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text.h5 color="dark">
-        Fill in the fields below with your information:
-      </Text.h5>
       <Styled.Fields>
         <Form.Input
           ref={register({ required: true })}
@@ -202,15 +192,7 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
           description="Add your Continuous Deployment (CD) tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. Consult our documentation for further details."
         />
       </Styled.Title>
-      <Styled.Subtitle color="dark">
-        Choose witch one you want to add:
-      </Styled.Subtitle>
-      <Radio.Buttons
-        name="cd-configuration"
-        items={radios}
-        onChange={({ currentTarget }) => setConfigType(currentTarget.value)}
-      />
-      {configType && renderForm()}
+      {renderForm()}
     </Styled.Content>
   );
 };
