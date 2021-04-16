@@ -67,7 +67,7 @@ export const dateTimeFormatter = (date: string | Date) => {
   return dayjs
     .utc(date, 'YYYY-MM-DD HH:MM:SS')
     .local()
-    .format('DD/MM/YYYY • HH:mm:ss');
+    .format('DD/MM/YYYY | HH:mm:ss');
 };
 
 export const newDateTimeFormatter = (date: string | Date) => {

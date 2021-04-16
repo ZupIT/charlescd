@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import { dateTimeFormatter } from 'core/utils/date';
+
 enum STATUS {
   DEPLOYING = 'deploying',
   DEPLOYED = 'deployed',
   DEPLOY_FAILED = 'deploy_failed',
   UNDEPLOYING = 'undeploying',
-  NOT_DEPLOYED = 'undeployed'
+  NOT_DEPLOYED = 'undeploy'
 }
 
 export const getReleaseStatus = (statusEnum: string) => {
@@ -37,4 +39,17 @@ export const getReleaseStatus = (statusEnum: string) => {
     default:
       return STATUS.DEPLOYED;
   }
+};
+
+export const getActionDateTime = (
+  deployDate: Date | string,
+  undeployDate: Date | string
+) => {
+  if (undeployDate) {
+    return dateTimeFormatter(undeployDate);
+  } if (deployDate) {
+    return dateTimeFormatter(deployDate);
+  }
+
+  return '-'
 };

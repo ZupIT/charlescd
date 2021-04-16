@@ -18,12 +18,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CircleRelease } from 'modules/Metrics/Circles/interfaces';
 import Text from 'core/components/Text';
-import { newDateTimeFormatter } from 'core/utils/date';
 import Icon from 'core/components/Icon';
+import isEmpty from 'lodash/isEmpty';
 import camelCase from 'lodash/camelCase';
 import startCase from 'lodash/startCase';
 import LogModal from './Logs';
-import { getReleaseStatus } from './helpers';
+import { getReleaseStatus, getActionDateTime } from './helpers';
 import { useCircleDeployHistory } from './hooks';
 import Loader from './Loaders';
 import Styled from './styled';
@@ -37,7 +37,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
   const page = useRef(0);
   const [toggleModal, setToggleModal] = useState(false);
   const [releases, setReleases] = useState<CircleRelease[]>([]);
-  const { getCircleReleases, response } = useCircleDeployHistory();
+  const { getCircleReleases, response, loading } = useCircleDeployHistory();
   const releasesResponse = response?.content;
   const hasMoreData = !response?.last;
 
@@ -82,6 +82,15 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
         loader={<Loader.History />}
         height={690}
       >
+        {(!loading && isEmpty(releases)) && (
+          <Styled.NoHistoryPlaceholder
+            icon="error-403"
+          >
+            <Styled.NoHistoryText color="dark" weight="bold" align="center">
+              No deployment history available
+            </Styled.NoHistoryText>
+          </Styled.NoHistoryPlaceholder>
+        )}
         {releases?.map((release, index) => (
           <>
             {toggleModal && (
@@ -95,7 +104,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
                   {release.authorEmail}
                 </Styled.TableTextName>
                 <Styled.TableDate color="light" >
-                  {release.deployedAt ? newDateTimeFormatter(release.deployedAt) : '-'}
+                  {getActionDateTime(release.deployedAt, release.undeployedAt) }
                 </Styled.TableDate>
                 <Styled.TableDeployStatus>
                   <Styled.Dot status={camelCase(getReleaseStatus(release.status))}/>
