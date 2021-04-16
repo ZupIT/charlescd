@@ -52,7 +52,7 @@ var initialValues = map[string]string{
 	"REQUESTS_PER_SECOND_LIMIT": "1",
 	"LIMITER_TOKEN_TTL":         "5",
 	"LIMITER_HEADERS_TTL":       "5",
-	"ENCRYPTION_KEY":      "caf5a807-5edd-4580-9149-7a4882755716",
+	"ENCRYPTION_KEY":            "caf5a807-5edd-4580-9149-7a4882755716",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
