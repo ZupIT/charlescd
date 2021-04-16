@@ -27,7 +27,7 @@ import { useWorkspaces } from '../hooks';
 import Loader from './loader';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   draft: WorkspacePaginationItem[];
   onSelect: (workspace: WorkspacePaginationItem) => void;
 }
@@ -69,11 +69,12 @@ const List = ({ draft, onSelect }: Props) => {
     <Fragment>
       <Styled.Search
         resume
+        name="workspace-search"
         label="Filter workspaces"
         onChange={e => handleChange(e.currentTarget.value)}
         maxLength={64}
       />
-      <Styled.Content>
+      <Styled.Content data-testid="workspace-list-content">
         <InfiniteScroll
           hasMore={!last}
           loadMore={loadMore}

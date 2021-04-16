@@ -21,7 +21,7 @@ import Text from 'core/components/Text';
 import { checkProps } from './helpers';
 import Styled from '../styled';
 
-interface Props {
+export interface Props {
   selected: boolean;
   workspace: WorkspacePaginationItem;
   onChange: (workspace: WorkspacePaginationItem) => void;

@@ -28,7 +28,7 @@ import { options, Option } from './constants';
 import Styled from './styled';
 import DocumentationLink from 'core/components/DocumentationLink';
 
-interface Props {
+export interface Props {
   workspaces: WorkspacePaginationItem[];
   onClose: () => void;
   onContinue: (workspaces: WorkspacePaginationItem[], type: Option) => void;
@@ -68,6 +68,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
       {isManual && <List draft={draft} onSelect={toggleWorkspace} />}
       <Styled.Item>
         <Button.Default
+          id="continue"
           type="button"
           size="SMALL"
           onClick={() => onContinue(draft, type)}
