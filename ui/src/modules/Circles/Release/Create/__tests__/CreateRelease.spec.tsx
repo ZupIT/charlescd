@@ -91,7 +91,7 @@ test('form should be valid', async () => {
   );
 });
 
-test('form should be valid TEST', async () => {
+test('should validate form when max lenght is greater than the limit', async () => {
   const errorMessage = 'Sum of component name and version name cannot be greater than 63 characters.';
   (fetch as FetchMock)
     .mockResponseOnce(mockGetModules)
@@ -119,11 +119,10 @@ test('form should be valid TEST', async () => {
   const versionNameLabel = screen.getByTestId('label-text-modules[0].version');
   expect(versionNameLabel).toHaveStyle(`color: ${inputTheme.error.color};`);
 
-  // TODO fix test
-  // await waitFor(() =>
-  //   expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
-  //   { timeout: 700 }
-  // );
+  await waitFor(() =>
+    expect(screen.getByTestId('button-default-submit')).toBeDisabled(),
+    { timeout: 700 }
+  );
 });
 
 test('form should be invalid when version name not found', async () => {
