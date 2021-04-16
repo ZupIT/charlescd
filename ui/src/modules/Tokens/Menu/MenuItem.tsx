@@ -16,7 +16,6 @@
 
 import { useHistory } from 'react-router-dom';
 import Text from 'core/components/Text';
-import Can from 'containers/Can';
 import { addParam, delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import useQueryString from 'core/utils/query';
@@ -42,13 +41,11 @@ const MenuItem = ({ id, name }: Props) => {
   };
 
   return (
-    <Can I="read" a="modules" passThrough>
-      <Styled.Link onClick={() => onMenuClick()} isActive={isActive()}>
-        <Styled.ListItem icon="token" isActive={isActive()}>
-          <Text.h4 color="light">{name}</Text.h4>
-        </Styled.ListItem>
-      </Styled.Link>
-    </Can>
+    <Styled.Link onClick={() => onMenuClick()} isActive={isActive()}>
+      <Styled.ListItem icon="token" isActive={isActive()}>
+        <Text.h4 color="light">{name}</Text.h4>
+      </Styled.ListItem>
+    </Styled.Link>
   );
 };
 

@@ -82,7 +82,7 @@ const Subtitle = styled.div`
 const Description = styled.div``;
 
 const Caption = styled.div`
-  margin: 10px 40px;
+  margin: 10px 40px 20px;
 `;
 
 export default {

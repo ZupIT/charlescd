@@ -89,8 +89,8 @@ const FormToken = ({ mode, data }: Props) => {
 
   const ModalNewToken = () => (
     <ModalCopy
-      title="Your token has been registered!"
-      description="You can now use the token according to the settings you have created."
+      title="Your token has been created!"
+      description="You have succesfully added a new personal acces token. Copy the token now!"
       token={response?.token}
       onClose={onCloseModalCopy}
     />
@@ -123,6 +123,7 @@ const FormToken = ({ mode, data }: Props) => {
           <ContentIcon icon="token">
             <Form.InputTitle
               name="name"
+              placeholder="Type a name"
               ref={self => {
                 nameRef.current = self;
                 return register(self, 

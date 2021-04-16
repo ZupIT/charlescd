@@ -33,7 +33,7 @@ const ModalRegenerate = ({ onClose, onContinue, isLoading }: Props) => {
       onDismiss={onClose}
       isLoading={isLoading}
     >
-      <Text.h4 color="light">
+      <Text.h4 color="dark">
         Any application or script using this token will no loger be able ato accesss Charles C.D. APIs.
         You can not undo this action. Do you want to continue?
       </Text.h4>
