@@ -113,7 +113,7 @@ function createDeployComponent(
   return component
 }
 
-export const getDeploymentWithManifestFixture = (simpleManifests: boolean) => {
+export const getDeploymentWithManifestFixture = (simpleManifests: boolean): DeploymentEntityV2 => {
   const deployment = new DeploymentEntityV2(
     'b7d08a07-f29d-452e-a667-7a39820f3262',
     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
@@ -141,7 +141,7 @@ export const getDeploymentWithManifestFixture = (simpleManifests: boolean) => {
   return deployment
 }
 
-export const getDeploymentWithManifestAndPreviousFixture = (simpleManifests: boolean) => {
+export const getDeploymentWithManifestAndPreviousFixture = (simpleManifests: boolean): DeploymentEntityV2 => {
   const deployment = new DeploymentEntityV2(
     'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
     'b8ccdabf-6094-495c-b44e-ba8ea2214e29',

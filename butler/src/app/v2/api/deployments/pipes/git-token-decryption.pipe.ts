@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BadRequestException, Injectable, InternalServerErrorException, PipeTransform } from '@nestjs/common'
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import * as openpgp from 'openpgp'
 import { AppConstants } from '../../../core/constants'
