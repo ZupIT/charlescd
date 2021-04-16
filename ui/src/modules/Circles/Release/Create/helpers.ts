@@ -139,7 +139,7 @@ interface Props {
 }
 
 export const checkComponentAndVersionMaxLength = ({tag, onError, setIsError} : Props) => {
-  const componentAndVersion = tag?.artifact.split('/')
+  const componentAndVersion = tag?.artifact.split('/');
   const componentAndVersionSplited = componentAndVersion[1].split(':');
   const componentNameLen = componentAndVersionSplited[0].length;
   const versionNameLen = componentAndVersionSplited[1].length;

@@ -44,7 +44,7 @@ const mockGetTags = JSON.stringify(
   [
     {
       name: 'image-1.0.0',
-      artifact: 'domain.com:image-1.0.0'
+      artifact: '12345/domain.com:image-1.0.0'
     }
   ]
 );
@@ -69,7 +69,7 @@ test('form should be valid', async () => {
   await act(async () => selectEvent.select(componentLabel, 'component-1'));
 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
-  await act(() => userEvent.type(versionInput, 'image-1.0.0'));
+  await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
 
   await waitFor(() =>
     expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
