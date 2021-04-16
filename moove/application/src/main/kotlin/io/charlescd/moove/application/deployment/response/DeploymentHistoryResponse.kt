@@ -26,7 +26,7 @@ class DeploymentHistoryResponse(
     val id: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val deployedAt: LocalDateTime?,
-    val authorName: String,
+    val authorEmail: String,
     val tag: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val undeployedAt: LocalDateTime?,
@@ -43,7 +43,7 @@ class DeploymentHistoryResponse(
                 id = deploymentHistory.id,
                 deployedAt = deploymentHistory.deployedAt,
                 undeployedAt = deploymentHistory.undeployedAt,
-                authorName = deploymentHistory.authorName,
+                authorEmail = deploymentHistory.authorEmail,
                 tag = deploymentHistory.tag,
                 deployDuration = deploymentHistory.deploymentDuration?.seconds ?: 0,
                 circleName = deploymentHistory.circleName,
