@@ -20,6 +20,7 @@ import isEmpty from 'lodash/isEmpty';
 import some from 'lodash/some';
 import debounce from 'lodash/debounce';
 import InfiniteScroll from 'core/components/InfiniteScroll';
+import Text from 'core/components/Text';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Item from './Item';
 import Empty from './Empty';
@@ -65,15 +66,24 @@ const List = ({ draft, onSelect }: Props) => {
       />
     ))
 
+  const NoContent = () => (
+    <Styled.NoContent>
+      <Text.h4 color="dark">No more results.</Text.h4>
+    </Styled.NoContent>
+  )
+
   return (
     <Fragment>
-      <Styled.Search
-        resume
-        name="workspace-search"
-        label="Filter workspaces"
-        onChange={e => handleChange(e.currentTarget.value)}
-        maxLength={64}
-      />
+      <Styled.Item>
+        <Styled.Search
+          resume
+          name="workspace-search"
+          label="Filter workspaces"
+          icon="search"
+          onChange={e => handleChange(e.currentTarget.value)}
+          maxLength={64}
+        />
+      </Styled.Item>
       <Styled.Content data-testid="workspace-list-content">
         <InfiniteScroll
           hasMore={!last}
@@ -82,6 +92,7 @@ const List = ({ draft, onSelect }: Props) => {
           loader={<Loader />}
         >
           {isEmpty(workspaces) && status !== 'pending' ? <Empty /> : renderItems()}
+          {!isEmpty(workspaces) && status !== 'pending' && <NoContent />}
         </InfiniteScroll>
       </Styled.Content>
     </Fragment>
