@@ -87,7 +87,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
             icon="error-403"
           >
             <Styled.NoHistoryText color="dark" weight="bold" align="center">
-              Sem historico de deploy disponivel
+              No deployment history available
             </Styled.NoHistoryText>
           </Styled.NoHistoryPlaceholder>
         )}
