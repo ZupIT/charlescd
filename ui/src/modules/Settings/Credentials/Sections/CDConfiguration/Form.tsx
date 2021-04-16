@@ -23,7 +23,6 @@ import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
-import Text from 'core/components/Text';
 import { radios, providers, gitProviders } from './constants';
 import { CDConfiguration } from './interfaces';
 import { Props } from '../interfaces';
