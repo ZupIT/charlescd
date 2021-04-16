@@ -121,11 +121,14 @@ export class ReconcileDeploymentUsecase {
       manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
     }
 
-    if (manifest.spec?.template?.metadata) {
-      manifest.spec.template.metadata.labels = {
-        ...manifest.spec.template.metadata.labels,
-        'deploymentId': deployment.id,
-        'circleId': deployment.circleId
+    if (manifest.spec?.template) {
+      manifest.spec.template.metadata = {
+        ...manifest.spec.template.metadata,
+        labels: {
+          ...manifest.spec.template.metadata?.labels,
+          'deploymentId': deployment.id,
+          'circleId': deployment.circleId
+        }
       }
     }
 
