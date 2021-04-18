@@ -20,11 +20,17 @@ import { Input } from 'core/components/Form';
 const Search = styled(Input)`
   margin-top: 5px;
   margin-bottom: 20px;
-  margin: 5px 40px 20px;
+  margin: 5px 40px 10px;
 
   > input {
     background-color: transparent;
+    border-bottom: 1px solid #FFF;
   }
+`;
+
+const Item = styled.div`
+  border-top: 1px solid #3A3A3C;
+  height: 50px;
 `;
 
 const Content = styled.div`
@@ -33,12 +39,21 @@ const Content = styled.div`
   overflow-y: auto;
 `;
 
+const NoContent = styled.div`
+  height: 100px;
+  display: flex;
+  margin-top: 24px;
+  justify-content: center;
+`;
+
 const Empty = styled.div`
   margin: 48px 40px 18px;
 `;
 
 export default {
   Search,
+  Item,
   Content,
+  NoContent,
   Empty,
 }

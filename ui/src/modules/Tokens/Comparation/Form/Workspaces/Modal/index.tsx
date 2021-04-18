@@ -43,11 +43,17 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
   const toggleWorkspace = (workspace: WorkspacePaginationItem) => {
     setDraft(xorBy(draft, [workspace], 'id'));
   };
+
+  const renderDescription = () => (
+    isManual
+      ? '*This token will have access only to the selected workspaces. '
+      : '*This token will have access to all selected workspaces. '
+  )
   
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
-        <Text.h2 color="light">Add Workspaces</Text.h2>
+        <Text.h2 color="light">Add workspaces</Text.h2>
         <Select
           options={options}
           defaultValue={type}
@@ -57,7 +63,8 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
       </Styled.Header>
       <Styled.Caption>
         <Text.h5 color="dark">
-          *This token will have access only to the selected workspaces. Read our 
+          {renderDescription()}
+          Read our 
           <DocumentationLink
             documentationLink="https://docs.charlescd.io"
             text="documentation"
@@ -71,9 +78,10 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
           id="continue"
           type="button"
           size="SMALL"
+          isDisabled={isManual && isEmpty(draft)}
           onClick={() => onContinue(draft, type)}
         >
-          {`${isAddMode ? 'Add' : 'Save'}`}
+          Next
         </Button.Default>
       </Styled.Item>
     </Styled.Modal>

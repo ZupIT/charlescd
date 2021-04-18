@@ -19,7 +19,6 @@ import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import debounce from 'lodash/debounce';
-import Can from 'containers/Can';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
@@ -96,13 +95,11 @@ const TokensMenu = () => {
   return (
     <Fragment>
       <Styled.Actions>
-        <Can I="write" a="modules" passThrough>
-          <Styled.Button onClick={handleCreate}>
-            <LabeledIcon icon="plus-circle" marginContent="5px">
-              <Text.h5 color="dark">Create access token</Text.h5>
-            </LabeledIcon>
-          </Styled.Button>
-        </Can>
+        <Styled.Button onClick={handleCreate}>
+          <LabeledIcon icon="plus-circle" marginContent="5px">
+            <Text.h5 color="dark">Create access token</Text.h5>
+          </LabeledIcon>
+        </Styled.Button>
       </Styled.Actions>
       <Styled.Content>
         <Styled.SearchInput
