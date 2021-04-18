@@ -95,5 +95,11 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
+	userToSave := savedSystemToken.CreateUserFromSystemToken()
+	_, err = createSystemToken.userRepository.Create(userToSave)
+	if err != nil {
+		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
+	}
+
 	return savedSystemToken, nil
 }

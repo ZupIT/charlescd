@@ -29,5 +29,6 @@ type User struct {
 	PhotoUrl  string
 	Email     string
 	IsRoot    bool
+	SystemTokenId string `gorm:"column:system_token_id"`
 	CreatedAt time.Time
 }
