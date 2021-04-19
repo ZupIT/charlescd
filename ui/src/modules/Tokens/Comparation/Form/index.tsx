@@ -49,7 +49,7 @@ const FormToken = ({ mode, data }: Props) => {
   const history = useHistory();
   const {
     register, handleSubmit, watch,
-    errors, formState: { isValid }
+    errors, formState: { isValid }, 
   } = methods;
   const nameRef = useRef<HTMLInputElement>(null);
 
@@ -141,7 +141,7 @@ const FormToken = ({ mode, data }: Props) => {
             />
             {isModeView && <Info />}
           </ContentIcon>
-          {name && <Workspaces mode={mode} />}
+          {name && !errors?.name?.message && <Workspaces mode={mode} />}
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />

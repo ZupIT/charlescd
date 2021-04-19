@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-import { COLOR_BLACK_MARLIN } from '../colors';
+import { COLOR_BLACK_MARLIN, COLOR_WHITE } from '../colors';
 
 export const light = {};
 
 
 export const dark = {
+  workspace: {
+    search: {
+      input: COLOR_WHITE
+    },
+    item: {
+      border: COLOR_BLACK_MARLIN
+    }
+  },
   scope: {
     view: {
       background: COLOR_BLACK_MARLIN
