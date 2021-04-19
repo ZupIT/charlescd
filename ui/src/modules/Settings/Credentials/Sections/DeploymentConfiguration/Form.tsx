@@ -53,7 +53,7 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
       <Form.Input
         ref={register({ required: true })}
         name="butlerUrl"
-        label="Enter the URL"
+        label="Enter butler URL"
       />
       <Form.Input
         ref={register({ required: true })}
