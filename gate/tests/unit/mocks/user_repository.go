@@ -12,6 +12,27 @@ type UserRepository struct {
 	mock.Mock
 }
 
+// Create provides a mock function with given fields: user
+func (_m *UserRepository) Create(user domain.User) (domain.User, error) {
+	ret := _m.Called(user)
+
+	var r0 domain.User
+	if rf, ok := ret.Get(0).(func(domain.User) domain.User); ok {
+		r0 = rf(user)
+	} else {
+		r0 = ret.Get(0).(domain.User)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(domain.User) error); ok {
+		r1 = rf(user)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ExistsByEmail provides a mock function with given fields: email
 func (_m *UserRepository) ExistsByEmail(email string) (bool, error) {
 	ret := _m.Called(email)
