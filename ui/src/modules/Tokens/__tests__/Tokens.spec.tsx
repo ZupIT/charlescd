@@ -210,7 +210,7 @@ test('should create a token', async () => {
   userEvent.click(addWorkspace);
 
   await waitFor(() => expect(screen.getByText('Allow access for all workspaces')).toBeInTheDocument());
-  const add = screen.getByText('Add');
+  const add = screen.getByText('Next');
   userEvent.click(add);
 
   await waitFor(() => expect(screen.getByText('Scopes')).toBeInTheDocument());
@@ -221,5 +221,5 @@ test('should create a token', async () => {
   await waitFor(() =>expect(generateToken).not.toBeDisabled());
   userEvent.click(generateToken);
 
-  await waitFor(() => expect(screen.getByText('Your token has been registered!')));
+  await waitFor(() => expect(screen.getByText('Your token has been created!')));
 });

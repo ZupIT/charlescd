@@ -41,7 +41,7 @@ const workspaces: WorkspacePaginationItem[] = [{
 test('Render Modal for the first time', async () => {
   render(<Modal {...props} />);
 
-  const Title = await screen.findByText('Add Workspaces');
+  const Title = await screen.findByText('Add workspaces');
   expect(Title).toBeInTheDocument();
 });
 
