@@ -36,6 +36,7 @@ type Props = {
 const DeployHistory = ({ onGoBack, id }: Props) => {
   const page = useRef(0);
   const [toggleModal, setToggleModal] = useState(false);
+  const [logDeploymentId, setLogDeploymentId] = useState<string>();
   const [releases, setReleases] = useState<CircleRelease[]>([]);
   const { getCircleReleases, response, loading } = useCircleDeployHistory();
   const releasesResponse = response?.content;
@@ -61,8 +62,19 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
     getCircleReleases({ page: page.current }, id);
   };
 
+  const openLogModal = (releaseId: string) => {
+    setLogDeploymentId(releaseId);
+    setToggleModal(true);
+  };
+
   return (
     <>
+      {toggleModal && (
+        <LogModal 
+          onGoBack={() => setToggleModal(false)} 
+          deploymentId={logDeploymentId}
+        />
+      )}
       <Styled.Layer data-testid="circles-deploy-history">
         <Styled.Icon
           name="arrow-left"
@@ -93,11 +105,6 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
         )}
         {releases?.map((release, index) => (
           <>
-            {toggleModal && (
-              <LogModal 
-                onGoBack={() => setToggleModal(false)} 
-                deploymentId={release.id}
-              />)}
             <Styled.DeploymentRow key={index}>
               <Styled.TableRow>
                 <Styled.TableTextName color="light" title={release.authorEmail}>
@@ -116,7 +123,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
                   name="expand" 
                   color="light"
                   size={'16px'}
-                  onClick={() => setToggleModal(true)}
+                  onClick={() => openLogModal(release.id)}
                 />
               </Styled.TableRow>
               <Styled.ReleaseRow>
