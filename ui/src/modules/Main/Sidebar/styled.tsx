@@ -62,7 +62,9 @@ const Item = styled.div`
 
 const WorkspaceItem = styled(Item)`
   >span{
-    width: 100px;
+    width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 
