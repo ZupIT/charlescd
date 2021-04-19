@@ -59,8 +59,8 @@ const Empty = styled.div`
 `;
 
 const Item = styled.div`
-  border-top: 1px solid #3A3A3C;
-  border-bottom: 1px solid #3A3A3C;
+  border-top: 1px solid ${({ theme }) => theme.token.workspace.item.border};
+  border-bottom: 1px solid ${({ theme }) => theme.token.workspace.item.border};
   height: 70px;
   padding: 0 40px;
   display: flex;

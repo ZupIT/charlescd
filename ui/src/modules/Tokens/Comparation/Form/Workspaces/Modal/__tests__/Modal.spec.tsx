@@ -41,7 +41,7 @@ const workspaces: WorkspacePaginationItem[] = [{
 test('Render Modal for the first time', async () => {
   render(<Modal {...props} />);
 
-  const Title = await screen.findByText('Add Workspaces');
+  const Title = await screen.findByText('Add workspaces');
   expect(Title).toBeInTheDocument();
 });
 
@@ -90,7 +90,7 @@ test('Render Modal and select manual select workspaces option with empty content
   const ListWorkspace = await screen.findByTestId('workspace-list-content');
   expect(ListWorkspace).toBeInTheDocument();
 
-  const EmptyContent = await screen.findByText('No workspace was found');
+  const EmptyContent = await screen.findByText('Workspace not found');
   expect(EmptyContent).toBeInTheDocument();
 });
 
@@ -113,7 +113,7 @@ test('Render Modal and select manual select workspaces option with content', asy
   const ListWorkspace = await screen.findByTestId('workspace-list-content');
   expect(ListWorkspace).toBeInTheDocument();
 
-  const EmptyContent = screen.queryByText('No workspace was found');
+  const EmptyContent = screen.queryByText('Workspace not found');
   expect(EmptyContent).not.toBeInTheDocument();
 
   const FirstContent = await screen.findByTestId(`item-${workspaces[0].id}`);

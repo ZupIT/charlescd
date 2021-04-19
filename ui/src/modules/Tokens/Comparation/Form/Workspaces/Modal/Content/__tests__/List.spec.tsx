@@ -39,7 +39,7 @@ const workspaces: WorkspacePaginationItem[] = [{
 test('Render List empty', async () => {
   render(<List {...props} />);
 
-  const EmptyContent = await screen.findByText('No workspace was found');
+  const EmptyContent = await screen.findByText('Workspace not found');
   expect(EmptyContent).toBeInTheDocument();
 
   const ListWorkspace = screen.queryByText('workspace-list-content');
@@ -58,7 +58,7 @@ test('Render List with content', async () => {
 
   render(<List {...props} />);
 
-  const EmptyContent = screen.queryByText('No workspace was found');
+  const EmptyContent = screen.queryByText('Workspace not found');
   expect(EmptyContent).not.toBeInTheDocument();
 
   const ListWorkspace = await screen.findByTestId('workspace-list-content');
