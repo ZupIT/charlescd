@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.configuration.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -26,6 +27,7 @@ import io.charlescd.moove.domain.GitConfiguration
 import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -38,11 +40,12 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createGitConfigurationInteractor = new CreateGitConfigurationInteractorImpl(gitConfigurationRepository,
-                new UserService(userRepository, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
+                new UserService(userRepository, systemTokenService, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
     }
 
     def "when workspace does not exist should throw exception"() {
@@ -53,7 +56,7 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", credentialsPart)
 
         when:
-        this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization)
+        this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> false
@@ -72,7 +75,7 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", credentialsPart)
 
         when:
-        this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization)
+        this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization, null)
 
         then:
         1 * this.workspaceRepository.exists(workspaceId) >> true
@@ -93,7 +96,7 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", credentialsPart)
 
         when:
-        def gitConfigurationResponse = this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization)
+        def gitConfigurationResponse = this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, authorization, null)
 
         then:
         1 * this.workspaceRepository.exists(workspaceId) >> true

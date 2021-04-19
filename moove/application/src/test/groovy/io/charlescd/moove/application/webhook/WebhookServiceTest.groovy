@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.webhook
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserService
 
 import io.charlescd.moove.application.WebhookService
@@ -24,6 +25,7 @@ import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
@@ -35,10 +37,11 @@ class WebhookServiceTest extends Specification {
     private WebhookService webhookService
 
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
-        this.webhookService = new WebhookService(new UserService(userRepository, managementUserSecurityService))
+        this.webhookService = new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService))
     }
 
     def "when trying to get author should do it successfully"() {
@@ -46,7 +49,7 @@ class WebhookServiceTest extends Specification {
         def author = getAuthor(false)
 
         when:
-        webhookService.getAuthor(authorization)
+        webhookService.getAuthor(authorization, null)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -59,11 +62,11 @@ class WebhookServiceTest extends Specification {
         def author = getAuthor(false)
 
         when:
-        webhookService.getAuthorEmail(authorization)
+        webhookService.getAuthor(authorization, null)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
-        0 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
+        1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
         notThrown()
     }
 
@@ -103,8 +106,6 @@ class WebhookServiceTest extends Specification {
        return new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "charlescd", authorEmail, "http://image.com.br/photo.png",
                 [], root, LocalDateTime.now())
     }
-
-
 
     private static String getAuthorization() {
         return "Bearer qwerty"

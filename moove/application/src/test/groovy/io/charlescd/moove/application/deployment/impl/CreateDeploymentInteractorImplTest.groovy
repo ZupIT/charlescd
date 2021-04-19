@@ -40,6 +40,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private CircleRepository circleRepository = Mock(CircleRepository)
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private HermesService hermesService = Mock(HermesService)
 
@@ -47,7 +48,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         this.createDeploymentInteractor = new CreateDeploymentInteractorImpl(
                 new DeploymentService(deploymentRepository),
                 new BuildService(buildRepository),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new CircleService(circleRepository),
                 deployService,
                 new WorkspaceService(workspaceRepository, userRepository),
@@ -64,7 +65,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.find(buildId, workspaceId) >> Optional.empty()
@@ -88,7 +89,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
         def workspace = TestUtils.workspace
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
@@ -114,7 +115,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
         def workspace = TestUtils.workspace
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
@@ -137,7 +138,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
         def workspace = TestUtils.workspace
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
@@ -164,7 +165,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
@@ -219,7 +220,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
@@ -276,7 +277,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.findById(build.id) >> Optional.of(build)
@@ -335,7 +336,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.findById(build.id) >> Optional.of(build)
@@ -389,7 +390,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization,)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.findById(build.id) >> Optional.of(build)
@@ -426,7 +427,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                 null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
         def authorization = TestUtils.authorization
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
@@ -461,7 +462,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
         def authorization = TestUtils.authorization
         when:
-        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email

@@ -38,13 +38,14 @@ class UndeployInteractorImplTest extends Specification {
     private BuildRepository buildRepository = Mock(BuildRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private DeployService deployService = Mock(DeployService)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private HermesService hermesService = Mock(HermesService)
 
     def setup() {
         this.undeployInteractor = new  UndeployInteractorImpl(
                 new DeploymentService(deploymentRepository),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 deployService,
                 new WebhookEventService(hermesService, new BuildService(buildRepository)))
     }
@@ -56,7 +57,7 @@ class UndeployInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
 
         when:
-        undeployInteractor.execute(workspaceId, authorization, id)
+        undeployInteractor.execute(workspaceId, authorization, null, id)
 
         then:
         1 * deploymentRepository.find(id, workspaceId) >> Optional.empty()
@@ -73,7 +74,7 @@ class UndeployInteractorImplTest extends Specification {
         def author = TestUtils.user
 
         when:
-        undeployInteractor.execute(workspaceId, authorization, deploymentId)
+        undeployInteractor.execute(workspaceId, authorization, null, deploymentId)
 
         then:
         1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(getDummyDeployment())
@@ -95,7 +96,7 @@ class UndeployInteractorImplTest extends Specification {
         def author = TestUtils.user
 
         when:
-        undeployInteractor.execute(workspaceId, authorization, deploymentId)
+        undeployInteractor.execute(workspaceId, authorization, null, deploymentId)
 
         then:
         1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(getDummyDeployment())

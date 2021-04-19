@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
 import io.charlescd.moove.application.user.FindUserByIdInteractor
@@ -25,6 +26,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -40,10 +42,12 @@ class FindUserByIdInteractorImplTest extends Specification {
 
     private KeycloakService keycloakService = Mock(KeycloakService)
 
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
-        findUserByIdInteractor = new FindUserByIdInteractorImpl(new UserService(userRepository, managementUserSecurityService),keycloakService)
+        findUserByIdInteractor = new FindUserByIdInteractorImpl(new UserService(userRepository, systemTokenService, managementUserSecurityService),keycloakService)
     }
 
     def "should find an user by its id"() {

@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.module.impl
 
 import io.charlescd.moove.application.ModuleService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -27,6 +28,7 @@ import io.charlescd.moove.application.module.request.CreateModuleRequest
 import io.charlescd.moove.application.module.response.ModuleResponse
 import io.charlescd.moove.domain.Module
 import io.charlescd.moove.domain.repository.ModuleRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -39,12 +41,13 @@ class CreateModuleInteractorImplTest extends Specification {
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         createModuleInteractor = new CreateModuleInteractorImpl(
                 new ModuleService(moduleRepository),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository)
         )
     }
@@ -61,7 +64,7 @@ class CreateModuleInteractorImplTest extends Specification {
 
         def workspace = TestUtils.workspace
         when:
-        def response = createModuleInteractor.execute(request, workspaceId, authorization)
+        def response = createModuleInteractor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * moduleRepository.save(_) >> { arguments ->

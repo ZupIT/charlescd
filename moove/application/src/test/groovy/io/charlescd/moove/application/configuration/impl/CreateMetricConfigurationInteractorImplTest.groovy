@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.configuration.impl
 
 import io.charlescd.moove.application.MetricConfigurationService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -25,6 +26,7 @@ import io.charlescd.moove.application.configuration.request.CreateMetricConfigur
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -42,6 +44,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     private CreateMetricConfigurationInteractor interactor
@@ -52,7 +55,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
 
     def setup() {
         this.interactor = new CreateMetricConfigurationInteractorImpl(new WorkspaceService(workspaceRepository, userRepository),
-                new UserService(userRepository, managementUserSecurityService), new MetricConfigurationService(metricConfigurationRepository, compassApi))
+                new UserService(userRepository, systemTokenService, managementUserSecurityService), new MetricConfigurationService(metricConfigurationRepository, compassApi))
     }
 
     def 'when workspace does not exist should throw exception'() {
@@ -63,7 +66,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
                 'https://metric-provider.com.br')
 
         when:
-        interactor.execute(request, workspaceId, authorization)
+        interactor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> false
@@ -83,7 +86,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
                 'https://metric-provider.com.br')
 
         when:
-        interactor.execute(request, workspaceId, authorization)
+        interactor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> true
@@ -106,7 +109,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
         def emptyList = []
 
         when:
-        def response = interactor.execute(request, workspaceId, authorization)
+        def response = interactor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> true

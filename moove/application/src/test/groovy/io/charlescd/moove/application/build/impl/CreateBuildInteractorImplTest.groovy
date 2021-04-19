@@ -42,12 +42,13 @@ class CreateBuildInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.buildInteractor = new CreateBuildInteractorImpl(
                 gitProviderService,
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new BuildService(buildRepository),
                 new HypothesisService(hypothesisRepository),
                 villagerService,
@@ -70,7 +71,7 @@ class CreateBuildInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
@@ -98,7 +99,7 @@ class CreateBuildInteractorImplTest extends Specification {
         def createBuildRequest = new CreateBuildRequest(featureList, tagName, hypothesisId)
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization, null)
 
         then:
         0 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
@@ -172,7 +173,7 @@ class CreateBuildInteractorImplTest extends Specification {
                 credentials, LocalDateTime.now(), author, "24d4f405-70e2-4908-8f66-f4951e46bc3b")
 
         when:
-        def buildResponse = buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+        def buildResponse = buildInteractor.execute(createBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
@@ -254,7 +255,7 @@ class CreateBuildInteractorImplTest extends Specification {
         def workspace = TestUtils.workspace
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
@@ -278,7 +279,7 @@ class CreateBuildInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
@@ -300,7 +301,7 @@ class CreateBuildInteractorImplTest extends Specification {
                 "c5147c49-1923-44c5-870a-78aaba646fe4", null)
 
         when:
-        buildInteractor.execute(createBuildRequest, workspaceId, authorization)
+        buildInteractor.execute(createBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
