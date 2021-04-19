@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
+import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
 const Empty = () => (
   <Styled.Empty>
-    <Text.h3 color="dark">No workspace was found</Text.h3>
+    <Icon name="workspace-not-found" />
+    <Text.h3 color="light">Workspace not found</Text.h3>
+    <Text.h3 color="dark">If you want to register one, go to the Workspaces page.</Text.h3>
   </Styled.Empty>
 );
 

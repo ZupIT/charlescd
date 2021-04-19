@@ -24,12 +24,12 @@ const Search = styled(Input)`
 
   > input {
     background-color: transparent;
-    border-bottom: 1px solid #FFF;
+    border-bottom: 1px solid ${({ theme }) => theme.token.workspace.search.input};
   }
 `;
 
 const Item = styled.div`
-  border-top: 1px solid #3A3A3C;
+  border-top: 1px solid ${({ theme }) => theme.token.workspace.item.border};
   height: 50px;
 `;
 
@@ -47,7 +47,11 @@ const NoContent = styled.div`
 `;
 
 const Empty = styled.div`
-  margin: 48px 40px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 40px 18px;
 `;
 
 export default {
