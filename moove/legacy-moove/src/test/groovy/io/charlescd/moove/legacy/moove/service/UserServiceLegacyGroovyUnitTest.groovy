@@ -37,6 +37,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             decodedEmail,
             "https://www.photos.com/johndoe",
             false,
+            null,
             LocalDateTime.now()
     )
 
@@ -46,6 +47,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             decodedEmail,
             "https://www.photos.com/johndoe",
             true,
+            null,
             LocalDateTime.now()
     )
     private UserRepresentation representation = new UserRepresentation(

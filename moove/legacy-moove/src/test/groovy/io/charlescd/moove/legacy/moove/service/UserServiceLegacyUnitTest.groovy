@@ -23,7 +23,7 @@ class UserServiceLegacyUnitTest extends Specification {
         given:
         def userId = "1"
         def userEmail = "teste@teste.com"
-        def user = new User(userId, "Teste", userEmail, "http://teste.com", true, LocalDateTime.now())
+        def user = new User(userId, "Teste", userEmail, "http://teste.com", true, null, LocalDateTime.now())
 
         when:
         this.userServiceLegacy.findUser(userId)
