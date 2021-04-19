@@ -80,7 +80,7 @@ test('renders Workspace menu without any results', async () => {
     />
   );
 
-  await waitFor(() => expect(screen.getByText('No workspace was found')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText('Workspace not found')).toBeInTheDocument());
 });
 
 test('renders Workspace menu on loading', async () => {
