@@ -24,14 +24,17 @@ import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/re
 import {
   componentsFixtureCircle1,
   componentsFixtureCircle1DiffNamespace,
-  componentsFixtureCircle1WithService, componentsFixtureCircle1WithServiceNoLabels,
+  componentsFixtureCircle1WithService,
+  componentsFixtureCircle1WithServiceNoLabels,
   componentsFixtureCircle2,
   deploymentFixture
 } from '../../fixtures/deployment-entity.fixture'
 import {
+  routesManifests2ComponentsOneCircle,
   routesManifestsDiffNamespace,
   routesManifestsSameNamespace,
-  routesManifestsSameNamespaceWithService, routesManifestsSameNamespaceWithServiceAndNoLabels
+  routesManifestsSameNamespaceWithService,
+  routesManifestsSameNamespaceWithServiceAndNoLabels
 } from '../../fixtures/manifests.fixture'
 
 describe('Hook Routes Manifest Creation', () => {
@@ -39,14 +42,32 @@ describe('Hook Routes Manifest Creation', () => {
   let deploymentRepository: DeploymentRepositoryV2
   let componentsRepository: ComponentsRepositoryV2
   let consoleLoggerService: ConsoleLoggerService
-  let hookParamsWith2Components: RouteHookParams
   let hookParamsWithNoCircle: RouteHookParams
+  let hookParamsWith2Components: RouteHookParams
+  let hookParamsWith2Components1Observed: RouteHookParams
+  let hookParamsWith2Components2Observed: RouteHookParams
 
   beforeEach(() => {
     deploymentRepository = new DeploymentRepositoryV2()
     componentsRepository = new ComponentsRepositoryV2()
     consoleLoggerService = new ConsoleLoggerService()
 
+    hookParamsWithNoCircle = {
+      controller: {},
+      parent: {
+        apiVersion: 'charlescd.io/v1',
+        kind: 'CharlesRoutes',
+        metadata: {},
+        spec: {
+          circles: []
+        }
+      },
+      children: {
+        'VirtualService.networking.istio.io/v1alpha3': {},
+        'DestinationRule.networking.istio.io/v1alpha3': {}
+      },
+      finalizing: false
+    }
     hookParamsWith2Components = {
       controller: {},
       parent: {
@@ -88,19 +109,162 @@ describe('Hook Routes Manifest Creation', () => {
       },
       finalizing: false
     }
-    hookParamsWithNoCircle = {
+    hookParamsWith2Components1Observed = {
       controller: {},
       parent: {
         apiVersion: 'charlescd.io/v1',
         kind: 'CharlesRoutes',
         metadata: {},
         spec: {
-          circles: []
+          circles: [
+            {
+              components: [
+                {
+                  name: 'A',
+                  tag: 'v2'
+                },
+                {
+                  name: 'B',
+                  tag: 'v2'
+                }
+              ],
+              id: 'circle-2',
+              default: false
+            }
+          ]
         }
       },
       children: {
-        'VirtualService.networking.istio.io/v1alpha3': {},
-        'DestinationRule.networking.istio.io/v1alpha3': {}
+        'DestinationRule.networking.istio.io/v1alpha3': {
+          A: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'DestinationRule',
+            metadata: {
+              name: 'A',
+              namespace: 'namespace',
+              annotations: {
+                circles: '["circle-2"]'
+              }
+            },
+            spec: {
+              host: 'A',
+              subsets: []
+            }
+          }
+        },
+        'VirtualService.networking.istio.io/v1alpha3': {
+          A: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'VirtualService',
+            metadata: {
+              name: 'A',
+              namespace: 'namespace',
+              annotations: {
+                circles: '["circle-2"]'
+              }
+            },
+            spec: {
+              gateways: [],
+              hosts: [],
+              http: []
+            }
+          }
+        }
+      },
+      finalizing: false
+    }
+    hookParamsWith2Components2Observed = {
+      controller: {},
+      parent: {
+        apiVersion: 'charlescd.io/v1',
+        kind: 'CharlesRoutes',
+        metadata: {},
+        spec: {
+          circles: [
+            {
+              components: [
+                {
+                  name: 'A',
+                  tag: 'v2'
+                },
+                {
+                  name: 'B',
+                  tag: 'v2'
+                }
+              ],
+              id: 'circle-2',
+              default: false
+            }
+          ]
+        }
+      },
+      children: {
+        'DestinationRule.networking.istio.io/v1alpha3': {
+          A: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'DestinationRule',
+            metadata: {
+              name: 'A',
+              namespace: 'namespace',
+              annotations: {
+                circles: '["circle-2"]'
+              }
+            },
+            spec: {
+              host: 'A',
+              subsets: []
+            }
+          },
+          B: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'DestinationRule',
+            metadata: {
+              name: 'B',
+              namespace: 'namespace',
+              annotations: {
+                circles: '["circle-2"]'
+              }
+            },
+            spec: {
+              host: 'B',
+              subsets: []
+            }
+          }
+        },
+        'VirtualService.networking.istio.io/v1alpha3': {
+          A: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'VirtualService',
+            metadata: {
+              name: 'A',
+              namespace: 'namespace',
+              annotations: {
+                circles: '["circle-2"]'
+              }
+            },
+            spec: {
+              gateways: [],
+              hosts: [],
+              http: []
+            }
+          },
+          B: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'VirtualService',
+            metadata: {
+              name: 'B',
+              namespace: 'namespace',
+              annotations: {
+                circles: '["circle-2"]'
+              }
+            },
+            spec: {
+              gateways: [],
+              hosts: [],
+              http: []
+            }
+          }
+        }
       },
       finalizing: false
     }
@@ -204,6 +368,59 @@ describe('Hook Routes Manifest Creation', () => {
     const manifests = await routeUseCase.execute(hookParamsWith2Components)
 
     expect(manifests).toEqual({ children: routesManifestsSameNamespaceWithServiceAndNoLabels, resyncAfterSeconds: 5 })
+  })
+
+  it('should return the desired state correctly when only one of the desired components have been observed', async() => {
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
+      async() => componentsFixtureCircle2
+    )
+    jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = await routeUseCase.execute(hookParamsWith2Components1Observed)
+
+    expect(manifests).toEqual({ children: routesManifests2ComponentsOneCircle, resyncAfterSeconds: 5 })
+  })
+
+  it('should set routes health status false when only one of the desired components have been observed', async() => {
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
+      async() => componentsFixtureCircle2
+    )
+    const updateSpy =
+      jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    await routeUseCase.execute(hookParamsWith2Components1Observed)
+
+    expect(updateSpy).toHaveBeenCalledWith('circle-2', false)
+  })
+
+  it('should set routes health status true when all of the desired components have been observed', async() => {
+    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
+      async() => componentsFixtureCircle2
+    )
+    const updateSpy =
+      jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    await routeUseCase.execute(hookParamsWith2Components2Observed)
+
+    expect(updateSpy).toHaveBeenCalledWith('circle-2', true)
   })
 })
 

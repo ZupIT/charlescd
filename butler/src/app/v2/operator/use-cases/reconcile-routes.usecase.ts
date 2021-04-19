@@ -143,11 +143,17 @@ export class ReconcileRoutesUsecase {
   }
 
   private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
-    const destionRulesCircles : string[] = JSON.parse(observed.children['DestinationRule.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
-    const desiredDestinationRulePresent = destionRulesCircles.includes(circleId)
-    const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
-    const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
-    return desiredDestinationRulePresent && desiredVirtualServicePresent
+    const observedDestinationRules = observed.children['DestinationRule.networking.istio.io/v1alpha3'][spec.metadata.name]
+    const observedVirtualService = observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name]
+
+    if (!observedDestinationRules || !observedVirtualService) {
+      return false
+    }
+
+    const destinationRulesCircles : string[] = JSON.parse(observedDestinationRules.metadata.annotations.circles)
+    const virtualServiceCircles : string [] = JSON.parse(observedVirtualService.metadata.annotations.circles)
+
+    return destinationRulesCircles.includes(circleId) && virtualServiceCircles.includes(circleId)
   }
 
   private getServicesWithMetadata(components: ComponentEntityV2[]): KubernetesManifest[] {
