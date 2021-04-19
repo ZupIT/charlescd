@@ -20,5 +20,5 @@ import io.charlescd.moove.infrastructure.service.client.response.LogResponse
 
 interface FindDeploymentLogsInteractor {
 
-    fun execute(workspaceId: String, authorization: String, deploymentId: String): LogResponse
+    fun execute(workspaceId: String, authorization: String?, token: String?, deploymentId: String): LogResponse
 }
