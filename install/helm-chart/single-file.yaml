@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "eEZFb2hqZE5RUQ=="
-  postgresql-password: "b3BaSTlxSFJSTg=="
+  postgresql-postgres-password: "UXJNRExLQXYzRA=="
+  postgresql-password: "cWpySnhnSDVybQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -6493,7 +6493,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.1
+          image: zupcharles/charlescd-butler:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6556,7 +6556,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.1
+          image: zupcharles/charlescd-circle-matcher:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6661,7 +6661,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.1
+          image: zupcharles/charlescd-compass:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6756,7 +6756,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.1
+          image: zupcharles/charlescd-moove:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6816,7 +6816,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.1
+          image: zupcharles/charlescd-octopipe:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6885,7 +6885,7 @@ spec:
               value: http://charles.info.example
             - name: REACT_APP_CHARLES_VERSION
               value: 
-          image: zupcharles/charlescd-ui:0.6.1
+          image: zupcharles/charlescd-ui:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6959,7 +6959,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.1
+          image: zupcharles/charlescd-villager:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
