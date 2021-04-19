@@ -70,11 +70,7 @@ class FindWorkspaceByUserIdInteractorImplTest extends Specification {
         assert response != null
         assert response[0].id == workspacePermission.id
         assert response[0].name == workspacePermission.name
-//        assert response.createdAt == user.createdAt
-//        assert response.photoUrl == user.photoUrl
         assert response.size() == 1
-//        assert response.workspaces[0].id == workspacePermission.id
-//        assert response.workspaces[0].name == workspacePermission.name
         assert response[0].permissions.size() == workspacePermission.permissions.size()
         assert response[0].permissions[0] == workspacePermission.permissions[0].name
     }
@@ -104,11 +100,7 @@ class FindWorkspaceByUserIdInteractorImplTest extends Specification {
         assert response != null
         assert response[0].id == workspacePermission.id
         assert response[0].name == workspacePermission.name
-//        assert response.createdAt == user.createdAt
-//        assert response.photoUrl == user.photoUrl
         assert response.size() == 1
-//        assert response.workspaces[0].id == workspacePermission.id
-//        assert response.workspaces[0].name == workspacePermission.name
         assert response[0].permissions.size() == workspacePermission.permissions.size()
         assert response[0].permissions[0] == workspacePermission.permissions[0].name
     }
