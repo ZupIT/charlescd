@@ -77,6 +77,21 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 	require.Nil(as.T(), err)
 }
 
+func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathSystemTokenRevoked() {
+	var path = "/moove/v2/circles"
+	var method = "GET"
+	var systemToken = utils.GetDummySystemToken()
+	systemToken.Revoked = true
+	systemToken.AllWorkspaces = true
+
+	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
+
+	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
+
+	require.Error(as.T(), err)
+	require.Equal(as.T(), logging.ForbiddenError, logging.GetErrorType(err))
+}
+
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutPermissionToWorkspace() {
 	var path = "/moove/v2/webhook/publish"
 	var method = "GET"
