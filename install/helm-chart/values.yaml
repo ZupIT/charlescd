@@ -509,7 +509,7 @@ ingress:
   enabled: true
 
 nginx_ingress_controller:
-  enabled: false
+  enabled: true
 
 ingress-nginx:
   controller:
