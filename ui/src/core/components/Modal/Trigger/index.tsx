@@ -75,7 +75,7 @@ const Trigger = forwardRef(({
               className="modal-button-dismiss"
               onClick={() => handleDismiss()}
             >
-              <Text.h5 color="light">{dismissLabel}</Text.h5>
+              <Text.h5 color="dark">{dismissLabel}</Text.h5>
             </Styled.Button.Dismiss>
             {onContinue && (
               <Styled.Button.Continue

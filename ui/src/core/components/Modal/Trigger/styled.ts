@@ -90,8 +90,12 @@ const DismissButton = styled(DefaultButton)`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  background-color: transparent;
   border: 0.1rem solid ${({ theme }) => theme.modal.trigger.border};
+  background-color: transparent;
+
+  span {
+    color: ${({ theme }) => theme.modal.trigger.border};
+  }
 `;
 
 const CloseButtonContainer = styled.div`

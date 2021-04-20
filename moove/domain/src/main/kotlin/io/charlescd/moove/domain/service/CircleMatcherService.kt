@@ -20,20 +20,25 @@ package io.charlescd.moove.domain.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.Circles
 import io.charlescd.moove.domain.SimpleCircle
 import io.charlescd.moove.domain.Workspace
 
 interface CircleMatcherService {
 
-    fun create(circle: Circle, matcherUri: String)
+    fun create(circle: Circle, matcherUri: String, active: Boolean = false)
 
     fun update(circle: Circle, previousReference: String, matcherUri: String, active: Boolean)
 
     fun delete(reference: String, matcherUri: String)
 
-    fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String)
+    fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String, active: Boolean = false)
 
     fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String, active: Boolean)
 
     fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle>
+
+    fun deleteAllFor(circles: Circles, matcherUri: String)
+
+    fun saveAllFor(circles: Circles, matcherUri: String)
 }

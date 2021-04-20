@@ -22,6 +22,7 @@ import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 import { fadeIn } from 'core/assets/style/animate';
 import ComponentText from 'core/components/Text';
+import TextComponent from 'core/components/Text';
 
 const Content = styled.div`
   display: flex;
@@ -130,6 +131,19 @@ const Link = styled.a`
   }
 `;
 
+const Placeholder = styled(TextComponent.h4)`
+  pointer-events: none;
+  margin-left: 47px;
+  opacity: 60%;
+  overflow: hidden;
+  position: absolute;
+  top: 21px
+`;
+
+const Wrapper = styled.div`
+  position: relative;
+`;
+
 export default {
   Form,
   Content,
@@ -141,5 +155,7 @@ export default {
   ButtonIconRounded,
   Title,
   Info,
-  Link
+  Link,
+  Placeholder,
+  Wrapper
 };

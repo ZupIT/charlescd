@@ -310,7 +310,7 @@ CharlesApplications:
     pluginsDir: "./plugins"
     dispatchInterval: "15s"
     limits:
-      requestPerSecond: "4"
+      requestsPerSecond: "5"
       tokenTTL: "5"
       headersTTL: "5"
     moove:
@@ -355,7 +355,7 @@ CharlesApplications:
       password: aGVybWVz
       name: charlescd_hermes
     amqp:
-      url: amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/
+      url: amqp://guest:guest@charlescd-rabbitmq:5672/
       message:
         queue: queue-message
         routingKey: routing-key-message
@@ -368,7 +368,7 @@ CharlesApplications:
       attempts: 3
     consumer:
       messageRetry:
-        expiration: 30000
+        expiration: 60000
         attempts: 3
     subscriptionRegisterLimit: 5
 
@@ -378,6 +378,13 @@ postgresql:
   initdbScriptsConfigMap: charles-postgres
   pguser: postgres
   pgpassword: postgres
+  resources:
+    limits:
+      cpu: 128m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 job:
   name: init-db
@@ -515,13 +522,14 @@ ingress-nginx:
   controller:
     service:
       annotations: {}
+    ingressClass: nginx
 
 rabbitmq:
   enabled: true
   fullnameOverride: charlescd-rabbitmq
   auth:
-    username: charlescd_hermes
-    password: aGVybWVz
+    username: guest
+    password: guest
   configuration: |-
     ## Username and password
     ##

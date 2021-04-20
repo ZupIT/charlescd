@@ -17,8 +17,7 @@
 package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserService
-import io.charlescd.moove.application.user.FindUserByEmailInteractor
-import io.charlescd.moove.application.user.FindUserByIdInteractor
+import io.charlescd.moove.application.user.FindWorkspaceByUserIdInteractor
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
@@ -32,9 +31,9 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class FindUserByIdInteractorImplTest extends Specification {
+class FindWorkspaceByUserIdInteractorImplTest extends Specification {
 
-    private FindUserByIdInteractor findUserByIdInteractor
+    private FindWorkspaceByUserIdInteractor findWorkspaceByUserIdInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
 
@@ -43,7 +42,7 @@ class FindUserByIdInteractorImplTest extends Specification {
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
-        findUserByIdInteractor = new FindUserByIdInteractorImpl(new UserService(userRepository, managementUserSecurityService),keycloakService)
+        findWorkspaceByUserIdInteractor = new FindWorkspaceByUserIdInteractorImpl(new UserService(userRepository, managementUserSecurityService),keycloakService)
     }
 
     def "should find an user by its id"() {
@@ -61,7 +60,7 @@ class FindUserByIdInteractorImplTest extends Specification {
                 [workspacePermission], false, LocalDateTime.now())
 
         when:
-        def response = findUserByIdInteractor.execute(authorization,id)
+        def response = findWorkspaceByUserIdInteractor.execute(authorization,id)
 
         then:
         1 * userRepository.findById(id.toString()) >> Optional.of(user)
@@ -69,15 +68,11 @@ class FindUserByIdInteractorImplTest extends Specification {
         1 * keycloakService.getEmailByAccessToken(authorization) >> user.getEmail()
 
         assert response != null
-        assert response.id == user.id
-        assert response.name == user.name
-        assert response.createdAt == user.createdAt
-        assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 1
-        assert response.workspaces[0].id == workspacePermission.id
-        assert response.workspaces[0].name == workspacePermission.name
-        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
+        assert response[0].id == workspacePermission.id
+        assert response[0].name == workspacePermission.name
+        assert response.size() == 1
+        assert response[0].permissions.size() == workspacePermission.permissions.size()
+        assert response[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
     def "should find an user by its id, because the authorization its root"() {
@@ -95,7 +90,7 @@ class FindUserByIdInteractorImplTest extends Specification {
                 [workspacePermission], false, LocalDateTime.now())
 
         when:
-        def response = findUserByIdInteractor.execute(authorization,id)
+        def response = findWorkspaceByUserIdInteractor.execute(authorization,id)
 
         then:
         1 * userRepository.findById(id.toString()) >> Optional.of(user)
@@ -103,15 +98,11 @@ class FindUserByIdInteractorImplTest extends Specification {
         1 * keycloakService.getEmailByAccessToken(authorization) >> author.getEmail()
 
         assert response != null
-        assert response.id == user.id
-        assert response.name == user.name
-        assert response.createdAt == user.createdAt
-        assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 1
-        assert response.workspaces[0].id == workspacePermission.id
-        assert response.workspaces[0].name == workspacePermission.name
-        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
+        assert response[0].id == workspacePermission.id
+        assert response[0].name == workspacePermission.name
+        assert response.size() == 1
+        assert response[0].permissions.size() == workspacePermission.permissions.size()
+        assert response[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
     def "should raise exception because  because the authorization isn't root, or the owner of the data"() {
@@ -129,7 +120,7 @@ class FindUserByIdInteractorImplTest extends Specification {
                 [workspacePermission], false, LocalDateTime.now())
 
         when:
-        def response = findUserByIdInteractor.execute(authorization,id)
+        def response = findWorkspaceByUserIdInteractor.execute(authorization,id)
 
         then:
         1 * userRepository.findById(id.toString()) >> Optional.of(user)
