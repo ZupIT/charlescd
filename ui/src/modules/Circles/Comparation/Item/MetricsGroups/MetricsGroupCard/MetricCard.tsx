@@ -19,7 +19,6 @@ import ReactTooltip from 'react-tooltip';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
-import Dropdown from 'core/components/Dropdown';
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 import { Metric, MetricsGroup } from '../types';
@@ -97,12 +96,12 @@ const MetricCard = ({
       </Styled.MetricLastValue>
       <Styled.MetricDropdown>
         <NewDropDown icon="vertical-dots" size="16px">
-          <Dropdown.Item
+          <NewDropDown.Item
             icon="edit"
             name="Edit metric"
             onClick={() => handleEditMetric(metric, metricGroup)}
           />
-          <Dropdown.Item
+          <NewDropDown.Item
             icon="delete"
             name="Delete"
             onClick={() => handleDeleteMetric(metricGroup.id, metric.id)}

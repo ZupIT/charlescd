@@ -214,6 +214,11 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
+        if len(subscriptions) <= 0 {
+            restutil.NewResponse(w, http.StatusOK, "No subscription founded to this event")
+            return
+        }
+
 		requestMessages, eventErr := restutil.SubscriptionToMessageRequest(subscriptions, request)
 		if eventErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, eventErr)

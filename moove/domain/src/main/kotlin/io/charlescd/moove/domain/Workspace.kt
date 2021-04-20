@@ -32,10 +32,14 @@ data class Workspace(
     val metricConfigurationId: String? = null
 ) {
     fun checkCurrentWorkspaceStatus(): WorkspaceStatusEnum {
-        return if (cdConfigurationId != null && registryConfigurationId != null) {
+        return if (cdConfigurationId != null && registryConfigurationId != null && circleMatcherUrl != null) {
             WorkspaceStatusEnum.COMPLETE
         } else {
             WorkspaceStatusEnum.INCOMPLETE
         }
+    }
+
+    fun hasCircleMatcher(): Boolean {
+        return circleMatcherUrl?.isNotBlank() == true
     }
 }
