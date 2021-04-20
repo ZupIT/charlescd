@@ -21,14 +21,7 @@ import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { RouteHookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 import { PartialRouteHookParams, SpecsUnion } from '../../../../app/v2/operator/interfaces/partial-params.interface'
 import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/reconcile-routes.usecase'
-import {
-  componentsFixtureCircle1,
-  componentsFixtureCircle1DiffNamespace,
-  componentsFixtureCircle1WithService,
-  componentsFixtureCircle1WithServiceNoLabels,
-  componentsFixtureCircle2,
-  deploymentFixture
-} from '../../fixtures/deployment-entity.fixture'
+import { createDeployComponent, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 import {
   routesManifests2ComponentsOneCircle,
   routesManifestsDiffNamespace,
@@ -271,9 +264,20 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('generate route manifest correctly with one component in two different circles and same namespace', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
-      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1 : componentsFixtureCircle2
+    const componentsCircle1 = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
+    ]
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsCircle1 : componentsCircle2
     )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
     const routeUseCase = new ReconcileRoutesUsecase(
@@ -288,7 +292,10 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('throws exception when manifests generation fail', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(async() => { throw new Error('Error') })
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(async() => { throw new Error('Error') })
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
     const routeUseCase = new ReconcileRoutesUsecase(
@@ -303,9 +310,20 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('generate route manifest correctly with kubernetes services manifests', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
-      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1WithService : componentsFixtureCircle2
+    const componentsCircle1WithService = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'simple', 'namespace', true)
+    ]
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsCircle1WithService : componentsCircle2
     )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
     const routeUseCase = new ReconcileRoutesUsecase(
@@ -320,9 +338,20 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('generate route manifest correctly with same component in different namespaces', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
-      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1DiffNamespace : componentsFixtureCircle2
+    const componentsCircle1DiffNamespace = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'diff-namespace', true)
+    ]
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsCircle1DiffNamespace : componentsCircle2
     )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
     const routeUseCase = new ReconcileRoutesUsecase(
@@ -337,7 +366,8 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('returns an empty array when no circles are observed in the charlesroutes resource', async() => {
-    const findSpy = jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId')
+    const findSpy = jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId')
+    const unhealthySpy = jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
     const updateSpy = jest.spyOn(deploymentRepository, 'updateRouteStatus')
 
     const routeUseCase = new ReconcileRoutesUsecase(
@@ -351,12 +381,25 @@ describe('Hook Routes Manifest Creation', () => {
     expect(manifests).toEqual({ children: [], resyncAfterSeconds: 5 })
     expect(updateSpy).toHaveBeenCalledTimes(0)
     expect(findSpy).toHaveBeenCalledTimes(0)
+    expect(unhealthySpy).toHaveBeenCalledTimes(0)
   })
 
   it('should create manifest metadata labels/namespace for the services when they dont exist', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
-      async(circleId) => circleId === 'circle-1' ? componentsFixtureCircle1WithServiceNoLabels : componentsFixtureCircle2
+    const componentsCircle1 = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'noLabels', 'namespace', true)
+    ]
+
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1' ? componentsCircle1 : componentsCircle2
     )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
     const routeUseCase = new ReconcileRoutesUsecase(
@@ -371,9 +414,17 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('should return the desired state correctly when only one of the desired components have been observed', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
-      async() => componentsFixtureCircle2
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async() => componentsCircle2
     )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
     const routeUseCase = new ReconcileRoutesUsecase(
@@ -388,9 +439,17 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('should set routes health status false when only one of the desired components have been observed', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
-      async() => componentsFixtureCircle2
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async() => componentsCircle2
     )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     const updateSpy =
       jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
@@ -406,9 +465,17 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('should set routes health status true when all of the desired components have been observed', async() => {
-    jest.spyOn(componentsRepository, 'findActiveComponentsByCircleId').mockImplementation(
-      async() => componentsFixtureCircle2
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async() => componentsCircle2
     )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async() => [])
+
     const updateSpy =
       jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
@@ -421,6 +488,34 @@ describe('Hook Routes Manifest Creation', () => {
     await routeUseCase.execute(hookParamsWith2Components2Observed)
 
     expect(updateSpy).toHaveBeenCalledWith('circle-2', true)
+  })
+
+  it('should create correct routes manifests when current deployment is not healthy a previous one exists on the same circle', async() => {
+    const previousComponentsCircle1 = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
+    ]
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
+
+    jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
+      async(circleId) => circleId === 'circle-1'? [] : componentsCircle2
+    )
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async(circleId) => circleId === 'circle-1'? previousComponentsCircle1 : [])
+
+    jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
+
+    const routeUseCase = new ReconcileRoutesUsecase(
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService
+    )
+
+    const manifests = await routeUseCase.execute(hookParamsWith2Components)
+
+    expect(manifests).toEqual({ children: routesManifestsSameNamespace, resyncAfterSeconds: 5 })
   })
 })
 
