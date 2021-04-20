@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
-import { getAccessTokenDecoded, isRoot, logout } from 'core/utils/auth';
+import { isRoot, logout } from 'core/utils/auth';
 import { clearWorkspace } from 'core/utils/workspace';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
@@ -29,9 +29,11 @@ import { removeWizard } from 'modules/Settings/helpers';
 import Modal from 'core/components/Modal';
 import Menu from './Menu';
 import Styled from './styled';
+import { getProfileByKey } from 'core/utils/profile';
 
 const Workspaces = () => {
-  const { name: profileName, email } = getAccessTokenDecoded();
+  const profileName = getProfileByKey('name');
+  const email = getProfileByKey('email');
   const [toggleModal, setToggleModal] = useState(false);
   const {
     save,

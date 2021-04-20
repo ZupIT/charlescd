@@ -19,4 +19,4 @@ package io.charlescd.moove.application
 import com.fasterxml.jackson.annotation.JsonInclude
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class ResourceValueResponse(val resource: String, val value: String)
+data class ResourceValueResponse(val resource: String, val value: String?)

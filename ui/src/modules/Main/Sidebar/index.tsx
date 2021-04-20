@@ -58,14 +58,14 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
       <Styled.Bottom>
         {
           !isEmpty(workspace?.id) && (
-            <Styled.Item>
+            <Styled.WorkspaceItem>
               <Styled.LinkIcon name="workspace" size="15px" isActive={false} />
               {
                 isExpanded && (
                   <Text.h5 color="light">{workspace?.name}</Text.h5>
                 )
               }
-            </Styled.Item>
+            </Styled.WorkspaceItem>
           )
         }
         <Styled.Item>

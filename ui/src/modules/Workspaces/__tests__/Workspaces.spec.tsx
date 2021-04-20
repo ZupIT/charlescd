@@ -82,7 +82,7 @@ test('render Workspace and see a placeholder', async () => {
   
   render(<Workspaces />);
 
-  expect(await screen.findByTestId('placeholder-empty-workspaces')).toBeInTheDocument();
+  expect(await screen.findByTestId('icon-empty-workspaces')).toBeInTheDocument();
   expect(screen.getByText('Hello, Charles Admin!')).toBeInTheDocument();
   expect(screen.getByText('Select or create a workspace in the side menu.')).toBeInTheDocument();
 });

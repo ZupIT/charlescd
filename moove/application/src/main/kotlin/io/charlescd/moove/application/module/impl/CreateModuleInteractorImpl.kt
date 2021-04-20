@@ -44,6 +44,8 @@ open class CreateModuleInteractorImpl(
 
         val user = userService.findByAuthorizationToken(authorization)
 
+        moduleService.checkIfComponentNameIsDuplicated(request.components.map { it.name }.toList())
+
         val workspace = workspaceService.find(workspaceId)
 
         if (workspace.status == WorkspaceStatusEnum.INCOMPLETE) {

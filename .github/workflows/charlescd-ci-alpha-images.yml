@@ -1,4 +1,4 @@
-name: charlescd-ci
+name: charlescd-ci-alpha-images
 
 on:
   push:

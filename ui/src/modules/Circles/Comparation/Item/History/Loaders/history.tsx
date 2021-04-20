@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.user
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-import io.charlescd.moove.application.user.response.UserResponse
-import java.util.UUID
-
-interface FindUserByIdInteractor {
-
-    fun execute(authorization: String, id: UUID): UserResponse
-}
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height={200}
+    viewBox="0 0 1200 400"
+    backgroundColor="#3a3a3c"
+    foregroundColor="#2c2c2e"
+  >
+    <rect x="0" y="0" rx="0" ry="0" width="100%" height="100" />
+    <rect x="0" y="110" rx="0" ry="0" width="100%" height="100" />
+    <rect x="0" y="220" rx="0" ry="0" width="100%" height="100" />
+  </ContentLoader>
+);

@@ -19,6 +19,7 @@ package manager
 import (
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
+	"octopipe/pkg/log"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
 
@@ -35,6 +36,7 @@ type ManagerMain struct {
 	deploymentMain    deployment.MainUseCases
 	cloudproviderMain cloudprovider.MainUseCases
 	repositoryMain    repository.MainUseCases
+	logAggregator     *log.Aggregator
 }
 
 func NewManagerMain(
@@ -43,7 +45,8 @@ func NewManagerMain(
 	deploymentMain deployment.MainUseCases,
 	cloudprovider cloudprovider.MainUseCases,
 	repositoryMain repository.MainUseCases,
+	logAggregator *log.Aggregator,
 ) MainUseCases {
 
-	return &ManagerMain{kubectl, templateMain, deploymentMain, cloudprovider, repositoryMain}
+	return &ManagerMain{kubectl, templateMain, deploymentMain, cloudprovider, repositoryMain, logAggregator}
 }

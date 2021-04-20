@@ -136,9 +136,9 @@ env:
 - name: KEYCLOAK_CLIENT_ID
   value: "{{ .RangeContext.keycloak.clientId}}"
 - name: RATELIMIT_CAPACITY
-  value: "4"
+  value: "5"
 - name: RATELIMIT_TOKENS
-  value: "4"
+  value: "5"
 - name: RATELIMIT_SECONDS
   value: "1"
 - name: KEYCLOAK_CLIENT_SECRET
@@ -213,7 +213,7 @@ env:
   - name: MOOVE_USER
     value: "{{ .RangeContext.moove.user }}"
   - name: MOOVE_PATH
-    value: "http://charlescd--moove:8080"
+    value: "http://charlescd-moove:8080"
   - name: MOOVE_AUTH
     value: "{{ .RangeContext.moove.auth }}"
   - name: REQUESTS_PER_SECOND_LIMIT
@@ -266,7 +266,7 @@ env:
   - name: REACT_APP_IDM_REDIRECT_URI
     value: {{ .RangeContext.idmRedirectHost }}
   - name: REACT_APP_CHARLES_VERSION
-    value: {{ .ChartContext.AppVersion }}
+    value: {{ .RangeContext.image.tag | default .ChartContext.Chart.AppVersion }}
 {{- end -}}
 
 {{- define "test.hermes-envs" -}}
@@ -298,7 +298,7 @@ env:
     value: "{{ .RangeContext.amqp.message.exchange}}"
   - name: AMQP_WAIT_MESSAGE_QUEUE
     value: "{{ .RangeContext.amqp.waitMessage.queue}}"
-  - name: AMQP_AMQP_WAIT_MESSAGE_EXCHANGE
+  - name: AMQP_WAIT_MESSAGE_EXCHANGE
     value: "{{ .RangeContext.amqp.waitMessage.exchange}}"
   - name: PUBLISHER_TIME
     value: "{{ .RangeContext.publisher.time}}"

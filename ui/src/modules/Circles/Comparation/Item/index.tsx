@@ -46,6 +46,7 @@ import LayerComponents from './Layer/Components';
 import LayerMetricsGroups from './Layer/MetricsGroups';
 import CreateSegments from './CreateSegments';
 import MetricsGroups from './MetricsGroups';
+import DeployHistory from './History';
 import Loader from './Loaders';
 import {
   isDefaultCircle,
@@ -238,13 +239,15 @@ const CirclesComparationItem = ({
 
   const renderDropdown = () => (
     <Dropdown>
-      <Can I="write" a="circles" passThrough>
-        <Dropdown.Item
-          icon="edit"
-          name="Edit segments"
-          onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
-        />
-      </Can>
+      {!circle?.default && (
+        <Can I="write" a="circles" passThrough>
+          <Dropdown.Item
+            icon="edit"
+            name="Edit segments"
+            onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
+          />
+        </Can>
+      )}
       {isUndeployable(circle) && (
         <Can I="write" a="deploy" passThrough>
           <Dropdown.Item
@@ -309,6 +312,13 @@ const CirclesComparationItem = ({
           </LabeledIcon>
         </Can>
       )}
+      <LabeledIcon
+        icon="clock"
+        marginContent="5px"
+        onClick={() => setActiveSection(SECTIONS.HISTORY)}
+        >
+          <Text.h5 color="dark">History</Text.h5>
+      </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>
   );
@@ -321,7 +331,7 @@ const CirclesComparationItem = ({
   const renderPanelContent = () => (
     <>
       {action === 'Delete' && renderWarning()}
-      <LayerName name={circle?.name} onSave={saveCircleName} />
+      <LayerName name={circle?.name} onSave={saveCircleName} isDefault={circle?.default} />
       <LayerSegments
         circle={circle}
         isEditing={isEditing}
@@ -363,6 +373,9 @@ const CirclesComparationItem = ({
         )}
         {activeSection === SECTIONS.GROUP_METRICS && (
           <MetricsGroups id={id} onGoBack={() => setActiveSection(undefined)} />
+        )}
+        {activeSection === SECTIONS.HISTORY && (
+          <DeployHistory id={id} onGoBack={() => setActiveSection(undefined)} />
         )}
       </>
     );
