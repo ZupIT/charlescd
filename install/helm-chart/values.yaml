@@ -310,7 +310,7 @@ CharlesApplications:
     pluginsDir: "./plugins"
     dispatchInterval: "15s"
     limits:
-      requestPerSecond: "4"
+      requestsPerSecond: "5"
       tokenTTL: "5"
       headersTTL: "5"
     moove:
@@ -323,7 +323,7 @@ CharlesApplications:
         password: 7Qs2KuM9gYzw48BS
 
   hermes:
-    enabled: false
+    enabled: true
     name: charlescd-hermes
     sidecarIstio:
       enabled: true
@@ -509,15 +509,16 @@ ingress:
   enabled: true
 
 nginx_ingress_controller:
-  enabled: true
+  enabled: false
 
 ingress-nginx:
   controller:
     service:
       annotations: {}
+    ingressClass: nginx
 
 rabbitmq:
-  enabled: false
+  enabled: true
   fullnameOverride: charlescd-rabbitmq
   auth:
     username: guest
