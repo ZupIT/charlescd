@@ -378,6 +378,13 @@ postgresql:
   initdbScriptsConfigMap: charles-postgres
   pguser: postgres
   pgpassword: postgres
+  resources:
+    limits:
+      cpu: 128m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 job:
   name: init-db
