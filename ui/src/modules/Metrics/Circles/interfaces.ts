@@ -45,6 +45,7 @@ export interface CircleRelease {
   deployedAt: string;
   undeployedAt: string;
   authorName: string;
+  authorEmail: string;
   createdAt: string;
   components: ReleaseComponent[];
   status: string;

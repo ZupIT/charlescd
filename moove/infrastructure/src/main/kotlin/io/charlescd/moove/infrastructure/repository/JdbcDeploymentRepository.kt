@@ -411,7 +411,7 @@ class JdbcDeploymentRepository(
                             deployments.created_at                                                                              AS deployment_created_at,
                             EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
                             deployments.status                                                                                  AS deployment_status,	                        
-                            users.name                                                                                          AS user_name,
+                            users.email                                                                                         AS user_email,
 	                        builds.tag                                                                                          AS deployment_version,
 	                        circles.name                                                                                        AS circle_name
                     FROM deployments deployments

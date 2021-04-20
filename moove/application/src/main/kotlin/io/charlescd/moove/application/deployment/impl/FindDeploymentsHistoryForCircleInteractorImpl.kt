@@ -60,6 +60,11 @@ class FindDeploymentsHistoryForCircleInteractorImpl(
 
     private fun mountHistoryFilter(circleId: String) = DeploymentHistoryFilter(
         circlesIds = listOf(circleId),
-        deploymentStatus = listOf(DeploymentStatusEnum.DEPLOYED, DeploymentStatusEnum.NOT_DEPLOYED, DeploymentStatusEnum.DEPLOY_FAILED)
+        deploymentStatus = listOf(
+            DeploymentStatusEnum.DEPLOYING,
+            DeploymentStatusEnum.DEPLOYED,
+            DeploymentStatusEnum.UNDEPLOYING,
+            DeploymentStatusEnum.NOT_DEPLOYED,
+            DeploymentStatusEnum.DEPLOY_FAILED)
     )
 }

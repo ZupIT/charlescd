@@ -17,9 +17,10 @@
 package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserService
-import io.charlescd.moove.application.user.FindUserByIdInteractor
-import io.charlescd.moove.application.user.response.UserResponse
+import io.charlescd.moove.application.user.FindWorkspaceByUserIdInteractor
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.KeycloakService
@@ -27,12 +28,30 @@ import java.util.UUID
 import javax.inject.Named
 
 @Named
-class FindUserByIdInteractorImpl(private val userService: UserService, private val keycloakService: KeycloakService) : FindUserByIdInteractor {
+class FindWorkspaceByUserIdInteractorImpl(private val userService: UserService, private val keycloakService: KeycloakService) :
+    FindWorkspaceByUserIdInteractor {
 
-    override fun execute(authorization: String, id: UUID): UserResponse {
+    override fun execute(authorization: String, id: UUID): List<SimpleWorkspaceResponse> {
         val user = userService.find(id.toString())
+        val distinctWorkspaces = user.workspaces.distinctBy { it.id }
+        val permissionMap = mutableMapOf<String, List<Permission>>()
+
+        user.workspaces.groupBy({ it.id }, { it.permissions })
+            .forEach { workspaceL ->
+                permissionMap[workspaceL.key] = workspaceL.value.flatten()
+            }
+
+        val workspaceResult = distinctWorkspaces.mapNotNull { workspace ->
+            permissionMap[workspace.id]?.let { workspacePermission ->
+                SimpleWorkspaceResponse(
+                    workspace.id,
+                    workspace.name,
+                    workspacePermission.distinctBy { it.name }.map { it.name })
+            }
+        }
+
         validateUser(authorization, user)
-        return UserResponse.from(user)
+        return workspaceResult
     }
 
     private fun validateUser(authorization: String, user: User) {
