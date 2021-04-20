@@ -128,26 +128,12 @@ export class ReconcileRoutesUsecase {
       kind: spec.kind,
       status: false
     }
-    if (this.checkEmptySpecs(observed) === true) {
+    if (ReconcileUtils.checkObservedRoutesEmptiness(observed)) {
       baseResponse.status = false
       return baseResponse
     }
-    baseResponse.status = this.checkComponentExistsOnObserved(observed, spec, circleId)
+    baseResponse.status = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observed, spec, circleId)
     return baseResponse
-  }
-
-  private checkEmptySpecs(observed: PartialRouteHookParams): boolean {
-    const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1alpha3'])
-    const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1alpha3'])
-    return emptyDestinationRules || emptyVirtualServices
-  }
-
-  private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
-    const destionRulesCircles : string[] = JSON.parse(observed.children['DestinationRule.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
-    const desiredDestinationRulePresent = destionRulesCircles.includes(circleId)
-    const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
-    const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
-    return desiredDestinationRulePresent && desiredVirtualServicePresent
   }
 
   private getServicesWithMetadata(components: ComponentEntityV2[]): KubernetesManifest[] {

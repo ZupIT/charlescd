@@ -380,9 +380,9 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should generate the reconcile deployment object with the correct metadata changes', async() => {
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture(true))
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture('simple'))
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
-      new Execution(getDeploymentWithManifestFixture(true), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+      new Execution(getDeploymentWithManifestFixture('simple'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
     jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsFixtureCircle1)
 
@@ -494,11 +494,11 @@ describe('Reconcile deployment usecase spec', () => {
 
   it('should generate the correct desired state with different deployment manifests when a override happens', async() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail')
-      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture(true))
-      .mockImplementationOnce(async() => getDeploymentWithManifestFixture(true))
+      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture('simple'))
+      .mockImplementationOnce(async() => getDeploymentWithManifestFixture('simple'))
 
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
-      new Execution(getDeploymentWithManifestAndPreviousFixture(true), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+      new Execution(getDeploymentWithManifestAndPreviousFixture('simple'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
 
     // this won't change the test outcome
@@ -698,11 +698,11 @@ describe('Reconcile deployment usecase spec', () => {
 
   it('should generate the correct desired state without manifest repetition when a override happens', async() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail')
-      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture(false))
-      .mockImplementationOnce(async() => getDeploymentWithManifestFixture(false))
+      .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture('complex'))
+      .mockImplementationOnce(async() => getDeploymentWithManifestFixture('complex'))
 
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
-      new Execution(getDeploymentWithManifestAndPreviousFixture(false), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+      new Execution(getDeploymentWithManifestAndPreviousFixture('complex'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
 
     // this won't change the test outcome
@@ -921,10 +921,10 @@ describe('Reconcile deployment usecase spec', () => {
 
   it('should return the desired manifests of the new deployment when there is no previous and it is not ready yet', async() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail')
-      .mockImplementation(async() => getDeploymentWithManifestFixture(false))
+      .mockImplementation(async() => getDeploymentWithManifestFixture('complex'))
 
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
-      new Execution(getDeploymentWithManifestAndPreviousFixture(false), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+      new Execution(getDeploymentWithManifestAndPreviousFixture('complex'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
 
     // this won't change the test outcome
@@ -1054,9 +1054,178 @@ describe('Reconcile deployment usecase spec', () => {
     expect(reconcileObj).toEqual(expectedReconcileObj)
   })
 
-  // TODO create unit test for the creation of the medatada field when the manifests don't have it
+  it('should create the correct medatada labels/namespace fields when the manifests dont have it', async() => {
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture('noLabels'))
+    jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
+      new Execution(getDeploymentWithManifestFixture('noLabels'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
+    )
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsFixtureCircle1)
 
-  // TODO create unit test to check whether the metadata values butler insert are overriding the ones found correctly
+    const expectedReconcileObj = {
+      children: [
+        {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          metadata: {
+            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            namespace: 'namespace',
+            labels: {
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+            }
+          },
+          spec: {
+            replicas: 1,
+            selector: {
+              matchLabels: {
+                app: 'hello-kubernetes'
+              }
+            },
+            template: {
+              metadata: {
+                annotations: {
+                  'sidecar.istio.io/inject': 'true'
+                },
+                labels: {
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
+                }
+              },
+              spec: {
+                containers: [
+                  {
+                    name: 'hello-kubernetes',
+                    image: 'build-image-url.com',
+                    livenessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    readinessProbe: {
+                      failureThreshold: 3,
+                      httpGet: {
+                        path: '/',
+                        port: 80,
+                        scheme: 'HTTP'
+                      },
+                      initialDelaySeconds: 30,
+                      periodSeconds: 20,
+                      successThreshold: 1,
+                      timeoutSeconds: 1
+                    },
+                    imagePullPolicy: 'Always',
+                    resources: {
+                      limits: {
+                        cpu: '128m',
+                        memory: '128Mi'
+                      },
+                      requests: {
+                        cpu: '64m',
+                        memory: '64Mi'
+                      }
+                    }
+                  }
+                ],
+                imagePullSecrets: [
+                  {
+                    name: 'realwavelab-registry'
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          apiVersion: 'apps/v1',
+          kind: 'StatefulSet',
+          metadata: {
+            name: 'hello-kubernetes',
+            namespace: 'namespace',
+            labels: {
+              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+            }
+          },
+          spec: {
+            serviceName: 'helm-test-chart',
+            replicas: 2,
+            selector: {
+              matchLabels: {
+                app: 'hello-kubernetes'
+              }
+            },
+            template: {
+              metadata: {
+                annotations: {
+                  'sidecar.istio.io/inject': 'true'
+                },
+                labels: {
+                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
+                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+                }
+              },
+              spec: {
+                containers: [
+                  {
+                    name: 'hello-kubernetes',
+                    image: 'build-image-url.com',
+                    ports: [
+                      {
+                        containerPort: 80,
+                        name: 'web'
+                      }
+                    ],
+                    volumeMounts: [
+                      {
+                        name: 'www',
+                        mountPath: '/usr/share/helm-test/html'
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            volumeClaimTemplates: [
+              {
+                metadata: {
+                  name: 'www'
+                },
+                spec: {
+                  accessModes: [
+                    'ReadWriteOnce'
+                  ],
+                  resources: {
+                    requests: {
+                      storage: '1Gi'
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      resyncAfterSeconds: 5
+    }
 
-  // TODO create unit test to check if the labels are being inserted in the template field (e.g. Deployment, Statefulset)
+    const reconcileDeploymentUsecase = new ReconcileDeploymentUsecase(
+      k8sClient,
+      deploymentRepository,
+      componentsRepository,
+      consoleLoggerService,
+      executionRepository,
+      mooveService
+    )
+
+    const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithNothingCreated)
+
+    expect(reconcileObj).toEqual(expectedReconcileObj)
+  })
 })

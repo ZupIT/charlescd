@@ -16,6 +16,8 @@
 
 import { KubernetesObject } from '@kubernetes/client-node'
 import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
+import { PartialRouteHookParams, SpecsUnion } from '../interfaces/partial-params.interface'
+import { isEmpty } from 'lodash'
 
 export class ReconcileUtils {
 
@@ -29,5 +31,25 @@ export class ReconcileUtils {
 
   public static getComponentServiceManifests(component: ComponentEntityV2): KubernetesObject[]  {
     return component.manifests.filter(m => m.kind === 'Service')
+  }
+
+  // TODO this is highly coupled with Istio. Maybe implement strategy pattern once butler support other service meshes.
+  public static checkObservedRoutesEmptiness(observed: PartialRouteHookParams): boolean {
+    const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1alpha3'])
+    const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1alpha3'])
+    return emptyDestinationRules || emptyVirtualServices
+  }
+
+  // TODO this is highly coupled with Istio. Maybe implement strategy pattern once butler support other service meshes.
+  public static checkIfComponentRoutesExistOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
+    const observedDestinationRules = observed.children['DestinationRule.networking.istio.io/v1alpha3'][spec.metadata.name]
+    const observedVirtualService = observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name]
+    if (!observedDestinationRules || !observedVirtualService) {
+      return false
+    }
+
+    const destinationRulesCircles : string[] = JSON.parse(observedDestinationRules.metadata.annotations.circles)
+    const virtualServiceCircles : string [] = JSON.parse(observedVirtualService.metadata.annotations.circles)
+    return destinationRulesCircles.includes(circleId) && virtualServiceCircles.includes(circleId)
   }
 }
