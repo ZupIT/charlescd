@@ -36,3 +36,4 @@ p,management,/moove/v2/users/{email:.+},GET
 p,management,/moove/v2/users/{id}/workspaces,GET
 p,management,/moove/v2/users/password,GET
 p,management,/moove/v2/users,GET
+p,management,/gate/api/v1/system-token*,(GET)|(POST)|(PUT)
