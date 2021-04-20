@@ -75,14 +75,17 @@ export const useFindModule = (): {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `${error.status}: ${error.statusText}`,
-          status: 'error'
-        })
-      );
-    }
+    (async () => {
+      if (error) {
+        const e = await error.json();
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
   }, [dispatch, error]);
 
   return {
@@ -117,14 +120,17 @@ export const useSaveModule = (): {
   }, [modules, dispatch]);
 
   useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `${error.status}: ${error.statusText}`,
-          status: 'error'
-        })
-      );
-    }
+    (async () => {
+      if (error) {
+        const e = await error.json();
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
   }, [dispatch, error]);
 
   return { loading, saveModule };
@@ -159,14 +165,17 @@ export const useDeleteModule = (
   }, [dispatch, modules, history, module]);
 
   useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `${error.status}: ${error.statusText}`,
-          status: 'error'
-        })
-      );
-    }
+    (async () => {
+      if (error) {
+        const e = await error.json();
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
   }, [dispatch, error]);
 
   return {
@@ -206,6 +215,7 @@ export const useUpdateModule = (): {
       setModuleId(id);
       try {
         await updateModulePromise(id, module);
+        dispatch(resetModulesAction());
         getAllModules();
         setStatus('resolved');
       } catch (error) {

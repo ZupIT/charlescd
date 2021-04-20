@@ -40,11 +40,6 @@ func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) 
 			return
 		}
 
-		if err := metricMain.Validate(newMetric); len(err.GetErrors()) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
-		}
-
 		metricGroup, err := metricsgroupMain.FindById(metricgroupId)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
@@ -53,6 +48,12 @@ func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) 
 
 		newMetric.MetricsGroupID = uuid.MustParse(metricgroupId)
 		newMetric.CircleID = metricGroup.CircleID
+
+		if err := metricMain.Validate(newMetric); len(err.GetErrors()) > 0 {
+			util.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
 		list, err := metricMain.SaveMetric(newMetric)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)

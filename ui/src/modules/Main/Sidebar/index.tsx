@@ -110,14 +110,14 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
       />
 
       <Styled.Bottom>
-        <Styled.Item>
+        <Styled.WorkspaceItem>
           {!isEmpty(workspaces) && renderDropdown()}
           {isExpanded && (
             <Text.h5 color="light">
               {!isRootMenu && (workspace?.name || selectedWorkspace)}
             </Text.h5>
           )}
-        </Styled.Item>
+        </Styled.WorkspaceItem>
         <Styled.Item>
           <Icon
             name="help"
