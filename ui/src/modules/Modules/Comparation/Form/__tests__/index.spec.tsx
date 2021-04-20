@@ -24,6 +24,7 @@ import { Module, Author } from "modules/Modules/interfaces/Module";
 import { Actions, Subjects } from "core/utils/abilities";
 import userEvent from "@testing-library/user-event";
 import { saveWorkspace } from 'core/utils/workspace';
+import { GitProviders } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/interfaces';
 
 interface fakeCanProps {
   I?: Actions;
@@ -71,7 +72,16 @@ jest.mock('containers/Can', () => {
 });
 
 beforeAll(() => {
-  saveWorkspace({ id: '123', name: 'Workspace', gitProvider: 'GITHUB' });
+  saveWorkspace({
+    id: '123',
+    name: 'Workspace',
+    deploymentConfiguration: {
+      id: '123',
+      name: 'provider',
+      gitProvider: 'GITHUB' as GitProviders
+    },
+    createdAt: ''
+  });
 });
 
 test("component for edit mode render", async () => {

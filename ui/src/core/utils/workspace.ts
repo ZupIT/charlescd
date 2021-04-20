@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Workspace } from 'modules/Users/interfaces/User';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
 const WORKSPACE = 'workspaceSelected';
 const WORKSPACE_KEY = 'workspace';

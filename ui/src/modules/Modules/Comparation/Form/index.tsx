@@ -84,7 +84,7 @@ const FormModule = ({ module, onChange }: Props) => {
   const { register, control, handleSubmit, formState: { isValid } } = form;
   const fieldArray = useFieldArray({ control, name: 'components', keyName: 'fieldId' });
   const workspace = getWorkspace();
-  const helmGitProvider = workspace?.gitProvider;
+  const helmGitProvider = workspace?.deploymentConfiguration?.gitProvider;
 
   useEffect(() => {
     if (updateStatus === 'resolved') {
@@ -145,6 +145,13 @@ const FormModule = ({ module, onChange }: Props) => {
 
   const renderGitHelm = () => (
     <Fragment>
+      <Styled.Helm>
+        <Styled.Title color="light">
+          {!isEditing
+            ? 'Add helm chart repository'
+            : 'Edit helm chart repository'}
+        </Styled.Title>
+      </Styled.Helm>
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert url"
@@ -228,13 +235,6 @@ const FormModule = ({ module, onChange }: Props) => {
             ref={register({ required: true })}
           />
           {!isEditing && <Components key="components" fieldArray={fieldArray} />}
-          <Styled.Helm>
-            <Styled.Title color="light">
-              {!isEditing
-                ? 'Add helm chart repository'
-                : 'Edit helm chart repository'}
-            </Styled.Title>
-          </Styled.Helm>
           {helmGitProvider && renderGitHelm()}
           <Can I="write" a="modules" isDisabled={!isValid || !isHelmValid} passThrough>
             <Styled.Button

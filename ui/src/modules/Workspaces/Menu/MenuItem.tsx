@@ -41,7 +41,7 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
 
   const handleClick = () => {
-    saveWorkspace({ id, name });
+    saveWorkspace(workspace);
     selectedWorkspace(name);
     setUserAbilities();
     dispatch(statusWorkspaceAction('idle'));
