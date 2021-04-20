@@ -297,7 +297,7 @@ jobs:
     
   build_and_push_release_gate:
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
 
