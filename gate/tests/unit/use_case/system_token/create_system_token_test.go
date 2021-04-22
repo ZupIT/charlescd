@@ -33,7 +33,7 @@ func (st *SystemTokenSuite) TestCreateSystemToken() {
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
 	workspaces := utils.GetDummySimpleWorkspaces()
-	user := utils.GetDummyUserSystemToken(systemToken.ID.String())
+	user := utils.GetDummyUserSystemToken(systemToken.ID)
 
 	systemToken.Permissions = permissions
 	systemToken.Workspaces = workspaces

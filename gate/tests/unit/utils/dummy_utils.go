@@ -84,12 +84,12 @@ func GetDummyCreateSystemTokenInput() system_token.CreateSystemTokenInput {
 	}
 }
 
-func GetDummyUserSystemToken(systemTokenId string) domain.User {
+func GetDummyUserSystemToken(systemTokenId uuid.UUID) domain.User {
 	return domain.User{
 		ID:            uuid.New(),
 		Name:          "System Token Test",
 		PhotoUrl:      "",
-		Email:         systemTokenId + "@system.token",
+		Email:         systemTokenId.String() + "@system.token",
 		IsRoot:        false,
 		SystemTokenId: systemTokenId,
 		CreatedAt:     time.Now(),
