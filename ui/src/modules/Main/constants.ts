@@ -99,6 +99,6 @@ export const rootMainMenu: MenuType[] = [
     id: genMenuId(routes.account),
     icon: 'account',
     text: 'Account',
-    to: routes.account
+    to: routes.accountProfile
   }
 ];
