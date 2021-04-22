@@ -67,7 +67,7 @@ func (userRepository userRepository) GetByEmail(email string) (domain.User, erro
 		if res.Error.Error() == "record not found" {
 			return domain.User{}, handleUserError("User not found", "unit.GetByEmail.First", res.Error, logging.NotFoundError)
 		}
-		return domain.User{}, handleSystemTokenError("Find user failed", "UserRepository.GetByEmail.First", res.Error, logging.InternalError)
+		return domain.User{}, handleUserError("Find user failed", "UserRepository.GetByEmail.First", res.Error, logging.InternalError)
 	}
 	return mapper.UserModelToDomain(user), nil
 }
@@ -79,7 +79,7 @@ func (userRepository userRepository) Create(user domain.User) (domain.User, erro
 	res := userRepository.db.Model(models.User{}).Create(&userToSave)
 
 	if res.Error != nil {
-		return domain.User{}, handleSystemTokenError("Create user failed", "UserRepository.Create.create", res.Error, logging.InternalError)
+		return domain.User{}, handleUserError("Create user failed", "UserRepository.Create.create", res.Error, logging.InternalError)
 	}
 	return mapper.UserModelToDomain(userToSave), nil
 }

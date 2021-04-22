@@ -44,7 +44,7 @@ func (systemToken SystemToken) CreateUserFromSystemToken() User {
 		PhotoUrl:      "",
 		Email:         systemToken.ID.String() + "@system.token",
 		IsRoot:        false,
-		SystemTokenId: systemToken.ID.String(),
+		SystemTokenId: systemToken.ID,
 		CreatedAt:     time.Now(),
 	}
 }

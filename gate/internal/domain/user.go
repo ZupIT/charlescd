@@ -29,6 +29,6 @@ type User struct {
 	PhotoUrl  string
 	Email     string
 	IsRoot    bool
-	SystemTokenId string
+	SystemTokenId uuid.UUID
 	CreatedAt time.Time
 }
