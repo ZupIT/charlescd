@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-import { Body, Controller, Headers, Param, Post, UnprocessableEntityException, UsePipes, ValidationPipe } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  UnprocessableEntityException,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common'
 import { validate as uuidValidate } from 'uuid'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
@@ -27,13 +37,17 @@ import { JoiValidationPipe } from '../pipes/joi-validation-pipe'
 import { GitTokenDecryptionPipe } from '../pipes/git-token-decryption.pipe'
 import { DefaultCircleUniquenessPipe } from '../pipes/default-circle-uniqueness.pipe'
 import { NamespaceValidationPipe } from '../pipes/namespace-validation.pipe'
+import { FindDeploymentLogsByIdUsecase } from '../use-cases/find-deployment-logs-by-id.usecase'
+import { ReadLogsDto } from '../dto/read-logs.dto'
+import { DefaultCircleNamespaceUniquenessPipe } from '../pipes/default-circle-namespace-uniqueness.pipe'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
 
   constructor(
     private createDeploymentUseCase: CreateDeploymentUseCase,
-    private createUndeploymentUseCase: CreateUndeploymentUseCase
+    private createUndeploymentUseCase: CreateUndeploymentUseCase,
+    private findDeploymentLogsByIdUseCase: FindDeploymentLogsByIdUsecase
   ) { }
 
   @Post('/')
@@ -41,6 +55,7 @@ export class DeploymentsController {
   @UsePipes(DeploymentUniquenessPipe)
   @UsePipes(DefaultCircleUniquenessPipe)
   @UsePipes(NamespaceValidationPipe)
+  @UsePipes(DefaultCircleNamespaceUniquenessPipe)
   @UsePipes(new JoiValidationPipe())
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
@@ -48,6 +63,15 @@ export class DeploymentsController {
   ): Promise<ReadDeploymentDto> {
     const processedIncomingCircleId = this.processIncomingCircleIdHeader(incomingCircleId)
     return this.createDeploymentUseCase.execute(createDeploymentRequestDto, processedIncomingCircleId)
+  }
+
+  @Get('/:id/logs')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  public async findDeploymentEvents(
+      @Param('id') deploymentId: string,
+      @Headers('x-workspace-id') workspaceId: string,
+  ): Promise<ReadLogsDto> {
+    return this.findDeploymentLogsByIdUseCase.execute(deploymentId, workspaceId)
   }
 
   @Post('/:id/undeploy')

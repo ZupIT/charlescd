@@ -2,13 +2,15 @@ package manager
 
 import (
 	"octopipe/pkg/cloudprovider"
+	"octopipe/pkg/log"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template/helm"
 )
 
 type V2CallbackData struct {
-	Type   string `json:"type"`
-	Status string `json:"status"`
+	Type   string    `json:"type"`
+	Status string    `json:"status"`
+	Logs []log.Log `json:"logs"`
 }
 
 // DefaultCircle contains information for helm usage

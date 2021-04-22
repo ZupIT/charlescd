@@ -15,19 +15,20 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { isEmpty } from 'lodash'
+import { isEmpty, uniqWith } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { DeploymentStatusEnum } from '../../api/deployments/enums/deployment-status.enum'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
 import { NotificationStatusEnum } from '../../core/enums/notification-status.enum'
-import { KubernetesManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
+import { KubernetesManifest, SpecTemplateManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { MooveService } from '../../core/integrations/moove'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { HookParams } from '../interfaces/params.interface'
+import { HookParams, SpecMetadata, SpecStatus } from '../interfaces/params.interface'
 import { ReconcileUtils } from '../utils/reconcile.utils'
+import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
 
 @Injectable()
 export class ReconcileDeploymentUsecase {
@@ -43,29 +44,26 @@ export class ReconcileDeploymentUsecase {
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
-    const execution = await this.executionRepository.findByDeploymentId(deployment.id)
-    if (execution.status === DeploymentStatusEnum.TIMED_OUT) {
-      this.consoleLoggerService.log('DEPLOYMENT_RECONCILE:TIMED_OUT_DEPLOYMENT', { executionId: execution.id, deploymentId: execution.deploymentId })
-      return { children: [] }
-    }
-    const rawSpecs = deployment.components.flatMap(c => c.manifests).filter(e => e.kind !== 'Service')
-    const specs = ReconcileUtils.addMetadata(rawSpecs, deployment)
-    if (isEmpty(params.children['Deployment.apps/v1'])) {
-      return { children: specs, resyncAfterSeconds: 5 }
-    }
-    const currentDeploymentSpecs = ReconcileUtils.specsByDeployment(params, deployment.id)
+    const desiredManifests = this.getDesiredManifests(deployment)
 
-    const allReady = ReconcileUtils.checkConditions(currentDeploymentSpecs)
-    if (!allReady) {
+    const resourcesCreated = this.checkIfResourcesWereCreated(params)
+    if (!resourcesCreated) {
+      return { children: desiredManifests, resyncAfterSeconds: 5 }
+    }
+
+    const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
+    if (!isDeploymentReady) {
       const previousDeploymentId = deployment.previousDeploymentId
-
       if (previousDeploymentId === null) {
         await this.deploymentRepository.updateHealthStatus(deployment.id, false)
-        return { children: specs, resyncAfterSeconds: 5 }
+        return { children: desiredManifests, resyncAfterSeconds: 5 }
       }
       const previousDeployment = await this.deploymentRepository.findWithComponentsAndConfig(previousDeploymentId)
-      const currentAndPrevious = ReconcileUtils.concatWithPrevious(previousDeployment, specs)
-      return { children: currentAndPrevious.filter(e => e.kind !== 'Service'), resyncAfterSeconds: 5 }
+      const currentAndPrevious = uniqWith(
+        [...this.getDesiredManifests(previousDeployment), ...desiredManifests],
+        ReconcileUtils.isNameAndKindEqual
+      )
+      return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
 
     const activeComponents = await this.componentRepository.findActiveComponents()
@@ -74,11 +72,12 @@ export class ReconcileDeploymentUsecase {
     } catch (error) {
       this.consoleLoggerService.error('DEPLOYMENT_RECONCILE:APPLY_ROUTE_CRD_ERROR', error)
       await this.deploymentRepository.updateHealthStatus(deployment.id, false)
-      return { children: specs, resyncAfterSeconds: 5 }
+      return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
+
     await this.deploymentRepository.updateHealthStatus(deployment.id, true)
     await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
-    return { children: specs }
+    return { children: desiredManifests }
   }
 
   private async notifyCallback(deployment: DeploymentEntityV2, status: DeploymentStatusEnum) {
@@ -92,6 +91,88 @@ export class ReconcileDeploymentUsecase {
       )
       await this.executionRepository.updateNotificationStatus(execution.id, notificationResponse.status)
     }
+  }
 
+  private getDesiredManifests(deployment: DeploymentEntityV2): KubernetesManifest[] {
+    return deployment.components.flatMap(component => {
+      const manifests = component.manifests.filter(e => e.kind !== 'Service')
+      return manifests.map(manifest => this.addCharlesMetadata(manifest, component, deployment))
+    })
+  }
+
+  // TODO create a class that implements the KubernetesObject interface and move this method inside it
+  private addCharlesMetadata(
+    manifest: KubernetesManifest & SpecTemplateManifest,
+    component: ComponentEntityV2,
+    deployment: DeploymentEntityV2
+  ): KubernetesManifest {
+
+    manifest.metadata = {
+      ...manifest.metadata,
+      namespace: deployment.namespace,
+      labels: {
+        ...manifest.metadata?.labels,
+        'deploymentId': deployment.id,
+        'circleId': deployment.circleId
+      }
+    }
+
+    // TODO what about other resources such as StatefulSet, CronJob etc?
+    if (manifest.kind === 'Deployment') {
+      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
+    }
+
+    if (manifest.spec?.template) {
+      manifest.spec.template.metadata = {
+        ...manifest.spec.template.metadata,
+        labels: {
+          ...manifest.spec.template.metadata?.labels,
+          'deploymentId': deployment.id,
+          'circleId': deployment.circleId
+        }
+      }
+    }
+
+    return manifest
+  }
+
+  private checkIfResourcesWereCreated(params: HookParams): boolean {
+    // TODO we should also check if other resources were created
+    return !isEmpty(params.children['Deployment.apps/v1'])
+  }
+
+  private checkIfDeploymentIsReady(params: HookParams, deploymentId: string): boolean {
+    // TODO we should also check if other resources are ready
+    const deploymentManifests = Object.entries(params.children['Deployment.apps/v1'])
+      .map(c => c[1])
+      .filter(p => p.metadata.labels.deploymentId === deploymentId)
+
+    return this.checkDeploymentConditions(deploymentManifests)
+  }
+
+  private checkDeploymentConditions(specs: { metadata: SpecMetadata, status: SpecStatus }[]): boolean {
+    if (specs.length === 0) {
+      return false
+    }
+    return specs.every(s => {
+      if (s.status.conditions.length === 0) {
+        return true
+      }
+      const conditions = s.status.conditions
+      const minimumReplicaCondition = conditions.filter(c => c.type === 'Available' && c.reason === 'MinimumReplicasAvailable')
+      const replicaSetAvailableCondition = conditions.filter(c => c.type === 'Progressing' && c.reason === 'NewReplicaSetAvailable')
+
+      if (minimumReplicaCondition.length === 0) {
+        return false
+      }
+      if (replicaSetAvailableCondition.length === 0) {
+        return false
+      }
+
+      const allAvailable = minimumReplicaCondition.every(c => c.status === 'True')
+      const allProgressing = replicaSetAvailableCondition.every(c => c.status === 'True')
+
+      return allAvailable && allProgressing
+    })
   }
 }

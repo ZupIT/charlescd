@@ -41,4 +41,4 @@ services:
         DARWIN_ISTIO_DEPLOYMENT_CALLBACK:  http://stubby4j:8883/deploy/notifications/istio-deployment
         HELM_TEMPLATE_URL: http://stubby4j:8883/helm
         HELM_PREFIX_URL: http://stubby4j:8883/helm
-        FAKE_HELM_URL: http://stubby4j:8883/helm/repos/charlescd-fake/helm-chart
+        FAKE_HELM_URL: http://stubby4j:8883/repos/charlescd-fake/helm-chart/contents?ref=master

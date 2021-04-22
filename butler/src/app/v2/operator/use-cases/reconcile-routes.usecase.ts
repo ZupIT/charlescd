@@ -45,7 +45,7 @@ export class ReconcileRoutesUsecase {
     const componentSnapshots = await this.getDesiredComponentSnapshots(hookParams)
     const namespacedComponentSnapshots = groupBy(componentSnapshots, component => component.deployment.namespace)
     for (const namespace in namespacedComponentSnapshots) {
-      services = services.concat(ReconcileUtils.getComponentsServiceManifests(namespacedComponentSnapshots[namespace]))
+      services = services.concat(this.getServicesWithMetadata(namespacedComponentSnapshots[namespace]))
       specs = specs.concat(this.createProxyManifests(namespace, namespacedComponentSnapshots[namespace]))
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
@@ -55,9 +55,12 @@ export class ReconcileRoutesUsecase {
 
   private async getDesiredComponentSnapshots(hookParams: RouteHookParams): Promise<ComponentEntityV2[]> {
     const observedCircles = hookParams.parent.spec.circles
-    const componentSnapshots = await Promise.all(observedCircles.map(circle =>
-      this.componentsRepository.findActiveComponentsByCircleId(circle.id)
-    ))
+    const componentSnapshots = []
+    for (const circle of observedCircles) {
+      const currentHealthySnapshots = await this.componentsRepository.findCurrentHealthyComponentsByCircleId(circle.id)
+      const previousSnapshots =  await this.componentsRepository.findPreviousComponentsFromCurrentUnhealthyByCircleId(circle.id)
+      componentSnapshots.push([...currentHealthySnapshots, ...previousSnapshots])
+    }
     return componentSnapshots.flatMap(c => c)
   }
 
@@ -128,25 +131,32 @@ export class ReconcileRoutesUsecase {
       kind: spec.kind,
       status: false
     }
-    if (this.checkEmptySpecs(observed) === true) {
+    if (ReconcileUtils.checkObservedRoutesEmptiness(observed)) {
       baseResponse.status = false
       return baseResponse
     }
-    baseResponse.status = this.checkComponentExistsOnObserved(observed, spec, circleId)
+    baseResponse.status = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observed, spec, circleId)
     return baseResponse
   }
 
-  private checkEmptySpecs(observed: PartialRouteHookParams): boolean {
-    const emptyDestinationRules = isEmpty(observed.children['DestinationRule.networking.istio.io/v1alpha3'])
-    const emptyVirtualServices = isEmpty(observed.children['VirtualService.networking.istio.io/v1alpha3'])
-    return emptyDestinationRules || emptyVirtualServices
+  private getServicesWithMetadata(components: ComponentEntityV2[]): KubernetesManifest[] {
+    return components.flatMap(component => {
+      const serviceManifests = ReconcileUtils.getComponentServiceManifests(component)
+      return serviceManifests.map(manifest => this.addCharlesMetadata(manifest, component.deployment))
+    })
   }
 
-  private checkComponentExistsOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
-    const destionRulesCircles : string[] = JSON.parse(observed.children['DestinationRule.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
-    const desiredDestinationRulePresent = destionRulesCircles.includes(circleId)
-    const virtualServiceCircles : string [] = JSON.parse(observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name].metadata.annotations.circles)
-    const desiredVirtualServicePresent = virtualServiceCircles.includes(circleId)
-    return desiredDestinationRulePresent && desiredVirtualServicePresent
+  // TODO create a class that implements the KubernetesObject interface and move this method inside it
+  private addCharlesMetadata(manifest: KubernetesManifest, deployment: DeploymentEntityV2): KubernetesManifest {
+    manifest.metadata = {
+      ...manifest.metadata,
+      namespace: deployment.namespace,
+      labels: {
+        ...manifest.metadata?.labels,
+        'deploymentId': deployment.id,
+        'circleId': deployment.circleId
+      }
+    }
+    return manifest
   }
 }

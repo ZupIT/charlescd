@@ -48,6 +48,10 @@ const K8sClientStub = {
         }
       }, 
       response: {} as http.IncomingMessage})
+  },
+  
+  client: {
+    delete: async() => Promise.resolve()
   }
 }
 

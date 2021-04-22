@@ -17,7 +17,6 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
-import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
@@ -25,6 +24,7 @@ import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfac
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
+import { EntityManager } from 'typeorm'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 
 describe('DeploymentController v2', () => {
@@ -901,6 +901,81 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('returns an error when there is one active default deployment with the same circle id on a different namespace', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com:someTag',
+          buildImageTag: 'someTag',
+          componentName: 'my-component',
+          hostValue: 'host-value-1',
+          gatewayName: 'gateway-name-1'
+        },
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl2.com:anotherTag',
+          buildImageTag: 'anotherTag',
+          componentName: 'my-other-component'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl
+    }
+
+    const sameCircleDiffNamespaceActiveDeployment = new DeploymentEntityV2(
+      '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3',
+      '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      'ad03d665-f689-42aa-b1de-d19653e89b86',
+      UrlConstants.deploymentCallbackUrl,
+      [
+        new ComponentEntityV2(
+          UrlConstants.helmRepository,
+          'currenttag',
+          'imageurl.com:currenttag',
+          'my-component',
+          '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          'host-value-1',
+          'gateway-name-1',
+          []
+        )
+      ],
+      true,
+      'default',
+      120,
+    )
+    sameCircleDiffNamespaceActiveDeployment.current = true
+
+    await manager.save(sameCircleDiffNamespaceActiveDeployment)
+
+    const errorResponse = {
+      error: 'Conflict',
+      message: 'Invalid namespace. Circle already has an active default deployment in a different namespace.',
+      statusCode: 409
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(409)
       .expect(response => {
         expect(response.body).toEqual(errorResponse)
       })

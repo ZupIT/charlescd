@@ -27,7 +27,7 @@ import { Execution } from '../../../../app/v2/api/deployments/entity/execution.e
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
-import { defaultManifests } from '../../fixtures/manifests.fixture'
+import { simpleManifests } from '../../fixtures/manifests.fixture'
 import { UrlConstants } from '../test-constants'
 
 describe('DeploymentController v2', () => {
@@ -49,7 +49,7 @@ describe('DeploymentController v2', () => {
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     manager = fixtureUtilsService.connection.manager
-    manifests = defaultManifests
+    manifests = simpleManifests
   })
 
   afterAll(async() => {
