@@ -12,6 +12,7 @@ import { DeploymentsHookController } from './controller/deployments.hook.control
 import { RoutesHookController } from './controller/routes.hook.controller'
 import { ReconcileRoutesUsecase } from './use-cases/reconcile-routes.usecase'
 import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
+import { EventsLogsAggregator } from './logs-aggregator/kubernetes-events-aggregator'
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.use
     MooveService,
     ReconcileRoutesUsecase,
     ReconcileDeploymentUsecase,
-    TimeoutScheduler
+    TimeoutScheduler,
+    EventsLogsAggregator
   ]
 })
 

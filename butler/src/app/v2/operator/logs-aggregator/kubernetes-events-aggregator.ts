@@ -1,10 +1,13 @@
 import * as k8s from '@kubernetes/client-node'
 import { Injectable } from '@nestjs/common'
+import { getConnection } from 'typeorm'
 import * as http from 'http'
 import * as moment from 'moment'
+import { LogEntity } from '../../api/deployments/entity/logs.entity'
+import { LogRepository } from '../../api/deployments/repository/log.repository'
 import { ConsoleLoggerService } from '../../core/logs/console'
+import { Log } from '../../api/deployments/interfaces/log.interface'
 
-// TODO: replace all console.log by logService
 @Injectable()
 export class EventsLogsAggregator {
 
@@ -18,7 +21,7 @@ export class EventsLogsAggregator {
 
   private connected = false
 
-  constructor(private consoleLoggerService: ConsoleLoggerService) {
+  constructor(private consoleLoggerService: ConsoleLoggerService, private logRepository: LogRepository) {
     this.kubeConfig = new k8s.KubeConfig()
     this.kubeConfig.loadFromDefault()
     this.resourceCache = {}
@@ -68,21 +71,32 @@ export class EventsLogsAggregator {
       if (this.hasAnyLabel(response.body, ['deploymentId'])
         && this.isAfter(event, this.lastConnectionLostTimestamp)) {
 
-        // TODO: store this data on the logs table
-        this.consoleLoggerService.log(`event time: ${event.timestamp} => lastConnectionLostTimestamp: ${this.lastConnectionLostTimestamp}`)
-        this.consoleLoggerService.log('ObjectLog', {
-          deploymentId: response.body.metadata?.labels?.['deploymentId'],
-          logs: {
-            type: event.type,
-            title: event.title,
-            timestamp: event.timestamp,
-            details: event.details
-          }
-        })
+        const deploymentId = response.body.metadata?.labels?.['deploymentId']
+
+        if(!deploymentId) {
+          this.consoleLoggerService.log('Unexpected behavior! "deploymentId" is mandatory! Discarding event')
+          return
+        }
+
+        const log = {
+          type: event.type,
+          title: event.title,
+          timestamp: moment(event.timestamp).format(), // TODO: rever essa formatação
+          details: event.details
+        }
+
+        this.saveLogs(deploymentId, log)
       }
     } catch (error) {
-      this.consoleLoggerService.error('Error processing event', error.body)
+      this.consoleLoggerService.error('Error processing event', error)
     }
+  }
+
+  private async saveLogs(deploymentId: string, log: Log): Promise<LogEntity> {
+    return getConnection().transaction(async transactionManager => {
+      const logEntity = new LogEntity(deploymentId, [log])
+      return transactionManager.save(logEntity)
+    })
   }
 
   private isAfter(event: Event, timestamp?: Date): boolean {
@@ -151,11 +165,6 @@ export class EventsLogsAggregator {
   }
 }
 
-interface EventDetails {
-  message: string
-  object: string
-}
-
 class Event {
 
   private readonly coreEventObject: k8s.CoreV1Event
@@ -168,8 +177,8 @@ class Event {
     return this.convertType(this.coreEventObject.type)
   }
 
-  public get title(): string | undefined {
-    return this.coreEventObject.reason
+  public get title(): string {
+    return this.coreEventObject.reason || ''
   }
 
   public get timestamp(): Date {
@@ -180,11 +189,11 @@ class Event {
     return this.fallBackTimestamp()
   }
 
-  public get details(): EventDetails {
-    return {
-      message: this.coreEventObject.message || '',
+  public get details(): string {
+    return JSON.stringify({
+      message: this.coreEventObject.message,
       object: `${this.coreEventObject.involvedObject.kind}/${this.coreEventObject.involvedObject.name}`
-    }
+    })
   }
 
   private convertType(eventType?: string): string {
