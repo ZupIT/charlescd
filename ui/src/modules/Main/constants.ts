@@ -69,10 +69,10 @@ export const mainMenu: MenuType[] = [
     to: routes.workspaces
   },
   {
-    id: genMenuId(routes.account),
+    id: genMenuId(routes.accountProfile),
     icon: 'account',
     text: 'Account',
-    to: routes.account
+    to: routes.accountProfile
   }
 ];
 
@@ -96,7 +96,7 @@ export const rootMainMenu: MenuType[] = [
     to: routes.groups
   },
   {
-    id: genMenuId(routes.account),
+    id: genMenuId(routes.accountProfile),
     icon: 'account',
     text: 'Account',
     to: routes.accountProfile
