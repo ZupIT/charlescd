@@ -13,6 +13,7 @@ import { RoutesHookController } from './controller/routes.hook.controller'
 import { ReconcileRoutesUsecase } from './use-cases/reconcile-routes.usecase'
 import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.usecase'
 import { EventsLogsAggregator } from './logs-aggregator/kubernetes-events-aggregator'
+import { EventsOperatorService } from './logs-aggregator/events-operator-service'
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { EventsLogsAggregator } from './logs-aggregator/kubernetes-events-aggreg
     ReconcileRoutesUsecase,
     ReconcileDeploymentUsecase,
     TimeoutScheduler,
-    EventsLogsAggregator
+    EventsLogsAggregator,
+    EventsOperatorService
   ]
 })
 
