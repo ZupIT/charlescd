@@ -14,7 +14,7 @@ require (
 	github.com/labstack/echo-contrib v0.9.0
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/leebenson/conform v1.2.2
-	github.com/lib/pq v1.8.0
+	github.com/lib/pq v1.8.0 // indirect
 	github.com/nleof/goyesql v1.0.1
 	github.com/pkosilo/gorm-crypto v1.0.0
 	github.com/prometheus/client_golang v1.9.0
