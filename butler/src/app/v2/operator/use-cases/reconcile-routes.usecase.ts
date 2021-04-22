@@ -55,9 +55,12 @@ export class ReconcileRoutesUsecase {
 
   private async getDesiredComponentSnapshots(hookParams: RouteHookParams): Promise<ComponentEntityV2[]> {
     const observedCircles = hookParams.parent.spec.circles
-    const componentSnapshots = await Promise.all(observedCircles.map(circle =>
-      this.componentsRepository.findActiveComponentsByCircleId(circle.id)
-    ))
+    const componentSnapshots = []
+    for (const circle of observedCircles) {
+      const currentHealthySnapshots = await this.componentsRepository.findCurrentHealthyComponentsByCircleId(circle.id)
+      const previousSnapshots =  await this.componentsRepository.findPreviousComponentsFromCurrentUnhealthyByCircleId(circle.id)
+      componentSnapshots.push([...currentHealthySnapshots, ...previousSnapshots])
+    }
     return componentSnapshots.flatMap(c => c)
   }
 

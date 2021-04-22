@@ -38,6 +38,7 @@ import { GitTokenDecryptionPipe } from '../pipes/git-token-decryption.pipe'
 import { DefaultCircleUniquenessPipe } from '../pipes/default-circle-uniqueness.pipe'
 import { FindDeploymentLogsByIdUsecase } from '../use-cases/find-deployment-logs-by-id.usecase'
 import { ReadLogsDto } from '../dto/read-logs.dto'
+import { DefaultCircleNamespaceUniquenessPipe } from '../pipes/default-circle-namespace-uniqueness.pipe'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -52,6 +53,7 @@ export class DeploymentsController {
   @UsePipes(GitTokenDecryptionPipe)
   @UsePipes(DeploymentUniquenessPipe)
   @UsePipes(DefaultCircleUniquenessPipe)
+  @UsePipes(DefaultCircleNamespaceUniquenessPipe)
   @UsePipes(new JoiValidationPipe())
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,

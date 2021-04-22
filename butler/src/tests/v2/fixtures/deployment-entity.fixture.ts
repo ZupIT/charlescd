@@ -78,13 +78,14 @@ const getManifests = (
   return manifests
 }
 
-const createDeployComponent = (
+export const createDeployComponent = (
   name: string,
   tag: string,
   circle: string,
   defaultCircle: boolean,
   manifestType: ManifestType,
-  namespace: string
+  namespace: string,
+  isDeploymentHealthy: boolean
 ) => {
   const component = new ComponentEntityV2(
     UrlConstants.helmRepository,
@@ -121,30 +122,10 @@ const createDeployComponent = (
     60
   )
   component.deployment.createdAt = new Date()
+  component.deployment.healthy = isDeploymentHealthy
 
   return component
 }
-
-export const componentsFixtureCircle1WithServiceNoLabels = [
-  createDeployComponent('A', 'v1', 'circle-1', true, 'noLabels', 'namespace')
-]
-
-export const componentsFixtureCircle1WithService = [
-  createDeployComponent('A', 'v1', 'circle-1', true, 'simple', 'namespace')
-]
-
-export const componentsFixtureCircle1DiffNamespace = [
-  createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'diff-namespace')
-]
-
-export const componentsFixtureCircle1 = [
-  createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace')
-]
-
-export const componentsFixtureCircle2 = [
-  createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace'),
-  createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace')
-]
 
 export const getDeploymentWithManifestFixture = (manifestType: ManifestType): DeploymentEntityV2 => {
   const deployment = new DeploymentEntityV2(
