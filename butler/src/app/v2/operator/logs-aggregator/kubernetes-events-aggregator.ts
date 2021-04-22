@@ -4,7 +4,6 @@ import { getConnection } from 'typeorm'
 import * as http from 'http'
 import * as moment from 'moment'
 import { LogEntity } from '../../api/deployments/entity/logs.entity'
-import { LogRepository } from '../../api/deployments/repository/log.repository'
 import { ConsoleLoggerService } from '../../core/logs/console'
 import { Log } from '../../api/deployments/interfaces/log.interface'
 
@@ -21,7 +20,7 @@ export class EventsLogsAggregator {
 
   private connected = false
 
-  constructor(private consoleLoggerService: ConsoleLoggerService, private logRepository: LogRepository) {
+  constructor(private consoleLoggerService: ConsoleLoggerService) {
     this.kubeConfig = new k8s.KubeConfig()
     this.kubeConfig.loadFromDefault()
     this.resourceCache = {}
