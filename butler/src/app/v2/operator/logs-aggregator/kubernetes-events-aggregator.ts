@@ -28,7 +28,7 @@ export class EventsLogsAggregator {
 
   public async watchEvents(): Promise<void> {
     const k8sWatch = new k8s.Watch(this.kubeConfig)
-    k8sWatch.watch('/api/v1/events',
+    return k8sWatch.watch('/api/v1/events',
       {},
       this.processEvent.bind(this),
       this.onFinishOrError.bind(this))
@@ -38,25 +38,45 @@ export class EventsLogsAggregator {
           this.consoleLoggerService.log('Connected!! Watching events...')
         })
       })
-      .catch(this.onError)
+      .catch(this.onError.bind(this))
   }
 
   private onError(error: Error) {
     // This is a startup error, should be verified evertime butler goes hair!
     this.consoleLoggerService.error('Error while trying to start streaming events', error)
-    throw error
+  }
+
+  // Called by any connection error or simple a close connection event
+  private async onFinishOrError(error?: Error) {
+    if (error) {
+      this.consoleLoggerService.error('Connection Error', error)
+    }
+
+    // Had an established connection
+    if (this.connected) {
+      this.lastConnectionLostTimestamp = moment.utc().toDate()
+      this.connected = false
+    }
+
+    this.retryWatchEvents()
+  }
+
+  private async retryWatchEvents() {
+    const restartIn = 5 // five seconds?
+    this.consoleLoggerService.log(`Restarting watching events in ${restartIn} seconds...`)
+    setTimeout(async() => this.watchEvents(), restartIn * 1000)
   }
 
   private async processEvent(phase: string, coreEvent: k8s.CoreV1Event) {
     try {
-      this.consoleLoggerService.log(phase)
+      this.consoleLoggerService.log(`Start processing new ${phase} event`)
       const involvedObject = coreEvent.involvedObject
 
       if (!involvedObject.namespace
         || !involvedObject.kind
         || !involvedObject.apiVersion
         || !involvedObject.name) {
-        this.consoleLoggerService.log('Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding event', involvedObject)
+        this.consoleLoggerService.log(`Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding ${phase} event`, involvedObject)
         return
       }
 
@@ -84,6 +104,7 @@ export class EventsLogsAggregator {
           details: event.details
         }
 
+        this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
         this.saveLogs(deploymentId, log)
       }
     } catch (error) {
@@ -100,27 +121,6 @@ export class EventsLogsAggregator {
 
   private isAfter(event: Event, timestamp?: Date): boolean {
     return !timestamp || event.isAfter(timestamp)
-  }
-
-  // Called by any connection error or simple a close connection event
-  private async onFinishOrError(error?: Error) {
-    if (error) {
-      this.consoleLoggerService.error('Connection Error', error)
-    }
-
-    // Had an established connection
-    if (this.connected) {
-      this.lastConnectionLostTimestamp = moment.utc().toDate()
-      this.connected = false
-    }
-
-    this.retryWatchEvents()
-  }
-
-  private async retryWatchEvents() {
-    const restartIn = 5 // five seconds?
-    this.consoleLoggerService.log(`Restarting watching events in ${restartIn} seconds...`)
-    setTimeout(async() => this.watchEvents(), restartIn * 1000)
   }
 
   private hasAnyLabel(resource: k8s.KubernetesObject, labels: string[]): boolean {
