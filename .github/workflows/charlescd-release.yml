@@ -451,5 +451,5 @@ jobs:
       - name: Deploy dev
         uses: WyriHaximus/github-action-helm3@v2.1.3
         with:
-          exec: export RABBITMQ_ERLANG_COOKIE=$(kubectl get secret --namespace default charlescd-rabbitmq -o jsonpath="{.data.rabbitmq-erlang-cookie}" | base64 --decode) && helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./values-charles-dev.yaml --set rabbitmq.auth.erlangCookie=$RABBITMQ_ERLANG_COOKIE
+          exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./values-charles-dev.yaml --set rabbitmq.auth.erlangCookie=${{ secrets.RABBITMQ_ERLANG_COOKIE_DEV }}
           kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
