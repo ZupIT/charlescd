@@ -36,3 +36,8 @@ type SystemToken struct {
 	LastUsedAt    *time.Time
 	Author        string
 }
+
+func(systemToken *SystemToken) SetLastUsed ()  {
+	lastUsedAt := time.Now()
+	systemToken.LastUsedAt =  &lastUsedAt
+}

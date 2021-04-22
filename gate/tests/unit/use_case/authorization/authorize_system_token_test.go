@@ -22,6 +22,7 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/tests/unit/utils"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,9 +31,16 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenPublicPath() {
 	var method = "GET"
 	var systemToken = utils.GetDummySystemToken()
 
+	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
+	as.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
+
 	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
+	require.Equal(as.T(), 2, len(as.systemTokenRepository.ExpectedCalls))
+	require.Equal(as.T(), 0, len(as.workspaceRepository.ExpectedCalls))
+	require.Equal(as.T(), 0, len(as.permissionRepository.ExpectedCalls))
+	require.True(as.T(), as.systemTokenRepository.AssertCalled(as.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutWorkspacePermission() {
@@ -47,6 +55,9 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutWorkspacePerm
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.ForbiddenError, logging.GetErrorType(err))
+	require.Equal(as.T(), 1, len(as.systemTokenRepository.ExpectedCalls))
+	require.Equal(as.T(), 1, len(as.workspaceRepository.ExpectedCalls))
+	require.Equal(as.T(), 0, len(as.permissionRepository.ExpectedCalls))
 }
 
 func (as *AuthorizeSuite) TestAuthorizeNotFoundSystemToken() {
@@ -60,6 +71,9 @@ func (as *AuthorizeSuite) TestAuthorizeNotFoundSystemToken() {
 
 	require.Error(as.T(), err)
 	require.Equal(as.T(), logging.NotFoundError, logging.GetErrorType(err))
+	require.Equal(as.T(), 1, len(as.systemTokenRepository.ExpectedCalls))
+	require.Equal(as.T(), 0, len(as.workspaceRepository.ExpectedCalls))
+	require.Equal(as.T(), 0, len(as.permissionRepository.ExpectedCalls))
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWorkspace() {
@@ -71,10 +85,16 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
 	as.workspaceRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(workspaces, nil).Once()
 	as.permissionRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
+	as.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
+
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, workspaces[0].ID.String(), utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)
+	require.Equal(as.T(), 2, len(as.systemTokenRepository.ExpectedCalls))
+	require.Equal(as.T(), 1, len(as.workspaceRepository.ExpectedCalls))
+	require.Equal(as.T(), 1, len(as.permissionRepository.ExpectedCalls))
+	require.True(as.T(), as.systemTokenRepository.AssertCalled(as.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathSystemTokenRevoked() {
@@ -104,5 +124,8 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutPermissionToW
 	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspace-id", utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Error(as.T(), err)
+	require.Equal(as.T(), 1, len(as.systemTokenRepository.ExpectedCalls))
+	require.Equal(as.T(), 1, len(as.workspaceRepository.ExpectedCalls))
+	require.Equal(as.T(), 1, len(as.permissionRepository.ExpectedCalls))
 	require.Equal(as.T(), logging.ForbiddenError, logging.GetErrorType(err))
 }
