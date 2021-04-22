@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as http from 'http'
 import { INestApplication } from '@nestjs/common'
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppConstants } from '../../../app/v2/core/constants'
@@ -37,6 +38,16 @@ const K8sClientStub = {
 
   applyRoutingCustomResource: async() => {
     return Promise.resolve()
+  },
+
+  getNamespace: async() => {
+    return Promise.resolve({ 
+      body: {
+        status: {
+          phase: "Active"
+        }
+      }, 
+      response: {} as http.IncomingMessage})
   }
 }
 

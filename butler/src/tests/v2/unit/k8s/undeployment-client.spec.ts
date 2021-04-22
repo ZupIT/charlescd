@@ -57,9 +57,9 @@ describe('Undeployment CRD client apply method', () => {
   })
 
   it('should call the read method with the correct arguments', async() => {
-    const readSpy = jest.spyOn(k8sClient.client, 'read')
+    const readSpy = jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'delete')
+    jest.spyOn(k8sClient.objectApi, 'delete')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
@@ -68,9 +68,9 @@ describe('Undeployment CRD client apply method', () => {
   })
 
   it('should call the delete method with the correct arguments', async() => {
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    const deleteSpy = jest.spyOn(k8sClient.client, 'delete')
+    const deleteSpy = jest.spyOn(k8sClient.objectApi, 'delete')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
@@ -81,9 +81,9 @@ describe('Undeployment CRD client apply method', () => {
   it('should throw error when read method fails and should not call the delete method', async() => {
     const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.reject(expectedError))
-    const deleteSpy = jest.spyOn(k8sClient.client, 'delete')
+    const deleteSpy = jest.spyOn(k8sClient.objectApi, 'delete')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     await expect(k8sClient.applyUndeploymentCustomResource(deployment))
@@ -94,9 +94,9 @@ describe('Undeployment CRD client apply method', () => {
   it('should throw error when delete method fails', async() => {
     const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'delete')
+    jest.spyOn(k8sClient.objectApi, 'delete')
       .mockImplementation(() => Promise.reject(expectedError))
 
     await expect(k8sClient.applyUndeploymentCustomResource(deployment))

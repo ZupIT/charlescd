@@ -13,4 +13,10 @@ rules:
   - delete
   - get
   - patch
+- apiGroups:
+  - '' 
+  resources:
+  - '*'
+  verbs:
+  - get
 {{- end }}
