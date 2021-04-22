@@ -43,8 +43,9 @@ class CreateWorkspaceInteractorImplTest extends Specification {
 
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
@@ -71,7 +72,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         ex.resourceName == "user"
     }
 
-    def 'should create workspace successfully'() {
+    def 'should create workspace successfully using authorization'() {
         given:
         def authorization = TestUtils.authorization
         def author = TestUtils.user
@@ -116,4 +117,52 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         workspaceResponse.gitConfiguration == null
         workspaceResponse.registryConfiguration == null
     }
+
+    def 'should create workspace successfully using system token'() {
+        given:
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def author = TestUtils.user
+        def expectedWorkspace = TestUtils.workspace
+        def createWorkspaceRequest = new CreateWorkspaceRequest(expectedWorkspace.name)
+        when:
+        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest, null, systemTokenValue)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
+        1 * workspaceRepository.save(_) >> { arguments ->
+            def workspace = arguments[0]
+            assert workspace instanceof Workspace
+
+            assert workspace.name == expectedWorkspace.name
+            assert workspace.author.id == expectedWorkspace.author.id
+            assert workspace.author.name == expectedWorkspace.author.name
+            assert workspace.author.photoUrl == expectedWorkspace.author.photoUrl
+            assert workspace.author.email == expectedWorkspace.author.email
+            assert workspace.author.workspaces == expectedWorkspace.author.workspaces
+            assert workspace.status == WorkspaceStatusEnum.INCOMPLETE
+
+            expectedWorkspace
+        }
+        1 * circleRepository.save(_) >> { arguments ->
+            def circle = arguments[0]
+            assert circle instanceof Circle
+
+            assert circle.name == "Default"
+            assert circle.defaultCircle
+            assert circle.workspaceId == expectedWorkspace.id
+        }
+
+        workspaceResponse != null
+        workspaceResponse.id == expectedWorkspace.id
+        workspaceResponse.status == expectedWorkspace.status.name()
+        workspaceResponse.createdAt == expectedWorkspace.createdAt
+        workspaceResponse.authorId == expectedWorkspace.author.id
+        workspaceResponse.cdConfiguration == null
+        workspaceResponse.circleMatcherUrl == expectedWorkspace.circleMatcherUrl
+        workspaceResponse.gitConfiguration == null
+        workspaceResponse.registryConfiguration == null
+    }
+
 }

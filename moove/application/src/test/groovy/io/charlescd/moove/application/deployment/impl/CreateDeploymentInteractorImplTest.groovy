@@ -37,10 +37,11 @@ class CreateDeploymentInteractorImplTest extends Specification {
     private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
     private DeployService deployService = Mock(DeployService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private HermesService hermesService = Mock(HermesService)
 
@@ -321,7 +322,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         deploymentResponse.deployedAt == null
     }
 
-    def 'when there is no active deployment in the circle and it is not default circle, should not undeploy it and deploy new one'() {
+    def 'when there is no active deployment in the circle and it is not default circle, should not undeploy it and deploy new one using authorization'() {
         given:
         def authorization = TestUtils.authorization
         def author = TestUtils.user
@@ -344,6 +345,62 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
+        1 * hermesService.notifySubscriptionEvent(_)
+        1 * deploymentRepository.save(_) >> _
+        1 * deployService.deploy(_, _, false, _) >> { arguments ->
+            def deploymentArgument = arguments[0]
+            def buildArgument = arguments[1]
+
+            assert deploymentArgument instanceof Deployment
+            assert buildArgument instanceof Build
+
+            deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
+            buildArgument.id == build.id
+        }
+
+        notThrown()
+        deploymentResponse.id != null
+        deploymentResponse.author.createdAt != null
+        deploymentResponse.status == DeploymentStatusEnum.DEPLOYING.name()
+        deploymentResponse.author.id == author.id
+        deploymentResponse.author.name == author.name
+        deploymentResponse.author.email == author.email
+        deploymentResponse.author.photoUrl == author.photoUrl
+        deploymentResponse.circle.id == build.deployments[0].circle.id
+        deploymentResponse.circle.name == build.deployments[0].circle.name
+        deploymentResponse.circle.author.id == build.deployments[0].circle.author.id
+        deploymentResponse.circle.author.name == build.deployments[0].circle.author.name
+        deploymentResponse.circle.author.email == build.deployments[0].circle.author.email
+        deploymentResponse.circle.author.photoUrl == build.deployments[0].circle.author.photoUrl
+        deploymentResponse.circle.importedAt == build.deployments[0].circle.importedAt
+        deploymentResponse.circle.importedKvRecords == build.deployments[0].circle.importedKvRecords
+        deploymentResponse.circle.matcherType == build.deployments[0].circle.matcherType.name()
+        deploymentResponse.circle.rules == build.deployments[0].circle.rules
+        deploymentResponse.buildId == build.id
+        deploymentResponse.deployedAt == null
+    }
+
+    def 'when there is no active deployment in the circle and it is not default circle, should not undeploy it and deploy new one using system token'() {
+        given:
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+
+        def workspace = TestUtils.workspace
+
+        when:
+        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
+        1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _

@@ -39,7 +39,8 @@ class CreateUserGroupInteractorImplTest extends Specification {
 
     private UserGroupRepository userGroupRepository = Mock(UserGroupRepository)
     private UserRepository userRepository = Mock(UserRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
@@ -66,7 +67,7 @@ class CreateUserGroupInteractorImplTest extends Specification {
         ex.resourceName == "user"
     }
 
-    def "should create user group and return user group response"() {
+    def "should create user group using authorization"() {
         given:
         def author = TestUtils.user
         def authorization = TestUtils.authorization
@@ -96,4 +97,37 @@ class CreateUserGroupInteractorImplTest extends Specification {
         assert userGroupResponse.id != null
         assert userGroupResponse.name == createUserGroupRequest.name
     }
+
+    def "should create user group using system token"() {
+        given:
+        def author = TestUtils.user
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def createUserGroupRequest = new CreateUserGroupRequest("group-name")
+
+        when:
+        def userGroupResponse = this.createUserGroupInteractor.execute(createUserGroupRequest, null, systemTokenValue)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
+        1 * this.userGroupRepository.save(_) >> { argument ->
+            def savedUserGroup = argument[0]
+            assert savedUserGroup instanceof UserGroup
+            assert savedUserGroup.id != null
+            assert savedUserGroup.name == createUserGroupRequest.name
+            assert savedUserGroup.createdAt != null
+            assert savedUserGroup.author.id == author.id
+            assert savedUserGroup.users.size() == 0
+
+            return savedUserGroup
+        }
+
+        notThrown()
+
+        assert userGroupResponse != null
+        assert userGroupResponse.id != null
+        assert userGroupResponse.name == createUserGroupRequest.name
+    }
+
 }
