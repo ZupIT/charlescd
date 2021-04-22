@@ -23,12 +23,14 @@ import (
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
 	ExistsByEmail(email string) (bool, error)
 	GetByEmail(email string) (domain.User, error)
+	Create(user domain.User) (domain.User, error)
 }
 
 type userRepository struct {
@@ -65,9 +67,21 @@ func (userRepository userRepository) GetByEmail(email string) (domain.User, erro
 		if res.Error.Error() == "record not found" {
 			return domain.User{}, handleUserError("User not found", "unit.GetByEmail.First", res.Error, logging.NotFoundError)
 		}
-		return domain.User{}, handleSystemTokenError("Find user failed", "UserRepository.GetByEmail.First", res.Error, logging.InternalError)
+		return domain.User{}, handleUserError("Find user failed", "UserRepository.GetByEmail.First", res.Error, logging.InternalError)
 	}
 	return mapper.UserModelToDomain(user), nil
+}
+
+func (userRepository userRepository) Create(user domain.User) (domain.User, error) {
+	user.ID = uuid.New()
+	userToSave := mapper.UserDomainToModel(user)
+
+	res := userRepository.db.Model(models.User{}).Create(&userToSave)
+
+	if res.Error != nil {
+		return domain.User{}, handleUserError("Create user failed", "UserRepository.Create.create", res.Error, logging.InternalError)
+	}
+	return mapper.UserModelToDomain(userToSave), nil
 }
 
 func handleUserError(message string, operation string, err error, errType string) error {

@@ -33,6 +33,7 @@ func (st *SystemTokenSuite) TestCreateSystemToken() {
 	systemTokenInput := utils.GetDummyCreateSystemTokenInput()
 	permissions := utils.GetDummyPermissions()
 	workspaces := utils.GetDummySimpleWorkspaces()
+	user := utils.GetDummyUserSystemToken(systemToken.ID)
 
 	systemToken.Permissions = permissions
 	systemToken.Workspaces = workspaces
@@ -42,13 +43,14 @@ func (st *SystemTokenSuite) TestCreateSystemToken() {
 	st.permissionRepository.On("FindAll", systemTokenInput.Permissions).Return(permissions, nil).Once()
 	st.workspaceRepository.On("FindByIds", systemTokenInput.Workspaces).Return(workspaces, nil).Once()
 	st.systemTokenRepository.On("Create", mock.AnythingOfType("domain.SystemToken")).Return(systemToken, nil).Once()
+	st.userRepository.On("Create", mock.AnythingOfType("domain.User")).Return(user, nil).Once()
 
 	result, err := st.createSystemToken.Execute(authorization, systemTokenInput)
 
 	require.NotNil(st.T(), result)
 	require.Nil(st.T(), err)
 
-	require.Equal(st.T(), 1, len(st.userRepository.ExpectedCalls))
+	require.Equal(st.T(), 2, len(st.userRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.permissionRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.workspaceRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
@@ -57,6 +59,7 @@ func (st *SystemTokenSuite) TestCreateSystemToken() {
 	require.True(st.T(), st.permissionRepository.AssertCalled(st.T(), "FindAll", systemTokenInput.Permissions))
 	require.True(st.T(), st.workspaceRepository.AssertCalled(st.T(), "FindByIds", systemTokenInput.Workspaces))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Create", mock.AnythingOfType("domain.SystemToken")))
+	require.True(st.T(), st.userRepository.AssertCalled(st.T(), "Create", mock.AnythingOfType("domain.User")))
 
 	createdSystemToken := st.systemTokenRepository.Calls[0].Parent.Calls[0].Arguments.Get(0).(domain.SystemToken)
 	require.NotNil(st.T(), createdSystemToken)

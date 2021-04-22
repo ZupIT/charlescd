@@ -50,10 +50,11 @@ class V2BuildController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createBuild(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody request: CreateBuildRequest
     ): BuildResponse {
-        return this.createBuildInteractor.execute(request, workspaceId, authorization)
+        return this.createBuildInteractor.execute(request, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Create a new Compose Build")
@@ -67,11 +68,12 @@ class V2BuildController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createComposedBuild(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody
         request: CreateComposedBuildRequest
     ): BuildResponse {
-        return this.createComposedBuildInteractor.execute(request, workspaceId, authorization)
+        return this.createComposedBuildInteractor.execute(request, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Find Build By Id")

@@ -22,6 +22,7 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.DeployService
@@ -45,6 +46,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
     private HermesService hermesService = Mock(HermesService)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
 
@@ -57,7 +59,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
                 new CdConfigurationService(deployService),
                 new MetricConfigurationService(metricConfigurationRepository, compassApi),
                 hermesService,
-                new UserService(userRepository, managementUserSecurityService)
+                new UserService(userRepository, systemTokenService, managementUserSecurityService)
         )
     }
 

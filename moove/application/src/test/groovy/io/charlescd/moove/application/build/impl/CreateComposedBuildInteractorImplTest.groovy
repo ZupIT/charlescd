@@ -18,6 +18,7 @@ package io.charlescd.moove.application.build.impl
 
 import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.ModuleService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.build.request.CreateComposedBuildRequest
@@ -25,6 +26,7 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.domain.repository.ModuleRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
@@ -38,11 +40,12 @@ class CreateComposedBuildInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         this.createComposedBuildInteractor = new CreateComposedBuildInteractorImpl(
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new ModuleService(moduleRepository),
                 new BuildService(buildRepository)
         )
@@ -56,7 +59,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest()
 
         when:
-        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
+        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> "email@email.com"
@@ -78,7 +81,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         listOfModulesId.add(createComposedBuildRequest.modules[0].id)
 
         when:
-        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
+        createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
@@ -124,7 +127,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         listOfModules.add(module)
 
         when:
-        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
+        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
@@ -192,7 +195,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         listOfModules.add(module)
 
         when:
-        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization)
+        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email

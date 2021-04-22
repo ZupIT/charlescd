@@ -30,8 +30,8 @@ class CreateUserGroupInteractorImpl @Inject constructor(
     private val userService: UserService
 ) : CreateUserGroupInteractor {
 
-    override fun execute(request: CreateUserGroupRequest, authorization: String): UserGroupResponse {
-        val author = userService.findByAuthorizationToken(authorization)
+    override fun execute(request: CreateUserGroupRequest, authorization: String?, token: String?): UserGroupResponse {
+        val author = userService.findFromAuthMethods(authorization, token)
         val saved = userGroupService.save(request.toUserGroup(author))
         return UserGroupResponse.from(saved)
     }

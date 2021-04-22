@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.webhook.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.HealthCheckWebhookSubscriptionInteractor
@@ -23,6 +24,7 @@ import io.charlescd.moove.domain.WebhookSubscriptionHealthCheck
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -35,15 +37,16 @@ class HealthCheckWebhookSubscriptionInteractorImplTest extends Specification {
     private HealthCheckWebhookSubscriptionInteractor healthCheckWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        healthCheckWebhookSubscriptionInteractor = new HealthCheckWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
+        healthCheckWebhookSubscriptionInteractor = new HealthCheckWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to delete subscription should do it successfully"() {
         when:
-        healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId)
+        healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, null, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -55,7 +58,7 @@ class HealthCheckWebhookSubscriptionInteractorImplTest extends Specification {
 
     def "when trying to delete subscription and is wrong workspace should throw not found exception"() {
         when:
-        healthCheckWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId)
+        healthCheckWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, null, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail

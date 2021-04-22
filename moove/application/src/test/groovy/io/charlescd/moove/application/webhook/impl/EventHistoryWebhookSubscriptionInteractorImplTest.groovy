@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.webhook.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.EventHistoryWebhookSubscriptionInteractor
@@ -27,6 +28,7 @@ import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.WebhookSubscriptionEventHistory
 import io.charlescd.moove.domain.WebhookSubscriptionInfo
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -39,10 +41,11 @@ class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
     private EventHistoryWebhookSubscriptionInteractor eventHistoryWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        eventHistoryWebhookSubscriptionInteractor = new EventHistoryWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
+        eventHistoryWebhookSubscriptionInteractor = new EventHistoryWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to get subscription event history should do it successfully"() {
@@ -68,7 +71,7 @@ class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
         def pageRequest = new PageRequest()
 
         when:
-        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId, "DEPLOY", null, null, null, pageRequest)
+        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, authorization, null, subscriptionId, "DEPLOY", null, null, null, pageRequest)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -83,7 +86,7 @@ class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
         def pageRequest = new PageRequest()
 
         when:
-        eventHistoryWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId, "DEPLOY", null, null, null, pageRequest)
+        eventHistoryWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, null, subscriptionId, "DEPLOY", null, null, null, pageRequest)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail

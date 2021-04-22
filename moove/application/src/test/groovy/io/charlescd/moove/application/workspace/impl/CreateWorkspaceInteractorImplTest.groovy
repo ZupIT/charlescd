@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.workspace.impl
 
 import io.charlescd.moove.application.CircleService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -28,6 +29,7 @@ import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -42,11 +44,12 @@ class CreateWorkspaceInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         createWorkspaceInteractor =
-                new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, managementUserSecurityService),
+                new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new CircleService(circleRepository))
     }
 
@@ -57,7 +60,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         def createWorkspaceRequest = new CreateWorkspaceRequest("Workspace name")
 
         when:
-        createWorkspaceInteractor.execute(createWorkspaceRequest, authorization)
+        createWorkspaceInteractor.execute(createWorkspaceRequest, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> email
@@ -75,7 +78,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         def expectedWorkspace = TestUtils.workspace
         def createWorkspaceRequest = new CreateWorkspaceRequest(expectedWorkspace.name)
         when:
-        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest, authorization)
+        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email

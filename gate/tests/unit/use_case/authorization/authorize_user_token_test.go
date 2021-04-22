@@ -69,7 +69,7 @@ func (as *AuthorizeSuite) TestAuthorizeRootUserTokenClosedPath() {
 func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithoutPermissions() {
 	var path = "/moove/v2/workspaces/users"
 	var method = "GET"
-	var user = utils.GetDummyUser()
+	var user = utils.GetDummyUserAuthorize()
 	var permissions = [][]domain.Permission{utils.GetDummyPermissions()}
 
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()
@@ -84,7 +84,7 @@ func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithoutPermissi
 func (as *AuthorizeSuite) TestAuthorizeNonRootUserTokenClosedPathWithPermissions() {
 	var path = "/moove/v2/circles/"
 	var method = "POST"
-	var user = utils.GetDummyUser()
+	var user = utils.GetDummyUserAuthorize()
 	var permissions = [][]domain.Permission{utils.GetDummyPermissions()}
 
 	as.userRepository.On("GetByEmail", user.Email).Return(user, nil).Once()

@@ -37,23 +37,23 @@ open class UndeployInteractorImpl @Inject constructor(
 ) : UndeployInteractor {
 
     @Transactional
-    override fun execute(workspaceId: String, authorization: String, id: String) {
+    override fun execute(workspaceId: String, authorization: String?, token: String?, id: String) {
         val deployment: Deployment = getDeployment(id, workspaceId)
         updateDeploymentStatus(deployment)
-        undeploy(authorization, deployment)
+        undeploy(authorization, token, deployment)
     }
 
     private fun updateDeploymentStatus(deployment: Deployment): Deployment {
         return deploymentService.update(deployment.copy(status = DeploymentStatusEnum.UNDEPLOYING))
     }
 
-    private fun getAuthorId(authorization: String): String {
-        return userService.findByAuthorizationToken(authorization).id
+    private fun getAuthorId(authorization: String?, token: String?): String {
+        return userService.findFromAuthMethods(authorization, token).id
     }
 
-    private fun undeploy(authorization: String, deployment: Deployment) {
+    private fun undeploy(authorization: String?, token: String?, deployment: Deployment) {
         try {
-            deployService.undeploy(deployment.id, getAuthorId(authorization))
+            deployService.undeploy(deployment.id, getAuthorId(authorization, token))
             notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
             notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.FAIL, deployment, ex.message!!)

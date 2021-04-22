@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.webhook.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.GetWebhookSubscriptionInteractor
@@ -23,6 +24,7 @@ import io.charlescd.moove.domain.SimpleWebhookSubscription
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -35,15 +37,16 @@ class GetWebhookSubscriptionInteractorImplTest extends Specification {
     private GetWebhookSubscriptionInteractor getWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        getWebhookSubscriptionInteractor = new GetWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
+        getWebhookSubscriptionInteractor = new GetWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService)), hermesService)
     }
 
     def "when trying to get subscription should do it successfully"() {
         when:
-        getWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId)
+        getWebhookSubscriptionInteractor.execute(workspaceId, authorization, null, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -55,7 +58,7 @@ class GetWebhookSubscriptionInteractorImplTest extends Specification {
 
     def "when trying to get subscription and is wrong workspace should throw not found exception"() {
         when:
-        getWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId)
+        getWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, null, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail

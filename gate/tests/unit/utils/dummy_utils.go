@@ -84,6 +84,18 @@ func GetDummyCreateSystemTokenInput() system_token.CreateSystemTokenInput {
 	}
 }
 
+func GetDummyUserSystemToken(systemTokenId uuid.UUID) domain.User {
+	return domain.User{
+		ID:            uuid.New(),
+		Name:          "System Token Test",
+		PhotoUrl:      "",
+		Email:         systemTokenId.String() + "@system.token",
+		IsRoot:        false,
+		SystemTokenId: systemTokenId,
+		CreatedAt:     time.Now(),
+	}
+}
+
 func GetDummyPermissions() []domain.Permission {
 	return []domain.Permission{
 		{
@@ -124,7 +136,7 @@ func GetDummyRootUser() domain.User {
 	}
 }
 
-func GetDummyUser() domain.User {
+func GetDummyUserAuthorize() domain.User {
 	return domain.User{
 		ID:        uuid.New(),
 		Name:      "John Doe",

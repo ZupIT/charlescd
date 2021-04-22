@@ -37,6 +37,18 @@ type SystemToken struct {
 	Author        string
 }
 
+func (systemToken SystemToken) CreateUserFromSystemToken() User {
+	return User{
+		ID:            uuid.New(),
+		Name:          systemToken.Name,
+		PhotoUrl:      "",
+		Email:         systemToken.ID.String() + "@system.token",
+		IsRoot:        false,
+		SystemTokenId: systemToken.ID,
+		CreatedAt:     time.Now(),
+	}
+}
+
 func(systemToken *SystemToken) SetLastUsed ()  {
 	lastUsedAt := time.Now()
 	systemToken.LastUsedAt =  &lastUsedAt

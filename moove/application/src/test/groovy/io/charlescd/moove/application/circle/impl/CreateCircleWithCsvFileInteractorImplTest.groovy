@@ -28,6 +28,7 @@ import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MatcherTypeEnum
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.KeyValueRuleRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
@@ -45,11 +46,12 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule()).registerModule(new JavaTimeModule())
     private CsvSegmentationService csvSegmentationService = new CsvSegmentationService(objectMapper)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createCircleWithCsvFileInteractor = new CreateCircleWithCsvFileInteractorImpl(
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new CircleService(circleRepository),
                 circleMatcherService,
                 new KeyValueRuleService(keyValueRuleRepository),
@@ -81,7 +83,7 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def request = new CreateCircleWithCsvRequest(name, keyName, inputStream)
 
         when:
-        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
+        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
@@ -177,7 +179,7 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         def request = new CreateCircleWithCsvRequest(name, keyName, inputStream)
 
         when:
-        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization)
+        def response = this.createCircleWithCsvFileInteractor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email

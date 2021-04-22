@@ -18,12 +18,14 @@ package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.OpCodeEnum
 import io.charlescd.moove.application.PatchOperation
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.PatchUserInteractor
 import io.charlescd.moove.application.user.request.PatchUserRequest
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -35,10 +37,11 @@ class PatchUserInteractorImplTest extends Specification {
 
     private PatchUserInteractor patchUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), true)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, systemTokenService, managementUserSecurityService), true)
     }
 
     def "when trying to update user name should do it successfully"() {
@@ -246,7 +249,7 @@ class PatchUserInteractorImplTest extends Specification {
         def request = new PatchUserRequest(patches)
         def authorization = "Bearer token"
 
-        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), false)
+        patchUserInteractor = new PatchUserInteractorImpl(new UserService(userRepository, systemTokenService, managementUserSecurityService), false)
 
         when:
         patchUserInteractor.execute(userId, request, authorization)

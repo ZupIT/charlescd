@@ -40,6 +40,10 @@ class TestUtils {
         return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
     }
 
+    static String getSystemToken() {
+        return "f916bea53b54433b869ea34c3499be6d"
+    }
+
     static String getIntruderAuthorId() {
         return "qwwweabd3c1-15a3-45b6-84fb-f0e548ac123s"
     }

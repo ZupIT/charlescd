@@ -155,6 +155,11 @@ env:
     secretKeyRef:
       name: "application-aes256-key"
       key: "encryption-key"
+- name: GATE_ENCRYPTION_KEY
+  valueFrom:
+    secretKeyRef:
+      name: "gate-aes256-key"
+      key: "encryption-key"
 {{- end -}}
 
 {{- define "test.circle-matcher-envs" -}}
