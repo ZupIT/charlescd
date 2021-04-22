@@ -34,7 +34,7 @@ const Title = styled(Text.h2)`
 `;
 
 const Subtitle = styled(Text.h5)`
-  margin: 10px 0px;
+  margin: 20px 0px 5px;
 `;
 
 const MinorTitle = styled(Text.h3)`
@@ -48,7 +48,10 @@ const Content = styled.div`
   margin-left: 8px;
 `;
 
-const Form = styled.form``;
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
 
 const Number = styled(FormComponent.Number)`
   width: 271px;
@@ -57,7 +60,7 @@ const Number = styled(FormComponent.Number)`
 
 const Input = styled(FormComponent.Input)`
   width: 271px;
-  margin-bottom: 12px;
+  margin-bottom: 5px;
 `;
 
 const Helm = styled.div`

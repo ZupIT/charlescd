@@ -33,7 +33,7 @@ import {
   validateSlash
 } from './helpers';
 import Styled from './styled';
-import { isNotBlank, isRequiredAndNotBlank } from 'core/utils/validations';
+import { isNotBlank, isRequired, isRequiredAndNotBlank, maxLength, urlPattern } from 'core/utils/validations';
 import { getWorkspace } from 'core/utils/workspace';
 
 interface Props {
@@ -81,7 +81,7 @@ const FormModule = ({ module, onChange }: Props) => {
     errors: helmErrors,
     formState: { isValid: isHelmValid }
   } = useForm<Helm>({ mode: 'onChange' });
-  const { register, control, handleSubmit, formState: { isValid } } = form;
+  const { register, control, handleSubmit, formState: { isValid }, errors } = form;
   const fieldArray = useFieldArray({ control, name: 'components', keyName: 'fieldId' });
   const workspace = getWorkspace();
   const helmGitProvider = workspace?.deploymentConfiguration?.gitProvider;
@@ -232,7 +232,12 @@ const FormModule = ({ module, onChange }: Props) => {
             label="URL git"
             name="gitRepositoryAddress"
             defaultValue={module?.gitRepositoryAddress}
-            ref={register({ required: true })}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength(1048),
+              pattern: urlPattern(),
+            })}
+            error={errors?.gitRepositoryAddress?.message}
           />
           {!isEditing && <Components key="components" fieldArray={fieldArray} />}
           {helmGitProvider && renderGitHelm()}
