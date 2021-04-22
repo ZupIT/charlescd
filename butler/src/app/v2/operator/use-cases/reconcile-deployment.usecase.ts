@@ -119,7 +119,7 @@ export class ReconcileDeploymentUsecase {
 
     // TODO what about other resources such as StatefulSet, CronJob etc?
     if (manifest.kind === 'Deployment') {
-      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
+      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.id}`
     }
 
     if (manifest.spec?.template) {

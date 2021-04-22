@@ -69,6 +69,7 @@ interface Labels {
   component: string
   tag: string
   circleId: string
+  deploymentId: string
 }
 
 export interface Http {
