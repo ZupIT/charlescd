@@ -239,13 +239,15 @@ const CirclesComparationItem = ({
 
   const renderDropdown = () => (
     <Dropdown>
-      <Can I="write" a="circles" passThrough>
-        <Dropdown.Item
-          icon="edit"
-          name="Edit segments"
-          onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
-        />
-      </Can>
+      {!circle?.default && (
+        <Can I="write" a="circles" passThrough>
+          <Dropdown.Item
+            icon="edit"
+            name="Edit segments"
+            onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
+          />
+        </Can>
+      )}
       {isUndeployable(circle) && (
         <Can I="write" a="deploy" passThrough>
           <Dropdown.Item
@@ -310,15 +312,13 @@ const CirclesComparationItem = ({
           </LabeledIcon>
         </Can>
       )}
-      {circle?.deployment && (
-        <LabeledIcon
-          icon="clock"
-          marginContent="5px"
-          onClick={() => setActiveSection(SECTIONS.HISTORY)}
-          >
-            <Text.h5 color="dark">History</Text.h5>
-        </LabeledIcon>
-      )}
+      <LabeledIcon
+        icon="clock"
+        marginContent="5px"
+        onClick={() => setActiveSection(SECTIONS.HISTORY)}
+        >
+          <Text.h5 color="dark">History</Text.h5>
+      </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>
   );
@@ -331,7 +331,7 @@ const CirclesComparationItem = ({
   const renderPanelContent = () => (
     <>
       {action === 'Delete' && renderWarning()}
-      <LayerName name={circle?.name} onSave={saveCircleName} />
+      <LayerName name={circle?.name} onSave={saveCircleName} isDefault={circle?.default} />
       <LayerSegments
         circle={circle}
         isEditing={isEditing}

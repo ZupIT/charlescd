@@ -297,7 +297,7 @@ jobs:
     
   build_and_push_release_gate:
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -376,6 +376,10 @@ jobs:
     - name: QEMU
       uses: docker/setup-qemu-action@v1
 
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+    
     - name: Docker Buildx
       uses: docker/setup-buildx-action@v1
 

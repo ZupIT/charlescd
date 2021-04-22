@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "RGU1TDg4anVzMg=="
-  postgresql-password: "VGQ1c01jUWJCcQ=="
+  postgresql-postgres-password: "UXJNRExLQXYzRA=="
+  postgresql-password: "cWpySnhnSDVybQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -187,7 +187,7 @@ data:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
-                  
+
                   - match:
                       prefix: "/gate/"
                     route:
@@ -328,7 +328,7 @@ data:
                   socket_address:
                     address: charlescd-hermes
                     port_value: 8080
-      
+
       - name: charlescd-gate
         connect_timeout: 0.25s
         type: strict_dns
@@ -5726,7 +5726,7 @@ data:
       psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
       psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
       psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    
+
       psql -c "CREATE DATABASE charlescd_hermes"
       psql -c "CREATE USER charlescd_hermes WITH PASSWORD 'aGVybWVz'"
       psql -c "ALTER DATABASE charlescd_hermes OWNER TO charlescd_hermes"
@@ -6529,7 +6529,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.1
+          image: zupcharles/charlescd-butler:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6592,7 +6592,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.1
+          image: zupcharles/charlescd-circle-matcher:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6687,7 +6687,7 @@ spec:
             - name: MOOVE_AUTH
               value: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcXkydE1XY2E1VVhaYjdONXZNSEE0b25NRkZqNkVLandSV0tnaTJvQkhNIn0.eyJleHAiOjE2MTEyNTMzMzcsImlhdCI6MTYxMTI0OTczNywianRpIjoiNmU5OWYyZjUtOTBlMS00OGFjLWFlN2QtYWJkMjIyODIwY2FmIiwiaXNzIjoiaHR0cDovL2NoYXJsZXMuaW5mby5leGFtcGxlL2tleWNsb2FrL2F1dGgvcmVhbG1zL2NoYXJsZXNjZCIsImF1ZCI6ImRhcndpbi1jbGllbnQiLCJzdWIiOiJkYThjYTQ5OC1lNDQ5LTQzMjYtYThkZC00ODM5NDI0Y2JkZDAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjaGFybGVzY2QtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjI5Mzk2ZDZlLWI4ZDctNGU0ZC1hYTI2LWVlYWVlM2M5ODRjNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNSb290Ijp0cnVlLCJuYW1lIjoiY2hhcmxlc2FkbWluQGFkbWluIGNoYXJsZXNhZG1pbkBhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImdpdmVuX25hbWUiOiJjaGFybGVzYWRtaW5AYWRtaW4iLCJmYW1pbHlfbmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImVtYWlsIjoiY2hhcmxlc2FkbWluQGFkbWluIn0.NLzu9222nMb-eyIiKwbznPzSTXe26QQp5cYGWw4MhfTW43gl6bXFAd-YMSXMEz5mmRy73NlW8WWnMKfQpC2FR-3wSKajVTB5_Y2CJC8PTLjXUpcZS2UxvBuV_ANZiINNovGiX87XFNhm9bHZxXzYUhDKqGh2C72G18fZKUTGMCfcTFHhFjxWDx1MEm5AN5JzPNbtcYWmrCMufgTsaQD9pQrHWxr9-8kNgKYff6wMVJLR6YIVpNVy7eHWTTOKwa59BFpw-w45clA3dtcs5cbMQo6GoA52_f5XdyvCZ-llYfvYpT09iPMsekWjG0TTbo2hCA59VKnMZA0r7JtPan9wrQ"
             - name: REQUESTS_PER_SECOND_LIMIT
-              value: ""
+              value: "5"
             - name: LIMITER_TOKEN_TTL
               value: "5"
             - name: LIMITER_HEADERS_TTL
@@ -6697,7 +6697,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.1
+          image: zupcharles/charlescd-compass:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6776,9 +6776,9 @@ spec:
           - name: KEYCLOAK_CLIENT_ID
             value: "realm-charlescd"
           - name: RATELIMIT_CAPACITY
-            value: "4"
+            value: "5"
           - name: RATELIMIT_TOKENS
-            value: "4"
+            value: "5"
           - name: RATELIMIT_SECONDS
             value: "1"
           - name: KEYCLOAK_CLIENT_SECRET
@@ -6792,7 +6792,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.1
+          image: zupcharles/charlescd-moove:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6852,7 +6852,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.1
+          image: zupcharles/charlescd-octopipe:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6921,7 +6921,7 @@ spec:
               value: http://charles.info.example
             - name: REACT_APP_CHARLES_VERSION
               value: 
-          image: zupcharles/charlescd-ui:0.6.1
+          image: zupcharles/charlescd-ui:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6995,7 +6995,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.1
+          image: zupcharles/charlescd-villager:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http

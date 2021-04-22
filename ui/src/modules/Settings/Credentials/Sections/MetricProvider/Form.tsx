@@ -31,6 +31,8 @@ import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
 import DocumentationLink from 'core/components/DocumentationLink';
 
+const datasourcePlaceholder = 'charlescd-data-source-example';
+
 const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
   const { responseSave, save, loadingSave, loadingAdd } = useDatasource();
   const {
@@ -38,11 +40,30 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
     loading: loadingConnectionResponse,
     save: testConnection
   } = useTestConnection(testDataSourceConnection);
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins();
-  const { control, register, handleSubmit, getValues, formState } = useForm<
-    Datasource
-  >({ mode: 'onChange' });
+  const { 
+    control,
+    register,
+    handleSubmit,
+    getValues,
+    formState,
+    watch
+  } = useForm<Datasource>({ 
+        mode: 'onChange',
+        defaultValues: {
+          data: {
+            url: 'https://'
+          }
+        }
+      });
+  
+  const urlField = watch('data.url') as string;
+
+  useEffect(() => {
+    setShowPlaceholder(['https://', 'http://'].includes(urlField));
+  }, [urlField]);
 
   useEffect(() => {
     getAll();
@@ -79,12 +100,19 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       {map(
         (plugin.inputParameters as PluginDatasource)['configurationInputs'],
         input => (
-          <Styled.Input
-            key={input.name}
-            ref={register({ required: input.required })}
-            name={`data.${input.name}`}
-            label={input.label}
-          />
+          <Styled.Wrapper>
+            <Styled.Input
+              key={input.name}
+              ref={register({ required: input.required })}
+              name={`data.${input.name}`}
+              label={input.label}
+            />
+            {(input.name === 'url' && showPlaceholder) &&
+              <Styled.Placeholder color="light">
+                {datasourcePlaceholder}
+              </Styled.Placeholder>
+            }
+          </Styled.Wrapper>
         )
       )}
       <ConnectionStatus

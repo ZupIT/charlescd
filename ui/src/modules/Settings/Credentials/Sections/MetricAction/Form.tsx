@@ -27,12 +27,20 @@ import { buildActionPayload } from './helpers';
 import DocumentationLink from 'core/components/DocumentationLink';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 
+const actionPlaceholder = 'charlescd-custom-path-example';
+
 const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   const [loadingPlugins, setLoadingPlugins] = useState(true);
   const [showConfigAction, setShowConfigAction] = useState(false);
   const [isDefault, setIsDefault] = useState(true);
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [pluginsOptions, setPluginsOptions] = useState([]);
-  const formMethods = useForm<ActionForm>({ mode: 'onChange' });
+  const formMethods = useForm<ActionForm>({
+    mode: 'onChange',
+    defaultValues: {
+      configuration: 'https://'
+    }
+  });
   const {
     handleSubmit,
     register,
@@ -41,9 +49,14 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
     formState: { isValid }
   } = formMethods;
   const nickname = watch('nickname') as string;
+  const configuration = watch('configuration') as string;
 
   const { getPlugins } = usePlugins();
   const { createAction, status } = useCreateAction();
+
+  useEffect(() => {
+    setShowPlaceholder(['https://', 'http://'].includes(configuration));
+  }, [configuration]);
 
   useEffect(() => {
     setLoadingPlugins(true);
@@ -97,11 +110,18 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
         </Styled.ButtonIconRounded>
       </Styled.ButtonGroup>
       {!isDefault && (
-        <Styled.Input
-          name="configuration"
-          ref={register(isRequiredAndNotBlank)}
-          label="Enter a action configuration"
-        />
+        <Styled.Wrapper>
+          <Styled.Input
+            name="configuration"
+            ref={register(isRequiredAndNotBlank)}
+            label="Enter a action configuration"
+          />
+          {showPlaceholder && (
+            <Styled.Placeholder color="light">
+              {actionPlaceholder}
+            </Styled.Placeholder>
+          )}
+        </Styled.Wrapper>
       )}
       <Button.Default
         id="save"

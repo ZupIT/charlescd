@@ -25,7 +25,7 @@ const Placeholder = () => {
       icon="empty-groups"
       title={`Hello, ${profileName}!`}
       description="
-        if you need to integrate external systems with Charles,
+        If you need to integrate external systems with Charles,
         consider creating a new access token using the side menu to have access to our API.
       "
     />

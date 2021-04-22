@@ -66,6 +66,10 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 		return logging.WithOperation(err, "authorize.systemToken")
 	}
 
+	if systemToken.Revoked {
+		return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
+	}
+
 	if !systemToken.AllWorkspaces {
 		workspaces, err := authorizeSystemToken.workspaceRepository.FindBySystemTokenId(systemToken.ID.String())
 		if err != nil {

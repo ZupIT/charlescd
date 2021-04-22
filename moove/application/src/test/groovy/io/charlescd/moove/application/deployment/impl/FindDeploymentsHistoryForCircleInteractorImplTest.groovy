@@ -75,7 +75,11 @@ class FindDeploymentsHistoryForCircleInteractorImplTest extends Specification {
 
         parameteres.deploymentName == null
         parameteres.periodBefore == null
-        parameteres.deploymentStatus == [DeploymentStatusEnum.DEPLOYED, DeploymentStatusEnum.NOT_DEPLOYED, DeploymentStatusEnum.DEPLOY_FAILED]
+        parameteres.deploymentStatus == [DeploymentStatusEnum.DEPLOYING,
+                                         DeploymentStatusEnum.DEPLOYED,
+                                         DeploymentStatusEnum.UNDEPLOYING,
+                                         DeploymentStatusEnum.NOT_DEPLOYED,
+                                         DeploymentStatusEnum.DEPLOY_FAILED]
         parameteres.circlesIds == [circle]
     }
 

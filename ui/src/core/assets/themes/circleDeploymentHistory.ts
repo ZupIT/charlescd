@@ -19,7 +19,7 @@ import {
   COLOR_MOUNTAIN_MEADOW,
   COLOR_DODGER_BLUE,
   COLOR_RED_ORANGE,
-  COLOR_PURPLE_HEART,
+  COLOR_GOLD,
   COLOR_BLACK_MARLIN,
   COLOR_ORANGE_PEEL
 } from '../colors';
@@ -32,11 +32,10 @@ export const dark = {
     release: COLOR_BLACK_MARLIN
   },
   execution: {
-    deployed: COLOR_MOUNTAIN_MEADOW,
     deploying: COLOR_DODGER_BLUE,
-    error: COLOR_RED_ORANGE,
-    failed: COLOR_RED_ORANGE,
-    undeploying: COLOR_ORANGE_PEEL,
-    notDeployed: COLOR_PURPLE_HEART,
+    deployed: COLOR_MOUNTAIN_MEADOW,
+    deployFailed: COLOR_RED_ORANGE,
+    undeploying: COLOR_GOLD,
+    undeploy: COLOR_ORANGE_PEEL
   } as Record<string, string>
 };

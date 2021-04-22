@@ -22,11 +22,13 @@ const Modal = styled(ComponentModal.Default)`
   .modal-container {
     width: 543px;
     padding: 35px 0 28px 0;
+    max-height: 650px;
+    bottom: 100px;
   }
 
   .modal-content {
-    overflow-y: hidden;
-    min-height: 200px;
+    overflow-y: auto;
+    max-height: 600px;
   }
 `;
 
