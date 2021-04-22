@@ -28,17 +28,19 @@ export class EventsLogsAggregator {
 
   public async watchEvents(): Promise<void> {
     const k8sWatch = new k8s.Watch(this.kubeConfig)
-    return k8sWatch.watch('/api/v1/events',
+    k8sWatch.watch('/api/v1/events',
       {},
       this.processEvent.bind(this),
       this.onFinishOrError.bind(this))
-      .then(req => {
-        req.on('response', () => {
-          this.connected = true
-          this.consoleLoggerService.log('Connected!! Watching events...')
-        })
-      })
+      .then(this.verifyConnectivity.bind(this))
       .catch(this.onError.bind(this))
+  }
+
+  private verifyConnectivity(req: k8s.RequestResult) {
+    req.on('response', () => {
+      this.connected = true
+      this.consoleLoggerService.log('Connected!! Watching events...')
+    })
   }
 
   private onError(error: Error) {
@@ -51,6 +53,8 @@ export class EventsLogsAggregator {
     if (error) {
       this.consoleLoggerService.error('Connection Error', error)
     }
+
+    this.consoleLoggerService.log('Connected lost! Reestablishing...')
 
     // Had an established connection
     if (this.connected) {
@@ -92,7 +96,7 @@ export class EventsLogsAggregator {
 
         const deploymentId = response.body.metadata?.labels?.['deploymentId']
 
-        if(!deploymentId) {
+        if (!deploymentId) {
           this.consoleLoggerService.log('Unexpected behavior! "deploymentId" is mandatory! Discarding event')
           return
         }
