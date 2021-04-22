@@ -48,3 +48,8 @@ func (systemToken SystemToken) CreateUserFromSystemToken() User {
 		CreatedAt:     time.Now(),
 	}
 }
+
+func(systemToken *SystemToken) SetLastUsed ()  {
+	lastUsedAt := time.Now()
+	systemToken.LastUsedAt =  &lastUsedAt
+}
