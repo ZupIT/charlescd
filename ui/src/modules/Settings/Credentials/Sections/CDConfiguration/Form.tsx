@@ -17,12 +17,12 @@
 import React, { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import first from 'lodash/first';
+import isEmpty from 'lodash/isEmpty';
 import Button from 'core/components/Button';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
-import Text from 'core/components/Text';
 import { radios, providers, gitProviders } from './constants';
 import { CDConfiguration } from './interfaces';
 import { Props } from '../interfaces';
@@ -34,11 +34,10 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
   const formMethods = useForm<CDConfiguration>({
     mode: 'onChange'
   });
-  const { control, register, errors, handleSubmit, formState: { isValid } } = formMethods;
-  const [configType, setConfigType] = useState('');
+  const { control, register, handleSubmit, formState: { isValid } } = formMethods;
+  const configType = 'OCTOPIPE';
   const [providerType, setProviderType] = useState('');
-  console.log(isValid);
-  console.log(errors);
+  const hasProvider = isEmpty(providerType);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -54,10 +53,6 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
       }
     });
   };
-
-  useEffect(() => {
-    if (configType === 'SPINNAKER') setProviderType('');
-  }, [configType]);
 
   const renderOthersFields = () =>
     providerType === 'GENERIC' && (
@@ -159,9 +154,6 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text.h5 color="dark">
-        Fill in the fields below with your information:
-      </Text.h5>
       <Styled.Fields>
         <Form.Input
           ref={register({ required: true })}
@@ -179,7 +171,7 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
       </Styled.Fields>
       <Button.Default
         type="submit"
-        isDisabled={!isValid}
+        isDisabled={!isValid || hasProvider}
         isLoading={loadingAdd || loadingSave}
       >
         Save
@@ -199,15 +191,7 @@ const FormCDConfiguration = ({ onFinish }: Props<CDConfiguration>) => {
           description="Add your Continuous Deployment (CD) tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. Consult our documentation for further details."
         />
       </Styled.Title>
-      <Styled.Subtitle color="dark">
-        Choose witch one you want to add:
-      </Styled.Subtitle>
-      <Radio.Buttons
-        name="cd-configuration"
-        items={radios}
-        onChange={({ currentTarget }) => setConfigType(currentTarget.value)}
-      />
-      {configType && renderForm()}
+      {renderForm()}
     </Styled.Content>
   );
 };

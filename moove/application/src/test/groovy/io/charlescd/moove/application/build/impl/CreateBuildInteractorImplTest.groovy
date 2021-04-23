@@ -163,7 +163,7 @@ class CreateBuildInteractorImplTest extends Specification {
         def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
                 "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
-                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null, null)
 
         def credentials = new GitCredentials("http://github.com.br", "zup", "zup@123",
                 null, GitServiceProvider.GITHUB)
@@ -275,7 +275,7 @@ class CreateBuildInteractorImplTest extends Specification {
         def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
                 "http://matcher-uri.com.br", null,
-                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null, null)
 
         when:
         buildInteractor.execute(createBuildRequest, workspaceId, authorization)
@@ -297,7 +297,7 @@ class CreateBuildInteractorImplTest extends Specification {
         def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.COMPLETE, null,
                 "http://matcher-uri.com.br", "7a973eed-599b-428d-89f0-9ef6db8fd39d",
-                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null, null)
 
         when:
         buildInteractor.execute(createBuildRequest, workspaceId, authorization)

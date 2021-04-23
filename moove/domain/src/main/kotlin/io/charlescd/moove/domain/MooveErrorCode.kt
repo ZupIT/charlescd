@@ -61,5 +61,6 @@ enum class MooveErrorCode(val key: String) {
     EXTERNAL_IDM_FORBIDDEN("external.idm.forbidden"),
     LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED("limit.of.percentage.circles.exceeded"),
     IDM_UNEXPECTED_ERROR("idm.unexpected.error"),
+    DUPLICATED_COMPONENT_NAME_ERROR("duplicated.component.name.error"),
     CD_CONFIGURATION_ALREADY_REGISTERED("cd.configuration.already.registered")
 }

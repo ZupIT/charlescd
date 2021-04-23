@@ -164,7 +164,7 @@ class AssociateUserGroupToWorkspaceInteractorImplTest extends Specification {
 
     private Workspace getDummyWorkspace(String workspaceId, User author, List<UserGroup> userGroupList) {
         new Workspace(workspaceId, "workspace-name", author, LocalDateTime.now(), userGroupList,
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null, null)
     }
 
 }

@@ -80,7 +80,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
         def author = getDummyUser()
         def authorization = 'Bearer qwerty'
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, "0b3a34b7-5180-469c-a343-ce7705f97475", null, null)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, "0b3a34b7-5180-469c-a343-ce7705f97475", null, null, null)
 
         when:
         getWorkspaceInteractor.execute(workspace.id, authorization)
@@ -100,7 +100,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
         def registryConfigurationId = "0000000d-9d3c-4a32-aa78-e19471affd56"
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, registryConfigurationId, null, null, null, null)
+                WorkspaceStatusEnum.INCOMPLETE, registryConfigurationId, null, null, null, null, null)
 
         when:
         getWorkspaceInteractor.execute(workspace.id, authorization)
@@ -122,7 +122,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
         def authorization = 'Bearer qwerty'
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, metricConfigurationId, deploymentConfigId)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, metricConfigurationId, deploymentConfigId, TestUtils.deploymentConfigId)
 
         when:
         getWorkspaceInteractor.execute(workspace.id, authorization)
@@ -146,6 +146,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
         def deploymentConfigId = TestUtils.deploymentConfigId
         def registryConfigurationId = "0000000d-9d3c-4a32-aa78-e19471affd56"
         def registryConfigurationName = "Registry Test"
+        def cdConfigurationId = "000ssss0d-9d3c-4a32-aa78-e19471affd56"
 
         def author = getDummyUser()
         def gitConfiguration = new GitConfiguration("0b3a34b7-5180-469c-a343-ce7705f97475", "git-configuration",
@@ -154,7 +155,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
         def metricConfiguration = new MetricConfiguration("64f4174e-381d-4d08-a4ce-872ce6f78c01", MetricConfiguration.ProviderEnum.PROMETHEUS,
                 "https://metric-provider-url.com.br", LocalDateTime.now(), workspaceId, author)
         def workspace = new Workspace(workspaceId, "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, registryConfigurationId, "www.circle-matcher.url", gitConfiguration.id, metricConfiguration.id, deploymentConfigId)
+                WorkspaceStatusEnum.INCOMPLETE, registryConfigurationId, "www.circle-matcher.url", gitConfiguration.id, cdConfigurationId, metricConfiguration.id, deploymentConfigId)
         def deploymentConfig = TestUtils.deploymentConfig
 
         def events = new ArrayList();

@@ -16,24 +16,19 @@
 
 package io.charlescd.moove.application.circle.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import io.charlescd.moove.application.CircleService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.circle.CreateCircleWithPercentageInteractor
-import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageRequest
-import io.charlescd.moove.application.circle.request.NodePart
-import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.*
-import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
-import org.jetbrains.annotations.NotNull
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -161,10 +156,10 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
                 "http://circle-matcher.com",
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 null,
+                null,
                 null
         )
     }
-
 
 
     private Circle getDummyCircle(String circleId, User author, String workspaceId, int percentage) {

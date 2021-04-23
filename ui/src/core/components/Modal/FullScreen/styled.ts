@@ -61,6 +61,7 @@ const Container = styled.div`
 const Content = styled.div`
   overflow-y: auto;
   max-height: 100vh;
+  height: 100%;
 `;
 
 export default {

@@ -46,7 +46,7 @@ const Tab = ({ param }: Props) => {
   const { getModuleById, response } = useFindModule();
   const { removeModule } = useDeleteModule(module);
   const isLoading = isEmpty(module) && id !== NEW_TAB;
-  const hasTabActions = id !== NEW_TAB && mode !== 'component'; 
+  const hasTabActions = id !== NEW_TAB && mode !== 'component' && isEmpty(component); 
 
   useEffect(() => {
     if (response) {

@@ -450,20 +450,20 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
-
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
 
         def percentageCircle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, false, 20)
         def deployedPercentageCircle = new Circle('5d058a02-6406-4aea-be8c-3315ee202a56', 'Circle percentage', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                    author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, false, 90)
+                author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, false, 90)
         def deployedPercentagesCirclePage = new Page([deployedPercentageCircle], 0, 5, 1)
 
         def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", deploymentConfigId)
+                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null, deploymentConfigId)
         def authorization = TestUtils.authorization
+
         when:
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
 
@@ -472,8 +472,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
         0 * deployService.undeploy(_, _)
         0 * deploymentRepository.save(_) >> _

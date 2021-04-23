@@ -100,9 +100,11 @@ class TestUtils {
                 WorkspaceStatusEnum.COMPLETE,
                 "abb3448d8-4421-4aba-99a9-184bdabe3we1",
                 "http://circle-matcher.com",
+                "dd31w48d8-4421-4aba-99a9-184bdabe3046",
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 "cc3448d8-4421-4aba-99a9-184bdabeq233",
                 deploymentConfigId
+
         )
     }
 

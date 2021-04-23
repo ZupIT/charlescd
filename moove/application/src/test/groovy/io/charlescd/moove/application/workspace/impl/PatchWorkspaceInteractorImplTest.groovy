@@ -79,8 +79,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def gitConfigurationId = "e6128936-3fb2-4d10-9264-4ac63b689e56"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+        def workspace = getDummyWorkspace()
 
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/gitConfigurationId", gitConfigurationId)])
 
@@ -101,8 +100,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def newGitConfigurationId = "ba7006e0-a653-46dd-90be-71a0987f548a"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/gitConfigurationId", newGitConfigurationId)])
 
         when:
@@ -128,8 +126,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def newRegistryConfigurationId = "ba7006e0-a653-46dd-90be-71a0987f548a"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/registryConfigurationId", newRegistryConfigurationId)])
 
         when:
@@ -159,8 +156,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         def previousDeploymentConfigId = "ba7006e0-a653-46dd-90be-71a0987f548a"
         def newDeploymentConfigId = TestUtils.deploymentConfigId
         def newDeploymentConfig = TestUtils.deploymentConfig
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, previousDeploymentConfigId)
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
 
         when:
@@ -191,9 +187,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         def deploymentConfigId = TestUtils.deploymentConfigId
         def newDeploymentConfigId = "9014531b-372f-4b11-9259-dc9a5779f69a"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, deploymentConfigId)
-
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
 
         when:
@@ -215,9 +209,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def registryConfigurationId = "e6128936-3fb2-4d10-9264-4ac63b689e56"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
-
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/registryConfigurationId", registryConfigurationId)])
 
         when:
@@ -238,9 +230,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def newCircleMatcherUrl = "https://new-circle-matcher-url.com.br"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
-
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
                 MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
@@ -274,12 +264,10 @@ class PatchWorkspaceInteractorImplTest extends Specification {
 
     def 'when replacing circle matcher url, should patch information successfully'() {
         given:
-        def oldCircleMatcherUrl = "https://old-circle-matcher-url.com.br"
+        def oldCircleMatcherUrl = "https://circle-matcher-url.com.br"
         def newCircleMatcherUrl = "https://new-circle-matcher-url.com.br"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, oldCircleMatcherUrl, null, null, null)
-
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
                 MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
@@ -317,7 +305,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         def circleMatcherUrl = "https://new-circle-matcher-url.com.br"
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, circleMatcherUrl, null, null, null)
+                WorkspaceStatusEnum.INCOMPLETE, null, circleMatcherUrl, null, null, null, null)
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", circleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
                 MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
@@ -353,9 +341,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def metricConfigurationId = "e6128936-3fb2-4d10-9264-4ac63b689e56"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
-
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/metricConfigurationId", metricConfigurationId)])
 
         when:
@@ -377,8 +363,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def metricConfigurationId = "ba7006e0-a653-46dd-90be-71a0987f548a"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/metricConfigurationId", metricConfigurationId)])
 
         when:
@@ -411,7 +396,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.INCOMPLETE, "registryConfigurationId", "https://circle-matcher.com.br",
-                "gitConfigurationId", "metricConfigurationId", "deploymentConfigurationId")
+                "gitConfigurationId", "cdConfigurationId", "metricConfigurationId", null)
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/metricConfigurationId", metricConfigurationId)])
 
         when:
@@ -442,9 +427,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def newCircleMatcherUrl = "https://new-circle-matcher-url.com.br"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
-
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
 
         when:
@@ -466,8 +449,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         given:
         def circleMatcherUrl = "https://new-circle-matcher-url.com.br"
         def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, "https://old-circle-matcher-url.com.br", null, null, null)
+        def workspace = getDummyWorkspace()
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", circleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
                 MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
@@ -495,8 +477,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         def oldCircleMatcherUrl = "https://old-circle-matcher-url.com.br"
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, oldCircleMatcherUrl, null, null, null)
-
+                WorkspaceStatusEnum.INCOMPLETE, null, oldCircleMatcherUrl, null, null, null, null)
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/circleMatcherUrl", null)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
                 MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
@@ -526,7 +507,13 @@ class PatchWorkspaceInteractorImplTest extends Specification {
 
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
+    }
+
+    private Workspace getDummyWorkspace() {
+        new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", getDummyUser(), LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, "https://circle-matcher-url.com.br", null, null, null, null)
+
     }
 
 }

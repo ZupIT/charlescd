@@ -22,6 +22,7 @@ import io.charlescd.moove.application.module.request.ComponentRequest
 import io.charlescd.moove.domain.Component
 import io.charlescd.moove.domain.Module
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.ModuleRepository
 import spock.lang.Specification
@@ -125,6 +126,75 @@ class UpdateComponentInteractorImplTest extends Specification {
 
         assert exception.resourceName == "component"
         assert exception.id == componentId
+    }
+
+    def "when component name already exists, should throw business exception"() {
+        given:
+        def moduleId = "module-id"
+        def workspaceId = "workspace-id"
+        def componentId = "component-id"
+        def request = new ComponentRequest("component-x", 20, 20, 'host', 'gateway')
+
+        def author = getDummyUser()
+
+        def componentA = new Component(componentId, moduleId, "component-name", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+        def componentB = new Component("component-id-b", moduleId, "component-x", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+        def updatedComponent = new Component(componentId, moduleId, "new-component-name", LocalDateTime.now(), workspaceId, 20, 20, 'host', 'gateway')
+
+        def module = new Module(moduleId, "module-name", "gitRepositoryAddress",
+                LocalDateTime.now(), "helm-repository", author,
+                [], null, [componentA, componentB], workspaceId)
+
+        when:
+        updateComponentInteractor.execute(moduleId, componentId, workspaceId, request)
+
+        then:
+        1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
+        0 * moduleRepository.updateComponent(_)
+
+        def exception = thrown(BusinessException)
+        assert exception.message == "duplicated.component.name.error"
+    }
+
+    def "should update a existing component, even if the name is equal"() {
+        given:
+        def moduleId = "module-id"
+        def workspaceId = "workspace-id"
+        def componentId = "component-id"
+        def request = new ComponentRequest("new-component-name", 20, 20, 'host', 'gateway')
+
+        def author = getDummyUser()
+
+        def component = new Component(componentId, moduleId, "new-component-name", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+        def updatedComponent = new Component(componentId, moduleId, "new-component-name", LocalDateTime.now(), workspaceId, 20, 20, 'host', 'gateway')
+
+        def module = new Module(moduleId, "module-name", "gitRepositoryAddress",
+                LocalDateTime.now(), "helm-repository", author,
+                [], null, [component], workspaceId)
+
+        when:
+        def response = updateComponentInteractor.execute(moduleId, componentId, workspaceId, request)
+
+        then:
+        1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
+        1 * moduleRepository.updateComponent(_) >> { arguments ->
+            def componentToBeUpdated = arguments[0]
+
+            assert componentToBeUpdated instanceof Component
+
+            assert componentToBeUpdated.id == updatedComponent.id
+            assert componentToBeUpdated.name == updatedComponent.name
+            assert componentToBeUpdated.errorThreshold == updatedComponent.errorThreshold
+            assert componentToBeUpdated.latencyThreshold == updatedComponent.latencyThreshold
+        }
+
+        assert response != null
+        assert response.id == updatedComponent.id
+        assert response.name == updatedComponent.name
+        assert response.errorThreshold == updatedComponent.errorThreshold
+        assert response.latencyThreshold == updatedComponent.latencyThreshold
+
+        notThrown()
     }
 
     private User getDummyUser() {

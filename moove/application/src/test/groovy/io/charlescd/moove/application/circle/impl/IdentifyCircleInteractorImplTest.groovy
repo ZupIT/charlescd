@@ -115,6 +115,7 @@ class IdentifyCircleInteractorImplTest extends Specification {
                 "http://circle-matcher.com",
                 null,
                 null,
+                null,
                 null
         )
     }

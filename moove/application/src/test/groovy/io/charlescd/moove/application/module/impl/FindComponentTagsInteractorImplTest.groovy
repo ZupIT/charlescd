@@ -70,7 +70,7 @@ class FindComponentTagsInteractorImplTest extends Specification {
 
         def workspace = new Workspace(workspaceId, "Workspace Name", author, LocalDateTime.now(), [],
                 WorkspaceStatusEnum.INCOMPLETE, "37549b0f-ae28-45ad-8189-dcb9b319705e", null,
-                "0b3a34b7-5180-469c-a343-ce7705f97475", null, null)
+                "0b3a34b7-5180-469c-a343-ce7705f97475", null, null, null)
 
         when:
         def response = findComponentTagsInteractor.execute(moduleId, componentId,tagName, workspaceId)
@@ -110,7 +110,7 @@ class FindComponentTagsInteractorImplTest extends Specification {
         def author = getDummyUser()
 
         def workspace = new Workspace(workspaceId, "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, "0b3a34b7-5180-469c-a343-ce7705f97475", null, null)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, "0b3a34b7-5180-469c-a343-ce7705f97475", null, null, null)
 
         when:
         findComponentTagsInteractor.execute(moduleId, componentId,tagName, workspaceId)

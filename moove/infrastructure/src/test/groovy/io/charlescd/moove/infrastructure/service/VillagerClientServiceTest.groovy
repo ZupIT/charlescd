@@ -272,11 +272,11 @@ class VillagerClientServiceTest extends Specification {
 
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
     }
 
     private Workspace getDummyWorkspace(User author) {
         new Workspace("2m000b2a-557b-45c5-91be-1e1db909bef6", "Workspace name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null, null)
     }
 }

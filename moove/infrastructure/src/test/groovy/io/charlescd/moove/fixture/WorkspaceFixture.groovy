@@ -16,6 +16,7 @@ class WorkspaceFixture {
     static DEFAULT_GIT_CONFIGURATION_ID = null
     static DEFAULT_CD_CONFIGURATION_ID = null
     static DEFAULT_METRIC_CONFIGURATION_ID = null
+    static DEFAULT_DEPLOYMENT_CONFIGURATION_ID = null
 
     String id
     String name
@@ -28,6 +29,7 @@ class WorkspaceFixture {
     String gitConfigurationId
     String cdConfigurationId
     String metricConfigurationId
+    String deploymentConfigurationId
 
     WorkspaceFixture(String id,
                      String name,
@@ -39,7 +41,9 @@ class WorkspaceFixture {
                      String circleMatcherUrl,
                      String gitConfigurationId,
                      String cdConfigurationId,
-                     String metricConfigurationId) {
+                     String metricConfigurationId,
+                     String deploymentConfigurationId
+    ) {
         this.id = id
         this.name = name
         this.author = author
@@ -51,6 +55,7 @@ class WorkspaceFixture {
         this.gitConfigurationId = gitConfigurationId
         this.cdConfigurationId = cdConfigurationId
         this.metricConfigurationId = metricConfigurationId
+        this.deploymentConfigurationId = deploymentConfigurationId
     }
 
     static WorkspaceFixture create() {
@@ -64,7 +69,8 @@ class WorkspaceFixture {
                 DEFAULT_CIRCLE_MATCHER_URL,
                 DEFAULT_GIT_CONFIGURATION_ID,
                 DEFAULT_CD_CONFIGURATION_ID,
-                DEFAULT_METRIC_CONFIGURATION_ID)
+                DEFAULT_METRIC_CONFIGURATION_ID,
+                DEFAULT_DEPLOYMENT_CONFIGURATION_ID)
     }
 
     WorkspaceFixture withId(String id) {
@@ -122,6 +128,11 @@ class WorkspaceFixture {
         return this
     }
 
+    WorkspaceFixture withDeploymentConfigurationId(String deploymentConfigurationId) {
+        this.deploymentConfigurationId = deploymentConfigurationId
+        return this
+    }
+
     Workspace build() {
         new Workspace(id,
                 name,
@@ -133,6 +144,7 @@ class WorkspaceFixture {
                 circleMatcherUrl,
                 gitConfigurationId,
                 cdConfigurationId,
-                metricConfigurationId)
+                metricConfigurationId,
+                deploymentConfigurationId)
     }
 }

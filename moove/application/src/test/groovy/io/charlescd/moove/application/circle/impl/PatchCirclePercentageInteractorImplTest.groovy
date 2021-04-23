@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.circle.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.NullNode
 import io.charlescd.moove.application.*
 import io.charlescd.moove.application.circle.PatchCircleWithPercentageInteractor
@@ -376,22 +375,7 @@ class PatchCirclePercentageInteractorImplTest extends Specification {
                 "http://circle-matcher.com",
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 null,
-                null
-        )
-    }
-
-    private static Circle getDummyCircle(String circleId, User author, NodePart nodePart, String workspaceId, Boolean isDefault) {
-        new Circle(
-                circleId,
-                "Women",
-                "9d109f66-351b-426d-ad69-a49bbc329914",
-                author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR,
-                new ObjectMapper().valueToTree(nodePart),
-                0,
                 null,
-                isDefault,
-                workspaceId,
                 null
         )
     }

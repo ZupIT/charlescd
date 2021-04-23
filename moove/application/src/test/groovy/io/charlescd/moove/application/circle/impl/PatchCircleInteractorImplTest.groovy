@@ -502,6 +502,7 @@ class PatchCircleInteractorImplTest extends Specification {
                 "http://circle-matcher.com",
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 null,
+                null,
                 null
         )
     }
