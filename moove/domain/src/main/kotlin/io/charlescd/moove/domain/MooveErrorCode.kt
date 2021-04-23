@@ -54,6 +54,7 @@ enum class MooveErrorCode(val key: String) {
     USER_ALREADY_DISASSOCIATED("user.already.disassociated"),
     MISSING_DEFAULT_CIRCLE("missing.default.circle"),
     INVALID_CIRCLE_MATCHER_URL_ERROR("invalid.circle.matcher.url.error"),
+    INVALID_BUTLER_URL_ERROR("invalid.butler.url.error"),
     MODULE_MUST_HAVE_AT_LEAST_ONE_COMPONENT("module.must.have.at.least.one.component"),
     CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS("create.user.error.email.already.exists"),
     USER_PASSWORD_DOES_NOT_MATCH("user.password.does.not.match"),
