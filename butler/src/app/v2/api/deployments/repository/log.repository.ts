@@ -23,11 +23,11 @@ export class LogRepository extends Repository<LogEntity> {
   public async findDeploymentLogs(deploymentId: string, workspaceId?: string): Promise<LogEntity | undefined> {
     const queryBuilder = this.createQueryBuilder('v2logs')
       .leftJoinAndSelect('v2logs.deployment', 'deployment')
-      .leftJoinAndSelect('deployment.cdConfiguration', 'c')
       .andWhere('deployment.id = :deploymentId', { deploymentId })
 
     return workspaceId ?
-      queryBuilder.andWhere('c.workspaceId = :workspaceId', { workspaceId }).getOne() :
+      queryBuilder.leftJoinAndSelect('deployment.cdConfiguration', 'c')
+        .andWhere('c.workspaceId = :workspaceId', { workspaceId }).getOne() :
       queryBuilder.getOne()
   }
 

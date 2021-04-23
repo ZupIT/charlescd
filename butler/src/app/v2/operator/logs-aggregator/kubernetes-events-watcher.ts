@@ -49,6 +49,8 @@ export class EventsWatcher {
       this.connected = true
       this.consoleLoggerService.log('Connected!! Watching events...')
     })
+
+    req.on('end', this.onFinishOrError.bind(this))
   }
 
   private onError(error: Error) {
