@@ -55,12 +55,13 @@ describe('Aggregate events from kubernetes to charles logs', () => {
   })
 
   it('Aggregate event as a log when the resource has the deploymentId label', async () => {
+    const deploymentId = 'a3e9c42b-8ff4-48a7-9a4e-e81f1d5dc3fa'
     const readSpy = jest.spyOn(k8sClient, 'readResource')
       .mockImplementation(spec => Promise.resolve({
         body: {
           metadata: {
             labels: {
-              deploymentId: 'a3e9c42b-8ff4-48a7-9a4e-e81f1d5dc3fa'
+              deploymentId: deploymentId
             }
           }
         },
@@ -89,7 +90,23 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
 
     expect(readSpy).toBeCalledTimes(1)
-    expect(logRepositorySpy).toBeCalledTimes(1)
+
+    const expectedLogEntity = {
+      deploymentId: deploymentId,
+      logs: [
+        {
+          type: 'INFO',
+          title: 'Created',
+          timestamp: '2021-04-23T08:30:20-03:00',
+          details: JSON.stringify({
+            message: 'Created container pod-name',
+            object: 'Pod/pod-name'
+          })
+        }
+      ]
+    }
+
+    expect(logRepositorySpy).toHaveBeenCalledWith(expectedLogEntity)
   })
 
   it('Do not aggregate event when the resource does not have the deploymentId label', async () => {
