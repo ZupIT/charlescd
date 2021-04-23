@@ -20,23 +20,15 @@ import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateDeploymentConfigurationInteractor
-import io.charlescd.moove.application.configuration.CreateGitConfigurationInteractor
 import io.charlescd.moove.application.configuration.request.CreateDeploymentConfigurationRequest
-import io.charlescd.moove.application.configuration.request.CreateGitConfigurationRequest
-import io.charlescd.moove.application.configuration.request.GitCredentialsData
 import io.charlescd.moove.domain.DeploymentConfiguration
-import io.charlescd.moove.domain.GitConfiguration
 import io.charlescd.moove.domain.GitProviderEnum
-import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
-import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
-import io.charlescd.moove.infrastructure.service.DeployClientService
-import io.charlescd.moove.infrastructure.service.client.DeployClient
 import io.charlescd.moove.infrastructure.service.client.response.GetDeployCdConfigurationsResponse
 import spock.lang.Specification
 
@@ -47,7 +39,6 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
     private CreateDeploymentConfigurationInteractor createDeploymentConfigurationInteractor
 
     private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
-    private DeployClient deployClient = Mock(DeployClient)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
@@ -55,7 +46,7 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
 
     void setup() {
         this.createDeploymentConfigurationInteractor = new CreateDeploymentConfigurationInteractorImpl(deploymentConfigurationRepository,
-                new DeployClientService(deployClient), new UserService(userRepository, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
+                new UserService(userRepository, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
     }
 
     def "when workspace does not exist should throw exception"() {
@@ -106,16 +97,6 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         def createDeploymentConfigurationRequest =
                 new CreateDeploymentConfigurationRequest("Test", "https://butler-url.com.br", "charlescd", "token", GitProviderEnum.GITHUB)
 
-        def configurationList = new ArrayList()
-        def configuration = new GetDeployCdConfigurationsResponse(
-                "configurationId",
-                "Test",
-                 author.id,
-                workspaceId,
-                LocalDateTime.now()
-        )
-        configurationList.add(configuration)
-
         when:
         this.createDeploymentConfigurationInteractor.execute(createDeploymentConfigurationRequest, workspaceId, authorization)
 
@@ -123,7 +104,7 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         1 * this.workspaceRepository.exists(workspaceId) >> true
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * deployClient.getCdConfigurations(workspaceId) >> configurationList
+        1 * deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId) >> true
         thrown(BusinessException)
     }
 
@@ -143,7 +124,7 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         1 * this.workspaceRepository.exists(workspaceId) >> true
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * deployClient.getCdConfigurations(workspaceId) >> new ArrayList<>()
+        1 * deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId) >> false
         1 * this.deploymentConfigurationRepository.save(_) >> { argument ->
             def savedCdConfiguration = argument[0]
             assert savedCdConfiguration instanceof DeploymentConfiguration

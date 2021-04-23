@@ -51,6 +51,12 @@ class JdbcDeploymentConfigurationRepository(
                            INNER JOIN users deployment_configuration_user ON deployment_configurations.user_id = deployment_configuration_user.id
                     WHERE 1 = 1
                 """
+
+        const val BASE_COUNT_QUERY_STATEMENT = """
+                    SELECT count(*) AS total
+                    FROM deployment_configurations
+                    WHERE deployment_configurations.workspace_id = ?
+                """
     }
 
     override fun save(deploymentConfiguration: DeploymentConfiguration): DeploymentConfiguration {
@@ -107,21 +113,29 @@ class JdbcDeploymentConfigurationRepository(
         return checkIfDeploymentConfigurationExistsByWorkspaceId(workspaceId, id)
     }
 
+    override fun existsAnyByWorkspaceId(workspaceId: String): Boolean {
+        return checkIfAnyDeploymentConfigurationExistsByWorkspaceId(workspaceId)
+    }
+
     private fun checkIfDeploymentConfigurationExistsByWorkspaceId(workspaceId: String, id: String): Boolean {
-        val countStatement = StringBuilder(
-            """
-               SELECT count(*) AS total
-               FROM deployment_configurations 
-               WHERE deployment_configurations.id = ?
-               AND deployment_configurations.workspace_id = ?
-               """
-        )
+        val countStatement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
+            .appendln("AND deployment_configurations.id = ?")
+            .toString()
 
+        return applyCountQuery(
+            countStatement, arrayOf(workspaceId))
+    }
+
+    private fun checkIfAnyDeploymentConfigurationExistsByWorkspaceId(workspaceId: String): Boolean {
+        return applyCountQuery(
+            BASE_COUNT_QUERY_STATEMENT, arrayOf(workspaceId))
+    }
+
+    private fun applyCountQuery(statement: String, params: Array<String>): Boolean {
         val count = this.jdbcTemplate.queryForObject(
-            countStatement.toString(),
-            arrayOf(id, workspaceId)
+            statement,
+            params
         ) { rs, _ -> rs.getInt(1) }
-
         return count != null && count >= 1
     }
 }

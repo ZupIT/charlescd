@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.configuration.impl
 
-import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateDeploymentConfigurationInteractor
@@ -24,15 +23,12 @@ import io.charlescd.moove.application.configuration.request.CreateDeploymentConf
 import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
-import io.charlescd.moove.infrastructure.service.DeployClientService
 import javax.inject.Named
 
 @Named
 class CreateDeploymentConfigurationInteractorImpl(
     private val deploymentConfigurationRepository: DeploymentConfigurationRepository,
-    private val deployClientService: DeployClientService,
     private val userService: UserService,
     private val workspaceService: WorkspaceService
 ) : CreateDeploymentConfigurationInteractor {
@@ -50,7 +46,7 @@ class CreateDeploymentConfigurationInteractorImpl(
     }
 
     private fun checkIfCdConfigurationExistsOnWorkspace(workspaceId: String) {
-        if (deployClientService.existsCdConfigurationByWorkspace(workspaceId)) {
+        if (deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId)) {
             throw BusinessException.of(MooveErrorCode.CD_CONFIGURATION_ALREADY_REGISTERED)
         }
     }
