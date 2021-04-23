@@ -47,7 +47,6 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
     private CreateDeploymentConfigurationInteractor createDeploymentConfigurationInteractor
 
     private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
-    private DeployClient deployClient = Mock(DeployClient)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
@@ -55,7 +54,7 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
 
     void setup() {
         this.createDeploymentConfigurationInteractor = new CreateDeploymentConfigurationInteractorImpl(deploymentConfigurationRepository,
-                new DeployClientService(deployClient), new UserService(userRepository, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
+                new UserService(userRepository, managementUserSecurityService), new WorkspaceService(workspaceRepository, userRepository))
     }
 
     def "when workspace does not exist should throw exception"() {
@@ -106,16 +105,6 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         def createDeploymentConfigurationRequest =
                 new CreateDeploymentConfigurationRequest("Test", "https://butler-url.com.br", "charlescd", "token", GitProviderEnum.GITHUB)
 
-        def configurationList = new ArrayList()
-        def configuration = new GetDeployCdConfigurationsResponse(
-                "configurationId",
-                "Test",
-                 author.id,
-                workspaceId,
-                LocalDateTime.now()
-        )
-        configurationList.add(configuration)
-
         when:
         this.createDeploymentConfigurationInteractor.execute(createDeploymentConfigurationRequest, workspaceId, authorization)
 
@@ -123,7 +112,7 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         1 * this.workspaceRepository.exists(workspaceId) >> true
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * deployClient.getCdConfigurations(workspaceId) >> configurationList
+        1 * deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId) >> true
         thrown(BusinessException)
     }
 
@@ -143,7 +132,7 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         1 * this.workspaceRepository.exists(workspaceId) >> true
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * deployClient.getCdConfigurations(workspaceId) >> new ArrayList<>()
+        1 * deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId) >> false
         1 * this.deploymentConfigurationRepository.save(_) >> { argument ->
             def savedCdConfiguration = argument[0]
             assert savedCdConfiguration instanceof DeploymentConfiguration
