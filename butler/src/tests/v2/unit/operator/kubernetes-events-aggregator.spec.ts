@@ -41,12 +41,12 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     logRepository = new LogRepository()
   })
 
-  it('Do not aggregate event without valid involved object', async () => {
+  it('Do not aggregate event without valid involved object', async() => {
     const readSpy = jest.spyOn(k8sClient, 'readResource')
-      .mockImplementation(spec => Promise.resolve({} as K8sClientResolveObject))
+      .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
-      .mockImplementation(entity => Promise.resolve({} as LogEntity))
+      .mockImplementation(() => Promise.resolve({} as LogEntity))
 
     const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
     await eventsLogsAggregator.aggregate({} as CoreV1Event)
@@ -55,9 +55,9 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     expect(logRepositorySpy).toBeCalledTimes(0)
   })
 
-  it('Aggregate event as a log when the resource has the deploymentId label', async () => {
+  it('Aggregate event as a log when the resource has the deploymentId label', async() => {
     const readSpy = jest.spyOn(k8sClient, 'readResource')
-      .mockImplementation(spec => Promise.resolve({
+      .mockImplementation(() => Promise.resolve({
         body: {
           metadata: {
             labels: {
@@ -69,7 +69,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       } as K8sClientResolveObject))
 
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
-      .mockImplementation(entity => Promise.resolve({} as LogEntity))
+      .mockImplementation(() => Promise.resolve({} as LogEntity))
 
     const coreEvent = {
       metadata: {
@@ -109,9 +109,9 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     expect(logRepositorySpy).toHaveBeenCalledWith(expectedLogEntity)
   })
 
-  it('Do not aggregate event when the resource does not have the deploymentId label', async () => {
+  it('Do not aggregate event when the resource does not have the deploymentId label', async() => {
     const readSpy = jest.spyOn(k8sClient, 'readResource')
-      .mockImplementation(spec => Promise.resolve({
+      .mockImplementation(() => Promise.resolve({
         body: {
           metadata: {
             labels: {}
@@ -121,7 +121,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       } as K8sClientResolveObject))
 
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
-      .mockImplementation(entity => Promise.resolve({} as LogEntity))
+      .mockImplementation(() => Promise.resolve({} as LogEntity))
 
     const coreEvent = {
       metadata: {
@@ -145,9 +145,9 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     expect(logRepositorySpy).toBeCalledTimes(0)
   })
 
-  it('Do not aggregate events old then the given date', async () => {
+  it('Do not aggregate events old then the given date', async() => {
     const readSpy = jest.spyOn(k8sClient, 'readResource')
-      .mockImplementation(spec => Promise.resolve({
+      .mockImplementation(() => Promise.resolve({
         body: {
           metadata: {
             labels: {
@@ -159,7 +159,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       } as K8sClientResolveObject))
 
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
-      .mockImplementation(entity => Promise.resolve({} as LogEntity))
+      .mockImplementation(() => Promise.resolve({} as LogEntity))
 
     const coreEvent = {
       metadata: {

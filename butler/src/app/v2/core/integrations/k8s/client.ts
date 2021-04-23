@@ -38,7 +38,7 @@ export class K8sClient {
     private readonly envConfiguration: IEnvConfiguration
   ) {
     this.kubeConfig = new k8s.KubeConfig()
-    this.kubeConfig.loadFromDefault()
+    this.kubeConfig.loadFromCluster() // TODO: chance it based on the env
     this.client = k8s.KubernetesObjectApi.makeApiClient(this.kubeConfig)
   }
 
