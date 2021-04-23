@@ -41,7 +41,7 @@ export class EventsWatcher {
   }
 
   private async processEvent(phase: string, coreEvent: k8s.CoreV1Event) {
-    this.eventsLogsAggregator.processEvent(coreEvent, this.lastConnectionLostTimestamp)
+    this.eventsLogsAggregator.aggregate(coreEvent, this.lastConnectionLostTimestamp)
   }
 
   private verifyConnectivity(req: k8s.RequestResult) {

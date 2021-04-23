@@ -38,8 +38,7 @@ export class EventsLogsAggregator {
     this.resourceCache = {}
   }
 
-  // TODO: rever nome
-  public async processEvent(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
+  public async aggregate(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
     try {
       const involvedObject = coreEvent.involvedObject
 
@@ -71,7 +70,7 @@ export class EventsLogsAggregator {
         const log = {
           type: event.type,
           title: event.title,
-          timestamp: moment(event.timestamp).format(), // TODO: rever essa formatação
+          timestamp: moment(event.timestamp).format(),
           details: event.details
         }
 
