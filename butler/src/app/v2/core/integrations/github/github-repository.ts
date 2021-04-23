@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HttpService, Injectable } from '@nestjs/common'
+import { BadRequestException, HttpService, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
@@ -81,6 +81,25 @@ export class GitHubRepository implements Repository {
 
   private async fetch(url: URL, config: AxiosRequestConfig): Promise<AxiosResponse> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url.toString())
-    return this.httpService.get(url.toString(), config).toPromise()
+    return await this.httpService.get(url.toString(), config)
+      .toPromise()
+      .catch(function(error) {
+        throw new BadRequestException({
+          errors: [
+            {
+              title: 'Unable to fetch GitHub URL',
+              detail: `Status '${error.response.statusText}' received when accessing GitHub resource: ${url}`,
+              meta: {
+                component: 'butler',
+                timestamp: Date.now()
+              },
+              source: {
+                pointer: 'components.helmRepository'
+              },
+              status: `${error.response.status}`
+            }
+          ]
+        })
+      })
   }
 }
