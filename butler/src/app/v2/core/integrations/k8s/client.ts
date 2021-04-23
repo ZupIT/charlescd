@@ -28,6 +28,8 @@ import { IncomingMessage } from 'http'
 @Injectable()
 export class K8sClient {
 
+  private readonly kubeConfig: k8s.KubeConfig
+
   public client: k8s.KubernetesObjectApi
 
   constructor(
@@ -35,9 +37,9 @@ export class K8sClient {
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private readonly envConfiguration: IEnvConfiguration
   ) {
-    const kc = new k8s.KubeConfig()
-    kc.loadFromCluster()
-    this.client = k8s.KubernetesObjectApi.makeApiClient(kc)
+    this.kubeConfig = new k8s.KubeConfig()
+    this.kubeConfig.loadFromDefault()
+    this.client = k8s.KubernetesObjectApi.makeApiClient(this.kubeConfig)
   }
 
   public async applyDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
@@ -50,7 +52,7 @@ export class K8sClient {
     try {
       await this.readResource(deploymentManifest)
       await this.patchResource(deploymentManifest)
-    } catch(error) {
+    } catch (error) {
       if (!(error instanceof k8s.HttpError) || error.statusCode !== 404) {
         this.consoleLoggerService.log('ERROR:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { error })
         throw error
@@ -67,7 +69,7 @@ export class K8sClient {
     try {
       await this.readResource(deploymentManifest)
       await this.deleteResource(deploymentManifest)
-    } catch(error) {
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { deploymentManifest })
       throw error
     }
@@ -80,7 +82,7 @@ export class K8sClient {
     try {
       await this.readResource(routingManifest)
       await this.patchResource(routingManifest)
-    } catch(error) {
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { routingManifest })
       throw error
     }
@@ -99,7 +101,7 @@ export class K8sClient {
       )
       this.consoleLoggerService.log('GET:PATCH_RESOURCE_RESPONSE')
       return res
-    } catch(error) {
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:PATCH_RESOURCE_MANIFEST', { error })
       throw error
     }
@@ -111,17 +113,21 @@ export class K8sClient {
       const res = await this.client.create(manifest)
       this.consoleLoggerService.log('GET:CREATE_RESOURCE_RESPONSE')
       return res
-    } catch(error) {
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:CREATE_RESOURCE_MANIFEST', { error })
       throw error
     }
   }
 
-  private async readResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
+  public async readResource(manifest: KubernetesManifest):
+    Promise<{
+      body: k8s.KubernetesObject,
+      response: IncomingMessage
+    }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:READ_RESOURCE_MANIFEST')
-      await this.client.read(manifest)
-    } catch(error) {
+      return await this.client.read(manifest)
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:READ_RESOURCE_MANIFEST', { error })
       throw error
     }
@@ -133,9 +139,14 @@ export class K8sClient {
       const res = await this.client.delete(manifest)
       this.consoleLoggerService.log('GET:DELETE_RESOURCE_RESPONSE')
       return res
-    } catch(error) {
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:DELETE_RESOURCE_MANIFEST', { error })
       throw error
     }
+  }
+
+  public async watchEvents(callback: (phase: string, coreEvent: k8s.CoreV1Event) => void, done: (err: any) => void): Promise<k8s.RequestResult> {
+    const k8sWatch = new k8s.Watch(this.kubeConfig)
+    return k8sWatch.watch('/api/v1/events', {}, callback, done)
   }
 }

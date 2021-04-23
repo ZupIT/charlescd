@@ -6,81 +6,31 @@ import * as moment from 'moment'
 import { LogEntity } from '../../api/deployments/entity/logs.entity'
 import { ConsoleLoggerService } from '../../core/logs/console'
 import { Log } from '../../api/deployments/interfaces/log.interface'
+import { K8sClient } from '../../core/integrations/k8s/client'
 
 @Injectable()
 export class EventsLogsAggregator {
 
-  private readonly kubeConfig: k8s.KubeConfig
   private readonly resourceCache: Record<string, Promise<{
     body: k8s.KubernetesObject
     response: http.IncomingMessage
   }>> // TODO: configure a LRU cache here
 
-  private lastConnectionLostTimestamp?: Date
-
-  private connected = false
-
-  constructor(private consoleLoggerService: ConsoleLoggerService) {
-    this.kubeConfig = new k8s.KubeConfig()
-    this.kubeConfig.loadFromDefault()
+  // TODO: receive logsRepository here
+  constructor(private consoleLoggerService: ConsoleLoggerService, private k8sClient: K8sClient) {
     this.resourceCache = {}
   }
 
-  public async watchEvents(): Promise<void> {
-    const k8sWatch = new k8s.Watch(this.kubeConfig)
-    k8sWatch.watch('/api/v1/events',
-      {},
-      this.processEvent.bind(this),
-      this.onFinishOrError.bind(this))
-      .then(this.verifyConnectivity.bind(this))
-      .catch(this.onError.bind(this))
-  }
-
-  private verifyConnectivity(req: k8s.RequestResult) {
-    req.on('response', () => {
-      this.connected = true
-      this.consoleLoggerService.log('Connected!! Watching events...')
-    })
-  }
-
-  private onError(error: Error) {
-    // This is a startup error, should be verified evertime butler goes hair!
-    this.consoleLoggerService.error('Error while trying to start streaming events', error)
-  }
-
-  // Called by any connection error or simple a close connection event
-  private async onFinishOrError(error?: Error) {
-    if (error) {
-      this.consoleLoggerService.error('Connection Error', error)
-    }
-
-    this.consoleLoggerService.log('Connected lost! Reestablishing...')
-
-    // Had an established connection
-    if (this.connected) {
-      this.lastConnectionLostTimestamp = moment.utc().toDate()
-      this.connected = false
-    }
-
-    this.retryWatchEvents()
-  }
-
-  private async retryWatchEvents() {
-    const restartIn = 5 // five seconds?
-    this.consoleLoggerService.log(`Restarting watching events in ${restartIn} seconds...`)
-    setTimeout(async() => this.watchEvents(), restartIn * 1000)
-  }
-
-  private async processEvent(phase: string, coreEvent: k8s.CoreV1Event) {
+  // TODO: rever nome
+  public async processEvent(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
     try {
-      this.consoleLoggerService.log(`Start processing new ${phase} event`)
       const involvedObject = coreEvent.involvedObject
 
       if (!involvedObject.namespace
         || !involvedObject.kind
         || !involvedObject.apiVersion
         || !involvedObject.name) {
-        this.consoleLoggerService.log(`Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding ${phase} event`, involvedObject)
+        this.consoleLoggerService.log('Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding event', involvedObject)
         return
       }
 
@@ -92,7 +42,7 @@ export class EventsLogsAggregator {
       )
       const event = new Event(coreEvent)
       if (this.hasAnyLabel(response.body, ['deploymentId'])
-        && this.isAfter(event, this.lastConnectionLostTimestamp)) {
+        && this.isAfter(event, since)) {
 
         const deploymentId = response.body.metadata?.labels?.['deploymentId']
 
@@ -123,8 +73,8 @@ export class EventsLogsAggregator {
     })
   }
 
-  private isAfter(event: Event, timestamp?: Date): boolean {
-    return !timestamp || event.isAfter(timestamp)
+  private isAfter(event: Event, since?: Date): boolean {
+    return !since || event.isAfter(since)
   }
 
   private hasAnyLabel(resource: k8s.KubernetesObject, labels: string[]): boolean {
@@ -146,7 +96,6 @@ export class EventsLogsAggregator {
       return this.resourceCache[cacheKey]
     }
 
-    const k8sApi = k8s.KubernetesObjectApi.makeApiClient(this.kubeConfig)
     const spec = {
       kind: kind,
       apiVersion: apiVersion,
@@ -156,7 +105,7 @@ export class EventsLogsAggregator {
       }
     }
 
-    const response = k8sApi.read(spec)
+    const response = this.k8sClient.readResource(spec)
 
     this.resourceCache[cacheKey] = response
 

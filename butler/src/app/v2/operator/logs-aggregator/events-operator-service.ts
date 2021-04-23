@@ -1,16 +1,16 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../core/logs/console'
-import { EventsLogsAggregator } from './kubernetes-events-aggregator'
+import { EventsWatcher } from './kubernetes-events-watcher'
 
 @Injectable()
 export class EventsOperatorService implements OnApplicationBootstrap {
 
-  constructor(private eventsLogsAggregator: EventsLogsAggregator, 
+  constructor(private eventsWatcher: EventsWatcher, 
     private consoleLoggerService: ConsoleLoggerService) {}
   
   public async onApplicationBootstrap(): Promise<void> {
     try {
-      return await this.eventsLogsAggregator.watchEvents()
+      return await this.eventsWatcher.start()
     } catch(error) {
       this.consoleLoggerService.error(error)
     }
