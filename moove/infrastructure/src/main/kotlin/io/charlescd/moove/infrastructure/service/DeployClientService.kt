@@ -59,7 +59,6 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         return deployClient.getCdConfigurations(workspaceId).isNotEmpty()
     }
 
-
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,

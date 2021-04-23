@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.configuration.impl
 
-import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateDeploymentConfigurationInteractor
@@ -24,7 +23,6 @@ import io.charlescd.moove.application.configuration.request.CreateDeploymentConf
 import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
 import io.charlescd.moove.infrastructure.service.DeployClientService
 import javax.inject.Named
