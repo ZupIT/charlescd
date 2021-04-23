@@ -87,7 +87,7 @@ export class GitHubRepository implements Repository {
         throw new BadRequestException({
           errors: [
             {
-              title: `Unable to fetch GitHub URL`,
+              title: 'Unable to fetch GitHub URL',
               detail: `Status '${error.response.statusText}' received when accessing GitHub resource: ${url}`,
               meta: {
                 component: 'butler',

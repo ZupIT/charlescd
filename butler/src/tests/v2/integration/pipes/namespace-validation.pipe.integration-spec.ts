@@ -24,11 +24,9 @@ import { CreateDeploymentRequestDto } from '../../../../../src/app/v2/api/deploy
 import { CreateGitDeploymentDto } from '../../../../../src/app/v2/api/deployments/dto/create-git-request.dto'
 import { GitProvidersEnum } from '../../../../../src/app/v2/core/configuration/interfaces'
 import { K8sClient } from '../../../../../src/app/v2/core/integrations/k8s/client'
-import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
 import { NamespaceValidationPipe } from '../../../../app/v2/api/deployments/pipes/namespace-validation.pipe'
-import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
@@ -38,8 +36,6 @@ describe('NamespaceValidationPipe', () => {
   let fixtureUtilsService: FixtureUtilsService
   let pipe: NamespaceValidationPipe
   let k8sClient: K8sClient
-  let manager: EntityManager
-  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -53,7 +49,6 @@ describe('NamespaceValidationPipe', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     pipe = app.get<NamespaceValidationPipe>(NamespaceValidationPipe)
     k8sClient = app.get<K8sClient>(K8sClient)
-    manager = fixtureUtilsService.connection.manager
     TestSetupUtils.seApplicationConstants()
   })
 
@@ -69,7 +64,7 @@ describe('NamespaceValidationPipe', () => {
   it('returns bad request error when trying to deploy into invalid namespace', async() => {
 
     jest.spyOn(k8sClient, 'getNamespace').mockImplementation( 
-      async() => Promise.resolve({ body: {}, response: {} as http.IncomingMessage})
+      async() => Promise.resolve({ body: {}, response: {} as http.IncomingMessage })
     )
 
     const req = new CreateDeploymentRequestDto(
@@ -93,11 +88,7 @@ describe('NamespaceValidationPipe', () => {
       new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
       10
     )
-
-    await expect(
-     pipe.transform(req)
-    ).rejects.toThrow(new BadRequestException({}))
-
+    await expect(pipe.transform(req)).rejects.toThrow(new BadRequestException({}))
   })
 
   it('allows the operation to continue due valid namespace', async() => {
@@ -106,11 +97,12 @@ describe('NamespaceValidationPipe', () => {
       async() => Promise.resolve({ 
         body: {
           status: {
-            phase: "Active"
+            phase: 'Active'
           }
         }, 
-        response: {} as http.IncomingMessage}
-    ))
+        response: {} as http.IncomingMessage }
+      )
+    )
 
     const req = new CreateDeploymentRequestDto(
       'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',

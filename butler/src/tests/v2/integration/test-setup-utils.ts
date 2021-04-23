@@ -44,10 +44,10 @@ const K8sClientStub = {
     return Promise.resolve({ 
       body: {
         status: {
-          phase: "Active"
+          phase: 'Active'
         }
       }, 
-      response: {} as http.IncomingMessage})
+      response: {} as http.IncomingMessage })
   },
   
   client: {

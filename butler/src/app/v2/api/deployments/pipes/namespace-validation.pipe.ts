@@ -35,12 +35,12 @@ export class NamespaceValidationPipe implements PipeTransform {
     
     const response = await this.k8sClient.getNamespace(deploymentRequest.namespace)
 
-    if (response.body.status?.phase !== "Active") {
+    if (response.body.status?.phase !== 'Active') {
       throw new BadRequestException({
         errors: [
           {
             message: `invalid namespace '${deploymentRequest.namespace}'`,
-            detail: `namespace does not exist or is not active`,
+            detail: 'namespace does not exist or is not active',
             meta: {
               component: 'butler',
               timestamp: Date.now()

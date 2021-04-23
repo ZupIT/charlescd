@@ -90,7 +90,7 @@ export class GitLabRepository implements Repository {
         throw new BadRequestException({
           errors: [
             {
-              title: `Unable to fetch GitLab URL`,
+              title: 'Unable to fetch GitLab URL',
               detail: `Status '${error.response.statusText}' received when accessing GitLab resource: ${url}`,
               meta: {
                 component: 'butler',
