@@ -16,7 +16,6 @@
 
 import * as k8s from '@kubernetes/client-node'
 import { Injectable } from '@nestjs/common'
-import { getConnection } from 'typeorm'
 import * as http from 'http'
 import * as moment from 'moment'
 import { LogEntity } from '../../api/deployments/entity/logs.entity'
@@ -33,7 +32,6 @@ export class EventsLogsAggregator {
     response: http.IncomingMessage
   }>> // TODO: configure a LRU cache here
 
-  // TODO: receive logsRepository here
   constructor(private k8sClient: K8sClient,
     private logsRepository: LogRepository,
     private consoleLoggerService: ConsoleLoggerService) {
@@ -86,10 +84,6 @@ export class EventsLogsAggregator {
   }
 
   private async saveLogs(deploymentId: string, log: Log): Promise<LogEntity> {
-    // return getConnection().transaction(async transactionManager => {
-    //   const logEntity = new LogEntity(deploymentId, [log])
-    //   return transactionManager.save(logEntity)
-    // })
     const logEntity = new LogEntity(deploymentId, [log])
     return this.logsRepository.save(logEntity)
   }
@@ -155,8 +149,8 @@ class Event {
   }
 
   public get timestamp(): Date {
-    if (this.coreEventObject.metadata.creationTimestamp) {
-      return new Date(this.coreEventObject.metadata.creationTimestamp)
+    if (this.coreEventObject.metadata?.creationTimestamp) {
+      return new Date(this.coreEventObject.metadata?.creationTimestamp)
     }
 
     return this.fallBackTimestamp()

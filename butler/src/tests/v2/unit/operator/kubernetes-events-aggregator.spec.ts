@@ -34,7 +34,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
   const k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
   const logRepository = new LogRepository()
 
-  it('Not process event without valid involved object', async() => {
+  it('Not process event without valid involved object', async () => {
     const readSpy = jest.spyOn(k8sClient, 'readResource')
       .mockImplementation(spec => Promise.resolve({} as K8sClientResolveObject))
 
@@ -46,5 +46,43 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
     expect(readSpy).toBeCalledTimes(0)
     expect(logRepositorySpy).toBeCalledTimes(0)
+  })
+
+  it('Save event as a log when the resource has the label deploymentId', async () => {
+    const readSpy = jest.spyOn(k8sClient, 'readResource')
+      .mockImplementation(spec => Promise.resolve({
+        body: {
+          metadata: {
+            labels: {
+              deploymentId: 'a3e9c42b-8ff4-48a7-9a4e-e81f1d5dc3fa'
+            }
+          }
+        },
+        response: {} as http.IncomingMessage
+      } as K8sClientResolveObject))
+
+    const logRepositorySpy = jest.spyOn(logRepository, 'save')
+      .mockImplementation(entity => Promise.resolve({} as LogEntity))
+
+    const coreEvent = {
+      metadata: {
+        creationTimestamp: new Date('2021-04-23T11:30:20Z')
+      },
+      involvedObject: {
+        namespace: 'events',
+        kind: 'Pod',
+        apiVersion: 'v1',
+        name: 'pod-name'
+      },
+      reason: 'Created',
+      message: 'Created container guestbook',
+      type: 'Normal',
+    }
+
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    await eventsLogsAggregator.processEvent(coreEvent as CoreV1Event)
+
+    expect(readSpy).toBeCalledTimes(1)
+    expect(logRepositorySpy).toBeCalledTimes(1)
   })
 })
