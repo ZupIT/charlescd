@@ -23,6 +23,7 @@ import { LogEntity } from '../../api/deployments/entity/logs.entity'
 import { ConsoleLoggerService } from '../../core/logs/console'
 import { Log } from '../../api/deployments/interfaces/log.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
+import { LogRepository } from '../../api/deployments/repository/log.repository'
 
 @Injectable()
 export class EventsLogsAggregator {
@@ -33,8 +34,9 @@ export class EventsLogsAggregator {
   }>> // TODO: configure a LRU cache here
 
   // TODO: receive logsRepository here
-  constructor(private consoleLoggerService: ConsoleLoggerService,
-    private k8sClient: K8sClient) {
+  constructor(private k8sClient: K8sClient,
+    private logsRepository: LogRepository,
+    private consoleLoggerService: ConsoleLoggerService) {
     this.resourceCache = {}
   }
 
@@ -84,10 +86,12 @@ export class EventsLogsAggregator {
   }
 
   private async saveLogs(deploymentId: string, log: Log): Promise<LogEntity> {
-    return getConnection().transaction(async transactionManager => {
-      const logEntity = new LogEntity(deploymentId, [log])
-      return transactionManager.save(logEntity)
-    })
+    // return getConnection().transaction(async transactionManager => {
+    //   const logEntity = new LogEntity(deploymentId, [log])
+    //   return transactionManager.save(logEntity)
+    // })
+    const logEntity = new LogEntity(deploymentId, [log])
+    return this.logsRepository.save(logEntity)
   }
 
   private isAfter(event: Event, since?: Date): boolean {

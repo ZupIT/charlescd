@@ -15,6 +15,7 @@ import { ReconcileDeploymentUsecase } from './use-cases/reconcile-deployment.use
 import { EventsLogsAggregator } from './logs-aggregator/kubernetes-events-aggregator'
 import { EventsWatcher } from './logs-aggregator/kubernetes-events-watcher'
 import { EventsOperatorService } from './logs-aggregator/events-operator-service'
+import { LogRepository } from '../api/deployments/repository/log.repository'
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { EventsOperatorService } from './logs-aggregator/events-operator-service
       DeploymentEntityV2,
       DeploymentRepositoryV2,
       ComponentsRepositoryV2,
-      ExecutionRepository
+      ExecutionRepository,
+      LogRepository
     ]),
     LogsModule,
     HttpModule

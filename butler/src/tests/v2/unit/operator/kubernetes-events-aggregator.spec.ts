@@ -22,22 +22,29 @@ import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 import { CoreV1Event, KubernetesObject } from '@kubernetes/client-node'
+import { LogRepository } from '../../../../app/v2/api/deployments/repository/log.repository'
+import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
 describe('Aggregate events from kubernetes to charles logs', () => {
 
   const butlerNamespace = 'butler-namespace'
+  const logService = new ConsoleLoggerService()
+  const k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
+  const logRepository = new LogRepository()
 
   it('Not process event without valid involved object', async() => {
-    const logService = new ConsoleLoggerService()
-    const k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
     const readSpy = jest.spyOn(k8sClient, 'readResource')
       .mockImplementation(spec => Promise.resolve({} as K8sClientResolveObject))
 
-    const eventsLogsAggregator = new EventsLogsAggregator(logService, k8sClient)
+    const logRepositorySpy = jest.spyOn(logRepository, 'save')
+      .mockImplementation(entity => Promise.resolve({} as LogEntity))
+
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
     await eventsLogsAggregator.processEvent({} as CoreV1Event)
 
     expect(readSpy).toBeCalledTimes(0)
+    expect(logRepositorySpy).toBeCalledTimes(0)
   })
 })
