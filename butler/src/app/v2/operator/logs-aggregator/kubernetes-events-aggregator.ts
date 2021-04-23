@@ -50,16 +50,20 @@ export class EventsLogsAggregator {
         return
       }
 
+      const event = new Event(coreEvent)
+
+      if (this.isEventOlderThen(event, since)) {
+        this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event`)
+        return
+      }
+
       const response = await this.resourceFor(
         involvedObject.namespace,
         involvedObject.kind,
         involvedObject.apiVersion,
         involvedObject.name
       )
-      const event = new Event(coreEvent)
-      if (this.hasAnyLabel(response.body, ['deploymentId'])
-        && this.isAfter(event, since)) {
-
+      if (this.hasAnyLabel(response.body, ['deploymentId'])) {
         const deploymentId = response.body.metadata?.labels?.['deploymentId']
 
         if (!deploymentId) {
@@ -87,8 +91,11 @@ export class EventsLogsAggregator {
     return this.logsRepository.save(logEntity)
   }
 
-  private isAfter(event: Event, since?: Date): boolean {
-    return !since || event.isAfter(since)
+  private isEventOlderThen(event: Event, since?: Date): boolean {
+    if(!since) {
+      return false
+    }
+    return !event.isAfter(since)
   }
 
   private hasAnyLabel(resource: k8s.KubernetesObject, labels: string[]): boolean {
