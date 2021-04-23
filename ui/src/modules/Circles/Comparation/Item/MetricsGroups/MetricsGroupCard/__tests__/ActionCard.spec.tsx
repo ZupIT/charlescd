@@ -35,7 +35,7 @@ test('render Action Card', async () => {
   const status = screen.getByTestId('action-status-success');
   const nickname = screen.getByText('action');
   const actionType = screen.getByText('Circle promotion');
-  const triggeredAt = screen.getByText('08/10/2015 • 12:35:00');
+  const triggeredAt = screen.getByText('08/10/2015 | 12:35:00');
   const dropdown = await screen.findByTestId('icon-vertical-dots');
 
   expect(status).toBeInTheDocument();
@@ -44,11 +44,11 @@ test('render Action Card', async () => {
   expect(triggeredAt).toBeInTheDocument();
 
   userEvent.click(dropdown);
-  userEvent.click(screen.getByText('Edit action'));
+  expect(screen.getByText('Edit action')).toBeInTheDocument();
   userEvent.click(screen.getByText('Delete action'));
   userEvent.click(screen.getByText('Yes, delete'));
 
-  expect(action).toHaveBeenCalledTimes(2);
+  expect(action).toHaveBeenCalledTimes(1);
 });
 
 test('render Action Card and confirm delete', async () => {

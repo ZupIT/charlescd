@@ -60,6 +60,14 @@ const Item = styled.div`
   }
 `;
 
+const WorkspaceItem = styled(Item)`
+  >span{
+    width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
 const Footer = styled.div``;
 
 const Logo = styled(IconComponent)`
@@ -200,5 +208,6 @@ export default {
   LinkText,
   Bottom,
   Footer,
-  Item
+  Item,
+  WorkspaceItem
 };

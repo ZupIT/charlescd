@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
-    private val findUserByIdInteractor: FindUserByIdInteractor,
+    private val findUserByIdInteractor: FindWorkspaceByUserIdInteractor,
     private val findAllUsersInteractor: FindAllUsersInteractor,
     private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
@@ -61,7 +61,7 @@ class V2UserController(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable("id") id: UUID
     ): List<SimpleWorkspaceResponse> {
-        return findUserByIdInteractor.execute(authorization, id).workspaces
+        return findUserByIdInteractor.execute(authorization, id)
     }
 
     @ApiOperation(value = "Find all users")

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Styled from './styled';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { Component } from 'modules/Modules/interfaces/Component';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
+import filter from 'lodash/filter';
 
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
@@ -12,7 +13,7 @@ interface Props {
 }
 
 const ComponentForm = ({ field, fields, index, remove }: Props) => {
-  const { register, unregister } = useFormContext();
+  const { register, unregister, getValues, errors } = useFormContext();
   const [editMoreOptions, setEditMoreOptions] = useState(false);
   const one = 1;
 
@@ -26,6 +27,13 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
     register(`components[${index}].hostValue`, isRequiredAndNotBlank);
     register(`components[${index}].gatewayName`, isRequiredAndNotBlank);
   };
+
+  const duplicatedComponent = (value: string) => {
+    const { components } = getValues();
+    const found = filter(components, ({ name }) => name === value);
+    return found.length === 1 ? true : 'duplicate component';
+  }
+
 
   return (
     <Styled.Components.ColumnWrapper key={field.id} data-testid={`components[${index}]`}>
@@ -41,7 +49,14 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         <Styled.Components.Input
           label="Enter name"
           name={`components[${index}].name`}
-          ref={register(isRequiredAndNotBlank)}
+          error={errors?.components?.[index]?.name.message}
+          ref={register({
+            ...isRequiredAndNotBlank,
+            validate: {
+              ...isRequiredAndNotBlank.validate,
+              duplicatedComponent
+            }
+          })}
           defaultValue={field.name}
         />
         <Styled.Components.Number

@@ -66,6 +66,7 @@ export interface Circle {
   rules: Rules;
   matcherType?: MatcherType;
   percentage?: number;
+  default?: boolean;
 }
 
 export interface CreateCircleWithFilePayload {
