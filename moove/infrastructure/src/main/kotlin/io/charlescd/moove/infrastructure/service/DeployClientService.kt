@@ -55,6 +55,11 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         )
     }
 
+    override fun existsCdConfigurationByWorkspace(workspaceId: String): Boolean {
+        return deployClient.getCdConfigurations(workspaceId).isNotEmpty()
+    }
+
+
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,

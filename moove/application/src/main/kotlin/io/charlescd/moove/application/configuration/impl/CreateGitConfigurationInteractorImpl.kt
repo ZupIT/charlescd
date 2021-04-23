@@ -23,6 +23,7 @@ import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateGitConfigurationInteractor
 import io.charlescd.moove.application.configuration.request.CreateGitConfigurationRequest
 import io.charlescd.moove.application.configuration.response.GitConfigurationResponse
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import javax.inject.Named
 
