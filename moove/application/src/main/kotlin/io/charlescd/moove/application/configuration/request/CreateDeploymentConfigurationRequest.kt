@@ -22,12 +22,17 @@ import io.charlescd.moove.domain.User
 import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Pattern
 
 data class CreateDeploymentConfigurationRequest(
     val name: String = "Deployment Configuration",
 
     @field:NotBlank
     @field:NotNull
+    @field:Pattern(
+        regexp = "^(?:http(s)?://)?[\\w.-]+(?:\\.[\\w.-]+)+[\\w\\-._~:/?#\\[\\]@!$&'()*+,;=]+\$",
+        message = "Butler URL must be a valid URL"
+    )
     val butlerUrl: String,
 
     @field:NotBlank
