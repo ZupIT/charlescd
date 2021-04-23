@@ -84,7 +84,6 @@ export const changeOperatorValue = (
   name: string,
   form: { getValues: Function; watch: Function; setValue: Function }
 ) => {
-  const values = form.getValues();
-  const newValue = values[name] === 'AND' ? 'OR' : 'AND';
+  const newValue = form.getValues(name) === 'AND' ? 'OR' : 'AND';
   form.setValue(name, newValue);
 };

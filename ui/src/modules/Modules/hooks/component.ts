@@ -36,14 +36,17 @@ export const useSaveComponent = (): {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `${error.status}: ${error.statusText}`,
-          status: 'error'
-        })
-      );
-    }
+    (async () => {
+      if (error) {
+        const e = await error.json();
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
   }, [dispatch, error]);
 
   return {
@@ -65,14 +68,17 @@ export const useUpdateComponent = (): {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `${error.status}: ${error.statusText}`,
-          status: 'error'
-        })
-      );
-    }
+    (async () => {
+      if (error) {
+        const e = await error.json();
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
   }, [dispatch, error]);
 
   return {
@@ -103,15 +109,19 @@ export const useDeleteComponent = (): {
   );
 
   useEffect(() => {
-    if (error) {
-      dispatch(
-        toogleNotification({
-          text: `${error.status}: ${error.statusText}`,
-          status: 'error'
-        })
-      );
-    }
+    (async () => {
+      if (error) {
+        const e = await error.json();
+        dispatch(
+          toogleNotification({
+            text: `${error.status}: ${e?.message}`,
+            status: 'error'
+          })
+        );
+      }
+    })();
   }, [dispatch, error]);
+
 
   return {
     removeComponent,

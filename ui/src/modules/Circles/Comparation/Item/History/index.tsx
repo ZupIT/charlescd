@@ -18,11 +18,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CircleRelease } from 'modules/Metrics/Circles/interfaces';
 import Text from 'core/components/Text';
-import { dateTimeFormatterWithTab } from 'core/utils/date';
 import Icon from 'core/components/Icon';
+import isEmpty from 'lodash/isEmpty';
 import camelCase from 'lodash/camelCase';
+import startCase from 'lodash/startCase';
 import LogModal from './Logs';
-import { getReleaseStatus } from './helpers';
+import { getReleaseStatus, getActionDateTime } from './helpers';
 import { useCircleDeployHistory } from './hooks';
 import Loader from './Loaders';
 import Styled from './styled';
@@ -35,8 +36,9 @@ type Props = {
 const DeployHistory = ({ onGoBack, id }: Props) => {
   const page = useRef(0);
   const [toggleModal, setToggleModal] = useState(false);
+  const [logDeploymentId, setLogDeploymentId] = useState<string>();
   const [releases, setReleases] = useState<CircleRelease[]>([]);
-  const { getCircleReleases, response } = useCircleDeployHistory();
+  const { getCircleReleases, response, loading } = useCircleDeployHistory();
   const releasesResponse = response?.content;
   const hasMoreData = !response?.last;
 
@@ -60,8 +62,19 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
     getCircleReleases({ page: page.current }, id);
   };
 
+  const openLogModal = (releaseId: string) => {
+    setLogDeploymentId(releaseId);
+    setToggleModal(true);
+  };
+
   return (
     <>
+      {toggleModal && (
+        <LogModal 
+          onGoBack={() => setToggleModal(false)} 
+          deploymentId={logDeploymentId}
+        />
+      )}
       <Styled.Layer data-testid="circles-deploy-history">
         <Styled.Icon
           name="arrow-left"
@@ -81,32 +94,36 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
         loader={<Loader.History />}
         height={690}
       >
+        {(!loading && isEmpty(releases)) && (
+          <Styled.NoHistoryPlaceholder
+            icon="error-403"
+          >
+            <Styled.NoHistoryText color="dark" weight="bold" align="center">
+              No deployment history available
+            </Styled.NoHistoryText>
+          </Styled.NoHistoryPlaceholder>
+        )}
         {releases?.map((release, index) => (
           <>
-            {toggleModal && (
-              <LogModal 
-                onGoBack={() => setToggleModal(false)} 
-                deploymentId={release.id}
-              />)}
             <Styled.DeploymentRow key={index}>
               <Styled.TableRow>
-                <Styled.TableTextName color="light" title={release.authorName}>
-                  {release.authorName}
+                <Styled.TableTextName color="light" title={release.authorEmail}>
+                  {release.authorEmail}
                 </Styled.TableTextName>
                 <Styled.TableDate color="light" >
-                  {release.deployedAt ? dateTimeFormatterWithTab(release.deployedAt) : '-'}
+                  {getActionDateTime(release.deployedAt, release.undeployedAt) }
                 </Styled.TableDate>
                 <Styled.TableDeployStatus>
-                  <Styled.Dot status={getReleaseStatus(release?.status)}/>
+                  <Styled.Dot status={camelCase(getReleaseStatus(release.status))}/>
                   <Styled.TableDeployStatusName color="light">
-                    {camelCase(release.status)}
+                    {startCase(getReleaseStatus(release.status))}
                   </Styled.TableDeployStatusName>
                 </Styled.TableDeployStatus>
                 <Styled.TableExpand 
                   name="expand" 
                   color="light"
                   size={'16px'}
-                  onClick={() => setToggleModal(true)}
+                  onClick={() => openLogModal(release.id)}
                 />
               </Styled.TableRow>
               <Styled.ReleaseRow>

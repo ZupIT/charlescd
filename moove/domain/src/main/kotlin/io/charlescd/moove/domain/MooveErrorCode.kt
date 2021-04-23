@@ -60,5 +60,6 @@ enum class MooveErrorCode(val key: String) {
     CANNOT_RESET_YOUR_OWN_PASSWORD("cannot.reset.your.own.password"),
     EXTERNAL_IDM_FORBIDDEN("external.idm.forbidden"),
     LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED("limit.of.percentage.circles.exceeded"),
-    IDM_UNEXPECTED_ERROR("idm.unexpected.error")
+    IDM_UNEXPECTED_ERROR("idm.unexpected.error"),
+    DUPLICATED_COMPONENT_NAME_ERROR("duplicated.component.name.error")
 }
