@@ -113,6 +113,25 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         ex.id == author.email
     }
 
+    def "when configuration already registered on workspace should throw an exception"() {
+        given:
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def createDeploymentConfigurationRequest =
+                new CreateDeploymentConfigurationRequest("Test", "https://butler-url.com.br", "charlescd", "token", GitProviderEnum.GITHUB)
+
+        when:
+        this.createDeploymentConfigurationInteractor.execute(createDeploymentConfigurationRequest, workspaceId, authorization)
+
+        then:
+        1 * this.workspaceRepository.exists(workspaceId) >> true
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId) >> true
+        thrown(BusinessException)
+    }
+
     def "should create deployment configuration successfully"() {
         given:
         def author = TestUtils.user
@@ -128,6 +147,7 @@ class CreateDeploymentConfigurationInteractorImplTest extends Specification {
         1 * deployClient.healthCheck(URI.create(request.butlerUrl))
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId) >> false
         1 * deploymentConfigurationRepository.save(_) >> { argument ->
             def savedDeploymentConfiguration = argument[0]
             assert savedDeploymentConfiguration instanceof DeploymentConfiguration

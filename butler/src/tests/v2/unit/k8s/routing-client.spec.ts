@@ -95,9 +95,9 @@ describe('Routing CRD client apply method', () => {
   })
 
   it('should call the read method with the correct arguments', async() => {
-    const readSpy = jest.spyOn(k8sClient.client, 'read')
+    const readSpy = jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildRoutingCrdManifest(activeComponents, butlerNamespace)
@@ -106,9 +106,9 @@ describe('Routing CRD client apply method', () => {
   })
 
   it('should call the patch method with the correct arguments', async() => {
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    const patchSpy = jest.spyOn(k8sClient.client, 'patch')
+    const patchSpy = jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildRoutingCrdManifest(activeComponents, butlerNamespace)
@@ -126,9 +126,9 @@ describe('Routing CRD client apply method', () => {
   it('should throw error when read method fails and should not call patch method', async() => {
     const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.reject(expectedError))
-    const patchSpy = jest.spyOn(k8sClient.client, 'patch')
+    const patchSpy = jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     await expect(k8sClient.applyRoutingCustomResource(activeComponents))
@@ -139,9 +139,9 @@ describe('Routing CRD client apply method', () => {
   it('should throw error when patch method fails', async() => {
     const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.reject(expectedError))
 
     await expect(k8sClient.applyRoutingCustomResource(activeComponents))
@@ -150,9 +150,9 @@ describe('Routing CRD client apply method', () => {
 
   it('should call the routing crd builder method with the correct activeComponents and namespace', async() => {
     const builderSpy = jest.spyOn(CrdBuilder, 'buildRoutingCrdManifest')
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     await k8sClient.applyRoutingCustomResource(activeComponents)

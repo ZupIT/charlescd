@@ -86,7 +86,7 @@ export const createDeployComponent = (
   manifestType: ManifestType,
   namespace: string,
   isDeploymentHealthy: boolean
-) => {
+): ComponentEntityV2 => {
   const component = new ComponentEntityV2(
     UrlConstants.helmRepository,
     tag,

@@ -42,6 +42,8 @@ class CreateDeploymentConfigurationInteractorImpl(
 
         val author = userService.findByAuthorizationToken(authorization)
 
+        checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId)
+
         val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
 
         return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
@@ -52,6 +54,12 @@ class CreateDeploymentConfigurationInteractorImpl(
             this.deployClientService.healthCheck(butlerUrl)
         } catch (exception: Exception) {
             throw BusinessException.of(MooveErrorCode.INVALID_BUTLER_URL_ERROR)
+        }
+    }
+
+    private fun checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId: String) {
+        if (deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId)) {
+            throw BusinessException.of(MooveErrorCode.DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED)
         }
     }
 }

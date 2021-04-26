@@ -17,6 +17,10 @@ COMPOSE_TESTS=./test/docker-compose.test.yaml
 start:
 				sh build-plugins.sh
 				$(GORUN) $(CMD_PATH)
+
+build-plugin:
+				sh build-plugins.sh
+
 build: 
 				$(GOBUILD) -o $(DIST_PATH)/$(BINARY_NAME) $(CMD_PATH)
 

@@ -18,8 +18,10 @@ import styled from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
 import ComponentText from 'core/components/Text';
 import ComponentModal from 'core/components/Modal';
-import { slideInRight } from 'core/assets/style/animate';
+import ComponentAceEditor from 'core/components/AceEditor';
+import ComponentPlaceholder from 'core/components/Placeholder';
 import LayerComponent from 'core/components/Layer';
+import { slideInRight } from 'core/assets/style/animate';
 
 
 const Icon = styled(ComponentIcon)`
@@ -55,7 +57,8 @@ const DeploymentRow = styled.div`
 const TableRow = styled.div`
   display: flex;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
+  align-items: center;
 `;
 
 const ReleaseRow = styled.div`
@@ -67,35 +70,27 @@ const ReleaseRow = styled.div`
 `;
 
 const TableTextName = styled(ComponentText.h4)`
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 200px;
+  padding-left: 20px;
 `;
 
 const TableTextRelease = styled(ComponentText.h4)`
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
-  padding-top: 10px;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 510px;
+  padding-left: 10px;
+  padding-top: 10px;
 `;
 
 const TableExpand = styled(ComponentIcon)`
-  margin-top: 2px;
-  margin-right: 5px;
+  margin-right: 13px;
 `;
 
 const TableDate = styled(ComponentText.h4)`
-  margin-top: 5px;
   padding-left: 15px;
   width: 155px;
 `;
@@ -112,7 +107,6 @@ const Dot = styled.div<DotProps>`
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
-  margin-top: 5px;
 `;
 
 const TableDeployStatus = styled.div`
@@ -132,6 +126,20 @@ const TableDeployStatusName = styled(ComponentText.h4)`
 
 const ModalFull = styled(ComponentModal.FullScreen)``;
 
+const AceEditor = styled(ComponentAceEditor)`
+  padding: 10px 0;
+  height: 97%;
+`;
+
+const NoHistoryPlaceholder = styled(ComponentPlaceholder)`
+  margin-top: 20px;
+`;
+
+const NoHistoryText = styled(ComponentText.h2)`
+  top: -20px;
+  position: relative;
+`;
+
 export default {
   Icon,
   Layer,
@@ -146,5 +154,8 @@ export default {
   Dot,
   ReleaseRow,
   TableDate,
-  ModalFull
+  ModalFull,
+  AceEditor,
+  NoHistoryPlaceholder,
+  NoHistoryText
 };
