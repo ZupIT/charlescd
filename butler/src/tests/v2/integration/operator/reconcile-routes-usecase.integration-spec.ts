@@ -19,7 +19,7 @@ import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/dep
 import { UrlConstants } from '../test-constants'
 import { EntityManager } from 'typeorm'
 
-describe('Routes manifest use case', () => {
+describe('Reconcile routes usecase', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let deploymentRepository: DeploymentRepositoryV2
