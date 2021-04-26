@@ -690,7 +690,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           source: {
             pointer: 'circle/id'
           },
-          status: 400
+          status: 409
         }
       ]
     }
@@ -987,7 +987,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           source: {
             pointer: 'namespace'
           },
-          status: 400
+          status: 409
         }
       ]
     }

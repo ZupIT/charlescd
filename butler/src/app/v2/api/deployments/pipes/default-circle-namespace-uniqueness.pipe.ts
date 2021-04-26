@@ -50,7 +50,7 @@ export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
             source: {
               pointer: 'namespace'
             },
-            status: 400
+            status: 409
           }
         ]
       }

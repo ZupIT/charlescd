@@ -43,7 +43,7 @@ export class DeploymentUniquenessPipe implements PipeTransform {
             source: {
               pointer: 'deploymentId'
             },
-            status: 400
+            status: 409
           }
         ]
       }

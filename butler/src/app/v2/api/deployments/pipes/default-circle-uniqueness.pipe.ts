@@ -50,7 +50,7 @@ export class DefaultCircleUniquenessPipe implements PipeTransform {
             source: {
               pointer: 'circle/id'
             },
-            status: 400
+            status: 409
           }
         ]
       })
