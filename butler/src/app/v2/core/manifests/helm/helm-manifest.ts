@@ -17,7 +17,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   UnprocessableEntityException
 } from '@nestjs/common'
 import { spawn } from 'child_process'
@@ -60,7 +59,7 @@ export class HelmManifest implements Manifest {
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
     } catch (exception) {
-      throw new UnprocessableEntityException(  `Could not render manifest. ${exception.message}`)
+      throw new BadRequestException(`Not valid template. ${exception.message}`)
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
       await this.cleanUp(chartPath)
