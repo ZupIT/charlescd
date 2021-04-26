@@ -199,6 +199,9 @@ describe('Aggregate events from kubernetes to charles logs', () => {
         response: {} as http.IncomingMessage
       } as K8sClientResolveObject))
 
+    const logRepositorySpy = jest.spyOn(logRepository, 'save')
+      .mockImplementation(() => Promise.resolve({} as LogEntity))
+
     const coreEvent = {
       metadata: {
         creationTimestamp: new Date('2021-04-23T11:30:20Z')
@@ -219,5 +222,44 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event) // Second call
 
     expect(readSpy).toBeCalledTimes(1)
+    expect(logRepositorySpy).toBeCalledTimes(2)
+  })
+
+  it('Should not aggregate events from kubernetes system namespaces', async() => {
+    const readSpy = jest.spyOn(k8sClient, 'readResource')
+      .mockImplementation(() => Promise.resolve({
+        body: {
+          metadata: {
+            labels: {
+              deploymentId: deploymentId
+            }
+          }
+        },
+        response: {} as http.IncomingMessage
+      } as K8sClientResolveObject))
+
+    const logRepositorySpy = jest.spyOn(logRepository, 'save')
+      .mockImplementation(() => Promise.resolve({} as LogEntity))
+      
+    const coreEvent = {
+      metadata: {
+        creationTimestamp: new Date('2021-04-23T11:30:20Z')
+      },
+      involvedObject: {
+        namespace: 'kube-system',
+        kind: 'Pod',
+        apiVersion: 'v1',
+        name: 'kube-scheduler'
+      },
+      reason: 'Created',
+      message: 'Created container kube-scheduler',
+      type: 'Normal',
+    }
+
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
+
+    expect(readSpy).toBeCalledTimes(0)
+    expect(logRepositorySpy).toBeCalledTimes(0)
   })
 })

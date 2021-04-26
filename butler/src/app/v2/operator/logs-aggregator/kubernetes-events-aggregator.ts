@@ -27,6 +27,8 @@ import { LogRepository } from '../../api/deployments/repository/log.repository'
 @Injectable()
 export class EventsLogsAggregator {
 
+  private static readonly KUBE_SYSTEM_NS_PREFIX = 'kube-'
+
   private readonly resourceCache: Record<string, Promise<{
     body: k8s.KubernetesObject
     response: http.IncomingMessage
@@ -45,14 +47,19 @@ export class EventsLogsAggregator {
       || !involvedObject.kind
       || !involvedObject.apiVersion
       || !involvedObject.name) {
-      this.consoleLoggerService.log('Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding event', involvedObject)
+      this.consoleLoggerService.log('Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding event...', involvedObject)
+      return
+    }
+
+    if (involvedObject.namespace.startsWith(EventsLogsAggregator.KUBE_SYSTEM_NS_PREFIX)) {
+      this.consoleLoggerService.log(`${involvedObject.namespace} is a kubernetes system namespace. Discarding event...`, involvedObject)
       return
     }
 
     const event = new Event(coreEvent)
 
     if (this.isEventOlderThen(event, since)) {
-      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event`)
+      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event...`)
       return
     }
 
@@ -73,7 +80,7 @@ export class EventsLogsAggregator {
     const deploymentId = resource.metadata?.labels?.[deploymentIdLabel]
 
     if (!deploymentId) {
-      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${deploymentIdLabel}. Discarding event`)
+      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${deploymentIdLabel}. Discarding event...`)
       return
     }
 
