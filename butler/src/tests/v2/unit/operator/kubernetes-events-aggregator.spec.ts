@@ -49,7 +49,9 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       .mockImplementation(() => Promise.resolve({} as LogEntity))
 
     const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
-    await eventsLogsAggregator.aggregate({} as CoreV1Event)
+    await eventsLogsAggregator.aggregate({
+      involvedObject: {}
+    } as CoreV1Event)
 
     expect(readSpy).toBeCalledTimes(0)
     expect(logRepositorySpy).toBeCalledTimes(0)

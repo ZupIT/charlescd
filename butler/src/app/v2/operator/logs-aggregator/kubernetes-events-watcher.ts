@@ -43,7 +43,11 @@ export class EventsWatcher {
   }
 
   private async processEvent(phase: string, coreEvent: k8s.CoreV1Event) {
-    this.eventsLogsAggregator.aggregate(coreEvent, this.lastConnectionLostTimestamp)
+    try {
+      await this.eventsLogsAggregator.aggregate(coreEvent, this.lastConnectionLostTimestamp)
+    } catch (error) {
+      this.consoleLoggerService.error('Error processing event', error)
+    }
   }
 
   private verifyConnectivity(req: k8s.RequestResult) {
@@ -79,6 +83,6 @@ export class EventsWatcher {
 
   private async restart() {
     this.consoleLoggerService.log(`Restarting watching events in ${EventsWatcher.RESTART_DELAY_IN_SECONDS} seconds...`)
-    setTimeout(async() => this.start(), EventsWatcher.RESTART_DELAY_IN_SECONDS * 1000)
+    setTimeout(async () => this.start(), EventsWatcher.RESTART_DELAY_IN_SECONDS * 1000)
   }
 }

@@ -39,75 +39,89 @@ export class EventsLogsAggregator {
   }
 
   public async aggregate(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
-    try {
-      const involvedObject = coreEvent.involvedObject
+    const involvedObject = coreEvent.involvedObject
 
-      if (!involvedObject.namespace
-        || !involvedObject.kind
-        || !involvedObject.apiVersion
-        || !involvedObject.name) {
-        this.consoleLoggerService.log('Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding event', involvedObject)
-        return
-      }
-
-      const event = new Event(coreEvent)
-
-      if (this.isEventOlderThen(event, since)) {
-        this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event`)
-        return
-      }
-
-      const response = await this.resourceFor(
-        involvedObject.namespace,
-        involvedObject.kind,
-        involvedObject.apiVersion,
-        involvedObject.name
-      )
-      if (this.hasAnyLabel(response.body, ['deploymentId'])) {
-        const deploymentId = response.body.metadata?.labels?.['deploymentId']
-
-        if (!deploymentId) {
-          this.consoleLoggerService.log('Unexpected behavior! "deploymentId" is mandatory! Discarding event')
-          return
-        }
-
-        const log = {
-          type: event.type,
-          title: event.title,
-          timestamp: moment(event.timestamp).format(),
-          details: event.details
-        }
-
-        this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
-        this.saveLogs(deploymentId, log)
-      }
-    } catch (error) {
-      this.consoleLoggerService.error('Error processing event', error)
+    if (!involvedObject.namespace
+      || !involvedObject.kind
+      || !involvedObject.apiVersion
+      || !involvedObject.name) {
+      this.consoleLoggerService.log('Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding event', involvedObject)
+      return
     }
+
+    const event = new Event(coreEvent)
+
+    if (this.isEventOlderThen(event, since)) {
+      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event`)
+      return
+    }
+
+    const resource = await this.resourceFor(
+      involvedObject.namespace,
+      involvedObject.kind,
+      involvedObject.apiVersion,
+      involvedObject.name
+    )
+
+    if (!resource) {
+      this.consoleLoggerService.log(`Could not find resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace}`)
+      return
+    }
+
+    const deploymentIdLabel = 'deploymentId'
+
+    const deploymentId = resource.metadata?.labels?.[deploymentIdLabel]
+
+    if (!deploymentId) {
+      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${deploymentIdLabel}. Discarding event`)
+      return
+    }
+
+    const log = {
+      type: event.type,
+      title: event.title,
+      timestamp: moment(event.timestamp).format(),
+      details: event.details
+    }
+
+    this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
+    this.saveLogs(deploymentId, log)
+
   }
 
   private async saveLogs(deploymentId: string, log: Log): Promise<LogEntity> {
-    const logEntity = new LogEntity(deploymentId, [log])
-    return this.logsRepository.save(logEntity)
+    try {
+      const logEntity = new LogEntity(deploymentId, [log])
+      return await this.logsRepository.save(logEntity)
+    } catch (error) {
+      this.consoleLoggerService.error('Error while trying to save log', error)
+      throw error
+    }
   }
 
   private isEventOlderThen(event: Event, since?: Date): boolean {
-    if(!since) {
+    if (!since) {
       return false
     }
     return !event.isAfter(since)
   }
 
-  private hasAnyLabel(resource: k8s.KubernetesObject, labels: string[]): boolean {
-    for (const label of labels) {
-      if (resource.metadata?.labels?.[label]) {
-        return true
-      }
+  private async resourceFor(namespace: string, kind: string, apiVersion: string, name: string): Promise<k8s.KubernetesObject | undefined> {
+    try {
+      const response = await this.cachedResourceFor(
+        namespace,
+        kind,
+        apiVersion,
+        name
+      )
+      return response.body
+    } catch (error) {
+      this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${namespace}/${kind}/${name}`, error.body)
+      return undefined
     }
-    return false
   }
 
-  private async resourceFor(namespace: string, kind: string, apiVersion: string, name: string):
+  private async cachedResourceFor(namespace: string, kind: string, apiVersion: string, name: string):
     Promise<{
       body: k8s.KubernetesObject,
       response: http.IncomingMessage
