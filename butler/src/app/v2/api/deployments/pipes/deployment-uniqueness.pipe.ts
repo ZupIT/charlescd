@@ -38,7 +38,7 @@ export class DeploymentUniquenessPipe implements PipeTransform {
             detail: 'deployment already exists',
             meta: {
               component: 'butler',
-              timestamp: expect.anything()
+              timestamp: Date.now()
             },
             source: {
               pointer: 'deploymentId'

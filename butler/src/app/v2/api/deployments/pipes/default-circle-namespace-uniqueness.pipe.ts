@@ -45,7 +45,7 @@ export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
             detail: 'Circle already has an active default deployment in a different namespace.',
             meta: {
               component: 'butler',
-              timestamp: expect.anything()
+              timestamp: Date.now()
             },
             source: {
               pointer: 'namespace'
