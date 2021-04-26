@@ -157,9 +157,9 @@ const Link = styled((props: LinkCustomProps) => {
       ::before {
         position: absolute;
         right: 0;
-        top: -25px;
-        width: 25px;
-        height: 25px;
+        top: -15px;
+        width: 15px;
+        height: 15px;
         font-size: 25px;
         line-height: 25px;
         content: '';
