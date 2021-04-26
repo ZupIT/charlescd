@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnprocessableEntityException
+} from '@nestjs/common'
 import { spawn } from 'child_process'
 import { promises as fs } from 'fs'
 import * as yaml from 'js-yaml'
@@ -54,9 +59,11 @@ export class HelmManifest implements Manifest {
       const manifest =  await this.template(chartPath, config)
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
+    } catch (exception) {
+      throw new UnprocessableEntityException(  `Invalid manifest. Error: ${exception.message}`)
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
-      this.cleanUp(chartPath)
+      await this.cleanUp(chartPath)
     }
   }
 
@@ -101,7 +108,7 @@ export class HelmManifest implements Manifest {
       helmProcess.on('close', (code) => {
         if (err) {
           reject({
-            err: err,
+            message: err,
             code: code
           })
           return

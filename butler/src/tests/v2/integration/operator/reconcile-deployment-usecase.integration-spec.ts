@@ -4,15 +4,8 @@ import { AppModule } from '../../../../app/app.module'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
-import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repository'
-import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { EntityManager } from 'typeorm'
 import { HookParams } from '../../../../app/v2/operator/interfaces/params.interface'
-import { createDeployComponent, getDeploymentWithManifestFixture } from '../../fixtures/deployment-entity.fixture'
-import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
-import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
-import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
-import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-cases/reconcile-deployment.usecase'
 import * as request from 'supertest'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
@@ -22,9 +15,6 @@ import { getSimpleManifests } from '../../fixtures/manifests.fixture'
 describe('Reconcile deployments usecase', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let deploymentRepository: DeploymentRepositoryV2
-  let componentsRepository: ComponentsRepositoryV2
-  let consoleLoggerService: ConsoleLoggerService
   let manager: EntityManager
 
   let hookParamsWithDeploymentNotReady: HookParams
@@ -43,9 +33,6 @@ describe('Reconcile deployments usecase', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    deploymentRepository = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
-    componentsRepository = app.get<ComponentsRepositoryV2>(ComponentsRepositoryV2)
-    consoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
     manager = fixtureUtilsService.connection.manager
 
     hookParamsWithDeploymentNotReady = {

@@ -97,7 +97,7 @@ export class GitHubRepository implements Repository {
             },
             status: `${error.response.status}`
           }
-        ]}
+          ] }
         if (error.response.status >= 400 && error.response.status < 500){
           throw new BadRequestException(err)
         }
