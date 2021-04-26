@@ -1,38 +1,59 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common'
+import {
+  ArgumentsHost, BadRequestException,
+  Catch,
+  ExceptionFilter,
+} from '@nestjs/common'
 import { Response } from 'express'
-import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
+import { plainToClass } from 'class-transformer'
 
-@Catch()
+@Catch(BadRequestException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  public catch(exception: unknown, host: ArgumentsHost): void {
+  public catch(exception: BadRequestException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
-    console.log(exception)
-    console.log(response)
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR
-
-    const message =
-      exception instanceof HttpException
-        ? exception.getResponse()
-        : exception
-    if (!response.get('title') && !response.get('details')){
+    if(!this.alreadyDetailedError(exception.getResponse())) {
       response
-        .status(status)
+        .status(exception.getStatus())
         .json({
           errors: [{
-            title: message,
+            title: this.getExceptionMessage(exception.getResponse()),
             meta: {
               component: 'butler',
               timestamp: Date.now()
             },
-            status: status
+            status: exception.getStatus()
           }]
-        }
-        )
+        })
+    } else {
+      response
+        .status(exception.getStatus())
+        .json(exception.getResponse())
     }
+  }
+  private getExceptionMessage(response: string | Record<string, any>) {
+    return typeof response === 'string' ? response  : this.convertToClass(response)
+  }
+
+  private convertToClass(response: Record<string, any>): Record<string, any> | string {
+    return plainToClass(ErrorResponse, response).message
+  }
+  private alreadyDetailedError(response: string | Record<string, any>): boolean {
+    return  typeof response !== 'string' &&  Object.entries(response).some(
+      ([key, value]) => key === 'errors')
   }
 
 }
+
+export class ErrorResponse {
+    public message: string;
+    public statusCode: string;
+    
+    constructor(
+      message: string,
+      statusCode: string
+    ) {
+      this.message = message
+      this.statusCode = statusCode
+    }
+}
+

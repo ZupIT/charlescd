@@ -61,7 +61,7 @@ export class HelmManifest implements Manifest {
       throw new BadRequestException(`Not valid template. ${exception.message}`)
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
-      await this.cleanUp(chartPath)
+      this.cleanUp(chartPath)
     }
   }
 
