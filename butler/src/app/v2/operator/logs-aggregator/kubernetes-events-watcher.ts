@@ -24,6 +24,8 @@ import { EventsLogsAggregator } from './kubernetes-events-aggregator'
 @Injectable()
 export class EventsWatcher {
 
+  private static readonly RESTART_DELAY_IN_SECONDS = 5
+
   private lastConnectionLostTimestamp?: Date
   private connected = false
 
@@ -72,12 +74,11 @@ export class EventsWatcher {
       this.connected = false
     }
 
-    this.retryWatchEvents()
+    this.restart()
   }
 
-  private async retryWatchEvents() {
-    const restartIn = 5 // five seconds?
-    this.consoleLoggerService.log(`Restarting watching events in ${restartIn} seconds...`)
-    setTimeout(async() => this.start(), restartIn * 1000)
+  private async restart() {
+    this.consoleLoggerService.log(`Restarting watching events in ${EventsWatcher.RESTART_DELAY_IN_SECONDS} seconds...`)
+    setTimeout(async() => this.start(), EventsWatcher.RESTART_DELAY_IN_SECONDS * 1000)
   }
 }
