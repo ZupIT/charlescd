@@ -16,7 +16,7 @@
 
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
-import { groupBy, isEmpty } from 'lodash'
+import { groupBy } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
