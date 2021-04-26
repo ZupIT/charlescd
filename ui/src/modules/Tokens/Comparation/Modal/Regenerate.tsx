@@ -34,7 +34,7 @@ const ModalRegenerate = ({ onClose, onContinue, isLoading }: Props) => {
       isLoading={isLoading}
     >
       <Text.h4 color="dark">
-        Any application or script using this token will no loger be able ato accesss Charles C.D. APIs.
+        Any application or script using this token will no longer be able ato access Charles C.D. APIs.
         You can not undo this action. Do you want to continue?
       </Text.h4>
     </Modal.Trigger>
