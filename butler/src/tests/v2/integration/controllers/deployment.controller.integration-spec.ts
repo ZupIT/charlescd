@@ -985,7 +985,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
             timestamp: expect.anything()
           },
           source: {
-            pointer: 'deploymentId'
+            pointer: 'namespace'
           },
           status: 400
         }

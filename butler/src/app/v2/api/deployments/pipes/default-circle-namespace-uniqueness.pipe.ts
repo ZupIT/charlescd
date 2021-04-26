@@ -48,7 +48,7 @@ export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
               timestamp: expect.anything()
             },
             source: {
-              pointer: 'deploymentId'
+              pointer: 'namespace'
             },
             status: 400
           }
