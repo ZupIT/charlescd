@@ -67,7 +67,7 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
             <Text.h5 color="dark">Release Name</Text.h5>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Cirles</Text.h5>
+            <Text.h5 color="dark">Circles</Text.h5>
           </Styled.TableColumn>
           <Styled.TableColumn>
             <Text.h5 color="dark">Deploy data</Text.h5>

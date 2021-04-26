@@ -26,4 +26,6 @@ interface DeploymentConfigurationRepository {
     fun find(id: String): Optional<DeploymentConfiguration>
 
     fun exists(workspaceId: String, id: String): Boolean
+
+    fun existsAnyByWorkspaceId(workspaceId: String): Boolean
 }

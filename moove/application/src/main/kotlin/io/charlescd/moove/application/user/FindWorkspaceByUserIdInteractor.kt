@@ -16,10 +16,10 @@
 
 package io.charlescd.moove.application.user
 
-import io.charlescd.moove.application.user.response.UserResponse
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import java.util.UUID
 
-interface FindUserByIdInteractor {
+interface FindWorkspaceByUserIdInteractor {
 
-    fun execute(authorization: String, id: UUID): UserResponse
+    fun execute(authorization: String, id: UUID): List<SimpleWorkspaceResponse>
 }

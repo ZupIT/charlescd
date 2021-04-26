@@ -21,6 +21,8 @@ import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateDeploymentConfigurationInteractor
 import io.charlescd.moove.application.configuration.request.CreateDeploymentConfigurationRequest
 import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
+import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
 import javax.inject.Named
 
@@ -36,8 +38,16 @@ class CreateDeploymentConfigurationInteractorImpl(
 
         val author = userService.findByAuthorizationToken(authorization)
 
+        checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId)
+
         val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
 
         return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
+    }
+
+    private fun checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId: String) {
+        if (deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId)) {
+            throw BusinessException.of(MooveErrorCode.DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED)
+        }
     }
 }

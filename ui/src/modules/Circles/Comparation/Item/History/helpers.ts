@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
+import { dateTimeFormatter } from 'core/utils/date';
+
 enum STATUS {
-  NOT_DEPLOYED = 'notDeployed',
-  DEPLOYED = 'deployed',
   DEPLOYING = 'deploying',
-  DEPLOY_FAILED = 'error',
+  DEPLOYED = 'deployed',
+  DEPLOY_FAILED = 'deploy_failed',
   UNDEPLOYING = 'undeploying',
-  ACTIVE = 'active',
-  INACTIVE = 'inactive'
+  NOT_DEPLOYED = 'undeploy'
 }
 
 export const getReleaseStatus = (statusEnum: string) => {
-  if (statusEnum === 'DEPLOYED') return STATUS.DEPLOYED;
-  return STATUS.DEPLOY_FAILED;
-};
-
-export const getStatus = (statusEnum: string) => {
   switch (statusEnum) {
     case 'NOT_DEPLOYED':
       return STATUS.NOT_DEPLOYED;
@@ -41,11 +36,20 @@ export const getStatus = (statusEnum: string) => {
       return STATUS.DEPLOY_FAILED;
     case 'UNDEPLOYING':
       return STATUS.UNDEPLOYING;
-    case 'ACTIVE':
-      return STATUS.ACTIVE;
-    case 'INACTIVE':
-      return STATUS.INACTIVE;
     default:
       return STATUS.DEPLOYED;
   }
+};
+
+export const getActionDateTime = (
+  deployDate: Date | string,
+  undeployDate: Date | string
+) => {
+  if (undeployDate) {
+    return dateTimeFormatter(undeployDate);
+  } if (deployDate) {
+    return dateTimeFormatter(deployDate);
+  }
+
+  return '-'
 };
