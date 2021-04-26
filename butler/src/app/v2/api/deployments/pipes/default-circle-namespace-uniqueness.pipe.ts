@@ -38,7 +38,23 @@ export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
     )
 
     if (deployment && deployment.namespace !== deploymentRequest.namespace) {
-      throw new ConflictException('Invalid namespace. Circle already has an active default deployment in a different namespace.')
+      throw new ConflictException({
+        errors: [
+          {
+            title: 'Invalid namespace',
+            detail: 'Circle already has an active default deployment in a different namespace.',
+            meta: {
+              component: 'butler',
+              timestamp: expect.anything()
+            },
+            source: {
+              pointer: 'deploymentId'
+            },
+            status: 400
+          }
+        ]
+      }
+      )
     }
 
     return deploymentRequest
