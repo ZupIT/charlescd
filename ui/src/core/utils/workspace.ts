@@ -16,12 +16,16 @@
 
 import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
-const WORKSPACE = 'workspaceSelected';
-const WORKSPACE_KEY = 'workspace';
+const WORKSPACE = 'workspace';
 
-export const getWorkspaceId = () => localStorage.getItem(WORKSPACE_KEY);
+export const getWorkspaceId = () => {
+  const workspace = JSON.parse(localStorage.getItem(WORKSPACE)) as Workspace;
+  return workspace?.id;
+};
 
-export const clearWorkspace = () => localStorage.removeItem(WORKSPACE_KEY);
+export const clearWorkspace = () => {
+  localStorage.removeItem(WORKSPACE);
+}
 
 export const getWorkspace = (): Workspace => {
   const ws = {
@@ -41,7 +45,6 @@ export const saveWorkspace = (workspace: Workspace) => {
   clearWorkspace();
 
   if (workspace) {
-    localStorage.setItem(WORKSPACE_KEY, workspace?.id);
     localStorage.setItem(WORKSPACE, JSON.stringify(workspace));
   }
 };

@@ -27,7 +27,6 @@ import Text from 'core/components/Text';
 import { getProfileByKey } from 'core/utils/profile';
 import { setUserAbilities } from 'core/utils/abilities';
 import {
-  saveWorkspace,
   getWorkspaceId,
   clearWorkspace
 } from 'core/utils/workspace';
@@ -70,7 +69,6 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   };
 
   const onSelect = (name: string) => {
-    saveWorkspace(find(workspaces, ['name', name]));
     setUserAbilities();
     navigate.push({
       pathname: isRoot() ? routes.credentials : routes.circles
