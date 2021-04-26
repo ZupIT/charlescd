@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BadRequestException, HttpService, Injectable } from '@nestjs/common'
+import { BadRequestException, InternalServerErrorException, HttpService, Injectable } from '@nestjs/common'
 import { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console'
@@ -87,22 +87,24 @@ export class GitLabRepository implements Repository {
     return this.httpService.get(url, config)
       .toPromise()
       .catch(function(error) {
-        throw new BadRequestException({
-          errors: [
-            {
-              title: 'Unable to fetch GitLab URL',
-              detail: `Status '${error.response.statusText}' received when accessing GitLab resource: ${url}`,
-              meta: {
-                component: 'butler',
-                timestamp: Date.now()
-              },
-              source: {
-                pointer: 'components.helmRepository'
-              },
-              status: `${error.response.status}`
-            }
-          ]
-        })
+        const err = {
+          errors: [{
+            title: 'Unable to fetch GitLab URL',
+            detail: `Status '${error.response.statusText}' received when accessing GitLab resource: ${url}`,
+            meta: {
+              component: 'butler',
+              timestamp: Date.now()
+            },
+            source: {
+              pointer: 'components.helmRepository'
+            },
+            status: `${error.response.status}`
+          }
+        ]}
+        if (error.response.status >= 400 && error.response.status < 500){
+          throw new BadRequestException(err)
+        }
+        throw new InternalServerErrorException(err)
       })
   }
 
