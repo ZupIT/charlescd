@@ -47,6 +47,7 @@ export class ReconcileDeploymentUsecase {
     const desiredManifests = this.getDesiredManifests(deployment)
 
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
+    // TODO check if this is necessary
     if (!resourcesCreated) {
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
