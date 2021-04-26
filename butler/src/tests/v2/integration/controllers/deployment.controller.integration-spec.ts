@@ -679,11 +679,21 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     await manager.save(sameNamespaceActiveDeployment)
 
     const errorResponse = {
-      error: 'Conflict',
-      message: 'Invalid circle id. Namespace already has an active default deployment with a different circle id.',
-      statusCode: 409
+      errors: [
+        {
+          title: 'Invalid circle id.',
+          detail: 'Circle already has an active default deployment in a different namespace.',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'circle/id'
+          },
+          status: 409
+        }
+      ]
     }
-
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
@@ -966,9 +976,20 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     await manager.save(sameCircleDiffNamespaceActiveDeployment)
 
     const errorResponse = {
-      error: 'Conflict',
-      message: 'Invalid namespace. Circle already has an active default deployment in a different namespace.',
-      statusCode: 409
+      errors: [
+        {
+          title: 'Invalid namespace',
+          detail: 'Circle already has an active default deployment in a different namespace.',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'namespace'
+          },
+          status: 409
+        }
+      ]
     }
 
     await request(app.getHttpServer())
