@@ -185,4 +185,39 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     expect(readSpy).toBeCalledTimes(0)
     expect(logRepositorySpy).toBeCalledTimes(0)
   })
+
+  it('Should cache resource read from kubernetes', async() => {
+    const readSpy = jest.spyOn(k8sClient, 'readResource')
+      .mockImplementation(() => Promise.resolve({
+        body: {
+          metadata: {
+            labels: {
+              deploymentId: deploymentId
+            }
+          }
+        },
+        response: {} as http.IncomingMessage
+      } as K8sClientResolveObject))
+
+    const coreEvent = {
+      metadata: {
+        creationTimestamp: new Date('2021-04-23T11:30:20Z')
+      },
+      involvedObject: {
+        namespace: 'events',
+        kind: 'Pod',
+        apiVersion: 'v1',
+        name: 'pod-name'
+      },
+      reason: 'Created',
+      message: 'Created container pod-name',
+      type: 'Normal',
+    }
+
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event) // First call
+    await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event) // Second call
+
+    expect(readSpy).toBeCalledTimes(1)
+  })
 })

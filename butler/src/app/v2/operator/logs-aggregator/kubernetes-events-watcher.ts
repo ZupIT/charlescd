@@ -83,6 +83,6 @@ export class EventsWatcher {
 
   private async restart() {
     this.consoleLoggerService.log(`Restarting watching events in ${EventsWatcher.RESTART_DELAY_IN_SECONDS} seconds...`)
-    setTimeout(async () => this.start(), EventsWatcher.RESTART_DELAY_IN_SECONDS * 1000)
+    setTimeout(async() => this.start(), EventsWatcher.RESTART_DELAY_IN_SECONDS * 1000)
   }
 }
