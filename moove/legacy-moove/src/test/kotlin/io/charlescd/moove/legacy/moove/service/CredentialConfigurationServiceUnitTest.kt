@@ -1,4 +1,4 @@
-///*
+// /*
 // *
 // *  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 // *  *
@@ -16,36 +16,36 @@
 // *
 // */
 //
-//package io.charlescd.moove.legacy.moove.service
+// package io.charlescd.moove.legacy.moove.service
 //
-//import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
-//import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
-//import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
-//import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
-//import io.charlescd.moove.commons.exceptions.ThirdPartyIntegrationExceptionLegacy
-//import io.charlescd.moove.commons.extension.toRepresentation
-//import io.charlescd.moove.commons.extension.toSimpleRepresentation
-//import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
-//import io.charlescd.moove.legacy.moove.api.DeployApi
-//import io.charlescd.moove.legacy.moove.api.VillagerApi
-//import io.charlescd.moove.legacy.moove.api.request.*
-//import io.charlescd.moove.legacy.moove.api.response.CreateDeployCdConfigurationResponse
-//import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfigurationResponse
-//import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
-//import io.charlescd.moove.legacy.moove.api.response.GetVillagerRegistryConfigurationsResponse
-//import io.charlescd.moove.legacy.moove.request.configuration.*
-//import io.charlescd.moove.legacy.repository.CredentialConfigurationRepository
-//import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
-//import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
-//import io.charlescd.moove.legacy.repository.entity.User
-//import io.mockk.every
-//import io.mockk.mockkClass
-//import io.mockk.verify
-//import java.time.LocalDateTime
-//import kotlin.test.assertEquals
-//import org.junit.Test
+// import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+// import io.charlescd.moove.commons.exceptions.IntegrationExceptionLegacy
+// import io.charlescd.moove.commons.exceptions.InvalidRegistryExceptionLegacy
+// import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
+// import io.charlescd.moove.commons.exceptions.ThirdPartyIntegrationExceptionLegacy
+// import io.charlescd.moove.commons.extension.toRepresentation
+// import io.charlescd.moove.commons.extension.toSimpleRepresentation
+// import io.charlescd.moove.commons.representation.CredentialConfigurationRepresentation
+// import io.charlescd.moove.legacy.moove.api.DeployApi
+// import io.charlescd.moove.legacy.moove.api.VillagerApi
+// import io.charlescd.moove.legacy.moove.api.request.*
+// import io.charlescd.moove.legacy.moove.api.response.CreateDeployCdConfigurationResponse
+// import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfigurationResponse
+// import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
+// import io.charlescd.moove.legacy.moove.api.response.GetVillagerRegistryConfigurationsResponse
+// import io.charlescd.moove.legacy.moove.request.configuration.*
+// import io.charlescd.moove.legacy.repository.CredentialConfigurationRepository
+// import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
+// import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
+// import io.charlescd.moove.legacy.repository.entity.User
+// import io.mockk.every
+// import io.mockk.mockkClass
+// import io.mockk.verify
+// import java.time.LocalDateTime
+// import kotlin.test.assertEquals
+// import org.junit.Test
 //
-//class CredentialConfigurationServiceUnitTest {
+// class CredentialConfigurationServiceUnitTest {
 //
 //    private val credentialConfigurationRepository = mockkClass(CredentialConfigurationRepository::class)
 //    private val userServiceLegacy = mockkClass(UserServiceLegacy::class)
@@ -1534,4 +1534,4 @@
 //    private fun getAuthorization(): String {
 //        return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
 //    }
-//}
+// }

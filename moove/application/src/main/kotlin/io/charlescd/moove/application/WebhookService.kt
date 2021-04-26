@@ -26,7 +26,7 @@ import javax.inject.Named
 class WebhookService(private val userService: UserService) {
 
     fun getAuthor(authorization: String?, token: String?): User {
-        return userService.findFromAuthMethods(authorization,token)
+        return userService.findFromAuthMethods(authorization, token)
     }
 
     fun validateWorkspace(workspaceId: String, id: String, author: User, subscription: WebhookSubscription) {

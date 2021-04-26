@@ -10,7 +10,7 @@ class JdbcSystemTokenRepository(
     private val jdbcTemplate: JdbcTemplate,
     @Value("\${gate.encryption.key}")
     private val gateEncryptionKey: String
-): SystemTokenRepository {
+) : SystemTokenRepository {
 
     companion object {
         const val BASE_QUERY_STATEMENT = """
@@ -23,5 +23,4 @@ class JdbcSystemTokenRepository(
     override fun getIdByTokenValue(tokenValue: String): String? {
         return this.jdbcTemplate.queryForObject(BASE_QUERY_STATEMENT, arrayOf(gateEncryptionKey, tokenValue), String::class.java)
     }
-
 }

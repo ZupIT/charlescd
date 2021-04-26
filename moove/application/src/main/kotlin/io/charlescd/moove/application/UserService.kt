@@ -100,5 +100,4 @@ class UserService(
         val systemTokenId = systemTokenService.getSystemTokenIdByTokenValue(token)
         return this.userRepository.findBySystemTokenId(systemTokenId).orElseThrow { NotFoundException("user", systemTokenId) }
     }
-
 }
