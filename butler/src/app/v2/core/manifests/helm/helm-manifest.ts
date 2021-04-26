@@ -60,7 +60,7 @@ export class HelmManifest implements Manifest {
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
     } catch (exception) {
-      throw new UnprocessableEntityException(  `Invalid manifest. ${exception.message}`)
+      throw new UnprocessableEntityException(  `Could not render manifest. ${exception.message}`)
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
       await this.cleanUp(chartPath)
