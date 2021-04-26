@@ -58,7 +58,8 @@ export class HelmManifest implements Manifest {
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
     } catch (exception) {
-      throw new BadRequestException(`Not valid template. ${exception.message}`)
+      this.consoleLoggerService.error('ERROR:RENDERING_MANIFESTS', exception)
+      throw new BadRequestException(`Not a valid template. ${exception.message}`)
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
       this.cleanUp(chartPath)
