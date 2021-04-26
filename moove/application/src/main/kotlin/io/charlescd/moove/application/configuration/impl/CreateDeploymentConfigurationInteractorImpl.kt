@@ -38,14 +38,14 @@ class CreateDeploymentConfigurationInteractorImpl(
 
         val author = userService.findByAuthorizationToken(authorization)
 
-        checkIfDeploymnetConfigurationExistsOnWorkspace(workspaceId)
+        checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId)
 
         val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
 
         return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
     }
 
-    private fun checkIfDeploymnetConfigurationExistsOnWorkspace(workspaceId: String) {
+    private fun checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId: String) {
         if (deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId)) {
             throw BusinessException.of(MooveErrorCode.DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED)
         }
