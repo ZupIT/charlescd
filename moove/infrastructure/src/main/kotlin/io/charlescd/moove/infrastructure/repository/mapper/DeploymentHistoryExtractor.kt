@@ -41,7 +41,7 @@ class DeploymentHistoryExtractor : ResultSetExtractor<Set<DeploymentHistory>> {
     private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentHistory(
         id = resultSet.getString("deployment_id"),
         tag = resultSet.getString("deployment_version"),
-        authorName = resultSet.getString("user_name"),
+        authorEmail = resultSet.getString("user_email"),
         status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
         deployedAt = resultSet.getTimestamp("deployed_at")?.toLocalDateTime(),
         undeployedAt = resultSet.getTimestamp("undeployed_at")?.toLocalDateTime(),

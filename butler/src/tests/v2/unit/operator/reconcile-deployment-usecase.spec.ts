@@ -19,7 +19,9 @@ import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repos
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import {
-  componentsFixtureCircle1, getDeploymentWithManifestAndPreviousFixture, getDeploymentWithManifestFixture
+  createDeployComponent,
+  getDeploymentWithManifestAndPreviousFixture,
+  getDeploymentWithManifestFixture
 } from '../../fixtures/deployment-entity.fixture'
 import { HookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-cases/reconcile-deployment.usecase'
@@ -380,11 +382,15 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should generate the reconcile deployment object with the correct metadata changes', async() => {
+    const componentsCircle1 = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
+    ]
+
     jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture('simple'))
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
       new Execution(getDeploymentWithManifestFixture('simple'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
-    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsFixtureCircle1)
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsCircle1)
 
     const expectedReconcileObj = {
       children: [
@@ -1055,11 +1061,15 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should create the correct medatada labels/namespace fields when the manifests dont have it', async() => {
+    const componentsCircle1 = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
+    ]
+
     jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture('noLabels'))
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
       new Execution(getDeploymentWithManifestFixture('noLabels'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
-    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsFixtureCircle1)
+    jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => componentsCircle1)
 
     const expectedReconcileObj = {
       children: [

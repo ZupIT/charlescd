@@ -21,7 +21,7 @@ import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto
 import { Repository } from 'typeorm'
 
 @Injectable()
-export class DefaultCircleUniquenessPipe implements PipeTransform {
+export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
 
   constructor(
     @InjectRepository(DeploymentEntity)
@@ -34,26 +34,27 @@ export class DefaultCircleUniquenessPipe implements PipeTransform {
     }
 
     const deployment: DeploymentEntity | undefined = await this.deploymentsRepository.findOne(
-      { defaultCircle: true, current: true, namespace: deploymentRequest.namespace }
+      { defaultCircle: true, current: true, circleId: deploymentRequest.circle.id }
     )
 
-    if (deployment && deployment.circleId !== deploymentRequest.circle.id) {
-      throw new ConflictException( {
+    if (deployment && deployment.namespace !== deploymentRequest.namespace) {
+      throw new ConflictException({
         errors: [
           {
-            title: 'Invalid circle id.',
+            title: 'Invalid namespace',
             detail: 'Circle already has an active default deployment in a different namespace.',
             meta: {
               component: 'butler',
               timestamp: Date.now()
             },
             source: {
-              pointer: 'circle/id'
+              pointer: 'namespace'
             },
             status: 409
           }
         ]
-      })
+      }
+      )
     }
 
     return deploymentRequest

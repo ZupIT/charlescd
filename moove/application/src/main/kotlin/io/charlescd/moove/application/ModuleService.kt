@@ -18,10 +18,8 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.domain.Component
-import io.charlescd.moove.domain.Module
-import io.charlescd.moove.domain.Page
-import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.ModuleRepository
 import javax.inject.Named
@@ -71,5 +69,11 @@ class ModuleService(private val moduleRepository: ModuleRepository) {
 
     fun findByIdsAndWorkspaceId(ids: List<String>, workspaceId: String): List<Module> {
         return moduleRepository.findByIdsAndWorkpaceId(ids, workspaceId)
+    }
+
+    fun checkIfComponentNameIsDuplicated(componentNames: List<String>) {
+        if (componentNames.groupingBy { it }.eachCount().any { it.value > 1 }) {
+            throw BusinessException.of(MooveErrorCode.DUPLICATED_COMPONENT_NAME_ERROR)
+        }
     }
 }

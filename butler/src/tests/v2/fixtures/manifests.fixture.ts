@@ -1388,3 +1388,414 @@ export const routesManifestsDiffNamespace: KubernetesManifest[] = [
     },
   } as KubernetesManifest,
 ]
+
+export const routesManifestsWithPreviousDeployment: KubernetesManifest[] = [
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'A',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["7dedce83-f39d-46d1-98f3-fb9ef3effb05"]'
+      }
+    },
+    spec: {
+      host: 'A',
+      subsets: [
+        {
+          labels: {
+            component: 'A',
+            tag: 'v1',
+            circleId: '7dedce83-f39d-46d1-98f3-fb9ef3effb05',
+          },
+          name: '7dedce83-f39d-46d1-98f3-fb9ef3effb05',
+        }
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'A',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["7dedce83-f39d-46d1-98f3-fb9ef3effb05"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'A',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=7dedce83-f39d-46d1-98f3-fb9ef3effb05.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: '7dedce83-f39d-46d1-98f3-fb9ef3effb05'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': '7dedce83-f39d-46d1-98f3-fb9ef3effb05'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': '7dedce83-f39d-46d1-98f3-fb9ef3effb05'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: '7dedce83-f39d-46d1-98f3-fb9ef3effb05'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'A',
+                subset: '7dedce83-f39d-46d1-98f3-fb9ef3effb05'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': '7dedce83-f39d-46d1-98f3-fb9ef3effb05'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': '7dedce83-f39d-46d1-98f3-fb9ef3effb05'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["ae0f14a5-52d2-4619-af6c-18819aa729fe"]'
+      }
+    },
+    spec: {
+      host: 'B',
+      subsets: [
+        {
+          labels: {
+            component: 'B',
+            tag: 'v1',
+            circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
+          },
+          name: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
+        },
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["ae0f14a5-52d2-4619-af6c-18819aa729fe"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'B',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=ae0f14a5-52d2-4619-af6c-18819aa729fe.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      labels: {
+        app: 'A',
+        circleId: '7dedce83-f39d-46d1-98f3-fb9ef3effb05',
+        component: 'A',
+        deploymentId: 'dbdc12d0-18e9-490b-9e1c-4a4d4592900d',
+        service: 'A',
+        tag: 'tag-example'
+      },
+      name: 'A',
+      namespace: 'namespace'
+    },
+    spec: {
+      ports: [
+        {
+          name: 'http',
+          port: 80,
+          targetPort: 80
+        }
+      ],
+      selector: {
+        app: 'A'
+      },
+      type: 'ClusterIP'
+    }
+  } as KubernetesManifest,
+  {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      labels: {
+        app: 'B',
+        circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
+        component: 'B',
+        deploymentId: 'c595eb75-dbf9-44a5-8e6f-c2646fadd641',
+        service: 'B',
+        tag: 'tag-example'
+      },
+      name: 'B',
+      namespace: 'namespace'
+    },
+    spec: {
+      ports: [
+        {
+          name: 'http',
+          port: 80,
+          targetPort: 80
+        }
+      ],
+      selector: {
+        app: 'B'
+      },
+      type: 'ClusterIP'
+    }
+  } as KubernetesManifest
+]
+
+export const routesManifestsWithoutPreviousDeployment: KubernetesManifest[] = [
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'DestinationRule',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["ae0f14a5-52d2-4619-af6c-18819aa729fe"]'
+      }
+    },
+    spec: {
+      host: 'B',
+      subsets: [
+        {
+          labels: {
+            component: 'B',
+            tag: 'v1',
+            circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
+          },
+          name: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
+        },
+      ],
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
+    kind: 'VirtualService',
+    metadata: {
+      name: 'B',
+      namespace: 'namespace',
+      annotations: {
+        circles: '["ae0f14a5-52d2-4619-af6c-18819aa729fe"]'
+      }
+    },
+    spec: {
+      gateways: [
+      ],
+      hosts: [
+        'B',
+      ],
+      http: [
+        {
+          match: [
+            {
+              headers: {
+                cookie: {
+                  regex: '.*x-circle-id=ae0f14a5-52d2-4619-af6c-18819aa729fe.*'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          match: [
+            {
+              headers: {
+                'x-circle-id': {
+                  exact: 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                }
+              }
+            }
+          ],
+          route: [
+            {
+              destination: {
+                host: 'B',
+                subset: 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+              },
+              headers: {
+                request: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                },
+                response: {
+                  set: {
+                    'x-circle-source': 'ae0f14a5-52d2-4619-af6c-18819aa729fe'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+  } as KubernetesManifest,
+  {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      labels: {
+        app: 'B',
+        circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
+        component: 'B',
+        deploymentId: 'c595eb75-dbf9-44a5-8e6f-c2646fadd641',
+        service: 'B',
+        tag: 'tag-example'
+      },
+      name: 'B',
+      namespace: 'namespace'
+    },
+    spec: {
+      ports: [
+        {
+          name: 'http',
+          port: 80,
+          targetPort: 80
+        }
+      ],
+      selector: {
+        app: 'B'
+      },
+      type: 'ClusterIP'
+    }
+  } as KubernetesManifest
+]

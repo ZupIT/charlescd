@@ -39,7 +39,6 @@ const Content = styled.div`
 `;
 
 const Form = styled.form`
-  margin-top: 20px;
   width: 271px;
 `;
 
