@@ -30,6 +30,7 @@ export interface Props {
   height?: string;
   width?: string;
   placeholder?: string;
+  className?: string;
 }
 
 const AceEditor = ({
@@ -40,10 +41,11 @@ const AceEditor = ({
   readOnly = true,
   height = '150px',
   width = '500px',
-  placeholder = ''
+  placeholder = '',
+  className
 }: Props) => {
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper className={className}>
       <AceEditorComponent
         mode={mode}
         theme={theme}
