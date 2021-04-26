@@ -123,7 +123,7 @@ class JdbcDeploymentConfigurationRepository(
             .toString()
 
         return applyCountQuery(
-            countStatement, arrayOf(workspaceId))
+            countStatement, arrayOf(workspaceId, id))
     }
 
     private fun checkIfAnyDeploymentConfigurationExistsByWorkspaceId(workspaceId: String): Boolean {
