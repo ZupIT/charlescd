@@ -19,8 +19,9 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type SystemToken struct {
@@ -30,7 +31,7 @@ type SystemToken struct {
 	Permissions   []Permission `gorm:"many2many:system_tokens_permissions;"`
 	Workspaces    []Workspace  `gorm:"many2many:system_tokens_workspaces;"`
 	AllWorkspaces bool
-	Token         string `gorm:"->:false;<-:create"`
+	Token         string `gorm:"->:false;<-:create;<-:update"`
 	CreatedAt     *time.Time
 	RevokedAt     *time.Time
 	LastUsedAt    *time.Time
