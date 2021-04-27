@@ -47,7 +47,7 @@ export class EventsLogsAggregator {
       || !involvedObject.kind
       || !involvedObject.apiVersion
       || !involvedObject.name) {
-      this.consoleLoggerService.log('Unexpected behavior! "event.involvedObject" does not have mandatory data! Discarding event...', involvedObject)
+      this.consoleLoggerService.log('"event.involvedObject" does not has the necessary data to identify the target resource! Discarding event...', involvedObject)
       return
     }
 
