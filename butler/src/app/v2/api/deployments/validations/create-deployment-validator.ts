@@ -28,7 +28,7 @@ import Joi = require('joi')
 export interface JsonAPIError {
     errors: {
       status: number
-      detail: string | undefined
+      detail?: string | undefined
       title: string
       source: {
         pointer: string | undefined
