@@ -41,8 +41,9 @@ class CreateModuleInteractorImplTest extends Specification {
 
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
@@ -53,7 +54,7 @@ class CreateModuleInteractorImplTest extends Specification {
         )
     }
 
-    def "should create a new module"() {
+    def "should create a new module using authorization"() {
         given:
         def component = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
         def authorization = TestUtils.authorization
@@ -82,6 +83,50 @@ class CreateModuleInteractorImplTest extends Specification {
         }
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        assert response != null
+        assert response instanceof ModuleResponse
+        assert response.id != null
+        assert response.name == request.name
+        assert response.createdAt != null
+        assert response.gitRepositoryAddress == request.gitRepositoryAddress
+        assert response.components[0].id != null
+        assert response.components[0] instanceof ComponentResponse
+        assert response.components[0].name == request.components[0].name
+        assert response.components[0].createdAt != null
+    }
+
+    def "should create a new module using system token"() {
+        given:
+        def component = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def workspaceId = TestUtils.workspaceId
+        def request = new CreateModuleRequest("CharlesCD", "http://github.com.br",
+                "http://github.com.br/helm", [component])
+
+        def author = TestUtils.user
+
+        def workspace = TestUtils.workspace
+        when:
+        def response = createModuleInteractor.execute(request, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * moduleRepository.save(_) >> { arguments ->
+            def module = arguments[0]
+
+            assert module instanceof Module
+            assert module.id != null
+            assert module.name == request.name
+            assert module.workspaceId == workspaceId
+            assert module.helmRepository == request.helmRepository
+            assert module.author.id == author.id
+
+            return module
+        }
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         assert response != null

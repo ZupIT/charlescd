@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.SystemTokenService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.CreateWebhookSubscriptionInteractor
@@ -36,20 +37,37 @@ class CreateWebhookSubscriptionInteractorImplTest extends Specification {
     private CreateWebhookSubscriptionInteractor createWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         createWebhookSubscriptionInteractor = new CreateWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService)), hermesService)
     }
 
-    def "when trying to create subscription should do it successfully"() {
+    def "when trying to create subscription should do it successfully using authorization"() {
         when:
         createWebhookSubscriptionInteractor.execute(workspaceId, authorization, null, createWebhookSubscriptionRequest)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
+        1 * this.hermesService.subscribe(authorEmail, simpleWebhookSubscription) >> subscriptionId
+
+        notThrown()
+    }
+
+    def "when trying to create subscription should do it successfully using system token"() {
+        given:
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+
+        when:
+        createWebhookSubscriptionInteractor.execute(workspaceId, null, systemTokenValue, createWebhookSubscriptionRequest)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * this.userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * this.hermesService.subscribe(authorEmail, simpleWebhookSubscription) >> subscriptionId
 
         notThrown()
