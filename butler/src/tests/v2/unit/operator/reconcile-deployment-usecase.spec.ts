@@ -398,7 +398,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
@@ -516,7 +516,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
@@ -602,7 +602,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-2-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-2-e728a072-b0aa-4459-88ba-0f4a9b71ae54',
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
@@ -720,7 +720,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
@@ -825,7 +825,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-2-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-2-e728a072-b0aa-4459-88ba-0f4a9b71ae54',
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
@@ -953,7 +953,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
@@ -1077,7 +1077,7 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b46fd548-0082-4021-ba80-a50703c44a3b',
+            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
             namespace: 'namespace',
             labels: {
               circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',

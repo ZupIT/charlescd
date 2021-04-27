@@ -359,7 +359,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"buildImageUrl" with value "imageurl.com2 " fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/',
+          detail: '"buildImageUrl" with value "imageurl.com2 " fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:\\/]*[a-zA-Z0-9]$/',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -370,7 +370,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"buildImageUrl" with value "imageurl-ends-with-dash.com3-" fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/',
+          detail: '"buildImageUrl" with value "imageurl-ends-with-dash.com3-" fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:\\/]*[a-zA-Z0-9]$/',
           meta: {
             component: 'butler',
             timestamp: expect.anything()

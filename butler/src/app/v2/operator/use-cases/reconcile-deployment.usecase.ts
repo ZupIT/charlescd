@@ -47,6 +47,7 @@ export class ReconcileDeploymentUsecase {
     const desiredManifests = this.getDesiredManifests(deployment)
 
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
+    // TODO check if this is necessary
     if (!resourcesCreated) {
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
@@ -119,7 +120,7 @@ export class ReconcileDeploymentUsecase {
 
     // TODO what about other resources such as StatefulSet, CronJob etc?
     if (manifest.kind === 'Deployment') {
-      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
+      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.id}`
     }
 
     if (manifest.spec?.template) {

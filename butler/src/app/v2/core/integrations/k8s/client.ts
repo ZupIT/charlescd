@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@nestjs/common'
+import { InternalServerErrorException, Inject, Injectable } from '@nestjs/common'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import * as k8s from '@kubernetes/client-node'
 import { CrdBuilder } from './crd-builder'
@@ -29,8 +29,9 @@ import { IncomingMessage } from 'http'
 export class K8sClient {
 
   private readonly kubeConfig: k8s.KubeConfig
-
-  public client: k8s.KubernetesObjectApi
+  
+  public objectApi: k8s.KubernetesObjectApi
+  public coreV1Api: k8s.CoreV1Api
 
   constructor(
     private consoleLoggerService: ConsoleLoggerService,
@@ -38,8 +39,9 @@ export class K8sClient {
     private readonly envConfiguration: IEnvConfiguration
   ) {
     this.kubeConfig = new k8s.KubeConfig()
-    this.kubeConfig.loadFromCluster() // TODO: chance it based on the env
-    this.client = k8s.KubernetesObjectApi.makeApiClient(this.kubeConfig)
+    this.kubeConfig.loadFromCluster()
+    this.objectApi = k8s.KubernetesObjectApi.makeApiClient(this.kubeConfig)
+    this.coreV1Api = this.kubeConfig.makeApiClient(k8s.CoreV1Api)
   }
 
   public async applyDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
@@ -54,7 +56,7 @@ export class K8sClient {
       await this.patchResource(deploymentManifest)
     } catch (error) {
       if (!(error instanceof k8s.HttpError) || error.statusCode !== 404) {
-        this.consoleLoggerService.log('ERROR:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { error })
+        this.consoleLoggerService.error('ERROR:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { error })
         throw error
       }
       await this.createResource(deploymentManifest)
@@ -69,8 +71,8 @@ export class K8sClient {
     try {
       await this.readResource(deploymentManifest)
       await this.deleteResource(deploymentManifest)
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { deploymentManifest })
+    } catch(error) {
+      this.consoleLoggerService.error('ERROR:COULD_NOT_FIND_RESOURCE', { deploymentManifest })
       throw error
     }
   }
@@ -82,16 +84,48 @@ export class K8sClient {
     try {
       await this.readResource(routingManifest)
       await this.patchResource(routingManifest)
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR:COULD_NOT_FIND_RESOURCE', { routingManifest })
+    } catch(error) {
+      this.consoleLoggerService.error('ERROR:COULD_NOT_FIND_RESOURCE', { routingManifest })
       throw error
+    }
+  }
+
+  public async getNamespace(namespace: string): Promise<{ body: k8s.V1Namespace; response: IncomingMessage; }> {
+    this.consoleLoggerService.log('START:SEARCH_FOR_NAMESPACE: ', namespace)
+    
+    try {
+      return await this.coreV1Api.readNamespace(namespace)
+    } catch (error) {
+      if (error.response.body.code == 404){
+        return {
+          body: {},
+          response: error.response
+        }
+      }
+      this.consoleLoggerService.error('ERROR:SEARCH_FOR_NAMESPACE', error)
+      throw new InternalServerErrorException({
+        errors: [
+          {
+            message: `error while getting namespace '${namespace}'`, 
+            detail: error.response.body.message,
+            meta: {
+              component: 'butler',
+              timestamp: Date.now()
+            },
+            source: {
+              pointer: 'namespace'
+            },
+            status: error.response.body.code
+          }
+        ]
+      })
     }
   }
 
   private async patchResource(manifest: KubernetesManifest): Promise<{ body: KubernetesObject; response: IncomingMessage; }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:PATCH_RESOURCE_MANIFEST')
-      const res = await this.client.patch(
+      const res = await this.objectApi.patch(
         manifest,
         undefined,
         undefined,
@@ -101,8 +135,8 @@ export class K8sClient {
       )
       this.consoleLoggerService.log('GET:PATCH_RESOURCE_RESPONSE')
       return res
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR:PATCH_RESOURCE_MANIFEST', { error })
+    } catch(error) {
+      this.consoleLoggerService.error('ERROR:PATCH_RESOURCE_MANIFEST', { error })
       throw error
     }
   }
@@ -110,11 +144,11 @@ export class K8sClient {
   private async createResource(manifest: KubernetesManifest): Promise<{ body: KubernetesObject; response: IncomingMessage; }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:CREATE_RESOURCE_MANIFEST')
-      const res = await this.client.create(manifest)
+      const res = await this.objectApi.create(manifest)
       this.consoleLoggerService.log('GET:CREATE_RESOURCE_RESPONSE')
       return res
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR:CREATE_RESOURCE_MANIFEST', { error })
+    } catch(error) {
+      this.consoleLoggerService.error('ERROR:CREATE_RESOURCE_MANIFEST', { error })
       throw error
     }
   }
@@ -126,9 +160,9 @@ export class K8sClient {
     }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:READ_RESOURCE_MANIFEST')
-      return await this.client.read(manifest)
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR:READ_RESOURCE_MANIFEST', { error })
+      return await this.objectApi.read(manifest)
+    } catch(error) {
+      this.consoleLoggerService.error('ERROR:READ_RESOURCE_MANIFEST', { error })
       throw error
     }
   }
@@ -136,11 +170,11 @@ export class K8sClient {
   private async deleteResource(manifest: KubernetesManifest): Promise<{ body: KubernetesObject; response: IncomingMessage; }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:DELETE_RESOURCE_MANIFEST')
-      const res = await this.client.delete(manifest)
+      const res = await this.objectApi.delete(manifest)
       this.consoleLoggerService.log('GET:DELETE_RESOURCE_RESPONSE')
       return res
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR:DELETE_RESOURCE_MANIFEST', { error })
+    } catch(error) {
+      this.consoleLoggerService.error('ERROR:DELETE_RESOURCE_MANIFEST', { error })
       throw error
     }
   }

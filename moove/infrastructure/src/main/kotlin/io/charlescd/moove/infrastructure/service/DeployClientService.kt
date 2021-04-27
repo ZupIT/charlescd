@@ -55,6 +55,10 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         )
     }
 
+    override fun healthCheck(butlerUrl: String) {
+        deployClient.healthCheck(URI.create(butlerUrl))
+    }
+
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,
