@@ -20,6 +20,7 @@ import { HEADINGS_FONT_SIZE } from './enums';
 
 interface Props {
   fontSize?: HEADINGS_FONT_SIZE;
+  lineHeight?: number;
   color?: string;
   fontStyle?: 'normal' | 'italic' | 'oblique';
   weight?: 'normal' | 'bold' | 'light';
@@ -37,6 +38,7 @@ const Text = (props: Props) => {
     align = 'left',
     fontStyle = 'normal',
     fontSize,
+    lineHeight,
     children,
     className,
     onClick
@@ -52,6 +54,7 @@ const Text = (props: Props) => {
       fontSize={fontSize}
       fontStyle={fontStyle}
       className={className}
+      lineHeight={lineHeight}
     >
       {children}
     </Styled.Text>

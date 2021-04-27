@@ -21,6 +21,7 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 
 export interface Props {
+  id?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
   icon: string;
@@ -33,6 +34,7 @@ export interface Props {
 }
 
 const CardConfig = ({
+  id,
   icon,
   description,
   onClose,
@@ -41,7 +43,7 @@ const CardConfig = ({
   children,
   className,
   isLoading,
-  isDisabled
+  isDisabled,
 }: Props) => {
   const headerIcon = <Icon name={icon} color="light" size="15px" />;
 
@@ -72,6 +74,7 @@ const CardConfig = ({
 
   return (
     <Styled.CardConfig
+      data-testid={id}
       className={className}
       onClick={onClick}
       isDisabled={isDisabled}
