@@ -38,11 +38,12 @@ class CreateBuildInteractorImplTest extends Specification {
     private GitProviderService gitProviderService = Mock(GitProviderService)
     private UserRepository userRepository = Mock(UserRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private HypothesisRepository hypothesisRepository = Mock(HypothesisRepository)
     private VillagerService villagerService = Mock(VillagerService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
@@ -112,7 +113,7 @@ class CreateBuildInteractorImplTest extends Specification {
 
     }
 
-    def 'should return build response'() {
+    def 'should create build using authorization'() {
 
         def authorization = TestUtils.authorization
         def hypothesisId = TestUtils.hypothesisId
@@ -180,6 +181,101 @@ class CreateBuildInteractorImplTest extends Specification {
         1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * buildRepository.save(_) >> { argument ->
+            def buildSaved = argument[0]
+            assert buildSaved instanceof Build
+            assert buildSaved.hypothesisId == hypothesis.id
+            assert buildSaved.status == BuildStatusEnum.BUILDING
+            assert buildSaved.tag == tagName
+            assert buildSaved.columnId == buildsCardColumn.id
+            assert buildSaved.workspaceId == workspaceId
+            assert buildSaved.author.id == author.id
+        }
+        1 * gitProviderService.createReleaseCandidates(_, _) >> _
+        1 * villagerService.build(_, _) >> _
+        1 * gitConfigurationRepository.find(_) >> Optional.of(gitConfiguration)
+
+        notThrown()
+
+        buildResponse != null
+        buildResponse.id != null
+        buildResponse.author.id == author.id
+        buildResponse.tag == tagName
+        buildResponse.status == BuildStatusEnum.BUILDING.name()
+        buildResponse.features.size() == 1
+        buildResponse.createdAt != null
+        buildResponse.deployments.size() == 0
+    }
+
+    def 'should create build using system token'() {
+
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def hypothesisId = TestUtils.hypothesisId
+        def workspaceId = TestUtils.workspaceId
+        def tagName = 'charles-cd-build-testing'
+        def featureList = new ArrayList()
+        featureList.add('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2')
+
+        def author = TestUtils.user
+
+        def todoCardColumn = getColumn(ColumnConstants.TO_DO_COLUMN_NAME)
+
+        def doingCardColumn = getColumn(ColumnConstants.DOING_COLUMN_NAME)
+
+        def listOfLabels = new ArrayList()
+        listOfLabels.add(getDummyLabel(author))
+
+        def module = new Module('dce51bbc-db52-401b-9d84-ef98d815c04f', 'Module name', 'Git repository address',
+                LocalDateTime.now(), 'Helm repository', author, listOfLabels, getDummyGitConfiguration(author, workspaceId), new ArrayList<Component>(),
+                workspaceId)
+
+        def listOfModules = new ArrayList()
+        listOfModules.add(module)
+
+        def feature = new Feature('1f9e7e42-26c5-4aa3-9f94-6c98095ba4a2', 'Feature X', 'branch-name', author,
+                LocalDateTime.now(), listOfModules, workspaceId)
+
+        def card = new SoftwareCard('f5242e5a-6aac-11ea-bc55-0242ac130003', 'Developing a feature', 'Description of the card',
+                '2dd791e6-6a2c-11ea-bc55-0242ac130003', SoftwareCardTypeEnum.FEATURE, author, LocalDateTime.now(), feature,
+                new ArrayList<Comment>(), CardStatusEnum.ACTIVE, new ArrayList<User>(), 0, workspaceId)
+
+        def listOfCards = new ArrayList();
+        listOfCards.add(card)
+
+        def readyToGoCardColumn = new Column('2dd7910a-6a2c-11ea-bc55-0242ac130003', ColumnConstants.READY_TO_GO_COLUMN_NAME,
+                hypothesisId, listOfCards, workspaceId)
+
+        def buildsCardColumn = getColumn(ColumnConstants.BUILDS_COLUMN_NAME)
+
+        def deployedReleasesCardColumn = getColumn(ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME)
+
+        def columns = new ArrayList<Column>()
+        columns.addAll(todoCardColumn, doingCardColumn, readyToGoCardColumn, buildsCardColumn, deployedReleasesCardColumn)
+
+        def hypothesis = getHypothesis(columns)
+
+        def createBuildRequest = new CreateBuildRequest(featureList, tagName, hypothesis.id)
+
+        def workspace = new Workspace(workspaceId, "Women", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.COMPLETE, "7a973eed-599b-428d-89f0-9ef6db8fd39d",
+                "http://matcher-uri.com.br", "833336cd-742c-4f62-9594-45ac0a1e807a",
+                "c5147c49-1923-44c5-870a-78aaba646fe4", null)
+
+        def credentials = new GitCredentials("http://github.com.br", "zup", "zup@123",
+                null, GitServiceProvider.GITHUB)
+
+        def gitConfiguration = new GitConfiguration("ab84b4df-879b-47b2-90d9-bf5a6708c39d", "GitHub",
+                credentials, LocalDateTime.now(), author, "24d4f405-70e2-4908-8f66-f4951e46bc3b")
+
+        when:
+        def buildResponse = buildInteractor.execute(createBuildRequest, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]
             assert buildSaved instanceof Build

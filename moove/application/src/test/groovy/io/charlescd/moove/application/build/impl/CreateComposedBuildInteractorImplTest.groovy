@@ -40,7 +40,8 @@ class CreateComposedBuildInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
@@ -161,7 +162,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         response.features[0].branchName == createComposedBuildRequest.releaseName
     }
 
-    def 'should create composed build successfully'() {
+    def 'should create composed build using authorization'() {
 
         given:
         def gitRepositoryAddress = 'http://git-repository-address.com'
@@ -200,6 +201,75 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
+        1 * buildRepository.save(_) >> { argument ->
+            def buildSaved = argument[0]
+            assert buildSaved instanceof Build
+            assert buildSaved.features != null
+            assert buildSaved.features[0].modules.size() == 1
+            assert buildSaved.features[0].modules[0].components.size() == 1
+
+            return buildSaved
+        }
+
+        notThrown()
+
+        response != null
+        response.status == BuildStatusEnum.BUILT.name()
+        response.tag == createComposedBuildRequest.releaseName
+        response.deployments.size() == 0
+        response.features.size() == 1
+        response.features[0].modules.size() == 1
+        response.features[0].modules[0].name == module.name
+        response.features[0].modules[0].gitRepositoryAddress == gitRepositoryAddress
+        response.features[0].modules[0].helmRepository == helmRepository
+        response.features[0].authorId == author.id
+        response.features[0].authorName == author.name
+        response.features[0].branches.size() == 1
+        response.features[0].branches[0] == gitRepositoryAddress + '/tree/' + createComposedBuildRequest.releaseName
+        response.features[0].branchName == createComposedBuildRequest.releaseName
+    }
+
+    def 'should create composed build using system token'() {
+
+        given:
+        def gitRepositoryAddress = 'http://git-repository-address.com'
+        def helmRepository = 'http://helm-repository.com'
+        def workspaceId = TestUtils.workspaceId
+        def author = TestUtils.user
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+
+        CreateComposedBuildRequest createComposedBuildRequest = getDummyCreateComposedBuildRequest()
+
+        def listOfModulesId = new ArrayList()
+        listOfModulesId.add(createComposedBuildRequest.modules[0].id)
+
+        def listOfLabels = new ArrayList()
+        listOfLabels.add(new Label('b803558d-3c70-4321-ace5-ae8317902c05', 'Label name', LocalDateTime.now(), author, '#FFFFFF'))
+
+        def component = new Component('1a58c67c-6acb-11ea-bc55-0242ac130003', '1a58c280-6acb-11ea-bc55-0242ac130003', 'testing-module',
+                LocalDateTime.now(), workspaceId, 10, 01, 'host', 'gateway')
+
+        def listOfComponents = new ArrayList()
+        listOfComponents.add(component)
+
+        def module = new Module('1a58c280-6acb-11ea-bc55-0242ac130003', 'Module name', gitRepositoryAddress,
+                LocalDateTime.now(), helmRepository, author, listOfLabels,
+                new GitConfiguration('68b04fa2-032c-4bdc-9228-6e2e8a5fb791', 'Git Config',
+                        new GitCredentials('Credential address', 'username',
+                                'password', 'Access Token', GitServiceProvider.GITHUB),
+                        LocalDateTime.now(), author, workspaceId), listOfComponents, workspaceId)
+
+        def listOfModules = new ArrayList()
+        listOfModules.add(module)
+
+        when:
+        def response = createComposedBuildInteractor.execute(createComposedBuildRequest, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * moduleRepository.findByIdsAndWorkpaceId(listOfModulesId, workspaceId) >> listOfModules
         1 * buildRepository.save(_) >> { argument ->
             def buildSaved = argument[0]

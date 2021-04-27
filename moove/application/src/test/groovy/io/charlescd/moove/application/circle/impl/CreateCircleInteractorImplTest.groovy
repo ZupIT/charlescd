@@ -42,9 +42,10 @@ class CreateCircleInteractorImplTest extends Specification {
     private CreateCircleInteractor createCircleInteractor
     private CircleRepository circleRepository = Mock(CircleRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
@@ -56,7 +57,7 @@ class CreateCircleInteractorImplTest extends Specification {
         )
     };
 
-    def "should create a new circle"() {
+    def "should create a new circle using authorization"() {
         given:
         def author = TestUtils.user
         def workspace =  TestUtils.workspace
@@ -72,6 +73,41 @@ class CreateCircleInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * circleRepository.save(_) >> circle
+        1 * circleMatcherService.create(circle, workspace.circleMatcherUrl, false)
+
+        notThrown(NotFoundException)
+
+        assert response != null
+        assert response.id == circle.id
+        assert response.author.id == TestUtils.authorId
+        assert response.createdAt == circle.createdAt
+        assert response.matcherType == circle.matcherType
+        assert response.name == circle.name
+        assert response.reference == circle.reference
+        assert response.workspaceId == circle.workspaceId
+        assert response.default == circle.defaultCircle
+        assert !response.default
+    }
+
+    def "should create a new circle using system token"() {
+        given:
+        def author = TestUtils.user
+        def workspace =  TestUtils.workspace
+        def circle =  TestUtils.circle
+        def workspaceId = TestUtils.workspaceId
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+
+        def request = new CreateCircleRequest("Women", TestUtils.nodePart)
+
+        when:
+        def response = this.createCircleInteractor.execute(request, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * circleRepository.save(_) >> circle
         1 * circleMatcherService.create(circle, workspace.circleMatcherUrl, false)
