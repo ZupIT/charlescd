@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.SystemTokenService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.DeleteWebhookSubscriptionInteractor
@@ -36,20 +37,37 @@ class DeleteWebhookSubscriptionInteractorImplTest extends Specification {
     private DeleteWebhookSubscriptionInteractor deleteWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         deleteWebhookSubscriptionInteractor = new DeleteWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService)), hermesService)
     }
 
-    def "when trying to delete subscription should do it successfully"() {
+    def "when trying to delete subscription should do it successfully using authorization"() {
         when:
         deleteWebhookSubscriptionInteractor.execute(workspaceId, authorization, null, subscriptionId)
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
+        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
+        1 * this.hermesService.deleteSubscription(authorEmail, subscriptionId)
+        notThrown()
+    }
+
+    def "when trying to delete subscription should do it successfully using system token"() {
+        given:
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+
+        when:
+        deleteWebhookSubscriptionInteractor.execute(workspaceId, null, systemTokenValue, subscriptionId)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * this.userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
         1 * this.hermesService.deleteSubscription(authorEmail, subscriptionId)
         notThrown()

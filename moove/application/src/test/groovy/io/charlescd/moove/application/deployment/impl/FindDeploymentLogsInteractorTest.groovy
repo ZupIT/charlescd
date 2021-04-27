@@ -32,7 +32,8 @@ import java.time.LocalDateTime
 
 class FindDeploymentLogsInteractorTest extends Specification {
     def userRepository = Mock(UserRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    def systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     def  managementUserSecurityService = Mock(ManagementUserSecurityService)
     def userService = new UserService(userRepository, systemTokenService, managementUserSecurityService)
     def deployClient = Mock(DeployClient)
@@ -40,7 +41,7 @@ class FindDeploymentLogsInteractorTest extends Specification {
     def findDeploymentLogsInteractor = new FindDeploymentLogsInteractorImpl(userService, deployClient)
 
 
-    def 'should return the correct log response '() {
+    def 'should return the correct log response using authorization'() {
         given:
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
@@ -56,6 +57,29 @@ class FindDeploymentLogsInteractorTest extends Specification {
         1 * deployClient.getDeploymentLogs(workspaceId, deploymentId) >> logResponse
         1 * managementUserSecurityService.getUserEmail(authorization) >> TestUtils.email
         1 * userRepository.findByEmail(TestUtils.email) >> Optional.of(TestUtils.user)
+        assert response.logs.size() == logResponse.logs.size()
+        assert response.logs[0].title == logResponse.logs[0].title
+        assert response.logs[0].details == logResponse.logs[0].details
+
+    }
+
+    def 'should return the correct log response using system token'() {
+        given:
+        def workspaceId = TestUtils.workspaceId
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def deploymentId = '083337ef-6177-4a24-b32e-f7429336ec20'
+        def log = new Log("INFO", "log title", "log details", LocalDateTime.now().toString())
+        def logResponse = new LogResponse(
+                "id",
+                [log]
+        )
+        when:
+        def response = findDeploymentLogsInteractor.execute(workspaceId, null, systemTokenValue, deploymentId)
+        then:
+        1 * deployClient.getDeploymentLogs(workspaceId, deploymentId) >> logResponse
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(TestUtils.user)
         assert response.logs.size() == logResponse.logs.size()
         assert response.logs[0].title == logResponse.logs[0].title
         assert response.logs[0].details == logResponse.logs[0].details

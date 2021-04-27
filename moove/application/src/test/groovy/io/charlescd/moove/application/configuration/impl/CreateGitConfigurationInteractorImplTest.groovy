@@ -40,7 +40,8 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
@@ -85,7 +86,7 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         ex.resourceName == "user"
     }
 
-    def "should return git configuration response"() {
+    def "should create git configuration using authorization"() {
         given:
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
@@ -102,6 +103,47 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         1 * this.workspaceRepository.exists(workspaceId) >> true
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * this.gitConfigurationRepository.save(_) >> { argument ->
+            def savedGitConfiguration = argument[0]
+            assert savedGitConfiguration instanceof GitConfiguration
+            assert savedGitConfiguration.id != null
+            assert savedGitConfiguration.name == createGitConfigurationRequest.name
+            assert savedGitConfiguration.createdAt != null
+            assert savedGitConfiguration.author.id == author.id
+            assert savedGitConfiguration.workspaceId == workspaceId
+            assert savedGitConfiguration.credentials.username == credentialsPart.username
+            assert savedGitConfiguration.credentials.password == credentialsPart.password
+            assert savedGitConfiguration.credentials.address == credentialsPart.address
+            assert savedGitConfiguration.credentials.accessToken == credentialsPart.accessToken
+            assert savedGitConfiguration.credentials.serviceProvider == credentialsPart.serviceProvider
+
+            return savedGitConfiguration
+        }
+
+        notThrown()
+
+        assert gitConfigurationResponse != null
+        assert gitConfigurationResponse.id != null
+        assert gitConfigurationResponse.name == createGitConfigurationRequest.name
+    }
+
+    def "should create git configuration using system token"() {
+        given:
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+
+        def credentialsPart = new GitCredentialsData("http://github.com", "zup", "123@zup", null, GitServiceProvider.GITHUB)
+        def createGitConfigurationRequest = new CreateGitConfigurationRequest("github-zup", credentialsPart)
+
+        when:
+        def gitConfigurationResponse = this.createGitConfigurationInteractor.execute(createGitConfigurationRequest, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * this.workspaceRepository.exists(workspaceId) >> true
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * this.gitConfigurationRepository.save(_) >> { argument ->
             def savedGitConfiguration = argument[0]
             assert savedGitConfiguration instanceof GitConfiguration

@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.SystemTokenService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.EventHistoryWebhookSubscriptionInteractor
@@ -41,14 +42,15 @@ class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
     private EventHistoryWebhookSubscriptionInteractor eventHistoryWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
-    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         eventHistoryWebhookSubscriptionInteractor = new EventHistoryWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService)), hermesService)
     }
 
-    def "when trying to get subscription event history should do it successfully"() {
+    def "when trying to get subscription event history should do it successfully using authorization"() {
         given:
         def response = new ArrayList()
         def history = new WebhookSubscriptionEventHistory(
@@ -76,6 +78,41 @@ class EventHistoryWebhookSubscriptionInteractorImplTest extends Specification {
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
         1 * this.userRepository.findByEmail(authorEmail) >> Optional.of(author)
+        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
+        1 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null, pageRequest) >> response
+        notThrown()
+    }
+
+    def "when trying to get subscription event history should do it successfully using system token"() {
+        given:
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def response = new ArrayList()
+        def history = new WebhookSubscriptionEventHistory(
+                "executionId",
+                new WebhookSubscriptionInfo(
+                        subscriptionId,
+                        "subscriptionDescription",
+                        "subscriptionUrl",
+                        workspaceId
+                ),
+                "ENQUEUED",
+                new WebhookEventInfo(
+                        "DEPLOY",
+                        "json"
+                ),
+                new ArrayList<WebhookExecutionInfo>()
+        )
+        response.add(history)
+
+        def pageRequest = new PageRequest()
+
+        when:
+        eventHistoryWebhookSubscriptionInteractor.execute(workspaceId, null, systemTokenValue, subscriptionId, "DEPLOY", null, null, null, pageRequest)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * this.userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
         1 * this.hermesService.getSubscriptionEventHistory(authorEmail, subscriptionId, "DEPLOY", null, null, null, pageRequest) >> response
         notThrown()
