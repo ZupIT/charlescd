@@ -15,7 +15,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { INestApplication } from '@nestjs/common'
+import { HttpException, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
@@ -74,7 +74,7 @@ describe('DeploymentCleanupHandler', () => {
 
     await expect(
       pipe.transform(nonExistingDeploymentId)
-    ).rejects.toThrow(new ExceptionBuilder(errorMessage, HttpStatus.BAD_REQUEST).build())
+    ).rejects.toThrow(new HttpException(errorMessage, HttpStatus.BAD_REQUEST))
 
   })
 
