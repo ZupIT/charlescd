@@ -23,7 +23,6 @@ import { Response } from 'express'
 import { plainToClass } from 'class-transformer'
 import { ErrorResponse } from '../utils/exception.utils'
 import { JsonAPIError } from '../../api/deployments/validations/create-deployment-validator'
-import { inspect } from 'util'
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
