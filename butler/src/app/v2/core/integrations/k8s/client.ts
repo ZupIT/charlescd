@@ -27,6 +27,8 @@ import { IncomingMessage } from 'http'
 
 @Injectable()
 export class K8sClient {
+
+  private readonly kubeConfig: k8s.KubeConfig
   
   public objectApi: k8s.KubernetesObjectApi
   public coreV1Api: k8s.CoreV1Api
@@ -36,10 +38,10 @@ export class K8sClient {
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private readonly envConfiguration: IEnvConfiguration
   ) {
-    const kc = new k8s.KubeConfig()
-    kc.loadFromCluster()
-    this.objectApi = k8s.KubernetesObjectApi.makeApiClient(kc)
-    this.coreV1Api = kc.makeApiClient(k8s.CoreV1Api)
+    this.kubeConfig = new k8s.KubeConfig()
+    this.kubeConfig.loadFromCluster()
+    this.objectApi = k8s.KubernetesObjectApi.makeApiClient(this.kubeConfig)
+    this.coreV1Api = this.kubeConfig.makeApiClient(k8s.CoreV1Api)
   }
 
   public async applyDeploymentCustomResource(deployment: Deployment): Promise<void> { // TODO return type?
@@ -52,7 +54,7 @@ export class K8sClient {
     try {
       await this.readResource(deploymentManifest)
       await this.patchResource(deploymentManifest)
-    } catch(error) {
+    } catch (error) {
       if (!(error instanceof k8s.HttpError) || error.statusCode !== 404) {
         this.consoleLoggerService.error('ERROR:CREATE_DEPLOYMENT_CUSTOM_RESOURCE', { error })
         throw error
@@ -151,10 +153,14 @@ export class K8sClient {
     }
   }
 
-  private async readResource(manifest: KubernetesManifest): Promise<void> { // TODO return type and use butler type
+  public async readResource(manifest: KubernetesManifest):
+    Promise<{
+      body: k8s.KubernetesObject,
+      response: IncomingMessage
+    }> { // TODO return type and use butler type
     try {
       this.consoleLoggerService.log('START:READ_RESOURCE_MANIFEST')
-      await this.objectApi.read(manifest)
+      return await this.objectApi.read(manifest)
     } catch(error) {
       this.consoleLoggerService.error('ERROR:READ_RESOURCE_MANIFEST', { error })
       throw error
@@ -171,5 +177,10 @@ export class K8sClient {
       this.consoleLoggerService.error('ERROR:DELETE_RESOURCE_MANIFEST', { error })
       throw error
     }
+  }
+
+  public async watchEvents(callback: (phase: string, coreEvent: k8s.CoreV1Event) => void, done: (err: any) => void): Promise<k8s.RequestResult> {
+    const k8sWatch = new k8s.Watch(this.kubeConfig)
+    return k8sWatch.watch('/api/v1/events', {}, callback, done)
   }
 }
