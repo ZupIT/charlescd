@@ -50,7 +50,7 @@ export class GitTokenDecryptionPipe implements PipeTransform {
     try {
       const decodedToken = Buffer.from(pgpToken, 'base64').toString('utf8')
       const message = await openpgp.readMessage({ armoredMessage: decodedToken })
-      const decryptedMessage = await openpgp.decrypt({ message: message, passwords: AppConstants.ENCRYPTION_KEY })
+      const decryptedMessage = await openpgp.decrypt({ message: message, passwords: AppConstants.MOOVE_ENCRYPTION_KEY })
       return decryptedMessage.data
     } catch (error) {
       return
