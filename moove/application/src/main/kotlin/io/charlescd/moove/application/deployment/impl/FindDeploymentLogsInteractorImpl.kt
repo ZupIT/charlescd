@@ -46,5 +46,4 @@ class FindDeploymentLogsInteractorImpl(
     private fun validateWorkspace(workspace: Workspace) {
         workspace.deploymentConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING)
     }
-
 }
