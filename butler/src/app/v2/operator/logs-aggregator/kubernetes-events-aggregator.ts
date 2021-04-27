@@ -23,21 +23,28 @@ import { ConsoleLoggerService } from '../../core/logs/console'
 import { Log } from '../../api/deployments/interfaces/log.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { LogRepository } from '../../api/deployments/repository/log.repository'
+import * as LRUCache from 'lru-cache'
 
 @Injectable()
 export class EventsLogsAggregator {
 
   private static readonly KUBE_SYSTEM_NS_PREFIX = 'kube-'
+  
+  private readonly MAX_CACHE_SIZE = 100
+  private readonly MAX_CACHE_AGE_ONE_HOUR = 1000 * 60 * 60
 
-  private readonly resourceCache: Record<string, Promise<{
+  private readonly cache: LRUCache<string, Promise<{
     body: k8s.KubernetesObject
     response: http.IncomingMessage
-  }>> // TODO: configure a LRU cache here
+  }>>
 
   constructor(private k8sClient: K8sClient,
     private logsRepository: LogRepository,
     private consoleLoggerService: ConsoleLoggerService) {
-    this.resourceCache = {}
+    this.cache = new LRUCache({ 
+      max: this.MAX_CACHE_SIZE, 
+      maxAge: this.MAX_CACHE_AGE_ONE_HOUR 
+    })
   }
 
   public async aggregate(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
@@ -58,7 +65,7 @@ export class EventsLogsAggregator {
 
     const event = new Event(coreEvent)
 
-    if (this.isEventOlderThen(event, since)) {
+    if (this.isEventOlderThan(event, since)) {
       this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event...`)
       return
     }
@@ -106,7 +113,7 @@ export class EventsLogsAggregator {
     }
   }
 
-  private isEventOlderThen(event: Event, since?: Date): boolean {
+  private isEventOlderThan(event: Event, since?: Date): boolean {
     if (!since) {
       return false
     }
@@ -133,9 +140,12 @@ export class EventsLogsAggregator {
       body: k8s.KubernetesObject,
       response: http.IncomingMessage
     }> {
+    
     const cacheKey = this.createCacheKey(namespace, kind, name)
-    if (this.resourceCache[cacheKey]) {
-      return this.resourceCache[cacheKey]
+
+    const cachedResponse = this.cache.get(cacheKey)
+    if (cachedResponse) {
+      return cachedResponse
     }
 
     const spec = {
@@ -149,7 +159,7 @@ export class EventsLogsAggregator {
 
     const response = this.k8sClient.readResource(spec)
 
-    this.resourceCache[cacheKey] = response
+    this.cache.set(cacheKey, response)
 
     return response
   }
