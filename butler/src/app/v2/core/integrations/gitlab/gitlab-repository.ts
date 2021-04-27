@@ -88,7 +88,7 @@ export class GitLabRepository implements Repository {
     return this.httpService.get(url, config)
       .toPromise()
       .catch(function(error) {
-        throw new ExceptionBuilder('Unable to fetch GitLab URL', error.status)
+        throw new ExceptionBuilder('Unable to fetch GitLab URL', error.response.status)
           .withDetail(`Status '${error.response.statusText}' received when accessing GitLab resource: ${url}`)
           .withSource('components.helmRepository')
           .build()
