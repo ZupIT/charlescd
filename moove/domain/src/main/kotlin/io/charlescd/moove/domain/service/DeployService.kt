@@ -27,4 +27,6 @@ interface DeployService {
     fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, configuration: DeploymentConfiguration)
 
     fun undeploy(deploymentId: String, authorId: String, configuration: DeploymentConfiguration)
+
+    fun healthCheck(butlerUrl: String)
 }
