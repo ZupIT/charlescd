@@ -33,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>()
     response
       .status(exception.getStatus())
-      .json( responseObject ? this.extractResponseDetails(responseObject) : this.extractStringResponse(exception))
+      .json( this.getJsonResponse(responseObject, exception))
   }
 
   private convertToObject(response: string | Record<string, unknown>): ErrorResponse | undefined {
@@ -43,8 +43,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     return plainToClass(ErrorResponse, response)
   }
 
-  private extractResponseDetails(responseObject: ErrorResponse) : JsonAPIError {
-    return  { 
+  private extractDetailedResponse(responseObject: ErrorResponse) : JsonAPIError {
+    return  {
       errors: responseObject.errors.map(error => {
         return {
           title: error.title,
@@ -63,17 +63,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
   }
 
-  private extractStringResponse(exception: HttpException) {
-    return {
-      errors: [{
-        title: exception.getResponse(),
-        meta: {
-          component: 'butler',
-          timestamp: Date.now()
-        },
-        status: exception.getStatus()
-      }]
+  private getJsonResponse(responseObject: ErrorResponse | undefined, exception: HttpException) {
+    if(responseObject != null && responseObject.errors != null) {
+      return this.extractDetailedResponse(responseObject)
     }
+    return exception.getResponse()
   }
-
 }

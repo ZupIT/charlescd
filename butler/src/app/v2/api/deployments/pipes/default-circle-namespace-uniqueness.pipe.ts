@@ -39,7 +39,7 @@ export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
     )
 
     if (deployment && deployment.namespace !== deploymentRequest.namespace) {
-      throw new ExceptionBuilder('Invalid Namespace', HttpStatus.CONFLICT)
+      throw new ExceptionBuilder('Invalid namespace', HttpStatus.CONFLICT)
         .withSource('namespace')
         .withDetail('Circle already has an active default deployment in a different namespace.')
         .build()
