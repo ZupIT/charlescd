@@ -85,7 +85,7 @@ export class GitHubRepository implements Repository {
     return await this.httpService.get(url.toString(), config)
       .toPromise()
       .catch(function(error) {
-        throw new ExceptionBuilder('Unable to fetch GitHub URL', error.status)
+        throw new ExceptionBuilder('Unable to fetch GitHub URL', error.response.status)
           .withDetail(`Status '${error.response.statusText}' received when accessing GitHub resource: ${url}`)
           .withSource('components.helmRepository')
           .build()

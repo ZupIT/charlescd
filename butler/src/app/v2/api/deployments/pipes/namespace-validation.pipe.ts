@@ -16,7 +16,7 @@
 
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { Injectable, PipeTransform } from '@nestjs/common'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { K8sClient } from '../../../core/integrations/k8s/client'

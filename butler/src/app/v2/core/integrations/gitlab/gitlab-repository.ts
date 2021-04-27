@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BadRequestException, InternalServerErrorException, HttpService, Injectable } from '@nestjs/common'
+import {  HttpService, Injectable } from '@nestjs/common'
 import { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console'

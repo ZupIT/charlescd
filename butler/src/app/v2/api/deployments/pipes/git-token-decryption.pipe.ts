@@ -18,7 +18,7 @@ import { Injectable, PipeTransform } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import * as openpgp from 'openpgp'
 import { AppConstants } from '../../../core/constants'
-import { ExceptionBuilder} from '../../../core/utils/exception.utils'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 @Injectable()
@@ -32,7 +32,7 @@ export class GitTokenDecryptionPipe implements PipeTransform {
       return deploymentRequest
     }
     throw new ExceptionBuilder( 'Unable to decrypt "token"', HttpStatus.BAD_REQUEST)
-      .withSource('token').build()
+      .withSource('git.token').build()
   }
 
   private async decryptToken(pgpToken: string) : Promise<string | undefined> {

@@ -21,8 +21,7 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 import { plainToClass } from 'class-transformer'
-import { ErrorDetails, ErrorResponse } from '../utils/exception.utils'
-import convert = require('lodash/fp/convert')
+import { ErrorResponse } from '../utils/exception.utils'
 import { JsonAPIError } from '../../api/deployments/validations/create-deployment-validator'
 import { inspect } from 'util'
 
@@ -30,7 +29,6 @@ import { inspect } from 'util'
 export class HttpExceptionFilter implements ExceptionFilter {
   public catch(exception: BadRequestException, host: ArgumentsHost): void {
     const responseError = exception.getResponse() as string | Record<string, unknown>
-    console.log(inspect(responseError))
     const responseObject = this.convertToObject(responseError)
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
@@ -43,12 +41,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if( typeof(response) === 'string') {
       return undefined
     }
-    // eslint-disable-next-line no-useless-catch
-    try {
-      return plainToClass(ErrorResponse, response)
-    } catch(exception){
-      console.log(exception)
-    }
+    return plainToClass(ErrorResponse, response)
   }
 
   private extractResponseDetails(responseObject: ErrorResponse) : JsonAPIError {

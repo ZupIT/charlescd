@@ -15,7 +15,7 @@
  */
 
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { ConflictException, HttpStatus, Injectable, PipeTransform } from '@nestjs/common'
+import { HttpStatus, Injectable, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { Repository } from 'typeorm'

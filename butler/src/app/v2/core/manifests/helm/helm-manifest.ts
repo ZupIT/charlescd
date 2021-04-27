@@ -58,7 +58,9 @@ export class HelmManifest implements Manifest {
       return manifest
     } catch (exception) {
       this.consoleLoggerService.error('ERROR:RENDERING_MANIFESTS', exception)
-      throw new ExceptionBuilder('Not a valid manifest', HttpStatus.UNPROCESSABLE_ENTITY).build()
+      throw new ExceptionBuilder('Not a valid manifest', HttpStatus.UNPROCESSABLE_ENTITY)
+        .withDetail(exception.message)
+        .build()
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
       this.cleanUp(chartPath)

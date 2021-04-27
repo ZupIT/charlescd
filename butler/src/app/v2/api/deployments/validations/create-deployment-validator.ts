@@ -62,7 +62,7 @@ export class CreateDeploymentValidator {
 
   public formatErrors(error: ValidationError, statusCode: HttpStatus) : ExceptionBuilder[] {
     return error.details.flatMap(d => {
-      return new ExceptionBuilder(d.message, HttpStatus.BAD_REQUEST).withSource(d.path.join('/'))
+      return new ExceptionBuilder(d.message, statusCode).withSource(d.path.join('/'))
     })
   }
 

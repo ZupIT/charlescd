@@ -9,7 +9,7 @@ export class ExceptionBuilder  {
   
       constructor(title: string, status: HttpStatus) {
         this.title = title
-        this.status = status.valueOf()
+        this.status = status ? status.valueOf() : HttpStatus.INTERNAL_SERVER_ERROR.valueOf()
       }
 
 
@@ -23,12 +23,12 @@ export class ExceptionBuilder  {
         return this
       }
     
-      public build() {
+      public build(): HttpException {
         const errorDetails = new ErrorDetails(this.title, this.status, this.source, this.detail)
         return new HttpException(new ErrorResponse([errorDetails]), this.status)
       }
 
-      public static buildFromArray(errors: ExceptionBuilder[], status: HttpStatus) {
+      public static buildFromArray(errors: ExceptionBuilder[], status: HttpStatus): HttpException {
         return new HttpException(new ErrorResponse(errors), status)
       }
 }
