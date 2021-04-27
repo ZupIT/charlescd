@@ -24,6 +24,7 @@ import io.charlescd.moove.application.workspace.*
 import io.charlescd.moove.application.workspace.request.AssociateUserGroupToWorkspaceRequest
 import io.charlescd.moove.application.workspace.request.CreateWorkspaceRequest
 import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
@@ -85,7 +86,7 @@ class V2WorkspaceController(
     fun findAll(
         @Valid pageRequest: PageRequest,
         @RequestParam(required = false, name = "name") @Size(max = 10) name: String?
-    ): ResourcePageResponse<WorkspaceResponse> {
+    ): ResourcePageResponse<SimpleWorkspaceResponse> {
         return findAllWorkspacesInteractor.execute(pageRequest, name)
     }
 

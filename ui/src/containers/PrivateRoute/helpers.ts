@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-import { getRoles } from 'core/utils/auth';
-import includes from 'lodash/includes';
-import forEach from 'lodash/forEach';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
+import { ability, Actions, Subjects } from 'core/utils/abilities';
 
 export const isAllowed = (allowedRoles: string[]) => {
-  const roles = getRoles();
-  let status = false;
-
-  forEach(allowedRoles, role => {
-    status = includes(roles, role);
-    if (status) {
-      return false;
-    }
+  const rule = find(allowedRoles, (role: string) => {
+    const [subject, action] = role.split('_') || ['', ''];
+    return ability.relevantRuleFor(action as Actions, subject as Subjects);
+    
   });
 
-  return status;
+  console.log('======= start ======');
+  console.log('isAllowed: rule: ', rule);
+  console.log('isAllowed: ability: ', ability.rules);
+  console.log('isAllowed: RETURN (!isEmpty(rule)): ', !isEmpty(rule));
+
+  return !isEmpty(rule);
 };

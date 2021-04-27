@@ -28,6 +28,7 @@ export interface Workspace {
   cdConfiguration?: Configuration;
   metricConfiguration?: MetricConfiguration;
   registryConfiguration?: Configuration;
+  permissions?: string[];
   webhookConfiguration?: Webhook[];
 }
 

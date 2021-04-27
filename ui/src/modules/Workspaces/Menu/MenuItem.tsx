@@ -18,37 +18,25 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
 import { setUserAbilities } from 'core/utils/abilities';
-import { useDispatch, useGlobalState } from 'core/state/hooks';
-import {
-  statusWorkspaceAction,
-  loadedWorkspaceAction
-} from 'modules/Workspaces/state/actions';
 import { hasPermission } from 'core/utils/auth';
 import { WORKSPACE_STATUS } from '../enums';
 import routes from 'core/constants/routes';
 import Styled from './styled';
+import { Workspace } from '../interfaces/Workspace';
 
 interface Props {
-  id: string;
-  name: string;
-  status: string;
-  selectedWorkspace: (name: string) => void;
+  workspace: Workspace;
 }
 
-const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
-  const dispatch = useDispatch();
+const MenuItem = ({ workspace }: Props) => {
   const history = useHistory();
-  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
 
   const handleClick = () => {
-    saveWorkspace({ id, name });
-    selectedWorkspace(name);
+    saveWorkspace({ ...workspace });
     setUserAbilities();
-    dispatch(statusWorkspaceAction('idle'));
-    dispatch(loadedWorkspaceAction({ ...workspace, id, name, status }));
     history.push({
       pathname:
-        status === WORKSPACE_STATUS.INCOMPLETE &&
+        workspace?.status === WORKSPACE_STATUS.INCOMPLETE &&
         hasPermission('maintenance_write')
           ? routes.credentials
           : routes.circles
@@ -56,9 +44,9 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   };
 
   return (
-    <Styled.Link onClick={handleClick} data-testid={`workspace-${name}`}>
+    <Styled.Link onClick={handleClick} data-testid={`workspace-${workspace.name}`}>
       <Styled.ListItem icon="workspace">
-        <Styled.Item color="light">{name}</Styled.Item>
+        <Styled.Item color="light">{workspace.name}</Styled.Item>
       </Styled.ListItem>
     </Styled.Link>
   );

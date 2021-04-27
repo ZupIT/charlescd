@@ -27,7 +27,7 @@ interface WorkspaceRepository {
 
     fun find(id: String): Optional<Workspace>
 
-    fun find(pageRequest: PageRequest, name: String?): Page<Workspace>
+    fun find(pageRequest: PageRequest, name: String?): Page<SimpleWorkspace>
 
     fun update(workspace: Workspace): Workspace
 

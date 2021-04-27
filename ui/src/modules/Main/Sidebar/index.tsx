@@ -14,86 +14,35 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
-import find from 'lodash/find';
-import map from 'lodash/map';
-import includes from 'lodash/includes';
-import isEmpty from 'lodash/isEmpty';
-import { logout, isRoot } from 'core/utils/auth';
+import { logout } from 'core/utils/auth';
 import routes from 'core/constants/routes';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
-import { getProfileByKey } from 'core/utils/profile';
-import { setUserAbilities } from 'core/utils/abilities';
 import {
-  saveWorkspace,
-  getWorkspaceId,
-  clearWorkspace
+  clearWorkspace, getWorkspace
 } from 'core/utils/workspace';
-import { Workspace } from 'modules/Users/interfaces/User';
 import { ExpandClick } from './Types';
 import MenuItems from './MenuItems';
 import Styled from './styled';
 import ReactTooltip from 'react-tooltip';
 import { goTo } from 'core/utils/routes';
+import isEmpty from 'lodash/isEmpty';
 
 interface Props {
   isExpanded: boolean;
   onClickExpand: (state: ExpandClick) => void;
-  selectedWorkspace?: string;
 }
 
-const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
-  const [workspace, setWorkspace] = useState<Workspace>();
-  const [workspaces, setWorkspaces] = useState<Workspace[]>();
+const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
   const navigate = useHistory();
-  const pathname = navigate.location.pathname;
-  const isRootMenu =
-    includes(pathname, routes.workspaces) ||
-    includes(pathname, routes.users) ||
-    includes(pathname, routes.account) ||
-    includes(pathname, routes.groups);
-
-  useEffect(() => {
-    setWorkspaces(getProfileByKey('workspaces'));
-  }, []);
-
-  useEffect(() => {
-    setWorkspace(find(workspaces, ['id', getWorkspaceId()]));
-  }, [workspaces]);
+  const workspace = getWorkspace();
 
   const handleClick = () => {
     clearWorkspace();
-    setWorkspace(null);
     navigate.push(routes.main);
   };
-
-  const onSelect = (name: string) => {
-    saveWorkspace(find(workspaces, ['name', name]));
-    setUserAbilities();
-    navigate.push({
-      pathname: isRoot() ? routes.credentials : routes.circles
-    });
-    window.location.reload(false);
-  };
-
-  const getIcon = (workspaceId: string) =>
-    getWorkspaceId() === workspaceId && 'checkmark';
-
-  const renderDropdown = () =>
-    !isRootMenu && (
-      <Styled.Dropdown icon="workspace">
-        {map(workspaces, workspace => (
-          <Styled.DropdownItem
-            key={`${workspace.id}-${workspace.name}`}
-            name={workspace.name}
-            icon={getIcon(workspace.id)}
-            onSelect={onSelect}
-          />
-        ))}
-      </Styled.Dropdown>
-    );
 
   const redirectToDocumentation = () => {
     goTo('https://docs.charlescd.io');
@@ -102,21 +51,23 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   return (
     <Styled.Nav data-testid="sidebar">
       <Styled.Logo name="charles" size="37px" onClick={() => handleClick()} />
-
       <MenuItems
         isExpanded={isExpanded}
         expandMenu={(state: ExpandClick) => onClickExpand(state)}
       />
-
       <Styled.Bottom>
-        <Styled.WorkspaceItem>
-          {!isEmpty(workspaces) && renderDropdown()}
-          {isExpanded && (
-            <Text.h5 color="light">
-              {!isRootMenu && (workspace?.name || selectedWorkspace)}
-            </Text.h5>
-          )}
-        </Styled.WorkspaceItem>
+        {
+          !isEmpty(workspace?.id) && (
+            <Styled.WorkspaceItem>
+              <Styled.LinkIcon name="workspace" size="15px" isActive={false} />
+              {
+                isExpanded && (
+                  <Text.h5 color="light">{workspace?.name}</Text.h5>
+                )
+              }
+            </Styled.WorkspaceItem>
+          )
+        }
         <Styled.Item>
           <Icon
             name="help"

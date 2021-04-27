@@ -46,7 +46,8 @@ data class UserResponse(
                 SimpleWorkspaceResponse(
                     workspace.id,
                     workspace.name,
-                    workspace.permissions.map { permission -> permission.name })
+                    workspace.permissions.map { permission -> permission.name },
+                    workspace.status.name)
             },
             isRoot = user.root
         )

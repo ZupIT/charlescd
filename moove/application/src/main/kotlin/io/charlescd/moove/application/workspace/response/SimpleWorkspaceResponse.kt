@@ -16,8 +16,25 @@
 
 package io.charlescd.moove.application.workspace.response
 
+import io.charlescd.moove.domain.SimpleWorkspace
+
 data class SimpleWorkspaceResponse(
     val id: String,
     val name: String,
-    val permissions: List<String>
-)
+    val permissions: List<String>,
+    val status: String
+) {
+    companion object {
+
+        fun from(
+            workspace: SimpleWorkspace
+        ): SimpleWorkspaceResponse {
+            return SimpleWorkspaceResponse(
+                id = workspace.id,
+                name = workspace.name,
+                status = workspace.status.name,
+                permissions = emptyList()
+            )
+        }
+    }
+}

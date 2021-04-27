@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-import { WorkspacePagination } from './WorkspacePagination';
-import { Workspace } from './Workspace';
-import { FetchStatuses } from 'core/providers/base/hooks';
+package io.charlescd.moove.domain
 
-export interface WorkspaceState {
-  list: WorkspacePagination;
-  item: Workspace;
-  status: FetchStatuses;
-  permissions: string[];
-}
+data class SimpleWorkspace(
+    val id: String,
+    val name: String,
+    val status: WorkspaceStatusEnum = WorkspaceStatusEnum.INCOMPLETE
+)

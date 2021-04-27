@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Workspace } from './Workspace';
+
 interface Users {
   id: string;
   name: string;
@@ -29,7 +31,7 @@ export interface WorkspacePaginationItem {
 }
 
 export interface WorkspacePagination {
-  content: WorkspacePaginationItem[];
+  content: Workspace[];
   page: number;
   size: number;
   totalPages: number;
