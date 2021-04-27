@@ -20,10 +20,10 @@ package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.HermesService
-import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Named
+import org.slf4j.LoggerFactory
 
 @Named
 class WebhookEventService(
@@ -44,7 +44,7 @@ class WebhookEventService(
             val simpleWebhookEvent = SimpleWebhookEvent(workspaceId, eventType, eventSubType, status)
             val hermesEvent = buildHermesEvent(simpleWebhookEvent, deployment, error)
             hermesService.notifySubscriptionEvent(hermesEvent)
-        }   catch (ex: Exception) {
+        } catch (ex: Exception) {
             log.error("failed to send event: ", ex)
         }
     }
