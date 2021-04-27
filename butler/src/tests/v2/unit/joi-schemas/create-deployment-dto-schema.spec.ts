@@ -20,7 +20,7 @@ import { CreateComponentRequestDto } from '../../../../app/v2/api/deployments/dt
 import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { CreateGitDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-git-request.dto'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
-import { CreateDeploymentValidator, JsonAPIError } from '../../../../app/v2/api/deployments/validations/create-deployment-validator'
+import { CreateDeploymentValidator } from '../../../../app/v2/api/deployments/validations/create-deployment-validator'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 import { UrlConstants } from '../../integration/test-constants'
 
