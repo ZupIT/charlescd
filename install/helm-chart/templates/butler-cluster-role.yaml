@@ -14,7 +14,7 @@ rules:
   - get
   - patch
 - apiGroups:
-  - ""
+  - ''
   resources:
   - '*'
   verbs:
