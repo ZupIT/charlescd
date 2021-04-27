@@ -40,11 +40,12 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
 
   const handleClick = () => {
-    saveWorkspace(workspace);
+    const currentWorkspace = { ...workspace, id, name, status }
     selectedWorkspace(name);
     setUserAbilities();
     dispatch(statusWorkspaceAction('idle'));
-    dispatch(loadedWorkspaceAction({ ...workspace, id, name, status }));
+    dispatch(loadedWorkspaceAction(currentWorkspace));
+    saveWorkspace(currentWorkspace);
     history.push({
       pathname:
         status === WORKSPACE_STATUS.INCOMPLETE &&
