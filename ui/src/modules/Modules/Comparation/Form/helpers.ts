@@ -98,9 +98,14 @@ const destructGithub = (
 
   const helmUrl = `${splitProtocol[0]}//${baseUrl}`
   const organization = splitUrl[reposPosition + 1];
-  const repository = splitUrl[reposPosition + 2]
+  const repository = splitUrl[reposPosition + 2];
+  
+  let path = '';
+  if (splitUrl[reposPosition + 4]) {
+    path = splitUrl[reposPosition + 4].split('?')[0];
+  }
+
   const branch = params.get('ref');
-  const path = params.get('path');
 
   setValue('helmUrl', helmUrl, { shouldValidate: true });
   setValue('helmOrganization', organization, { shouldValidate: true });

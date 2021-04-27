@@ -154,7 +154,7 @@ const FormModule = ({ module, onChange }: Props) => {
       </Styled.Helm>
       <Styled.FieldPopover>
         <Styled.Input
-          label="Insert url"
+          label="Base URL"
           name="helmUrl"
           ref={helmRegister({ ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm url") })}
           error={helmErrors?.helmUrl?.message}
@@ -167,8 +167,7 @@ const FormModule = ({ module, onChange }: Props) => {
           name="helmPath"
           ref={
             helmRegister({ validate: {
-              slash: value => validateSlash(value, "helm path"),
-              notBlack: isNotBlank
+              slash: value => validateSlash(value, "helm path")
             }})
           }
           error={helmErrors?.helmPath?.message}
